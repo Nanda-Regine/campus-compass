@@ -1,0 +1,79 @@
+import { redirect } from 'next/navigation'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import DashboardClient from '@/components/dashboard/DashboardClient'
+import { currentMonthRange } from '@/lib/utils'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Dashboard' }
+
+export default async function DashboardPage() {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) redirect('/auth/login')
+
+  // Fetch all dashboard data in parallel
+  const { start, end } = currentMonthRange()
+
+  const [
+    { data: profile },
+    { data: budget },
+    { data: tasks },
+    { data: exams },
+    { data: modules },
+    { data: timetable },
+    { data: recentExpenses },
+    { data: subscription },
+  ] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('budgets').select('*').eq('user_id', user.id).single(),
+    supabase
+      .from('tasks')
+      .select('*, module:modules(id,name,colour)')
+      .eq('user_id', user.id)
+      .eq('done', false)
+      .order('due_date', { ascending: true, nullsFirst: false }),
+    supabase
+      .from('exams')
+      .select('*, module:modules(id,name,colour)')
+      .eq('user_id', user.id)
+      .gte('exam_date', new Date().toISOString().split('T')[0])
+      .order('exam_date', { ascending: true }),
+    supabase
+      .from('modules')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('timetable_entries')
+      .select('*, module:modules(id,name,colour)')
+      .eq('user_id', user.id),
+    supabase
+      .from('expenses')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('date', start)
+      .lte('date', end)
+      .order('date', { ascending: false })
+      .limit(10),
+    supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
+  ])
+
+  // Redirect to setup if profile incomplete
+  if (!profile?.setup_complete) redirect('/setup')
+
+  return (
+    <DashboardClient
+      initialData={{
+        profile:        profile!,
+        budget:         budget!,
+        tasks:          tasks ?? [],
+        exams:          exams ?? [],
+        modules:        modules ?? [],
+        timetable:      timetable ?? [],
+        recentExpenses: recentExpenses ?? [],
+        subscription:   subscription ?? null,
+      }}
+    />
+  )
+}
