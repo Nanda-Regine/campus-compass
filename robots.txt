@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /study/
+Disallow: /budget/
+Disallow: /meals/
+Disallow: /nova/
+Disallow: /setup/
+Disallow: /api/
+
+# Public pages
+Allow: /$
+Allow: /auth/login
+Allow: /auth/signup
+
+Sitemap: https://campuscompass.co.za/sitemap.xml

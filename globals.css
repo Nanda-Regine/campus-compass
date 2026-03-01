@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Campus Compass — Global Design System
+   Deep Teal · Coral · Warm Modern · SA Student Super-App
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --teal:        #0d9488;
+  --teal-light:  #14b8a6;
+  --teal-dim:    rgba(13, 148, 136, 0.12);
+  --teal-glow:   rgba(13, 148, 136, 0.2);
+  --coral:       #f97316;
+  --coral-light: #fb923c;
+  --coral-dim:   rgba(249, 115, 22, 0.12);
+
+  /* Home (light) surfaces */
+  --home-bg:     #f0fdfa;
+  --home-bg2:    #ccfbf1;
+  --home-card:   #ffffff;
+  --home-border: rgba(13, 148, 136, 0.12);
+
+  /* Dark premium surfaces */
+  --dark-bg:      #080f0e;
+  --dark-bg2:     #0d1614;
+  --dark-surface: #111a18;
+  --dark-surface2: #182320;
+  --dark-border:  rgba(255, 255, 255, 0.07);
+  --dark-border2: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --text-dark:   #0f2420;
+  --text-mid:    #374151;
+  --text-muted:  #6b7280;
+  --text-light:  rgba(255, 255, 255, 0.9);
+  --text-light2: rgba(255, 255, 255, 0.6);
+  --text-light3: rgba(255, 255, 255, 0.35);
+
+  /* Status */
+  --green:  #22c55e;
+  --amber:  #f59e0b;
+  --red:    #ef4444;
+  --purple: #a855f7;
+  --blue:   #3b82f6;
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  background: var(--dark-bg);
+  color: white;
+}
+
+/* ── Scrollbar styling ──────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Focus visible ──────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* ── Safe area insets ───────────────────────────────────── */
+.safe-bottom {
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+.safe-top {
+  padding-top: max(0px, env(safe-area-inset-top));
+}
+
+/* ── Typography ──────────────────────────────────────────── */
+.font-mono {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-5px); }
+}
+
+@keyframes pulse-teal {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,148,136,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(13,148,136,0); }
+}
+
+@keyframes ring-fill {
+  from { stroke-dashoffset: 408.4; }
+}
+
+/* ── Utility classes ─────────────────────────────────────── */
+.animate-fade-up   { animation: fadeUp 0.4s ease both; }
+.animate-fade-in   { animation: fadeIn 0.3s ease both; }
+.animate-bounce-in { animation: bounceIn 0.6s ease both; }
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--dark-surface) 25%,
+    var(--dark-surface2) 50%,
+    var(--dark-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+
+.typing-dot {
+  width: 6px; height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: typingBounce 1.2s ease infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── Glass effect ───────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-dark {
+  background: rgba(8, 15, 14, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Page transitions ───────────────────────────────────── */
+.page-enter {
+  animation: fadeUp 0.35s ease both;
+}
+
+/* ── Ring SVG animation ─────────────────────────────────── */
+.ring-fill-animated {
+  animation: ring-fill 1s ease forwards;
+}
+
+/* ── Mobile-first tap targets ───────────────────────────── */
+@media (max-width: 640px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ── PWA standalone padding ─────────────────────────────── */
+@media (display-mode: standalone) {
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 20px);
+  }
+}
+
+/* ── Chat input area fix on mobile ─────────────────────── */
+.chat-page-height {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* ── Prevent body scroll when modal open ───────────────── */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ── Progress bar transitions ───────────────────────────── */
+.progress-bar-fill {
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
