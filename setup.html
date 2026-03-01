@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Campus Compass — Setup</title>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#0d9488"/>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    body { background: var(--dark-bg); }
+
+    .emoji-grid {
+      display: grid; grid-template-columns: repeat(6,1fr); gap: 8px;
+      margin-bottom: 16px;
+    }
+    .emoji-btn {
+      aspect-ratio: 1;
+      background: var(--dark-surface);
+      border: 2px solid var(--dark-border);
+      border-radius: var(--radius);
+      font-size: 1.4rem;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .emoji-btn:hover  { border-color: var(--dark-border2); }
+    .emoji-btn.selected { border-color: var(--teal); background: var(--teal-dim); }
+
+    .module-tag-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .module-tag {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: 100px;
+      padding: 7px 14px;
+      font-family: var(--font-mono); font-size: 0.68rem;
+      color: var(--text-light2); cursor: pointer; transition: all 0.15s;
+    }
+    .module-tag:hover  { border-color: var(--dark-border2); }
+    .module-tag.selected { border-color: var(--teal); background: var(--teal-dim); color: var(--teal-light); }
+
+    .welcome-screen {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px; text-align: center;
+      background: linear-gradient(160deg, #080f0e 0%, #0d1614 50%, #080f0e 100%);
+    }
+    .welcome-logo {
+      font-size: 4rem; margin-bottom: 20px;
+      animation: bounceIn 0.6s ease;
+    }
+    @keyframes bounceIn {
+      0%   { transform: scale(0.5); opacity:0; }
+      70%  { transform: scale(1.1); }
+      100% { transform: scale(1);   opacity:1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div class="onboarding-page" id="setup-page">
+
+  <div class="onboarding-hero">
+    <div class="onboarding-logo">🧭</div>
+    <div class="onboarding-brand">Campus Compass</div>
+    <div class="onboarding-tagline">Your varsity life, fully organised</div>
+  </div>
+
+  <div class="onboarding-card">
+    <!-- Progress pips -->
+    <div class="step-progress" id="step-progress">
+      <div class="step-pip active" id="pip-0"></div>
+      <div class="step-pip" id="pip-1"></div>
+      <div class="step-pip" id="pip-2"></div>
+      <div class="step-pip" id="pip-3"></div>
+      <div class="step-pip" id="pip-4"></div>
+    </div>
+
+    <!-- STEP 0 — Who are you? -->
+    <div class="step-panel active" id="step-0">
+      <div class="step-label">Step 1 of 5</div>
+      <h2 class="step-heading">Hey! What's your name?</h2>
+      <p class="step-sub">Let's personalise your Campus Compass experience.</p>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Your Name</label>
+        <input type="text" class="form-input form-input-dark" id="s-name" placeholder="e.g. Thandi Nkosi" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Pick your avatar</label>
+        <div class="emoji-grid">
+          ${['🎓','😎','🌟','💪','🔥','✨','🦋','🌻','🎯','🚀','💡','🦁'].map(e=>`
+            <div class="emoji-btn" data-emoji="${e}" onclick="selectEmoji(this)">${e}</div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="onboarding-nav">
+        <span></span>
+        <button class="btn btn-teal" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 1 — University -->
+    <div class="step-panel" id="step-1">
+      <div class="step-label">Step 2 of 5</div>
+      <h2 class="step-heading">Where are you studying?</h2>
+      <p class="step-sub">We'll customise your experience for your institution.</p>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">University / Institution</label>
+        <select class="form-select form-select-dark" id="s-uni">
+          <option value="">Select your university…</option>
+          ${SA_UNIS.map(u=>`<option value="${u}">${u}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Year of Study</label>
+        <div class="year-btns">
+          ${['1st Year','2nd Year','3rd Year','Honours / 4th Year','Masters / PhD','Part-time'].map(y=>`
+            <div class="year-btn" data-year="${y}" onclick="selectYear(this)">${y}</div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Faculty / Field of Study</label>
+        <select class="form-select form-select-dark" id="s-faculty">
+          <option value="">Select faculty…</option>
+          ${['Engineering & Technology','Health Sciences','Humanities & Social Sciences','Commerce & Business','Law','Education','Science','Arts & Design','Agriculture','Built Environment','Other'].map(f=>`<option>${f}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="onboarding-nav">
+        <button class="btn btn-outline-light btn-sm" onclick="prevStep(0)">← Back</button>
+        <button class="btn btn-teal" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — Funding & Budget -->
+    <div class="step-panel" id="step-2">
+      <div class="step-label">Step 3 of 5</div>
+      <h2 class="step-heading">How are you funded?</h2>
+      <p class="step-sub">We'll help you track every rand so your money works harder.</p>
+
+      <div style="margin-bottom:16px;">
+        ${[
+          {key:'nsfas', icon:'🏛️', name:'NSFAS', desc:'National Student Financial Aid Scheme'},
+          {key:'bursary', icon:'📜', name:'Private Bursary', desc:'Company, foundation or trust funding'},
+          {key:'self', icon:'💼', name:'Self-funded / Family', desc:'Personal or family support'},
+          {key:'loan', icon:'🏦', name:'Student Loan', desc:'Bank or institution loan'},
+          {key:'mixed', icon:'🔀', name:'Mixed funding', desc:'Combination of the above'},
+        ].map(f=>`
+          <div class="funding-btn" data-funding="${f.key}" onclick="selectFunding(this)">
+            <span class="funding-icon">${f.icon}</span>
+            <div>
+              <div class="funding-name">${f.name}</div>
+              <div class="funding-desc">${f.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div id="nsfas-extra" style="display:none;">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Monthly NSFAS Allowance (R)</label>
+          <input type="number" class="form-input form-input-dark" id="s-nsfas-amount" placeholder="e.g. 1500" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Monthly Budget / Pocket Money (R)</label>
+        <input type="number" class="form-input form-input-dark" id="s-budget" placeholder="e.g. 2000" />
+      </div>
+
+      <div class="onboarding-nav">
+        <button class="btn btn-outline-light btn-sm" onclick="prevStep(1)">← Back</button>
+        <button class="btn btn-teal" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 — Modules -->
+    <div class="step-panel" id="step-3">
+      <div class="step-label">Step 4 of 5</div>
+      <h2 class="step-heading">What are you studying?</h2>
+      <p class="step-sub">Add your modules / subjects so we can build your study planner.</p>
+
+      <div id="modules-added" style="margin-bottom:12px;"></div>
+
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <input type="text" class="form-input form-input-dark" id="s-module-input"
+          placeholder="e.g. Introduction to Programming" style="flex:1;"
+          onkeydown="if(event.key==='Enter') addModule()" />
+        <button class="btn btn-teal btn-sm" onclick="addModule()">Add</button>
+      </div>
+
+      <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-light3);">
+        You can add or edit modules anytime in the Study Planner.
+      </p>
+
+      <div class="onboarding-nav">
+        <button class="btn btn-outline-light btn-sm" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-teal" onclick="nextStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Meal Preferences -->
+    <div class="step-panel" id="step-4">
+      <div class="step-label">Step 5 of 5</div>
+      <h2 class="step-heading">Your food & living situation</h2>
+      <p class="step-sub">Help us give you relevant meal planning and budget tips.</p>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Where do you stay?</label>
+        <select class="form-select form-select-dark" id="s-living">
+          <option value="">Select…</option>
+          <option>On-campus residence</option>
+          <option>Off-campus digs / flat</option>
+          <option>At home with family</option>
+          <option>Student commune</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Dietary preference</label>
+        <div class="module-tag-grid" id="diet-tags">
+          ${['No restrictions','Vegetarian','Vegan','Halaal','Kosher','Lactose-free','Gluten-free'].map(d=>`
+            <div class="module-tag" data-diet="${d}" onclick="selectDiet(this)">${d}</div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label form-label-dark">Monthly food budget (R)</label>
+        <input type="number" class="form-input form-input-dark" id="s-food-budget" placeholder="e.g. 800" />
+      </div>
+
+      <div class="onboarding-nav">
+        <button class="btn btn-outline-light btn-sm" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-coral" onclick="finishSetup()">🚀 Launch Campus Compass</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- WELCOME SCREEN (shown after setup) -->
+<div class="welcome-screen" id="welcome-screen" style="display:none;">
+  <div class="welcome-logo">🧭</div>
+  <h1 style="font-family:var(--font-display);font-size:2rem;font-weight:900;color:white;margin-bottom:8px;">
+    You're all set!
+  </h1>
+  <p style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-light3);letter-spacing:0.08em;margin-bottom:32px;">
+    Welcome to Campus Compass
+  </p>
+  <div id="welcome-name" style="font-family:var(--font-display);font-size:1.2rem;color:var(--teal-light);margin-bottom:32px;"></div>
+  <button class="btn btn-teal btn-lg" onclick="window.location.href='index.html'">
+    Open Dashboard →
+  </button>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  let selectedEmoji   = '🎓';
+  let selectedYear    = '';
+  let selectedFunding = '';
+  let selectedDiet    = '';
+  let addedModules    = [];
+  let currentStep     = 0;
+
+  function selectEmoji(el) {
+    document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedEmoji = el.dataset.emoji;
+  }
+
+  function selectYear(el) {
+    document.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedYear = el.dataset.year;
+  }
+
+  function selectFunding(el) {
+    document.querySelectorAll('.funding-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedFunding = el.dataset.funding;
+    document.getElementById('nsfas-extra').style.display = selectedFunding === 'nsfas' ? 'block' : 'none';
+  }
+
+  function selectDiet(el) {
+    document.querySelectorAll('.module-tag[data-diet]').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDiet = el.dataset.diet;
+  }
+
+  function addModule() {
+    const input = document.getElementById('s-module-input');
+    const val = input.value.trim();
+    if (!val) return;
+    addedModules.push(val);
+    input.value = '';
+    renderModules();
+  }
+
+  function renderModules() {
+    document.getElementById('modules-added').innerHTML = addedModules.map((m,i) => `
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        background:var(--dark-surface);border:1px solid var(--dark-border);
+        border-radius:8px;padding:10px 14px;margin-bottom:6px;">
+        <span style="font-size:0.875rem;color:var(--text-light);">${m}</span>
+        <button onclick="removeModule(${i})" style="background:none;border:none;color:var(--text-light3);cursor:pointer;font-size:0.9rem;">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function removeModule(i) {
+    addedModules.splice(i,1);
+    renderModules();
+  }
+
+  function nextStep(to) {
+    // Validate
+    if (to === 1) {
+      if (!document.getElementById('s-name').value.trim()) { toast('Please enter your name 👋'); return; }
+    }
+    if (to === 2) {
+      if (!document.getElementById('s-uni').value) { toast('Please select your university'); return; }
+      if (!selectedYear) { toast('Please select your year of study'); return; }
+    }
+    showStep(to);
+  }
+
+  function prevStep(to) { showStep(to); }
+
+  function showStep(n) {
+    document.querySelectorAll('.step-panel').forEach((p,i) => p.classList.toggle('active', i===n));
+    document.querySelectorAll('.step-pip').forEach((p,i) => {
+      p.className = 'step-pip ' + (i < n ? 'done' : i === n ? 'active' : '');
+    });
+    currentStep = n;
+    window.scrollTo(0,0);
+  }
+
+  function finishSetup() {
+    const profile = {
+      name:        document.getElementById('s-name').value.trim(),
+      emoji:       selectedEmoji,
+      uni:         document.getElementById('s-uni').value,
+      year:        selectedYear,
+      faculty:     document.getElementById('s-faculty').value,
+      funding:     selectedFunding,
+      diet:        selectedDiet,
+      living:      document.getElementById('s-living').value,
+      setupAt:     new Date().toISOString(),
+    };
+
+    Profile.set(profile);
+
+    // Save budget
+    const monthly     = Number(document.getElementById('s-budget').value) || 0;
+    const nsfasAmount = Number(document.getElementById('s-nsfas-amount').value) || 0;
+    const foodBudget  = Number(document.getElementById('s-food-budget').value) || 0;
+    Budget.set({ monthly, nsfas: selectedFunding==='nsfas', nsfasAmount, foodBudget, spent:[] });
+
+    // Save study modules
+    if (addedModules.length) {
+      Study.setModules(addedModules.map((name,i) => ({ id:uid(), name, colour: ['teal','coral','purple','amber','blue'][i%5] })));
+    }
+
+    // Show welcome
+    document.getElementById('setup-page').style.display = 'none';
+    document.getElementById('welcome-screen').style.display = 'flex';
+    document.getElementById('welcome-name').textContent = `${selectedEmoji}  ${profile.name}`;
+  }
+</script>
+</body>
+</html>

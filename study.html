@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Study Planner — Campus Compass</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    .timetable-grid {
+      display: grid;
+      grid-template-columns: 48px repeat(5, 1fr);
+      gap: 2px;
+      font-size: 0.72rem;
+    }
+    .tt-header {
+      font-family: var(--font-mono);
+      font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-light3);
+      padding: 8px 4px; text-align: center;
+    }
+    .tt-time {
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--text-light3); padding: 6px 4px 6px 0;
+      text-align: right; line-height: 1;
+    }
+    .tt-slot {
+      background: var(--dark-surface2);
+      border-radius: 6px; padding: 6px;
+      min-height: 44px; cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid var(--dark-border);
+    }
+    .tt-slot:hover { background: var(--dark-surface); border-color: var(--dark-border2); }
+    .tt-slot.has-class { cursor: default; }
+    .tt-class {
+      border-radius: 4px; padding: 4px 6px;
+      font-family: var(--font-mono); font-size: 0.58rem;
+      font-weight: 500; line-height: 1.3;
+      letter-spacing: 0.03em;
+    }
+    .task-item {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+      margin-bottom: 8px;
+      transition: border-color 0.15s;
+    }
+    .task-item:hover { border-color: var(--dark-border2); }
+    .task-item.done { opacity: 0.5; }
+    .task-check {
+      width: 20px; height: 20px;
+      border: 2px solid var(--dark-border2);
+      border-radius: 5px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      transition: all 0.15s;
+    }
+    .task-check.checked { background: var(--teal); border-color: var(--teal); color: white; font-size: 0.7rem; }
+    .task-title { font-family: var(--font-display); font-size: 0.875rem; font-weight: 700; color: white; margin-bottom: 3px; }
+    .task-item.done .task-title { text-decoration: line-through; color: var(--text-light3); }
+    .task-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .task-due { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-light3); }
+    .task-due.urgent { color: var(--red); }
+    .task-due.soon   { color: var(--amber); }
+
+    .module-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 100px;
+      font-family: var(--font-mono); font-size: 0.58rem;
+    }
+    .module-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    .countdown-card {
+      background: linear-gradient(135deg, var(--dark-surface), var(--dark-surface2));
+      border: 1px solid var(--dark-border);
+      border-radius: var(--radius-lg); padding: 16px;
+      text-align: center;
+    }
+    .countdown-num {
+      font-family: var(--font-display); font-size: 2.2rem; font-weight: 900;
+      line-height: 1;
+    }
+    .countdown-label {
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--text-light3); text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .countdown-exam { font-size: 0.78rem; color: var(--text-light2); margin-top: 6px; }
+
+    .tab-bar {
+      display: flex; gap: 2px; padding: 16px 16px 0;
+      border-bottom: 1px solid var(--dark-border);
+    }
+    .tab-btn {
+      padding: 8px 16px; border: none; background: none;
+      font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
+      color: var(--text-light3); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { color: var(--teal-light); border-bottom-color: var(--teal); }
+    .tab-panel { display: none; padding: 16px; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div id="drawer-container"></div>
+
+<div class="module-page">
+
+  <div class="topbar topbar-dark">
+    <button class="topbar-menu-btn" onclick="openDrawer()">☰</button>
+    <span class="topbar-title">📚 Study Planner</span>
+    <button class="topbar-action topbar-dark" onclick="openModal('add-task-modal')">＋</button>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tasks')">Tasks</button>
+    <button class="tab-btn" onclick="switchTab('timetable')">Timetable</button>
+    <button class="tab-btn" onclick="switchTab('exams')">Exams</button>
+    <button class="tab-btn" onclick="switchTab('modules')">Modules</button>
+  </div>
+
+  <!-- TASKS TAB -->
+  <div class="tab-panel active" id="tab-tasks">
+
+    <!-- Quick filter -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="nova-chip active-chip" id="filter-all"     onclick="filterTasks('all')">All</button>
+      <button class="nova-chip"             id="filter-pending" onclick="filterTasks('pending')">Pending</button>
+      <button class="nova-chip"             id="filter-urgent"  onclick="filterTasks('urgent')">Urgent</button>
+      <button class="nova-chip"             id="filter-done"    onclick="filterTasks('done')">Done</button>
+    </div>
+
+    <div id="tasks-list"></div>
+
+    <button class="btn btn-teal btn-full" style="margin-top:8px;" onclick="openModal('add-task-modal')">
+      + Add Assignment / Task
+    </button>
+  </div>
+
+  <!-- TIMETABLE TAB -->
+  <div class="tab-panel" id="tab-timetable">
+    <div style="overflow-x:auto;">
+      <div class="timetable-grid" id="timetable-grid" style="min-width:500px;"></div>
+    </div>
+    <button class="btn btn-outline-light btn-full btn-sm" style="margin-top:16px;" onclick="openModal('add-class-modal')">
+      + Add Class to Timetable
+    </button>
+  </div>
+
+  <!-- EXAMS TAB -->
+  <div class="tab-panel" id="tab-exams">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;" id="exam-countdowns"></div>
+    <div id="exams-list"></div>
+    <button class="btn btn-teal btn-full" onclick="openModal('add-exam-modal')">+ Add Exam</button>
+  </div>
+
+  <!-- MODULES TAB -->
+  <div class="tab-panel" id="tab-modules">
+    <div id="modules-list" style="margin-bottom:16px;"></div>
+    <button class="btn btn-outline-light btn-full btn-sm" onclick="openModal('add-module-modal')">+ Add Module</button>
+  </div>
+
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="add-task-modal" style="display:none;" onclick="handleModalClick(event,'add-task-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Add Task / Assignment</span>
+      <button class="btn-ghost-light btn" onclick="closeModal('add-task-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label form-label-dark">Task Title *</label>
+        <input type="text" class="form-input form-input-dark" id="t-title" placeholder="e.g. Essay: Chapter 3 Analysis" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Module</label>
+          <select class="form-select form-select-dark" id="t-module">
+            <option value="">General</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label form-label-dark">Type</label>
+          <select class="form-select form-select-dark" id="t-type">
+            <option>Assignment</option>
+            <option>Test</option>
+            <option>Project</option>
+            <option>Presentation</option>
+            <option>Reading</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Due Date</label>
+          <input type="date" class="form-input form-input-dark" id="t-due" />
+        </div>
+        <div class="form-group">
+          <label class="form-label form-label-dark">Priority</label>
+          <select class="form-select form-select-dark" id="t-priority">
+            <option value="normal">Normal</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent 🔥</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label form-label-dark">Notes (optional)</label>
+        <textarea class="form-input form-input-dark form-textarea" id="t-notes" placeholder="Any details…" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-light btn-sm" onclick="closeModal('add-task-modal')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EXAM MODAL -->
+<div class="modal-overlay" id="add-exam-modal" style="display:none;" onclick="handleModalClick(event,'add-exam-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Add Exam</span>
+      <button class="btn-ghost-light btn" onclick="closeModal('add-exam-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label form-label-dark">Exam / Module Name *</label>
+        <input type="text" class="form-input form-input-dark" id="e-name" placeholder="e.g. Mathematics 101 Final" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Date *</label>
+          <input type="date" class="form-input form-input-dark" id="e-date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label form-label-dark">Time</label>
+          <input type="time" class="form-input form-input-dark" id="e-time" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label form-label-dark">Venue</label>
+        <input type="text" class="form-input form-input-dark" id="e-venue" placeholder="e.g. Hall A, Main Building" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-light btn-sm" onclick="closeModal('add-exam-modal')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveExam()">Save Exam</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODULE MODAL -->
+<div class="modal-overlay" id="add-module-modal" style="display:none;" onclick="handleModalClick(event,'add-module-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Add Module</span>
+      <button class="btn-ghost-light btn" onclick="closeModal('add-module-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label form-label-dark">Module Name *</label>
+        <input type="text" class="form-input form-input-dark" id="m-name" placeholder="e.g. Introduction to Psychology" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Module Code</label>
+          <input type="text" class="form-input form-input-dark" id="m-code" placeholder="e.g. PSY101" />
+        </div>
+        <div class="form-group">
+          <label class="form-label form-label-dark">Colour</label>
+          <select class="form-select form-select-dark" id="m-colour">
+            <option value="teal">Teal</option>
+            <option value="coral">Coral</option>
+            <option value="purple">Purple</option>
+            <option value="amber">Amber</option>
+            <option value="blue">Blue</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-light btn-sm" onclick="closeModal('add-module-modal')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveModule()">Add Module</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CLASS (TIMETABLE) MODAL -->
+<div class="modal-overlay" id="add-class-modal" style="display:none;" onclick="handleModalClick(event,'add-class-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Add Class to Timetable</span>
+      <button class="btn-ghost-light btn" onclick="closeModal('add-class-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label form-label-dark">Module</label>
+        <select class="form-select form-select-dark" id="cl-module"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label form-label-dark">Day</label>
+          <select class="form-select form-select-dark" id="cl-day">
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label form-label-dark">Time</label>
+          <select class="form-select form-select-dark" id="cl-time">
+            ${['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'].map(t=>`<option>${t}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label form-label-dark">Venue / Room</label>
+        <input type="text" class="form-input form-input-dark" id="cl-venue" placeholder="e.g. Room 2B, Science Block" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-light btn-sm" onclick="closeModal('add-class-modal')">Cancel</button>
+      <button class="btn btn-teal" onclick="saveClass()">Add to Timetable</button>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  requireSetup();
+  document.getElementById('drawer-container').innerHTML = renderDrawer('study');
+
+  const COLOURS = {
+    teal:   { bg:'rgba(13,148,136,0.15)',  text:'#2dd4bf', dot:'#0d9488' },
+    coral:  { bg:'rgba(249,115,22,0.15)',  text:'#fb923c', dot:'#f97316' },
+    purple: { bg:'rgba(168,85,247,0.15)',  text:'#c084fc', dot:'#a855f7' },
+    amber:  { bg:'rgba(245,158,11,0.15)',  text:'#fcd34d', dot:'#f59e0b' },
+    blue:   { bg:'rgba(59,130,246,0.15)',  text:'#93c5fd', dot:'#3b82f6' },
+  };
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const HOURS = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+
+  let exams    = () => DB.get('exams',[]);
+  let classes  = () => DB.get('timetable',[]);
+  let activeFilter = 'all';
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => {
+      b.classList.toggle('active', ['tasks','timetable','exams','modules'][i]===name);
+    });
+    document.querySelectorAll('.tab-panel').forEach((p,i) => {
+      p.classList.toggle('active', ['tasks','timetable','exams','modules'][i]===name);
+    });
+    if (name==='tasks')     renderTasks();
+    if (name==='timetable') renderTimetable();
+    if (name==='exams')     renderExams();
+    if (name==='modules')   renderModules();
+  }
+
+  function populateModuleSelects() {
+    const mods = Study.modules();
+    ['t-module','cl-module'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = `<option value="">General</option>` +
+        mods.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+    });
+  }
+
+  // ── TASKS ─────────────────────────────────────────────────
+  function filterTasks(f) {
+    activeFilter = f;
+    document.querySelectorAll('[id^="filter-"]').forEach(b => {
+      b.classList.toggle('active-chip', b.id === `filter-${f}`);
+    });
+    renderTasks();
+  }
+
+  function renderTasks() {
+    const mods  = Study.modules();
+    const today = new Date(); today.setHours(0,0,0,0);
+    let tasks   = Study.tasks().sort((a,b)=>new Date(a.dueDate||'9999')-new Date(b.dueDate||'9999'));
+
+    if (activeFilter==='pending') tasks = tasks.filter(t=>!t.done);
+    if (activeFilter==='done')    tasks = tasks.filter(t=>t.done);
+    if (activeFilter==='urgent')  tasks = tasks.filter(t=>{
+      if (t.done || !t.dueDate) return false;
+      const d = Math.ceil((new Date(t.dueDate)-today)/(86400000));
+      return d<=3 || t.priority==='urgent';
+    });
+
+    const list = document.getElementById('tasks-list');
+    if (!tasks.length) {
+      list.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text-light3);font-family:var(--font-mono);font-size:0.72rem;">
+        ${activeFilter==='done' ? 'No completed tasks yet.' : 'No tasks here. Stay ahead — add one!'}
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = tasks.map(t => {
+      const mod = mods.find(m=>m.id===t.module);
+      const col = mod ? COLOURS[mod.colour||'teal'] : COLOURS.teal;
+      let dueClass='', dueText='';
+      if (t.dueDate) {
+        const days = Math.ceil((new Date(t.dueDate)-today)/86400000);
+        if (days < 0)      { dueClass='urgent'; dueText=`Overdue by ${Math.abs(days)}d`; }
+        else if (days===0) { dueClass='urgent'; dueText='Due today!'; }
+        else if (days<=3)  { dueClass='soon';   dueText=`${days}d left`; }
+        else               { dueText = fmt.dateShort(t.dueDate); }
+      }
+      return `
+      <div class="task-item ${t.done?'done':''}">
+        <div class="task-check ${t.done?'checked':''}" onclick="toggleTask('${t.id}')">
+          ${t.done?'✓':''}
+        </div>
+        <div style="flex:1;">
+          <div class="task-title">${t.title}</div>
+          <div class="task-meta">
+            ${mod ? `<span class="module-pill" style="background:${col.bg};color:${col.text};">
+              <span class="module-dot" style="background:${col.dot}"></span>${mod.name}
+            </span>` : ''}
+            <span class="badge badge-${t.priority==='urgent'?'red':t.priority==='high'?'amber':'teal'}" style="font-size:0.55rem;padding:2px 7px;">
+              ${t.type||'Task'}
+            </span>
+            ${dueText ? `<span class="task-due ${dueClass}">${dueText}</span>` : ''}
+          </div>
+          ${t.notes?`<div style="font-size:0.75rem;color:var(--text-light3);margin-top:4px;">${t.notes}</div>`:''}
+        </div>
+        <button class="btn-ghost-light btn" style="padding:4px 8px;font-size:0.8rem;" onclick="deleteTask('${t.id}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  function toggleTask(id) {
+    Study.toggleTask(id);
+    renderTasks();
+    toast('Task updated ✓');
+  }
+
+  function deleteTask(id) {
+    Study.removeTask(id);
+    renderTasks();
+  }
+
+  function saveTask() {
+    const title = document.getElementById('t-title').value.trim();
+    if (!title) { toast('Please enter a task title'); return; }
+    Study.addTask({
+      title,
+      module:   document.getElementById('t-module').value,
+      type:     document.getElementById('t-type').value,
+      dueDate:  document.getElementById('t-due').value,
+      priority: document.getElementById('t-priority').value,
+      notes:    document.getElementById('t-notes').value.trim(),
+    });
+    closeModal('add-task-modal');
+    document.getElementById('t-title').value = '';
+    document.getElementById('t-notes').value = '';
+    renderTasks();
+    toast('Task added!');
+  }
+
+  // ── TIMETABLE ────────────────────────────────────────────
+  function renderTimetable() {
+    const mods = Study.modules();
+    const cls  = classes();
+    const grid = document.getElementById('timetable-grid');
+
+    grid.innerHTML = `<div class="tt-header"></div>` +
+      DAYS.map(d=>`<div class="tt-header">${d.slice(0,3)}</div>`).join('');
+
+    HOURS.forEach(hour => {
+      grid.innerHTML += `<div class="tt-time">${hour}</div>`;
+      DAYS.forEach(day => {
+        const slot = cls.find(c=>c.day===day && c.time===hour);
+        if (slot) {
+          const mod = mods.find(m=>m.id===slot.moduleId);
+          const col = mod ? COLOURS[mod.colour||'teal'] : COLOURS.teal;
+          grid.innerHTML += `<div class="tt-slot has-class">
+            <div class="tt-class" style="background:${col.bg};color:${col.text};">
+              ${mod?.name?.split(' ').slice(0,2).join(' ') || 'Class'}
+              ${slot.venue ? `<br/><span style="opacity:0.7;">${slot.venue}</span>` : ''}
+            </div>
+          </div>`;
+        } else {
+          grid.innerHTML += `<div class="tt-slot" onclick="prefillClass('${day}','${hour}')"></div>`;
+        }
+      });
+    });
+  }
+
+  function prefillClass(day, time) {
+    document.getElementById('cl-day').value  = day;
+    document.getElementById('cl-time').value = time;
+    openModal('add-class-modal');
+  }
+
+  function saveClass() {
+    const modId = document.getElementById('cl-module').value;
+    const day   = document.getElementById('cl-day').value;
+    const time  = document.getElementById('cl-time').value;
+    const venue = document.getElementById('cl-venue').value.trim();
+    const list  = classes();
+    // Remove existing in that slot
+    const filtered = list.filter(c=>!(c.day===day && c.time===time));
+    filtered.push({ id:uid(), moduleId:modId, day, time, venue });
+    DB.set('timetable', filtered);
+    closeModal('add-class-modal');
+    renderTimetable();
+    toast('Class added to timetable!');
+  }
+
+  // ── EXAMS ─────────────────────────────────────────────────
+  function renderExams() {
+    const list = exams().sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const upcoming = list.filter(e=>new Date(e.date)>=new Date().setHours(0,0,0,0));
+
+    // Countdowns (next 4)
+    const cdContainer = document.getElementById('exam-countdowns');
+    cdContainer.innerHTML = upcoming.slice(0,4).map(e=>{
+      const days = Math.ceil((new Date(e.date)-new Date().setHours(0,0,0,0))/86400000);
+      const col  = days<=7 ? 'var(--red)' : days<=14 ? 'var(--amber)' : 'var(--teal-light)';
+      return `<div class="countdown-card">
+        <div class="countdown-num" style="color:${col}">${days}</div>
+        <div class="countdown-label">Days to go</div>
+        <div class="countdown-exam">${e.name}</div>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-light3);margin-top:4px;">${fmt.dateShort(e.date)}${e.time?` · ${e.time}`:''}</div>
+      </div>`;
+    }).join('');
+
+    if (!upcoming.length) {
+      cdContainer.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px 0;color:var(--text-light3);font-family:var(--font-mono);font-size:0.72rem;">No upcoming exams. Add one to start counting down.</div>`;
+    }
+
+    const el = document.getElementById('exams-list');
+    el.innerHTML = list.map(e=>{
+      const past = new Date(e.date) < new Date().setHours(0,0,0,0);
+      return `<div class="task-item" style="${past?'opacity:0.5':''}">
+        <div style="flex:1;">
+          <div class="task-title">${e.name}</div>
+          <div class="task-meta">
+            <span class="badge badge-${past?'teal':'coral'}">${past?'Past':'Upcoming'}</span>
+            <span class="task-due">${fmt.date(e.date)}${e.time?` · ${e.time}`:''}</span>
+            ${e.venue?`<span class="task-due">${e.venue}</span>`:''}
+          </div>
+        </div>
+        <button class="btn-ghost-light btn" style="padding:4px 8px;font-size:0.8rem;" onclick="deleteExam('${e.id}')">✕</button>
+      </div>`;
+    }).join('') || `<div style="text-align:center;padding:30px 0;color:var(--text-light3);font-family:var(--font-mono);font-size:0.72rem;">No exams added yet.</div>`;
+  }
+
+  function saveExam() {
+    const name = document.getElementById('e-name').value.trim();
+    const date = document.getElementById('e-date').value;
+    if (!name || !date) { toast('Please fill in exam name and date'); return; }
+    const list = exams();
+    list.push({ id:uid(), name, date, time:document.getElementById('e-time').value, venue:document.getElementById('e-venue').value.trim() });
+    DB.set('exams',list);
+    closeModal('add-exam-modal');
+    renderExams();
+    toast('Exam added!');
+  }
+
+  function deleteExam(id) {
+    DB.set('exams', exams().filter(e=>e.id!==id));
+    renderExams();
+  }
+
+  // ── MODULE MANAGEMENT ─────────────────────────────────────
+  function renderModules() {
+    const mods = Study.modules();
+    const list = document.getElementById('modules-list');
+    if (!mods.length) {
+      list.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--text-light3);font-family:var(--font-mono);font-size:0.72rem;">No modules added yet.</div>`;
+      return;
+    }
+    list.innerHTML = mods.map(m=>{
+      const col = COLOURS[m.colour||'teal'];
+      const tasks = Study.tasks().filter(t=>t.module===m.id && !t.done).length;
+      return `<div class="task-item">
+        <div class="module-dot" style="background:${col.dot};width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px;"></div>
+        <div style="flex:1;">
+          <div class="task-title">${m.name}</div>
+          <div class="task-meta">
+            ${m.code?`<span class="badge badge-teal" style="font-size:0.55rem;">${m.code}</span>`:''}
+            <span class="task-due">${tasks} pending task${tasks!==1?'s':''}</span>
+          </div>
+        </div>
+        <button class="btn-ghost-light btn" style="padding:4px 8px;font-size:0.8rem;" onclick="deleteModule('${m.id}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  function saveModule() {
+    const name = document.getElementById('m-name').value.trim();
+    if (!name) { toast('Please enter a module name'); return; }
+    const mods = Study.modules();
+    mods.push({ id:uid(), name, code:document.getElementById('m-code').value.trim(), colour:document.getElementById('m-colour').value });
+    Study.setModules(mods);
+    closeModal('add-module-modal');
+    populateModuleSelects();
+    renderModules();
+    toast('Module added!');
+  }
+
+  function deleteModule(id) {
+    Study.setModules(Study.modules().filter(m=>m.id!==id));
+    renderModules();
+  }
+
+  function handleModalClick(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  }
+
+  // Init
+  populateModuleSelects();
+  renderTasks();
+</script>
+</body>
+</html>
