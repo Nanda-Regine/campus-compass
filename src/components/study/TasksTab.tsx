@@ -16,6 +16,7 @@ import {
 import { cn, getTaskUrgency, fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import StudyAssistModal from '@/components/study/StudyAssistModal'
 
 const TASK_TYPES: TaskType[] = ['Assignment','Test','Project','Presentation','Reading','Other']
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
@@ -48,6 +49,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
   const [modalOpen, setModalOpen] = useState(false)
   const [saving,    setSaving]    = useState(false)
   const [filter,    setFilter]    = useState<'all' | 'pending' | 'done'>('pending')
+  const [assistModal, setAssistModal] = useState<{ open: boolean; task: Task | null }>({ open: false, task: null })
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -212,6 +214,16 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
 
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {!task.done && <div className="w-2 h-2 rounded-full" style={{ background: urgencyDot }} />}
+                  {!task.done && (
+                    <button
+                      onClick={e => { e.stopPropagation(); setAssistModal({ open: true, task }) }}
+                      className="opacity-0 group-hover:opacity-100 text-teal-400/60 hover:text-teal-400 transition-all text-xs px-1"
+                      title="AI Study Plan"
+                      aria-label="Generate AI study plan"
+                    >
+                      ✨
+                    </button>
+                  )}
                   <button onClick={() => deleteTask(task.id)}
                     className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs">
                     ✕
@@ -222,6 +234,15 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
           })}
         </div>
       )}
+
+      <StudyAssistModal
+        open={assistModal.open}
+        onClose={() => setAssistModal({ open: false, task: null })}
+        type="study_plan"
+        taskTitle={assistModal.task?.title}
+        moduleName={assistModal.task?.module?.name}
+        dueDate={assistModal.task?.due_date ?? undefined}
+      />
 
       <Modal
         open={modalOpen}

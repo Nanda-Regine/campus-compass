@@ -28,7 +28,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com",
               "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
             ].join('; '),
           },

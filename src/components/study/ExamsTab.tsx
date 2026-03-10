@@ -13,6 +13,7 @@ import { type Exam, type Module, MODULE_COLOURS } from '@/types'
 import { cn, fmt, getDaysUntil } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import StudyAssistModal from '@/components/study/StudyAssistModal'
 
 const schema = z.object({
   name:       z.string().min(2, 'Name is required'),
@@ -35,6 +36,7 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
   const { addExam, removeExam } = useAppStore()
   const [modalOpen, setModalOpen] = useState(false)
   const [saving,    setSaving]    = useState(false)
+  const [assistModal, setAssistModal] = useState<{ open: boolean; exam: Exam | null; type: 'exam_prep' | 'conflict_check' }>({ open: false, exam: null, type: 'exam_prep' })
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -118,6 +120,13 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
         </div>
 
         <button
+          onClick={e => { e.stopPropagation(); setAssistModal({ open: true, exam, type: 'exam_prep' }) }}
+          className="absolute top-3 right-12 opacity-0 group-hover:opacity-100 text-purple-400/60 hover:text-purple-400 transition-all text-xs"
+          title="Exam Prep Guide"
+        >
+          📚
+        </button>
+        <button
           onClick={() => deleteExam(exam.id)}
           className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs"
         >
@@ -129,7 +138,13 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={() => setAssistModal({ open: true, exam: null, type: 'conflict_check' })}
+          className="font-mono text-[0.62rem] bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 text-amber-400 px-3 py-1.5 rounded-xl transition-all"
+        >
+          ⚡ Conflict check
+        </button>
         <Button size="sm" onClick={() => setModalOpen(true)}>+ Add exam</Button>
       </div>
 
@@ -163,6 +178,15 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
           )}
         </>
       )}
+
+      <StudyAssistModal
+        open={assistModal.open}
+        onClose={() => setAssistModal({ open: false, exam: null, type: 'exam_prep' })}
+        type={assistModal.type}
+        examName={assistModal.exam?.name}
+        moduleName={assistModal.exam?.module?.name}
+        dueDate={assistModal.exam?.exam_date ?? undefined}
+      />
 
       <Modal
         open={modalOpen}

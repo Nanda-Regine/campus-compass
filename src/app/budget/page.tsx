@@ -1,33 +1,41 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
-import TopBar from '@/components/layout/TopBar'
-import Link from 'next/link'
+import BudgetClient from '@/components/budget/BudgetClient'
+import { currentMonthRange } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Budget & NSFAS' }
 
 export default async function BudgetPage() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/auth/login')
 
+  const { start, end } = currentMonthRange()
+
+  const [
+    { data: budget },
+    { data: expenses },
+    { data: profile },
+    { data: subscription },
+  ] = await Promise.all([
+    supabase.from('budgets').select('*').eq('user_id', user.id).single(),
+    supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', start).lte('date', end).order('date', { ascending: false }),
+    supabase.from('profiles').select('name, funding_type, university, year_of_study, is_premium').eq('id', user.id).single(),
+    supabase.from('subscriptions').select('plan').eq('user_id', user.id).single(),
+  ])
+
+  const isPremium = profile?.is_premium || subscription?.plan === 'premium'
+
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
-      <TopBar title="Budget & NSFAS" />
-      <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-        <div className="text-5xl mb-4">💰</div>
-        <h2 className="font-display font-black text-xl text-white mb-2">Budget Tracker</h2>
-        <p className="font-mono text-sm text-white/40 mb-6">
-          Full budget management coming soon. Track NSFAS allowances, log expenses, and export CSV reports.
-        </p>
-        <Link
-          href="/dashboard"
-          className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-5 py-2.5 rounded-xl transition-all"
-        >
-          Back to Dashboard
-        </Link>
-      </div>
-    </div>
+    <BudgetClient
+      initialData={{
+        budget: budget!,
+        expenses: expenses || [],
+        profile: profile!,
+        isPremium,
+        userId: user.id,
+      }}
+    />
   )
 }

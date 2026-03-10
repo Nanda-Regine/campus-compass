@@ -19,7 +19,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   // Network-first for AI APIs
-  if (e.request.url.includes('openai.com') || e.request.url.includes('googleapis.com')) {
+  if (e.request.url.includes('anthropic.com') || e.request.url.includes('googleapis.com')) {
     e.respondWith(
       fetch(e.request).catch(() =>
         new Response(JSON.stringify({ error: 'offline' }), { headers: { 'Content-Type': 'application/json' } })

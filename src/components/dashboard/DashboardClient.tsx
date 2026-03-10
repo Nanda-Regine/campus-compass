@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import TopBar from '@/components/layout/TopBar'
@@ -13,6 +13,28 @@ import {
   fmt, getGreeting, getDaysUntil, getTaskUrgency,
   calcTotalBudget, getLoadSheddingStatus, cn,
 } from '@/lib/utils'
+
+interface NovaInsight {
+  id: string
+  insight_type: string
+  content: string
+  created_at: string
+}
+
+interface CheckInData {
+  checkIn: string
+  actions: { icon: string; action: string; urgency: string }[]
+  snapshot: {
+    completedTasks: number
+    pendingTasks: number
+    overdueTasks: number
+    upcomingExams: number
+    nextExam: string | null
+    budgetRemaining: number
+    budgetTotal: number
+    monthProgress: number
+  }
+}
 
 interface DashboardClientProps {
   initialData: {
@@ -29,8 +51,11 @@ interface DashboardClientProps {
 
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const store = useAppStore()
+  const [novaInsights, setNovaInsights] = useState<NovaInsight[]>([])
+  const [checkInData, setCheckInData] = useState<CheckInData | null>(null)
+  const [checkInLoading, setCheckInLoading] = useState(false)
+  const [showCheckIn, setShowCheckIn] = useState(false)
 
-  // Hydrate store on mount
   useEffect(() => {
     store.setProfile(initialData.profile)
     store.setBudget(initialData.budget)
@@ -43,46 +68,101 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Load Nova proactive insights
+  useEffect(() => {
+    const loadInsights = async () => {
+      try {
+        const res = await fetch('/api/insights')
+        if (res.ok) {
+          const data = await res.json()
+          setNovaInsights(data.insights || [])
+        }
+      } catch { /* silent */ }
+    }
+    loadInsights()
+  }, [])
+
+  const loadCheckIn = useCallback(async () => {
+    setCheckInLoading(true)
+    setShowCheckIn(true)
+    try {
+      const res = await fetch('/api/insights/checkin')
+      if (res.ok) {
+        const data = await res.json()
+        setCheckInData(data)
+      }
+    } catch { /* silent */ } finally {
+      setCheckInLoading(false)
+    }
+  }, [])
+
+  const dismissInsight = async (id: string) => {
+    setNovaInsights(prev => prev.filter(i => i.id !== id))
+    await fetch('/api/insights', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+  }
+
   const { profile, budget, tasks, exams, modules, timetable, expenses } = store
 
-  const p       = profile ?? initialData.profile
-  const b       = budget  ?? initialData.budget
-  const allTasks = tasks.length  ? tasks  : initialData.tasks
-  const allExams = exams.length  ? exams  : initialData.exams
-  const allMods  = modules.length ? modules : initialData.modules
-  const allTT    = timetable.length ? timetable : initialData.timetable
-  const recentExp = expenses.length ? expenses : initialData.recentExpenses
+  const p        = profile ?? initialData.profile
+  const b        = budget  ?? initialData.budget
+  const allTasks  = tasks.length     ? tasks     : initialData.tasks
+  const allExams  = exams.length     ? exams     : initialData.exams
+  const allMods   = modules.length   ? modules   : initialData.modules
+  const allTT     = timetable.length ? timetable : initialData.timetable
+  const recentExp = expenses.length  ? expenses  : initialData.recentExpenses
 
-  const totalBudget  = b ? calcTotalBudget(b) : 0
-  const monthSpent   = recentExp.reduce((s, e) => s + e.amount, 0)
-  const remaining    = totalBudget - monthSpent
-  const spentPct     = fmt.pct(monthSpent, totalBudget)
-  const overBudget   = monthSpent > totalBudget
+  const totalBudget = b ? calcTotalBudget(b) : 0
+  const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
+  const remaining   = totalBudget - monthSpent
+  const spentPct    = fmt.pct(monthSpent, totalBudget)
+  const overBudget  = monthSpent > totalBudget
 
-  // Today's timetable
   const todayName = DAYS_OF_WEEK[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]
   const todayClasses = allTT
     .filter(e => e.day_of_week === todayName)
-    .sort((a, b) => a.start_time.localeCompare(b.start_time))
+    .sort((a, bb) => a.start_time.localeCompare(bb.start_time))
 
-  // Upcoming tasks (not done, sort by urgency)
-  const pendingTasks = allTasks
-    .filter(t => !t.done)
-    .slice(0, 5)
+  const pendingTasks = allTasks.filter(t => !t.done).slice(0, 5)
+  const overdueTasks = allTasks.filter(t => !t.done && t.due_date && new Date(t.due_date) < new Date())
+  const nextExam     = allExams[0] ?? null
+  const ls           = getLoadSheddingStatus()
+  const isPremium    = p?.is_premium || initialData.subscription?.plan === 'premium'
 
-  // Next exam
-  const nextExam = allExams[0] ?? null
-
-  // Load shedding
-  const ls = getLoadSheddingStatus()
-
-  const isPremium = p?.is_premium || initialData.subscription?.plan === 'premium'
+  const insightIcon: Record<string, string> = {
+    study_nudge: '📚',
+    budget_warning: '💰',
+    stress_alert: '💙',
+  }
 
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
       <TopBar title="Dashboard" />
 
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
+
+        {/* ─── Nova Proactive Insights ─── */}
+        {novaInsights.map(insight => (
+          <div
+            key={insight.id}
+            className="flex items-start gap-3 bg-purple-500/8 border border-purple-500/20 rounded-2xl px-4 py-3 animate-fade-up"
+          >
+            <span className="text-xl flex-shrink-0">{insightIcon[insight.insight_type] || '🌟'}</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-mono text-[0.55rem] text-purple-400 uppercase tracking-widest mb-1">Nova</div>
+              <div className="font-body text-sm text-white/80">{insight.content}</div>
+            </div>
+            <button
+              onClick={() => dismissInsight(insight.id)}
+              className="text-white/20 hover:text-white/50 transition-colors text-xs flex-shrink-0 mt-0.5"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
 
         {/* ─── Hero greeting card ─── */}
         <div
@@ -92,20 +172,14 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             border: '1px solid rgba(13,148,136,0.4)',
           }}
         >
-          {/* Background texture */}
           <div
             className="absolute inset-0 opacity-10 pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
-            }}
+            style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)' }}
           />
-
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="font-mono text-[0.6rem] text-teal-300/70 uppercase tracking-widest">
-                  {getGreeting()}
-                </p>
+                <p className="font-mono text-[0.6rem] text-teal-300/70 uppercase tracking-widest">{getGreeting()}</p>
                 <h2 className="font-display font-black text-xl text-white leading-tight mt-0.5">
                   {p?.name?.split(' ')[0] ?? 'Student'}{' '}
                   <span className="text-2xl">{p?.emoji ?? '🎓'}</span>
@@ -121,6 +195,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               )}
             </div>
 
+            {/* Overdue alert */}
+            {overdueTasks.length > 0 && (
+              <div className="bg-red-500/20 border border-red-400/30 rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
+                <span className="text-red-300 text-sm">⚠️</span>
+                <span className="font-mono text-[0.6rem] text-red-300">
+                  {overdueTasks.length} overdue task{overdueTasks.length > 1 ? 's' : ''} — check your planner
+                </span>
+              </div>
+            )}
+
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-2 mt-4">
               <div className="bg-white/10 rounded-xl px-3 py-2.5 text-center">
@@ -135,11 +219,81 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <div className={cn('font-display font-black text-lg', overBudget ? 'text-red-300' : 'text-white')}>
                   {fmt.currencyShort(remaining)}
                 </div>
-                <div className="font-mono text-[0.55rem] text-teal-200/60 uppercase">Left this month</div>
+                <div className="font-mono text-[0.55rem] text-teal-200/60 uppercase">Left</div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* ─── AI Check-in button ─── */}
+        {!showCheckIn ? (
+          <button
+            onClick={loadCheckIn}
+            className="w-full flex items-center gap-4 bg-gradient-to-r from-purple-900/20 to-teal-900/20 border border-purple-500/15 hover:border-purple-500/30 rounded-2xl p-4 transition-all text-left"
+          >
+            <div className="w-10 h-10 bg-purple-500/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">🌟</div>
+            <div>
+              <div className="font-display font-bold text-purple-300 text-sm">How am I doing?</div>
+              <div className="font-mono text-[0.6rem] text-white/30">Nova checks in on your whole semester →</div>
+            </div>
+          </button>
+        ) : (
+          <div className="bg-gradient-to-br from-purple-900/20 to-teal-900/10 border border-purple-500/20 rounded-2xl p-5 animate-fade-up">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-xl bg-purple-500/20 flex items-center justify-center text-sm">🌟</div>
+              <div className="font-mono text-[0.6rem] text-purple-400 uppercase tracking-widest">Nova Semester Check-in</div>
+            </div>
+
+            {checkInLoading ? (
+              <div className="space-y-2">
+                <div className="skeleton h-4 rounded w-full" />
+                <div className="skeleton h-4 rounded w-5/6" />
+                <div className="skeleton h-4 rounded w-4/6" />
+              </div>
+            ) : checkInData ? (
+              <>
+                <p className="font-body text-sm text-white/80 leading-relaxed whitespace-pre-wrap mb-4">
+                  {checkInData.checkIn}
+                </p>
+                {checkInData.actions.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest">Your next moves</div>
+                    {checkInData.actions.map((action, i) => (
+                      <div key={i} className="flex items-center gap-3 bg-white/5 rounded-xl px-3 py-2.5">
+                        <span className="text-base">{action.icon}</span>
+                        <div className="flex-1 font-body text-sm text-white/80">{action.action}</div>
+                        <span className={cn(
+                          'font-mono text-[0.55rem] px-2 py-0.5 rounded-full border',
+                          action.urgency === 'now'
+                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                            : action.urgency === 'today'
+                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                            : 'bg-teal-600/10 text-teal-400 border-teal-600/20'
+                        )}>
+                          {action.urgency}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/7">
+                  <button
+                    onClick={loadCheckIn}
+                    className="font-mono text-[0.58rem] text-white/30 hover:text-white/50 transition-colors"
+                  >
+                    ↻ Refresh
+                  </button>
+                  <button
+                    onClick={() => setShowCheckIn(false)}
+                    className="font-mono text-[0.58rem] text-white/30 hover:text-white/50 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            ) : null}
+          </div>
+        )}
 
         {/* ─── Load shedding alert ─── */}
         {ls.active && (
@@ -147,9 +301,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <span className="text-amber-400 text-lg flex-shrink-0">⚡</span>
             <div className="min-w-0">
               <div className="font-display font-bold text-amber-400 text-xs">Load shedding active — {ls.stage}</div>
-              {ls.time && (
-                <div className="font-mono text-[0.6rem] text-amber-400/60">{ls.time}</div>
-              )}
+              {ls.time && <div className="font-mono text-[0.6rem] text-amber-400/60">{ls.time}</div>}
             </div>
           </div>
         )}
@@ -165,34 +317,26 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   <span className="text-white/30 font-normal text-sm"> / {fmt.currencyShort(totalBudget)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    'font-mono text-[0.6rem] font-bold px-2.5 py-1 rounded-full border',
-                    overBudget
-                      ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                      : spentPct > 80
-                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                      : 'bg-teal-600/10 text-teal-400 border-teal-600/20'
-                  )}
-                >
-                  {overBudget ? 'Over budget' : `${spentPct}% spent`}
-                </span>
-              </div>
+              <span className={cn(
+                'font-mono text-[0.6rem] font-bold px-2.5 py-1 rounded-full border',
+                overBudget
+                  ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                  : spentPct > 80
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                  : 'bg-teal-600/10 text-teal-400 border-teal-600/20'
+              )}>
+                {overBudget ? 'Over budget' : `${spentPct}% spent`}
+              </span>
             </div>
-
-            {/* Progress bar */}
             <div className="h-2 bg-white/8 rounded-full overflow-hidden">
               <div
                 className={cn(
                   'h-full rounded-full transition-all duration-700',
-                  overBudget ? 'bg-red-500' : spentPct > 80 ? 'bg-amber-500' : 'bg-teal-600'
+                  overBudget ? 'bg-red-500' : spentPct > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-teal-600 to-teal-400'
                 )}
                 style={{ width: `${Math.min(100, spentPct)}%` }}
               />
             </div>
-
-            {/* NSFAS pill */}
             {b?.nsfas_enabled && (
               <div className="flex items-center gap-1.5 mt-2.5">
                 <span className="text-teal-400 text-xs">🏛️</span>
@@ -209,7 +353,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           {[
             { href: '/study',  icon: '📚', label: 'Study Planner', colour: 'teal',   sub: `${allMods.length} modules` },
             { href: '/budget', icon: '💰', label: 'Budget',         colour: 'coral',  sub: `${recentExp.length} expenses` },
-            { href: '/meals',  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'Plan your week' },
+            { href: '/meals',  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'AI recipes + planner' },
             { href: '/nova',   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
           ].map(item => {
             const colorMap = {
@@ -240,28 +384,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           <section>
             <div className="flex items-center justify-between mb-2.5">
               <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">Today — {todayName}</div>
-              <Link href="/study" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">
-                Full timetable →
-              </Link>
+              <Link href="/study" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">Full timetable →</Link>
             </div>
             <div className="space-y-2">
               {todayClasses.map(entry => {
                 const mod = entry.module
                 const colour = mod?.colour ? MODULE_COLOURS[mod.colour] : MODULE_COLOURS.teal
                 return (
-                  <div
-                    key={entry.id}
-                    className="flex items-center gap-3 bg-[#111a18] border border-white/7 rounded-xl px-4 py-3"
-                  >
-                    <div
-                      className="w-2 h-8 rounded-full flex-shrink-0"
-                      style={{ background: colour.dot }}
-                    />
+                  <div key={entry.id} className="flex items-center gap-3 bg-[#111a18] border border-white/7 rounded-xl px-4 py-3">
+                    <div className="w-2 h-8 rounded-full flex-shrink-0" style={{ background: colour.dot }} />
                     <div className="flex-1 min-w-0">
-                      <div
-                        className="font-display font-bold text-sm truncate"
-                        style={{ color: colour.text }}
-                      >
+                      <div className="font-display font-bold text-sm truncate" style={{ color: colour.text }}>
                         {mod?.name ?? 'Class'}
                       </div>
                       <div className="font-mono text-[0.6rem] text-white/40">
@@ -283,9 +416,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">
               Upcoming tasks ({pendingTasks.length})
             </div>
-            <Link href="/study" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">
-              All tasks →
-            </Link>
+            <Link href="/study" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">All tasks →</Link>
           </div>
 
           {pendingTasks.length === 0 ? (
@@ -305,10 +436,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   soon:    { dot: '#0d9488', label: 'bg-teal-600/10 text-teal-400 border-teal-600/20' },
                   normal:  { dot: '#4b5563', label: 'bg-white/5 text-white/40 border-white/10' },
                 }[urgency]
-
-                const modColour = task.module?.colour
-                  ? MODULE_COLOURS[task.module.colour]
-                  : null
+                const modColour = task.module?.colour ? MODULE_COLOURS[task.module.colour] : null
 
                 return (
                   <Link
@@ -316,28 +444,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                     key={task.id}
                     className="flex items-center gap-3 bg-[#111a18] border border-white/7 hover:border-white/15 rounded-xl px-4 py-3 transition-all"
                   >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{ background: urgencyStyle.dot }}
-                    />
+                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: urgencyStyle.dot }} />
                     <div className="flex-1 min-w-0">
                       <div className="font-display text-sm text-white truncate">{task.title}</div>
                       {task.module && (
-                        <div
-                          className="font-mono text-[0.58rem] truncate mt-0.5"
-                          style={{ color: modColour?.text ?? '#6b7280' }}
-                        >
+                        <div className="font-mono text-[0.58rem] truncate mt-0.5" style={{ color: modColour?.text ?? '#6b7280' }}>
                           {task.module.name}
                         </div>
                       )}
                     </div>
                     {label && (
-                      <span
-                        className={cn(
-                          'flex-shrink-0 font-mono text-[0.58rem] px-2 py-0.5 rounded-full border',
-                          urgencyStyle.label
-                        )}
-                      >
+                      <span className={cn('flex-shrink-0 font-mono text-[0.58rem] px-2 py-0.5 rounded-full border', urgencyStyle.label)}>
                         {label}
                       </span>
                     )}
@@ -351,9 +468,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         {/* ─── Next exam countdown ─── */}
         {nextExam && (
           <section>
-            <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-2.5">
-              Next exam
-            </div>
+            <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-2.5">Next exam</div>
             <Link href="/study">
               <div
                 className="rounded-2xl p-4 border transition-all hover:border-purple-500/40"
@@ -366,14 +481,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   <div>
                     <div className="font-display font-bold text-white text-sm">{nextExam.name}</div>
                     {nextExam.module && (
-                      <div
-                        className="font-mono text-[0.58rem] mt-0.5"
-                        style={{
-                          color: nextExam.module.colour
-                            ? MODULE_COLOURS[nextExam.module.colour].text
-                            : '#c084fc',
-                        }}
-                      >
+                      <div className="font-mono text-[0.58rem] mt-0.5" style={{ color: nextExam.module.colour ? MODULE_COLOURS[nextExam.module.colour].text : '#c084fc' }}>
                         {nextExam.module.name}
                       </div>
                     )}
@@ -391,9 +499,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                           <div className="font-display font-black text-3xl text-purple-300">
                             {days < 0 ? 'Done' : days === 0 ? 'Today!' : days}
                           </div>
-                          {days > 0 && (
-                            <div className="font-mono text-[0.55rem] text-purple-300/50 uppercase">days left</div>
-                          )}
+                          {days > 0 && <div className="font-mono text-[0.55rem] text-purple-300/50 uppercase">days left</div>}
                         </>
                       )
                     })()}
@@ -408,27 +514,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         {recentExp.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-2.5">
-              <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">
-                Recent expenses
-              </div>
-              <Link href="/budget" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">
-                All expenses →
-              </Link>
+              <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">Recent expenses</div>
+              <Link href="/budget" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">All →</Link>
             </div>
             <div className="bg-[#111a18] border border-white/7 rounded-2xl overflow-hidden">
               {recentExp.slice(0, 4).map((exp, i) => (
-                <div
-                  key={exp.id}
-                  className={cn(
-                    'flex items-center justify-between px-4 py-3',
-                    i < recentExp.slice(0, 4).length - 1 && 'border-b border-white/5'
-                  )}
-                >
+                <div key={exp.id} className={cn('flex items-center justify-between px-4 py-3', i < 3 && 'border-b border-white/5')}>
                   <div className="flex items-center gap-3">
                     <div className="text-base">
                       {['🍔','🚌','📱','📖','🏠','🎮','💊','💳'][
-                        ['Food','Transport','Data','Stationery','Accommodation','Entertainment','Health','Other']
-                          .indexOf(exp.category)
+                        ['Food','Transport','Data','Stationery','Accommodation','Entertainment','Health','Other'].indexOf(exp.category)
                       ] ?? '💳'}
                     </div>
                     <div>
@@ -436,31 +531,24 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                       <div className="font-mono text-[0.58rem] text-white/30">{exp.category} · {fmt.dateShort(exp.date)}</div>
                     </div>
                   </div>
-                  <div className="font-display font-bold text-sm text-coral">{fmt.currencyShort(exp.amount)}</div>
+                  <div className="font-display font-bold text-sm text-orange-400">-{fmt.currencyShort(exp.amount)}</div>
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* ─── Upgrade CTA for free users ─── */}
+        {/* ─── Upgrade CTA ─── */}
         {!isPremium && (
           <Link href="/upgrade" className="block">
             <div
               className="rounded-2xl p-4 flex items-center gap-4"
-              style={{
-                background: 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.04))',
-                border: '1px solid rgba(245,158,11,0.2)',
-              }}
+              style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.04))', border: '1px solid rgba(245,158,11,0.2)' }}
             >
-              <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
-                ⭐
-              </div>
+              <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">⭐</div>
               <div className="flex-1">
                 <div className="font-display font-bold text-amber-400 text-sm">Upgrade to Premium</div>
-                <div className="font-mono text-[0.6rem] text-white/30">
-                  Unlimited Nova · AI recipes · CSV export · R49/month
-                </div>
+                <div className="font-mono text-[0.6rem] text-white/30">Unlimited Nova · AI recipes · Financial coach · R49/month</div>
               </div>
               <div className="font-mono text-[0.6rem] text-amber-400 flex-shrink-0">→</div>
             </div>

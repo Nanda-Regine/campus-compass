@@ -179,22 +179,23 @@ export type ExpenseCategory =
   | 'Accommodation'
   | 'Entertainment'
   | 'Health'
+  | 'Clothing'
   | 'Other'
 
 export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   'Food', 'Transport', 'Data', 'Stationery',
-  'Accommodation', 'Entertainment', 'Health', 'Other',
+  'Accommodation', 'Entertainment', 'Health', 'Clothing', 'Other',
 ]
 
 export const CATEGORY_ICONS: Record<ExpenseCategory, string> = {
   Food: '🍔', Transport: '🚌', Data: '📱', Stationery: '📖',
-  Accommodation: '🏠', Entertainment: '🎮', Health: '💊', Other: '💳',
+  Accommodation: '🏠', Entertainment: '🎮', Health: '💊', Clothing: '👕', Other: '💳',
 }
 
 export const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   Food: '#f97316', Transport: '#3b82f6', Data: '#a855f7',
   Stationery: '#f59e0b', Accommodation: '#0d9488', Entertainment: '#ec4899',
-  Health: '#22c55e', Other: '#6b7280',
+  Health: '#22c55e', Clothing: '#8b5cf6', Other: '#6b7280',
 }
 
 export type ModuleColour = 'teal' | 'coral' | 'purple' | 'amber' | 'blue' | 'green'
@@ -296,6 +297,43 @@ export interface ExamFormData {
   start_time?: string
   venue?: string
   notes?: string
+}
+
+// ─── AI Feature Types ─────────────────────────────────────────
+
+export interface NovaInsight {
+  id: string
+  user_id: string
+  insight_type: 'stress_alert' | 'budget_warning' | 'study_nudge'
+  content: string
+  dismissed: boolean
+  created_at: string
+}
+
+export interface BudgetInsight {
+  healthScore: number
+  healthLabel: 'excellent' | 'good' | 'tight' | 'critical'
+  summary: string
+  tips: { icon: string; title: string; detail: string }[]
+  projectedEndBalance: number
+  biggestSpendCategory: string
+  savingOpportunity: string
+}
+
+export interface GeneratedRecipe {
+  name: string
+  totalCost: number
+  costPerServing: number
+  prepTime: string
+  cookTime: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  servings: number
+  ingredients: { item: string; amount: string; estimatedCost: number }[]
+  steps: { step: number; instruction: string }[]
+  tips: string[]
+  nutritionNote: string
+  canMakeAhead: boolean
+  storageTip: string
 }
 
 // ─── API response types ───────────────────────────────────────

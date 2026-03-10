@@ -1,3 +1,4 @@
+import React from 'react'
 import { cn } from '@/lib/utils'
 
 interface SkeletonProps {
@@ -5,13 +6,14 @@ interface SkeletonProps {
   lines?: number
 }
 
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       className={cn(
         'skeleton rounded-lg',
         className
       )}
+      style={style}
       aria-hidden="true"
     />
   )

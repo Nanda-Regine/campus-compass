@@ -10,6 +10,7 @@ import ExamsTab from '@/components/study/ExamsTab'
 import ModulesTab from '@/components/study/ModulesTab'
 import { type Module, type Task, type TimetableEntry, type Exam } from '@/types'
 import { cn } from '@/lib/utils'
+import StudyAssistModal from '@/components/study/StudyAssistModal'
 
 interface StudyClientProps {
   initialData: {
@@ -32,6 +33,7 @@ type TabId = typeof TABS[number]['id']
 export default function StudyClient({ initialData }: StudyClientProps) {
   const store = useAppStore()
   const [activeTab, setActiveTab] = useState<TabId>('tasks')
+  const [gradeCalcOpen, setGradeCalcOpen] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -53,7 +55,17 @@ export default function StudyClient({ initialData }: StudyClientProps) {
 
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
-      <TopBar title="Study Planner" />
+      <TopBar
+        title="Study Planner"
+        action={
+          <button
+            onClick={() => setGradeCalcOpen(true)}
+            className="font-mono text-[0.6rem] bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-xl transition-all flex-shrink-0"
+          >
+            📊 Grade Calc
+          </button>
+        }
+      />
 
       <div className="sticky top-[57px] z-20 bg-[#080f0e] border-b border-white/7">
         <div className="flex px-4 gap-1 max-w-2xl mx-auto">
@@ -97,6 +109,12 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   userId={userId} supabase={supabase} />}
         {activeTab === 'modules'   && <ModulesTab   modules={modules}                     userId={userId} supabase={supabase} />}
       </div>
+
+      <StudyAssistModal
+        open={gradeCalcOpen}
+        onClose={() => setGradeCalcOpen(false)}
+        type="grade_calculator"
+      />
     </div>
   )
 }

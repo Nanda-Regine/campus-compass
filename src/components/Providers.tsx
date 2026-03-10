@@ -6,7 +6,7 @@ import { useAppStore } from '@/store'
 import type { Profile, Budget, Subscription } from '@/types'
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const { setUserId, setProfile, setBudget, setSubscription, reset } = useAppStore()
+  const { setUserId, setProfile, setBudget, setSubscription, setNovaInsights, reset } = useAppStore()
   const supabase = createClient()
 
   useEffect(() => {
@@ -60,6 +60,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       .single()
 
     if (sub) setSubscription(sub as Subscription)
+
+    // Load Nova proactive insights
+    const { data: insights } = await supabase
+      .from('nova_insights')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('dismissed', false)
+      .limit(5)
+    if (insights) setNovaInsights(insights)
   }
 
   return <>{children}</>

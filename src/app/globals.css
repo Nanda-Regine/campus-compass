@@ -205,10 +205,18 @@ body {
   }
 }
 
-/* ── Chat input area fix on mobile ─────────────────────── */
+/* ── Chat page height (full viewport minus top nav) ─────── */
 .chat-page-height {
-  height: 100vh;
-  height: 100dvh;
+  height: calc(100dvh - 57px);
+}
+
+/* ── Hide scrollbar but keep scroll ─────────────────────── */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── Prevent body scroll when modal open ───────────────── */

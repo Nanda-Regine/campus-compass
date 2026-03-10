@@ -14,6 +14,6 @@ export const config = {
      * - favicon.ico, manifest.json, robots.txt
      * - public folder files
      */
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|robots.txt|sitemap.xml|icons/|images/).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|manifest.json|robots.txt|sitemap.xml|icons/|images/).*)',
   ],
 }
