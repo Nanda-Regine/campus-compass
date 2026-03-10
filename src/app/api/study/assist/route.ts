@@ -55,7 +55,7 @@ Respond with valid JSON only:
 }`
 
       const response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1200,
         messages: [{ role: 'user', content: prompt }],
       })
@@ -98,7 +98,7 @@ Calculate precisely and explain clearly. Respond with valid JSON only:
 }`
 
       const response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 600,
         messages: [{ role: 'user', content: prompt }],
       })
@@ -165,7 +165,7 @@ Respond with valid JSON only:
 }`
 
       const response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 800,
         messages: [{ role: 'user', content: prompt }],
       })
@@ -211,7 +211,7 @@ Respond with valid JSON only:
 }`
 
       const response = await anthropic.messages.create({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1200,
         messages: [{ role: 'user', content: prompt }],
       })

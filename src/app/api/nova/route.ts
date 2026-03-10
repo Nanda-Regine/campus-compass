@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
 
     // Call Claude
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: buildSystemPrompt(ctx),
       messages,
@@ -274,7 +274,7 @@ async function generateProactiveInsight(
 
   try {
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 100,
       messages: [{ role: 'user', content: prompt }],
     })

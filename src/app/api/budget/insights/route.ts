@@ -82,7 +82,7 @@ TASK: Respond with valid JSON only (no markdown). Use this exact structure:
 }`
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 800,
       messages: [{ role: 'user', content: prompt }],
     })
@@ -145,7 +145,7 @@ Write a professional, empathetic appeal letter that:
 Format as plain text with proper paragraph spacing. Include placeholder brackets for info the student needs to fill in like [Student Number], [Date], etc.`
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }],
     })
