@@ -11,7 +11,11 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceRoleClient()
 
-    // Always log — silently ignore errors here
+    // m_payment_id is encoded as "userId|months"
+    const [userId, monthsStr] = (data.m_payment_id ?? '').split('|')
+    const months = parseInt(monthsStr ?? '1', 10) || 1
+
+    // Always log — non-fatal
     try {
       await supabase.from('payment_logs').insert({
         payfast_payment_id: data.pf_payment_id ?? null,
@@ -19,17 +23,19 @@ export async function POST(request: NextRequest) {
         status: data.payment_status ?? 'unknown',
         item_name: data.item_name ?? null,
         raw_data: data,
-        user_id: data.m_payment_id ?? null,
+        user_id: userId || null,
       })
-    } catch { /* log failure is non-fatal */ }
-
-    const userId = data.m_payment_id
+    } catch { /* non-fatal */ }
 
     if (data.payment_status === 'COMPLETE' && userId) {
+      const premiumUntil = new Date()
+      premiumUntil.setMonth(premiumUntil.getMonth() + months)
+      const premiumUntilStr = premiumUntil.toISOString()
+
       await Promise.all([
         supabase
           .from('profiles')
-          .update({ is_premium: true })
+          .update({ is_premium: true, premium_until: premiumUntilStr })
           .eq('id', userId),
         supabase
           .from('subscriptions')
@@ -38,29 +44,11 @@ export async function POST(request: NextRequest) {
             plan: 'premium',
             status: 'active',
             payfast_payment_id: data.pf_payment_id ?? null,
-            payfast_subscription_token: data.token ?? null,
-            amount: parseFloat(data.amount_gross ?? '49'),
+            amount: parseFloat(data.amount_gross ?? '0'),
             billing_date: new Date().toISOString().split('T')[0],
+            next_billing_date: premiumUntilStr,
             updated_at: new Date().toISOString(),
           }, { onConflict: 'user_id' }),
-      ])
-    }
-
-    if (data.payment_status === 'CANCELLED' && userId) {
-      await Promise.all([
-        supabase
-          .from('profiles')
-          .update({ is_premium: false })
-          .eq('id', userId),
-        supabase
-          .from('subscriptions')
-          .update({
-            plan: 'free',
-            status: 'cancelled',
-            cancelled_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq('user_id', userId),
       ])
     }
 
@@ -68,6 +56,6 @@ export async function POST(request: NextRequest) {
     return new NextResponse('OK', { status: 200 })
   } catch (error) {
     console.error('[PayFast ITN Error]', error)
-    return new NextResponse('OK', { status: 200 }) // still 200
+    return new NextResponse('OK', { status: 200 })
   }
 }

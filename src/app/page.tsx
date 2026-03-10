@@ -267,6 +267,12 @@ export default function LandingPage() {
             {' '}· Mirembe Muse (Pty) Ltd · East London, Eastern Cape
           </p>
           <div className="flex items-center gap-4">
+            <Link href="/terms" className="font-mono text-[0.6rem] text-white/30 hover:text-white/60 transition-colors">
+              Terms
+            </Link>
+            <Link href="/privacy" className="font-mono text-[0.6rem] text-white/30 hover:text-white/60 transition-colors">
+              Privacy
+            </Link>
             <Link href="/auth/login" className="font-mono text-[0.6rem] text-white/30 hover:text-white/60 transition-colors">
               Log in
             </Link>
