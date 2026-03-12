@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
+Allow: /$
+Allow: /auth/login
+Allow: /auth/signup
+Allow: /terms
+Allow: /privacy
+Allow: /upgrade
 Disallow: /dashboard/
 Disallow: /study/
 Disallow: /budget/
@@ -8,9 +14,5 @@ Disallow: /nova/
 Disallow: /setup/
 Disallow: /api/
 
-# Public pages
-Allow: /$
-Allow: /auth/login
-Allow: /auth/signup
-
-Sitemap: https://campuscompass.co.za/sitemap.xml
+# Sitemap
+Sitemap: https://varsityos.co.za/sitemap.xml

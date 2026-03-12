@@ -154,7 +154,7 @@ export default function SetupFlow() {
         await supabase.from('modules').insert(moduleRows)
       }
 
-      toast.success('All set! Welcome to Campus Compass 🎉')
+      toast.success('All set! Welcome to VarsityOS 🎉')
       router.push('/dashboard')
       router.refresh()
     } catch (err) {
@@ -179,7 +179,7 @@ export default function SetupFlow() {
         <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur border border-white/25 flex items-center justify-center text-3xl mx-auto mb-4">
           🧭
         </div>
-        <div className="font-display font-black text-xl text-white">Campus Compass</div>
+        <div className="font-display font-black text-xl text-white">VarsityOS</div>
         <div className="font-mono text-[0.6rem] text-white/60 tracking-widest uppercase mt-1">
           Your varsity life, fully organised
         </div>
@@ -200,7 +200,7 @@ export default function SetupFlow() {
             <div>
               <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 1 of 5</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Hey! What&apos;s your name?</h2>
-              <p className="text-sm text-white/50 mb-5">Let&apos;s personalise your Campus Compass.</p>
+              <p className="text-sm text-white/50 mb-5">Let&apos;s personalise your VarsityOS.</p>
 
               <div className="space-y-4">
                 <Input
@@ -441,7 +441,7 @@ export default function SetupFlow() {
             onClick={handleNext}
             loading={saving}
           >
-            {step === totalSteps - 1 ? '🚀 Launch Campus Compass' : 'Continue →'}
+            {step === totalSteps - 1 ? '🚀 Launch VarsityOS' : 'Continue →'}
           </Button>
         </div>
       </div>

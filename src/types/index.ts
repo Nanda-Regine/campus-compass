@@ -1,5 +1,5 @@
 // ============================================================
-// Campus Compass — TypeScript Types
+// VarsityOS — TypeScript Types
 // ============================================================
 
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[]

@@ -57,7 +57,7 @@ export default function SignupForm() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center text-xl">
             🧭
           </div>
-          <span className="font-display font-bold text-white">Campus Compass</span>
+          <span className="font-display font-bold text-white">VarsityOS</span>
         </Link>
         <h1 className="font-display font-black text-2xl text-white mb-1.5">Create your account</h1>
         <p className="font-mono text-xs text-white/40">Free forever. No credit card needed.</p>

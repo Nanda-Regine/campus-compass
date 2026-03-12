@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
-  description: 'Campus Compass Terms and Conditions of Use',
+  description: 'VarsityOS Terms and Conditions of Use',
 }
 
 export default function TermsPage() {
@@ -20,7 +20,7 @@ export default function TermsPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 10 March 2026 · Effective immediately</p>
         </div>
@@ -30,18 +30,18 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">1. About These Terms</h2>
             <p>
-              These Terms and Conditions (&ldquo;Terms&rdquo;) govern your use of Campus Compass, a mobile web application
+              These Terms and Conditions (&ldquo;Terms&rdquo;) govern your use of VarsityOS, a mobile web application
               (&ldquo;the App&rdquo;) operated by <strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), a company registered in South Africa.
             </p>
             <p className="mt-3">
               By creating an account or using the App, you agree to these Terms in full. If you do not agree, please do not
-              use Campus Compass.
+              use VarsityOS.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">2. Who Can Use Campus Compass</h2>
-            <p>You may use Campus Compass if you:</p>
+            <h2 className="font-display font-bold text-base text-white mb-3">2. Who Can Use VarsityOS</h2>
+            <p>You may use VarsityOS if you:</p>
             <ul className="list-disc ml-5 mt-2 space-y-1.5">
               <li>Are at least 13 years old.</li>
               <li>Are a student or prospective student at a South African university or TVET college.</li>
@@ -65,7 +65,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">4. Free vs. Premium Access</h2>
-            <p>Campus Compass offers a free tier and a Premium tier.</p>
+            <p>VarsityOS offers a free tier and a Premium tier.</p>
             <div className="mt-3 space-y-3">
               <div>
                 <p className="text-white/85 font-bold">Free tier includes:</p>
@@ -157,7 +157,7 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">8. Intellectual Property</h2>
             <p>
-              All content, design, code, and branding in Campus Compass is owned by Mirembe Muse (Pty) Ltd or its licensors.
+              All content, design, code, and branding in VarsityOS is owned by Mirembe Muse (Pty) Ltd or its licensors.
               You may not copy, redistribute, or commercialise any part of the App without written permission.
             </p>
             <p className="mt-3">
@@ -244,7 +244,7 @@ export default function TermsPage() {
             Privacy Policy →
           </Link>
           <Link href="/" className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors">
-            Back to Campus Compass
+            Back to VarsityOS
           </Link>
         </div>
       </div>

@@ -93,7 +93,7 @@ self.addEventListener('fetch', e => {
           // Offline fallback for navigation requests
           if (e.request.mode === 'navigate') {
             return caches.match('/') || new Response(
-              '<h1>You are offline</h1><p>Open Campus Compass when you have data.</p>',
+              '<h1>You are offline</h1><p>Open VarsityOS when you have data.</p>',
               { headers: { 'Content-Type': 'text/html' } }
             );
           }

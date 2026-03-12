@@ -36,7 +36,7 @@ function buildPayFastForm(userId: string, name: string, email: string, months: n
     email_address: email,
     m_payment_id:  `${userId}|${months}`,   // parsed in webhook
     amount:        price.toFixed(2),
-    item_name:     `Campus Compass Premium — ${months} Month${months > 1 ? 's' : ''}`,
+    item_name:     `VarsityOS Premium — ${months} Month${months > 1 ? 's' : ''}`,
   }
 
   const queryString = Object.entries(data)
@@ -84,7 +84,7 @@ export default async function UpgradePage() {
       <div className="max-w-sm mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="text-4xl mb-3">⭐</div>
-          <h1 className="font-display font-black text-2xl text-white mb-1">Campus Compass Premium</h1>
+          <h1 className="font-display font-black text-2xl text-white mb-1">VarsityOS Premium</h1>
           <p className="font-mono text-xs text-white/40">One-off payment · No auto-renewal · Cancel anytime</p>
         </div>
 

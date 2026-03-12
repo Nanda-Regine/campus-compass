@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Campus Compass Privacy Policy — how we collect, use, and protect your data.',
+  description: 'VarsityOS Privacy Policy — how we collect, use, and protect your data.',
 }
 
 export default function PrivacyPage() {
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 10 March 2026 · POPIA compliant</p>
         </div>
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">1. Introduction</h2>
             <p>
-              <strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) operates Campus Compass. We are committed
+              <strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) operates VarsityOS. We are committed
               to protecting your personal information in accordance with the{' '}
               <strong className="text-white/85">Protection of Personal Information Act 4 of 2013 (POPIA)</strong> and other
               applicable South African privacy laws.
@@ -131,7 +131,7 @@ export default function PrivacyPage() {
                 </thead>
                 <tbody className="space-y-1">
                   {[
-                    ['Provide the Campus Compass service', 'Performance of a contract'],
+                    ['Provide the VarsityOS service', 'Performance of a contract'],
                     ['Process Premium payments', 'Performance of a contract'],
                     ['Generate personalised AI insights', 'Consent (you trigger these)'],
                     ['Detect crisis signals in Nova chats', 'Legitimate interest (user safety)'],
@@ -215,7 +215,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">6. Cookies &amp; Local Storage</h2>
-            <p>Campus Compass uses:</p>
+            <p>VarsityOS uses:</p>
             <ul className="list-disc ml-5 mt-2 space-y-1.5">
               <li><strong className="text-white/85">Session cookies</strong> — set by Supabase Auth to keep you logged in (strictly necessary)</li>
               <li><strong className="text-white/85">Service Worker cache</strong> — stores app assets locally for offline access (no personal data)</li>
@@ -253,7 +253,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display font-bold text-base text-white mb-3">8. Children&apos;s Privacy</h2>
             <p>
-              Campus Compass is not directed at children under 13. We do not knowingly collect personal information from
+              VarsityOS is not directed at children under 13. We do not knowingly collect personal information from
               children under 13. If you believe a child under 13 has provided us with personal information, contact us
               and we will delete it promptly.
             </p>
@@ -300,7 +300,7 @@ export default function PrivacyPage() {
             Terms &amp; Conditions →
           </Link>
           <Link href="/" className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors">
-            Back to Campus Compass
+            Back to VarsityOS
           </Link>
         </div>
       </div>

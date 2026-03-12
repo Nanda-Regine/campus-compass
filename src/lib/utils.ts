@@ -1,5 +1,5 @@
 // ============================================================
-// Campus Compass — Utility Functions
+// VarsityOS — Utility Functions
 // ============================================================
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'

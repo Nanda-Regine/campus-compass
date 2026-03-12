@@ -85,7 +85,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
               🧭
             </div>
             <div>
-              <div className="font-display font-bold text-white text-sm leading-tight">Campus Compass</div>
+              <div className="font-display font-bold text-white text-sm leading-tight">VarsityOS</div>
               <div className="font-mono text-[0.55rem] text-teal-400 tracking-widest uppercase">Your varsity OS</div>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-white/7">
           <p className="font-mono text-[0.56rem] text-white/20 leading-relaxed">
-            Campus Compass v2.0<br />
+            VarsityOS v2.0<br />
             Built by{' '}
             <a href="https://creativelynanda.co.za" target="_blank" rel="noopener noreferrer" className="text-teal-500 hover:text-teal-400">
               Nanda Regine

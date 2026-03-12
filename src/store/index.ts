@@ -1,5 +1,5 @@
 // ============================================================
-// Campus Compass — Zustand App Store (AI-Enhanced)
+// VarsityOS — Zustand App Store (AI-Enhanced)
 // ============================================================
 import { create } from 'zustand'
 import type {

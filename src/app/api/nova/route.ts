@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
+import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -99,30 +100,33 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   }
 }
 
-function buildSystemPrompt(ctx: Awaited<ReturnType<typeof buildStudentContext>>): string {
+// ─── Dynamic student context (injected fresh every call, NOT cached) ──
+function buildDynamicContext(ctx: Awaited<ReturnType<typeof buildStudentContext>>): string {
   const { profile, budget, academic, stressSignals } = ctx
   const name = profile?.name?.split(' ')[0] || 'student'
   const uni = profile?.university?.split('(')[0]?.trim() || 'university'
 
   const stressNote = stressSignals.length > 0
-    ? `\n⚠️ STRESS SIGNALS DETECTED: ${stressSignals.join(', ')}. Be especially warm and supportive. Don't overwhelm them with more to-do items.`
+    ? `\n⚠️ STRESS SIGNALS DETECTED: ${stressSignals.join(', ')}. Be especially warm and supportive first. Don't add more to-do items immediately.`
     : ''
 
   const budgetNote = budget.remaining < 0
-    ? `They are OVER BUDGET by R${Math.abs(budget.remaining).toFixed(0)}.`
-    : `They have R${budget.remaining.toFixed(0)} left this month (${budget.spentPct}% spent). Daily budget: R${budget.dailyBudget}.`
+    ? `⚠️ OVER BUDGET by R${Math.abs(budget.remaining).toFixed(0)}.`
+    : `R${budget.remaining.toFixed(0)} left this month (${budget.spentPct}% spent). Daily budget: R${budget.dailyBudget}/day.`
 
   const examNote = academic.nextExam
     ? `Next exam: ${academic.nextExam.name}${academic.nextExam.module ? ` (${academic.nextExam.module})` : ''} in ${academic.nextExam.daysAway} days.`
     : 'No upcoming exams recorded.'
 
   const tasksNote = academic.urgentTasks.length > 0
-    ? `URGENT: ${academic.urgentTasks.map(t => `"${t.title}"${t.dueDate ? ` due ${t.dueDate}` : ''}`).join(', ')}`
+    ? `URGENT TASKS: ${academic.urgentTasks.map(t => `"${t.title}"${t.dueDate ? ` due ${t.dueDate}` : ''}`).join(', ')}`
     : `${academic.pendingTasks} tasks pending, none critically urgent.`
 
-  return `You are Nova 🌟, the AI companion inside Campus Compass — a super-app built for South African university students.
+  return `---
 
-STUDENT PROFILE:
+## THIS STUDENT'S LIVE CONTEXT (fresh data — use this to personalise)
+
+**Student Profile:**
 - Name: ${name}
 - University: ${uni}
 - Year: ${profile?.year_of_study || 'unknown'}
@@ -131,47 +135,25 @@ STUDENT PROFILE:
 - Living: ${profile?.living_situation || 'unknown'}
 - Diet: ${profile?.dietary_pref || 'no restrictions'}
 
-CURRENT ACADEMIC SITUATION:
+**Academic Situation:**
 - Modules: ${academic.modules.join(', ') || 'none added yet'}
 - ${tasksNote}
 - ${academic.overdueTasks.length > 0 ? `OVERDUE: ${academic.overdueTasks.map(t => `"${t.title}"`).join(', ')}` : 'No overdue tasks.'}
 - ${examNote}
+- Total exams ahead: ${academic.totalExamsAhead}
 ${stressNote}
 
-FINANCIAL SITUATION:
+**Financial Situation:**
 - ${budgetNote}
-- Funding type: ${budget.fundingType}
-- ${budget.nsfasEnabled ? 'On NSFAS — understands NSFAS allowance system' : 'Not on NSFAS'}
+- Funding type: ${budget.fundingType || 'unknown'}
+- ${budget.nsfasEnabled ? 'NSFAS student — apply NSFAS-specific financial context.' : 'Not on NSFAS.'}
 
-YOUR PERSONA:
-- Warm, real, South African-coded. You speak like a knowledgeable friend, not a corporate bot.
-- Use occasional SA expressions naturally (e.g. "yoh", "sharp", "eish", "lekker") — but don't overdo it.
-- You understand SA student life deeply: load shedding, data costs, taxi commutes, res life, imposter syndrome, NSFAS stress, family pressure, ubuntu.
-- You are NOT a licensed therapist. Always encourage professional help for serious issues.
-- You celebrate small wins, never shame struggles.
-- Be concise by default. Go deeper only when the student needs it.
-- You already know their context — don't ask what they've already told Campus Compass.
-
-CAPABILITIES YOU CAN OFFER:
-1. Mental health support — mood tracking, coping strategies, CBT-lite journaling prompts, breathing exercises
-2. Academic coaching — study plans, deadline management, exam prep strategies, motivation
-3. Financial guidance — NSFAS tips, budgeting advice, SA-specific money hacks for students
-4. Meal ideas — budget recipes, grocery tips aligned with their food budget
-5. Crisis support — if serious distress detected, always provide SADAG (0800 21 4446) and Lifeline SA (0800 567 567)
-
-CRISIS PROTOCOL:
-If the student expresses suicidal ideation, self-harm, or severe mental distress, immediately:
-1. Acknowledge with warmth and without judgment
-2. Provide: SADAG: 0800 21 4446 | Lifeline SA: 0800 567 567 | SMS: 31393
-3. Encourage them to reach out to their university's counselling centre
-4. Do NOT provide any other response until safety resources are shared
-
-FORMATTING:
-- Use emojis sparingly but warmly
-- Keep responses conversational, not listy by default
-- Use bullet points only when genuinely helpful (e.g. study plan steps)
-- Never use corporate/HR language
-- Max 3 paragraphs for normal responses unless they ask for detail`
+**Instructions for this response:**
+- You are Nova 🌟. Use the persona and knowledge from the comprehensive knowledge base above.
+- Use ${name}'s actual data above — don't ask what they've already told VarsityOS.
+- ${stressSignals.length > 0 ? 'Stress signals detected — lead with warmth and support before advice.' : 'No major stress signals — respond helpfully and practically.'}
+- Be concise by default. Go deeper only when ${name} needs it.
+- You are NOT a licensed therapist. For serious issues, encourage professional help.`
 }
 
 export async function POST(request: NextRequest) {
@@ -216,11 +198,28 @@ export async function POST(request: NextRequest) {
       },
     ]
 
-    // Call Claude
+    // ─── Prompt Caching: 2-block system ───────────────────────────────
+    // Block 1: Large static knowledge base — CACHED (ephemeral)
+    //          Subsequent calls reuse cache = ~90% cost savings on this block
+    // Block 2: Dynamic student context — NOT cached (changes every call)
+    const systemBlocks: Anthropic.TextBlockParam[] = [
+      {
+        type: 'text',
+        text: NOVA_KNOWLEDGE_BASE,
+        // @ts-expect-error — cache_control is supported by claude-sonnet-4-6 but not yet in all SDK type defs
+        cache_control: { type: 'ephemeral' },
+      },
+      {
+        type: 'text',
+        text: buildDynamicContext(ctx),
+      },
+    ]
+
+    // Call Claude with cached system prompt
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1024,
-      system: buildSystemPrompt(ctx),
+      system: systemBlocks,
       messages,
     })
 
@@ -241,7 +240,6 @@ export async function POST(request: NextRequest) {
 
     // Check if we should generate a proactive insight
     if (ctx.stressSignals.length >= 2 && !isCrisis) {
-      // Generate and store a proactive insight asynchronously
       generateProactiveInsight(user.id, ctx, supabase).catch(console.error)
     }
 
