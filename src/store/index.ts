@@ -2,6 +2,7 @@
 // VarsityOS — Zustand App Store (AI-Enhanced)
 // ============================================================
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type {
   Profile, Budget, Subscription,
   Task, Exam, Module, TimetableEntry, Expense,
@@ -21,6 +22,7 @@ interface AppState {
   profile:      Profile | null
   budget:       Budget | null
   subscription: Subscription | null
+  isOnline:     boolean
 
   // ─── Study data ────────────────────────────────────────────
   tasks:        Task[]
@@ -40,6 +42,7 @@ interface AppState {
   novaMessageCount: number
 
   // ─── Setters ───────────────────────────────────────────────
+  setIsOnline:         (online: boolean) => void
   setUserId:           (id: string) => void
   setProfile:          (profile: Profile) => void
   setBudget:           (budget: Budget) => void
@@ -92,6 +95,7 @@ const initialState = {
   profile:          null,
   budget:           null,
   subscription:     null,
+  isOnline:         true,
   tasks:            [],
   exams:            [],
   modules:          [],
@@ -103,10 +107,13 @@ const initialState = {
   novaMessageCount: 0,
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
   ...initialState,
 
   // Setters
+  setIsOnline:         (isOnline)         => set({ isOnline }),
   setUserId:           (userId)           => set({ userId }),
   setProfile:          (profile)          => set({ profile }),
   setBudget:           (budget)           => set({ budget }),
@@ -167,4 +174,14 @@ export const useAppStore = create<AppState>((set) => ({
 
   // Reset
   reset: () => set(initialState),
-}))
+    }),
+    {
+      name: 'varsityos-store',
+      // Don't persist online status — always re-detect on load
+      partialize: (state) => {
+        const { isOnline: _isOnline, ...rest } = state
+        return rest
+      },
+    }
+  )
+)

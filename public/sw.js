@@ -1,9 +1,9 @@
-const CACHE_VERSION = 'cc-v2';
-const STATIC_CACHE = `${CACHE_VERSION}-static`;
+const CACHE_VERSION = 'cc-v3';
+const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
+const OFFLINE_URL   = '/offline';
 
-// Core app shell — Next.js serves these from /_next/
-// We don't pre-cache Next.js chunks (they have content hashes), just the shell routes
+// Pre-cache shell routes on install
 const SHELL_ROUTES = [
   '/',
   '/dashboard',
@@ -11,58 +11,61 @@ const SHELL_ROUTES = [
   '/budget',
   '/meals',
   '/nova',
+  '/offline',
   '/manifest.json',
+  '/favicon.jpg',
 ];
 
-// Never cache these
+// Never intercept these — always go to network
 const BYPASS = [
   '/api/',
-  'anthropic.com',
   'supabase.co',
+  'anthropic.com',
   'payfast.co.za',
   'vercel-insights',
   'va.vercel-scripts',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
 ];
 
 function shouldBypass(url) {
   return BYPASS.some(b => url.includes(b));
 }
 
-// ─── Install: cache the shell ─────────────────────────────────
+// ─── Install: pre-cache shell ─────────────────────────────────
 self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(STATIC_CACHE).then(cache =>
-      // addAll fails if any request fails — use individual adds so one 404 doesn't break it
       Promise.allSettled(SHELL_ROUTES.map(r => cache.add(r)))
     )
   );
 });
 
-// ─── Activate: clean old caches ──────────────────────────────
+// ─── Activate: purge old caches ───────────────────────────────
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
+    caches.keys()
+      .then(keys => Promise.all(
         keys
           .filter(k => k !== STATIC_CACHE && k !== DYNAMIC_CACHE)
           .map(k => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
 // ─── Fetch strategy ───────────────────────────────────────────
 self.addEventListener('fetch', e => {
-  const { url, method } = e.request;
+  const { url, method, mode } = e.request;
 
   // Only handle GET
   if (method !== 'GET') return;
 
-  // Bypass: APIs, analytics, external services — always network
+  // Bypass: external services, APIs — always network
   if (shouldBypass(url)) return;
 
-  // Next.js static assets (/_next/static/) — cache forever, they're content-hashed
+  // /_next/static/ — cache-first forever (content-hashed, never stale)
   if (url.includes('/_next/static/')) {
     e.respondWith(
       caches.match(e.request).then(cached => {
@@ -78,27 +81,43 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // App routes — network first, fall back to cache
+  // /_next/image/ — network first, cache on success
+  if (url.includes('/_next/image/')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.ok) {
+            caches.open(DYNAMIC_CACHE).then(c => c.put(e.request, res.clone()));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Navigation + app routes — network first, cache on success, offline fallback
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        if (res.ok) {
+        // Cache successful navigation responses
+        if (res.ok && (mode === 'navigate' || url.includes('/_next/data/'))) {
           caches.open(DYNAMIC_CACHE).then(c => c.put(e.request, res.clone()));
         }
         return res;
       })
-      .catch(() =>
-        caches.match(e.request).then(cached => {
-          if (cached) return cached;
-          // Offline fallback for navigation requests
-          if (e.request.mode === 'navigate') {
-            return caches.match('/') || new Response(
-              '<h1>You are offline</h1><p>Open VarsityOS when you have data.</p>',
-              { headers: { 'Content-Type': 'text/html' } }
-            );
-          }
-          return new Response('', { status: 503 });
-        })
-      )
+      .catch(async () => {
+        // Try the cache
+        const cached = await caches.match(e.request);
+        if (cached) return cached;
+
+        // Navigation fallback: serve the offline page
+        if (mode === 'navigate') {
+          const offlinePage = await caches.match(OFFLINE_URL);
+          if (offlinePage) return offlinePage;
+        }
+
+        return new Response('', { status: 503 });
+      })
   );
 });
