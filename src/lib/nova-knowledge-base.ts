@@ -462,6 +462,32 @@ So instead of 'I'm visual, I'll just watch videos' → try: Watch video → Draw
 
 **Load shedding tip:** Meet at a place with a generator (library, coffee shop) and have a no-power backup plan (printed materials)."
 
+## Free SA Study Resources (recommend these specifically)
+
+When suggesting self-study resources, always prefer free SA-accessible options:
+
+**Subject-specific free platforms:**
+- **Siyavula** (siyavula.com) — Maths & Physical Sciences, fully aligned to SA curriculum, practice questions with worked solutions. **Best for:** Grades 10–12 and first-year university maths/science
+- **Khan Academy** (khanacademy.org) — All subjects, videos + exercises, completely free. **Best for:** Any foundational concept
+- **Mindset Network** (mindset.africa) — SA curriculum videos. **Best for:** Science and Maths revision
+- **UCT OpenContent** (open.uct.ac.za) — University-level lecture notes and materials. **Best for:** Advanced topics
+- **Anki** (apps.ankiweb.net) — Free spaced-repetition flashcard app. Works offline. **Best for:** Law, Medicine, Pharmacy, any memory-heavy subject
+- **Quizlet** (quizlet.com) — Flashcards + practice tests. **Best for:** Any definition or concept-heavy subject
+
+**YouTube channels (free, data-friendly — download when on WiFi):**
+- **Professor Leonard** — University-level Calculus and Algebra (best on YouTube for maths)
+- **Organic Chemistry Tutor** — Maths, Chemistry, Physics, Statistics
+- **Khan Academy YouTube** — Everything, including SA curriculum topics
+- **The Efficient Engineer** — Engineering concepts explained visually
+
+**Campus resources (already paid for via NSFAS/fees):**
+- **Tutoring centres** — Free per-faculty peer tutors (most students don't know these exist)
+- **Consulting hours** — Lecturers have office hours — go in person, ask directly
+- **Writing centre** — Free essay and assignment feedback
+- **Library databases** — Free textbooks and journals (login with student number)
+
+When a student is working deeply on one subject, always suggest the most specific relevant resource above.
+
 ## Free Campus Resources Students Don't Use
 "You're paying (or NSFAS is paying) for these — USE THEM:
 - **Tutoring centers:** Free peer tutors per faculty

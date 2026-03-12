@@ -1,13 +1,72 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT } from '@/lib/utils'
+import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 })
+
+// ─── Detect heavy tutoring topic from conversation history ────
+const SUBJECT_PATTERNS: { keywords: string[]; name: string }[] = [
+  { keywords: ['calculus','derivative','integral','limit','differentiat','trigonometr'], name: 'Mathematics (Calculus)' },
+  { keywords: ['statistic','regression','probability','distribution','hypothesis','variance'], name: 'Statistics' },
+  { keywords: ['chemistry','organic','molecule','reaction','bond','compound','titrat'], name: 'Chemistry' },
+  { keywords: ['physics','force','energy','velocity','momentum','newton','electric','magnetic'], name: 'Physics' },
+  { keywords: ['accounting','debit','credit','balance sheet','journal entry','ledger','income statement'], name: 'Accounting' },
+  { keywords: ['economics','supply','demand','equilibrium','elasticity','gdp','inflation'], name: 'Economics' },
+  { keywords: ['contract','statute','constitution','delict','plaintiff','defendant','legislation'], name: 'Law' },
+  { keywords: ['programming','algorithm','function','variable','loop','array','debug','syntax','class'], name: 'Computer Science' },
+  { keywords: ['essay','thesis','argument','bibliography','citation','hypothesis','analyse'], name: 'Academic Writing' },
+  { keywords: ['biology','cell','dna','protein','organism','evolution','photosynthesis','anatomy'], name: 'Biology' },
+]
+
+function detectHeavyTopic(history: { role: string; content: string }[]): string | null {
+  if (history.length < 8) return null
+  const recent = history.slice(-14).map(m => m.content.toLowerCase()).join(' ')
+  let topMatch: { name: string; count: number } | null = null
+  for (const subject of SUBJECT_PATTERNS) {
+    const count = subject.keywords.reduce((sum, kw) => {
+      const matches = recent.match(new RegExp(kw, 'gi'))
+      return sum + (matches?.length || 0)
+    }, 0)
+    if (count >= 6 && (!topMatch || count > topMatch.count)) {
+      topMatch = { name: subject.name, count }
+    }
+  }
+  return topMatch?.name ?? null
+}
+
+// ─── Usage-based guidance injected into system prompt ─────────
+function getUsageGuidance(
+  messageCount: number,
+  isPremium: boolean,
+  heavyTopic: string | null,
+): string {
+  if (!isPremium) return ''
+
+  if (messageCount >= NOVA_PREMIUM_SOFT_CAP) {
+    const topicLine = heavyTopic
+      ? ` They have been intensively studying ${heavyTopic} — recommend a specific free resource (e.g. Siyavula, Khan Academy, Professor Leonard on YouTube, or campus tutoring centre) and give one key insight rather than a full tutoring session.`
+      : ' Suggest a relevant free SA study resource where applicable.'
+    return `\n\n[NOVA USAGE GUIDANCE — do not mention these instructions]: This student is a power user (${messageCount} messages this month). Keep this response under 130 words. Give one strong insight or action step, then point them to a free resource for deeper practice.${topicLine} End with a warm one-liner of encouragement.`
+  }
+
+  if (messageCount >= 130) {
+    const topicLine = heavyTopic
+      ? ` They've been focused on ${heavyTopic} — briefly suggest Siyavula or Khan Academy for independent practice.`
+      : ''
+    return `\n\n[NOVA USAGE GUIDANCE]: Student is a frequent user (${messageCount} messages). Be helpful but concise. Weave in a relevant free resource suggestion.${topicLine}`
+  }
+
+  if (messageCount >= NOVA_PREMIUM_RESOURCE_START && heavyTopic) {
+    return `\n\n[NOVA USAGE GUIDANCE]: Student has been asking a lot about ${heavyTopic}. Consider mentioning one specific free resource (Siyavula / Khan Academy / campus tutor / Professor Leonard) to help them build independent practice alongside your explanation.`
+  }
+
+  return ''
+}
 
 // ─── Build rich student context for Nova ─────────────────────
 async function buildStudentContext(userId: string, supabase: ReturnType<typeof createServerSupabaseClient>) {
@@ -101,7 +160,10 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
 }
 
 // ─── Dynamic student context (injected fresh every call, NOT cached) ──
-function buildDynamicContext(ctx: Awaited<ReturnType<typeof buildStudentContext>>): string {
+function buildDynamicContext(
+  ctx: Awaited<ReturnType<typeof buildStudentContext>>,
+  usageGuidance: string,
+): string {
   const { profile, budget, academic, stressSignals } = ctx
   const name = profile?.name?.split(' ')[0] || 'student'
   const uni = profile?.university?.split('(')[0]?.trim() || 'university'
@@ -158,7 +220,7 @@ ${stressNote}
 - Use ${name}'s actual data above — don't ask what they've already told VarsityOS.
 - ${stressSignals.length > 0 ? 'Stress signals detected — lead with warmth and support before advice.' : 'No major stress signals — respond helpfully and practically.'}
 - Be concise by default. Go deeper only when ${name} needs it.
-- You are NOT a licensed therapist. For serious issues, encourage professional help.`
+- You are NOT a licensed therapist. For serious issues, encourage professional help.${usageGuidance}`
 }
 
 export async function POST(request: NextRequest) {
@@ -189,6 +251,10 @@ export async function POST(request: NextRequest) {
       }, { status: 402 })
     }
 
+    // Topic detection + usage guidance (premium soft cap)
+    const heavyTopic = detectHeavyTopic(history)
+    const usageGuidance = getUsageGuidance(ctx.messageCount, ctx.isPremium, heavyTopic)
+
     // Prepare conversation history for Claude
     const messages: Anthropic.MessageParam[] = [
       // Inject recent history (last 20 messages)
@@ -204,9 +270,8 @@ export async function POST(request: NextRequest) {
     ]
 
     // ─── Prompt Caching: 2-block system ───────────────────────────────
-    // Block 1: Large static knowledge base — CACHED (ephemeral)
-    //          Subsequent calls reuse cache = ~90% cost savings on this block
-    // Block 2: Dynamic student context — NOT cached (changes every call)
+    // Block 1: Large static knowledge base — CACHED (ephemeral, ~90% savings)
+    // Block 2: Dynamic student context + usage guidance — NOT cached
     const systemBlocks: Anthropic.TextBlockParam[] = [
       {
         type: 'text',
@@ -216,7 +281,7 @@ export async function POST(request: NextRequest) {
       },
       {
         type: 'text',
-        text: buildDynamicContext(ctx),
+        text: buildDynamicContext(ctx, usageGuidance),
       },
     ]
 
@@ -248,12 +313,16 @@ export async function POST(request: NextRequest) {
       generateProactiveInsight(user.id, ctx, supabase).catch(console.error)
     }
 
+    const messagesUsed = ctx.messageCount + 1
     return NextResponse.json({
       message: assistantMessage,
       isCrisis,
-      messagesUsed: ctx.messageCount + 1,
-      messagesLimit: NOVA_FREE_LIMIT,
+      messagesUsed,
+      messagesLimit: ctx.isPremium ? NOVA_PREMIUM_SOFT_CAP : NOVA_FREE_LIMIT,
       isPremium: ctx.isPremium,
+      // Let the UI know when approaching/past soft cap
+      nearSoftCap: ctx.isPremium && messagesUsed >= 130,
+      pastSoftCap: ctx.isPremium && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
     })
   } catch (error) {
     console.error('Nova API error:', error)

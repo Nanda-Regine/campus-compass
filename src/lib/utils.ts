@@ -129,9 +129,11 @@ export function exportToCSV(data: Record<string, unknown>[], filename: string): 
   a.click()
 }
 
-// ─── Nova free tier ───────────────────────────────────────────
-export const NOVA_FREE_LIMIT = 10
-export const NOVA_PREMIUM_PRICE = 49 // ZAR
+// ─── Nova usage limits ────────────────────────────────────────
+export const NOVA_FREE_LIMIT          = 10   // hard block for free users
+export const NOVA_PREMIUM_SOFT_CAP    = 150  // premium: responses shift resource-forward above this
+export const NOVA_PREMIUM_RESOURCE_START = 100 // premium: start weaving in resources above this
+export const NOVA_PREMIUM_PRICE       = 49  // ZAR
 
 // ─── PayFast signature ────────────────────────────────────────
 export function generatePayFastSignature(data: Record<string, string>, passphrase?: string): string {
