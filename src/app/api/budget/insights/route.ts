@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
     ] = await Promise.all([
       supabase.from('budgets').select('*').eq('user_id', user.id).single(),
       supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', start).lte('date', end),
-      supabase.from('profiles').select('funding_type, university, year_of_study').eq('id', user.id).single(),
+      supabase.from('profiles').select('funding_type, university, year_of_study, ai_language').eq('id', user.id).single(),
     ])
 
     if (!budget || !expenses) {
@@ -49,7 +49,10 @@ export async function GET(_request: NextRequest) {
       .map(([cat, amount]) => `${cat}: R${amount.toFixed(0)} (${Math.round((amount / totalSpent) * 100)}%)`)
       .join(', ')
 
-    const prompt = `You are a financial wellness coach for South African university students. Analyse this student's financial situation and provide actionable advice.
+    const language = profile?.ai_language || 'English'
+    const langLine = language !== 'English' ? `\nRESPONSE LANGUAGE: ${language} — write all human-readable text values in ${language}. Keep JSON field names and enum values (like "excellent", "good", "tight", "critical") in English.` : ''
+
+    const prompt = `You are a financial wellness coach for South African university students. Analyse this student's financial situation and provide actionable advice.${langLine}
 
 STUDENT CONTEXT:
 - University: ${profile?.university || 'SA University'}
@@ -120,11 +123,14 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name, university, year_of_study, faculty, funding_type')
+      .select('name, university, year_of_study, faculty, funding_type, ai_language')
       .eq('id', user.id)
       .single()
 
-    const prompt = `Draft a formal NSFAS appeal letter for a South African student.
+    const appealLang = profile?.ai_language || 'English'
+    const appealLangNote = appealLang !== 'English' ? `\nWrite the letter in ${appealLang}.` : ''
+
+    const prompt = `Draft a formal NSFAS appeal letter for a South African student.${appealLangNote}
 
 STUDENT INFO:
 - Name: ${profile?.name || '[Student Name]'}

@@ -16,9 +16,14 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name, year_of_study, faculty')
+      .select('name, year_of_study, faculty, ai_language')
       .eq('id', user.id)
       .single()
+
+    const language = profile?.ai_language || 'English'
+    const langLine = language !== 'English'
+      ? `\nRESPONSE LANGUAGE: ${language} — write all human-readable text values in ${language}. Keep JSON field names and enum values in English.`
+      : ''
 
     // ─── Study Plan Generator ───────────────────────────────
     if (type === 'study_plan') {
@@ -26,7 +31,7 @@ export async function POST(request: NextRequest) {
         ? Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
         : 7
 
-      const prompt = `Create a realistic study/work plan for a South African university student.
+      const prompt = `Create a realistic study/work plan for a South African university student.${langLine}
 
 TASK: "${taskTitle}"
 MODULE: ${moduleName || 'Unknown module'}
@@ -77,7 +82,7 @@ Respond with valid JSON only:
 
     // ─── Grade Calculator ────────────────────────────────────
     if (type === 'grade_calculator') {
-      const prompt = `Calculate what a student needs on their remaining assessment(s) to achieve their target grade.
+      const prompt = `Calculate what a student needs on their remaining assessment(s) to achieve their target grade.${langLine}
 
 CURRENT SITUATION:
 - Module: ${moduleName}
@@ -139,7 +144,7 @@ Calculate precisely and explain clearly. Respond with valid JSON only:
         date: e.exam_date,
       })) || []
 
-      const prompt = `Analyse this student's upcoming deadlines for conflicts and overload.
+      const prompt = `Analyse this student's upcoming deadlines for conflicts and overload.${langLine}
 
 TASKS: ${JSON.stringify(taskList)}
 EXAMS: ${JSON.stringify(examList)}
@@ -181,7 +186,7 @@ Respond with valid JSON only:
         ? Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
         : 14
 
-      const prompt = `Create an exam preparation guide for a South African university student.
+      const prompt = `Create an exam preparation guide for a South African university student.${langLine}
 
 EXAM: ${examName || taskTitle}
 MODULE: ${moduleName}

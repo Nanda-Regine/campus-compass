@@ -122,6 +122,11 @@ function buildDynamicContext(ctx: Awaited<ReturnType<typeof buildStudentContext>
     ? `URGENT TASKS: ${academic.urgentTasks.map(t => `"${t.title}"${t.dueDate ? ` due ${t.dueDate}` : ''}`).join(', ')}`
     : `${academic.pendingTasks} tasks pending, none critically urgent.`
 
+  const language = profile?.ai_language || 'English'
+  const langInstruction = language !== 'English'
+    ? `\n- **Language:** Respond in ${language}. You may code-switch naturally. Keep any technical terms/app names in English.`
+    : ''
+
   return `---
 
 ## THIS STUDENT'S LIVE CONTEXT (fresh data — use this to personalise)
@@ -133,7 +138,7 @@ function buildDynamicContext(ctx: Awaited<ReturnType<typeof buildStudentContext>
 - Faculty: ${profile?.faculty || 'unknown'}
 - Funding: ${profile?.funding_type?.toUpperCase() || 'unknown'}
 - Living: ${profile?.living_situation || 'unknown'}
-- Diet: ${profile?.dietary_pref || 'no restrictions'}
+- Diet: ${profile?.dietary_pref || 'no restrictions'}${langInstruction}
 
 **Academic Situation:**
 - Modules: ${academic.modules.join(', ') || 'none added yet'}

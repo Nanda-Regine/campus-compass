@@ -21,6 +21,7 @@ export interface Profile {
   premium_until: string | null
   setup_complete: boolean
   avatar_url: string | null
+  ai_language: SALanguage | null
   created_at: string
   updated_at: string
 }
@@ -220,6 +221,35 @@ export type MealSlot = 'Breakfast' | 'Lunch' | 'Supper' | 'Snack'
 export const MEAL_SLOTS: MealSlot[] = ['Breakfast', 'Lunch', 'Supper', 'Snack']
 
 export const TIMETABLE_HOURS = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00']
+
+// ─── SA Official Languages ───────────────────────────────────
+
+export type SALanguage =
+  | 'English'
+  | 'isiZulu'
+  | 'isiXhosa'
+  | 'Afrikaans'
+  | 'Sesotho sa Leboa'
+  | 'Setswana'
+  | 'Sesotho'
+  | 'Xitsonga'
+  | 'siSwati'
+  | 'Tshivenda'
+  | 'isiNdebele'
+
+export const SA_LANGUAGES: { value: SALanguage; label: string }[] = [
+  { value: 'English',          label: 'English' },
+  { value: 'isiZulu',          label: 'isiZulu' },
+  { value: 'isiXhosa',         label: 'isiXhosa' },
+  { value: 'Afrikaans',        label: 'Afrikaans' },
+  { value: 'Sesotho sa Leboa', label: 'Sesotho sa Leboa (Sepedi)' },
+  { value: 'Setswana',         label: 'Setswana' },
+  { value: 'Sesotho',          label: 'Sesotho' },
+  { value: 'Xitsonga',         label: 'Xitsonga' },
+  { value: 'siSwati',          label: 'siSwati' },
+  { value: 'Tshivenda',        label: 'Tshivenda' },
+  { value: 'isiNdebele',       label: 'isiNdebele' },
+]
 
 // ─── SA Universities ──────────────────────────────────────────
 

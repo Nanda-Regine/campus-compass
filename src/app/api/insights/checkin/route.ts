@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
       { data: expenses },
       { data: modules },
     ] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', user.id).single(),
+      supabase.from('profiles').select('*, ai_language').eq('id', user.id).single(),
       supabase.from('budgets').select('*').eq('user_id', user.id).single(),
       supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', false),
       supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', true).gte('done_at', start),
@@ -45,7 +45,10 @@ export async function GET(_request: NextRequest) {
     const dayOfMonth = now.getDate()
     const monthProgress = Math.round((dayOfMonth / daysInMonth) * 100)
 
-    const prompt = `You are Nova, a warm AI companion for South African university students. Write a personalised semester check-in for ${profile?.name?.split(' ')[0] || 'this student'}.
+    const checkinLang = profile?.ai_language || 'English'
+    const checkinLangNote = checkinLang !== 'English' ? `\nWRITE IN ${checkinLang}: Respond entirely in ${checkinLang}.` : ''
+
+    const prompt = `You are Nova, a warm AI companion for South African university students. Write a personalised semester check-in for ${profile?.name?.split(' ')[0] || 'this student'}.${checkinLangNote}
 
 THEIR SNAPSHOT:
 - University: ${profile?.university?.split('(')[0]?.trim()}
@@ -75,7 +78,7 @@ Maximum 180 words total.`
     const checkIn = response.content[0].type === 'text' ? response.content[0].text : ''
 
     // Also generate 3 personalised action items
-    const actionPrompt = `Based on this student's data, give exactly 3 specific, actionable next steps.
+    const actionPrompt = `Based on this student's data, give exactly 3 specific, actionable next steps.${checkinLangNote}
 
 DATA: ${completedThisMonth} tasks done this month, ${overdueTasks.length} overdue, ${exams?.length || 0} exams ahead, R${remaining.toFixed(0)} remaining budget.
 

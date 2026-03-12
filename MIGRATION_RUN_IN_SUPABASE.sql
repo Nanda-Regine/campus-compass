@@ -5,6 +5,16 @@
 -- Safe to run multiple times (uses IF NOT EXISTS / OR REPLACE)
 -- ============================================================
 
+-- ai_language: user's preferred language for all Nova AI responses
+-- Supports all 11 SA official languages. Defaults to English.
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS ai_language TEXT DEFAULT 'English'
+    CHECK (ai_language IN (
+      'English','isiZulu','isiXhosa','Afrikaans',
+      'Sesotho sa Leboa','Setswana','Sesotho',
+      'Xitsonga','siSwati','Tshivenda','isiNdebele'
+    ));
+
 -- nova_messages: stores Nova chat history per user
 CREATE TABLE IF NOT EXISTS public.nova_messages (
   id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

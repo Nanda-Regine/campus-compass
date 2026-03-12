@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -8,6 +8,7 @@ import { useAppStore } from '@/store'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { SA_LANGUAGES, type SALanguage } from '@/types'
 
 interface DrawerProps {
   open: boolean
@@ -26,9 +27,24 @@ export default function Drawer({ open, onClose }: DrawerProps) {
   const pathname = usePathname()
   const router = useRouter()
   const overlayRef = useRef<HTMLDivElement>(null)
-  const { profile, subscription, reset } = useAppStore()
+  const { profile, subscription, reset, setProfile } = useAppStore()
   const supabase = createClient()
   const isPremium = profile?.is_premium || subscription?.plan === 'premium'
+  const [savingLang, setSavingLang] = useState(false)
+
+  const handleLanguageChange = async (lang: SALanguage) => {
+    if (!profile) return
+    setSavingLang(true)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ ai_language: lang })
+      .eq('id', profile.id)
+    if (!error) {
+      setProfile({ ...profile, ai_language: lang })
+      toast.success(`Nova will now respond in ${lang}`)
+    }
+    setSavingLang(false)
+  }
 
   useEffect(() => {
     if (open) {
@@ -143,6 +159,28 @@ export default function Drawer({ open, onClose }: DrawerProps) {
             <div className="font-mono text-[0.56rem] tracking-[0.18em] uppercase text-white/25 px-3 mb-2">
               Account
             </div>
+
+            {/* AI Language Selector */}
+            <div className="px-3 py-2.5 mb-0.5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-base w-5 text-center">🌍</span>
+                <span className="font-display text-sm text-white/60">Nova Language</span>
+                {savingLang && <span className="ml-auto font-mono text-[0.52rem] text-teal-400">saving…</span>}
+              </div>
+              <select
+                value={profile?.ai_language || 'English'}
+                onChange={(e) => handleLanguageChange(e.target.value as SALanguage)}
+                disabled={savingLang}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 font-mono text-[0.7rem] text-white/70 focus:outline-none focus:border-teal-600/50 disabled:opacity-40"
+              >
+                {SA_LANGUAGES.map(l => (
+                  <option key={l.value} value={l.value} className="bg-[#111a18]">
+                    {l.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <Link
               href="/setup"
               onClick={onClose}

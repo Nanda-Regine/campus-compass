@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('dietary_pref, living_situation')
+      .select('dietary_pref, living_situation, ai_language')
       .eq('id', user.id)
       .single()
 
@@ -31,8 +31,10 @@ export async function POST(request: NextRequest) {
       : ''
 
     const budgetCap = maxBudget || (budget?.food_budget ? Math.round(budget.food_budget / 30) * 2 : 50)
+    const language = profile?.ai_language || 'English'
+    const langLine = language !== 'English' ? `\nRESPONSE LANGUAGE: ${language} — write all human-readable text values in ${language}. Keep JSON field names and enum values (like "easy", "medium", "hard") in English.` : ''
 
-    const prompt = `You are a South African student meal planner. Create a budget recipe using available ingredients.
+    const prompt = `You are a South African student meal planner. Create a budget recipe using available ingredients.${langLine}
 
 INGREDIENTS AVAILABLE: ${ingredients}
 MAX BUDGET: R${budgetCap}
@@ -89,14 +91,16 @@ export async function GET(_request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const [{ data: profile }, { data: budget }] = await Promise.all([
-      supabase.from('profiles').select('dietary_pref, living_situation').eq('id', user.id).single(),
+      supabase.from('profiles').select('dietary_pref, living_situation, ai_language').eq('id', user.id).single(),
       supabase.from('budgets').select('food_budget').eq('user_id', user.id).single(),
     ])
 
     const weeklyFoodBudget = budget?.food_budget || 200
     const diet = profile?.dietary_pref || 'No restrictions'
+    const planLang = profile?.ai_language || 'English'
+    const planLangLine = planLang !== 'English' ? `\nRESPONSE LANGUAGE: ${planLang} — write all human-readable text values in ${planLang}. Keep JSON field names in English.` : ''
 
-    const prompt = `Create a 5-day (Mon–Fri) meal plan for a South African student.
+    const prompt = `Create a 5-day (Mon–Fri) meal plan for a South African student.${planLangLine}
 
 CONSTRAINTS:
 - Weekly food budget: R${weeklyFoodBudget}
