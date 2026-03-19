@@ -100,14 +100,29 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
   }
 
   const toggleDone = async (task: Task) => {
-    updateTask(task.id, { done: !task.done })
+    const completing = !task.done
+    updateTask(task.id, { done: completing })
+
     const { error } = await supabase
       .from('tasks')
-      .update({ done: !task.done, done_at: !task.done ? new Date().toISOString() : null })
+      .update({ done: completing, done_at: completing ? new Date().toISOString() : null })
       .eq('id', task.id)
+
     if (error) {
       updateTask(task.id, { done: task.done })
       toast.error('Failed to update task')
+      return
+    }
+
+    // Celebrate task completion with confetti
+    if (completing) {
+      const pendingAfter = tasks.filter(t => !t.done && t.id !== task.id).length
+      import('@/lib/confetti').then(({ triggerConfetti }) => {
+        triggerConfetti(pendingAfter === 0 ? 'all_done' : 'task')
+      })
+      if (pendingAfter === 0) {
+        toast.success('All tasks done! You crushed it today 🎉', { duration: 3000 })
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import ModulesTab from '@/components/study/ModulesTab'
 import { type Module, type Task, type TimetableEntry, type Exam } from '@/types'
 import { cn } from '@/lib/utils'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
+import StreakWidget from '@/components/gamification/StreakWidget'
 
 interface StudyClientProps {
   initialData: {
@@ -104,6 +105,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-4">
+        {activeTab === 'tasks' && <div className="mb-3"><StreakWidget /></div>}
         {activeTab === 'tasks'     && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} />}
         {activeTab === 'timetable' && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
         {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   userId={userId} supabase={supabase} />}
