@@ -391,3 +391,131 @@ export interface PayFastPaymentData {
   cycles?: '0' // Indefinite
   signature: string
 }
+
+// ─── Part-Time Job Manager ────────────────────────────────────
+
+export type JobType = 'retail' | 'food_service' | 'tutoring' | 'call_centre' | 'campus_job' | 'freelance' | 'gig' | 'other'
+export type PayType = 'hourly' | 'shift' | 'monthly' | 'per_gig'
+export type JobStatus = 'active' | 'seasonal' | 'ended'
+export type ShiftStatus = 'scheduled' | 'worked' | 'missed' | 'swapped' | 'declined'
+export type BalanceFlag = 'healthy' | 'watch' | 'overloaded' | 'crisis'
+
+export const JOB_TYPE_LABELS: Record<JobType, string> = {
+  retail:       '🛒 Retail',
+  food_service: '🍽️ Food Service',
+  tutoring:     '📚 Tutoring',
+  call_centre:  '📞 Call Centre',
+  campus_job:   '🏛️ Campus Job',
+  freelance:    '💻 Freelance',
+  gig:          '🛵 Gig Work',
+  other:        '💼 Other',
+}
+
+export interface PartTimeJob {
+  id: string
+  student_id: string
+  employer_name: string
+  job_type: JobType
+  role_title: string | null
+  location: string | null
+  is_on_campus: boolean
+  is_remote: boolean
+  pay_type: PayType
+  pay_rate: number | null
+  currency: string
+  contracted_hours_per_week: number | null
+  max_comfortable_hours: number
+  status: JobStatus
+  start_date: string | null
+  end_date: string | null
+  sync_with_study_planner: boolean
+  block_exam_periods: boolean
+  created_at: string
+}
+
+export interface WorkShift {
+  id: string
+  job_id: string
+  student_id: string
+  shift_date: string
+  start_time: string
+  end_time: string
+  duration_hours: number
+  status: ShiftStatus
+  earnings: number | null
+  has_study_conflict: boolean
+  conflict_type: string | null
+  conflict_detail: string | null
+  notes: string | null
+  created_at: string
+  // Joined
+  job?: PartTimeJob
+}
+
+export interface EarningsLog {
+  id: string
+  student_id: string
+  job_id: string | null
+  pay_period_start: string
+  pay_period_end: string
+  hours_worked: number
+  gross_earnings: number
+  allocated_to: Record<string, number> | null
+  created_at: string
+}
+
+export interface BalanceSnapshot {
+  id: string
+  student_id: string
+  week_start: string
+  study_hours: number
+  work_hours: number
+  sleep_estimate_hours: number
+  free_time_hours: number
+  balance_score: number
+  nova_flag: BalanceFlag
+  created_at: string
+}
+
+export interface WorkConflict {
+  type: 'lecture' | 'assignment_due' | 'exam_proximity' | 'hours_overload'
+  severity: 'medium' | 'high' | 'critical'
+  detail: string
+  suggestion: string
+}
+
+export interface JobFormData {
+  employer_name: string
+  job_type: JobType
+  role_title?: string
+  location?: string
+  is_on_campus: boolean
+  is_remote: boolean
+  pay_type: PayType
+  pay_rate?: number
+  contracted_hours_per_week?: number
+  max_comfortable_hours: number
+  start_date?: string
+  block_exam_periods: boolean
+}
+
+export interface ShiftFormData {
+  job_id: string
+  shift_date: string
+  start_time: string
+  end_time: string
+  status: ShiftStatus
+  notes?: string
+}
+
+// ─── Mood & Wellness ─────────────────────────────────────────
+
+export type MoodScore = 1 | 2 | 3 | 4 | 5
+
+export interface MoodCheckinRecord {
+  id: string
+  user_id: string
+  mood_score: MoodScore
+  checked_in_at: string
+  date: string
+}

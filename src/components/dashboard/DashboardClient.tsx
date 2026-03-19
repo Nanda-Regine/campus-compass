@@ -4,13 +4,15 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import TopBar from '@/components/layout/TopBar'
+import DashboardGreeting from '@/components/dashboard/DashboardGreeting'
+import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
   type Profile, type Budget, type Task, type Exam,
   type Module, type TimetableEntry, type Expense,
   type Subscription, MODULE_COLOURS, DAYS_OF_WEEK,
 } from '@/types'
 import {
-  fmt, getGreeting, getDaysUntil, getTaskUrgency,
+  fmt, getDaysUntil, getTaskUrgency,
   calcTotalBudget, getLoadSheddingStatus, cn,
 } from '@/lib/utils'
 
@@ -144,6 +146,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 
+        {/* ─── Mood check-in ─── */}
+        <MoodCheckin userId={p.id} />
+
         {/* ─── Nova Proactive Insights ─── */}
         {novaInsights.map(insight => (
           <div
@@ -177,33 +182,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)' }}
           />
           <div className="relative">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="font-mono text-[0.6rem] text-teal-300/70 uppercase tracking-widest">{getGreeting()}</p>
-                <h2 className="font-display font-black text-xl text-white leading-tight mt-0.5">
-                  {p?.name?.split(' ')[0] ?? 'Student'}{' '}
-                  <span className="text-2xl">{p?.emoji ?? '🎓'}</span>
-                </h2>
-                <p className="font-mono text-[0.6rem] text-teal-200/60 mt-0.5">
-                  {p?.university?.split('(')[0]?.trim()} · {p?.year_of_study}
-                </p>
-              </div>
-              {isPremium && (
-                <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-mono text-[0.58rem] uppercase tracking-wide flex-shrink-0">
-                  ⭐ Premium
-                </span>
-              )}
+            <div className="mb-3">
+              <DashboardGreeting
+                profile={p}
+                budget={b}
+                nextExam={nextExam}
+                overdueTasks={overdueTasks}
+                isPremium={isPremium}
+              />
             </div>
 
-            {/* Overdue alert */}
-            {overdueTasks.length > 0 && (
-              <div className="bg-red-500/20 border border-red-400/30 rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
-                <span className="text-red-300 text-sm">⚠️</span>
-                <span className="font-mono text-[0.6rem] text-red-300">
-                  {overdueTasks.length} overdue task{overdueTasks.length > 1 ? 's' : ''} — check your planner
-                </span>
-              </div>
-            )}
 
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-2 mt-4">
@@ -351,16 +339,20 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         {/* ─── Quick action grid ─── */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { href: '/study',  icon: '📚', label: 'Study Planner', colour: 'teal',   sub: `${allMods.length} modules` },
-            { href: '/budget', icon: '💰', label: 'Budget',         colour: 'coral',  sub: `${recentExp.length} expenses` },
-            { href: '/meals',  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'AI recipes + planner' },
-            { href: '/nova',   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
+            { href: '/study',                  icon: '📚', label: 'Study Planner', colour: 'teal',   sub: `${allMods.length} modules` },
+            { href: '/budget',                 icon: '💰', label: 'Budget',         colour: 'coral',  sub: `${recentExp.length} expenses` },
+            { href: '/meals',                  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'AI recipes + planner' },
+            { href: '/nova',                   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
+            { href: '/dashboard/work',         icon: '💼', label: 'Work',            colour: 'blue',   sub: 'Shifts & earnings' },
+            { href: '/dashboard/campus-life',  icon: '🏛️', label: 'Campus Life',    colour: 'green',  sub: '10 guides by Nova' },
           ].map(item => {
             const colorMap = {
               teal:   { border: 'hover:border-teal-600/40',   icon: 'bg-teal-600/15',   text: 'text-teal-400' },
               coral:  { border: 'hover:border-orange-500/40', icon: 'bg-orange-500/15', text: 'text-orange-400' },
               amber:  { border: 'hover:border-amber-500/40',  icon: 'bg-amber-500/15',  text: 'text-amber-400' },
               purple: { border: 'hover:border-purple-500/40', icon: 'bg-purple-500/15', text: 'text-purple-400' },
+              blue:   { border: 'hover:border-blue-500/40',   icon: 'bg-blue-500/15',   text: 'text-blue-400' },
+              green:  { border: 'hover:border-green-500/40',  icon: 'bg-green-500/15',  text: 'text-green-400' },
             }
             const c = colorMap[item.colour as keyof typeof colorMap]
             return (
