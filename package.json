@@ -16,12 +16,13 @@
     "@supabase/supabase-js": "^2.44.4",
     "@vercel/analytics": "^1.3.1",
     "@vercel/speed-insights": "^1.0.12",
+    "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "csv-stringify": "^6.5.1",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.3.8",
     "lucide-react": "^0.414.0",
-    "next": "14.2.5",
+    "next": "^14.2.35",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -33,6 +34,7 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/d3-color": "^3.1.3",
     "@types/d3-path": "^3.1.1",
     "@types/d3-scale": "^4.0.9",
