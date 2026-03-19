@@ -3,13 +3,12 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'VarsityOS Privacy Policy — how we collect, use, and protect your data.',
+  description: 'Campus Compass Privacy Policy — POPIA compliant. How we collect, use, and protect your personal information.',
 }
 
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[#080f0e] text-white/80">
-      {/* Header */}
       <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
@@ -20,288 +19,169 @@ export default function PrivacyPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
-          <p className="font-mono text-xs text-white/30">Last updated: 10 March 2026 · POPIA compliant</p>
+          <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white/65">
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">1. Introduction</h2>
-            <p>
-              <strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) operates VarsityOS. We are committed
-              to protecting your personal information in accordance with the{' '}
-              <strong className="text-white/85">Protection of Personal Information Act 4 of 2013 (POPIA)</strong> and other
-              applicable South African privacy laws.
-            </p>
-            <p className="mt-3">
-              This Policy explains what personal information we collect, why we collect it, how we use it, who we share it
-              with, and what rights you have over it.
-            </p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">1. Who We Are (Responsible Party)</h2>
+            <p>Campus Compass is operated by <strong className="text-white">Mirembe Muse Pty Ltd</strong>, a company registered in South Africa. We are the &quot;responsible party&quot; as defined in the Protection of Personal Information Act 4 of 2013 (&quot;POPIA&quot;).</p>
+            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
+            <p className="mt-2 text-white/40 text-xs">We are required by POPIA to process your personal information lawfully, responsibly, and transparently.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">2. Information We Collect</h2>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.1 Account Information</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Full name and email address (required to create an account)</li>
-                  <li>University name and year of study (collected during setup)</li>
-                  <li>Profile photo (optional, via Google OAuth)</li>
-                </ul>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.2 Study Planner Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Tasks, assignments, and deadlines you create</li>
-                  <li>Timetable entries and module names</li>
-                  <li>Exam dates, venues, and preparation notes</li>
-                </ul>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.3 Financial Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Monthly budget amounts and NSFAS allowance figures you enter</li>
-                  <li>Expense records (category, amount, description, date)</li>
-                  <li>NSFAS allowance breakdown (living, accommodation, books)</li>
-                </ul>
-                <p className="mt-2 text-white/45 text-xs">
-                  We do not have access to your actual bank accounts or NSFAS portal — all figures are manually entered by you.
-                </p>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.4 Meal Plan Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>7-day meal plans you create</li>
-                  <li>Grocery lists and budget preferences</li>
-                  <li>Dietary preferences you disclose to the recipe generator</li>
-                </ul>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.5 Nova AI Conversation Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Messages you send to Nova (stored in our database)</li>
-                  <li>Nova&apos;s responses</li>
-                  <li>Mood indicators you select</li>
-                </ul>
-                <p className="mt-2 text-white/45 text-xs">
-                  Nova messages are sent to Anthropic&apos;s Claude API for processing. See Section 5 for more on third-party
-                  processors. Your conversations are not used to train AI models.
-                </p>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.6 Payment Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Payment confirmation records (amount, date, plan duration)</li>
-                  <li>PayFast transaction ID</li>
-                </ul>
-                <p className="mt-2 text-white/45 text-xs">
-                  We do not store card numbers, CVVs, or banking details. These are handled entirely by PayFast.
-                </p>
-              </div>
-
-              <div>
-                <p className="text-white/85 font-bold mb-2">2.7 Technical Data</p>
-                <ul className="list-disc ml-5 space-y-1.5">
-                  <li>Device type and browser (via Vercel Analytics — aggregated, anonymous)</li>
-                  <li>Page views and feature usage (no individual profiling)</li>
-                  <li>Error logs (no personal data in logs)</li>
-                </ul>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">3. Why We Collect This Information</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left py-2 pr-4 text-white/50 font-normal">Purpose</th>
-                    <th className="text-left py-2 text-white/50 font-normal">Legal basis (POPIA)</th>
-                  </tr>
-                </thead>
-                <tbody className="space-y-1">
-                  {[
-                    ['Provide the VarsityOS service', 'Performance of a contract'],
-                    ['Process Premium payments', 'Performance of a contract'],
-                    ['Generate personalised AI insights', 'Consent (you trigger these)'],
-                    ['Detect crisis signals in Nova chats', 'Legitimate interest (user safety)'],
-                    ['Improve app performance', 'Legitimate interest'],
-                    ['Comply with legal obligations', 'Legal obligation'],
-                    ['Send account-related emails', 'Performance of a contract'],
-                  ].map(([purpose, basis]) => (
-                    <tr key={purpose} className="border-b border-white/5">
-                      <td className="py-2 pr-4 text-white/65">{purpose}</td>
-                      <td className="py-2 text-teal-400/70">{basis}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">4. How We Store Your Data</h2>
-            <p>
-              Your data is stored in <strong className="text-white/85">Supabase</strong> (hosted on AWS infrastructure).
-              All tables have Row Level Security (RLS) enabled — you can only access your own data and no other user&apos;s data.
-            </p>
-            <p className="mt-3">
-              Data is encrypted in transit (HTTPS/TLS) and at rest. We retain your data for as long as your account is
-              active. If you delete your account, we will delete or anonymise your personal data within 30 days, except
-              where we are required to retain it for legal or tax purposes (e.g., payment records for 5 years).
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">5. Third-Party Services</h2>
-            <p className="mb-3">We use the following sub-processors to provide the service:</p>
-
-            <div className="space-y-3">
-              {[
-                {
-                  name: 'Supabase',
-                  purpose: 'Database, authentication, file storage',
-                  location: 'AWS (South Africa region where available)',
-                  privacy: 'supabase.com/privacy',
-                },
-                {
-                  name: 'Anthropic',
-                  purpose: 'Nova AI conversations and all AI-generated content',
-                  location: 'United States',
-                  privacy: 'anthropic.com/privacy',
-                },
-                {
-                  name: 'Vercel',
-                  purpose: 'App hosting, edge functions, analytics',
-                  location: 'Global CDN',
-                  privacy: 'vercel.com/legal/privacy-policy',
-                },
-                {
-                  name: 'PayFast',
-                  purpose: 'Payment processing',
-                  location: 'South Africa',
-                  privacy: 'payfast.io/privacy-policy',
-                },
-                {
-                  name: 'Google',
-                  purpose: 'Optional Google OAuth sign-in',
-                  location: 'Global',
-                  privacy: 'policies.google.com/privacy',
-                },
-              ].map(s => (
-                <div key={s.name} className="bg-white/3 rounded-xl p-3 border border-white/6">
-                  <p className="text-white/85 font-bold text-xs mb-1">{s.name}</p>
-                  <p className="text-xs text-white/50">{s.purpose}</p>
-                  <p className="text-xs text-white/35 mt-0.5">Location: {s.location}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-4 text-white/45 text-xs">
-              When data is transferred outside South Africa (e.g., to Anthropic in the US), we ensure appropriate
-              safeguards are in place consistent with POPIA Section 72 requirements.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">6. Cookies &amp; Local Storage</h2>
-            <p>VarsityOS uses:</p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li><strong className="text-white/85">Session cookies</strong> — set by Supabase Auth to keep you logged in (strictly necessary)</li>
-              <li><strong className="text-white/85">Service Worker cache</strong> — stores app assets locally for offline access (no personal data)</li>
-              <li><strong className="text-white/85">Zustand local state</strong> — temporary UI state, cleared on logout</li>
+            <h2 className="font-display font-bold text-white text-lg mb-3">2. What Personal Information We Collect</h2>
+            <p className="mb-2">We collect only the minimum personal information necessary to provide our service (&quot;data minimisation&quot; as required by POPIA):</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li><strong className="text-white/75">Identity &amp; contact:</strong> Name, email address (required to create an account)</li>
+              <li><strong className="text-white/75">Academic profile:</strong> University, year of study, faculty, modules — used to personalise AI responses</li>
+              <li><strong className="text-white/75">Financial data:</strong> Monthly budget, expense records, NSFAS allowance amounts you enter — stored securely, never shared</li>
+              <li><strong className="text-white/75">Usage data:</strong> App interactions, AI message history, task completions — used to improve your experience</li>
+              <li><strong className="text-white/75">Device &amp; technical data:</strong> IP address (for security and fraud prevention), browser type, crash logs</li>
+              <li><strong className="text-white/75">Payment data:</strong> Payment status from PayFast (we do not store your card details — PayFast is the payment processor)</li>
             </ul>
-            <p className="mt-3">
-              We do not use advertising cookies, tracking pixels, or third-party analytics cookies.
-              Vercel Analytics is privacy-first and does not fingerprint individual users.
-            </p>
+            <p className="mt-3 text-white/40 text-xs">We do NOT collect: South African ID numbers, bank account numbers, biometric data, or information about minors under 18.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">7. Your Rights Under POPIA</h2>
-            <p>As a data subject, you have the right to:</p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li><strong className="text-white/85">Access</strong> — request a copy of the personal information we hold about you</li>
-              <li><strong className="text-white/85">Correction</strong> — request correction of inaccurate information</li>
-              <li><strong className="text-white/85">Deletion</strong> — request deletion of your account and personal data</li>
-              <li><strong className="text-white/85">Objection</strong> — object to processing based on legitimate interest</li>
-              <li><strong className="text-white/85">Restriction</strong> — request that we limit processing of your data</li>
-              <li><strong className="text-white/85">Portability</strong> — receive your data in a machine-readable format (CSV export available in Premium)</li>
+            <h2 className="font-display font-bold text-white text-lg mb-3">3. Purpose of Processing (Why We Collect Your Data)</h2>
+            <p className="mb-2">Under POPIA, we may only process personal information for a specific, explicitly defined, and lawful purpose. We collect your information for the following purposes:</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li>Providing and operating the Campus Compass platform (account management, feature access)</li>
+              <li>Personalising your AI companion (Nova) using your academic and financial context</li>
+              <li>Processing subscription payments via PayFast</li>
+              <li>Sending service-related communications (account confirmations, payment receipts)</li>
+              <li>Security and fraud prevention (rate limiting, suspicious activity detection)</li>
+              <li>Improving our services through aggregate, anonymised analytics</li>
+              <li>Complying with our legal obligations under South African law</li>
             </ul>
-            <p className="mt-3">
-              To exercise any of these rights, email us at{' '}
-              <a href="mailto:hello@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">hello@mirembemuse.co.za</a>{' '}
-              with the subject line &ldquo;POPIA Request&rdquo;. We will respond within 30 days.
-            </p>
-            <p className="mt-3">
-              If you are unsatisfied with our response, you may lodge a complaint with the{' '}
-              <strong className="text-white/85">Information Regulator of South Africa</strong> at{' '}
-              <a href="mailto:complaints.IR@justice.gov.za" className="text-teal-400 hover:text-teal-300">complaints.IR@justice.gov.za</a>.
-            </p>
+            <p className="mt-3">We will <strong className="text-white/75">not</strong> process your personal information for any purpose incompatible with those listed above without your explicit consent.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">8. Children&apos;s Privacy</h2>
-            <p>
-              VarsityOS is not directed at children under 13. We do not knowingly collect personal information from
-              children under 13. If you believe a child under 13 has provided us with personal information, contact us
-              and we will delete it promptly.
-            </p>
-            <p className="mt-3">
-              Users aged 13–17 should ensure a parent or guardian has reviewed and consented to these terms on their behalf.
-            </p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">4. Lawful Basis for Processing</h2>
+            <p className="mb-2">We process your personal information on the following lawful grounds under POPIA s11:</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li><strong className="text-white/75">Contractual necessity:</strong> Processing required to deliver the service you signed up for</li>
+              <li><strong className="text-white/75">Legitimate interest:</strong> Security monitoring, fraud prevention, service improvement (always balanced against your rights)</li>
+              <li><strong className="text-white/75">Legal obligation:</strong> Retaining payment records as required by tax law</li>
+              <li><strong className="text-white/75">Consent:</strong> For any optional features, marketing, or uses beyond the above — we will ask explicitly</li>
+            </ul>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">9. Data Breaches</h2>
-            <p>
-              In the event of a personal information breach that poses a risk to your rights, we will notify you and the
-              Information Regulator as required by POPIA Section 22, within 72 hours of becoming aware of the breach.
-            </p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">5. AI Processing (Nova) — Special Notice</h2>
+            <p className="mb-2">Campus Compass uses Anthropic&apos;s Claude AI to power Nova. When you send a message to Nova:</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li>Your message and relevant personal context (budget, tasks, exams) are sent to Anthropic&apos;s API for processing</li>
+              <li>Anthropic processes this data under their own privacy policy and data processing agreement</li>
+              <li>We have enabled <strong className="text-white/75">prompt caching</strong> — your base knowledge context is cached temporarily on Anthropic&apos;s infrastructure</li>
+              <li>We do <strong className="text-white/75">not</strong> use your conversations to train AI models</li>
+              <li>Nova conversations are stored in our database and can be deleted on request</li>
+            </ul>
+            <p className="mt-2">By using Nova, you consent to this processing. You can opt out by not using Nova features.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">10. Changes to This Policy</h2>
-            <p>
-              We may update this Privacy Policy from time to time. We will post the updated policy with a new effective
-              date. For material changes, we will notify you via email at least 14 days before the change takes effect.
-            </p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">6. Data Sharing — Who Sees Your Data</h2>
+            <p className="mb-2">We do <strong className="text-white">not sell your personal information</strong>. We share data only with:</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li><strong className="text-white/75">Supabase (Supabase Inc.):</strong> Database and authentication infrastructure — data stored in the EU (Ireland) region</li>
+              <li><strong className="text-white/75">Anthropic, PBC:</strong> AI processing for Nova responses — see Section 5</li>
+              <li><strong className="text-white/75">PayFast (DPO PayGate (Pty) Ltd):</strong> Payment processing — they are a registered payment service provider in South Africa</li>
+              <li><strong className="text-white/75">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
+              <li><strong className="text-white/75">Law enforcement:</strong> Only when required by a valid legal order under South African law</li>
+            </ul>
+            <p className="mt-3 text-white/40 text-xs">All third-party processors are bound by data processing agreements ensuring POPIA-equivalent protections.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">11. Contact &amp; Information Officer</h2>
-            <div className="mt-2 space-y-1">
-              <p><strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong></p>
-              <p>Information Officer: Nanda Regine</p>
-              <p>East London, Eastern Cape, South Africa</p>
-              <p>
-                Email:{' '}
-                <a href="mailto:hello@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">
-                  hello@mirembemuse.co.za
-                </a>
+            <h2 className="font-display font-bold text-white text-lg mb-3">7. Cross-Border Data Transfers</h2>
+            <p>Some of our service providers (Supabase, Anthropic, Vercel) process data outside South Africa. Under POPIA s72, we may transfer personal information to foreign countries only where:</p>
+            <ul className="space-y-1 list-disc list-inside text-white/55 mt-2">
+              <li>The recipient country has adequate data protection laws; or</li>
+              <li>We have a binding data processing agreement in place with adequate protections; or</li>
+              <li>You have consented to the transfer</li>
+            </ul>
+            <p className="mt-2">All our service providers maintain appropriate technical and organisational security measures.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">8. Your Rights Under POPIA</h2>
+            <p className="mb-2">You have the following rights regarding your personal information (POPIA ss23–25):</p>
+            <ul className="space-y-2 list-disc list-inside text-white/55">
+              <li><strong className="text-white/75">Right of access:</strong> Request a copy of the personal information we hold about you</li>
+              <li><strong className="text-white/75">Right to correction:</strong> Request correction of inaccurate or incomplete information</li>
+              <li><strong className="text-white/75">Right to deletion:</strong> Request deletion of your personal information (subject to legal retention obligations)</li>
+              <li><strong className="text-white/75">Right to object:</strong> Object to processing based on legitimate interest at any time</li>
+              <li><strong className="text-white/75">Right to data portability:</strong> Receive your data in a structured, machine-readable format</li>
+              <li><strong className="text-white/75">Right to withdraw consent:</strong> Where processing is based on consent, you may withdraw at any time without affecting prior processing</li>
+              <li><strong className="text-white/75">Right to complain:</strong> Lodge a complaint with the Information Regulator of South Africa</li>
+            </ul>
+            <p className="mt-3">To exercise any right, email: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a>. We will respond within 30 days as required by POPIA.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">9. Data Retention</h2>
+            <p className="mb-2">We retain personal information only as long as necessary for the purpose it was collected (POPIA s14):</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white/55">
+              <li><strong className="text-white/75">Account data:</strong> For the duration of your account + 12 months after deletion request</li>
+              <li><strong className="text-white/75">Financial/payment records:</strong> 5 years (required by South African tax law — Income Tax Act)</li>
+              <li><strong className="text-white/75">AI conversation history:</strong> For the duration of your account or until you request deletion</li>
+              <li><strong className="text-white/75">Security logs:</strong> 90 days</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">10. Security Measures</h2>
+            <p className="mb-2">We implement appropriate technical and organisational measures to protect your personal information (POPIA s19), including:</p>
+            <ul className="space-y-1 list-disc list-inside text-white/55">
+              <li>Row-Level Security (RLS) — you can only access your own data in our database</li>
+              <li>Encryption in transit (HTTPS/TLS) and at rest (AES-256)</li>
+              <li>Rate limiting on all API endpoints to prevent abuse</li>
+              <li>API keys never exposed to browsers or client-side code</li>
+              <li>Secure, httpOnly session cookies</li>
+              <li>IP whitelisting on payment webhooks</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">11. Cookies</h2>
+            <p>We use only essential cookies (authentication session management). We do not use tracking cookies, advertising cookies, or third-party analytics cookies that identify you personally. Session cookies are deleted when you log out.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">12. Children&apos;s Privacy</h2>
+            <p>Campus Compass is intended for university students aged 18 and older. We do not knowingly collect personal information from persons under 18. If you believe a minor has created an account, contact us immediately and we will delete the account.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">13. Breach Notification</h2>
+            <p>In the event of a data breach that poses a risk of harm, we will notify the Information Regulator and affected data subjects within the timeframes prescribed by POPIA and as directed by the Regulator.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">14. Changes to This Policy</h2>
+            <p>We may update this policy. Material changes will be communicated via email or prominent in-app notice at least 30 days before they take effect. Continued use after the effective date constitutes acceptance.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact &amp; Information Regulator</h2>
+            <div className="space-y-2 text-white/55">
+              <p><strong className="text-white/75">Information Officer:</strong> <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
+              <p><strong className="text-white/75">Company:</strong> Mirembe Muse Pty Ltd, South Africa</p>
+              <p className="pt-2 border-t border-white/10"><strong className="text-white/75">Information Regulator of South Africa:</strong><br />
+                Website: <a href="https://www.justice.gov.za/inforeg/" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300">www.justice.gov.za/inforeg</a><br />
+                Email: <a href="mailto:inforeg@justice.gov.za" className="text-teal-400 hover:text-teal-300">inforeg@justice.gov.za</a><br />
+                Tel: 010 023 5200
               </p>
             </div>
           </section>
 
-        </div>
-
-        <div className="mt-12 pt-6 border-t border-white/8 flex flex-wrap gap-4 justify-between items-center">
-          <Link href="/terms" className="font-mono text-xs text-teal-400/70 hover:text-teal-400 transition-colors">
-            Terms &amp; Conditions →
-          </Link>
-          <Link href="/" className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors">
-            Back to VarsityOS
-          </Link>
         </div>
       </div>
     </div>

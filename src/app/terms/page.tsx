@@ -3,13 +3,12 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
-  description: 'VarsityOS Terms and Conditions of Use',
+  description: 'Campus Compass Terms and Conditions of Use — South African law compliant.',
 }
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[#080f0e] text-white/80">
-      {/* Header */}
       <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
@@ -20,232 +19,152 @@ export default function TermsPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
-          <p className="font-mono text-xs text-white/30">Last updated: 10 March 2026 · Effective immediately</p>
+          <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white/65">
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">1. About These Terms</h2>
-            <p>
-              These Terms and Conditions (&ldquo;Terms&rdquo;) govern your use of VarsityOS, a mobile web application
-              (&ldquo;the App&rdquo;) operated by <strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong> (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), a company registered in South Africa.
-            </p>
-            <p className="mt-3">
-              By creating an account or using the App, you agree to these Terms in full. If you do not agree, please do not
-              use VarsityOS.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">2. Who Can Use VarsityOS</h2>
-            <p>You may use VarsityOS if you:</p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li>Are at least 13 years old.</li>
-              <li>Are a student or prospective student at a South African university or TVET college.</li>
-              <li>Provide accurate registration information.</li>
-              <li>Agree to use the App only for lawful purposes.</li>
+            <h2 className="font-display font-bold text-white text-lg mb-3">1. Parties and Agreement</h2>
+            <p>These Terms &amp; Conditions (&quot;Terms&quot;) constitute a binding agreement between <strong className="text-white">Mirembe Muse Pty Ltd</strong> (&quot;we&quot;, &quot;us&quot;, &quot;Campus Compass&quot;) and you (&quot;User&quot;, &quot;you&quot;), a person accessing or using the Campus Compass platform.</p>
+            <p className="mt-2">By creating an account or using the platform you confirm that you:</p>
+            <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
+              <li>Are at least 18 years old and legally capable of entering a binding agreement</li>
+              <li>Are a university student or prospective student in South Africa</li>
+              <li>Have read, understood, and agree to be bound by these Terms and our Privacy Policy</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">3. Your Account</h2>
-            <p>
-              You are responsible for maintaining the confidentiality of your account credentials. Notify us immediately at{' '}
-              <a href="mailto:hello@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">hello@mirembemuse.co.za</a>{' '}
-              if you suspect unauthorised access to your account.
-            </p>
-            <p className="mt-3">
-              We reserve the right to suspend or terminate accounts that violate these Terms or that have been inactive for
-              more than 12 months.
-            </p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">2. Description of Service</h2>
+            <p>Campus Compass is a digital student support platform providing tools including academic planning, budget tracking, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management.</p>
+            <p className="mt-2">The platform is offered on a freemium basis:</p>
+            <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
+              <li><strong className="text-white/75">Free tier:</strong> Core features with 10 Nova AI messages per month</li>
+              <li><strong className="text-white/75">Premium (R49/month):</strong> Unlimited Nova messages and additional features as described on the upgrade page</li>
+            </ul>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">4. Free vs. Premium Access</h2>
-            <p>VarsityOS offers a free tier and a Premium tier.</p>
-            <div className="mt-3 space-y-3">
-              <div>
-                <p className="text-white/85 font-bold">Free tier includes:</p>
-                <ul className="list-disc ml-5 mt-1 space-y-1">
-                  <li>Study planner (tasks, timetable, exams, modules)</li>
-                  <li>Budget tracker and expense logging</li>
-                  <li>7-day meal planner</li>
-                  <li>10 Nova AI messages per month</li>
-                </ul>
-              </div>
-              <div>
-                <p className="text-white/85 font-bold">Premium tier adds:</p>
-                <ul className="list-disc ml-5 mt-1 space-y-1">
-                  <li>Unlimited Nova AI conversations</li>
-                  <li>AI Recipe Generator</li>
-                  <li>AI Budget Coach</li>
-                  <li>AI Study Plans &amp; Exam Prep</li>
-                  <li>CSV Export Reports</li>
-                </ul>
-              </div>
+            <h2 className="font-display font-bold text-white text-lg mb-3">3. User Obligations</h2>
+            <p className="mb-2">You agree to:</p>
+            <ul className="list-disc list-inside text-white/55 space-y-1">
+              <li>Provide accurate, truthful information when creating your account and profile</li>
+              <li>Keep your login credentials confidential and notify us immediately of any unauthorised access</li>
+              <li>Use the platform only for lawful purposes consistent with South African law</li>
+              <li>Not attempt to bypass, hack, reverse-engineer, or exploit any part of the platform</li>
+              <li>Not use the AI (Nova) to generate harmful, illegal, or abusive content</li>
+              <li>Not share your account with others or create multiple accounts</li>
+              <li>Not use automated scripts, bots, or tools to interact with the platform</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">4. AI Disclaimer (Nova) — Important</h2>
+            <p className="mb-2">Nova is an <strong className="text-white">AI companion, not a licensed professional</strong>. Specifically:</p>
+            <ul className="list-disc list-inside text-white/55 space-y-1.5">
+              <li>Nova is <strong className="text-white/75">not a licensed therapist, psychologist, financial advisor, or legal advisor</strong></li>
+              <li>Nothing Nova says constitutes professional mental health advice, financial advice, or legal advice</li>
+              <li>In a mental health emergency, call SADAG (0800 21 4446) or your university counselling centre — do not rely solely on Nova</li>
+              <li>Financial information provided by Nova is for general guidance only — consult a qualified financial advisor for important decisions</li>
+              <li>AI responses may contain errors. Always verify important information from official sources</li>
+              <li>Nova uses Anthropic&apos;s Claude AI — by using Nova you accept Anthropic&apos;s terms of service</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">5. Payments and Subscriptions</h2>
+            <p className="mb-2">Premium subscriptions are processed by <strong className="text-white">PayFast (DPO PayGate (Pty) Ltd)</strong>, a registered payment service provider in South Africa.</p>
+            <ul className="list-disc list-inside text-white/55 space-y-1.5">
+              <li>All prices are in South African Rand (ZAR) and are inclusive of VAT where applicable</li>
+              <li>Subscriptions are billed monthly and renew automatically unless cancelled</li>
+              <li>You may cancel at any time; cancellation takes effect at the end of the current billing period</li>
+              <li><strong className="text-white/75">Refund policy:</strong> Refunds are available within 7 days of initial purchase if the service is materially defective. Contact support to request a refund. No refunds for partial months of use.</li>
+              <li>We reserve the right to change pricing with 30 days&apos; written notice</li>
+              <li>Your premium status will lapse if a recurring payment fails — you will be notified by email</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">6. Referral Program</h2>
+            <ul className="list-disc list-inside text-white/55 space-y-1.5">
+              <li>Referral credits are bonus Nova messages, not cash or real premium status</li>
+              <li>Credits are awarded only when a referred user successfully creates and verifies an account</li>
+              <li>Each user may only benefit from one referral credit (as a referred user)</li>
+              <li>We reserve the right to reverse referral credits if abuse or fraud is detected</li>
+              <li>Referral credits have no monetary value and cannot be transferred or redeemed for cash</li>
+              <li>We may modify or discontinue the referral program at any time with reasonable notice</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">7. Intellectual Property</h2>
+            <p>All content, design, code, and features of Campus Compass are the intellectual property of Mirembe Muse Pty Ltd, protected under South African copyright law. You may not reproduce, distribute, or create derivative works without our written consent.</p>
+            <p className="mt-2">You retain ownership of all content you create in the platform (tasks, notes, budget entries). By using the platform you grant us a limited licence to process and store this content to provide the service.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">8. Limitation of Liability</h2>
+            <p className="mb-2">To the maximum extent permitted by South African law:</p>
+            <ul className="list-disc list-inside text-white/55 space-y-1.5">
+              <li>We are not liable for any loss of data, academic failure, financial loss, or other consequential damages arising from use of the platform</li>
+              <li>The platform is provided &quot;as is&quot; without warranty of uninterrupted availability or error-free operation</li>
+              <li>Our total liability to you in any 12-month period shall not exceed the amount you paid us in subscription fees during that period</li>
+              <li>Nothing in these Terms excludes liability for gross negligence, fraud, or death/personal injury caused by our negligence, as these cannot be excluded under South African law</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">9. Service Availability</h2>
+            <p>We aim for 99% uptime but do not guarantee uninterrupted service. Scheduled maintenance will be announced in advance where possible. We are not responsible for downtime caused by third-party providers (Supabase, Vercel, Anthropic, PayFast) or events outside our reasonable control (force majeure).</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">10. Account Termination</h2>
+            <p className="mb-2">We may suspend or terminate your account immediately if you:</p>
+            <ul className="list-disc list-inside text-white/55 space-y-1">
+              <li>Breach these Terms</li>
+              <li>Engage in fraudulent activity (including payment fraud or referral abuse)</li>
+              <li>Use the platform to harm others or engage in illegal activity</li>
+              <li>Attempt to circumvent usage limits or security measures</li>
+            </ul>
+            <p className="mt-2">You may delete your own account at any time. We will process deletion requests within 30 days. Financial records required by law will be retained for 5 years.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">11. Electronic Communications Act Compliance</h2>
+            <p>This agreement is concluded electronically and is binding under the Electronic Communications and Transactions Act 25 of 2002 (ECTA). You agree that electronic communications constitute valid written notices for purposes of this agreement.</p>
+            <p className="mt-2">Our full company registration details and registered address are available on request from <a href="mailto:legal@campus-compass.app" className="text-teal-400 hover:text-teal-300">legal@campus-compass.app</a>.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">12. Consumer Protection</h2>
+            <p>Where you are a consumer as defined in the Consumer Protection Act 68 of 2008 (CPA), nothing in these Terms reduces or waives rights you have under the CPA. To lodge a CPA complaint contact the National Consumer Commission: <a href="https://www.thencc.gov.za" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300">www.thencc.gov.za</a>.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">13. Governing Law and Disputes</h2>
+            <p>These Terms are governed by the laws of South Africa. Any dispute shall be subject to the jurisdiction of the South African courts. We encourage resolution of disputes through good-faith negotiation before legal proceedings.</p>
+            <p className="mt-2">For disputes under R200,000 you may approach the Small Claims Court. For larger disputes, the High Court of South Africa has jurisdiction.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">14. Changes to Terms</h2>
+            <p>We may update these Terms. We will provide at least 30 days&apos; notice of material changes via email or prominent in-app notice. Continued use after the effective date constitutes acceptance. If you do not agree to the changes, you must stop using the platform and may request account deletion.</p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact Us</h2>
+            <div className="space-y-1 text-white/55">
+              <p>General: <a href="mailto:hello@campus-compass.app" className="text-teal-400 hover:text-teal-300">hello@campus-compass.app</a></p>
+              <p>Privacy: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
+              <p>Legal: <a href="mailto:legal@campus-compass.app" className="text-teal-400 hover:text-teal-300">legal@campus-compass.app</a></p>
+              <p>Support: <a href="mailto:support@campus-compass.app" className="text-teal-400 hover:text-teal-300">support@campus-compass.app</a></p>
             </div>
           </section>
 
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">5. Payments &amp; Refunds</h2>
-            <p>
-              Premium plans are <strong className="text-white/85">once-off payments</strong> — there is no automatic
-              renewal or subscription billing. You choose a plan duration (1 month or 3 months) and pay once. Your Premium
-              access expires at the end of that period.
-            </p>
-            <p className="mt-3">
-              All payments are processed securely by <strong className="text-white/85">PayFast</strong>, a South African
-              payment gateway. We do not store your card details.
-            </p>
-            <p className="mt-3">
-              <strong className="text-white/85">Refund policy:</strong> Due to the digital nature of the service and immediate
-              access to Premium features upon payment, we do not offer refunds once Premium access has been activated. If you
-              experience a technical issue that prevents you from accessing Premium features you paid for, contact us within
-              7 days at{' '}
-              <a href="mailto:hello@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">hello@mirembemuse.co.za</a>{' '}
-              and we will investigate and resolve it.
-            </p>
-            <p className="mt-3">
-              Prices are in South African Rand (ZAR) and inclusive of VAT where applicable.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">6. Nova AI Companion — Important Disclaimer</h2>
-            <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-4 mb-3">
-              <p className="text-amber-300/90 text-xs leading-relaxed">
-                <strong>Nova is an AI assistant, not a mental health professional.</strong> Conversations with Nova are
-                for informational and emotional support purposes only. Nova is not a substitute for professional
-                psychological, psychiatric, or medical advice, diagnosis, or treatment.
-              </p>
-            </div>
-            <p>
-              If you are in crisis or need urgent support, please contact:
-            </p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li><strong className="text-white/85">SADAG (South African Depression and Anxiety Group):</strong> 0800 456 789 (24-hour)</li>
-              <li><strong className="text-white/85">Lifeline SA:</strong> 0861 322 322</li>
-              <li><strong className="text-white/85">Emergency services:</strong> 10111 (Police) / 10177 (Ambulance)</li>
-            </ul>
-            <p className="mt-3">
-              Nova automatically surfaces crisis helpline information when distress signals are detected in your messages.
-              This is a safety feature, not a diagnosis.
-            </p>
-            <p className="mt-3">
-              Nova conversations are processed via the <strong className="text-white/85">Anthropic Claude API</strong>.
-              By using Nova, you consent to your messages being sent to Anthropic for processing in accordance with
-              Anthropic&apos;s usage policies. We do not use your Nova conversations to train AI models.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">7. Acceptable Use</h2>
-            <p>You agree not to:</p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li>Use the App to harass, threaten, or harm others.</li>
-              <li>Attempt to circumvent Premium access restrictions.</li>
-              <li>Reverse-engineer, scrape, or exploit the App&apos;s AI features at scale.</li>
-              <li>Share your account credentials with others.</li>
-              <li>Use the App for any unlawful purpose under South African law.</li>
-              <li>Upload malicious code or attempt to disrupt the App&apos;s infrastructure.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">8. Intellectual Property</h2>
-            <p>
-              All content, design, code, and branding in VarsityOS is owned by Mirembe Muse (Pty) Ltd or its licensors.
-              You may not copy, redistribute, or commercialise any part of the App without written permission.
-            </p>
-            <p className="mt-3">
-              Content you create within the App (tasks, notes, budgets, meal plans) remains yours. You grant us a limited,
-              non-exclusive licence to store and process this content solely to provide you with the service.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">9. Service Availability</h2>
-            <p>
-              We aim for high availability but cannot guarantee uninterrupted access. The App may be unavailable during
-              maintenance windows, load shedding events affecting our infrastructure, or circumstances beyond our control.
-            </p>
-            <p className="mt-3">
-              AI-powered features depend on third-party APIs (Anthropic). Their availability affects these features. We will
-              not issue refunds due to temporary third-party API outages.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">10. Limitation of Liability</h2>
-            <p>
-              To the maximum extent permitted by South African law, Mirembe Muse (Pty) Ltd shall not be liable for:
-            </p>
-            <ul className="list-disc ml-5 mt-2 space-y-1.5">
-              <li>Loss of data due to circumstances outside our reasonable control.</li>
-              <li>Decisions made based on AI-generated content (budgets, study plans, recipe costs).</li>
-              <li>Financial loss resulting from inaccurate AI outputs.</li>
-              <li>Harm arising from reliance on Nova&apos;s responses instead of professional advice.</li>
-            </ul>
-            <p className="mt-3">
-              Our total liability to you for any claim shall not exceed the amount you paid for Premium access in the
-              preceding 3 months.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">11. Governing Law</h2>
-            <p>
-              These Terms are governed by the laws of the Republic of South Africa. Any disputes shall be subject to the
-              exclusive jurisdiction of the courts of South Africa.
-            </p>
-            <p className="mt-3">
-              The Consumer Protection Act 68 of 2008 and the Protection of Personal Information Act 4 of 2013 (POPIA)
-              apply where relevant.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">12. Changes to These Terms</h2>
-            <p>
-              We may update these Terms from time to time. We will notify you of significant changes via email or an
-              in-app notice at least 14 days before they take effect. Continued use of the App after changes constitutes
-              acceptance of the new Terms.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="font-display font-bold text-base text-white mb-3">13. Contact Us</h2>
-            <p>For any questions about these Terms:</p>
-            <div className="mt-3 space-y-1">
-              <p><strong className="text-white/85">Mirembe Muse (Pty) Ltd</strong></p>
-              <p>East London, Eastern Cape, South Africa</p>
-              <p>
-                Email:{' '}
-                <a href="mailto:hello@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">
-                  hello@mirembemuse.co.za
-                </a>
-              </p>
-              <p>
-                Website:{' '}
-                <a href="https://creativelynanda.co.za" className="text-teal-400 hover:text-teal-300" target="_blank" rel="noreferrer">
-                  creativelynanda.co.za
-                </a>
-              </p>
-            </div>
-          </section>
-
-        </div>
-
-        <div className="mt-12 pt-6 border-t border-white/8 flex flex-wrap gap-4 justify-between items-center">
-          <Link href="/privacy" className="font-mono text-xs text-teal-400/70 hover:text-teal-400 transition-colors">
-            Privacy Policy →
-          </Link>
-          <Link href="/" className="font-mono text-xs text-white/30 hover:text-white/60 transition-colors">
-            Back to VarsityOS
-          </Link>
         </div>
       </div>
     </div>
