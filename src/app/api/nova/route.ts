@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server'
 import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
+import { detectPrebuilt, detectTopicResources, formatResourceLinks } from '@/lib/nova-resources'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -94,7 +96,6 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     supabase.from('nova_insights').select('*').eq('user_id', userId).eq('dismissed', false).order('created_at', { ascending: false }).limit(3),
   ])
 
-  // Budget calculations
   const totalBudget = (budget?.monthly_budget || 0) +
     (budget?.nsfas_enabled ? (budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books) : 0)
   const totalSpent = expenses?.reduce((s, e) => s + e.amount, 0) || 0
@@ -104,7 +105,6 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   const dailyBudget = remaining / (daysInMonth - dayOfMonth + 1)
   const spentPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
-  // Task urgency breakdown
   const urgentTasks = tasks?.filter(t => {
     if (!t.due_date) return false
     const days = Math.ceil((new Date(t.due_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
@@ -121,7 +121,6 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     ? Math.ceil((new Date(nextExam.exam_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null
 
-  // Stress signals for Nova to pick up on
   const stressSignals = []
   if (overdueTasks.length >= 2) stressSignals.push(`${overdueTasks.length} overdue tasks`)
   if (spentPct > 85) stressSignals.push(`budget at ${spentPct}%`)
@@ -229,17 +228,52 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const body = await request.json()
-    const { message, history = [], mood } = body
+    // ─── Rate limiting: max 15 Nova messages per minute per user ──────────
+    const rateCheck = checkRateLimit(user.id, 'nova', 15, 60_000)
+    if (!rateCheck.allowed) {
+      return NextResponse.json({
+        error: 'Too many messages — please wait a moment before sending again.',
+        retryAfterMs: rateCheck.resetIn,
+      }, { status: 429 })
+    }
 
-    if (!message?.trim()) {
+    const body = await request.json()
+    const rawMessage: unknown = body?.message
+    const message = typeof rawMessage === 'string' ? rawMessage.slice(0, 2000).trim() : ''
+    const history: { role: string; content: string }[] = Array.isArray(body?.history) ? body.history : []
+    const mood: string | undefined = body?.mood
+
+    if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
-    // Crisis detection — immediate safety check
+    // ─── Crisis detection — always check first ─────────────────────────────
     const isCrisis = detectCrisis(message)
 
-    // Build student context
+    // ─── Pre-built response check — zero API cost ──────────────────────────
+    // For breathing exercises, crisis, sleep tips, Pomodoro, etc. — respond instantly
+    const prebuilt = detectPrebuilt(message)
+    if (prebuilt?.skipApi) {
+      // Save to DB then return — no Anthropic call
+      const supabase2 = createServerSupabaseClient()
+      await supabase2.from('nova_messages').insert([
+        { user_id: user.id, role: 'user', content: mood ? `[Mood: ${mood}] ${message}` : message },
+        { user_id: user.id, role: 'assistant', content: prebuilt.response },
+      ])
+      const monthYear = currentMonthYear()
+      await supabase2.rpc('increment_nova_usage', { p_user_id: user.id, p_month_year: monthYear })
+
+      return NextResponse.json({
+        message: prebuilt.response,
+        isCrisis,
+        resources: prebuilt.resources || [],
+        prebuilt: true,
+        messagesUsed: 1,
+        isPremium: false,
+      })
+    }
+
+    // ─── Build student context ─────────────────────────────────────────────
     const ctx = await buildStudentContext(user.id, supabase)
 
     // Check free tier limit
@@ -251,32 +285,32 @@ export async function POST(request: NextRequest) {
       }, { status: 402 })
     }
 
-    // Topic detection + usage guidance (premium soft cap)
+    // Topic detection + usage guidance
     const heavyTopic = detectHeavyTopic(history)
     const usageGuidance = getUsageGuidance(ctx.messageCount, ctx.isPremium, heavyTopic)
 
-    // Prepare conversation history for Claude
+    // Topic-based resource links (appended to response, not API call)
+    const topicResources = detectTopicResources(message)
+
     const messages: Anthropic.MessageParam[] = [
-      // Inject recent history (last 20 messages)
       ...history.slice(-20).map((msg: { role: string; content: string }) => ({
         role: msg.role as 'user' | 'assistant',
         content: msg.content,
       })),
-      // Current message, with mood prefix if provided
       {
         role: 'user' as const,
         content: mood ? `[Mood: ${mood}] ${message}` : message,
       },
     ]
 
-    // ─── Prompt Caching: 2-block system ───────────────────────────────
-    // Block 1: Large static knowledge base — CACHED (ephemeral, ~90% savings)
-    // Block 2: Dynamic student context + usage guidance — NOT cached
+    // ─── Prompt Caching: 2-block system ───────────────────────────────────
+    // Block 1: Large static knowledge base — CACHED (~90% cost savings)
+    // Block 2: Dynamic student context — NOT cached (fresh each call)
     const systemBlocks: Anthropic.TextBlockParam[] = [
       {
         type: 'text',
         text: NOVA_KNOWLEDGE_BASE,
-        // @ts-expect-error — cache_control is supported by claude-sonnet-4-6 but not yet in all SDK type defs
+        // @ts-expect-error — cache_control is supported but not yet in all SDK type defs
         cache_control: { type: 'ephemeral' },
       },
       {
@@ -285,7 +319,6 @@ export async function POST(request: NextRequest) {
       },
     ]
 
-    // Call Claude with cached system prompt
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1024,
@@ -293,22 +326,26 @@ export async function POST(request: NextRequest) {
       messages,
     })
 
-    const assistantMessage = response.content
+    let assistantMessage = response.content
       .filter(block => block.type === 'text')
       .map(block => block.text)
       .join('')
 
-    // Save both messages to DB
+    // Append curated resource links if topic matched and resources exist
+    if (topicResources.length > 0) {
+      assistantMessage += formatResourceLinks(topicResources)
+    }
+
+    // Save messages to DB
     await supabase.from('nova_messages').insert([
       { user_id: user.id, role: 'user', content: mood ? `[Mood: ${mood}] ${message}` : message },
       { user_id: user.id, role: 'assistant', content: assistantMessage },
     ])
 
-    // Increment usage counter
     const monthYear = currentMonthYear()
     await supabase.rpc('increment_nova_usage', { p_user_id: user.id, p_month_year: monthYear })
 
-    // Check if we should generate a proactive insight
+    // Generate proactive insight if stress signals detected
     if (ctx.stressSignals.length >= 2 && !isCrisis) {
       generateProactiveInsight(user.id, ctx, supabase).catch(console.error)
     }
@@ -317,10 +354,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: assistantMessage,
       isCrisis,
+      resources: topicResources,
       messagesUsed,
       messagesLimit: ctx.isPremium ? NOVA_PREMIUM_SOFT_CAP : NOVA_FREE_LIMIT,
       isPremium: ctx.isPremium,
-      // Let the UI know when approaching/past soft cap
       nearSoftCap: ctx.isPremium && messagesUsed >= 130,
       pastSoftCap: ctx.isPremium && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
     })
@@ -340,33 +377,48 @@ async function generateProactiveInsight(
   const { stressSignals, profile } = ctx
   const name = profile?.name?.split(' ')[0] || 'hey'
 
-  const prompt = `A student named ${name} has these stress signals: ${stressSignals.join(', ')}.
-  Write a single warm, non-alarmist 1-sentence check-in message from Nova (their AI companion).
-  Make it feel like it's from a caring friend, not a system alert. Max 20 words. No emojis.`
+  // Use pre-built templates for common stress combos to save API credits
+  const templates: Record<string, string> = {
+    exam: `${name}, your exam is coming up fast — even 25 minutes of focused revision today will make a difference.`,
+    budget: `Hey ${name}, your budget is getting tight. Want me to help you find a few places to cut back this week?`,
+    overdue: `${name}, you have some overdue tasks building up. Let's tackle the smallest one first — that's often all it takes.`,
+    default: `${name}, things look a little full on your plate right now. You've got this — one step at a time.`,
+  }
+
+  const hasExam = stressSignals.some(s => s.includes('exam'))
+  const hasBudget = stressSignals.some(s => s.includes('budget'))
+  const hasOverdue = stressSignals.some(s => s.includes('overdue'))
+
+  const insightText = hasExam ? templates.exam
+    : hasBudget ? templates.budget
+    : hasOverdue ? templates.overdue
+    : templates.default
+
+  const insightType = hasExam ? 'study_nudge'
+    : hasBudget ? 'budget_warning'
+    : 'stress_alert'
 
   try {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 100,
-      messages: [{ role: 'user', content: prompt }],
-    })
+    // Check we haven't already sent a similar insight today
+    const today = new Date().toISOString().split('T')[0]
+    const { data: existing } = await supabase
+      .from('nova_insights')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('insight_type', insightType)
+      .gte('created_at', today)
+      .limit(1)
+      .single()
 
-    const insight = response.content[0].type === 'text' ? response.content[0].text : null
-    if (!insight) return
-
-    const insightType = stressSignals.some(s => s.includes('exam'))
-      ? 'study_nudge'
-      : stressSignals.some(s => s.includes('budget'))
-      ? 'budget_warning'
-      : 'stress_alert'
+    if (existing) return // Already sent one today for this type
 
     await supabase.from('nova_insights').insert({
       user_id: userId,
       insight_type: insightType,
-      content: insight,
+      content: insightText,
     })
-  } catch (err) {
-    console.error('Insight generation error:', err)
+  } catch {
+    // Ignore — proactive insight is best-effort
   }
 }
 

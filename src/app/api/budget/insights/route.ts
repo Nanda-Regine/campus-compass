@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { currentMonthRange } from '@/lib/utils'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -11,6 +12,12 @@ export async function GET(_request: NextRequest) {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Rate limit: max 5 budget analyses per minute
+    const rateCheck = checkRateLimit(user.id, 'budget-insights', 5, 60_000)
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
+    }
 
     const { start, end } = currentMonthRange()
     const now = new Date()
@@ -38,7 +45,6 @@ export async function GET(_request: NextRequest) {
     const remaining = totalBudget - totalSpent
     const spentPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
-    // Category breakdown
     const categoryTotals: Record<string, number> = {}
     expenses.forEach(e => {
       categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount
@@ -118,8 +124,15 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const rateCheck = checkRateLimit(user.id, 'nsfas-appeal', 3, 60_000)
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
+    }
+
     const body = await request.json()
-    const { situation, appealType } = body
+    const rawSituation: unknown = body?.situation
+    const situation = typeof rawSituation === 'string' ? rawSituation.slice(0, 1000) : ''
+    const appealType: string = body?.appealType || 'General appeal'
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -137,7 +150,7 @@ STUDENT INFO:
 - University: ${profile?.university || '[University]'}
 - Year: ${profile?.year_of_study || '[Year]'}
 - Faculty: ${profile?.faculty || '[Faculty]'}
-- Appeal type: ${appealType || 'General appeal'}
+- Appeal type: ${appealType}
 - Situation: ${situation}
 
 Write a professional, empathetic appeal letter that:
