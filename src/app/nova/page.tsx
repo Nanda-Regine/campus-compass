@@ -3,9 +3,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import TopBar from '@/components/layout/TopBar'
+import NovaCapabilitiesMenu from '@/components/nova/NovaCapabilitiesMenu'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+
+interface Resource {
+  title: string
+  url: string
+  type: 'video' | 'article' | 'tool' | 'helpline' | 'website'
+  description?: string
+}
 
 interface Message {
   id: string
@@ -13,6 +21,7 @@ interface Message {
   content: string
   timestamp: Date
   isCrisis?: boolean
+  resources?: Resource[]
 }
 
 const MOODS = [
@@ -25,20 +34,19 @@ const MOODS = [
   { label: 'Struggling', emoji: '💔', colour: 'red' },
 ]
 
-const QUICK_PROMPTS = [
-  { label: '📚 Study help', message: "I need help planning my studies" },
-  { label: '💸 Money stress', message: "I'm stressed about my finances" },
-  { label: '😔 Feeling lonely', message: "I've been feeling really isolated lately" },
-  { label: '🎯 Stay motivated', message: "I'm struggling to stay motivated" },
-  { label: '🧘 Breathe', message: "Can we do a quick breathing exercise?" },
-  { label: '📊 How am I doing?', message: "Give me a check-in on how my semester is going" },
-]
-
 const CRISIS_NUMBERS = [
   { name: 'SADAG', number: '0800 21 4446', type: 'Toll-free' },
   { name: 'Lifeline SA', number: '0800 567 567', type: 'Toll-free' },
   { name: 'SMS Support', number: '31393', type: 'SMS' },
 ]
+
+const RESOURCE_ICONS: Record<string, string> = {
+  video: '▶',
+  article: '📄',
+  tool: '🛠',
+  helpline: '🆘',
+  website: '🔗',
+}
 
 export default function NovaPage() {
   const router = useRouter()
@@ -53,6 +61,7 @@ export default function NovaPage() {
   const [showMoods, setShowMoods] = useState(false)
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
+  const [showCapabilities, setShowCapabilities] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -64,7 +73,6 @@ export default function NovaPage() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Load chat history
   useEffect(() => {
     const loadHistory = async () => {
       try {
@@ -109,6 +117,7 @@ export default function NovaPage() {
     setInput('')
     setSelectedMood(null)
     setShowWelcome(false)
+    setShowCapabilities(false)
     setLoading(true)
 
     try {
@@ -130,6 +139,12 @@ export default function NovaPage() {
       const data = await res.json()
 
       if (!res.ok) {
+        if (res.status === 429) {
+          toast.error('Slow down — give Nova a moment to breathe')
+          setMessages(prev => prev.filter(m => m.id !== userMessage.id))
+          setInput(text)
+          return
+        }
         if (data.error === 'free_limit_reached') {
           toast.error("You've reached your free message limit")
           router.push('/upgrade')
@@ -144,14 +159,13 @@ export default function NovaPage() {
         content: data.message,
         timestamp: new Date(),
         isCrisis: data.isCrisis,
+        resources: data.resources || [],
       }
 
       setMessages(prev => [...prev, assistantMessage])
       setMessageCount(data.messagesUsed || messageCount + 1)
 
-      if (data.isCrisis) {
-        setShowCrisisPanel(true)
-      }
+      if (data.isCrisis) setShowCrisisPanel(true)
     } catch (err) {
       console.error(err)
       toast.error('Nova had a moment — please try again')
@@ -178,6 +192,20 @@ export default function NovaPage() {
         title="Nova"
         action={
           <div className="flex items-center gap-2">
+            {/* Capabilities menu button */}
+            <button
+              onClick={() => setShowCapabilities(!showCapabilities)}
+              className={cn(
+                'font-mono text-[0.58rem] px-2.5 py-1 rounded-lg border transition-all',
+                showCapabilities
+                  ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
+                  : 'bg-white/5 border-white/10 text-white/40 hover:text-white/70 hover:bg-white/10'
+              )}
+              title="What can Nova do?"
+            >
+              ✦ Menu
+            </button>
+
             {!isPremium && (
               <div className="flex items-center gap-1.5">
                 <div className="h-1.5 w-16 bg-white/10 rounded-full overflow-hidden">
@@ -197,6 +225,14 @@ export default function NovaPage() {
           </div>
         }
       />
+
+      {/* Capabilities menu — slides in below TopBar */}
+      {showCapabilities && (
+        <NovaCapabilitiesMenu
+          onSelectPrompt={(msg) => { setInput(msg); inputRef.current?.focus() }}
+          onClose={() => setShowCapabilities(false)}
+        />
+      )}
 
       {/* Crisis banner */}
       {showCrisisPanel && (
@@ -260,20 +296,25 @@ export default function NovaPage() {
                 <p className="font-mono text-[0.7rem] text-white/40 max-w-xs leading-relaxed mb-1">
                   Your AI companion for varsity life. I already know your semester — talk to me about anything.
                 </p>
-                <p className="font-mono text-[0.6rem] text-white/20 max-w-xs">
-                  Studies · Budget · Mental health · Meal ideas
+                <p className="font-mono text-[0.6rem] text-white/20 max-w-xs mb-4">
+                  Studies · Budget · Mental health · Meal ideas · Group work
                 </p>
+                <button
+                  onClick={() => setShowCapabilities(true)}
+                  className="font-mono text-[0.65rem] bg-teal-600/15 border border-teal-600/25 text-teal-400 px-4 py-2 rounded-xl hover:bg-teal-600/25 transition-all"
+                >
+                  ✦ See what I can do
+                </button>
               </div>
             )}
 
-            {messages.map((msg, i) => (
+            {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={cn(
                   'flex gap-3 animate-fade-up',
                   msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 )}
-                style={{ animationDelay: `${i === messages.length - 1 ? 0 : 0}s` }}
               >
                 {msg.role === 'assistant' && (
                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-900/60 to-teal-900/60 border border-purple-500/20 flex items-center justify-center text-base flex-shrink-0 mt-0.5">
@@ -281,31 +322,57 @@ export default function NovaPage() {
                   </div>
                 )}
 
-                <div
-                  className={cn(
-                    'max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-relaxed',
-                    msg.role === 'user'
-                      ? 'bg-teal-600/20 border border-teal-600/30 text-white rounded-tr-sm'
-                      : msg.isCrisis
-                      ? 'bg-red-500/10 border border-red-500/20 text-white rounded-tl-sm'
-                      : 'bg-[#111a18] border border-white/7 text-white/90 rounded-tl-sm'
-                  )}
-                >
-                  {/* Strip mood prefix for display */}
-                  <p className="whitespace-pre-wrap">
-                    {msg.content.replace(/^\[Mood: .+?\] /, '')}
-                  </p>
-                  <div className={cn(
-                    'font-mono text-[0.52rem] mt-1.5',
-                    msg.role === 'user' ? 'text-teal-400/50 text-right' : 'text-white/25'
-                  )}>
-                    {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
+                <div className="max-w-[82%] space-y-1.5">
+                  <div
+                    className={cn(
+                      'rounded-2xl px-4 py-3 text-sm leading-relaxed',
+                      msg.role === 'user'
+                        ? 'bg-teal-600/20 border border-teal-600/30 text-white rounded-tr-sm'
+                        : msg.isCrisis
+                        ? 'bg-red-500/10 border border-red-500/20 text-white rounded-tl-sm'
+                        : 'bg-[#111a18] border border-white/7 text-white/90 rounded-tl-sm'
+                    )}
+                  >
+                    <p className="whitespace-pre-wrap">
+                      {msg.content.replace(/^\[Mood: .+?\] /, '')}
+                    </p>
+                    <div className={cn(
+                      'font-mono text-[0.52rem] mt-1.5',
+                      msg.role === 'user' ? 'text-teal-400/50 text-right' : 'text-white/25'
+                    )}>
+                      {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
+
+                  {/* Resource links — shown below assistant message */}
+                  {msg.role === 'assistant' && msg.resources && msg.resources.length > 0 && (
+                    <div className="space-y-1 pl-1">
+                      {msg.resources.map((r, i) => (
+                        <a
+                          key={i}
+                          href={r.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 bg-white/3 hover:bg-white/7 border border-white/7 hover:border-teal-600/25 rounded-xl px-3 py-2 transition-all group"
+                        >
+                          <span className="text-sm">{RESOURCE_ICONS[r.type] || '🔗'}</span>
+                          <div className="min-w-0">
+                            <p className="font-mono text-[0.6rem] text-teal-300/80 group-hover:text-teal-300 truncate transition-colors">
+                              {r.title}
+                            </p>
+                            {r.description && (
+                              <p className="font-mono text-[0.55rem] text-white/25 truncate">{r.description}</p>
+                            )}
+                          </div>
+                          <span className="text-white/20 text-xs ml-auto flex-shrink-0">↗</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
 
-            {/* Loading indicator */}
             {loading && (
               <div className="flex gap-3 animate-fade-in">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-900/60 to-teal-900/60 border border-purple-500/20 flex items-center justify-center text-base flex-shrink-0">
@@ -355,23 +422,6 @@ export default function NovaPage() {
         </div>
       )}
 
-      {/* Quick prompts — only show when empty */}
-      {messages.length === 0 && !loading && (
-        <div className="px-4 pb-2">
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {QUICK_PROMPTS.map(p => (
-              <button
-                key={p.label}
-                onClick={() => sendMessage(p.message)}
-                className="flex-shrink-0 font-mono text-[0.62rem] bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white px-3 py-1.5 rounded-full transition-all"
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Mood indicator */}
       {selectedMood && (
         <div className="px-4 pb-1 animate-fade-in">
@@ -392,7 +442,6 @@ export default function NovaPage() {
 
       {/* Input area */}
       <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[#080f0e]">
-        {/* Free limit warning */}
         {!isPremium && usageLeft <= 3 && usageLeft > 0 && (
           <div className="mb-2 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
             <span className="font-mono text-[0.6rem] text-amber-400">
@@ -440,6 +489,7 @@ export default function NovaPage() {
                 onKeyDown={handleKeyDown}
                 placeholder="Talk to Nova…"
                 rows={1}
+                maxLength={2000}
                 className="w-full bg-[#111a18] border border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
                 style={{ minHeight: '44px', maxHeight: '120px' }}
                 onInput={e => {
