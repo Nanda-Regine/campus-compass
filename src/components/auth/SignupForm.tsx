@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,6 +26,14 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const { loading, signUp, signInWithGoogle } = useAuth()
+  const searchParams = useSearchParams()
+
+  // Capture referral code from URL and persist in localStorage
+  // Applied after login via the dashboard's useEffect
+  useEffect(() => {
+    const ref = searchParams.get('ref')
+    if (ref) localStorage.setItem('pending_ref', ref.toLowerCase().trim())
+  }, [searchParams])
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),

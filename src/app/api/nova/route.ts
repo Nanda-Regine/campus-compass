@@ -155,6 +155,8 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     insights: insights || [],
     messageCount: usage?.message_count || 0,
     isPremium: profile?.is_premium || false,
+    // Referral bonus credits stack on top of the free tier limit
+    referralCredits: profile?.referral_credits || 0,
   }
 }
 
@@ -277,10 +279,12 @@ export async function POST(request: NextRequest) {
     const ctx = await buildStudentContext(user.id, supabase)
 
     // Check free tier limit
-    if (!ctx.isPremium && ctx.messageCount >= NOVA_FREE_LIMIT) {
+    // Effective limit = base free limit + any referral bonus credits
+    const effectiveFreeLimit = NOVA_FREE_LIMIT + ctx.referralCredits
+    if (!ctx.isPremium && ctx.messageCount >= effectiveFreeLimit) {
       return NextResponse.json({
         error: 'free_limit_reached',
-        message: `You've used all ${NOVA_FREE_LIMIT} free Nova messages this month. Upgrade to Premium for unlimited access.`,
+        message: `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Premium for unlimited access, or refer a friend for +50 bonus messages.`,
         upgradeUrl: '/upgrade',
       }, { status: 402 })
     }
@@ -356,7 +360,7 @@ export async function POST(request: NextRequest) {
       isCrisis,
       resources: topicResources,
       messagesUsed,
-      messagesLimit: ctx.isPremium ? NOVA_PREMIUM_SOFT_CAP : NOVA_FREE_LIMIT,
+      messagesLimit: ctx.isPremium ? NOVA_PREMIUM_SOFT_CAP : NOVA_FREE_LIMIT + ctx.referralCredits,
       isPremium: ctx.isPremium,
       nearSoftCap: ctx.isPremium && messagesUsed >= 130,
       pastSoftCap: ctx.isPremium && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,

@@ -70,6 +70,28 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Apply pending referral code on first dashboard load (captured from signup URL)
+  useEffect(() => {
+    const pendingRef = localStorage.getItem('pending_ref')
+    if (!pendingRef) return
+    localStorage.removeItem('pending_ref') // clear immediately to prevent double-apply
+    fetch('/api/referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: pendingRef }),
+    })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          // Dynamic import to keep bundle lean
+          import('react-hot-toast').then(({ default: toast }) => {
+            toast.success(`🎉 Referral applied! You got ${d.bonusMessages} bonus Nova messages.`)
+          })
+        }
+      })
+      .catch(() => { /* silent — referral is best-effort */ })
+  }, [])
+
   // Load Nova proactive insights
   useEffect(() => {
     const loadInsights = async () => {
