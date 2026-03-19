@@ -154,30 +154,42 @@ Nova is not a generic chatbot — she is purpose-built for SA students.
 
 ---
 
-## Planned: Phase 6 — Scale & Monetisation (Q2 2026)
+## Phase 6 — Scale & Security (March 2026) — IN PROGRESS
 
 ### Security hardening
-- [ ] Rate limiting on all API routes (Upstash Redis or Vercel KV)
-- [ ] PayFast IP whitelist validation on ITN webhook
-- [ ] Input length limits on all AI prompt inputs (prevent prompt injection)
-- [ ] Concurrent request mutex for nova_usage (prevent race condition)
+- [x] Rate limiting on all AI routes — sliding window, 429 with graceful UI
+- [x] PayFast IP whitelist validation on ITN webhook
+- [x] Input length caps on all AI prompt inputs (prevent prompt injection)
+- [x] Nova proactive insights use pre-built templates (no API call, no race)
+- [ ] Concurrent request mutex for nova_usage (Supabase advisory lock)
 - [ ] API abuse detection: flag unusually high message bursts
 
-### Performance
-- [ ] Supabase Edge Functions for AI calls (lower cold start latency)
-- [ ] React Query / SWR for client-side caching and stale-while-revalidate
-- [ ] Image optimisation: WebP conversion for avatars
-- [ ] Bundle analysis and code splitting audit
+### Nova Intelligence Upgrades
+- [x] Pre-built response library — breathing, Pomodoro, sleep, crisis (zero API cost)
+- [x] Topic resource map — 13 subjects mapped to free SA-specific resources
+- [x] Nova capabilities menu — 6 categories, 25+ quick-start prompts
+- [x] Resource link cards in chat — YouTube, websites, helplines rendered as tappable cards
+- [x] Crisis detection 100% local — no API call for safety responses
 
-### New Features
+### Group Assignment Manager
+- [x] Full CRUD for group assignments with member management
+- [x] Task assignment to specific members with done tracking + progress bar
+- [x] Shareable invite links (WhatsApp-friendly, 7-day expiry)
+- [x] Non-app users get join page that sends to signup preserving invite
+- [x] RLS: members only see their own groups
+
+### Remaining Phase 6
 - [ ] Push notifications (Web Push) — exam reminders, budget alerts
 - [ ] Receipt scanning — OCR photo upload → auto-expense entry
 - [ ] Pomodoro study timer with automatic study_sessions tracking
 - [ ] Student noticeboard — campus events, subletting, textbook swaps
-- [ ] Study groups — shared timetables and task accountability
 - [ ] WhatsApp bot integration (SA's primary communication channel)
 - [ ] pgvector semantic search across study notes
-- [ ] Campus map integration (lecture hall navigation)
+
+### Performance
+- [ ] Supabase Edge Functions for AI calls (lower cold start latency)
+- [ ] React Query / SWR for client-side caching and stale-while-revalidate
+- [ ] Bundle analysis and code splitting audit
 
 ### Monetisation roadmap
 - [ ] Referral program: 1 free premium month per referral
