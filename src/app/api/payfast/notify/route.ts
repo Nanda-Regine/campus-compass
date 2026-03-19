@@ -39,14 +39,16 @@ export async function POST(request: NextRequest) {
     if (!isSandbox && !PAYFAST_IPS.includes(clientIp)) {
       console.warn(`[PayFast ITN] Rejected request from unknown IP: ${clientIp}`)
       // Still return 200 to avoid PayFast retry loops, but don't process
-      await supabase.from('payment_logs').insert({
-        payfast_payment_id: data.pf_payment_id ?? null,
-        amount: parseFloat(data.amount_gross ?? '0'),
-        status: 'REJECTED_IP',
-        item_name: data.item_name ?? null,
-        raw_data: { ...data, rejected_ip: clientIp },
-        user_id: null,
-      }).catch(() => {/* non-fatal */})
+      try {
+        await supabase.from('payment_logs').insert({
+          payfast_payment_id: data.pf_payment_id ?? null,
+          amount: parseFloat(data.amount_gross ?? '0'),
+          status: 'REJECTED_IP',
+          item_name: data.item_name ?? null,
+          raw_data: { ...data, rejected_ip: clientIp },
+          user_id: null,
+        })
+      } catch { /* non-fatal */ }
       return new NextResponse('OK', { status: 200 })
     }
 

@@ -10,7 +10,7 @@ export default async function GroupsPage() {
 
   return (
     <div className="flex flex-col h-screen bg-[#080f0e]">
-      <TopBar title="Group Assignments" back="/dashboard" />
+      <TopBar title="Group Assignments" />
       <div className="flex-1 overflow-hidden">
         <GroupsClient userId={user.id} />
       </div>
