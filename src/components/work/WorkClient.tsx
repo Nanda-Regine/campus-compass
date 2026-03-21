@@ -105,7 +105,13 @@ export default function WorkClient({ userId }: Props) {
   if (loading) {
     return (
       <div className="space-y-3 p-4">
-        {[1,2,3].map(i => <div key={i} className="skeleton h-16 rounded-2xl" />)}
+        {[1, 2, 3].map(i => (
+          <div key={i} className="animate-pulse rounded-2xl bg-white/5 h-20" />
+        ))}
+        <div className="animate-pulse rounded-xl bg-white/5 h-10" />
+        {[1, 2].map(i => (
+          <div key={i} className="animate-pulse rounded-xl bg-white/5 h-14" />
+        ))}
       </div>
     )
   }
@@ -177,12 +183,17 @@ export default function WorkClient({ userId }: Props) {
         </div>
 
         {jobs.length === 0 ? (
-          <div className="bg-[#111a18] border border-white/7 rounded-2xl p-8 text-center">
-            <div className="text-3xl mb-3">💼</div>
-            <p className="font-display font-bold text-white text-sm">No jobs added yet</p>
-            <p className="font-mono text-[0.6rem] text-white/30 mt-1 mb-4">Add your part-time work to track shifts and earnings</p>
-            <Link href="/dashboard/work/add-job" className="font-mono text-[0.6rem] text-teal-400 hover:text-teal-300">
-              + Add your first job
+          <div className="text-center py-12">
+            <div className="text-4xl mb-3">💼</div>
+            <p className="font-display font-bold text-white">No jobs added yet</p>
+            <p className="font-mono text-[0.6rem] text-white/30 mt-1 mb-4">
+              Add your first part-time job to start tracking shifts and earnings.
+            </p>
+            <Link
+              href="/dashboard/work/add-job"
+              className="inline-block bg-teal-600 hover:bg-teal-500 text-white font-display font-bold text-sm px-4 py-2 rounded-xl transition-all"
+            >
+              Add a job
             </Link>
           </div>
         ) : (
@@ -225,8 +236,10 @@ export default function WorkClient({ userId }: Props) {
         </div>
 
         {shifts.length === 0 ? (
-          <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5 text-center">
-            <p className="font-mono text-[0.6rem] text-white/30">No shifts this week</p>
+          <div className="text-center py-8">
+            <div className="text-4xl mb-2">📅</div>
+            <p className="font-display font-bold text-white text-sm">No shifts this week</p>
+            <p className="font-mono text-[0.6rem] text-white/30 mt-1">Your schedule is clear — enjoy the break!</p>
           </div>
         ) : (
           <div className="space-y-2">
