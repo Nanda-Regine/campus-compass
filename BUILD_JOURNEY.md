@@ -277,5 +277,45 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 
 ---
 
-*Last updated: 2026-03-19*
+---
+
+## Phase 6 — Production Polish (March 2026)
+
+### Landing Page — Full Redesign
+- Complete overhaul of `page.tsx` with mandatory 12-section structure:
+  Navbar → Hero → Social Proof → Problem → Solution → Features → Nova
+  → How It Works → Pricing → Testimonials → FAQ → Final CTA → Footer
+- Aesthetic: warm African-modern (dark warm #0b0907, terracotta coral
+  accents, teal primary) — moving away from cold generic dark SaaS
+- Added interactive app preview mockup (budget, study, Nova chat)
+- PROBLEM section: four pain points that resonate for SA students
+- 3-tier pricing: Free (R0) / Student (R29) / Premium (R49)
+- HOW IT WORKS: 3-step visual flow
+- Student testimonials from realistic SA profiles
+- Footer: clickable creativelynanda.co.za attribution
+- OG image: 1200×630 edge-rendered via Next.js ImageResponse
+
+### Security Hardening
+- HSTS header added: `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+- Rate limiting added to `work/shift-draft` (10/min) and `insights/checkin` (5/min)
+- All 6 AI-calling routes now have rate limiting applied
+- ANTHROPIC_API_KEY confirmed server-side only via grep audit
+
+### SEO
+- `robots.ts`: disallow private routes, allow public, sitemap pointer
+- `opengraph-image.tsx`: dynamic OG image at edge (replaces static PNG dependency)
+- Both `sitemap.ts` and `robots.ts` active
+
+### Credibility Details
+- `not-found.tsx`: branded 404 page — warm aesthetic, two CTAs, quick links
+- `study/sessions` API route: powers Pomodoro study session tracking
+
+### Documentation
+- README.md: full production-quality rewrite — badges, feature table,
+  architecture tree, env vars, setup guide, security summary, roadmap
+
+### API Routes Added
+- `GET/POST /api/study/sessions` — save and retrieve Pomodoro study sessions
+
+*Last updated: 2026-03-21*
 *Built with love for South African students*
