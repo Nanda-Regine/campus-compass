@@ -153,6 +153,16 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
         </div>
       </div>
 
+      {timetable.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-3xl mb-2">🗓️</div>
+          <p className="font-display font-bold text-white text-sm">Your timetable is empty</p>
+          <p className="font-mono text-[0.6rem] text-white/30 mt-1">
+            Tap a time slot or use &apos;+ Add class&apos; to build your weekly schedule.
+          </p>
+        </div>
+      )}
+
       {modules.length === 0 && (
         <p className="text-center font-mono text-[0.6rem] text-white/30 pt-2">
           Add modules first to assign them to timetable slots.
