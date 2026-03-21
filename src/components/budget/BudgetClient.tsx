@@ -11,6 +11,7 @@ import {
 import { fmt, calcTotalBudget, cn, exportToCSV, currentMonthRange } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import ReceiptScanner from '@/components/budget/ReceiptScanner'
 
 interface BudgetClientProps {
   initialData: {
@@ -137,6 +138,20 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       toast.error('Failed to log expense')
     } finally {
       setAddingExpense(false)
+    }
+  }
+
+  const refreshExpenses = async () => {
+    const { data } = await supabase
+      .from('expenses')
+      .select('*')
+      .eq('user_id', initialData.userId)
+      .gte('date', currentMonthRange().start)
+      .lte('date', currentMonthRange().end)
+      .order('date', { ascending: false })
+    if (data) {
+      setLocalExpenses(data as Expense[])
+      setExpenses(data as Expense[])
     }
   }
 
@@ -317,7 +332,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="font-display font-bold text-white text-base">{expenses.length} expenses</div>
                 <div className="font-mono text-[0.6rem] text-white/30">{fmt.currencyShort(totalSpent)} total this month</div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <button
                   onClick={() => exportToCSV(expenses.map(e => ({ Date: e.date, Description: e.description, Category: e.category, Amount: e.amount })), 'expenses.csv')}
                   className="font-mono text-[0.6rem] bg-white/5 border border-white/10 hover:bg-white/10 text-white/50 hover:text-white px-3 py-1.5 rounded-lg transition-all"
@@ -390,6 +405,15 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                   </button>
                 </div>
               </div>
+            )}
+
+            {/* Receipt scanner */}
+            {!showAddForm && (
+              <ReceiptScanner
+                userId={initialData.userId}
+                supabase={supabase}
+                onExpenseAdded={refreshExpenses}
+              />
             )}
 
             {/* Expense list */}
