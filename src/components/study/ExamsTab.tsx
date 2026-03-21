@@ -14,6 +14,7 @@ import { cn, fmt, getDaysUntil } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
+import ExamPushBanner from '@/components/study/ExamPushBanner'
 
 const schema = z.object({
   name:       z.string().min(2, 'Name is required'),
@@ -148,15 +149,19 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
         <Button size="sm" onClick={() => setModalOpen(true)}>+ Add exam</Button>
       </div>
 
-      {exams.length === 0 ? (
+      <ExamPushBanner />
+
+      {upcoming.length === 0 && past.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-3xl mb-3">📝</div>
-          <p className="font-display font-bold text-white text-sm">No exams yet</p>
-          <p className="font-mono text-[0.6rem] text-white/30 mt-1">Add your exam dates to start the countdown.</p>
+          <div className="text-3xl mb-2">📝</div>
+          <p className="font-display font-bold text-white text-sm">No exams added yet</p>
+          <p className="font-mono text-[0.6rem] text-white/30 mt-1 max-w-xs mx-auto">
+            Add your upcoming exams to track countdowns and get AI prep guides.
+          </p>
         </div>
       ) : (
         <>
-          {upcoming.length > 0 && (
+          {upcoming.length > 0 ? (
             <div>
               <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">
                 Upcoming ({upcoming.length})
@@ -165,6 +170,10 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
                 {upcoming.map(e => <ExamCard key={e.id} exam={e} />)}
               </div>
             </div>
+          ) : (
+            <p className="font-mono text-[0.6rem] text-white/30 text-center py-3">
+              No upcoming exams — you&apos;re done! 🎉
+            </p>
           )}
           {past.length > 0 && (
             <div>
