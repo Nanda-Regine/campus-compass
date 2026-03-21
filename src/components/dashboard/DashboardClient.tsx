@@ -106,6 +106,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     loadInsights()
   }, [])
 
+  // Check exam reminders — once per session
+  useEffect(() => {
+    if (sessionStorage.getItem('push_checked')) return
+    sessionStorage.setItem('push_checked', '1')
+    fetch('/api/push/check-exams').catch(() => {})
+  }, [])
+
   const loadCheckIn = useCallback(async () => {
     setCheckInLoading(true)
     setShowCheckIn(true)

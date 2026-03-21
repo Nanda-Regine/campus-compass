@@ -121,3 +121,37 @@ self.addEventListener('fetch', e => {
       })
   );
 });
+
+// ─── Push notifications ───────────────────────────────────────
+self.addEventListener('push', e => {
+  if (!e.data) return;
+  let payload;
+  try { payload = e.data.json(); } catch { payload = { title: 'VarsityOS', body: e.data.text() }; }
+  const { title = 'VarsityOS', body = '', url = '/dashboard', icon = '/favicon.jpg', badge = '/favicon.jpg' } = payload;
+  e.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon,
+      badge,
+      data: { url },
+      tag: 'varsityos',
+      renotify: true,
+    })
+  );
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = e.notification.data?.url || '/dashboard';
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const client of list) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
+});
