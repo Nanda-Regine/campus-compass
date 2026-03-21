@@ -15,7 +15,10 @@ export async function POST(req: Request) {
   const rl = checkRateLimit(user.id, 'shift-draft', 10, 60_000)
   if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded. Try again shortly.' }, { status: 429 })
 
-  const { shift_id, request_type, reason } = await req.json()
+  const body = await req.json()
+  const shift_id = typeof body.shift_id === 'string' ? body.shift_id : ''
+  const request_type = typeof body.request_type === 'string' ? body.request_type.slice(0, 50).trim() : ''
+  const reason = typeof body.reason === 'string' ? body.reason.slice(0, 300).trim() : ''
   if (!shift_id || !request_type) {
     return NextResponse.json({ error: 'Missing shift_id or request_type' }, { status: 400 })
   }

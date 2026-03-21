@@ -18,7 +18,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { type, taskId, taskTitle, moduleName, dueDate, examName, currentGrade, targetGrade, assessmentWeights } = body
+    const { type, taskId, currentGrade, targetGrade, assessmentWeights } = body
+    // Cap all user-supplied strings to prevent prompt injection / oversized inputs
+    const taskTitle  = typeof body.taskTitle  === 'string' ? body.taskTitle.slice(0, 200).trim()  : ''
+    const moduleName = typeof body.moduleName === 'string' ? body.moduleName.slice(0, 100).trim() : ''
+    const dueDate    = typeof body.dueDate    === 'string' ? body.dueDate.slice(0, 30).trim()     : ''
+    const examName   = typeof body.examName   === 'string' ? body.examName.slice(0, 200).trim()   : ''
 
     const { data: profile } = await supabase
       .from('profiles')

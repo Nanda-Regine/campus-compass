@@ -18,7 +18,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { ingredients, maxBudget, mealType, servings = 2 } = body
+    const {
+      ingredients: rawIngredients,
+      maxBudget,
+      mealType: rawMealType,
+      servings = 2,
+    } = body
+    // Cap user-supplied strings before they reach the AI prompt
+    const ingredients = typeof rawIngredients === 'string' ? rawIngredients.slice(0, 500).trim() : ''
+    const mealType = typeof rawMealType === 'string' ? rawMealType.slice(0, 100).trim() : ''
 
     const { data: profile } = await supabase
       .from('profiles')
