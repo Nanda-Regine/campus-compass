@@ -12,6 +12,7 @@ import { type Module, type Task, type TimetableEntry, type Exam } from '@/types'
 import { cn } from '@/lib/utils'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 import StreakWidget from '@/components/gamification/StreakWidget'
+import PomodoroTimer from '@/components/study/PomodoroTimer'
 
 interface StudyClientProps {
   initialData: {
@@ -27,6 +28,7 @@ const TABS = [
   { id: 'timetable', label: 'Timetable', icon: '🗓️' },
   { id: 'exams',     label: 'Exams',     icon: '📝' },
   { id: 'modules',   label: 'Modules',   icon: '📚' },
+  { id: 'pomodoro',  label: 'Focus',     icon: '⏱️' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -110,6 +112,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'timetable' && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
         {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   userId={userId} supabase={supabase} />}
         {activeTab === 'modules'   && <ModulesTab   modules={modules}                     userId={userId} supabase={supabase} />}
+        {activeTab === 'pomodoro'  && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
       </div>
 
       <StudyAssistModal
