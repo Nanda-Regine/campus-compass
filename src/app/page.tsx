@@ -603,11 +603,30 @@ export default function LandingPage() {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: 'rgba(13,148,136,0.15)' }} aria-hidden="true">🧭</div>
               <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>VarsityOS</span>
             </div>
-            <p className="font-mono text-[0.6rem] text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              Built by{' '}
-              <a href="https://creativelynanda.co.za" target="_blank" rel="noopener noreferrer" style={{ color: '#4db6ac' }}>Nanda Regine</a>
-              {' '}· Mirembe Muse (Pty) Ltd · East London, Eastern Cape
-            </p>
+            <div className="flex flex-col items-center gap-1">
+              <p className="font-mono text-[0.6rem] text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Built by{' '}
+                <a
+                  href="https://creativelynanda.co.za"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold transition-colors"
+                  style={{ color: '#4db6ac' }}
+                >
+                  Nanda Regine
+                </a>
+                {' '}· Mirembe Muse (Pty) Ltd
+              </p>
+              <a
+                href="https://creativelynanda.co.za"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[0.58rem] transition-colors"
+                style={{ color: 'rgba(77,182,172,0.5)' }}
+              >
+                creativelynanda.co.za ↗
+              </a>
+            </div>
             <nav aria-label="Footer navigation">
               <div className="flex items-center gap-4">
                 {[{ href: '/terms', label: 'Terms' }, { href: '/privacy', label: 'Privacy' }, { href: '/auth/login', label: 'Log in' }, { href: '/auth/signup', label: 'Sign up' }].map(link => (
