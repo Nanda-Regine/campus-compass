@@ -189,6 +189,14 @@ export default function Drawer({ open, onClose }: DrawerProps) {
               <span className="text-base w-5 text-center">👤</span>
               My Profile
             </Link>
+            <Link
+              href="/referral"
+              onClick={onClose}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-display text-white/60 hover:text-white hover:bg-white/5 transition-all mb-0.5"
+            >
+              <span className="text-base w-5 text-center">🎁</span>
+              Refer &amp; Earn
+            </Link>
             {!isPremium && (
               <Link
                 href="/upgrade"
