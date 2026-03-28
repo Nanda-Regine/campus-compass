@@ -30,8 +30,8 @@ const jsonLd = {
       operatingSystem: 'Web, iOS, Android (PWA)',
       offers: [
         { '@type': 'Offer', name: 'Free Plan', price: '0', priceCurrency: 'ZAR', description: 'Full access to Study Planner, Budget Tracker, Meal Prep, and 10 Nova AI messages per month.' },
-        { '@type': 'Offer', name: 'Student Plan', price: '29', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '50 Nova messages, AI Recipe Generator, and premium support.' },
-        { '@type': 'Offer', name: 'Premium Plan', price: '49', priceCurrency: 'ZAR', billingDuration: 'P1M', description: 'Unlimited Nova AI messages, all features, CSV export, and priority support.' },
+        { '@type': 'Offer', name: 'Scholar Plan', price: '39', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '75 Nova messages per month, AI Recipe Generator, study session tracking, and priority support.' },
+        { '@type': 'Offer', name: 'Premium Plan', price: '79', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '200 Nova messages per month, all features, CSV export, and early access to new features.' },
       ],
       featureList: [
         'NSFAS allowance tracker', 'Student budget management', 'Study planner with exam countdowns',
@@ -51,7 +51,7 @@ const jsonLd = {
     {
       '@type': 'FAQPage',
       mainEntity: [
-        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Meal Prep module, and 10 Nova AI messages per month. Premium is R49/month for unlimited Nova access.' } },
+        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Meal Prep module, and 10 Nova AI messages per month. Scholar is R39/month for 75 messages and Premium is R79/month for 200 messages.' } },
         { '@type': 'Question', name: 'What is NSFAS and how does VarsityOS help me track it?', acceptedAnswer: { '@type': 'Answer', text: "NSFAS (National Student Financial Aid Scheme) is South Africa's government student funding programme. VarsityOS lets you log and track your NSFAS allowances, set spending categories, and monitor your balance in real time so you never run short before month-end." } },
         { '@type': 'Question', name: 'What is Nova and how does it help students?', acceptedAnswer: { '@type': 'Answer', text: "Nova is VarsityOS's AI companion built specifically for SA students. Nova provides CBT-based mental health support, crisis detection with SA helpline resources, imposter syndrome coaching, study strategies, NSFAS financial guidance, and load-shedding study plans." } },
         { '@type': 'Question', name: 'Which South African universities does VarsityOS support?', acceptedAnswer: { '@type': 'Answer', text: 'VarsityOS works for students at all South African universities including UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, and TUT.' } },
@@ -98,22 +98,22 @@ const PRICING = [
     highlight: false,
   },
   {
-    name: 'Student',
-    price: 'R29',
+    name: 'Scholar',
+    price: 'R39',
     sub: 'per month',
     colour: 'coral',
-    features: ['Everything in Free', '50 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
-    cta: 'Start free trial',
-    href: '/auth/signup',
+    features: ['Everything in Free', '75 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
+    cta: 'Go Scholar',
+    href: '/upgrade',
     highlight: true,
     badge: 'Best value',
   },
   {
     name: 'Premium',
-    price: 'R49',
+    price: 'R79',
     sub: 'per month',
     colour: 'teal',
-    features: ['Everything in Student', 'Unlimited Nova messages', 'CSV data export', 'Early access to new features', 'Priority support'],
+    features: ['Everything in Scholar', '200 Nova messages / month', 'CSV data export', 'Early access to new features', 'Priority support'],
     cta: 'Go Premium',
     href: '/upgrade',
     highlight: false,
@@ -215,7 +215,7 @@ export default function LandingPage() {
               { value: 'R0', label: 'to get started', sub: 'free forever' },
               { value: '5-in-1', label: 'tools, one app', sub: 'no switching' },
               { value: '15+', label: 'SA universities', sub: 'UCT to TUT' },
-              { value: 'R49', label: 'for full AI access', sub: 'unlimited Nova' },
+              { value: 'R39', label: 'to unlock Scholar', sub: '75 Nova messages' },
             ].map((stat, i) => (
               <div key={stat.label} className="flex flex-col items-center justify-center py-6 px-4 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.06)' : undefined }}>
                 <span className="font-display font-black text-2xl sm:text-3xl text-white mb-0.5">{stat.value}</span>
@@ -436,7 +436,7 @@ export default function LandingPage() {
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'rgba(13,148,136,0.2)' }} aria-hidden="true">↑</div>
                   </div>
                 </div>
-                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>10 free messages/month · More with Student & Premium</p>
+                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>10 free messages/month · 75 with Scholar · 200 with Premium</p>
               </div>
             </div>
           </div>
@@ -555,7 +555,7 @@ export default function LandingPage() {
               { q: 'What makes Nova different from ChatGPT?', a: 'Nova is built specifically for SA students. It knows NSFAS rules, understands load shedding, speaks to imposter syndrome in first-gen students, uses CBT techniques, and detects mental health crises with instant access to SA helplines. It speaks your reality.' },
               { q: 'Which universities does VarsityOS work for?', a: 'All SA universities — UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, TUT, and more.' },
               { q: 'Can I install it on my phone without an app store?', a: "Open VarsityOS in Chrome or Safari and tap 'Add to Home Screen'. It installs like a native app, works offline during load shedding, and uses almost no storage." },
-              { q: 'What does the Student plan include vs Premium?', a: 'Student (R29/month) gives you 50 Nova messages and the AI Recipe Generator. Premium (R49/month) gives you unlimited Nova messages, CSV export, and early access to new features.' },
+              { q: 'What does the Scholar plan include vs Premium?', a: 'Scholar (R39/month) gives you 75 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 200 Nova messages, CSV export, and early access to new features.' },
             ].map((faq, i) => (
               <details key={i} className="rounded-2xl group overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <summary className="font-display font-bold text-sm cursor-pointer flex items-center justify-between gap-3 px-5 py-4 text-white" style={{ listStyle: 'none' }}>
