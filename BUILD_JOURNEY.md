@@ -352,5 +352,21 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 ### CSP
 - PostHog domains added to connect-src
 
+### DB Migration
+- MIGRATION_SCHOLAR_TIER.sql created (run in Supabase SQL editor)
+- profiles: subscription_tier, referral_credits, ai_language columns
+- Backfill from is_premium flag
+
+### PayFast Webhook
+- Updated to parse m_payment_id as 'userId|tierId' (scholar or premium)
+- Sets profiles.subscription_tier on successful payment
+- Stores payfast_subscription_token for recurring billing management
+- Handles CANCELLED status
+
+### Conversion Audit Fixes
+- Nova page: error code fix (limit_reached), tier-aware upgrade copy (R39/R79)
+- PostHog env var corrected to NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN
+- GTM hardcoded to GTM-W7R77VP9 (GOOGLE_TAG had no NEXT_PUBLIC_ prefix)
+
 *Last updated: 2026-03-28*
 *Built with love for South African students*
