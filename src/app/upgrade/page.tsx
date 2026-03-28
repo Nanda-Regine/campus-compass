@@ -6,37 +6,79 @@ import Link from 'next/link'
 import { createHash } from 'crypto'
 
 export const dynamic = 'force-dynamic'
-export const metadata: Metadata = { title: 'Upgrade to Premium' }
+export const metadata: Metadata = { title: 'Upgrade — VarsityOS' }
 
-const PLANS = [
-  { months: 1, price: 49,  label: '1 Month',   badge: null,          saving: null },
-  { months: 3, price: 129, label: '3 Months',  badge: 'Best value',  saving: 'Save R18' },
+// ─── Tier definitions ─────────────────────────────────────────────────────────
+
+const TIERS = [
+  {
+    id: 'scholar',
+    name: 'Scholar',
+    price: 39,
+    highlight: true,
+    badge: 'Most popular',
+    novaMessages: 75,
+    features: [
+      { icon: '🌟', label: '75 Nova messages / month' },
+      { icon: '🍲', label: 'AI Recipe Generator' },
+      { icon: '📊', label: 'AI Budget Coach' },
+      { icon: '📚', label: 'AI Study Plans & Exam Prep' },
+      { icon: '⚡', label: 'Priority support' },
+    ],
+    itemName: 'VarsityOS Scholar — Monthly',
+    colour: '#e8956e',
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: 79,
+    highlight: false,
+    badge: null,
+    novaMessages: 200,
+    features: [
+      { icon: '🌟', label: '200 Nova messages / month' },
+      { icon: '🍲', label: 'AI Recipe Generator' },
+      { icon: '📊', label: 'AI Budget Coach' },
+      { icon: '📚', label: 'AI Study Plans & Exam Prep' },
+      { icon: '📥', label: 'CSV Export Reports' },
+      { icon: '🚀', label: 'Early access to new features' },
+    ],
+    itemName: 'VarsityOS Premium — Monthly',
+    colour: '#0d9488',
+  },
 ]
 
-const FEATURES = [
-  { icon: '🌟', label: 'Unlimited Nova messages' },
-  { icon: '🍲', label: 'AI Recipe Generator' },
-  { icon: '📊', label: 'AI Budget Coach' },
-  { icon: '📚', label: 'AI Study Plans & Exam Prep' },
-  { icon: '📥', label: 'CSV Export Reports' },
-]
+// ─── PayFast recurring subscription builder ───────────────────────────────────
 
-function buildPayFastForm(userId: string, name: string, email: string, months: number, price: number) {
-  const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://campuscompass.co.za'
+function buildPayFastForm(
+  userId: string,
+  name: string,
+  email: string,
+  tierId: string,
+  price: number,
+  itemName: string,
+) {
+  const isSandbox = process.env.NEXT_PUBLIC_PAYFAST_SANDBOX === 'true'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za'
   const passphrase = process.env.PAYFAST_PASSPHRASE || ''
 
   const data: Record<string, string> = {
-    merchant_id:   process.env.PAYFAST_MERCHANT_ID!,
-    merchant_key:  process.env.PAYFAST_MERCHANT_KEY!,
-    return_url:    `${appUrl}/dashboard?upgraded=1`,
-    cancel_url:    `${appUrl}/upgrade?cancelled=1`,
-    notify_url:    `${appUrl}/api/payfast/notify`,
-    name_first:    name.split(' ')[0] || 'Student',
-    email_address: email,
-    m_payment_id:  `${userId}|${months}`,   // parsed in webhook
-    amount:        price.toFixed(2),
-    item_name:     `VarsityOS Premium — ${months} Month${months > 1 ? 's' : ''}`,
+    merchant_id:      process.env.PAYFAST_MERCHANT_ID!,
+    merchant_key:     process.env.PAYFAST_MERCHANT_KEY!,
+    return_url:       `${appUrl}/dashboard?upgraded=1&tier=${tierId}`,
+    cancel_url:       `${appUrl}/upgrade?cancelled=1`,
+    notify_url:       `${appUrl}/api/payfast/notify`,
+    name_first:       name.split(' ')[0] || 'Student',
+    email_address:    email,
+    m_payment_id:     `${userId}|${tierId}`,
+    amount:           price.toFixed(2),
+    item_name:        itemName,
+    // Recurring subscription fields
+    subscription_type: '1',
+    billing_date:     new Date().toISOString().split('T')[0],
+    recurring_amount:  price.toFixed(2),
+    frequency:        '3',  // Monthly
+    cycles:           '0',  // Indefinite
   }
 
   const queryString = Object.entries(data)
@@ -59,6 +101,8 @@ function buildPayFastForm(userId: string, name: string, email: string, months: n
   }
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function UpgradePage() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -66,97 +110,134 @@ export default async function UpgradePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, is_premium, premium_until')
+    .select('name, is_premium, subscription_tier')
     .eq('id', user.id)
     .single()
 
-  if (profile?.is_premium) redirect('/dashboard')
+  // Already on premium — redirect to dashboard
+  const currentTier = (profile as { subscription_tier?: string | null } | null)?.subscription_tier
+    || (profile?.is_premium ? 'premium' : 'free')
+  if (currentTier === 'premium') redirect('/dashboard')
 
-  const forms = PLANS.map(plan => ({
-    ...plan,
-    payfast: buildPayFastForm(user.id, profile?.name || 'Student', user.email || '', plan.months, plan.price),
+  const tiersWithForms = TIERS.map(tier => ({
+    ...tier,
+    payfast: buildPayFastForm(
+      user.id,
+      profile?.name || 'Student',
+      user.email || '',
+      tier.id,
+      tier.price,
+      tier.itemName,
+    ),
+    isCurrent: currentTier === tier.id,
   }))
 
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
-      <TopBar title="Go Premium" />
+      <TopBar title="Upgrade" />
 
       <div className="max-w-sm mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <div className="text-4xl mb-3">⭐</div>
-          <h1 className="font-display font-black text-2xl text-white mb-1">VarsityOS Premium</h1>
-          <p className="font-mono text-xs text-white/40">One-off payment · No auto-renewal · Cancel anytime</p>
+          <h1 className="font-display font-black text-2xl text-white mb-1">Unlock more Nova</h1>
+          <p className="font-mono text-xs text-white/40">Monthly subscription · Cancel anytime</p>
         </div>
 
-        {/* Feature list */}
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4 mb-6">
-          <p className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest mb-3">What you unlock</p>
-          <ul className="space-y-2.5">
-            {FEATURES.map(f => (
-              <li key={f.label} className="flex items-center gap-2.5">
-                <span className="text-sm">{f.icon}</span>
-                <span className="font-display text-sm text-white/75">{f.label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Plan cards */}
-        <div className="space-y-3 mb-6">
-          {forms.map(plan => (
+        {/* Tier cards */}
+        <div className="space-y-4 mb-6">
+          {tiersWithForms.map(tier => (
             <div
-              key={plan.months}
-              className="relative rounded-2xl p-5"
+              key={tier.id}
+              className="relative rounded-2xl overflow-hidden"
               style={{
-                background: plan.badge
-                  ? 'linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.04))'
+                background: tier.highlight
+                  ? 'linear-gradient(135deg, rgba(232,149,110,0.1), rgba(232,149,110,0.04))'
                   : 'rgba(255,255,255,0.03)',
-                border: plan.badge ? '1px solid rgba(245,158,11,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                border: tier.highlight
+                  ? '1px solid rgba(232,149,110,0.35)'
+                  : '1px solid rgba(255,255,255,0.08)',
               }}
             >
-              {plan.badge && (
-                <div className="absolute -top-2.5 left-4 bg-amber-500 text-black font-mono text-[0.55rem] uppercase tracking-widest px-2.5 py-0.5 rounded-full">
-                  {plan.badge}
+              {tier.badge && (
+                <div
+                  className="absolute top-0 right-0 font-mono text-[0.55rem] uppercase tracking-widest px-3 py-1 rounded-bl-xl"
+                  style={{ background: tier.colour, color: tier.highlight ? '#1a0a00' : '#fff' }}
+                >
+                  {tier.badge}
                 </div>
               )}
 
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <div className="font-display font-bold text-white text-base">{plan.label}</div>
-                  {plan.saving && (
-                    <div className="font-mono text-[0.6rem] text-amber-400">{plan.saving}</div>
-                  )}
-                </div>
-                <div className="text-right">
-                  <div className="font-display font-black text-2xl text-white">R{plan.price}</div>
-                  <div className="font-mono text-[0.58rem] text-white/30">
-                    R{Math.round(plan.price / plan.months)}/month
+              <div className="p-5">
+                {/* Header */}
+                <div className="flex items-end justify-between mb-4">
+                  <div>
+                    <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-1"
+                      style={{ color: tier.colour }}>
+                      {tier.name}
+                    </p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display font-black text-3xl text-white">R{tier.price}</span>
+                      <span className="font-mono text-xs text-white/30">/month</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono text-xs text-white/50">{tier.novaMessages} Nova</p>
+                    <p className="font-mono text-[0.6rem] text-white/25">messages/mo</p>
                   </div>
                 </div>
-              </div>
 
-              <form action={plan.payfast.action} method="POST">
-                {Object.entries(plan.payfast.fields).map(([name, value]) => (
-                  <input key={name} type="hidden" name={name} value={value} />
-                ))}
-                <button
-                  type="submit"
-                  className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.98]"
-                  style={{
-                    background: plan.badge ? '#f59e0b' : 'rgba(13,148,136,0.2)',
-                    color: plan.badge ? '#000' : '#2dd4bf',
-                    border: plan.badge ? 'none' : '1px solid rgba(13,148,136,0.3)',
-                  }}
-                >
-                  Pay R{plan.price} via PayFast
-                </button>
-              </form>
+                {/* Features */}
+                <ul className="space-y-2 mb-4">
+                  {tier.features.map(f => (
+                    <li key={f.label} className="flex items-center gap-2.5">
+                      <span className="text-sm">{f.icon}</span>
+                      <span className="font-display text-xs text-white/70">{f.label}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* PayFast form */}
+                {tier.isCurrent ? (
+                  <div
+                    className="w-full font-display font-bold text-sm py-3 rounded-xl text-center"
+                    style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }}
+                  >
+                    Current plan
+                  </div>
+                ) : (
+                  <form action={tier.payfast.action} method="POST">
+                    {Object.entries(tier.payfast.fields).map(([fieldName, value]) => (
+                      <input key={fieldName} type="hidden" name={fieldName} value={value} />
+                    ))}
+                    <button
+                      type="submit"
+                      className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.98]"
+                      style={{
+                        background: tier.highlight
+                          ? tier.colour
+                          : 'rgba(13,148,136,0.2)',
+                        color: tier.highlight ? '#1a0a00' : '#2dd4bf',
+                        border: tier.highlight ? 'none' : '1px solid rgba(13,148,136,0.3)',
+                      }}
+                    >
+                      Subscribe for R{tier.price}/month
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           ))}
         </div>
 
-        <p className="font-mono text-[0.56rem] text-white/20 text-center mb-6">
-          Secured by PayFast · Once-off payment · Access expires after your chosen period
+        {/* Free tier reminder */}
+        <div className="bg-white/3 border border-white/6 rounded-2xl p-4 mb-5 text-center">
+          <p className="font-mono text-xs text-white/30">
+            Already on <span className="text-white/50">Free</span>? You get 10 Nova messages/month plus full Study Planner, Budget & NSFAS tracker, Meal Prep, and Work tracker — forever.
+          </p>
+        </div>
+
+        <p className="font-mono text-[0.56rem] text-white/20 text-center mb-4">
+          Secured by PayFast · Recurring monthly · Cancel anytime in your profile
         </p>
 
         <Link
