@@ -21,13 +21,16 @@ CREATE TABLE public.profiles (
   funding_type    TEXT,
   dietary_pref    TEXT DEFAULT 'No restrictions',
   living_situation TEXT,
-  is_premium      BOOLEAN NOT NULL DEFAULT FALSE,
-  premium_until   TIMESTAMPTZ,
-  payfast_token   TEXT,
-  setup_complete  BOOLEAN NOT NULL DEFAULT FALSE,
-  avatar_url      TEXT,
-  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  is_premium         BOOLEAN NOT NULL DEFAULT FALSE,
+  premium_until      TIMESTAMPTZ,
+  subscription_tier  TEXT DEFAULT 'free' CHECK (subscription_tier IN ('free', 'scholar', 'premium')),
+  payfast_token      TEXT,
+  referral_credits   INTEGER NOT NULL DEFAULT 0,
+  ai_language        TEXT,
+  setup_complete     BOOLEAN NOT NULL DEFAULT FALSE,
+  avatar_url         TEXT,
+  created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- ─────────────────────────────────────────────

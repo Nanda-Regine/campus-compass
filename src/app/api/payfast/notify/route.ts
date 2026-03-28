@@ -52,9 +52,15 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id is encoded as "userId|months"
-    const [userId, monthsStr] = (data.m_payment_id ?? '').split('|')
-    const months = parseInt(monthsStr ?? '1', 10) || 1
+    // m_payment_id is encoded as "userId|tierId" (e.g. "abc123|scholar" or "abc123|premium")
+    // Legacy format was "userId|months" — handle both gracefully
+    const parts = (data.m_payment_id ?? '').split('|')
+    const userId = parts[0]
+    const tierOrMonths = parts[1] ?? 'premium'
+
+    // Determine tier: 'scholar' or 'premium' (legacy numeric = premium)
+    const tier: 'scholar' | 'premium' =
+      tierOrMonths === 'scholar' ? 'scholar' : 'premium'
 
     // Always log — non-fatal
     try {
@@ -69,28 +75,42 @@ export async function POST(request: NextRequest) {
     } catch { /* non-fatal */ }
 
     if (data.payment_status === 'COMPLETE' && userId) {
-      const premiumUntil = new Date()
-      premiumUntil.setMonth(premiumUntil.getMonth() + months)
-      const premiumUntilStr = premiumUntil.toISOString()
+      const now = new Date()
+      const nextBillingDate = new Date(now)
+      nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
+      const nextBillingStr = nextBillingDate.toISOString()
 
       await Promise.all([
         supabase
           .from('profiles')
-          .update({ is_premium: true, premium_until: premiumUntilStr })
+          .update({
+            is_premium: true,
+            subscription_tier: tier,
+            premium_until: nextBillingStr,
+          })
           .eq('id', userId),
         supabase
           .from('subscriptions')
           .upsert({
             user_id: userId,
-            plan: 'premium',
+            plan: tier,
             status: 'active',
             payfast_payment_id: data.pf_payment_id ?? null,
+            payfast_subscription_token: data.token ?? null,
             amount: parseFloat(data.amount_gross ?? '0'),
-            billing_date: new Date().toISOString().split('T')[0],
-            next_billing_date: premiumUntilStr,
-            updated_at: new Date().toISOString(),
+            billing_date: now.toISOString().split('T')[0],
+            next_billing_date: nextBillingStr,
+            updated_at: now.toISOString(),
           }, { onConflict: 'user_id' }),
       ])
+    }
+
+    // Handle subscription cancellation / charge_failed
+    if (data.payment_status === 'CANCELLED' && userId) {
+      await supabase
+        .from('subscriptions')
+        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+        .eq('user_id', userId)
     }
 
     // PayFast REQUIRES 200 — always
