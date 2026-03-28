@@ -58,6 +58,7 @@ export default function NovaPage() {
   const [messageCount, setMessageCount] = useState(0)
   const [messageLimit, setMessageLimit] = useState(10)
   const [isPremium, setIsPremium] = useState(false)
+  const [userTier, setUserTier] = useState<'free' | 'scholar' | 'premium'>('free')
   const [showMoods, setShowMoods] = useState(false)
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
@@ -93,6 +94,7 @@ export default function NovaPage() {
         setMessageCount(data.messageCount || 0)
         setMessageLimit(data.messageLimit || 10)
         setIsPremium(data.isPremium || false)
+        if (data.tier) setUserTier(data.tier)
       } catch (err) {
         console.error(err)
       } finally {
@@ -145,8 +147,8 @@ export default function NovaPage() {
           setInput(text)
           return
         }
-        if (data.error === 'free_limit_reached') {
-          toast.error("You've reached your free message limit")
+        if (data.error === 'limit_reached' || data.error === 'free_limit_reached') {
+          toast.error(data.message || "You've reached your monthly message limit")
           router.push('/upgrade')
           return
         }
@@ -219,7 +221,7 @@ export default function NovaPage() {
             )}
             {isPremium && (
               <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                ⭐ PRO
+                ⭐ {userTier === 'scholar' ? 'SCHOLAR' : 'PREMIUM'}
               </span>
             )}
           </div>
@@ -456,12 +458,16 @@ export default function NovaPage() {
         {!isPremium && usageLeft === 0 ? (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
             <p className="font-display font-bold text-white text-sm mb-1">Monthly limit reached</p>
-            <p className="font-mono text-[0.62rem] text-white/40 mb-3">Upgrade for unlimited Nova conversations</p>
+            <p className="font-mono text-[0.62rem] text-white/40 mb-3">
+              {userTier === 'scholar'
+                ? 'Upgrade to Premium for 200 messages/month'
+                : 'Scholar gives you 75 messages for R39/month'}
+            </p>
             <Link
               href="/upgrade"
               className="inline-block font-display font-bold text-sm bg-amber-500/10 text-amber-400 border border-amber-500/20 px-5 py-2 rounded-xl hover:bg-amber-500/20 transition-all"
             >
-              ⭐ Upgrade to Premium — R49/month
+              ⭐ {userTier === 'scholar' ? 'Upgrade to Premium — R79/month' : 'Unlock Scholar — R39/month'}
             </Link>
           </div>
         ) : (

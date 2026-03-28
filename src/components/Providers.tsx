@@ -9,8 +9,8 @@ import { useAppStore } from '@/store'
 import type { Profile, Budget, Subscription } from '@/types'
 
 // Initialise PostHog once (client-side only)
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
     capture_pageview: false, // we fire manually on route change below
     capture_pageleave: true,
@@ -23,7 +23,7 @@ function PostHogPageView() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (pathname && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+    if (pathname && process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
       posthog.capture('$pageview', { $current_url: window.location.href })
     }
   }, [pathname])
@@ -72,7 +72,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       setProfile(profile as Profile)
 
       // Identify user in PostHog
-      if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
         const p = profile as Profile
         posthog.identify(userId, {
           tier: p.subscription_tier || (p.is_premium ? 'premium' : 'free'),
