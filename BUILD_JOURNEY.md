@@ -317,5 +317,40 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 ### API Routes Added
 - `GET/POST /api/study/sessions` — save and retrieve Pomodoro study sessions
 
-*Last updated: 2026-03-21*
+---
+
+## Phase 7 — March 2026 Sprint: Production Standards + Pricing Restructure
+
+### Pricing Restructure (cost audit)
+- **Free**: R0 — 10 Nova messages/month (was unchanged)
+- **Scholar**: R39/month — 75 Nova messages (replaced "Student R29 / 50 msgs" — 63%+ gross margin)
+- **Premium**: R79/month — 200 messages hard cap (replaced "R49 unlimited" — was loss-making at high usage)
+- Nova message cost: ~R0.17/message at Sonnet 4.6 rates; R49 unlimited broke even at 240 msgs/month
+- PayFast upgraded to recurring subscriptions (subscription_type=1, frequency=3 monthly)
+
+### Bug Fixes
+- **iOS Safari signup blank screen**: Suspense fallback replaced with full-height form skeleton
+- **Login page missing Google OAuth**: Added Google button above email form with divider
+
+### Analytics
+- PostHog client-side analytics installed and wired into Providers.tsx
+- User identified on login with tier, university, year, funding_type
+- Pageview capture on every route change
+
+### Domain
+- varsityos.co.za purchased and wired throughout codebase (APP_URL, sitemap, robots, JSON-LD)
+
+### Nova Tier Enforcement
+- Server-side message cap by tier: Free=10, Scholar=75, Premium=200
+- `subscription_tier` column added to Profile type for granular tier tracking
+- GET endpoint returns correct messageLimit per tier
+
+### PWA
+- manifest.json: start_url fixed to "/" (was "/dashboard"), background_color/theme_color per spec
+- Icon entries updated with separate PNG icons and maskable purpose
+
+### CSP
+- PostHog domains added to connect-src
+
+*Last updated: 2026-03-28*
 *Built with love for South African students*
