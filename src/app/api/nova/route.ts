@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START } from '@/lib/utils'
+import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
 import { detectPrebuilt, detectTopicResources, formatResourceLinks } from '@/lib/nova-resources'
@@ -44,10 +44,10 @@ function detectHeavyTopic(history: { role: string; content: string }[]): string 
 // ─── Usage-based guidance injected into system prompt ─────────
 function getUsageGuidance(
   messageCount: number,
-  isPremium: boolean,
+  tier: 'free' | 'scholar' | 'premium',
   heavyTopic: string | null,
 ): string {
-  if (!isPremium) return ''
+  if (tier === 'free') return ''
 
   if (messageCount >= NOVA_PREMIUM_SOFT_CAP) {
     const topicLine = heavyTopic
@@ -155,6 +155,8 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     insights: insights || [],
     messageCount: usage?.message_count || 0,
     isPremium: profile?.is_premium || false,
+    // Derive subscription tier: subscription_tier column (new) → fallback to is_premium bool
+    subscriptionTier: (profile?.subscription_tier as 'free' | 'scholar' | 'premium' | null) || (profile?.is_premium ? 'premium' : 'free'),
     // Referral bonus credits stack on top of the free tier limit
     referralCredits: profile?.referral_credits || 0,
   }
@@ -278,20 +280,32 @@ export async function POST(request: NextRequest) {
     // ─── Build student context ─────────────────────────────────────────────
     const ctx = await buildStudentContext(user.id, supabase)
 
-    // Check free tier limit
-    // Effective limit = base free limit + any referral bonus credits
+    // ─── Tier-based message cap enforcement ───────────────────────────────
+    const tier = ctx.subscriptionTier
     const effectiveFreeLimit = NOVA_FREE_LIMIT + ctx.referralCredits
-    if (!ctx.isPremium && ctx.messageCount >= effectiveFreeLimit) {
+    const tierLimit = tier === 'premium' ? NOVA_PREMIUM_HARD_CAP
+      : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
+      : effectiveFreeLimit
+
+    const tierLabel = tier === 'premium' ? 'Premium (200/month)'
+      : tier === 'scholar' ? 'Scholar (75/month)'
+      : `Free (${effectiveFreeLimit}/month)`
+
+    if (ctx.messageCount >= tierLimit) {
+      const isFreeTier = tier === 'free'
       return NextResponse.json({
-        error: 'free_limit_reached',
-        message: `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Premium for unlimited access, or refer a friend for +50 bonus messages.`,
+        error: 'limit_reached',
+        message: isFreeTier
+          ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Scholar (R39) for 75 messages, or refer a friend for +50 bonus messages.`
+          : `You've reached your ${tierLabel} limit for this month. ${tier === 'scholar' ? 'Upgrade to Premium (R79) for 200 messages.' : 'Your messages reset on the 1st of next month.'}`,
         upgradeUrl: '/upgrade',
+        tier,
       }, { status: 402 })
     }
 
     // Topic detection + usage guidance
     const heavyTopic = detectHeavyTopic(history)
-    const usageGuidance = getUsageGuidance(ctx.messageCount, ctx.isPremium, heavyTopic)
+    const usageGuidance = getUsageGuidance(ctx.messageCount, tier, heavyTopic)
 
     // Topic-based resource links (appended to response, not API call)
     const topicResources = detectTopicResources(message)
@@ -360,10 +374,11 @@ export async function POST(request: NextRequest) {
       isCrisis,
       resources: topicResources,
       messagesUsed,
-      messagesLimit: ctx.isPremium ? NOVA_PREMIUM_SOFT_CAP : NOVA_FREE_LIMIT + ctx.referralCredits,
+      messagesLimit: tierLimit,
       isPremium: ctx.isPremium,
-      nearSoftCap: ctx.isPremium && messagesUsed >= 130,
-      pastSoftCap: ctx.isPremium && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
+      tier,
+      nearSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
+      pastSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_HARD_CAP,
     })
   } catch (error) {
     console.error('Nova API error:', error)
@@ -449,15 +464,23 @@ export async function GET(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_premium')
+      .select('is_premium, subscription_tier, referral_credits')
       .eq('id', user.id)
       .single()
+
+    const tier = (profile as { subscription_tier?: string | null } | null)?.subscription_tier as 'free' | 'scholar' | 'premium' | null
+      || (profile?.is_premium ? 'premium' : 'free')
+    const referralCredits = (profile as { referral_credits?: number } | null)?.referral_credits || 0
+    const messageLimit = tier === 'premium' ? NOVA_PREMIUM_HARD_CAP
+      : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
+      : NOVA_FREE_LIMIT + referralCredits
 
     return NextResponse.json({
       messages: messages || [],
       messageCount: usage?.message_count || 0,
-      messageLimit: NOVA_FREE_LIMIT,
+      messageLimit,
       isPremium: profile?.is_premium || false,
+      tier,
     })
   } catch (error) {
     console.error('Nova GET error:', error)
