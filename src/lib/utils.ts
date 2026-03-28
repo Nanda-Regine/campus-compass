@@ -130,10 +130,15 @@ export function exportToCSV(data: Record<string, unknown>[], filename: string): 
 }
 
 // ─── Nova usage limits ────────────────────────────────────────
-export const NOVA_FREE_LIMIT          = 10   // hard block for free users
-export const NOVA_PREMIUM_SOFT_CAP    = 150  // premium: responses shift resource-forward above this
-export const NOVA_PREMIUM_RESOURCE_START = 100 // premium: start weaving in resources above this
-export const NOVA_PREMIUM_PRICE       = 49  // ZAR
+export const NOVA_FREE_LIMIT             = 10   // hard block for free users (10/month)
+export const NOVA_SCHOLAR_LIMIT          = 75   // hard block for scholar users (75/month)
+export const NOVA_PREMIUM_HARD_CAP       = 200  // hard block for premium users (200/month — ~6–7/day)
+export const NOVA_PREMIUM_SOFT_CAP       = 160  // premium: responses shift resource-forward above this
+export const NOVA_PREMIUM_RESOURCE_START = 120  // premium: start weaving in resources above this
+
+// ─── Pricing (ZAR) ───────────────────────────────────────────
+export const NOVA_SCHOLAR_PRICE  = 39  // R39/month — target tier, 63%+ gross margin
+export const NOVA_PREMIUM_PRICE  = 79  // R79/month — 200 msg hard cap, 47–71% gross margin
 
 // ─── PayFast signature ────────────────────────────────────────
 export function generatePayFastSignature(data: Record<string, string>, passphrase?: string): string {
