@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'react-hot-toast'
+import Script from 'next/script'
 import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import './globals.css'
@@ -148,8 +149,104 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:locale:alternate" content="af_ZA" />
         <meta property="og:locale:alternate" content="zu_ZA" />
         <meta property="og:locale:alternate" content="xh_ZA" />
+
+        {/* ── Schema.org JSON-LD ── */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'VarsityOS',
+              applicationCategory: 'EducationalApplication',
+              operatingSystem: 'Web, iOS, Android',
+              description:
+                'VarsityOS is the free super-app built for South African university students. Track NSFAS allowances, manage your student budget, plan meals on R33/day, organise assignments and exams, and get AI mental health support from Nova.',
+              url: APP_URL,
+              author: {
+                '@type': 'Person',
+                name: 'Nandawula Regine Kabali-Kagwa',
+                url: 'https://creativelynanda.co.za',
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'Mirembe Muse (Pty) Ltd',
+              },
+              offers: [
+                {
+                  '@type': 'Offer',
+                  name: 'Free',
+                  price: '0',
+                  priceCurrency: 'ZAR',
+                  description: '10 Nova messages/month, full Study Planner, Budget & NSFAS tracker, Meal Prep, Work tracker — no credit card required',
+                },
+                {
+                  '@type': 'Offer',
+                  name: 'Scholar',
+                  price: '39',
+                  priceCurrency: 'ZAR',
+                  billingDuration: 'P1M',
+                  description: '75 Nova messages/month, AI Recipe Generator, AI Budget Coach, AI Study Plans — 63%+ gross margin tier',
+                },
+                {
+                  '@type': 'Offer',
+                  name: 'Premium',
+                  price: '79',
+                  priceCurrency: 'ZAR',
+                  billingDuration: 'P1M',
+                  description: '200 Nova messages/month, CSV export, early access to new features — ~6–7 messages per day',
+                },
+              ],
+              inLanguage: 'en-ZA',
+              countriesSupported: 'ZA',
+            }),
+          }}
+        />
+
+        {/* ── Google Tag Manager (head) ── */}
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <Script id="gtm-head" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');`}
+          </Script>
+        )}
+
+        {/* ── Hotjar ── */}
+        {process.env.NEXT_PUBLIC_HOTJAR_ID && (
+          <Script id="hotjar" strategy="afterInteractive">
+            {`(function(h,o,t,j,a,r){
+h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
+a=o.getElementsByTagName('head')[0];
+r=o.createElement('script');r.async=1;
+r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+a.appendChild(r);
+})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
+          </Script>
+        )}
+
+        {/* ── Crisp Live Chat ── */}
+        {process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID && (
+          <Script id="crisp-widget" strategy="afterInteractive">
+            {`window.$crisp=[];window.CRISP_WEBSITE_ID="${process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID}";(function(){var d=document;var s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`}
+          </Script>
+        )}
       </head>
       <body className={`${displayFont.variable} ${monoFont.variable} font-body antialiased`}>
+        {/* ── Google Tag Manager (noscript fallback) ── */}
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+            />
+          </noscript>
+        )}
         <Providers>
           {children}
         </Providers>
