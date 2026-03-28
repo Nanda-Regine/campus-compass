@@ -1,9 +1,35 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import posthog from 'posthog-js'
+import { PostHogProvider } from 'posthog-js/react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import type { Profile, Budget, Subscription } from '@/types'
+
+// Initialise PostHog once (client-side only)
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    capture_pageview: false, // we fire manually on route change below
+    capture_pageleave: true,
+    persistence: 'localStorage',
+    autocapture: true,
+  })
+}
+
+function PostHogPageView() {
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (pathname && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      posthog.capture('$pageview', { $current_url: window.location.href })
+    }
+  }, [pathname])
+
+  return null
+}
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { setUserId, setProfile, setBudget, setSubscription, setNovaInsights, reset } = useAppStore()
@@ -27,6 +53,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         }
       } else if (event === 'SIGNED_OUT') {
         reset()
+        posthog.reset()
       }
     })
 
@@ -41,7 +68,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       .eq('id', userId)
       .single()
 
-    if (profile) setProfile(profile as Profile)
+    if (profile) {
+      setProfile(profile as Profile)
+
+      // Identify user in PostHog
+      if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+        const p = profile as Profile
+        posthog.identify(userId, {
+          tier: p.subscription_tier || (p.is_premium ? 'premium' : 'free'),
+          university: p.university,
+          year: p.year_of_study,
+          funding_type: p.funding_type,
+        })
+      }
+    }
 
     // Load budget
     const { data: budget } = await supabase
@@ -71,5 +111,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     if (insights) setNovaInsights(insights)
   }
 
-  return <>{children}</>
+  return (
+    <PostHogProvider client={posthog}>
+      <PostHogPageView />
+      {children}
+    </PostHogProvider>
+  )
 }

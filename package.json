@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@arcjet/next": "^1.3.0",
     "@anthropic-ai/sdk": "^0.27.0",
     "@hookform/resolvers": "^3.9.0",
     "@supabase/ssr": "^0.4.0",
@@ -21,6 +22,7 @@
     "clsx": "^2.1.1",
     "csv-stringify": "^6.5.1",
     "date-fns": "^3.6.0",
+    "firebase": "^11.0.0",
     "framer-motion": "^11.3.8",
     "lucide-react": "^0.414.0",
     "next": "^14.2.35",
