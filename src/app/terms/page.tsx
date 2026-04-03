@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
-  description: 'Campus Compass Terms and Conditions of Use — South African law compliant.',
+  description: 'VarsityOS Terms and Conditions of Use — South African law compliant.',
 }
 
 export default function TermsPage() {
@@ -19,7 +19,7 @@ export default function TermsPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
         </div>
@@ -28,7 +28,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">1. Parties and Agreement</h2>
-            <p>These Terms &amp; Conditions (&quot;Terms&quot;) constitute a binding agreement between <strong className="text-white">Mirembe Muse Pty Ltd</strong> (&quot;we&quot;, &quot;us&quot;, &quot;Campus Compass&quot;) and you (&quot;User&quot;, &quot;you&quot;), a person accessing or using the Campus Compass platform.</p>
+            <p>These Terms &amp; Conditions (&quot;Terms&quot;) constitute a binding agreement between <strong className="text-white">Mirembe Muse Pty Ltd</strong> (&quot;we&quot;, &quot;us&quot;, &quot;VarsityOS&quot;) and you (&quot;User&quot;, &quot;you&quot;), a person accessing or using the VarsityOS platform.</p>
             <p className="mt-2">By creating an account or using the platform you confirm that you:</p>
             <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
               <li>Are at least 18 years old and legally capable of entering a binding agreement</li>
@@ -39,11 +39,12 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">2. Description of Service</h2>
-            <p>Campus Compass is a digital student support platform providing tools including academic planning, budget tracking, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management.</p>
+            <p>VarsityOS is a digital student support platform providing tools including academic planning, budget tracking, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management.</p>
             <p className="mt-2">The platform is offered on a freemium basis:</p>
             <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
               <li><strong className="text-white/75">Free tier:</strong> Core features with 10 Nova AI messages per month</li>
-              <li><strong className="text-white/75">Premium (R49/month):</strong> Unlimited Nova messages and additional features as described on the upgrade page</li>
+              <li><strong className="text-white/75">Scholar (R39/month):</strong> 75 Nova messages per month plus AI Recipe Generator and priority support</li>
+              <li><strong className="text-white/75">Premium (R79/month):</strong> 200 Nova messages per month, all Scholar features, CSV data export, and early access to new features</li>
             </ul>
           </section>
 
@@ -101,7 +102,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">7. Intellectual Property</h2>
-            <p>All content, design, code, and features of Campus Compass are the intellectual property of Mirembe Muse Pty Ltd, protected under South African copyright law. You may not reproduce, distribute, or create derivative works without our written consent.</p>
+            <p>All content, design, code, and features of VarsityOS are the intellectual property of Mirembe Muse Pty Ltd, protected under South African copyright law. You may not reproduce, distribute, or create derivative works without our written consent.</p>
             <p className="mt-2">You retain ownership of all content you create in the platform (tasks, notes, budget entries). By using the platform you grant us a limited licence to process and store this content to provide the service.</p>
           </section>
 
@@ -136,7 +137,7 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">11. Electronic Communications Act Compliance</h2>
             <p>This agreement is concluded electronically and is binding under the Electronic Communications and Transactions Act 25 of 2002 (ECTA). You agree that electronic communications constitute valid written notices for purposes of this agreement.</p>
-            <p className="mt-2">Our full company registration details and registered address are available on request from <a href="mailto:legal@campus-compass.app" className="text-teal-400 hover:text-teal-300">legal@campus-compass.app</a>.</p>
+            <p className="mt-2">Our full company registration details and registered address are available on request from <a href="mailto:legal@varsityos.co.za" className="text-teal-400 hover:text-teal-300">legal@varsityos.co.za</a>.</p>
           </section>
 
           <section>
@@ -158,10 +159,10 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact Us</h2>
             <div className="space-y-1 text-white/55">
-              <p>General: <a href="mailto:hello@campus-compass.app" className="text-teal-400 hover:text-teal-300">hello@campus-compass.app</a></p>
-              <p>Privacy: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
-              <p>Legal: <a href="mailto:legal@campus-compass.app" className="text-teal-400 hover:text-teal-300">legal@campus-compass.app</a></p>
-              <p>Support: <a href="mailto:support@campus-compass.app" className="text-teal-400 hover:text-teal-300">support@campus-compass.app</a></p>
+              <p>General: <a href="mailto:hello@varsityos.co.za" className="text-teal-400 hover:text-teal-300">hello@varsityos.co.za</a></p>
+              <p>Privacy: <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
+              <p>Legal: <a href="mailto:legal@varsityos.co.za" className="text-teal-400 hover:text-teal-300">legal@varsityos.co.za</a></p>
+              <p>Support: <a href="mailto:support@varsityos.co.za" className="text-teal-400 hover:text-teal-300">support@varsityos.co.za</a></p>
             </div>
           </section>
 

@@ -569,7 +569,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">⭐</div>
               <div className="flex-1">
                 <div className="font-display font-bold text-amber-400 text-sm">Upgrade to Premium</div>
-                <div className="font-mono text-[0.6rem] text-white/30">Unlimited Nova · AI recipes · Financial coach · R49/month</div>
+                <div className="font-mono text-[0.6rem] text-white/30">200 messages/month · AI recipes · Financial coach · R79/month</div>
               </div>
               <div className="font-mono text-[0.6rem] text-amber-400 flex-shrink-0">→</div>
             </div>
