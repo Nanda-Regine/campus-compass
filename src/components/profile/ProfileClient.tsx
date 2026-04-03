@@ -122,6 +122,11 @@ export default function ProfileClient() {
   const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'account'>('profile')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
+  // Account deletion state
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+
   useEffect(() => {
     fetch('/api/profile')
       .then(r => r.json())
@@ -172,6 +177,20 @@ export default function ProfileClient() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/')
+  }
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText !== 'DELETE') return
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/account/delete', { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed')
+      await supabase.auth.signOut()
+      router.push('/?deleted=1')
+    } catch {
+      toast.error('Account deletion failed. Please try again or contact support.')
+      setDeleting(false)
+    }
   }
 
   if (loading) {
@@ -482,20 +501,62 @@ export default function ProfileClient() {
                 Sign out
               </button>
 
-              <p className="font-mono text-[0.55rem] text-center pt-2" style={{ color: 'rgba(255,255,255,0.18)' }}>
-                To delete your account, contact{' '}
-                <a
-                  href="mailto:support@varsityos.co.za"
-                  className="text-teal-600 hover:text-teal-500"
-                  rel="noopener noreferrer"
-                >
-                  support@varsityos.co.za
-                </a>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all"
+                style={{ background: 'rgba(239,68,68,0.05)', color: 'rgba(239,68,68,0.7)', border: '1px solid rgba(239,68,68,0.15)' }}
+              >
+                Delete my account
+              </button>
+
+              <p className="font-mono text-[0.55rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                POPIA: you may request deletion of all your data at any time
               </p>
             </div>
           </div>
         )}
       </div>
+
+      {/* ── Account deletion confirmation modal ─────────────────────────────── */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)' }}>
+          <div className="w-full max-w-sm rounded-2xl p-6" style={{ background: '#120e0a', border: '1px solid rgba(239,68,68,0.3)' }}>
+            <h2 className="font-display font-black text-white text-lg mb-2">Delete account?</h2>
+            <p className="font-mono text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              This will permanently delete your account and <strong className="text-white">all your data</strong> — study plans, budget history, Nova conversations, everything. This cannot be undone.
+            </p>
+            <p className="font-mono text-[0.65rem] mb-2" style={{ color: 'rgba(239,68,68,0.8)' }}>
+              Type <strong>DELETE</strong> to confirm
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={e => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              className="w-full rounded-xl px-3 py-2.5 font-mono text-sm text-white outline-none mb-4"
+              style={{ background: '#1a1009', border: '1px solid rgba(239,68,68,0.3)' }}
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowDeleteModal(false); setDeleteConfirmText('') }}
+                className="flex-1 font-display font-bold text-sm py-2.5 rounded-xl transition-all"
+                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText !== 'DELETE' || deleting}
+                className="flex-1 font-display font-bold text-sm py-2.5 rounded-xl transition-all disabled:opacity-40"
+                style={{ background: 'rgba(239,68,68,0.85)', color: '#fff' }}
+              >
+                {deleting ? 'Deleting…' : 'Delete everything'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
