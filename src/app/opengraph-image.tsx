@@ -126,7 +126,7 @@ export default function Image() {
 
           {/* Tags */}
           <div style={{ display: 'flex' }}>
-            {['R0 free forever', 'All SA universities', 'Works offline'].map((tag, i) => (
+            {['Free to join', 'All SA universities', 'varsityos.co.za'].map((tag, i) => (
               <div
                 key={tag}
                 style={{
@@ -168,9 +168,9 @@ export default function Image() {
             }}
           >
             {[
-              { colour: '#0d9488', label: 'Budget & NSFAS', sub: 'R1,840 remaining this month' },
-              { colour: '#d97b54', label: 'Study Planner', sub: 'CHEM3 exam in 12 days' },
-              { colour: '#d4a847', label: 'Meal Prep', sub: 'Recipes under R50' },
+              { colour: '#0d9488', label: 'Budget & NSFAS', sub: 'Track every rand of your allowance' },
+              { colour: '#d97b54', label: 'Study Planner', sub: 'Exams, tasks & timetable in one place' },
+              { colour: '#d4a847', label: 'Meal Prep', sub: 'Eat well on R33/day' },
               { colour: '#9b59b6', label: 'Nova AI', sub: 'Your SA student companion' },
             ].map((item, i) => (
               <div

@@ -114,7 +114,10 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: '', // Add Google Search Console verification token here
+    google: 'Dj4sB80xhNyZtXa2m8EPBKcl4TKlBTfyj9lpHsjIEs4',
+    other: {
+      'msvalidate.01': ['25B3BED7B31C2C85D996EBA7003A02CB'],
+    },
   },
   other: {
     'geo.region': 'ZA',
@@ -126,8 +129,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#0d9488' },

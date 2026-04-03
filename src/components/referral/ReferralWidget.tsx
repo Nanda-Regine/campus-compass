@@ -35,7 +35,7 @@ export default function ReferralWidget() {
   const shareWhatsApp = () => {
     if (!data?.referralUrl) return
     const text = encodeURIComponent(
-      `Hey! I've been using Campus Compass to manage my varsity life — study planner, budget tracker, NSFAS help and an AI companion called Nova. Sign up with my link and get bonus Nova messages: ${data.referralUrl}`
+      `Hey! I've been using VarsityOS to manage my varsity life — study planner, budget tracker, NSFAS help and an AI companion called Nova 🎓\n\nSign up free with my link and we both get bonus Nova messages: ${data.referralUrl}`
     )
     window.open(`https://wa.me/?text=${text}`, '_blank')
   }

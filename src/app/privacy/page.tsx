@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Campus Compass Privacy Policy — POPIA compliant. How we collect, use, and protect your personal information.',
+  description: 'VarsityOS Privacy Policy — POPIA compliant. How we collect, use, and protect your personal information.',
 }
 
 export default function PrivacyPage() {
@@ -19,7 +19,7 @@ export default function PrivacyPage() {
 
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="mb-10">
-          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">Campus Compass</p>
+          <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
         </div>
@@ -28,8 +28,8 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">1. Who We Are (Responsible Party)</h2>
-            <p>Campus Compass is operated by <strong className="text-white">Mirembe Muse Pty Ltd</strong>, a company registered in South Africa. We are the &quot;responsible party&quot; as defined in the Protection of Personal Information Act 4 of 2013 (&quot;POPIA&quot;).</p>
-            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
+            <p>VarsityOS is operated by <strong className="text-white">Mirembe Muse Pty Ltd</strong>, a company registered in South Africa. We are the &quot;responsible party&quot; as defined in the Protection of Personal Information Act 4 of 2013 (&quot;POPIA&quot;).</p>
+            <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
             <p className="mt-2 text-white/40 text-xs">We are required by POPIA to process your personal information lawfully, responsibly, and transparently.</p>
           </section>
 
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
             <h2 className="font-display font-bold text-white text-lg mb-3">3. Purpose of Processing (Why We Collect Your Data)</h2>
             <p className="mb-2">Under POPIA, we may only process personal information for a specific, explicitly defined, and lawful purpose. We collect your information for the following purposes:</p>
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
-              <li>Providing and operating the Campus Compass platform (account management, feature access)</li>
+              <li>Providing and operating the VarsityOS platform (account management, feature access)</li>
               <li>Personalising your AI companion (Nova) using your academic and financial context</li>
               <li>Processing subscription payments via PayFast</li>
               <li>Sending service-related communications (account confirmations, payment receipts)</li>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">5. AI Processing (Nova) — Special Notice</h2>
-            <p className="mb-2">Campus Compass uses Anthropic&apos;s Claude AI to power Nova. When you send a message to Nova:</p>
+            <p className="mb-2">VarsityOS uses Anthropic&apos;s Claude AI to power Nova. When you send a message to Nova:</p>
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
               <li>Your message and relevant personal context (budget, tasks, exams) are sent to Anthropic&apos;s API for processing</li>
               <li>Anthropic processes this data under their own privacy policy and data processing agreement</li>
@@ -122,7 +122,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white/75">Right to withdraw consent:</strong> Where processing is based on consent, you may withdraw at any time without affecting prior processing</li>
               <li><strong className="text-white/75">Right to complain:</strong> Lodge a complaint with the Information Regulator of South Africa</li>
             </ul>
-            <p className="mt-3">To exercise any right, email: <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a>. We will respond within 30 days as required by POPIA.</p>
+            <p className="mt-3">To exercise any right, email: <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a>. We will respond within 30 days as required by POPIA.</p>
           </section>
 
           <section>
@@ -156,7 +156,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">12. Children&apos;s Privacy</h2>
-            <p>Campus Compass is intended for university students aged 18 and older. We do not knowingly collect personal information from persons under 18. If you believe a minor has created an account, contact us immediately and we will delete the account.</p>
+            <p>VarsityOS is intended for university students aged 18 and older. We do not knowingly collect personal information from persons under 18. If you believe a minor has created an account, contact us immediately and we will delete the account.</p>
           </section>
 
           <section>
@@ -172,7 +172,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact &amp; Information Regulator</h2>
             <div className="space-y-2 text-white/55">
-              <p><strong className="text-white/75">Information Officer:</strong> <a href="mailto:privacy@campus-compass.app" className="text-teal-400 hover:text-teal-300">privacy@campus-compass.app</a></p>
+              <p><strong className="text-white/75">Information Officer:</strong> <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
               <p><strong className="text-white/75">Company:</strong> Mirembe Muse Pty Ltd, South Africa</p>
               <p className="pt-2 border-t border-white/10"><strong className="text-white/75">Information Regulator of South Africa:</strong><br />
                 Website: <a href="https://www.justice.gov.za/inforeg/" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300">www.justice.gov.za/inforeg</a><br />

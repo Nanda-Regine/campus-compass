@@ -29,7 +29,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat",
               "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
               "img-src 'self' data: blob: https: https://client.crisp.chat",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com https://app.posthog.com https://*.posthog.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io",
               "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
               "worker-src 'self' blob:",
             ].join('; '),

@@ -124,7 +124,7 @@ function JoinGroupContent() {
           {joining ? 'Joining…' : 'Join Group'}
         </button>
         <p className="font-mono text-[0.58rem] text-white/25">
-          You need a Campus Compass account to join. We&apos;ll create one if you don&apos;t have one.
+          You need a VarsityOS account to join. We&apos;ll create one if you don&apos;t have one.
         </p>
       </div>
     </div>

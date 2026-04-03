@@ -22,7 +22,7 @@ export async function GET() {
       .select('id', { count: 'exact', head: true })
       .eq('referrer_id', user.id)
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://campus-compass.app'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za'
     const referralUrl = `${appUrl}/auth/signup?ref=${profile?.referral_code}`
 
     return NextResponse.json({

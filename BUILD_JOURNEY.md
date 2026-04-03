@@ -368,5 +368,45 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 - PostHog env var corrected to NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN
 - GTM hardcoded to GTM-W7R77VP9 (GOOGLE_TAG had no NEXT_PUBLIC_ prefix)
 
-*Last updated: 2026-03-28*
+---
+
+## Phase 8 — Production Services & Deployment (April 2026)
+
+### Vercel Deployment (2026-04-03)
+- First successful production deploy via Vercel CLI
+- Fixed build-breaking bug: `'use server'` directive incorrectly placed in `src/app/referral/page.tsx`
+  (Server Components never need `'use server'` — that directive is for Server Action files only)
+
+### Search Engine Verification
+- **Google Search Console**: verification token wired via Next.js `metadata.verification.google`
+- **Bing Webmaster Tools**: msvalidate.01 token added via `metadata.verification.other`
+
+### Environment Variables — Full Audit & Fix
+- Discovered `ANTHROPIC_KEY` was set in Vercel but code uses `ANTHROPIC_API_KEY` — added correct key
+- Added all Firebase `NEXT_PUBLIC_` variables (API key, auth domain, project ID, storage bucket, app ID)
+- Added `NEXT_PUBLIC_CRISP_WEBSITE_ID` (layout used `NEXT_PUBLIC_` prefix but only `CRISP_WEBSITE_ID` was set)
+- Added `NEXT_PUBLIC_SENTRY_DSN` for client-side error reporting
+- `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`, `NEXT_PUBLIC_POSTHOG_HOST`, `NEXT_PUBLIC_GTM_ID` confirmed present
+- All PayFast, Supabase, ArcJet, Resend vars confirmed in Vercel
+
+### Bug Fix — Firebase VAPID Key
+- `src/lib/firebase-messaging.ts` line 64 was using `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` as the
+  FCM `vapidKey` (incorrect — that's the sender ID, not the VAPID key)
+- Fixed to use `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+
+### CSP Update
+- Added `https://o4511111217217536.ingest.de.sentry.io` to `connect-src` so Sentry can report errors
+
+### OG Image Refresh
+- Updated bottom tags: "R0 free forever" → "Free to join" + added "varsityos.co.za" domain badge
+- Updated feature card sub-text to be more descriptive and current
+
+### Services Now Active
+- PostHog analytics: page views + user identification on login (wired in Providers.tsx)
+- Google Tag Manager (GTM-W7R77VP9): fires on all pages via `NEXT_PUBLIC_GTM_ID`
+- Crisp live chat: wired via `NEXT_PUBLIC_CRISP_WEBSITE_ID`
+- Firebase FCM: env vars wired, VAPID key corrected, ready for push notification flow
+- Sentry: DSN set (full @sentry/nextjs SDK install pending)
+
+*Last updated: 2026-04-03*
 *Built with love for South African students*
