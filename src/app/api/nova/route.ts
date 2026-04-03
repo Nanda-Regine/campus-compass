@@ -265,7 +265,11 @@ export async function POST(request: NextRequest) {
         { user_id: user.id, role: 'assistant', content: prebuilt.response },
       ])
       const monthYear = currentMonthYear()
-      await supabase2.rpc('increment_nova_usage', { p_user_id: user.id, p_month_year: monthYear })
+      await supabase2.rpc('check_and_increment_nova_usage', {
+        p_user_id: user.id,
+        p_month_year: monthYear,
+        p_max_messages: 9999, // prebuilt path — cap already enforced above
+      })
 
       return NextResponse.json({
         message: prebuilt.response,
@@ -360,8 +364,13 @@ export async function POST(request: NextRequest) {
       { user_id: user.id, role: 'assistant', content: assistantMessage },
     ])
 
+    // Atomically increment — the check already happened above, this is the post-response write
     const monthYear = currentMonthYear()
-    await supabase.rpc('increment_nova_usage', { p_user_id: user.id, p_month_year: monthYear })
+    await supabase.rpc('check_and_increment_nova_usage', {
+      p_user_id: user.id,
+      p_month_year: monthYear,
+      p_max_messages: tierLimit + 1, // always allow: we checked the cap before the API call
+    })
 
     // Generate proactive insight if stress signals detected
     if (ctx.stressSignals.length >= 2 && !isCrisis) {
