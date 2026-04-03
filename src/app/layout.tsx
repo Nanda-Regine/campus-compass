@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
 import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
+import { BottomNav } from '@/components/layout/BottomNav'
 import './globals.css'
 
 const displayFont = Plus_Jakarta_Sans({
@@ -244,7 +245,10 @@ a.appendChild(r);
           />
         </noscript>
         <Providers>
-          {children}
+          <div className="pb-16 md:pb-0">
+            {children}
+          </div>
+          <BottomNav />
         </Providers>
         <Toaster
           position="bottom-center"
