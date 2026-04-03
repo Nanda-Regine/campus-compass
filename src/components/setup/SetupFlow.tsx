@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
@@ -10,6 +10,35 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
+
+// Detect SA university from email domain
+const UNIVERSITY_DOMAINS: Record<string, string> = {
+  'uct.ac.za':   'University of Cape Town (UCT)',
+  'wits.ac.za':  'University of the Witwatersrand (Wits)',
+  'up.ac.za':    'University of Pretoria (UP)',
+  'sun.ac.za':   'Stellenbosch University (SU)',
+  'ukzn.ac.za':  'University of KwaZulu-Natal (UKZN)',
+  'uj.ac.za':    'University of Johannesburg (UJ)',
+  'uwc.ac.za':   'University of the Western Cape (UWC)',
+  'nmu.ac.za':   'Nelson Mandela University (NMU)',
+  'nmmu.ac.za':  'Nelson Mandela University (NMU)',
+  'ru.ac.za':    'Rhodes University',
+  'unisa.ac.za': 'University of South Africa (UNISA)',
+  'dut.ac.za':   'Durban University of Technology (DUT)',
+  'cput.ac.za':  'Cape Peninsula University of Technology (CPUT)',
+  'tut.ac.za':   'Tshwane University of Technology (TUT)',
+  'wsu.ac.za':   'Walter Sisulu University (WSU)',
+  'ufh.ac.za':   'University of Fort Hare (UFH)',
+  'unizulu.ac.za': 'University of Zululand (UniZulu)',
+  'ul.ac.za':    'University of Limpopo (UL)',
+  'nwu.ac.za':   'North-West University (NWU)',
+  'univen.ac.za': 'University of Venda (UNIVEN)',
+  'cut.ac.za':   'Central University of Technology (CUT)',
+  'vut.ac.za':   'Vaal University of Technology (VUT)',
+  'mut.ac.za':   'Mangosuthu University of Technology (MUT)',
+  'spu.ac.za':   'Sol Plaatje University (SPU)',
+  'ump.ac.za':   'University of Mpumalanga (UMP)',
+}
 
 const EMOJIS = ['🎓','😎','🌟','💪','🔥','✨','🦋','🌻','🎯','🚀','💡','🦁','🌈','⚡','🎵','🏆']
 
@@ -45,6 +74,21 @@ export default function SetupFlow() {
 
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [detectedUniversity, setDetectedUniversity] = useState<string | null>(null)
+
+  // Auto-detect university from email domain on mount
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user?.email) return
+      const domain = user.email.split('@')[1]?.toLowerCase()
+      const detected = domain ? UNIVERSITY_DOMAINS[domain] : null
+      if (detected) {
+        setDetectedUniversity(detected)
+        setUniversity(detected)
+      }
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Form state
   const [name,         setName]         = useState('')
@@ -240,6 +284,16 @@ export default function SetupFlow() {
               <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 2 of 5</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Where are you studying?</h2>
               <p className="text-sm text-white/50 mb-5">We&apos;ll customise your experience.</p>
+
+              {detectedUniversity && (
+                <div className="rounded-xl px-4 py-3 mb-4 flex items-center gap-3" style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.25)' }}>
+                  <span className="text-lg">🎓</span>
+                  <div>
+                    <p className="font-display font-bold text-teal-400 text-xs">Detected from your email</p>
+                    <p className="font-mono text-[0.62rem] text-white/60">{detectedUniversity}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-4">
                 <Select

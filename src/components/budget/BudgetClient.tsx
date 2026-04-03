@@ -134,6 +134,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       setAmount('')
       setShowAddForm(false)
       toast.success('Expense logged!')
+      // Fire-and-forget 80% budget alert check
+      fetch('/api/budget/alert', { method: 'POST' }).catch(() => null)
     } catch {
       toast.error('Failed to log expense')
     } finally {
