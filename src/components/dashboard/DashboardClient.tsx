@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import TopBar from '@/components/layout/TopBar'
+import PWAInstallBanner from '@/components/PWAInstallBanner'
 import DashboardGreeting from '@/components/dashboard/DashboardGreeting'
 import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
@@ -172,6 +173,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
       <TopBar title="Dashboard" />
+
+      <PWAInstallBanner variant="banner" />
 
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 

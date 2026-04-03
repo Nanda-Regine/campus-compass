@@ -8,6 +8,7 @@ import { SA_UNIVERSITIES, type FundingType, type ModuleColour } from '@/types'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
+import PWAInstallBanner from '@/components/PWAInstallBanner'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
@@ -476,6 +477,11 @@ export default function SetupFlow() {
                   value={foodBudget}
                   onChange={e => setFoodBudget(e.target.value)}
                 />
+
+                {/* PWA install prompt on last step */}
+                <div className="pt-2">
+                  <PWAInstallBanner variant="card" />
+                </div>
               </div>
             </div>
           )}
