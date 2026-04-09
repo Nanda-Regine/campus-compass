@@ -1,12 +1,15 @@
-const CACHE_VERSION = 'cc-v3';
+const CACHE_VERSION = 'varsityos-v4';
 const STATIC_CACHE  = `${CACHE_VERSION}-static`;
-const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
+const DATA_CACHE    = `${CACHE_VERSION}-data`;
 const OFFLINE_URL   = '/offline';
 
 // Pre-cache shell routes on install
-const SHELL_ROUTES = [
+const STATIC_ASSETS = [
   '/',
   '/dashboard',
+  '/dashboard/budget',
+  '/dashboard/tasks',
+  '/dashboard/groups',
   '/study',
   '/budget',
   '/meals',
@@ -18,7 +21,6 @@ const SHELL_ROUTES = [
 
 // Never intercept these — always go to network
 const BYPASS = [
-  '/api/',
   'supabase.co',
   'anthropic.com',
   'payfast.co.za',
@@ -37,7 +39,7 @@ self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(STATIC_CACHE).then(cache =>
-      Promise.allSettled(SHELL_ROUTES.map(r => cache.add(r)))
+      Promise.allSettled(STATIC_ASSETS.map(r => cache.add(r)))
     )
   );
 });
@@ -48,7 +50,7 @@ self.addEventListener('activate', e => {
     caches.keys()
       .then(keys => Promise.all(
         keys
-          .filter(k => k !== STATIC_CACHE && k !== DYNAMIC_CACHE)
+          .filter(k => k !== STATIC_CACHE && k !== DATA_CACHE)
           .map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
@@ -62,8 +64,24 @@ self.addEventListener('fetch', e => {
   // Only handle GET
   if (method !== 'GET') return;
 
-  // Bypass: external services, APIs — always network
+  // Bypass: external services — always network
   if (shouldBypass(url)) return;
+
+  // API calls: network first, cache on success for offline fallback
+  if (url.includes('/api/')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(DATA_CACHE).then(c => c.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
 
   // /_next/static/ — cache-first forever (content-hashed, never stale)
   if (url.includes('/_next/static/')) {
@@ -87,7 +105,7 @@ self.addEventListener('fetch', e => {
       fetch(e.request)
         .then(res => {
           if (res.ok) {
-            caches.open(DYNAMIC_CACHE).then(c => c.put(e.request, res.clone()));
+            caches.open(DATA_CACHE).then(c => c.put(e.request, res.clone()));
           }
           return res;
         })
@@ -96,22 +114,27 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Navigation + app routes — network first, cache on success, offline fallback
+  // Dashboard routes — cache first for offline access
+  if (url.includes('/dashboard') || STATIC_ASSETS.some(r => url.endsWith(r))) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request))
+    );
+    return;
+  }
+
+  // All other navigation + routes — network first, cache on success, offline fallback
   e.respondWith(
     fetch(e.request)
       .then(res => {
-        // Cache successful navigation responses
         if (res.ok && (mode === 'navigate' || url.includes('/_next/data/'))) {
-          caches.open(DYNAMIC_CACHE).then(c => c.put(e.request, res.clone()));
+          caches.open(DATA_CACHE).then(c => c.put(e.request, res.clone()));
         }
         return res;
       })
       .catch(async () => {
-        // Try the cache
         const cached = await caches.match(e.request);
         if (cached) return cached;
 
-        // Navigation fallback: serve the offline page
         if (mode === 'navigate') {
           const offlinePage = await caches.match(OFFLINE_URL);
           if (offlinePage) return offlinePage;

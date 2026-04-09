@@ -7,6 +7,7 @@ import Script from 'next/script'
 import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import './globals.css'
 
 const displayFont = Plus_Jakarta_Sans({
@@ -198,7 +199,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   price: '79',
                   priceCurrency: 'ZAR',
                   billingDuration: 'P1M',
-                  description: '200 Nova messages/month, CSV export, early access to new features — ~6–7 messages per day',
+                  description: '250 Nova messages/month, CSV export, early access to new features',
+                },
+                {
+                  '@type': 'Offer',
+                  name: 'Nova Unlimited',
+                  price: '129',
+                  priceCurrency: 'ZAR',
+                  billingDuration: 'P1M',
+                  description: 'Unlimited Nova messages, first access to new Nova capabilities, direct feedback channel',
                 },
               ],
               inLanguage: 'en-ZA',
@@ -252,6 +261,7 @@ a.appendChild(r);
           </noscript>
         )}
         <Providers>
+          <OfflineBanner />
           <div className="pb-16 md:pb-0">
             {children}
           </div>
