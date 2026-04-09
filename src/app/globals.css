@@ -198,6 +198,41 @@ body {
   }
 }
 
+/* ── Touch UX improvements (iOS Safari, Android Chrome) ─── */
+button, a, [role="button"], input, select, textarea {
+  /* Remove 300ms tap delay on touch devices */
+  touch-action: manipulation;
+}
+
+/* ── Smooth scrolling on iOS ────────────────────────────── */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* ── Prevent text inflation on mobile rotation ──────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ── iOS Safari: fix 100vh issue with dynamic viewport ──── */
+.h-screen {
+  height: 100dvh;
+}
+
+/* ── Edge/IE: ensure consistent box-model ───────────────── */
+*, *::before, *::after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* ── Improve tap highlight on Android ───────────────────── */
+a, button {
+  -webkit-tap-highlight-color: rgba(13, 148, 136, 0.1);
+}
+
 /* ── PWA standalone padding ─────────────────────────────── */
 @media (display-mode: standalone) {
   .safe-top {

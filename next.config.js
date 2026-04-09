@@ -3,12 +3,30 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
+  // Compress responses
+  compress: true,
+
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Aggressive image optimization for SA bandwidth constraints
+    minimumCacheTTL: 86400, // 24h
+    dangerouslyAllowSVG: false,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+
+  experimental: {
+    // Optimize package imports to reduce bundle size
+    optimizePackageImports: [
+      '@anthropic-ai/sdk',
+      '@supabase/supabase-js',
+      'date-fns',
+      'recharts',
+      'zustand',
+    ],
   },
 
   async headers() {
@@ -30,7 +48,7 @@ const nextConfig = {
               "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
               "img-src 'self' data: blob: https: https://client.crisp.chat",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io",
-              "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
+              "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za https://g.page",
               "worker-src 'self' blob:",
             ].join('; '),
           },

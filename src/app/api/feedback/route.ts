@@ -1,8 +1,16 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/rateLimit'
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 feedback submissions per hour per IP
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous'
+  const rateCheck = checkRateLimit(`feedback_${ip}`, 'feedback', 5, 60 * 60 * 1000)
+  if (!rateCheck.allowed) {
+    return NextResponse.json({ error: 'Too many submissions — please try again later.' }, { status: 429 })
+  }
+
   const supabase = createRouteHandlerClient({ cookies })
   const { data: { user } } = await supabase.auth.getUser()
 

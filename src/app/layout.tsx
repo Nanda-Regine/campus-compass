@@ -36,27 +36,63 @@ export const metadata: Metadata = {
     'VarsityOS is the free super-app built for South African university students. Track NSFAS allowances, manage your student budget, plan meals on R33/day, organise assignments and exams, and get AI mental health support from Nova — all in one place.',
   keywords: [
     // Brand
-    'VarsityOS', 'Varsity OS', 'varsityos.co.za',
-    // Core features
+    'VarsityOS', 'Varsity OS', 'varsityos.co.za', 'VarsityOS app',
+    // NSFAS — highest-traffic SA student keyword
     'NSFAS tracker', 'NSFAS allowance tracker', 'NSFAS app South Africa',
+    'NSFAS payment tracker', 'NSFAS budget app', 'NSFAS 2025 2026',
+    'NSFAS N+ rule', 'NSFAS student financial aid', 'track NSFAS money',
+    'NSFAS monthly allowance tracker', 'NSFAS appeal app',
+    // Student budget
     'student budget app South Africa', 'university student budget',
+    'student budget tracker South Africa', 'budget app for students',
+    'free budget app students', 'student money management South Africa',
+    'varsity budget tracker', 'how to budget as a student South Africa',
+    // Study planner — high search volume
     'study planner South Africa', 'exam planner university',
-    'student meal planner South Africa', 'cheap student meals South Africa',
-    // Nova AI
+    'student planner app', 'university timetable app',
+    'assignment tracker app', 'exam countdown app',
+    'student organiser app', 'free study planner app',
+    'university assignment planner', 'study schedule app South Africa',
+    'varsity study planner', 'student timetable app South Africa',
+    // Tutor / academic help
+    'student tutor app South Africa', 'AI tutor South Africa',
+    'online tutor SA students', 'study help app university',
+    'academic help app South Africa', 'AI study assistant South Africa',
+    'AI student app South Africa', 'AI homework helper South Africa',
+    // Nova AI mental health
     'Nova AI student', 'AI mental health student South Africa',
     'student mental health app South Africa', 'SA student wellness app',
+    'student mental health support free', 'therapy app students South Africa',
+    'student counselling app', 'CBT app students South Africa',
+    'student anxiety app', 'imposter syndrome university South Africa',
+    // Meals
+    'student meal planner South Africa', 'cheap student meals South Africa',
+    'student recipes South Africa', 'budget meals varsity',
+    'AI recipe generator students', 'meals under R50 South Africa',
     // University-specific
     'UCT student app', 'Wits student app', 'UP student app',
     'UKZN student app', 'UJ student app', 'UWC student app',
-    'South African university app', 'varsity super app',
-    // Problem-specific
-    'NSFAS payment tracker', 'student budget tracker South Africa',
-    'imposter syndrome university', 'first gen student support',
-    'load shedding study plan', 'student financial aid South Africa',
+    'Stellenbosch student app', 'UNISA student app',
+    'DUT student app', 'CPUT student app', 'TUT student app',
+    'NMU student app', 'Rhodes student app', 'UFH student app',
+    'WSU student app', 'South African university app',
+    'varsity super app', 'SA university student tool',
+    // Problem-specific SA searches
+    'first gen student support South Africa', 'load shedding study plan',
+    'student financial aid South Africa', 'bursary tracker South Africa',
+    'student savings app South Africa', 'savings goals app students',
+    'part time job tracker students', 'student work shift tracker',
+    'group assignment manager South Africa', 'student collaboration app',
+    // PWA / offline
+    'offline student app South Africa', 'student app without data',
+    'student app works offline', 'PWA student app South Africa',
+    'student app no wifi', 'student app load shedding',
     // Long-tail
-    'free student app South Africa', 'university student organiser',
-    'best app for SA students', 'varsity life organiser',
-    'student mental health South Africa free',
+    'free student app South Africa', 'best app for SA students',
+    'varsity life organiser', 'student mental health South Africa free',
+    'how to manage money as a student South Africa',
+    'student productivity app South Africa', 'varsity student helper app',
+    'first year university app South Africa', 'campus life app South Africa',
   ],
   authors: [{ name: 'Nanda Regine', url: 'https://creativelynanda.co.za' }],
   creator: 'Nanda Regine — Mirembe Muse (Pty) Ltd',
@@ -183,7 +219,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   name: 'Free',
                   price: '0',
                   priceCurrency: 'ZAR',
-                  description: '10 Nova messages/month, full Study Planner, Budget & NSFAS tracker, Meal Prep, Work tracker — no credit card required',
+                  description: '15 Nova messages/month, full Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker — no credit card required. Works offline.',
                 },
                 {
                   '@type': 'Offer',
@@ -191,7 +227,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   price: '39',
                   priceCurrency: 'ZAR',
                   billingDuration: 'P1M',
-                  description: '75 Nova messages/month, AI Recipe Generator, AI Budget Coach, AI Study Plans — 63%+ gross margin tier',
+                  description: '100 Nova messages/month, AI Recipe Generator, AI Budget Coach, AI Study Plans, priority support',
                 },
                 {
                   '@type': 'Offer',
