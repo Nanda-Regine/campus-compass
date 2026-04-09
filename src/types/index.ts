@@ -19,7 +19,7 @@ export interface Profile {
   living_situation: string | null
   is_premium: boolean
   premium_until: string | null
-  subscription_tier: 'free' | 'scholar' | 'premium' | null
+  subscription_tier: 'free' | 'scholar' | 'premium' | 'nova_unlimited' | null
   setup_complete: boolean
   avatar_url: string | null
   ai_language: SALanguage | null
@@ -141,7 +141,7 @@ export interface Subscription {
   user_id: string
   payfast_payment_id: string | null
   payfast_subscription_token: string | null
-  plan: 'free' | 'scholar' | 'premium'
+  plan: 'free' | 'scholar' | 'premium' | 'nova_unlimited'
   status: 'active' | 'cancelled' | 'expired' | 'pending'
   amount: number | null
   billing_date: string | null

@@ -56,9 +56,9 @@ export default function NovaPage() {
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [messageCount, setMessageCount] = useState(0)
-  const [messageLimit, setMessageLimit] = useState(10)
+  const [messageLimit, setMessageLimit] = useState(15)
   const [isPremium, setIsPremium] = useState(false)
-  const [userTier, setUserTier] = useState<'free' | 'scholar' | 'premium'>('free')
+  const [userTier, setUserTier] = useState<'free' | 'scholar' | 'premium' | 'nova_unlimited'>('free')
   const [showMoods, setShowMoods] = useState(false)
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
@@ -185,7 +185,8 @@ export default function NovaPage() {
     }
   }
 
-  const usagePercent = isPremium ? 0 : Math.round((messageCount / messageLimit) * 100)
+  const isUnlimited = userTier === 'nova_unlimited'
+  const usagePercent = (isPremium || isUnlimited) ? 0 : Math.round((messageCount / messageLimit) * 100)
   const usageLeft = messageLimit - messageCount
 
   return (
@@ -208,18 +209,29 @@ export default function NovaPage() {
               ✦ Menu
             </button>
 
-            {!isPremium && (
+            {isUnlimited && (
+              <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                ✦ UNLIMITED
+              </span>
+            )}
+            {!isUnlimited && !isPremium && (
               <div className="flex items-center gap-1.5">
                 <div className="h-1.5 w-16 bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className={cn('h-full rounded-full transition-all', usagePercent > 80 ? 'bg-red-500' : 'bg-teal-600')}
+                    className={cn('h-full rounded-full transition-all',
+                      usagePercent > 80 ? 'bg-red-500' : usagePercent > 50 ? 'bg-amber-500' : 'bg-teal-600'
+                    )}
                     style={{ width: `${usagePercent}%` }}
                   />
                 </div>
-                <span className="font-mono text-[0.55rem] text-white/30">{usageLeft} left</span>
+                <span className={cn('font-mono text-[0.55rem]',
+                  usagePercent > 80 ? 'text-red-400' : usagePercent > 50 ? 'text-amber-400' : 'text-white/30'
+                )}>
+                  {usageLeft} left
+                </span>
               </div>
             )}
-            {isPremium && (
+            {isPremium && !isUnlimited && (
               <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
                 ⭐ {userTier === 'scholar' ? 'SCHOLAR' : 'PREMIUM'}
               </span>
@@ -444,7 +456,7 @@ export default function NovaPage() {
 
       {/* Input area */}
       <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[#080f0e]">
-        {!isPremium && usageLeft <= 3 && usageLeft > 0 && (
+        {!isUnlimited && !isPremium && usageLeft <= 3 && usageLeft > 0 && (
           <div className="mb-2 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
             <span className="font-mono text-[0.6rem] text-amber-400">
               {usageLeft} message{usageLeft === 1 ? '' : 's'} left this month
@@ -455,19 +467,21 @@ export default function NovaPage() {
           </div>
         )}
 
-        {!isPremium && usageLeft === 0 ? (
+        {!isUnlimited && usageLeft === 0 ? (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
             <p className="font-display font-bold text-white text-sm mb-1">Monthly limit reached</p>
             <p className="font-mono text-[0.62rem] text-white/40 mb-3">
-              {userTier === 'scholar'
-                ? 'Upgrade to Premium for 200 messages/month'
-                : 'Scholar gives you 75 messages for R39/month'}
+              {userTier === 'premium'
+                ? 'Nova Unlimited (R129/month) removes all caps'
+                : userTier === 'scholar'
+                ? 'Upgrade to Premium for 250 messages, or go Unlimited for R129'
+                : 'Scholar gives you 100 messages for R39/month'}
             </p>
             <Link
               href="/upgrade"
               className="inline-block font-display font-bold text-sm bg-amber-500/10 text-amber-400 border border-amber-500/20 px-5 py-2 rounded-xl hover:bg-amber-500/20 transition-all"
             >
-              ⭐ {userTier === 'scholar' ? 'Upgrade to Premium — R79/month' : 'Unlock Scholar — R39/month'}
+              ⭐ {userTier === 'premium' ? 'Go Nova Unlimited — R129/month' : userTier === 'scholar' ? 'Upgrade to Premium — R79/month' : 'Unlock Scholar — R39/month'}
             </Link>
           </div>
         ) : (

@@ -130,15 +130,37 @@ export function exportToCSV(data: Record<string, unknown>[], filename: string): 
 }
 
 // ─── Nova usage limits ────────────────────────────────────────
-export const NOVA_FREE_LIMIT             = 10   // hard block for free users (10/month)
-export const NOVA_SCHOLAR_LIMIT          = 75   // hard block for scholar users (75/month)
-export const NOVA_PREMIUM_HARD_CAP       = 200  // hard block for premium users (200/month — ~6–7/day)
-export const NOVA_PREMIUM_SOFT_CAP       = 160  // premium: responses shift resource-forward above this
-export const NOVA_PREMIUM_RESOURCE_START = 120  // premium: start weaving in resources above this
+export const NOVA_FREE_LIMIT             = 15   // hard block for free users (15/month)
+export const NOVA_SCHOLAR_LIMIT          = 100  // hard block for scholar users (100/month)
+export const NOVA_PREMIUM_HARD_CAP       = 250  // hard block for premium users (250/month — ~8/day)
+export const NOVA_PREMIUM_SOFT_CAP       = 200  // premium: responses shift resource-forward above this
+export const NOVA_PREMIUM_RESOURCE_START = 150  // premium: start weaving in resources above this
+
+export const NOVA_LIMITS = {
+  free:           15,
+  scholar:        100,
+  premium:        250,
+  nova_unlimited: -1, // -1 = unlimited
+} as const
+
+export type NovaTier = keyof typeof NOVA_LIMITS
+
+export function isAtNovaLimit(used: number, plan: NovaTier): boolean {
+  const limit = NOVA_LIMITS[plan]
+  if (limit === -1) return false
+  return used >= limit
+}
+
+export function novaMessagesRemaining(used: number, plan: NovaTier): number | 'unlimited' {
+  const limit = NOVA_LIMITS[plan]
+  if (limit === -1) return 'unlimited'
+  return Math.max(0, limit - used)
+}
 
 // ─── Pricing (ZAR) ───────────────────────────────────────────
-export const NOVA_SCHOLAR_PRICE  = 39  // R39/month — target tier, 63%+ gross margin
-export const NOVA_PREMIUM_PRICE  = 79  // R79/month — 200 msg hard cap, 47–71% gross margin
+export const NOVA_SCHOLAR_PRICE   = 39   // R39/month — target tier, 63%+ gross margin
+export const NOVA_PREMIUM_PRICE   = 79   // R79/month — 250 msg hard cap
+export const NOVA_UNLIMITED_PRICE = 129  // R129/month — unlimited Nova messages
 
 // ─── PayFast signature ────────────────────────────────────────
 export function generatePayFastSignature(data: Record<string, string>, passphrase?: string): string {

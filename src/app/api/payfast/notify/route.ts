@@ -58,9 +58,11 @@ export async function POST(request: NextRequest) {
     const userId = parts[0]
     const tierOrMonths = parts[1] ?? 'premium'
 
-    // Determine tier: 'scholar' or 'premium' (legacy numeric = premium)
-    const tier: 'scholar' | 'premium' =
-      tierOrMonths === 'scholar' ? 'scholar' : 'premium'
+    // Determine tier: 'scholar', 'premium', or 'nova_unlimited' (legacy numeric = premium)
+    const tier: 'scholar' | 'premium' | 'nova_unlimited' =
+      tierOrMonths === 'scholar' ? 'scholar'
+      : tierOrMonths === 'nova_unlimited' ? 'nova_unlimited'
+      : 'premium'
 
     // Always log — non-fatal
     try {
