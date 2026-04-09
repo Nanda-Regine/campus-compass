@@ -121,6 +121,8 @@ export async function POST(request: NextRequest) {
         .from('profiles')
         .update({
           plan: tier,
+          subscription_tier: tier,
+          is_premium: true,
           nova_messages_limit: novaLimit,
         })
         .eq('id', userId)
@@ -130,7 +132,12 @@ export async function POST(request: NextRequest) {
     if (data.payment_status === 'CANCELLED' && userId) {
       await supabase
         .from('profiles')
-        .update({ plan: 'free', nova_messages_limit: 15 })
+        .update({
+          plan: 'free',
+          subscription_tier: 'free',
+          is_premium: false,
+          nova_messages_limit: 15,
+        })
         .eq('id', userId)
     }
 
