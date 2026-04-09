@@ -8,6 +8,7 @@ import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
+import ConsentBanner from '@/components/ConsentBanner'
 import './globals.css'
 
 const displayFont = Plus_Jakarta_Sans({
@@ -298,6 +299,7 @@ a.appendChild(r);
         )}
         <Providers>
           <OfflineBanner />
+          <ConsentBanner />
           <div className="pb-16 md:pb-0">
             {children}
           </div>
