@@ -82,37 +82,26 @@ export async function POST(request: NextRequest) {
       nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
       const nextBillingStr = nextBillingDate.toISOString()
 
-      await Promise.all([
-        supabase
-          .from('profiles')
-          .update({
-            is_premium: true,
-            subscription_tier: tier,
-            premium_until: nextBillingStr,
-          })
-          .eq('id', userId),
-        supabase
-          .from('subscriptions')
-          .upsert({
-            user_id: userId,
-            plan: tier,
-            status: 'active',
-            payfast_payment_id: data.pf_payment_id ?? null,
-            payfast_subscription_token: data.token ?? null,
-            amount: parseFloat(data.amount_gross ?? '0'),
-            billing_date: now.toISOString().split('T')[0],
-            next_billing_date: nextBillingStr,
-            updated_at: now.toISOString(),
-          }, { onConflict: 'user_id' }),
-      ])
+      // Determine nova_messages_limit for this plan
+      const novaLimit = tier === 'nova_unlimited' ? 9999
+        : tier === 'premium' ? 250
+        : 100 // scholar
+
+      await supabase
+        .from('profiles')
+        .update({
+          plan: tier,
+          nova_messages_limit: novaLimit,
+        })
+        .eq('id', userId)
     }
 
-    // Handle subscription cancellation / charge_failed
+    // Handle subscription cancellation — revert to free tier
     if (data.payment_status === 'CANCELLED' && userId) {
       await supabase
-        .from('subscriptions')
-        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-        .eq('user_id', userId)
+        .from('profiles')
+        .update({ plan: 'free', nova_messages_limit: 15 })
+        .eq('id', userId)
     }
 
     // PayFast REQUIRES 200 — always

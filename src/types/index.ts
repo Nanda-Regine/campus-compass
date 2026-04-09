@@ -9,21 +9,22 @@ export type Json = string | number | boolean | null | { [key: string]: Json } | 
 export interface Profile {
   id: string
   email: string | null
-  name: string
-  emoji: string
+  full_name: string | null
   university: string | null
-  year_of_study: string | null
-  faculty: string | null
-  funding_type: FundingType | null
-  dietary_pref: string
-  living_situation: string | null
-  is_premium: boolean
-  premium_until: string | null
-  subscription_tier: 'free' | 'scholar' | 'premium' | 'nova_unlimited' | null
-  setup_complete: boolean
+  degree: string | null
+  year_of_study: number | null
+  student_number: string | null
   avatar_url: string | null
-  ai_language: SALanguage | null
-  referral_credits: number
+  plan: 'free' | 'scholar' | 'premium' | 'nova_unlimited'
+  nova_messages_used: number
+  nova_messages_limit: number
+  streak_count: number
+  last_activity_date: string | null
+  onboarding_complete: boolean
+  funding_type: FundingType | null
+  phone: string | null
+  preferred_language: string
+  notifications_enabled: boolean
   created_at: string
   updated_at: string
 }
@@ -44,22 +45,26 @@ export interface Budget {
 export interface Expense {
   id: string
   user_id: string
-  description: string
+  category: string
+  description: string | null
   amount: number
-  category: ExpenseCategory
-  date: string
-  notes: string | null
+  expense_date: string
+  month_year: string | null
+  receipt_url: string | null
   created_at: string
 }
 
 export interface Module {
   id: string
   user_id: string
-  name: string
-  code: string | null
-  colour: ModuleColour
-  lecturer: string | null
+  module_name: string
+  module_code: string
+  credits: number
+  lecturer_name: string | null
   venue: string | null
+  color: string
+  semester: number | null
+  is_active: boolean
   created_at: string
 }
 
@@ -67,13 +72,17 @@ export interface Task {
   id: string
   user_id: string
   module_id: string | null
+  group_id: string | null
   title: string
-  task_type: TaskType
+  description: string | null
+  task_type: string
   due_date: string | null
   priority: TaskPriority
-  notes: string | null
-  done: boolean
-  done_at: string | null
+  status: 'todo' | 'in_progress' | 'done' | 'overdue'
+  is_group_task: boolean
+  estimated_hours: number | null
+  recurrence_rule: string | null
+  completed_at: string | null
   created_at: string
   updated_at: string
   // Joined
@@ -97,10 +106,11 @@ export interface Exam {
   id: string
   user_id: string
   module_id: string | null
-  name: string
+  exam_name: string
   exam_date: string
-  start_time: string | null
   venue: string | null
+  duration_minutes: number | null
+  exam_type: string
   notes: string | null
   created_at: string
   // Joined

@@ -11,31 +11,25 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const monthYear = new Date().toISOString().slice(0, 7) // YYYY-MM
-
     const [
       { data: profile },
-      { data: usage },
-      { data: referral },
       { data: sessions },
     ] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', user.id).single(),
-      supabase.from('nova_usage').select('message_count').eq('user_id', user.id).eq('month_year', monthYear).single(),
-      supabase.from('profiles').select('referral_code, referral_credits').eq('id', user.id).single(),
       supabase.from('study_sessions')
         .select('duration_minutes')
         .eq('user_id', user.id)
         .gte('started_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
     ])
 
-    const { count: referralCount } = await supabase
-      .from('referrals')
-      .select('id', { count: 'exact', head: true })
-      .eq('referrer_id', user.id)
-
-    const novaMessagesUsed = usage?.message_count ?? 0
-    const novaLimit = profile?.is_premium ? null : 10 // null = unlimited
-    const totalStudyMinutes = (sessions ?? []).reduce((sum, s) => sum + (s.duration_minutes ?? 0), 0)
+    const p = profile as Record<string, unknown> | null
+    const novaMessagesUsed = (p?.nova_messages_used as number) ?? 0
+    const plan = (p?.plan as string) ?? 'free'
+    const novaLimit = plan === 'nova_unlimited' ? -1
+      : plan === 'premium' ? 250
+      : plan === 'scholar' ? 100
+      : 15
+    const totalStudyMinutes = (sessions ?? []).reduce((sum, s) => sum + ((s as Record<string, unknown>).duration_minutes as number ?? 0), 0)
 
     return NextResponse.json({
       profile,
@@ -43,9 +37,6 @@ export async function GET() {
         novaMessagesUsed,
         novaLimit,
         totalStudyMinutesThisMonth: totalStudyMinutes,
-        referralCount: referralCount ?? 0,
-        referralCredits: referral?.referral_credits ?? 0,
-        referralCode: referral?.referral_code ?? null,
       },
     })
   } catch (error) {
@@ -63,12 +54,13 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json()
 
-    // Whitelist editable fields — never allow is_premium, payfast_token etc.
+    // Whitelist editable fields — never allow plan, nova_messages etc.
     const allowed = [
-      'name', 'emoji', 'university', 'year_of_study', 'faculty',
-      'funding_type', 'dietary_pref', 'living_situation', 'ai_language',
+      'full_name', 'university', 'degree', 'year_of_study', 'student_number',
+      'funding_type', 'phone', 'preferred_language', 'notifications_enabled',
+      'avatar_url', 'onboarding_complete',
     ]
-    const updates: Record<string, string> = {}
+    const updates: Record<string, unknown> = {}
     for (const key of allowed) {
       if (body[key] !== undefined) updates[key] = body[key]
     }

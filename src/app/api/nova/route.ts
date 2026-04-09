@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START } from '@/lib/utils'
+import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START, NOVA_LIMITS } from '@/lib/utils'
 import type { NovaTier } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
@@ -79,32 +79,30 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
 
   const [
     { data: profile },
-    { data: budget },
+    { data: walletConfig },
+    { data: income },
     { data: tasks },
     { data: exams },
     { data: modules },
     { data: expenses },
-    { data: usage },
-    { data: insights },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('budgets').select('*').eq('user_id', userId).single(),
-    supabase.from('tasks').select('*, module:modules(name)').eq('user_id', userId).eq('done', false).order('due_date', { ascending: true }),
-    supabase.from('exams').select('*, module:modules(name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
-    supabase.from('modules').select('*').eq('user_id', userId),
-    supabase.from('expenses').select('*').eq('user_id', userId).gte('date', monthYear + '-01').order('date', { ascending: false }),
-    supabase.from('nova_usage').select('message_count').eq('user_id', userId).eq('month_year', monthYear).single(),
-    supabase.from('nova_insights').select('*').eq('user_id', userId).eq('dismissed', false).order('created_at', { ascending: false }).limit(3),
+    supabase.from('wallet_config').select('monthly_budget_goal').eq('user_id', userId).single(),
+    supabase.from('income_entries').select('amount').eq('user_id', userId).eq('month_year', monthYear),
+    supabase.from('tasks').select('*, module:modules(module_name)').eq('user_id', userId).neq('status', 'done').order('due_date', { ascending: true }),
+    supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
+    supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true),
+    supabase.from('expenses').select('amount').eq('user_id', userId).eq('month_year', monthYear),
   ])
 
-  const totalBudget = (budget?.monthly_budget || 0) +
-    (budget?.nsfas_enabled ? (budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books) : 0)
+  const totalIncome = income?.reduce((s, e) => s + (e.amount || 0), 0) || 0
+  const budgetGoal = walletConfig?.monthly_budget_goal || totalIncome
   const totalSpent = expenses?.reduce((s, e) => s + e.amount, 0) || 0
-  const remaining = totalBudget - totalSpent
+  const remaining = budgetGoal - totalSpent
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
   const dayOfMonth = now.getDate()
-  const dailyBudget = remaining / (daysInMonth - dayOfMonth + 1)
-  const spentPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
+  const dailyBudget = remaining / Math.max(1, daysInMonth - dayOfMonth + 1)
+  const spentPct = budgetGoal > 0 ? Math.round((totalSpent / budgetGoal) * 100) : 0
 
   const urgentTasks = tasks?.filter(t => {
     if (!t.due_date) return false
@@ -128,38 +126,34 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   if (daysToNextExam !== null && daysToNextExam <= 5) stressSignals.push(`exam in ${daysToNextExam} days`)
   if (urgentTasks.length >= 3) stressSignals.push(`${urgentTasks.length} tasks due within 3 days`)
 
+  const tier = ((profile as Record<string, unknown>)?.plan as NovaTier | null) || 'free'
+
   return {
     profile,
     budget: {
-      total: totalBudget,
+      total: budgetGoal,
       spent: totalSpent,
       remaining,
       spentPct,
       dailyBudget: Math.round(dailyBudget),
-      nsfasEnabled: budget?.nsfas_enabled,
       fundingType: profile?.funding_type,
     },
     academic: {
-      modules: modules?.map(m => m.name) || [],
+      modules: modules?.map((m: Record<string, unknown>) => m.module_name as string) || [],
       pendingTasks: tasks?.length || 0,
-      urgentTasks: urgentTasks.map(t => ({ title: t.title, module: t.module?.name, dueDate: t.due_date })),
-      overdueTasks: overdueTasks.map(t => ({ title: t.title, module: t.module?.name })),
+      urgentTasks: urgentTasks.map(t => ({ title: t.title, module: (t.module as Record<string, unknown>)?.module_name, dueDate: t.due_date })),
+      overdueTasks: overdueTasks.map(t => ({ title: t.title, module: (t.module as Record<string, unknown>)?.module_name })),
       nextExam: nextExam ? {
-        name: nextExam.name,
-        module: nextExam.module?.name,
+        name: nextExam.exam_name,
+        module: (nextExam.module as Record<string, unknown>)?.module_name,
         date: nextExam.exam_date,
         daysAway: daysToNextExam,
       } : null,
       totalExamsAhead: exams?.length || 0,
     },
     stressSignals,
-    insights: insights || [],
-    messageCount: usage?.message_count || 0,
-    isPremium: profile?.is_premium || false,
-    // Derive subscription tier: subscription_tier column (new) → fallback to is_premium bool
-    subscriptionTier: (profile?.subscription_tier as NovaTier | null) || (profile?.is_premium ? 'premium' : 'free'),
-    // Referral bonus credits stack on top of the free tier limit
-    referralCredits: profile?.referral_credits || 0,
+    messageCount: (profile as Record<string, unknown>)?.nova_messages_used as number || 0,
+    subscriptionTier: tier,
   }
 }
 
@@ -169,8 +163,9 @@ function buildDynamicContext(
   usageGuidance: string,
 ): string {
   const { profile, budget, academic, stressSignals } = ctx
-  const name = profile?.name?.split(' ')[0] || 'student'
-  const uni = profile?.university?.split('(')[0]?.trim() || 'university'
+  const p = profile as Record<string, unknown>
+  const name = (p?.full_name as string | null)?.split(' ')[0] || 'student'
+  const uni = (p?.university as string | null)?.split('(')[0]?.trim() || 'university'
 
   const stressNote = stressSignals.length > 0
     ? `\n⚠️ STRESS SIGNALS DETECTED: ${stressSignals.join(', ')}. Be especially warm and supportive first. Don't add more to-do items immediately.`
@@ -188,7 +183,7 @@ function buildDynamicContext(
     ? `URGENT TASKS: ${academic.urgentTasks.map(t => `"${t.title}"${t.dueDate ? ` due ${t.dueDate}` : ''}`).join(', ')}`
     : `${academic.pendingTasks} tasks pending, none critically urgent.`
 
-  const language = profile?.ai_language || 'English'
+  const language = (p?.preferred_language as string | null) || 'English'
   const langInstruction = language !== 'English'
     ? `\n- **Language:** Respond in ${language}. You may code-switch naturally. Keep any technical terms/app names in English.`
     : ''
@@ -200,11 +195,8 @@ function buildDynamicContext(
 **Student Profile:**
 - Name: ${name}
 - University: ${uni}
-- Year: ${profile?.year_of_study || 'unknown'}
-- Faculty: ${profile?.faculty || 'unknown'}
-- Funding: ${profile?.funding_type?.toUpperCase() || 'unknown'}
-- Living: ${profile?.living_situation || 'unknown'}
-- Diet: ${profile?.dietary_pref || 'no restrictions'}${langInstruction}
+- Year: ${p?.year_of_study || 'unknown'}
+- Funding: ${(p?.funding_type as string | null)?.toUpperCase() || 'unknown'}${langInstruction}
 
 **Academic Situation:**
 - Modules: ${academic.modules.join(', ') || 'none added yet'}
@@ -217,7 +209,6 @@ ${stressNote}
 **Financial Situation:**
 - ${budgetNote}
 - Funding type: ${budget.fundingType || 'unknown'}
-- ${budget.nsfasEnabled ? 'NSFAS student — apply NSFAS-specific financial context.' : 'Not on NSFAS.'}
 
 **Instructions for this response:**
 - You are Nova 🌟. Use the persona and knowledge from the comprehensive knowledge base above.
@@ -259,26 +250,18 @@ export async function POST(request: NextRequest) {
     // For breathing exercises, crisis, sleep tips, Pomodoro, etc. — respond instantly
     const prebuilt = detectPrebuilt(message)
     if (prebuilt?.skipApi) {
-      // Save to DB then return — no Anthropic call
-      const supabase2 = createServerSupabaseClient()
-      await supabase2.from('nova_messages').insert([
-        { user_id: user.id, role: 'user', content: mood ? `[Mood: ${mood}] ${message}` : message },
-        { user_id: user.id, role: 'assistant', content: prebuilt.response },
-      ])
-      const monthYear = currentMonthYear()
-      await supabase2.rpc('check_and_increment_nova_usage', {
-        p_user_id: user.id,
-        p_month_year: monthYear,
-        p_max_messages: 9999, // prebuilt path — cap already enforced above
-      })
+      // Build context to get current usage count, then increment
+      const ctx = await buildStudentContext(user.id, supabase)
+      const newCount = ctx.messageCount + 1
+      await supabase.from('profiles').update({ nova_messages_used: newCount }).eq('id', user.id)
 
       return NextResponse.json({
         message: prebuilt.response,
         isCrisis,
         resources: prebuilt.resources || [],
         prebuilt: true,
-        messagesUsed: 1,
-        isPremium: false,
+        messagesUsed: newCount,
+        tier: ctx.subscriptionTier,
       })
     }
 
@@ -287,26 +270,24 @@ export async function POST(request: NextRequest) {
 
     // ─── Tier-based message cap enforcement ───────────────────────────────
     const tier = ctx.subscriptionTier
-    const effectiveFreeLimit = NOVA_FREE_LIMIT + ctx.referralCredits
+    // For nova_unlimited, use the internal cost-protection cap (not exposed to UI)
+    const tierLimit = NOVA_LIMITS[tier]
     const isUnlimited = tier === 'nova_unlimited'
-    const tierLimit = isUnlimited ? Infinity
-      : tier === 'premium' ? NOVA_PREMIUM_HARD_CAP
-      : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
-      : effectiveFreeLimit
+    const effectiveFreeLimit = NOVA_FREE_LIMIT
 
-    const tierLabel = tier === 'nova_unlimited' ? 'Nova Unlimited'
-      : tier === 'premium' ? 'Premium (250/month)'
-      : tier === 'scholar' ? 'Scholar (100/month)'
-      : `Free (${effectiveFreeLimit}/month)`
+    if (ctx.messageCount >= tierLimit) {
+      const limitMessage = tier === 'nova_unlimited'
+        ? "Nova is taking a well-earned rest for the remainder of this month — your messages reset on the 1st. In the meantime, check out Siyavula, Khan Academy, or your campus counselling centre."
+        : tier === 'free'
+          ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Scholar (R39) for 100 messages/month.`
+          : tier === 'scholar'
+            ? `You've reached your 100-message Scholar limit. Upgrade to Premium (R79) for 250 messages, or Nova Unlimited (R129) for much more.`
+            : `You've reached your 250-message Premium limit. Upgrade to Nova Unlimited (R129) for extended access.`
 
-    if (!isUnlimited && ctx.messageCount >= tierLimit) {
-      const isFreeTier = tier === 'free'
       return NextResponse.json({
         error: 'limit_reached',
-        message: isFreeTier
-          ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Scholar (R39) for 100 messages, or refer a friend for +50 bonus messages.`
-          : `You've reached your ${tierLabel} limit for this month. ${tier === 'scholar' ? 'Upgrade to Premium (R79) for 250 messages, or go Nova Unlimited (R129) for no cap.' : 'Upgrade to Nova Unlimited (R129) for unlimited messages, or your messages reset on the 1st.'}`,
-        upgradeUrl: '/upgrade',
+        message: limitMessage,
+        upgradeUrl: tier === 'nova_unlimited' ? null : '/upgrade',
         tier,
       }, { status: 402 })
     }
@@ -362,33 +343,26 @@ export async function POST(request: NextRequest) {
       assistantMessage += formatResourceLinks(topicResources)
     }
 
-    // Save messages to DB
-    await supabase.from('nova_messages').insert([
-      { user_id: user.id, role: 'user', content: mood ? `[Mood: ${mood}] ${message}` : message },
-      { user_id: user.id, role: 'assistant', content: assistantMessage },
-    ])
-
-    // Atomically increment — the check already happened above, this is the post-response write
-    const monthYear = currentMonthYear()
-    await supabase.rpc('check_and_increment_nova_usage', {
-      p_user_id: user.id,
-      p_month_year: monthYear,
-      p_max_messages: tierLimit + 1, // always allow: we checked the cap before the API call
-    })
-
-    // Generate proactive insight if stress signals detected
-    if (ctx.stressSignals.length >= 2 && !isCrisis) {
-      generateProactiveInsight(user.id, ctx, supabase).catch(console.error)
-    }
-
+    // Increment message counter on profile
     const messagesUsed = ctx.messageCount + 1
+    await supabase.from('profiles').update({ nova_messages_used: messagesUsed }).eq('id', user.id)
+
+    // Save conversation to nova_conversations (best-effort, non-blocking)
+    supabase.from('nova_conversations').upsert({
+      user_id: user.id,
+      messages: [...history.slice(-20), { role: 'user', content: message }, { role: 'assistant', content: assistantMessage }],
+      conversation_type: isCrisis ? 'crisis' : 'general',
+      crisis_detected: isCrisis,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' }).then(() => {}).catch(() => {})
+
     return NextResponse.json({
       message: assistantMessage,
       isCrisis,
       resources: topicResources,
       messagesUsed,
-      messagesLimit: tierLimit,
-      isPremium: ctx.isPremium,
+      // Always return -1 (unlimited) to UI for nova_unlimited — internal cap is invisible to users
+      messagesLimit: tier === 'nova_unlimited' ? -1 : tierLimit,
       tier,
       nearSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
       pastSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_HARD_CAP,
@@ -401,99 +375,42 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function generateProactiveInsight(
-  userId: string,
-  ctx: Awaited<ReturnType<typeof buildStudentContext>>,
-  supabase: ReturnType<typeof createServerSupabaseClient>
-) {
-  const { stressSignals, profile } = ctx
-  const name = profile?.name?.split(' ')[0] || 'hey'
-
-  // Use pre-built templates for common stress combos to save API credits
-  const templates: Record<string, string> = {
-    exam: `${name}, your exam is coming up fast — even 25 minutes of focused revision today will make a difference.`,
-    budget: `Hey ${name}, your budget is getting tight. Want me to help you find a few places to cut back this week?`,
-    overdue: `${name}, you have some overdue tasks building up. Let's tackle the smallest one first — that's often all it takes.`,
-    default: `${name}, things look a little full on your plate right now. You've got this — one step at a time.`,
-  }
-
-  const hasExam = stressSignals.some(s => s.includes('exam'))
-  const hasBudget = stressSignals.some(s => s.includes('budget'))
-  const hasOverdue = stressSignals.some(s => s.includes('overdue'))
-
-  const insightText = hasExam ? templates.exam
-    : hasBudget ? templates.budget
-    : hasOverdue ? templates.overdue
-    : templates.default
-
-  const insightType = hasExam ? 'study_nudge'
-    : hasBudget ? 'budget_warning'
-    : 'stress_alert'
-
-  try {
-    // Check we haven't already sent a similar insight today
-    const today = new Date().toISOString().split('T')[0]
-    const { data: existing } = await supabase
-      .from('nova_insights')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('insight_type', insightType)
-      .gte('created_at', today)
-      .limit(1)
-      .single()
-
-    if (existing) return // Already sent one today for this type
-
-    await supabase.from('nova_insights').insert({
-      user_id: userId,
-      insight_type: insightType,
-      content: insightText,
-    })
-  } catch {
-    // Ignore — proactive insight is best-effort
-  }
-}
-
 export async function GET(request: NextRequest) {
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { data: messages } = await supabase
-      .from('nova_messages')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: true })
-      .limit(50)
+    const [
+      { data: conversation },
+      { data: profile },
+    ] = await Promise.all([
+      supabase
+        .from('nova_conversations')
+        .select('messages')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .single(),
+      supabase
+        .from('profiles')
+        .select('plan, nova_messages_used, nova_messages_limit')
+        .eq('id', user.id)
+        .single(),
+    ])
 
-    const monthYear = currentMonthYear()
-    const { data: usage } = await supabase
-      .from('nova_usage')
-      .select('message_count')
-      .eq('user_id', user.id)
-      .eq('month_year', monthYear)
-      .single()
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_premium, subscription_tier, referral_credits')
-      .eq('id', user.id)
-      .single()
-
-    const tier = ((profile as { subscription_tier?: string | null } | null)?.subscription_tier as NovaTier | null)
-      || (profile?.is_premium ? 'premium' : 'free')
-    const referralCredits = (profile as { referral_credits?: number } | null)?.referral_credits || 0
+    const p = profile as Record<string, unknown> | null
+    const tier = (p?.plan as NovaTier | null) || 'free'
+    const messageCount = (p?.nova_messages_used as number) || 0
     const messageLimit = tier === 'nova_unlimited' ? -1
       : tier === 'premium' ? NOVA_PREMIUM_HARD_CAP
       : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
-      : NOVA_FREE_LIMIT + referralCredits
+      : NOVA_FREE_LIMIT
 
     return NextResponse.json({
-      messages: messages || [],
-      messageCount: usage?.message_count || 0,
+      messages: (conversation?.messages as unknown[]) || [],
+      messageCount,
       messageLimit,
-      isPremium: profile?.is_premium || false,
       tier,
     })
   } catch (error) {

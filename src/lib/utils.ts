@@ -136,24 +136,30 @@ export const NOVA_PREMIUM_HARD_CAP       = 250  // hard block for premium users 
 export const NOVA_PREMIUM_SOFT_CAP       = 200  // premium: responses shift resource-forward above this
 export const NOVA_PREMIUM_RESOURCE_START = 150  // premium: start weaving in resources above this
 
+// Internal cost-protection cap for Nova Unlimited — never shown to users.
+// At ~R0.18/message, 500 msgs ≈ R90 API cost vs R129 revenue = R39 gross margin (30%).
+// Most users never approach this; it protects against extreme edge cases.
+const NOVA_UNLIMITED_INTERNAL_CAP = 500
+
 export const NOVA_LIMITS = {
   free:           15,
   scholar:        100,
   premium:        250,
-  nova_unlimited: -1, // -1 = unlimited
+  nova_unlimited: NOVA_UNLIMITED_INTERNAL_CAP,
 } as const
 
 export type NovaTier = keyof typeof NOVA_LIMITS
 
 export function isAtNovaLimit(used: number, plan: NovaTier): boolean {
+  if (plan === 'nova_unlimited') return used >= NOVA_UNLIMITED_INTERNAL_CAP
   const limit = NOVA_LIMITS[plan]
-  if (limit === -1) return false
   return used >= limit
 }
 
 export function novaMessagesRemaining(used: number, plan: NovaTier): number | 'unlimited' {
+  // Always return 'unlimited' to the UI for nova_unlimited — cap is internal
+  if (plan === 'nova_unlimited') return 'unlimited'
   const limit = NOVA_LIMITS[plan]
-  if (limit === -1) return 'unlimited'
   return Math.max(0, limit - used)
 }
 
