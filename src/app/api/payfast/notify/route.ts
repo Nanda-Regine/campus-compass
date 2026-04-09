@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import crypto from 'crypto'
 
 // PayFast production IP ranges (from PayFast documentation)
 // https://developers.payfast.co.za/docs#step_5_notify_url
@@ -24,6 +25,24 @@ function getClientIp(request: NextRequest): string {
   )
 }
 
+// Verify PayFast MD5 signature per their ITN specification
+function verifySignature(data: Record<string, string>, passphrase: string | undefined): boolean {
+  const { signature, ...rest } = data
+
+  // Build query string from all params except signature, in received order
+  // PayFast expects params in the order they were received
+  const paramString = Object.entries(rest)
+    .map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%20/g, '+')}`)
+    .join('&')
+
+  const stringToHash = passphrase
+    ? `${paramString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
+    : paramString
+
+  const computed = crypto.createHash('md5').update(stringToHash).digest('hex')
+  return computed === signature
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
@@ -38,7 +57,6 @@ export async function POST(request: NextRequest) {
     const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
     if (!isSandbox && !PAYFAST_IPS.includes(clientIp)) {
       console.warn(`[PayFast ITN] Rejected request from unknown IP: ${clientIp}`)
-      // Still return 200 to avoid PayFast retry loops, but don't process
       try {
         await supabase.from('payment_logs').insert({
           payfast_payment_id: data.pf_payment_id ?? null,
@@ -46,6 +64,23 @@ export async function POST(request: NextRequest) {
           status: 'REJECTED_IP',
           item_name: data.item_name ?? null,
           raw_data: { ...data, rejected_ip: clientIp },
+          user_id: null,
+        })
+      } catch { /* non-fatal */ }
+      return new NextResponse('OK', { status: 200 })
+    }
+
+    // ─── MD5 signature verification ───────────────────────────────────────
+    const passphrase = process.env.PAYFAST_PASSPHRASE
+    if (!verifySignature(data, passphrase)) {
+      console.warn('[PayFast ITN] Signature verification failed')
+      try {
+        await supabase.from('payment_logs').insert({
+          payfast_payment_id: data.pf_payment_id ?? null,
+          amount: parseFloat(data.amount_gross ?? '0'),
+          status: 'REJECTED_SIGNATURE',
+          item_name: data.item_name ?? null,
+          raw_data: data,
           user_id: null,
         })
       } catch { /* non-fatal */ }
@@ -77,11 +112,6 @@ export async function POST(request: NextRequest) {
     } catch { /* non-fatal */ }
 
     if (data.payment_status === 'COMPLETE' && userId) {
-      const now = new Date()
-      const nextBillingDate = new Date(now)
-      nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
-      const nextBillingStr = nextBillingDate.toISOString()
-
       // Determine nova_messages_limit for this plan
       const novaLimit = tier === 'nova_unlimited' ? 9999
         : tier === 'premium' ? 250

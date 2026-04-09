@@ -111,10 +111,22 @@ export async function PATCH(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id, ...updates } = await req.json()
+  const body = await req.json()
+  const { id } = body as { id?: string }
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+
+  // Whitelist — never allow student_id, earnings, conflict fields to be overwritten by client
+  const ALLOWED = ['status', 'notes', 'shift_date', 'start_time', 'end_time']
+  const safeUpdates = Object.fromEntries(
+    Object.entries(body as Record<string, unknown>).filter(([k]) => ALLOWED.includes(k))
+  )
+  if (Object.keys(safeUpdates).length === 0) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
+
   const { data, error } = await supabase
     .from('work_shifts')
-    .update(updates)
+    .update(safeUpdates)
     .eq('id', id)
     .eq('student_id', user.id)
     .select()

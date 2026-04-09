@@ -4,6 +4,28 @@ import type { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
+// Helper: verify user is a member or creator of the assignment that owns a task
+async function verifyTaskAccess(
+  supabase: ReturnType<typeof createServerSupabaseClient>,
+  taskId: string,
+  userId: string,
+): Promise<boolean> {
+  const { data: task } = await supabase
+    .from('group_tasks')
+    .select('assignment_id')
+    .eq('id', taskId)
+    .single()
+
+  if (!task) return false
+
+  const [{ data: member }, { data: creator }] = await Promise.all([
+    supabase.from('group_members').select('id').eq('assignment_id', task.assignment_id).eq('user_id', userId).single(),
+    supabase.from('group_assignments').select('id').eq('id', task.assignment_id).eq('created_by', userId).single(),
+  ])
+
+  return !!(member || creator)
+}
+
 // POST /api/groups/tasks — create a group task
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +89,10 @@ export async function PATCH(request: NextRequest) {
     const { id, ...updates } = await request.json()
     if (!id) return NextResponse.json({ error: 'Task ID required' }, { status: 400 })
 
+    // Verify membership before modifying
+    const hasAccess = await verifyTaskAccess(supabase, id, user.id)
+    if (!hasAccess) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
     const allowed = ['done', 'title', 'notes', 'due_date', 'assigned_to', 'assigned_to_email']
     const safeUpdates = Object.fromEntries(
       Object.entries(updates).filter(([k]) => allowed.includes(k))
@@ -87,7 +113,7 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE /api/groups/tasks — delete task
+// DELETE /api/groups/tasks — delete task (creator or assignment owner only)
 export async function DELETE(request: NextRequest) {
   try {
     const supabase = createServerSupabaseClient()
@@ -97,6 +123,26 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+
+    // Only task creator or assignment owner can delete
+    const { data: task } = await supabase
+      .from('group_tasks')
+      .select('assignment_id, created_by')
+      .eq('id', id)
+      .single()
+
+    if (!task) return NextResponse.json({ error: 'Task not found' }, { status: 404 })
+
+    const { data: assignmentOwner } = await supabase
+      .from('group_assignments')
+      .select('id')
+      .eq('id', task.assignment_id)
+      .eq('created_by', user.id)
+      .single()
+
+    if (task.created_by !== user.id && !assignmentOwner) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     const { error } = await supabase
       .from('group_tasks')
