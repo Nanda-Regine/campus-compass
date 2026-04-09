@@ -469,5 +469,45 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 - Gold border/badge (#d4a847) for Nova Unlimited throughout
 - Redirect guard: nova_unlimited users redirected to dashboard
 
+---
+
+## Phase 10 — Security Hardening, POPIA & TypeScript Clean (2026-04-09)
+
+### Nova Knowledge Base — Massively Expanded
+- `src/lib/nova-knowledge-base.ts`: Grew to ~1762 lines of preloaded SA student knowledge
+- 26 SA public universities documented (contacts, faculties, DP rules, registration)
+- Academic calendar, exam periods, supp rules, N+ funding limits
+- Subject content deep-dives: Maths, Accounting, Economics, CS, Biology, Chemistry, Physics, Law
+- Career guidance: what to study for each profession, matric requirements
+- Health & wellness: campus clinic access, SADAG mental health, crisis contacts
+- Student rights: SRC, DHET complaints, CCMA, whistleblower protections
+- Digital skills: CV building, LinkedIn for students, data-saving tips on campus WiFi
+- Post-grad finance: NSFAS repayment, NRF bursaries, SAMRC grants
+- 40+ FAQ entries covering the most common SA student questions
+
+### Critical Security Fixes
+- `src/app/api/payfast/notify/route.ts`: Added MD5 signature verification — forged payment notifications now rejected before any DB writes
+- `src/app/api/work/jobs/route.ts`: Field whitelist (`ALLOWED_JOB_FIELDS`) — was spreading raw request body into Supabase insert
+- `src/app/api/work/shifts/route.ts`: PATCH whitelist — prevented client overwriting `student_id`, `earnings`, `has_study_conflict`
+- `src/app/api/groups/tasks/route.ts`: IDOR fix — added `verifyTaskAccess()` helper; any user could previously edit/delete any group task
+
+### Real-time Improvements
+- `src/components/groups/GroupsClient.tsx`: Added `group_members` Supabase Realtime subscription — member list now updates live when invitees accept
+
+### POPIA Consent Banner
+- `src/components/ConsentBanner.tsx`: POPIA-compliant cookie consent banner with 1.2s delay, localStorage persistence, PostHog opt-in/opt-out, GTM suppression via `window.varsityos_analytics_allowed`
+- `src/app/layout.tsx`: Banner wired into root layout inside `<Providers>`
+
+### Pomodoro Timer — Verified Complete
+- `src/components/study/PomodoroTimer.tsx`: Confirmed full session saving — POSTs to `/api/study/sessions` with duration_minutes, task_id, module_id, started_at on work phase completion; toast + mobile vibration on complete
+
+### TypeScript Audit — All Errors Cleared
+- `src/types/index.ts`: Added missing fields across all interfaces (Profile: name/emoji/is_premium/subscription_tier/ai_language; Module: name/code/lecturer/colour aliases with ModuleColour type; Exam: name/start_time; Task: done/done_at; Expense: date alias + ExpenseCategory type for category)
+- `src/app/api/nova/route.ts`: Fixed PromiseLike.catch() issue (two-arg then pattern)
+- `src/app/api/feedback/route.ts`: Replaced deprecated `@supabase/auth-helpers-nextjs` with `createServerSupabaseClient`
+- `src/components/groups/GroupsClient.tsx`: Replaced auth-helpers with `createClient` from lib/supabase/client
+- `src/hooks/useOfflineSync.ts`: Same auth-helpers migration + resolved implicit `any` types
+- `npx tsc --noEmit` → **PASSES** ✓
+
 *Last updated: 2026-04-09*
 *Built with love for South African students*
