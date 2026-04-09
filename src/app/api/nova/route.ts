@@ -354,7 +354,7 @@ export async function POST(request: NextRequest) {
       conversation_type: isCrisis ? 'crisis' : 'general',
       crisis_detected: isCrisis,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' }).then(() => {}).catch(() => {})
+    }, { onConflict: 'user_id' }).then(() => {}, () => {})
 
     return NextResponse.json({
       message: assistantMessage,

@@ -29,11 +29,11 @@ export default function ConsentBanner() {
       }
       // Block GTM analytics cookies (GTM is already loaded, but we suppress events)
       if (typeof window !== 'undefined') {
-        (window as Record<string, unknown>).varsityos_analytics_allowed = false
+        ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = false
       }
     } else if (c === 'all') {
       if (typeof window !== 'undefined') {
-        (window as Record<string, unknown>).varsityos_analytics_allowed = true
+        ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = true
         // Re-enable PostHog if previously opted out
         const ph = (window as { posthog?: { opt_in_capturing?: () => void; has_opted_out_capturing?: () => boolean } }).posthog
         if (ph?.has_opted_out_capturing?.() && ph.opt_in_capturing) {

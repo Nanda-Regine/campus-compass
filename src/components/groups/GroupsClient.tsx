@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
@@ -41,7 +41,7 @@ type View = 'list' | 'detail'
 
 export default function GroupsClient({ userId }: { userId: string }) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const [assignments, setAssignments] = useState<GroupAssignment[]>([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<View>('list')
@@ -82,20 +82,42 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
   useEffect(() => { load() }, [load])
 
-  // ── Realtime: refresh when group_tasks change ─────────────────
+  // ── Realtime: refresh when group_tasks or group_members change ──
   useEffect(() => {
-    const channel = supabase
+    const tasksChannel = supabase
       .channel('group-tasks-realtime')
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
         table: 'group_tasks',
       }, () => {
-        load() // re-fetch on any insert/update/delete
+        load()
       })
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
+    // Refresh assignments when a new member joins (invite accepted)
+    const membersChannel = supabase
+      .channel('group-members-realtime')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'group_members',
+      }, () => {
+        load()
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'group_members',
+      }, () => {
+        load()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(tasksChannel)
+      supabase.removeChannel(membersChannel)
+    }
   }, [supabase, load])
 
   const createAssignment = async () => {

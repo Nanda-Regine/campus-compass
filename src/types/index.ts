@@ -10,12 +10,16 @@ export interface Profile {
   id: string
   email: string | null
   full_name: string | null
+  name: string | null
+  emoji: string | null
   university: string | null
   degree: string | null
   year_of_study: number | null
   student_number: string | null
   avatar_url: string | null
   plan: 'free' | 'scholar' | 'premium' | 'nova_unlimited'
+  subscription_tier: 'free' | 'scholar' | 'premium' | 'nova_unlimited' | null
+  is_premium: boolean
   nova_messages_used: number
   nova_messages_limit: number
   streak_count: number
@@ -24,6 +28,7 @@ export interface Profile {
   funding_type: FundingType | null
   phone: string | null
   preferred_language: string
+  ai_language: string | null
   notifications_enabled: boolean
   created_at: string
   updated_at: string
@@ -45,10 +50,11 @@ export interface Budget {
 export interface Expense {
   id: string
   user_id: string
-  category: string
+  category: ExpenseCategory
   description: string | null
   amount: number
   expense_date: string
+  date: string
   month_year: string | null
   receipt_url: string | null
   created_at: string
@@ -58,11 +64,15 @@ export interface Module {
   id: string
   user_id: string
   module_name: string
+  name: string
   module_code: string
+  code: string
   credits: number
   lecturer_name: string | null
+  lecturer: string | null
   venue: string | null
-  color: string
+  color: ModuleColour
+  colour: ModuleColour
   semester: number | null
   is_active: boolean
   created_at: string
@@ -79,9 +89,11 @@ export interface Task {
   due_date: string | null
   priority: TaskPriority
   status: 'todo' | 'in_progress' | 'done' | 'overdue'
+  done: boolean
   is_group_task: boolean
   estimated_hours: number | null
   recurrence_rule: string | null
+  done_at: string | null
   completed_at: string | null
   created_at: string
   updated_at: string
@@ -107,7 +119,9 @@ export interface Exam {
   user_id: string
   module_id: string | null
   exam_name: string
+  name: string
   exam_date: string
+  start_time: string | null
   venue: string | null
   duration_minutes: number | null
   exam_type: string

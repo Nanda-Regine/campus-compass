@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit } from '@/lib/rateLimit'
 
@@ -11,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Too many submissions — please try again later.' }, { status: 429 })
   }
 
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const body = await req.json()

@@ -1760,4 +1760,3 @@ Typically 50% overall to pass. But many modules have sub-minimum rules: you need
 
 **"I was asked to do something unethical at work, what are my rights?"**
 You have the right to refuse unethical or illegal instructions. SA whistleblower protection: Protected Disclosures Act (No. 26 of 2000) protects employees who report wrongdoing in good faith. You cannot be dismissed for reporting to CCMA, SAPS, or relevant regulatory authority. Keep records of everything.`
-`

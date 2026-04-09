@@ -1,12 +1,12 @@
 'use client'
 import { useEffect } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { getOfflineDB } from '@/lib/offline/db'
 import { flushPendingWrites } from '@/lib/offline/pendingWrites'
 import { currentMonthYear } from '@/lib/utils'
 
 export function useOfflineSync() {
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     async function syncToIndexedDB() {
@@ -19,41 +19,25 @@ export function useOfflineSync() {
       const today = new Date().toISOString().split('T')[0]
       const monthYear = currentMonthYear()
 
+      type SyncResult = { data: Record<string, unknown>[] | null }
+
+      const syncTable = async (
+        query: PromiseLike<SyncResult>,
+        storeName: string,
+      ) => {
+        const { data } = await query
+        if (!data) return
+        const tx = db.transaction(storeName as Parameters<typeof db.transaction>[0], 'readwrite')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await Promise.all([...data.map(r => (tx as any).store.put(r)), tx.done])
+      }
+
       await Promise.allSettled([
-        // Timetable
-        supabase.from('timetable_slots').select('*').eq('user_id', user.id).then(async ({ data }) => {
-          if (!data) return
-          const tx = db.transaction('timetable', 'readwrite')
-          await Promise.all([...data.map(r => tx.store.put(r as Record<string, unknown>)), tx.done])
-        }),
-
-        // Tasks (open ones)
-        supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', false).then(async ({ data }) => {
-          if (!data) return
-          const tx = db.transaction('tasks', 'readwrite')
-          await Promise.all([...data.map(r => tx.store.put(r as Record<string, unknown>)), tx.done])
-        }),
-
-        // Expenses (current month)
-        supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', monthYear + '-01').then(async ({ data }) => {
-          if (!data) return
-          const tx = db.transaction('expenses', 'readwrite')
-          await Promise.all([...data.map(r => tx.store.put(r as Record<string, unknown>)), tx.done])
-        }),
-
-        // Savings goals
-        supabase.from('savings_goals').select('*').eq('user_id', user.id).then(async ({ data }) => {
-          if (!data) return
-          const tx = db.transaction('savings_goals', 'readwrite')
-          await Promise.all([...data.map(r => tx.store.put(r as Record<string, unknown>)), tx.done])
-        }),
-
-        // Upcoming exams
-        supabase.from('exams').select('*').eq('user_id', user.id).gte('exam_date', today).then(async ({ data }) => {
-          if (!data) return
-          const tx = db.transaction('exams', 'readwrite')
-          await Promise.all([...data.map(r => tx.store.put(r as Record<string, unknown>)), tx.done])
-        }),
+        syncTable(supabase.from('timetable_slots').select('*').eq('user_id', user.id) as unknown as PromiseLike<SyncResult>, 'timetable'),
+        syncTable(supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', false) as unknown as PromiseLike<SyncResult>, 'tasks'),
+        syncTable(supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', monthYear + '-01') as unknown as PromiseLike<SyncResult>, 'expenses'),
+        syncTable(supabase.from('savings_goals').select('*').eq('user_id', user.id) as unknown as PromiseLike<SyncResult>, 'savings_goals'),
+        syncTable(supabase.from('exams').select('*').eq('user_id', user.id).gte('exam_date', today) as unknown as PromiseLike<SyncResult>, 'exams'),
       ])
 
       // Flush any pending offline writes
