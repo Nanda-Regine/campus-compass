@@ -29,15 +29,19 @@ const jsonLd = {
       applicationCategory: 'EducationApplication',
       operatingSystem: 'Web, iOS, Android (PWA)',
       offers: [
-        { '@type': 'Offer', name: 'Free Plan', price: '0', priceCurrency: 'ZAR', description: 'Full access to Study Planner, Budget Tracker, Meal Prep, and 10 Nova AI messages per month.' },
-        { '@type': 'Offer', name: 'Scholar Plan', price: '39', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '75 Nova messages per month, AI Recipe Generator, study session tracking, and priority support.' },
-        { '@type': 'Offer', name: 'Premium Plan', price: '79', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '200 Nova messages per month, all features, CSV export, and early access to new features.' },
+        { '@type': 'Offer', name: 'Free Plan', price: '0', priceCurrency: 'ZAR', description: 'Full access to Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova AI messages per month. Works offline.' },
+        { '@type': 'Offer', name: 'Scholar Plan', price: '39', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '100 Nova messages per month, AI Recipe Generator, study session tracking, and priority support.' },
+        { '@type': 'Offer', name: 'Premium Plan', price: '79', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '250 Nova messages per month, all features, CSV export, and early access to new features.' },
+        { '@type': 'Offer', name: 'Nova Unlimited Plan', price: '129', priceCurrency: 'ZAR', billingDuration: 'P1M', description: 'Unlimited Nova messages, all Premium features, first access to new Nova capabilities, and a direct feedback channel to the builder.' },
       ],
       featureList: [
-        'NSFAS allowance tracker', 'Student budget management', 'Study planner with exam countdowns',
+        'NSFAS allowance tracker', 'Student budget management', 'Flexible spending wallet',
+        'Savings goals tracker', 'Study planner with exam countdowns',
         'Affordable meal planning for SA students', 'Nova AI mental health companion',
         'CBT-based mental health support', 'Crisis detection with SA helpline resources',
         'Load-shedding study schedule planner', 'NSFAS N+ rule guidance',
+        'Group assignment manager', 'Part-time work and shift tracker',
+        'Offline PWA — works without internet',
       ],
       audience: { '@type': 'EducationalAudience', educationalRole: 'student', geographicArea: { '@type': 'Country', name: 'South Africa' } },
       creator: { '@type': 'Organization', name: 'Mirembe Muse (Pty) Ltd', url: 'https://creativelynanda.co.za', foundingLocation: 'East London, Eastern Cape, South Africa' },
@@ -51,7 +55,7 @@ const jsonLd = {
     {
       '@type': 'FAQPage',
       mainEntity: [
-        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Meal Prep module, and 10 Nova AI messages per month. Scholar is R39/month for 75 messages and Premium is R79/month for 200 messages.' } },
+        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova AI messages per month. Scholar is R39/month for 100 messages, Premium is R79/month for 250 messages, and Nova Unlimited is R129/month for unlimited messages.' } },
         { '@type': 'Question', name: 'What is NSFAS and how does VarsityOS help me track it?', acceptedAnswer: { '@type': 'Answer', text: "NSFAS (National Student Financial Aid Scheme) is South Africa's government student funding programme. VarsityOS lets you log and track your NSFAS allowances, set spending categories, and monitor your balance in real time so you never run short before month-end." } },
         { '@type': 'Question', name: 'What is Nova and how does it help students?', acceptedAnswer: { '@type': 'Answer', text: "Nova is VarsityOS's AI companion built specifically for SA students. Nova provides CBT-based mental health support, crisis detection with SA helpline resources, imposter syndrome coaching, study strategies, NSFAS financial guidance, and load-shedding study plans." } },
         { '@type': 'Question', name: 'Which South African universities does VarsityOS support?', acceptedAnswer: { '@type': 'Answer', text: 'VarsityOS works for students at all South African universities including UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, and TUT.' } },
@@ -64,12 +68,14 @@ const jsonLd = {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  { icon: '💰', title: 'Budget & NSFAS', desc: 'Track every rand. Log allowances, monitor spending, and get AI budget analysis.' },
-  { icon: '📚', title: 'Study Planner',  desc: 'Timetable, exam countdowns, tasks, and AI study plans around your schedule.' },
-  { icon: '🍲', title: 'Meal Prep',      desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator.' },
-  { icon: '🌟', title: 'Nova AI',        desc: 'A warm AI companion for mental health, study strategy, and NSFAS guidance.' },
-  { icon: '💼', title: 'Work & Shifts',  desc: 'Track part-time jobs, log shifts, and get conflict alerts with your lectures.' },
-  { icon: '👥', title: 'Study Groups',   desc: 'Create group spaces, share tasks, and collaborate with classmates — built in.' },
+  { icon: '💰', title: 'Budget & NSFAS',    desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.' },
+  { icon: '🏦', title: 'Flexible Wallet',   desc: 'Manage your own spending buckets beyond NSFAS — part-time income, bursaries, family support.', isNew: true },
+  { icon: '🎯', title: 'Savings Goals',     desc: 'Set goals like a laptop or textbooks, track progress, and celebrate every milestone with confetti.', isNew: true },
+  { icon: '📚', title: 'Study Planner',     desc: 'Timetable, exam countdowns, tasks, and AI study plans built around your actual schedule.' },
+  { icon: '🍲', title: 'Meal Prep',         desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.' },
+  { icon: '🌟', title: 'Nova AI',           desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support. 15 free messages/month.' },
+  { icon: '💼', title: 'Work & Shifts',     desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.' },
+  { icon: '👥', title: 'Group Assignments', desc: 'Create group spaces, share tasks and deadlines, and collaborate with classmates — no WhatsApp chaos.', isNew: true },
 ]
 
 const PAIN_POINTS = [
@@ -92,31 +98,46 @@ const PRICING = [
     price: 'R0',
     sub: 'forever, no catch',
     colour: 'neutral',
-    features: ['Full Study Planner', 'Budget & NSFAS tracker', 'Meal Prep module', 'Work & earnings tracker', '10 Nova messages / month'],
+    features: ['Full Study Planner', 'Budget & NSFAS tracker', 'Flexible Wallet', 'Savings Goals', 'Meal Prep & Work tracker', '15 Nova messages / month', 'Works offline (PWA)'],
     cta: 'Get started free',
     href: '/auth/signup',
     highlight: false,
+    gold: false,
   },
   {
     name: 'Scholar',
     price: 'R39',
     sub: 'per month',
     colour: 'coral',
-    features: ['Everything in Free', '75 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
+    features: ['Everything in Free', '100 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
     cta: 'Go Scholar',
     href: '/upgrade',
     highlight: true,
     badge: 'Best value',
+    gold: false,
   },
   {
     name: 'Premium',
     price: 'R79',
     sub: 'per month',
     colour: 'teal',
-    features: ['Everything in Scholar', '200 Nova messages / month', 'CSV data export', 'Early access to new features', 'Priority support'],
+    features: ['Everything in Scholar', '250 Nova messages / month', 'CSV data export', 'Early access to new features', 'Priority support'],
     cta: 'Go Premium',
     href: '/upgrade',
     highlight: false,
+    gold: false,
+  },
+  {
+    name: 'Nova Unlimited',
+    price: 'R129',
+    sub: 'per month',
+    colour: 'gold',
+    features: ['Everything in Premium', 'Unlimited Nova messages', 'First access to new Nova features', 'Direct feedback channel to the builder'],
+    cta: 'Go Unlimited',
+    href: '/upgrade',
+    highlight: false,
+    badge: 'Most Nova',
+    gold: true,
   },
 ]
 
@@ -181,7 +202,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
-              NSFAS tracking, budget management, study planner, meal prep, and Nova — an AI companion built for the reality of being a South African student.
+              Budget, savings goals, study planner, group projects, meal prep, and Nova — your AI companion who actually understands SA student life. Works offline. No app store needed.
             </p>
 
             <div className="flex items-center justify-center gap-3 flex-wrap mb-5">
@@ -212,10 +233,10 @@ export default function LandingPage() {
             style={{ border: '1px solid rgba(255,255,255,0.07)', background: '#120e0a' }}
           >
             {[
-              { value: 'R0', label: 'to get started', sub: 'free forever' },
-              { value: '5-in-1', label: 'tools, one app', sub: 'no switching' },
+              { value: 'R0', label: 'forever', sub: 'no credit card' },
+              { value: '8+', label: 'tools, one app', sub: 'no switching' },
               { value: '15+', label: 'SA universities', sub: 'UCT to TUT' },
-              { value: 'R39', label: 'to unlock Scholar', sub: '75 Nova messages' },
+              { value: '📶', label: 'Works offline', sub: 'load shedding ready' },
             ].map((stat, i) => (
               <div key={stat.label} className="flex flex-col items-center justify-center py-6 px-4 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.06)' : undefined }}>
                 <span className="font-display font-black text-2xl sm:text-3xl text-white mb-0.5">{stat.value}</span>
@@ -364,9 +385,12 @@ export default function LandingPage() {
               Everything you need.<br />Nothing you don&apos;t.
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {FEATURES.map((f) => (
-              <article key={f.title} className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <article key={f.title} className="rounded-2xl p-5 relative" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+                {f.isNew && (
+                  <span className="absolute top-3 right-3 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.15)', color: '#4db6ac', border: '1px solid rgba(13,148,136,0.25)' }}>New</span>
+                )}
                 <div className="text-2xl mb-3" aria-hidden="true">{f.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-1.5">{f.title}</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{f.desc}</p>
@@ -436,7 +460,7 @@ export default function LandingPage() {
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'rgba(13,148,136,0.2)' }} aria-hidden="true">↑</div>
                   </div>
                 </div>
-                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>10 free messages/month · 75 with Scholar · 200 with Premium</p>
+                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
               </div>
             </div>
           </div>
@@ -452,7 +476,7 @@ export default function LandingPage() {
             {[
               { step: '01', icon: '✉️', title: 'Create your account', desc: 'Sign up with email or Google in under a minute. No payment details required.' },
               { step: '02', icon: '🎓', title: 'Set up your profile', desc: 'Add your university, degree, and year. We personalise everything around you.' },
-              { step: '03', icon: '🚀', title: 'Take control', desc: 'Add your modules, load your NSFAS budget, and meet Nova. Everything syncs.' },
+              { step: '03', icon: '🚀', title: 'Take control', desc: 'Add your modules, load your budget or NSFAS, set savings goals, and meet Nova. Everything syncs and works offline.' },
             ].map((step, i) => (
               <div key={step.step} className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <span className="absolute top-4 right-5 font-display font-black text-5xl pointer-events-none select-none" style={{ color: 'rgba(255,255,255,0.04)', lineHeight: 1 }} aria-hidden="true">{step.step}</span>
@@ -471,31 +495,35 @@ export default function LandingPage() {
             <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Start free. Upgrade only when you need more Nova.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
             {PRICING.map((tier) => {
               const isHighlight = tier.highlight
+              const isGold = tier.gold
               return (
                 <div
                   key={tier.name}
                   className="relative rounded-2xl p-6"
                   style={{
-                    background: isHighlight ? 'linear-gradient(145deg, #1c0e08, #200f08)' : '#120e0a',
-                    border: isHighlight ? '1px solid rgba(217,120,84,0.35)' : '1px solid rgba(255,255,255,0.09)',
-                    boxShadow: isHighlight ? '0 0 40px rgba(217,120,84,0.08)' : undefined,
+                    background: isGold ? 'linear-gradient(145deg, #1a1508, #1c1609)' : isHighlight ? 'linear-gradient(145deg, #1c0e08, #200f08)' : '#120e0a',
+                    border: isGold ? '1px solid rgba(212,168,71,0.4)' : isHighlight ? '1px solid rgba(217,120,84,0.35)' : '1px solid rgba(255,255,255,0.09)',
+                    boxShadow: isGold ? '0 0 40px rgba(212,168,71,0.08)' : isHighlight ? '0 0 40px rgba(217,120,84,0.08)' : undefined,
                   }}
                 >
                   {tier.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[0.6rem] uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: '#d97b54', color: '#fff' }}>
+                    <div
+                      className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[0.6rem] uppercase tracking-widest px-3 py-1 rounded-full"
+                      style={{ background: isGold ? '#d4a847' : '#d97b54', color: '#fff' }}
+                    >
                       {tier.badge}
                     </div>
                   )}
-                  <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: isHighlight ? '#e8956e' : 'rgba(255,255,255,0.3)' }}>{tier.name}</div>
+                  <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: isGold ? '#d4a847' : isHighlight ? '#e8956e' : 'rgba(255,255,255,0.3)' }}>{tier.name}</div>
                   <div className="font-display font-black text-4xl text-white mb-0.5">{tier.price}</div>
                   <div className="font-mono text-xs mb-5" style={{ color: 'rgba(255,255,255,0.25)' }}>{tier.sub}</div>
                   <ul className="space-y-2.5 mb-6">
                     {tier.features.map(f => (
                       <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                        <span className="text-xs flex-shrink-0" style={{ color: isHighlight ? '#e8956e' : '#4db6ac' }} aria-hidden="true">✓</span>
+                        <span className="text-xs flex-shrink-0" style={{ color: isGold ? '#d4a847' : isHighlight ? '#e8956e' : '#4db6ac' }} aria-hidden="true">✓</span>
                         {f}
                       </li>
                     ))}
@@ -504,9 +532,9 @@ export default function LandingPage() {
                     href={tier.href}
                     className="block text-center font-display font-bold text-sm py-2.5 rounded-xl transition-all"
                     style={{
-                      background: isHighlight ? '#d97b54' : 'transparent',
-                      color: isHighlight ? '#fff' : 'rgba(255,255,255,0.55)',
-                      border: isHighlight ? undefined : '1px solid rgba(255,255,255,0.12)',
+                      background: isGold ? '#d4a847' : isHighlight ? '#d97b54' : 'transparent',
+                      color: isGold || isHighlight ? '#fff' : 'rgba(255,255,255,0.55)',
+                      border: isGold || isHighlight ? undefined : '1px solid rgba(255,255,255,0.12)',
                     }}
                   >
                     {tier.cta}
@@ -550,12 +578,14 @@ export default function LandingPage() {
           </div>
           <div className="space-y-2">
             {[
-              { q: 'Is VarsityOS actually free?', a: 'Yes. The free plan gives you full access to the Study Planner, Budget & NSFAS tracker, Meal Prep, Work tracker, and 10 Nova messages every month — forever. Paid plans unlock more Nova.' },
+              { q: 'Is VarsityOS actually free?', a: 'Yes. The free plan gives you full access to the Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova messages every month — forever. Paid plans unlock more Nova.' },
               { q: 'How does VarsityOS help me track my NSFAS?', a: "Log your NSFAS allowances, track spending by category, and see exactly how much you have left. Nova can also answer questions about N+ rules and what happens if you fail modules." },
               { q: 'What makes Nova different from ChatGPT?', a: 'Nova is built specifically for SA students. It knows NSFAS rules, understands load shedding, speaks to imposter syndrome in first-gen students, uses CBT techniques, and detects mental health crises with instant access to SA helplines. It speaks your reality.' },
               { q: 'Which universities does VarsityOS work for?', a: 'All SA universities — UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, TUT, and more.' },
-              { q: 'Can I install it on my phone without an app store?', a: "Open VarsityOS in Chrome or Safari and tap 'Add to Home Screen'. It installs like a native app, works offline during load shedding, and uses almost no storage." },
-              { q: 'What does the Scholar plan include vs Premium?', a: 'Scholar (R39/month) gives you 75 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 200 Nova messages, CSV export, and early access to new features.' },
+              { q: 'Does VarsityOS work offline (during load shedding)?', a: "Yes. VarsityOS is a Progressive Web App (PWA). Once loaded, your budget, tasks, timetable, and study data are available offline. Changes sync automatically when you reconnect. Open it in Chrome or Safari and tap 'Add to Home Screen' to install it like a native app." },
+              { q: 'I\'m not on NSFAS — can I still use it?', a: "Absolutely. The Flexible Wallet lets you track any income source — bursaries, family support, part-time work. The budget and savings tools work for every SA student, not just NSFAS recipients." },
+              { q: 'What does the Scholar plan include vs Premium vs Nova Unlimited?', a: 'Scholar (R39/month) gives you 100 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 250 Nova messages, CSV export, and early access to new features. Nova Unlimited (R129/month) removes all Nova limits entirely — unlimited messages, first access to new Nova capabilities, and a direct line to the builder.' },
+              { q: 'Is my data safe? How does VarsityOS comply with POPIA?', a: 'VarsityOS is registered under POPIA (Act 4 of 2013), Registration No. 2026-005658. Your data is stored securely in South Africa via Supabase. We never sell your data. You can request deletion at any time. See our Privacy Policy for full details.' },
             ].map((faq, i) => (
               <details key={i} className="rounded-2xl group overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <summary className="font-display font-bold text-sm cursor-pointer flex items-center justify-between gap-3 px-5 py-4 text-white" style={{ listStyle: 'none' }}>
@@ -592,6 +622,18 @@ export default function LandingPage() {
                 Create your free account
               </Link>
               <p className="font-mono text-xs mt-4" style={{ color: 'rgba(255,255,255,0.2)' }}>No credit card · No app store · Works on any device</p>
+              <div className="mt-6 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="font-mono text-[0.6rem] mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>Already using VarsityOS? A quick review helps the next student find us.</p>
+                <a
+                  href="https://g.page/r/CdPIXBcTmJE6EAI/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-mono text-xs px-5 py-2.5 rounded-xl transition-all hover:opacity-80"
+                  style={{ background: 'rgba(212,168,71,0.12)', color: '#d4a847', border: '1px solid rgba(212,168,71,0.25)' }}
+                >
+                  ⭐ Leave a Google Review
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -626,6 +668,9 @@ export default function LandingPage() {
               >
                 creativelynanda.co.za ↗
               </a>
+              <p className="font-mono text-[0.52rem] text-center mt-1" style={{ color: 'rgba(255,255,255,0.15)' }}>
+                POPIA Reg. No. 2026-005658
+              </p>
             </div>
             <nav aria-label="Footer navigation">
               <div className="flex items-center gap-4">
