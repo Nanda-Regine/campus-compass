@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import TopBar from '@/components/layout/TopBar'
 import ReferralWidget from '@/components/referral/ReferralWidget'
+import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { SA_UNIVERSITIES, SA_LANGUAGES } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -125,6 +126,7 @@ export default function ProfileClient() {
   // Account deletion state
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [showFeedback, setShowFeedback] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
@@ -457,7 +459,7 @@ export default function ProfileClient() {
                     </p>
                   )}
                   {!profile?.is_premium && (
-                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>10 Nova messages / month</p>
+                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>15 Nova messages / month</p>
                   )}
                 </div>
                 {!profile?.is_premium && (
@@ -513,8 +515,36 @@ export default function ProfileClient() {
                 POPIA: you may request deletion of all your data at any time
               </p>
             </div>
+
+            {/* Feedback & Reviews */}
+            <div className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Feedback &amp; Reviews</p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowFeedback(true)}
+                  className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all flex items-center gap-2"
+                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <span>📝</span>
+                  <span>Send feedback</span>
+                </button>
+                <a
+                  href="https://g.page/r/CdPIXBcTmJE6EAI/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all flex items-center gap-2"
+                  style={{ background: 'rgba(245,158,11,0.06)', color: 'rgba(251,191,36,0.8)', border: '1px solid rgba(245,158,11,0.15)' }}
+                >
+                  <span>⭐</span>
+                  <span>Review on Google →</span>
+                </a>
+                <p className="font-mono text-[0.56rem] text-white/25 text-center">Your review helps other students find VarsityOS</p>
+              </div>
+            </div>
           </div>
         )}
+
+      <FeedbackModal open={showFeedback} onClose={() => setShowFeedback(false)} />
       </div>
 
       {/* ── Account deletion confirmation modal ─────────────────────────────── */}
