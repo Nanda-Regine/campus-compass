@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
@@ -40,6 +41,7 @@ type View = 'list' | 'detail'
 
 export default function GroupsClient({ userId }: { userId: string }) {
   const router = useRouter()
+  const supabase = createClientComponentClient()
   const [assignments, setAssignments] = useState<GroupAssignment[]>([])
   const [loading, setLoading] = useState(true)
   const [view, setView] = useState<View>('list')
@@ -79,6 +81,22 @@ export default function GroupsClient({ userId }: { userId: string }) {
   }, [router])
 
   useEffect(() => { load() }, [load])
+
+  // ── Realtime: refresh when group_tasks change ─────────────────
+  useEffect(() => {
+    const channel = supabase
+      .channel('group-tasks-realtime')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'group_tasks',
+      }, () => {
+        load() // re-fetch on any insert/update/delete
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [supabase, load])
 
   const createAssignment = async () => {
     if (!newTitle.trim()) return
