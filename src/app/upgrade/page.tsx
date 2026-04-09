@@ -17,9 +17,9 @@ const TIERS = [
     price: 39,
     highlight: true,
     badge: 'Most popular',
-    novaMessages: 75,
+    novaMessages: '100',
     features: [
-      { icon: '🌟', label: '75 Nova messages / month' },
+      { icon: '🌟', label: '100 Nova messages / month' },
       { icon: '🍲', label: 'AI Recipe Generator' },
       { icon: '📊', label: 'AI Budget Coach' },
       { icon: '📚', label: 'AI Study Plans & Exam Prep' },
@@ -27,6 +27,7 @@ const TIERS = [
     ],
     itemName: 'VarsityOS Scholar — Monthly',
     colour: '#e8956e',
+    gold: false,
   },
   {
     id: 'premium',
@@ -34,9 +35,9 @@ const TIERS = [
     price: 79,
     highlight: false,
     badge: null,
-    novaMessages: 200,
+    novaMessages: '250',
     features: [
-      { icon: '🌟', label: '200 Nova messages / month' },
+      { icon: '🌟', label: '250 Nova messages / month' },
       { icon: '🍲', label: 'AI Recipe Generator' },
       { icon: '📊', label: 'AI Budget Coach' },
       { icon: '📚', label: 'AI Study Plans & Exam Prep' },
@@ -45,6 +46,27 @@ const TIERS = [
     ],
     itemName: 'VarsityOS Premium — Monthly',
     colour: '#0d9488',
+    gold: false,
+  },
+  {
+    id: 'nova_unlimited',
+    name: 'Nova Unlimited',
+    price: 129,
+    highlight: false,
+    badge: 'Most Nova',
+    novaMessages: '∞',
+    features: [
+      { icon: '♾️', label: 'Unlimited Nova messages' },
+      { icon: '🍲', label: 'AI Recipe Generator' },
+      { icon: '📊', label: 'AI Budget Coach' },
+      { icon: '📚', label: 'AI Study Plans & Exam Prep' },
+      { icon: '📥', label: 'CSV Export Reports' },
+      { icon: '🚀', label: 'First access to new Nova features' },
+      { icon: '💬', label: 'Direct feedback channel to builder' },
+    ],
+    itemName: 'VarsityOS Nova Unlimited — Monthly',
+    colour: '#d4a847',
+    gold: true,
   },
 ]
 
@@ -114,10 +136,11 @@ export default async function UpgradePage() {
     .eq('id', user.id)
     .single()
 
-  // Already on premium — redirect to dashboard
   const currentTier = (profile as { subscription_tier?: string | null } | null)?.subscription_tier
     || (profile?.is_premium ? 'premium' : 'free')
-  if (currentTier === 'premium') redirect('/dashboard')
+
+  // Already on Nova Unlimited — no higher tier to offer
+  if (currentTier === 'nova_unlimited') redirect('/dashboard')
 
   const tiersWithForms = TIERS.map(tier => ({
     ...tier,
@@ -143,25 +166,64 @@ export default async function UpgradePage() {
           <p className="font-mono text-xs text-white/40">Monthly subscription · Cancel anytime</p>
         </div>
 
-        {/* Tier cards */}
+        {/* Free tier info card */}
+        <div
+          className="rounded-2xl p-4 mb-4 relative overflow-hidden"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <div className="absolute top-2 right-2 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.12)', color: '#4db6ac', border: '1px solid rgba(13,148,136,0.2)' }}>
+            Works offline
+          </div>
+          <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Free — forever</p>
+          <div className="flex items-baseline gap-1 mb-3">
+            <span className="font-display font-black text-3xl text-white">R0</span>
+            <span className="font-mono text-xs text-white/30">/month</span>
+          </div>
+          <ul className="space-y-1.5">
+            {[
+              { icon: '🌟', label: '15 Nova messages / month' },
+              { icon: '📚', label: 'Full Study Planner' },
+              { icon: '💰', label: 'Budget & NSFAS tracker' },
+              { icon: '🏦', label: 'Flexible Wallet + Savings Goals' },
+              { icon: '🍲', label: 'Meal Prep & Work tracker' },
+            ].map(f => (
+              <li key={f.label} className="flex items-center gap-2.5">
+                <span className="text-sm">{f.icon}</span>
+                <span className="font-display text-xs text-white/50">{f.label}</span>
+              </li>
+            ))}
+          </ul>
+          {currentTier === 'free' && (
+            <div className="mt-3 font-mono text-[0.6rem] text-white/30 text-center py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
+              Your current plan
+            </div>
+          )}
+        </div>
+
+        {/* Paid tier cards */}
         <div className="space-y-4 mb-6">
           {tiersWithForms.map(tier => (
             <div
               key={tier.id}
               className="relative rounded-2xl overflow-hidden"
               style={{
-                background: tier.highlight
-                  ? 'linear-gradient(135deg, rgba(232,149,110,0.1), rgba(232,149,110,0.04))'
-                  : 'rgba(255,255,255,0.03)',
-                border: tier.highlight
-                  ? '1px solid rgba(232,149,110,0.35)'
-                  : '1px solid rgba(255,255,255,0.08)',
+                background: tier.gold
+                  ? 'linear-gradient(135deg, rgba(212,168,71,0.1), rgba(212,168,71,0.04))'
+                  : tier.highlight
+                    ? 'linear-gradient(135deg, rgba(232,149,110,0.1), rgba(232,149,110,0.04))'
+                    : 'rgba(255,255,255,0.03)',
+                border: tier.gold
+                  ? '1px solid rgba(212,168,71,0.4)'
+                  : tier.highlight
+                    ? '1px solid rgba(232,149,110,0.35)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                boxShadow: tier.gold ? '0 0 30px rgba(212,168,71,0.06)' : undefined,
               }}
             >
               {tier.badge && (
                 <div
                   className="absolute top-0 right-0 font-mono text-[0.55rem] uppercase tracking-widest px-3 py-1 rounded-bl-xl"
-                  style={{ background: tier.colour, color: tier.highlight ? '#1a0a00' : '#fff' }}
+                  style={{ background: tier.colour, color: tier.gold ? '#1a1200' : '#fff' }}
                 >
                   {tier.badge}
                 </div>
@@ -181,7 +243,7 @@ export default async function UpgradePage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-mono text-xs text-white/50">{tier.novaMessages} Nova</p>
+                    <p className="font-mono text-xs" style={{ color: tier.colour }}>{tier.novaMessages} Nova</p>
                     <p className="font-mono text-[0.6rem] text-white/25">messages/mo</p>
                   </div>
                 </div>
@@ -196,7 +258,7 @@ export default async function UpgradePage() {
                   ))}
                 </ul>
 
-                {/* PayFast form */}
+                {/* PayFast form or current plan */}
                 {tier.isCurrent ? (
                   <div
                     className="w-full font-display font-bold text-sm py-3 rounded-xl text-center"
@@ -213,11 +275,13 @@ export default async function UpgradePage() {
                       type="submit"
                       className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.98]"
                       style={{
-                        background: tier.highlight
+                        background: tier.gold
                           ? tier.colour
-                          : 'rgba(13,148,136,0.2)',
-                        color: tier.highlight ? '#1a0a00' : '#2dd4bf',
-                        border: tier.highlight ? 'none' : '1px solid rgba(13,148,136,0.3)',
+                          : tier.highlight
+                            ? tier.colour
+                            : 'rgba(13,148,136,0.2)',
+                        color: tier.gold ? '#1a1200' : tier.highlight ? '#1a0a00' : '#2dd4bf',
+                        border: tier.gold || tier.highlight ? 'none' : '1px solid rgba(13,148,136,0.3)',
                       }}
                     >
                       Subscribe for R{tier.price}/month
@@ -227,13 +291,6 @@ export default async function UpgradePage() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Free tier reminder */}
-        <div className="bg-white/3 border border-white/6 rounded-2xl p-4 mb-5 text-center">
-          <p className="font-mono text-xs text-white/30">
-            Already on <span className="text-white/50">Free</span>? You get 10 Nova messages/month plus full Study Planner, Budget & NSFAS tracker, Meal Prep, and Work tracker — forever.
-          </p>
         </div>
 
         <p className="font-mono text-[0.56rem] text-white/20 text-center mb-4">
