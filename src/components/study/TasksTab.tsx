@@ -10,15 +10,18 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import {
-  type Task, type Module, type TaskType, type TaskPriority,
+  type Task, type Module, type TaskPriority,
   MODULE_COLOURS,
 } from '@/types'
 import { cn, getTaskUrgency, fmt } from '@/lib/utils'
+import {
+  TASK_CATEGORY_GROUPS, TASK_TYPE_LABELS, getGroupForType,
+  type TaskCategoryGroup,
+} from '@/lib/tasks/categories'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 
-const TASK_TYPES: TaskType[] = ['Assignment','Test','Project','Presentation','Reading','Other']
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
   { value: 'normal', label: 'Normal' },
   { value: 'high',   label: 'High' },
@@ -27,6 +30,7 @@ const PRIORITIES: { value: TaskPriority; label: string }[] = [
 
 const schema = z.object({
   title:     z.string().min(2, 'Title is required'),
+  category:  z.string().default('academic'),
   task_type: z.string(),
   due_date:  z.string().optional(),
   priority:  z.string(),
@@ -43,27 +47,59 @@ interface Props {
 }
 
 const URGENCY_ORDER = { overdue: 0, today: 1, urgent: 2, soon: 3, normal: 4 }
+type ViewMode = 'today' | 'week' | 'all' | 'done'
+
+function isToday(dateStr: string | null): boolean {
+  if (!dateStr) return false
+  return dateStr === new Date().toISOString().split('T')[0]
+}
+
+function isThisWeek(dateStr: string | null): boolean {
+  if (!dateStr) return false
+  const d = new Date(dateStr)
+  const now = new Date()
+  const end = new Date(now)
+  end.setDate(now.getDate() + 7)
+  return d <= end
+}
+
+function isOverdue(dateStr: string | null): boolean {
+  if (!dateStr) return false
+  return dateStr < new Date().toISOString().split('T')[0]
+}
 
 export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
   const { addTask, updateTask, removeTask } = useAppStore()
-  const [modalOpen, setModalOpen] = useState(false)
-  const [saving,    setSaving]    = useState(false)
-  const [filter,    setFilter]    = useState<'all' | 'pending' | 'done'>('pending')
-  const [assistModal, setAssistModal] = useState<{ open: boolean; task: Task | null }>({ open: false, task: null })
+  const [modalOpen, setModalOpen]       = useState(false)
+  const [saving, setSaving]             = useState(false)
+  const [view, setView]                 = useState<ViewMode>('today')
+  const [selectedCategory, setSelectedCategory] = useState<TaskCategoryGroup | 'all'>('all')
+  const [assistModal, setAssistModal]   = useState<{ open: boolean; task: Task | null }>({ open: false, task: null })
+  const [formCategory, setFormCategory] = useState<TaskCategoryGroup>('academic')
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { task_type: 'Assignment', priority: 'normal' },
+    defaultValues: { category: 'academic', task_type: 'Assignment', priority: 'normal' },
   })
 
-  const filteredTasks = tasks
+  // ── Filter tasks by view ────────────────────────────────────
+  const pendingTasks = tasks.filter(t => !t.done)
+  const doneTasks    = tasks.filter(t => t.done)
+
+  const filteredByView = (view === 'done' ? doneTasks : pendingTasks).filter(t => {
+    if (view === 'today') return isToday(t.due_date) || isOverdue(t.due_date)
+    if (view === 'week')  return isThisWeek(t.due_date) || isOverdue(t.due_date)
+    return true
+  })
+
+  const filteredTasks = filteredByView
     .filter(t => {
-      if (filter === 'pending') return !t.done
-      if (filter === 'done')    return t.done
-      return true
+      if (selectedCategory === 'all') return true
+      const grp = getGroupForType(t.task_type)
+      return grp === selectedCategory
     })
     .sort((a, b) => {
-      if (filter === 'done') return new Date(b.done_at ?? 0).getTime() - new Date(a.done_at ?? 0).getTime()
+      if (view === 'done') return new Date(b.done_at ?? 0).getTime() - new Date(a.done_at ?? 0).getTime()
       const ua = getTaskUrgency(a.due_date).urgency
       const ub = getTaskUrgency(b.due_date).urgency
       return URGENCY_ORDER[ua] - URGENCY_ORDER[ub]
@@ -114,7 +150,6 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
       return
     }
 
-    // Celebrate task completion with confetti
     if (completing) {
       const pendingAfter = tasks.filter(t => !t.done && t.id !== task.id).length
       import('@/lib/confetti').then(({ triggerConfetti }) => {
@@ -131,37 +166,79 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
     await supabase.from('tasks').delete().eq('id', id)
   }
 
-  const pendingCount = tasks.filter(t => !t.done).length
-  const doneCount    = tasks.filter(t => t.done).length
+  const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'Assignment', priority: 'normal' }) }
+
+  const todayCount = pendingTasks.filter(t => isToday(t.due_date) || isOverdue(t.due_date)).length
+  const weekCount  = pendingTasks.filter(t => isThisWeek(t.due_date) || isOverdue(t.due_date)).length
 
   return (
     <div className="space-y-4">
+      {/* ── View tabs ── */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex bg-white/5 rounded-xl p-1 gap-1">
-          {(['pending','all','done'] as const).map(f => (
+          {([
+            { key: 'today', label: `Today (${todayCount})` },
+            { key: 'week',  label: `Week (${weekCount})` },
+            { key: 'all',   label: `All (${pendingTasks.length})` },
+            { key: 'done',  label: `Done (${doneTasks.length})` },
+          ] as const).map(({ key, label }) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
+              key={key}
+              onClick={() => setView(key)}
               className={cn(
-                'px-3 py-1.5 rounded-lg font-mono text-[0.6rem] uppercase tracking-wide transition-all',
-                filter === f ? 'bg-teal-600/20 text-teal-400' : 'text-white/40 hover:text-white/70'
+                'px-3 py-1.5 rounded-lg font-mono text-[0.58rem] uppercase tracking-wide transition-all whitespace-nowrap',
+                view === key ? 'bg-teal-600/20 text-teal-400' : 'text-white/40 hover:text-white/70'
               )}
             >
-              {f === 'pending' ? `Due (${pendingCount})` : f === 'done' ? `Done (${doneCount})` : 'All'}
+              {label}
             </button>
           ))}
         </div>
-        <Button size="sm" onClick={() => setModalOpen(true)}>+ Add task</Button>
+        <Button size="sm" onClick={openAdd}>+ Add</Button>
       </div>
 
+      {/* ── Category filter pills ── */}
+      {view !== 'done' && (
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={cn(
+              'flex-shrink-0 font-mono text-[0.58rem] px-3 py-1 rounded-full border transition-all',
+              selectedCategory === 'all'
+                ? 'bg-white/15 border-white/30 text-white'
+                : 'bg-white/5 border-white/10 text-white/40 hover:text-white/70'
+            )}
+          >
+            All
+          </button>
+          {(Object.entries(TASK_CATEGORY_GROUPS) as [TaskCategoryGroup, typeof TASK_CATEGORY_GROUPS[TaskCategoryGroup]][]).map(([key, grp]) => (
+            <button
+              key={key}
+              onClick={() => setSelectedCategory(key)}
+              className={cn(
+                'flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] px-3 py-1 rounded-full border transition-all',
+                selectedCategory === key
+                  ? 'border-white/40 text-white'
+                  : 'bg-white/5 border-white/10 text-white/40 hover:text-white/70'
+              )}
+              style={selectedCategory === key ? { background: `${grp.color}25`, borderColor: `${grp.color}60`, color: grp.color } : {}}
+            >
+              <span>{grp.icon}</span>
+              <span>{grp.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ── Task list ── */}
       {filteredTasks.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-3xl mb-3">{filter === 'done' ? '📋' : '🎯'}</div>
+          <div className="text-3xl mb-3">{view === 'done' ? '📋' : view === 'today' ? '✅' : '🎯'}</div>
           <p className="font-display font-bold text-white text-sm">
-            {filter === 'done' ? 'No completed tasks yet' : 'No pending tasks!'}
+            {view === 'done' ? 'No completed tasks yet' : view === 'today' ? 'Nothing due today!' : 'No tasks here'}
           </p>
           <p className="font-mono text-[0.6rem] text-white/30 mt-1">
-            {filter === 'done' ? 'Complete tasks to see them here.' : "You're all caught up!"}
+            {view === 'done' ? 'Complete tasks to see them here.' : view === 'today' ? "You're all caught up for today." : "Add tasks to stay on track."}
           </p>
         </div>
       ) : (
@@ -170,14 +247,16 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
             const { urgency, label } = getTaskUrgency(task.due_date)
             const urgencyDot = { overdue:'#ef4444', today:'#f97316', urgent:'#f59e0b', soon:'#0d9488', normal:'#4b5563' }[urgency]
             const urgencyBadge = {
-              overdue:'bg-red-500/10 text-red-400 border-red-500/20',
-              today:  'bg-orange-500/10 text-orange-400 border-orange-500/20',
-              urgent: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-              soon:   'bg-teal-600/10 text-teal-400 border-teal-600/20',
-              normal: 'bg-white/5 text-white/40 border-white/10',
+              overdue: 'bg-red-500/10 text-red-400 border-red-500/20',
+              today:   'bg-orange-500/10 text-orange-400 border-orange-500/20',
+              urgent:  'bg-amber-500/10 text-amber-400 border-amber-500/20',
+              soon:    'bg-teal-600/10 text-teal-400 border-teal-600/20',
+              normal:  'bg-white/5 text-white/40 border-white/10',
             }[urgency]
             const modColour = task.module?.colour ? MODULE_COLOURS[task.module.colour] : null
             const priorityIcon = { normal: '', high: '🔺', urgent: '🚨' }[task.priority]
+            const grp = getGroupForType(task.task_type)
+            const grpDef = grp ? TASK_CATEGORY_GROUPS[grp] : null
 
             return (
               <div
@@ -203,13 +282,16 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
+                    {grpDef && <span className="text-xs">{grpDef.icon}</span>}
                     {priorityIcon && <span className="text-xs">{priorityIcon}</span>}
                     <span className={cn('font-display text-sm font-medium', task.done ? 'line-through text-white/30' : 'text-white')}>
                       {task.title}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="font-mono text-[0.58rem] text-white/30">{task.task_type}</span>
+                    <span className="font-mono text-[0.58rem] text-white/30">
+                      {TASK_TYPE_LABELS[task.task_type] ?? task.task_type}
+                    </span>
                     {task.module && (
                       <span className="font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full"
                         style={{ background: modColour?.bg, color: modColour?.text }}>
@@ -259,6 +341,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
         dueDate={assistModal.task?.due_date ?? undefined}
       />
 
+      {/* ── Add Task Modal ── */}
       <Modal
         open={modalOpen}
         onClose={() => { setModalOpen(false); reset() }}
@@ -272,8 +355,41 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
       >
         <form id="task-form" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
           <Input label="Task title" placeholder="e.g. Submit research essay" error={errors.title?.message} {...register('title')} />
+
+          {/* Category selector */}
+          <div>
+            <label className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide mb-2 block">Category</label>
+            <div className="flex gap-2 flex-wrap">
+              {(Object.entries(TASK_CATEGORY_GROUPS) as [TaskCategoryGroup, typeof TASK_CATEGORY_GROUPS[TaskCategoryGroup]][]).map(([key, grp]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    setFormCategory(key)
+                    setValue('category', key)
+                    setValue('task_type', grp.types[0])
+                  }}
+                  className={cn(
+                    'flex items-center gap-1.5 font-mono text-[0.58rem] px-3 py-1.5 rounded-full border transition-all',
+                    formCategory === key
+                      ? 'border-white/40 text-white'
+                      : 'bg-white/5 border-white/10 text-white/40 hover:text-white/70'
+                  )}
+                  style={formCategory === key ? { background: `${grp.color}25`, borderColor: `${grp.color}60`, color: grp.color } : {}}
+                >
+                  <span>{grp.icon}</span>
+                  <span>{grp.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
-            <Select label="Type" options={TASK_TYPES.map(t => ({ value: t, label: t }))} {...register('task_type')} />
+            <Select
+              label="Type"
+              options={TASK_CATEGORY_GROUPS[formCategory].types.map(t => ({ value: t, label: TASK_TYPE_LABELS[t] ?? t }))}
+              {...register('task_type')}
+            />
             <Input label="Due date" type="date" {...register('due_date')} />
           </div>
           <div className="grid grid-cols-2 gap-3">

@@ -212,7 +212,20 @@ export const MODULE_COLOURS: Record<ModuleColour, { bg: string; text: string; do
   green:  { bg: 'rgba(34,197,94,0.15)',   text: '#86efac', dot: '#22c55e' },
 }
 
-export type TaskType = 'Assignment' | 'Test' | 'Project' | 'Presentation' | 'Reading' | 'Other'
+export type TaskType =
+  // Academic (legacy capitalized)
+  | 'Assignment' | 'Test' | 'Project' | 'Presentation' | 'Reading' | 'Other'
+  // Academic (extended)
+  | 'exam' | 'tutorial' | 'lab' | 'group_project'
+  // Life & Admin
+  | 'reminder' | 'meeting' | 'appointment' | 'chore' | 'errand' | 'admin'
+  // Wellness
+  | 'self_care' | 'exercise' | 'social' | 'personal_goal'
+  // Work
+  | 'work_shift' | 'work_task'
+  // Finance
+  | 'payment_due' | 'budget_review'
+
 export type TaskPriority = 'normal' | 'high' | 'urgent'
 
 export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'
