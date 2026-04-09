@@ -39,13 +39,15 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">2. Description of Service</h2>
-            <p>VarsityOS is a digital student support platform providing tools including academic planning, budget tracking, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management.</p>
+            <p>VarsityOS is a digital student support platform providing tools including academic planning, flexible wallet tracking, savings goals, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management. The platform works offline via PWA technology.</p>
             <p className="mt-2">The platform is offered on a freemium basis:</p>
             <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
-              <li><strong className="text-white/75">Free tier:</strong> Core features with 10 Nova AI messages per month</li>
-              <li><strong className="text-white/75">Scholar (R39/month):</strong> 75 Nova messages per month plus AI Recipe Generator and priority support</li>
-              <li><strong className="text-white/75">Premium (R79/month):</strong> 200 Nova messages per month, all Scholar features, CSV data export, and early access to new features</li>
+              <li><strong className="text-white/75">Free tier:</strong> Core features + 15 Nova AI messages per month</li>
+              <li><strong className="text-white/75">Scholar (R39/month):</strong> 100 Nova messages per month, AI Recipe Generator, study session tracking, priority support</li>
+              <li><strong className="text-white/75">Premium (R79/month):</strong> 250 Nova messages per month, all Scholar features, CSV data export, early access to new features</li>
+              <li><strong className="text-white/75">Nova Unlimited (R129/month):</strong> Unlimited Nova messages, all Premium features, first access to new Nova capabilities, direct feedback channel to the builder</li>
             </ul>
+            <p className="mt-2 text-xs text-white/40">We process your personal information in compliance with POPIA (Act 4 of 2013). Mirembe Muse (Pty) Ltd POPIA Registration No.: <strong className="text-white/60">2026-005658</strong>.</p>
           </section>
 
           <section>
@@ -67,11 +69,11 @@ export default function TermsPage() {
             <p className="mb-2">Nova is an <strong className="text-white">AI companion, not a licensed professional</strong>. Specifically:</p>
             <ul className="list-disc list-inside text-white/55 space-y-1.5">
               <li>Nova is <strong className="text-white/75">not a licensed therapist, psychologist, financial advisor, or legal advisor</strong></li>
-              <li>Nothing Nova says constitutes professional mental health advice, financial advice, or legal advice</li>
-              <li>In a mental health emergency, call SADAG (0800 21 4446) or your university counselling centre — do not rely solely on Nova</li>
+              <li>Nothing Nova says constitutes professional mental health advice, financial advice, or legal advice. Nova&apos;s responses are for general informational and supportive purposes only.</li>
+              <li>In a mental health crisis, please contact <strong className="text-white/75">SADAG (0800 567 567)</strong> or <strong className="text-white/75">Lifeline SA (0861 322 322)</strong> immediately — do not rely solely on Nova</li>
               <li>Financial information provided by Nova is for general guidance only — consult a qualified financial advisor for important decisions</li>
-              <li>AI responses may contain errors. Always verify important information from official sources</li>
-              <li>Nova uses Anthropic&apos;s Claude AI — by using Nova you accept Anthropic&apos;s terms of service</li>
+              <li>AI responses may contain errors. Always verify important information from official sources (NSFAS, your university, SARS)</li>
+              <li>Nova uses Anthropic&apos;s Claude AI — by using Nova you accept Anthropic&apos;s terms of service. We process your data under POPIA (Registration No. 2026-005658).</li>
             </ul>
           </section>
 
