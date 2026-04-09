@@ -408,5 +408,66 @@ If we capture students at Year 1 and keep them through graduation, we own the mo
 - Firebase FCM: env vars wired, VAPID key corrected, ready for push notification flow
 - Sentry: DSN set (full @sentry/nextjs SDK install pending)
 
-*Last updated: 2026-04-03*
+---
+
+## Phase 9 — Feature Completeness Sprint (April 2026)
+
+### Nova Tier Restructure (Stream 1)
+- Free tier raised to **15 Nova messages/month** (was 10)
+- Scholar: **100 messages/month** (was 75)
+- Premium: **250 messages/month** (was 200 with a 200 hard cap)
+- **Nova Unlimited**: R129/month — unlimited Nova messages, first access to new capabilities
+- `NOVA_LIMITS`, `isAtNovaLimit()`, `novaMessagesRemaining()` helpers in `lib/utils.ts`
+- Nova page: tri-colour usage bar (teal → amber → red), Unlimited badge, correct CTAs
+- PayFast webhook handles `nova_unlimited` tier from `m_payment_id`
+
+### Offline-First PWA (Stream 2)
+- Service worker updated to `varsityos-v4`: API endpoints now network-first with cache fallback
+- `src/lib/offline/db.ts`: IndexedDB schema (idb) — timetable, tasks, income_entries, expenses, savings_goals, exams, meal_plans, pending_writes stores
+- `src/lib/offline/pendingWrites.ts`: offline mutation queue with `queueWrite()` + `flushPendingWrites()`
+- `src/hooks/useOfflineSync.ts`: syncs 5 data stores from Supabase on mount + reconnect
+- `src/components/ui/OfflineBanner.tsx`: sticky amber banner when offline, auto-hides on reconnect
+- All dashboard routes cached for offline access
+
+### Task System Overhaul (Stream 3)
+- `src/lib/tasks/categories.ts`: 20+ task types grouped into 5 category groups (academic, life, wellness, work, finance)
+- `src/components/study/TasksTab.tsx`: Today/Week/All/Done view tabs, category filter pills, category icon on task cards, translated type labels
+
+### Gamification (Stream 4)
+- `src/lib/confetti.ts`: `celebrateSmall()`, `celebrateBig()`, `celebrateStreakMilestone()`, `celebrateSavingsGoal()` — VarsityOS colour palette
+- `src/lib/gamification/encouragement.ts`: 6 encouragement pools with `getRandomEncouragement()`
+- `src/lib/gamification/streak.ts`: `incrementStreak()` helper — checks last_activity_date, increments or resets
+- `src/components/ui/WinToast.tsx`: forest-green toast (amber ✦ icon), auto-dismisses after 3s
+
+### Supabase Sync (Stream 5)
+- `MIGRATION_APP_FEEDBACK.sql`: `app_feedback` table (rating 1-5, category enum, message, platform, RLS)
+- `src/components/groups/GroupsClient.tsx`: Supabase Realtime subscription on `group_tasks` table
+
+### Legal — POPIA Compliance (Stream 6)
+- `src/app/privacy/page.tsx`: POPIA banner (Reg. No. 2026-005658), IR complaint URL, Nova AI disclaimer
+- `src/app/terms/page.tsx`: Nova tier descriptions updated (15/100/250/∞ at R129), POPIA reg no.
+
+### Reviews & Feedback System (Stream 7)
+- `src/components/feedback/FeedbackModal.tsx`: star rating + category pills + 4-star Google review prompt
+- `src/app/api/feedback/route.ts`: validates and inserts into `app_feedback`, platform detection
+- `src/hooks/useReviewPrompt.ts`: 30-day cooldown, triggers when streak ≥ 7 or savings goal complete
+- `ProfileClient.tsx`: Feedback & Reviews section in Account tab, free tier label corrected to 15 msgs
+
+### Landing Page Refresh (Stream 8)
+- Hero subtitle: savings goals, group projects, offline, no app store
+- Stats bar: R0 forever / 8+ tools / 15+ unis / Works offline
+- FEATURES: 8 tiles (Flexible Wallet + Savings Goals + Group Assignments added) with isNew badges
+- PRICING: 4-tier grid (Free/Scholar/Premium/Nova Unlimited) with gold Nova Unlimited card
+- FAQ: offline, non-NSFAS, Nova Unlimited, POPIA entries added
+- Google Review nudge above Final CTA
+- Footer POPIA Reg. No. 2026-005658
+- JSON-LD updated: all offers, featureList, FAQ answers
+
+### Upgrade Page — 4 Tiers (Stream 9)
+- Free tier shown as info card with "Works offline" badge + 15 Nova msgs
+- Scholar: 100 msgs · Premium: 250 msgs · Nova Unlimited: ∞ msgs with gold styling
+- Gold border/badge (#d4a847) for Nova Unlimited throughout
+- Redirect guard: nova_unlimited users redirected to dashboard
+
+*Last updated: 2026-04-09*
 *Built with love for South African students*
