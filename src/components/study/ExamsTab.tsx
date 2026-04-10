@@ -53,14 +53,14 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
         .from('exams')
         .insert({
           user_id:    userId,
-          name:       data.name,
+          exam_name:  data.name,
           exam_date:  data.exam_date,
           module_id:  data.module_id || null,
           start_time: data.start_time || null,
           venue:      data.venue || null,
           notes:      data.notes || null,
         })
-        .select('*, module:modules(id,name,colour)')
+        .select('*, module:modules(id,module_name,color)')
         .single()
 
       if (error) throw error
@@ -84,7 +84,7 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
   const ExamCard = ({ exam }: { exam: Exam }) => {
     const days = getDaysUntil(exam.exam_date)
     const isPast = days < 0
-    const modColour = exam.module?.colour ? MODULE_COLOURS[exam.module.colour] : null
+    const modColour = exam.module?.color ? MODULE_COLOURS[exam.module.color] : null
 
     const urgencyStyle =
       isPast          ? { bg: 'bg-white/3',             border: 'border-white/7',         count: 'text-white/30' }
@@ -97,10 +97,10 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
       <div className={cn('group relative rounded-2xl p-4 border transition-all', urgencyStyle.bg, urgencyStyle.border)}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="font-display font-bold text-sm text-white truncate">{exam.name}</div>
+            <div className="font-display font-bold text-sm text-white truncate">{exam.exam_name}</div>
             {exam.module && (
               <div className="font-mono text-[0.58rem] mt-0.5" style={{ color: modColour?.text ?? '#c084fc' }}>
-                {exam.module.name}
+                {exam.module.module_name}
               </div>
             )}
             <div className="font-mono text-[0.6rem] text-white/40 mt-1.5">
@@ -192,7 +192,7 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
         open={assistModal.open}
         onClose={() => setAssistModal({ open: false, exam: null, type: 'exam_prep' })}
         type={assistModal.type}
-        examName={assistModal.exam?.name}
+        examName={assistModal.exam?.exam_name}
         moduleName={assistModal.exam?.module?.name}
         dueDate={assistModal.exam?.exam_date ?? undefined}
       />
@@ -218,7 +218,7 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
             <Select
               label="Module (optional)"
               placeholder="No module"
-              options={modules.map(m => ({ value: m.id, label: m.name }))}
+              options={modules.map(m => ({ value: m.id, label: m.module_name }))}
               {...register('module_id')}
             />
             <Input label="Venue (optional)" placeholder="e.g. Main Hall" {...register('venue')} />

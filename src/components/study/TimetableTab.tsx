@@ -42,7 +42,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
     setSaving(true)
     try {
       const { data: entry, error } = await supabase
-        .from('timetable_entries')
+        .from('timetable_slots')
         .insert({
           user_id:     userId,
           module_id:   data.module_id || null,
@@ -51,7 +51,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
           end_time:    data.end_time || null,
           venue:       data.venue || null,
         })
-        .select('*, module:modules(id,name,colour)')
+        .select('*, module:modules(id,module_name,color)')
         .single()
 
       if (error) throw error
@@ -70,7 +70,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
 
   const deleteEntry = async (id: string) => {
     removeTimetableEntry(id)
-    await supabase.from('timetable_entries').delete().eq('id', id)
+    await supabase.from('timetable_slots').delete().eq('id', id)
   }
 
   return (
@@ -112,7 +112,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                 const entry = timetable.find(e => e.day_of_week === day && e.start_time === hour + ':00')
                            ?? timetable.find(e => e.day_of_week === day && e.start_time === hour)
                 const mod = entry?.module || modules.find(m => m.id === entry?.module_id)
-                const col = mod?.colour ? MODULE_COLOURS[mod.colour] : null
+                const col = mod?.color ? MODULE_COLOURS[mod.color] : null
 
                 if (entry && col) {
                   return (
@@ -122,7 +122,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                       style={{ background: col.bg, border: `1px solid ${col.dot}30` }}
                     >
                       <div className="font-mono text-[0.52rem] leading-snug" style={{ color: col.text }}>
-                        {mod?.name?.split(' ').slice(0,3).join(' ') ?? 'Class'}
+                        {mod?.module_name?.split(' ').slice(0,3).join(' ') ?? 'Class'}
                       </div>
                       {entry.venue && (
                         <div className="font-mono text-[0.48rem] opacity-60 mt-0.5" style={{ color: col.text }}>
@@ -184,7 +184,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
           <Select
             label="Module"
             placeholder="Select module…"
-            options={modules.map(m => ({ value: m.id, label: m.name }))}
+            options={modules.map(m => ({ value: m.id, label: m.module_name }))}
             {...register('module_id')}
           />
           <div className="grid grid-cols-2 gap-3">

@@ -49,12 +49,13 @@ export default function ModulesTab({ modules, userId, supabase }: Props) {
       const { data: module, error } = await supabase
         .from('modules')
         .insert({
-          user_id:  userId,
-          name:     data.name,
-          code:     data.code || null,
-          colour:   data.colour as ModuleColour,
-          lecturer: data.lecturer || null,
-          venue:    data.venue || null,
+          user_id:      userId,
+          module_name:  data.name,
+          module_code:  data.code || '',
+          color:        data.colour as ModuleColour,
+          lecturer_name: data.lecturer || null,
+          venue:        data.venue || null,
+          credits:      0,
         })
         .select()
         .single()
@@ -92,7 +93,7 @@ export default function ModulesTab({ modules, userId, supabase }: Props) {
       ) : (
         <div className="space-y-2">
           {modules.map(mod => {
-            const col = MODULE_COLOURS[mod.colour]
+            const col = MODULE_COLOURS[mod.color] ?? MODULE_COLOURS.teal
             return (
               <div
                 key={mod.id}
@@ -103,20 +104,20 @@ export default function ModulesTab({ modules, userId, supabase }: Props) {
 
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-sm truncate" style={{ color: col.text }}>
-                    {mod.name}
-                    {mod.code && (
+                    {mod.module_name}
+                    {mod.module_code && (
                       <span
                         className="ml-2 font-mono text-[0.55rem] opacity-60 border rounded px-1"
                         style={{ borderColor: col.dot + '40' }}
                       >
-                        {mod.code}
+                        {mod.module_code}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
-                    {mod.lecturer && (
+                    {mod.lecturer_name && (
                       <span className="font-mono text-[0.58rem] opacity-60" style={{ color: col.text }}>
-                        {mod.lecturer}
+                        {mod.lecturer_name}
                       </span>
                     )}
                     {mod.venue && (

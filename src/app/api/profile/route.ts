@@ -59,6 +59,7 @@ export async function PATCH(request: NextRequest) {
       'full_name', 'name', 'emoji', 'university', 'degree', 'year_of_study', 'student_number',
       'funding_type', 'phone', 'preferred_language', 'notifications_enabled',
       'avatar_url', 'onboarding_complete',
+      'faculty', 'dietary_pref', 'living_situation', 'ai_language',
     ]
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {

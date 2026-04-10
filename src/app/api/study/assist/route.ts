@@ -128,30 +128,30 @@ Calculate precisely and explain clearly. Respond with valid JSON only:
     if (type === 'conflict_check') {
       const { data: tasks } = await supabase
         .from('tasks')
-        .select('*, module:modules(name)')
+        .select('*, module:modules(module_name)')
         .eq('user_id', user.id)
-        .eq('done', false)
+        .neq('status', 'done')
         .not('due_date', 'is', null)
         .order('due_date', { ascending: true })
 
       const { data: exams } = await supabase
         .from('exams')
-        .select('*, module:modules(name)')
+        .select('*, module:modules(module_name)')
         .eq('user_id', user.id)
         .gte('exam_date', new Date().toISOString().split('T')[0])
         .order('exam_date', { ascending: true })
 
       const taskList = tasks?.map(t => ({
         title: t.title,
-        module: t.module?.name,
+        module: t.module?.module_name,
         due: t.due_date,
         priority: t.priority,
         type: t.task_type,
       })) || []
 
       const examList = exams?.map(e => ({
-        name: e.name,
-        module: e.module?.name,
+        name: e.exam_name,
+        module: e.module?.module_name,
         date: e.exam_date,
       })) || []
 
