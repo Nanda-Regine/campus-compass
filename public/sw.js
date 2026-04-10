@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'varsityos-v4';
+const CACHE_VERSION = 'varsityos-v5';
 const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const DATA_CACHE    = `${CACHE_VERSION}-data`;
 const OFFLINE_URL   = '/offline';

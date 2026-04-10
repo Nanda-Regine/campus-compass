@@ -151,7 +151,10 @@ export default function SetupFlow() {
     setSaving(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
 
       // Save profile
       const profileData = {
