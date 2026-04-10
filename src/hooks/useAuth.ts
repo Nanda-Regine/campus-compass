@@ -40,8 +40,7 @@ export function useAuth() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-      router.push('/dashboard')
-      router.refresh()
+      router.replace('/dashboard')
       return { error: null }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Sign in failed'

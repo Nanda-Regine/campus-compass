@@ -31,6 +31,14 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // If an OAuth/email code lands on the wrong page, route it to the callback handler
+  const code = request.nextUrl.searchParams.get('code')
+  if (code && !pathname.startsWith('/auth/')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/callback'
+    return NextResponse.redirect(url)
+  }
+
   // Public routes (no auth needed)
   const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/callback', '/auth/reset-password']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth/'))
