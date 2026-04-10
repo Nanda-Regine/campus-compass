@@ -69,10 +69,10 @@ interface ShiftInput {
 }
 
 interface TimetableEntry {
-  day_of_week: string
+  day_of_week_text: string
   start_time: string
   end_time: string | null
-  module?: { name: string } | null
+  module?: { module_name: string } | null
 }
 
 interface TaskEntry {
@@ -82,7 +82,7 @@ interface TaskEntry {
 
 interface ExamEntry {
   exam_date: string
-  name: string
+  exam_name: string
 }
 
 export function detectShiftConflicts(
@@ -100,7 +100,7 @@ export function detectShiftConflicts(
   const shiftHours = (shiftEnd - shiftStart) / 60
 
   // 1. Check timetable overlaps on shift day
-  const dayLectures = timetable.filter(t => t.day_of_week === dayName)
+  const dayLectures = timetable.filter(t => t.day_of_week_text === dayName)
   for (const lecture of dayLectures) {
     if (!lecture.end_time) continue
     const lectureStart = parseTime(lecture.start_time)
@@ -109,7 +109,7 @@ export function detectShiftConflicts(
       conflicts.push({
         type: 'lecture',
         severity: 'high',
-        detail: `${lecture.module?.name ?? 'Class'} ${lecture.start_time}–${lecture.end_time}`,
+        detail: `${lecture.module?.module_name ?? 'Class'} ${lecture.start_time}–${lecture.end_time}`,
         suggestion: 'Consider swapping this shift — missing lectures compounds quickly.',
       })
     }
@@ -135,7 +135,7 @@ export function detectShiftConflicts(
     conflicts.push({
       type: 'exam_proximity',
       severity: 'critical',
-      detail: `${exam.name} exam on ${exam.exam_date}`,
+      detail: `${exam.exam_name} exam on ${exam.exam_date}`,
       suggestion: 'This is exam week. Consider requesting the shift off entirely.',
     })
   }

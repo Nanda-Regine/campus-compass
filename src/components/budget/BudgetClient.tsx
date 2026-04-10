@@ -121,7 +121,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
           description: desc.trim(),
           amount: parseFloat(amount),
           category,
-          date,
+          expense_date: date,
         })
         .select()
         .single()
@@ -148,9 +148,9 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       .from('expenses')
       .select('*')
       .eq('user_id', initialData.userId)
-      .gte('date', currentMonthRange().start)
-      .lte('date', currentMonthRange().end)
-      .order('date', { ascending: false })
+      .gte('expense_date', currentMonthRange().start)
+      .lte('expense_date', currentMonthRange().end)
+      .order('expense_date', { ascending: false })
     if (data) {
       setLocalExpenses(data as Expense[])
       setExpenses(data as Expense[])
@@ -336,7 +336,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               </div>
               <div className="flex gap-2 items-center">
                 <button
-                  onClick={() => exportToCSV(expenses.map(e => ({ Date: e.date, Description: e.description, Category: e.category, Amount: e.amount })), 'expenses.csv')}
+                  onClick={() => exportToCSV(expenses.map(e => ({ Date: e.expense_date, Description: e.description, Category: e.category, Amount: e.amount })), 'expenses.csv')}
                   className="font-mono text-[0.6rem] bg-white/5 border border-white/10 hover:bg-white/10 text-white/50 hover:text-white px-3 py-1.5 rounded-lg transition-all"
                 >
                   Export CSV
@@ -440,7 +440,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-body text-sm text-white truncate">{exp.description}</div>
-                      <div className="font-mono text-[0.58rem] text-white/30">{exp.category} · {fmt.dateShort(exp.date)}</div>
+                      <div className="font-mono text-[0.58rem] text-white/30">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="font-display font-bold text-sm" style={{ color: CATEGORY_COLORS[exp.category] || '#f97316' }}>

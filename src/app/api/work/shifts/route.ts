@@ -56,9 +56,9 @@ export async function POST(req: Request) {
 
   // Run conflict detection
   const [timetableRes, tasksRes, examsRes, weekShiftsRes] = await Promise.all([
-    supabase.from('timetable_entries').select('day_of_week,start_time,end_time,module:modules(name)').eq('user_id', user.id),
-    supabase.from('tasks').select('due_date,title').eq('user_id', user.id).eq('done', false),
-    supabase.from('exams').select('exam_date,name').eq('user_id', user.id).gte('exam_date', shift_date),
+    supabase.from('timetable_slots').select('day_of_week_text,start_time,end_time,module:modules(module_name)').eq('user_id', user.id),
+    supabase.from('tasks').select('due_date,title').eq('user_id', user.id).neq('status', 'done'),
+    supabase.from('exams').select('exam_date,exam_name').eq('user_id', user.id).gte('exam_date', shift_date),
     supabase.from('work_shifts').select('duration_hours').eq('student_id', user.id)
       .gte('shift_date', getWeekStart(shift_date))
       .lte('shift_date', getWeekEnd(shift_date)),

@@ -29,13 +29,13 @@ export default async function DashboardPage() {
     supabase.from('budgets').select('*').eq('user_id', user.id).single(),
     supabase
       .from('tasks')
-      .select('*, module:modules(id,name,colour)')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
-      .eq('done', false)
+      .neq('status', 'done')
       .order('due_date', { ascending: true, nullsFirst: false }),
     supabase
       .from('exams')
-      .select('*, module:modules(id,name,colour)')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .gte('exam_date', new Date().toISOString().split('T')[0])
       .order('exam_date', { ascending: true }),
@@ -45,16 +45,16 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: true }),
     supabase
-      .from('timetable_entries')
-      .select('*, module:modules(id,name,colour)')
+      .from('timetable_slots')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id),
     supabase
       .from('expenses')
       .select('*')
       .eq('user_id', user.id)
-      .gte('date', start)
-      .lte('date', end)
-      .order('date', { ascending: false })
+      .gte('expense_date', start)
+      .lte('expense_date', end)
+      .order('expense_date', { ascending: false })
       .limit(10),
     supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
   ])

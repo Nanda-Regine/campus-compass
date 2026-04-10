@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { detectCrisis, currentMonthYear, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START, NOVA_LIMITS } from '@/lib/utils'
+import { detectCrisis, currentMonthRange, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START, NOVA_LIMITS } from '@/lib/utils'
 import type { NovaTier } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
@@ -74,29 +74,27 @@ function getUsageGuidance(
 // ─── Build rich student context for Nova ─────────────────────
 async function buildStudentContext(userId: string, supabase: ReturnType<typeof createServerSupabaseClient>) {
   const now = new Date()
-  const monthYear = currentMonthYear()
   const today = now.toISOString().split('T')[0]
+  const { start, end } = currentMonthRange()
 
   const [
     { data: profile },
-    { data: walletConfig },
-    { data: income },
+    { data: budget },
     { data: tasks },
     { data: exams },
     { data: modules },
     { data: expenses },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('wallet_config').select('monthly_budget_goal').eq('user_id', userId).single(),
-    supabase.from('income_entries').select('amount').eq('user_id', userId).eq('month_year', monthYear),
+    supabase.from('budgets').select('*').eq('user_id', userId).single(),
     supabase.from('tasks').select('*, module:modules(module_name)').eq('user_id', userId).neq('status', 'done').order('due_date', { ascending: true }),
     supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
     supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true),
-    supabase.from('expenses').select('amount').eq('user_id', userId).eq('month_year', monthYear),
+    supabase.from('expenses').select('amount').eq('user_id', userId).gte('expense_date', start).lte('expense_date', end),
   ])
 
-  const totalIncome = income?.reduce((s, e) => s + (e.amount || 0), 0) || 0
-  const budgetGoal = walletConfig?.monthly_budget_goal || totalIncome
+  const budgetGoal = (budget?.monthly_budget || 0) +
+    (budget?.nsfas_enabled ? ((budget.nsfas_living || 0) + (budget.nsfas_accom || 0) + (budget.nsfas_books || 0)) : 0)
   const totalSpent = expenses?.reduce((s, e) => s + e.amount, 0) || 0
   const remaining = budgetGoal - totalSpent
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()

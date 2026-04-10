@@ -28,7 +28,7 @@ export async function DELETE() {
       'study_sessions',
       'expenses',
       'tasks',
-      'timetable_entries',
+      'timetable_slots',
       'exams',
       'modules',
       'meal_plans',

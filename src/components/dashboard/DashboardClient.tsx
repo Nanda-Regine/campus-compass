@@ -413,13 +413,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <div className="space-y-2">
               {todayClasses.map(entry => {
                 const mod = entry.module
-                const colour = mod?.colour ? MODULE_COLOURS[mod.colour] : MODULE_COLOURS.teal
+                const colour = mod?.color ? MODULE_COLOURS[mod.color] : MODULE_COLOURS.teal
                 return (
                   <div key={entry.id} className="flex items-center gap-3 bg-[#111a18] border border-white/7 rounded-xl px-4 py-3">
                     <div className="w-2 h-8 rounded-full flex-shrink-0" style={{ background: colour.dot }} />
                     <div className="flex-1 min-w-0">
                       <div className="font-display font-bold text-sm truncate" style={{ color: colour.text }}>
-                        {mod?.name ?? 'Class'}
+                        {mod?.module_name ?? 'Class'}
                       </div>
                       <div className="font-mono text-[0.6rem] text-white/40">
                         {fmt.time(entry.start_time)}
@@ -460,7 +460,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   soon:    { dot: '#0d9488', label: 'bg-teal-600/10 text-teal-400 border-teal-600/20' },
                   normal:  { dot: '#4b5563', label: 'bg-white/5 text-white/40 border-white/10' },
                 }[urgency]
-                const modColour = task.module?.colour ? MODULE_COLOURS[task.module.colour] : null
+                const modColour = task.module?.color ? MODULE_COLOURS[task.module.color] : null
 
                 return (
                   <Link
@@ -473,7 +473,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                       <div className="font-display text-sm text-white truncate">{task.title}</div>
                       {task.module && (
                         <div className="font-mono text-[0.58rem] truncate mt-0.5" style={{ color: modColour?.text ?? '#6b7280' }}>
-                          {task.module.name}
+                          {task.module.module_name}
                         </div>
                       )}
                     </div>
@@ -503,10 +503,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-display font-bold text-white text-sm">{nextExam.name}</div>
+                    <div className="font-display font-bold text-white text-sm">{nextExam.exam_name}</div>
                     {nextExam.module && (
-                      <div className="font-mono text-[0.58rem] mt-0.5" style={{ color: nextExam.module.colour ? MODULE_COLOURS[nextExam.module.colour].text : '#c084fc' }}>
-                        {nextExam.module.name}
+                      <div className="font-mono text-[0.58rem] mt-0.5" style={{ color: nextExam.module.color ? MODULE_COLOURS[nextExam.module.color].text : '#c084fc' }}>
+                        {nextExam.module.module_name}
                       </div>
                     )}
                     <div className="font-mono text-[0.6rem] text-purple-300/60 mt-1.5">
@@ -552,7 +552,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                     </div>
                     <div>
                       <div className="font-body text-sm text-white truncate max-w-[160px]">{exp.description}</div>
-                      <div className="font-mono text-[0.58rem] text-white/30">{exp.category} · {fmt.dateShort(exp.date)}</div>
+                      <div className="font-mono text-[0.58rem] text-white/30">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
                     </div>
                   </div>
                   <div className="font-display font-bold text-sm text-orange-400">-{fmt.currencyShort(exp.amount)}</div>

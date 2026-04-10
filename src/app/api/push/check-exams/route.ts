@@ -20,7 +20,7 @@ export async function GET() {
 
     const [{ data: exams }, { data: subs }] = await Promise.all([
       supabase.from('exams')
-        .select('name, exam_date')
+        .select('exam_name, exam_date')
         .eq('user_id', user.id)
         .gte('exam_date', todayStr)
         .lte('exam_date', in3Str),
@@ -34,8 +34,8 @@ export async function GET() {
     const exam = exams[0] // notify for the soonest
     const daysUntil = Math.ceil((new Date(exam.exam_date).getTime() - today.getTime()) / 86400000)
     const body = daysUntil === 0
-      ? `Your ${exam.name} exam is TODAY. Good luck! 💪`
-      : `${exam.name} is in ${daysUntil} day${daysUntil > 1 ? 's' : ''}. Time to prep! 📚`
+      ? `Your ${exam.exam_name} exam is TODAY. Good luck! 💪`
+      : `${exam.exam_name} is in ${daysUntil} day${daysUntil > 1 ? 's' : ''}. Time to prep! 📚`
 
     const payload = JSON.stringify({
       title: 'Exam Reminder',

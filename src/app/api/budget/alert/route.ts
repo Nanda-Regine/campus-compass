@@ -14,7 +14,7 @@ export async function POST() {
 
     const [{ data: budget }, { data: expenses }] = await Promise.all([
       supabase.from('budgets').select('monthly_budget, nsfas_enabled, nsfas_living, nsfas_accom, nsfas_books').eq('user_id', user.id).single(),
-      supabase.from('expenses').select('amount').eq('user_id', user.id).gte('date', start).lte('date', end),
+      supabase.from('expenses').select('amount').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end),
     ])
 
     if (!budget || !expenses) return NextResponse.json({ ok: false })

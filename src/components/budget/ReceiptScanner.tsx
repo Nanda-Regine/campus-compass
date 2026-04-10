@@ -107,10 +107,8 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
         user_id: userId,
         amount,
         category,
-        merchant: merchant.slice(0, 100),
-        description: description.slice(0, 200) || merchant.slice(0, 100),
-        date: date || new Date().toISOString().slice(0, 10),
-        receipt_scanned: true,
+        description: (description.slice(0, 200) || merchant.slice(0, 100)).trim(),
+        expense_date: date || new Date().toISOString().slice(0, 10),
       })
       if (error) throw error
       toast.success(`R${amount.toFixed(2)} added to budget`)

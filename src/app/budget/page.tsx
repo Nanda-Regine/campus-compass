@@ -20,7 +20,7 @@ export default async function BudgetPage() {
     { data: subscription },
   ] = await Promise.all([
     supabase.from('budgets').select('*').eq('user_id', user.id).single(),
-    supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', start).lte('date', end).order('date', { ascending: false }),
+    supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end).order('expense_date', { ascending: false }),
     supabase.from('profiles').select('name, funding_type, university, year_of_study, is_premium').eq('id', user.id).single(),
     supabase.from('subscriptions').select('plan').eq('user_id', user.id).single(),
   ])

@@ -35,7 +35,7 @@ export function useOfflineSync() {
       await Promise.allSettled([
         syncTable(supabase.from('timetable_slots').select('*').eq('user_id', user.id) as unknown as PromiseLike<SyncResult>, 'timetable'),
         syncTable(supabase.from('tasks').select('*').eq('user_id', user.id).neq('status', 'done') as unknown as PromiseLike<SyncResult>, 'tasks'),
-        syncTable(supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', monthYear + '-01') as unknown as PromiseLike<SyncResult>, 'expenses'),
+        syncTable(supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', monthYear + '-01') as unknown as PromiseLike<SyncResult>, 'expenses'),
         syncTable(supabase.from('savings_goals').select('*').eq('user_id', user.id) as unknown as PromiseLike<SyncResult>, 'savings_goals'),
         syncTable(supabase.from('exams').select('*').eq('user_id', user.id).gte('exam_date', today) as unknown as PromiseLike<SyncResult>, 'exams'),
       ])

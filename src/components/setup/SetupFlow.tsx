@@ -189,16 +189,6 @@ export default function SetupFlow() {
           nsfas_books:    parseFloat(nsfasBooks)     || 0,
         }, { onConflict: 'user_id' })
 
-      // Update wallet_config income source flags
-      await supabase
-        .from('wallet_config')
-        .update({
-          has_nsfas: funding === 'nsfas',
-          has_bursary: funding === 'bursary',
-          has_scholarship: funding === 'scholarship',
-        })
-        .eq('user_id', user.id)
-
       // Save initial modules
       if (modules.length > 0) {
         const colours = MODULE_COLOURS

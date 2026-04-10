@@ -31,10 +31,10 @@ export async function GET(_request: NextRequest) {
     ] = await Promise.all([
       supabase.from('profiles').select('*, ai_language').eq('id', user.id).single(),
       supabase.from('budgets').select('*').eq('user_id', user.id).single(),
-      supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', false),
-      supabase.from('tasks').select('*').eq('user_id', user.id).eq('done', true).gte('done_at', start),
-      supabase.from('exams').select('*, module:modules(name)').eq('user_id', user.id).gte('exam_date', today).order('exam_date', { ascending: true }),
-      supabase.from('expenses').select('*').eq('user_id', user.id).gte('date', start).lte('date', end),
+      supabase.from('tasks').select('*').eq('user_id', user.id).neq('status', 'done'),
+      supabase.from('tasks').select('*').eq('user_id', user.id).eq('status', 'done').gte('completed_at', start),
+      supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', user.id).gte('exam_date', today).order('exam_date', { ascending: true }),
+      supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end),
       supabase.from('modules').select('*').eq('user_id', user.id),
     ])
 
@@ -60,7 +60,7 @@ THEIR SNAPSHOT:
 - Month progress: ${monthProgress}% through the month
 - Completed tasks this month: ${completedThisMonth}
 - Pending tasks: ${tasks?.length || 0} (${overdueTasks.length} overdue)
-- Upcoming exams: ${exams?.length || 0}${exams?.[0] ? ` (next: ${exams[0].name})` : ''}
+- Upcoming exams: ${exams?.length || 0}${exams?.[0] ? ` (next: ${exams[0].exam_name})` : ''}
 - Budget: R${remaining.toFixed(0)} remaining of R${totalBudget.toFixed(0)} (${totalBudget > 0 ? Math.round(((totalBudget - remaining) / totalBudget) * 100) : 0}% spent)
 - Modules: ${modules?.length || 0}
 - Funding: ${profile?.funding_type}
@@ -108,7 +108,7 @@ Respond with valid JSON only — array of 3 objects:
         pendingTasks: tasks?.length || 0,
         overdueTasks: overdueTasks.length,
         upcomingExams: exams?.length || 0,
-        nextExam: exams?.[0]?.name || null,
+        nextExam: exams?.[0]?.exam_name || null,
         budgetRemaining: remaining,
         budgetTotal: totalBudget,
         monthProgress,
