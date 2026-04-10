@@ -166,8 +166,7 @@ export default function SetupFlow() {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .update(profileData)
-        .eq('id', user.id)
+        .upsert({ id: user.id, email: user.email, ...profileData })
         .select()
         .single()
 
