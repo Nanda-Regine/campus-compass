@@ -60,7 +60,7 @@ export default async function DashboardPage() {
   ])
 
   // Redirect to setup if profile incomplete
-  if (!profile?.setup_complete) redirect('/setup')
+  if (!profile?.onboarding_complete) redirect('/setup')
 
   return (
     <DashboardClient

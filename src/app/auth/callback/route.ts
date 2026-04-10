@@ -14,17 +14,19 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Check if profile setup is complete
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('onboarding_complete')
-          .eq('id', user.id)
-          .single()
+      // Skip onboarding check for auth flows (e.g. password reset)
+      if (!next.startsWith('/auth/')) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('onboarding_complete')
+            .eq('id', user.id)
+            .single()
 
-        if (!profile?.onboarding_complete) {
-          return NextResponse.redirect(`${origin}/setup`)
+          if (!profile?.onboarding_complete) {
+            return NextResponse.redirect(`${origin}/setup`)
+          }
         }
       }
 
