@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
@@ -97,8 +98,8 @@ export default function Drawer({ open, onClose }: DrawerProps) {
         <div className="px-6 pt-14 pb-5 border-b border-white/7">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center text-xl shadow-teal flex-shrink-0">
-              🧭
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center flex-shrink-0">
+              <Image src="/logo.jpg" alt="VarsityOS" width={40} height={40} className="object-contain" />
             </div>
             <div>
               <div className="font-display font-bold text-white text-sm leading-tight">VarsityOS</div>

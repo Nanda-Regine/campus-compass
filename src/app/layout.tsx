@@ -140,10 +140,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/favicon.jpg', type: 'image/jpeg' },
+      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '192x192' },
+      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '48x48' },
+      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '32x32' },
     ],
-    apple: '/favicon.jpg',
-    shortcut: '/favicon.jpg',
+    apple: { url: '/favicon.jpg', sizes: '180x180', type: 'image/jpeg' },
+    shortcut: { url: '/favicon.jpg', type: 'image/jpeg' },
   },
   alternates: {
     canonical: APP_URL,
@@ -181,6 +183,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-ZA" suppressHydrationWarning>
       <head>
 
+        <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="32x32" />
+        <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="48x48" />
+        <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="192x192" />
         <meta name="geo.region" content="ZA" />
         <meta name="geo.placename" content="South Africa" />
         <meta name="ICBM" content="-29.0, 26.0" />

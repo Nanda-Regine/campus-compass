@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import Script from 'next/script'
 
 export const metadata: Metadata = {
@@ -165,7 +166,9 @@ export default function LandingPage() {
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', background: 'rgba(11,9,7,0.9)' }}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)' }} aria-hidden="true">🧭</div>
+            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white/10">
+              <Image src="/logo.jpg" alt="VarsityOS" width={32} height={32} className="object-contain" />
+            </div>
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
           <div className="flex items-center gap-2">
@@ -642,7 +645,9 @@ export default function LandingPage() {
         <footer className="px-5 py-8 max-w-6xl mx-auto" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: 'rgba(13,148,136,0.15)' }} aria-hidden="true">🧭</div>
+              <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-white/10">
+                <Image src="/logo.jpg" alt="VarsityOS" width={28} height={28} className="object-contain" />
+              </div>
               <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>VarsityOS</span>
             </div>
             <div className="flex flex-col items-center gap-1">
