@@ -28,7 +28,7 @@ const monoFont = JetBrains_Mono({
 const APP_URL = 'https://varsityos.co.za'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || APP_URL),
+  metadataBase: new URL(APP_URL),
   title: {
     default: 'VarsityOS — Student Super-App for South African University Students',
     template: '%s | VarsityOS',
@@ -180,7 +180,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-ZA" suppressHydrationWarning>
       <head>
-        <link rel="canonical" href={APP_URL} />
+
         <meta name="geo.region" content="ZA" />
         <meta name="geo.placename" content="South Africa" />
         <meta name="ICBM" content="-29.0, 26.0" />
