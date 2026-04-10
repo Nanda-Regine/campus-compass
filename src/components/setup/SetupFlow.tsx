@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
@@ -44,6 +45,11 @@ const UNIVERSITY_DOMAINS: Record<string, string> = {
 const EMOJIS = ['🎓','😎','🌟','💪','🔥','✨','🦋','🌻','🎯','🚀','💡','🦁','🌈','⚡','🎵','🏆']
 
 const YEARS = ['1st Year','2nd Year','3rd Year','Honours / 4th Year','Masters / PhD','Part-time / Short course']
+
+const YEAR_MAP: Record<string, number> = {
+  '1st Year': 1, '2nd Year': 2, '3rd Year': 3,
+  'Honours / 4th Year': 4, 'Masters / PhD': 5, 'Part-time / Short course': 6,
+}
 
 const FACULTIES = [
   'Engineering & Technology','Health Sciences','Humanities & Social Sciences',
@@ -153,7 +159,7 @@ export default function SetupFlow() {
         full_name: name.trim(),
         emoji,
         university,
-        year_of_study: year,
+        year_of_study: YEAR_MAP[year] ?? 1,
         funding_type: funding as FundingType,
         onboarding_complete: true,
       }
@@ -225,8 +231,8 @@ export default function SetupFlow() {
         className="px-5 pt-12 pb-8 text-center"
         style={{ background: 'linear-gradient(160deg, #0d9488 0%, #0f766e 60%, #134e4a 100%)' }}
       >
-        <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur border border-white/25 flex items-center justify-center text-3xl mx-auto mb-4">
-          🧭
+        <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur border border-white/25 flex items-center justify-center mx-auto mb-4 overflow-hidden">
+          <Image src="/logo.png" alt="VarsityOS" width={56} height={56} className="object-contain" />
         </div>
         <div className="font-display font-black text-xl text-white">VarsityOS</div>
         <div className="font-mono text-[0.6rem] text-white/60 tracking-widest uppercase mt-1">

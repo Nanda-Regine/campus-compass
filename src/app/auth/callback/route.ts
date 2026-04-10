@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('setup_complete')
+          .select('onboarding_complete')
           .eq('id', user.id)
           .single()
 
-        if (!profile?.setup_complete) {
+        if (!profile?.onboarding_complete) {
           return NextResponse.redirect(`${origin}/setup`)
         }
       }
