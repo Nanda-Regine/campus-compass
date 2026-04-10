@@ -52,11 +52,12 @@ const FACULTIES = [
 ]
 
 const FUNDING_OPTIONS: { key: FundingType; icon: string; name: string; desc: string }[] = [
-  { key: 'nsfas',   icon: '🏛️', name: 'NSFAS',           desc: 'National Student Financial Aid Scheme' },
-  { key: 'bursary', icon: '📜', name: 'Private Bursary',  desc: 'Company, foundation or trust funding' },
-  { key: 'self',    icon: '💼', name: 'Self / Family',     desc: 'Personal or family support' },
-  { key: 'loan',    icon: '🏦', name: 'Student Loan',      desc: 'Bank or institution loan' },
-  { key: 'mixed',   icon: '🔀', name: 'Mixed funding',     desc: 'Combination of the above' },
+  { key: 'nsfas',       icon: '🏛️', name: 'NSFAS',           desc: 'National Student Financial Aid Scheme' },
+  { key: 'bursary',     icon: '📜', name: 'Private Bursary',  desc: 'Company, foundation or trust funding' },
+  { key: 'scholarship', icon: '🎓', name: 'Scholarship',      desc: 'Merit or institution scholarship' },
+  { key: 'family',      icon: '👨‍👩‍👧', name: 'Family Support',  desc: 'Supported by family or guardian' },
+  { key: 'self_funded', icon: '💼', name: 'Self-Funded',       desc: 'Personal savings or student loan' },
+  { key: 'other',       icon: '🔀', name: 'Other / Mixed',     desc: 'Combination or other arrangement' },
 ]
 
 const DIETS = ['No restrictions','Vegetarian','Vegan','Halaal','Kosher','Lactose-free','Gluten-free']
@@ -71,7 +72,7 @@ interface StepProps {
 export default function SetupFlow() {
   const router = useRouter()
   const supabase = createClient()
-  const { setProfile, setBudget } = useAppStore()
+  const { setProfile } = useAppStore()
 
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
@@ -149,14 +150,12 @@ export default function SetupFlow() {
       // Save profile
       const profileData = {
         name: name.trim(),
+        full_name: name.trim(),
         emoji,
         university,
         year_of_study: year,
-        faculty,
         funding_type: funding as FundingType,
-        dietary_pref: diet,
-        living_situation: living,
-        setup_complete: true,
+        onboarding_complete: true,
       }
 
       const { data: profile, error: profileError } = await supabase
@@ -169,32 +168,37 @@ export default function SetupFlow() {
       if (profileError) throw profileError
       setProfile(profile)
 
-      // Save budget
-      const budgetData = {
-        monthly_budget: parseFloat(monthlyBudget) || 0,
-        food_budget:    parseFloat(foodBudget)    || 0,
-        nsfas_enabled:  funding === 'nsfas',
-        nsfas_living:   parseFloat(nsfasLiving)   || 0,
-        nsfas_accom:    parseFloat(nsfasAccom)     || 0,
-        nsfas_books:    parseFloat(nsfasBooks)     || 0,
-      }
-
-      const { data: budget, error: budgetError } = await supabase
+      // Save budget targets
+      await supabase
         .from('budgets')
-        .update(budgetData)
-        .eq('user_id', user.id)
-        .select()
-        .single()
+        .upsert({
+          user_id: user.id,
+          monthly_budget: parseFloat(monthlyBudget) || 0,
+          food_budget:    parseFloat(foodBudget)    || 0,
+          nsfas_enabled:  funding === 'nsfas',
+          nsfas_living:   parseFloat(nsfasLiving)   || 0,
+          nsfas_accom:    parseFloat(nsfasAccom)     || 0,
+          nsfas_books:    parseFloat(nsfasBooks)     || 0,
+        }, { onConflict: 'user_id' })
 
-      if (budgetError) throw budgetError
-      setBudget(budget)
+      // Update wallet_config income source flags
+      await supabase
+        .from('wallet_config')
+        .update({
+          has_nsfas: funding === 'nsfas',
+          has_bursary: funding === 'bursary',
+          has_scholarship: funding === 'scholarship',
+        })
+        .eq('user_id', user.id)
 
       // Save initial modules
       if (modules.length > 0) {
-        const moduleRows = modules.map((name, i) => ({
+        const colours = MODULE_COLOURS
+        const moduleRows = modules.map((modName, i) => ({
           user_id: user.id,
-          name,
-          colour: MODULE_COLOURS[i % MODULE_COLOURS.length],
+          module_name: modName,
+          module_code: modName.replace(/\s+/g, '').slice(0, 8).toUpperCase(),
+          color: colours[i % colours.length],
         }))
         await supabase.from('modules').insert(moduleRows)
       }

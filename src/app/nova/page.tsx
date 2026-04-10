@@ -7,6 +7,7 @@ import NovaCapabilitiesMenu from '@/components/nova/NovaCapabilitiesMenu'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import { trackEvent } from '@/lib/analytics'
 
 interface Resource {
   title: string
@@ -166,6 +167,13 @@ export default function NovaPage() {
 
       setMessages(prev => [...prev, assistantMessage])
       setMessageCount(data.messagesUsed || messageCount + 1)
+
+      trackEvent('nova_message_sent', {
+        tier: userTier,
+        has_mood: !!selectedMood,
+        is_crisis: !!data.isCrisis,
+        message_count: data.messagesUsed || messageCount + 1,
+      })
 
       if (data.isCrisis) setShowCrisisPanel(true)
     } catch (err) {

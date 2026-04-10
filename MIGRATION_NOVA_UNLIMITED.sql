@@ -1,87 +1,88 @@
 -- =============================================
--- VarsityOS — Nova Unlimited Tier Migration
+-- VarsityOS — Profiles Extension Migration
 -- Run this in your Supabase SQL editor
 -- Date: 2026-04-10
 -- =============================================
--- Extends subscription_tier CHECK constraint to include 'nova_unlimited'.
--- Updates PayFast webhook tier references.
+-- The full-new-schema.sql already includes:
+--   plan CHECK ('free','scholar','premium','nova_unlimited')
+--   recurrence_rule on tasks
+-- This migration adds the columns missing from the clean schema
+-- that the app code expects.
 -- =============================================
 
 -- ─────────────────────────────────────────────
--- 1. Drop old CHECK constraint, add updated one
+-- 1. Add subscription_tier column to profiles
+--    (PayFast webhook writes this on COMPLETE/CANCELLED)
 -- ─────────────────────────────────────────────
--- PostgreSQL requires dropping then recreating CHECK constraints
 ALTER TABLE public.profiles
-  DROP CONSTRAINT IF EXISTS profiles_subscription_tier_check;
-
-ALTER TABLE public.profiles
-  ADD CONSTRAINT profiles_subscription_tier_check
+  ADD COLUMN IF NOT EXISTS subscription_tier TEXT NOT NULL DEFAULT 'free'
     CHECK (subscription_tier IN ('free', 'scholar', 'premium', 'nova_unlimited'));
 
+-- Backfill from plan
+UPDATE public.profiles
+  SET subscription_tier = plan
+  WHERE subscription_tier = 'free' AND plan != 'free';
+
 -- ─────────────────────────────────────────────
--- 2. profiles.plan — extend to include nova_unlimited
+-- 2. Add is_premium boolean shorthand
 -- ─────────────────────────────────────────────
--- If plan is an enum type, run this instead:
--- ALTER TYPE plan_enum ADD VALUE IF NOT EXISTS 'nova_unlimited';
--- If it's a TEXT CHECK constraint:
 ALTER TABLE public.profiles
-  DROP CONSTRAINT IF EXISTS profiles_plan_check;
+  ADD COLUMN IF NOT EXISTS is_premium BOOLEAN NOT NULL DEFAULT false;
 
-ALTER TABLE public.profiles
-  ADD CONSTRAINT profiles_plan_check
-    CHECK (plan IN ('free', 'scholar', 'premium', 'nova_unlimited'));
-
--- ─────────────────────────────────────────────
--- 3. subscriptions.plan — same extension
--- ─────────────────────────────────────────────
-ALTER TABLE public.subscriptions
-  DROP CONSTRAINT IF EXISTS subscriptions_plan_check;
-
-ALTER TABLE public.subscriptions
-  ADD CONSTRAINT subscriptions_plan_check
-    CHECK (plan IN ('free', 'scholar', 'premium', 'nova_unlimited'));
+-- Backfill
+UPDATE public.profiles
+  SET is_premium = (plan IN ('scholar', 'premium', 'nova_unlimited'));
 
 -- ─────────────────────────────────────────────
--- 4. Add name, emoji columns if missing (used in components)
+-- 3. Add name (display name, mirrors full_name by default)
+--    Used in onboarding flow and Nova greeting
 -- ─────────────────────────────────────────────
 ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS name TEXT;
 
-ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS emoji TEXT DEFAULT '🎓';
-
--- Backfill name from full_name
 UPDATE public.profiles
   SET name = full_name
   WHERE name IS NULL AND full_name IS NOT NULL;
 
 -- ─────────────────────────────────────────────
--- 5. Add is_premium computed-style column (boolean shorthand)
+-- 4. Add emoji (avatar emoji chosen at onboarding)
 -- ─────────────────────────────────────────────
 ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS is_premium BOOLEAN NOT NULL DEFAULT FALSE;
-
--- Backfill is_premium based on current tier
-UPDATE public.profiles
-  SET is_premium = (subscription_tier IN ('premium', 'nova_unlimited'));
+  ADD COLUMN IF NOT EXISTS emoji TEXT DEFAULT '🎓';
 
 -- ─────────────────────────────────────────────
--- 6. Add done_at column to tasks (used in TasksTab)
+-- 5. Create budgets table (used by BudgetClient and 8 API routes)
+--    This is separate from wallet_config which tracks income sources.
+--    budgets stores monthly budget targets and NSFAS allocations.
 -- ─────────────────────────────────────────────
-ALTER TABLE public.tasks
-  ADD COLUMN IF NOT EXISTS done_at TIMESTAMPTZ;
+CREATE TABLE IF NOT EXISTS public.budgets (
+  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id        UUID NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
+  monthly_budget NUMERIC(10,2) NOT NULL DEFAULT 0,
+  food_budget    NUMERIC(10,2) NOT NULL DEFAULT 0,
+  nsfas_enabled  BOOLEAN NOT NULL DEFAULT false,
+  nsfas_living   NUMERIC(10,2) NOT NULL DEFAULT 0,
+  nsfas_accom    NUMERIC(10,2) NOT NULL DEFAULT 0,
+  nsfas_books    NUMERIC(10,2) NOT NULL DEFAULT 0,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
--- Backfill done_at for tasks that have a completed status
-UPDATE public.tasks
-  SET done_at = completed_at
-  WHERE done_at IS NULL AND completed_at IS NOT NULL;
+ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "own_rows" ON public.budgets FOR ALL USING (auth.uid() = user_id);
+
+-- Backfill: create a budget row for every existing profile
+INSERT INTO public.budgets (user_id)
+SELECT id FROM public.profiles
+ON CONFLICT (user_id) DO NOTHING;
 
 -- ─────────────────────────────────────────────
--- 7. Verify
+-- 6. Verify results
 -- ─────────────────────────────────────────────
 SELECT
+  plan,
   subscription_tier,
   COUNT(*) AS user_count
 FROM public.profiles
-GROUP BY subscription_tier
-ORDER BY subscription_tier;
+GROUP BY plan, subscription_tier
+ORDER BY plan;

@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, BookOpen, DollarSign, UtensilsCrossed, Star } from 'lucide-react'
+import { trackEvent } from '@/lib/analytics'
 
 const tabs = [
   { href: '/dashboard', icon: Home, label: 'Home' },
@@ -37,6 +38,7 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
+              onClick={() => !active && trackEvent('feature_opened', { feature: label.toLowerCase(), path: href })}
               className="flex flex-col items-center gap-1 px-3 py-2 transition-all"
               style={{ color: active ? '#2dd4bf' : 'rgba(255,255,255,0.35)' }}
             >

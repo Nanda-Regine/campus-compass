@@ -37,6 +37,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
   const store = useAppStore()
   const [activeTab, setActiveTab] = useState<TabId>('tasks')
   const [gradeCalcOpen, setGradeCalcOpen] = useState(false)
+  const [triggerAdd, setTriggerAdd]       = useState(0)
   const supabase = createClient()
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
   const timetable = store.timetable.length ? store.timetable : initialData.timetable
   const exams     = store.exams.length     ? store.exams     : initialData.exams
 
-  const pendingCount      = tasks.filter(t => !t.done).length
+  const pendingCount      = tasks.filter(t => t.status !== 'done').length
   const upcomingExamCount = exams.filter(e => new Date(e.exam_date) >= new Date()).length
 
   return (
@@ -108,7 +109,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
 
       <div className="max-w-2xl mx-auto px-4 py-4">
         {activeTab === 'tasks' && <div className="mb-3"><StreakWidget /></div>}
-        {activeTab === 'tasks'     && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} />}
+        {activeTab === 'tasks'     && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} />}
         {activeTab === 'timetable' && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
         {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   userId={userId} supabase={supabase} />}
         {activeTab === 'modules'   && <ModulesTab   modules={modules}                     userId={userId} supabase={supabase} />}
@@ -120,6 +121,18 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         onClose={() => setGradeCalcOpen(false)}
         type="grade_calculator"
       />
+
+      {/* ── Quick-add FAB ── */}
+      {activeTab === 'tasks' && (
+        <button
+          onClick={() => setTriggerAdd(n => n + 1)}
+          className="fixed bottom-24 right-5 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all active:scale-95 md:bottom-8"
+          style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)', boxShadow: '0 4px 20px rgba(13,148,136,0.4)' }}
+          aria-label="Add task"
+        >
+          <span className="text-white text-2xl font-light leading-none">+</span>
+        </button>
+      )}
     </div>
   )
 }

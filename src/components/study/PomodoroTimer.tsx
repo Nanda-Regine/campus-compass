@@ -215,7 +215,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
   const strokeDashoffset = circumference * (1 - progress)
   const c = PHASE_COLOURS[phase]
 
-  const pendingTasks = tasks.filter(t => !t.done)
+  const pendingTasks = tasks.filter(t => t.status !== 'done')
   const selectedTask = pendingTasks.find(t => t.id === selectedTaskId)
 
   return (

@@ -24,16 +24,16 @@ export default async function StudyPage() {
       .order('created_at', { ascending: true }),
     supabase
       .from('tasks')
-      .select('*, module:modules(id,name,colour)')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
     supabase
-      .from('timetable_entries')
-      .select('*, module:modules(id,name,colour)')
+      .from('timetable_slots')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id),
     supabase
       .from('exams')
-      .select('*, module:modules(id,name,colour)')
+      .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .order('exam_date', { ascending: true }),
   ])

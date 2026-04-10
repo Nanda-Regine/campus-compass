@@ -158,8 +158,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     .filter(e => e.day_of_week === todayName)
     .sort((a, bb) => a.start_time.localeCompare(bb.start_time))
 
-  const pendingTasks = allTasks.filter(t => !t.done).slice(0, 5)
-  const overdueTasks = allTasks.filter(t => !t.done && t.due_date && new Date(t.due_date) < new Date())
+  const pendingTasks = allTasks.filter(t => t.status !== 'done').slice(0, 5)
+  const overdueTasks = allTasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < new Date())
   const nextExam     = allExams[0] ?? null
   const ls           = getLoadSheddingStatus()
   const isPremium    = p?.is_premium || initialData.subscription?.plan === 'premium'

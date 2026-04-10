@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -40,10 +40,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 interface Props {
-  tasks:    Task[]
-  modules:  Module[]
-  userId:   string
-  supabase: SupabaseClient
+  tasks:       Task[]
+  modules:     Module[]
+  userId:      string
+  supabase:    SupabaseClient
+  triggerAdd?: number // increment to open add modal from parent
 }
 
 const URGENCY_ORDER = { overdue: 0, today: 1, urgent: 2, soon: 3, normal: 4 }
@@ -68,7 +69,7 @@ function isOverdue(dateStr: string | null): boolean {
   return dateStr < new Date().toISOString().split('T')[0]
 }
 
-export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
+export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd }: Props) {
   const { addTask, updateTask, removeTask } = useAppStore()
   const [modalOpen, setModalOpen]       = useState(false)
   const [saving, setSaving]             = useState(false)
@@ -77,14 +78,19 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
   const [assistModal, setAssistModal]   = useState<{ open: boolean; task: Task | null }>({ open: false, task: null })
   const [formCategory, setFormCategory] = useState<TaskCategoryGroup>('academic')
 
+  useEffect(() => {
+    if (triggerAdd) openAdd()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerAdd])
+
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { category: 'academic', task_type: 'Assignment', priority: 'normal' },
   })
 
   // ── Filter tasks by view ────────────────────────────────────
-  const pendingTasks = tasks.filter(t => !t.done)
-  const doneTasks    = tasks.filter(t => t.done)
+  const pendingTasks = tasks.filter(t => t.status !== 'done')
+  const doneTasks    = tasks.filter(t => t.status === 'done')
 
   const filteredByView = (view === 'done' ? doneTasks : pendingTasks).filter(t => {
     if (view === 'today') return isToday(t.due_date) || isOverdue(t.due_date)
@@ -99,7 +105,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
       return grp === selectedCategory
     })
     .sort((a, b) => {
-      if (view === 'done') return new Date(b.done_at ?? 0).getTime() - new Date(a.done_at ?? 0).getTime()
+      if (view === 'done') return new Date(b.completed_at ?? 0).getTime() - new Date(a.completed_at ?? 0).getTime()
       const ua = getTaskUrgency(a.due_date).urgency
       const ub = getTaskUrgency(b.due_date).urgency
       return URGENCY_ORDER[ua] - URGENCY_ORDER[ub]
@@ -119,7 +125,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
           module_id: data.module_id || null,
           notes:     data.notes || null,
         })
-        .select('*, module:modules(id,name,colour)')
+        .select('*, module:modules(id,module_name,color)')
         .single()
 
       if (error) throw error
@@ -136,22 +142,23 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
   }
 
   const toggleDone = async (task: Task) => {
-    const completing = !task.done
-    updateTask(task.id, { done: completing })
+    const completing = task.status !== 'done'
+    const newStatus = completing ? 'done' : 'todo'
+    updateTask(task.id, { status: newStatus, completed_at: completing ? new Date().toISOString() : null })
 
     const { error } = await supabase
       .from('tasks')
-      .update({ done: completing, done_at: completing ? new Date().toISOString() : null })
+      .update({ status: newStatus, completed_at: completing ? new Date().toISOString() : null })
       .eq('id', task.id)
 
     if (error) {
-      updateTask(task.id, { done: task.done })
+      updateTask(task.id, { status: task.status, completed_at: task.completed_at })
       toast.error('Failed to update task')
       return
     }
 
     if (completing) {
-      const pendingAfter = tasks.filter(t => !t.done && t.id !== task.id).length
+      const pendingAfter = tasks.filter(t => t.status !== 'done' && t.id !== task.id).length
       import('@/lib/confetti').then(({ triggerConfetti }) => {
         triggerConfetti(pendingAfter === 0 ? 'all_done' : 'task')
       })
@@ -253,7 +260,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
               soon:    'bg-teal-600/10 text-teal-400 border-teal-600/20',
               normal:  'bg-white/5 text-white/40 border-white/10',
             }[urgency]
-            const modColour = task.module?.colour ? MODULE_COLOURS[task.module.colour] : null
+            const modColour = task.module?.color ? MODULE_COLOURS[task.module.color] : null
             const priorityIcon = { normal: '', high: '🔺', urgent: '🚨' }[task.priority]
             const grp = getGroupForType(task.task_type)
             const grpDef = grp ? TASK_CATEGORY_GROUPS[grp] : null
@@ -263,17 +270,17 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
                 key={task.id}
                 className={cn(
                   'flex items-start gap-3 bg-[#111a18] border rounded-xl px-4 py-3 transition-all group',
-                  task.done ? 'opacity-50 border-white/5' : 'border-white/8 hover:border-white/15'
+                  task.status === 'done' ? 'opacity-50 border-white/5' : 'border-white/8 hover:border-white/15'
                 )}
               >
                 <button
                   onClick={() => toggleDone(task)}
                   className={cn(
                     'flex-shrink-0 w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center transition-all',
-                    task.done ? 'border-teal-600 bg-teal-600' : 'border-white/30 hover:border-teal-600'
+                    task.status === 'done' ? 'border-teal-600 bg-teal-600' : 'border-white/30 hover:border-teal-600'
                   )}
                 >
-                  {task.done && (
+                  {task.status === 'done' && (
                     <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
                       <path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -284,7 +291,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {grpDef && <span className="text-xs">{grpDef.icon}</span>}
                     {priorityIcon && <span className="text-xs">{priorityIcon}</span>}
-                    <span className={cn('font-display text-sm font-medium', task.done ? 'line-through text-white/30' : 'text-white')}>
+                    <span className={cn('font-display text-sm font-medium', task.status === 'done' ? 'line-through text-white/30' : 'text-white')}>
                       {task.title}
                     </span>
                   </div>
@@ -295,23 +302,23 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
                     {task.module && (
                       <span className="font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full"
                         style={{ background: modColour?.bg, color: modColour?.text }}>
-                        {task.module.name}
+                        {task.module.module_name}
                       </span>
                     )}
-                    {label && !task.done && (
+                    {label && task.status !== 'done' && (
                       <span className={cn('font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full border', urgencyBadge)}>
                         {label}
                       </span>
                     )}
-                    {task.done && task.done_at && (
-                      <span className="font-mono text-[0.58rem] text-white/20">Done {fmt.dateShort(task.done_at)}</span>
+                    {task.status === 'done' && task.completed_at && (
+                      <span className="font-mono text-[0.58rem] text-white/20">Done {fmt.dateShort(task.completed_at)}</span>
                     )}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {!task.done && <div className="w-2 h-2 rounded-full" style={{ background: urgencyDot }} />}
-                  {!task.done && (
+                  {task.status !== 'done' && <div className="w-2 h-2 rounded-full" style={{ background: urgencyDot }} />}
+                  {task.status !== 'done' && (
                     <button
                       onClick={e => { e.stopPropagation(); setAssistModal({ open: true, task }) }}
                       className="opacity-0 group-hover:opacity-100 text-teal-400/60 hover:text-teal-400 transition-all text-xs px-1"
@@ -337,7 +344,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
         onClose={() => setAssistModal({ open: false, task: null })}
         type="study_plan"
         taskTitle={assistModal.task?.title}
-        moduleName={assistModal.task?.module?.name}
+        moduleName={assistModal.task?.module?.module_name}
         dueDate={assistModal.task?.due_date ?? undefined}
       />
 
@@ -394,7 +401,7 @@ export default function TasksTab({ tasks, modules, userId, supabase }: Props) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Select label="Priority" options={PRIORITIES.map(p => ({ value: p.value, label: p.label }))} {...register('priority')} />
-            <Select label="Module (optional)" placeholder="No module" options={modules.map(m => ({ value: m.id, label: m.name }))} {...register('module_id')} />
+            <Select label="Module (optional)" placeholder="No module" options={modules.map(m => ({ value: m.id, label: m.module_name }))} {...register('module_id')} />
           </div>
           <Input label="Notes (optional)" placeholder="Any extra details…" {...register('notes')} />
         </form>

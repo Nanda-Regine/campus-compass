@@ -89,11 +89,9 @@ export interface Task {
   due_date: string | null
   priority: TaskPriority
   status: 'todo' | 'in_progress' | 'done' | 'overdue'
-  done: boolean
   is_group_task: boolean
   estimated_hours: number | null
   recurrence_rule: string | null
-  done_at: string | null
   completed_at: string | null
   created_at: string
   updated_at: string
@@ -196,7 +194,7 @@ export interface DashboardSummary {
 
 // ─── Enums / Union types ─────────────────────────────────────
 
-export type FundingType = 'nsfas' | 'bursary' | 'self' | 'loan' | 'mixed'
+export type FundingType = 'nsfas' | 'bursary' | 'self_funded' | 'family' | 'scholarship' | 'other'
 
 export type ExpenseCategory =
   | 'Food'

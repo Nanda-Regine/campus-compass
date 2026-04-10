@@ -56,7 +56,7 @@ export async function PATCH(request: NextRequest) {
 
     // Whitelist editable fields — never allow plan, nova_messages etc.
     const allowed = [
-      'full_name', 'university', 'degree', 'year_of_study', 'student_number',
+      'full_name', 'name', 'emoji', 'university', 'degree', 'year_of_study', 'student_number',
       'funding_type', 'phone', 'preferred_language', 'notifications_enabled',
       'avatar_url', 'onboarding_complete',
     ]

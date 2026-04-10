@@ -44,11 +44,12 @@ interface Stats {
 const YEAR_OPTIONS = ['1st year', '2nd year', '3rd year', '4th year', '5th year', 'Honours', 'Masters', 'PhD', 'Other']
 
 const FUNDING_OPTIONS = [
-  { value: 'nsfas',    label: 'NSFAS' },
-  { value: 'bursary',  label: 'Bursary' },
-  { value: 'self',     label: 'Self-funded' },
-  { value: 'loan',     label: 'Student loan' },
-  { value: 'mixed',    label: 'Mixed / Other' },
+  { value: 'nsfas',       label: 'NSFAS' },
+  { value: 'bursary',     label: 'Bursary' },
+  { value: 'scholarship', label: 'Scholarship' },
+  { value: 'family',      label: 'Family Support' },
+  { value: 'self_funded', label: 'Self-Funded' },
+  { value: 'other',       label: 'Other / Mixed' },
 ]
 
 const DIETARY_OPTIONS = ['No restrictions', 'Vegetarian', 'Vegan', 'Halaal', 'Kosher', 'Gluten-free', 'Other']

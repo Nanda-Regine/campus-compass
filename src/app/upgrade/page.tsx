@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
 import { createHash } from 'crypto'
+import UpgradeButton from '@/components/upgrade/UpgradeButton'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Upgrade — VarsityOS' }
@@ -267,26 +268,15 @@ export default async function UpgradePage() {
                     Current plan
                   </div>
                 ) : (
-                  <form action={tier.payfast.action} method="POST">
-                    {Object.entries(tier.payfast.fields).map(([fieldName, value]) => (
-                      <input key={fieldName} type="hidden" name={fieldName} value={value} />
-                    ))}
-                    <button
-                      type="submit"
-                      className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.98]"
-                      style={{
-                        background: tier.gold
-                          ? tier.colour
-                          : tier.highlight
-                            ? tier.colour
-                            : 'rgba(13,148,136,0.2)',
-                        color: tier.gold ? '#1a1200' : tier.highlight ? '#1a0a00' : '#2dd4bf',
-                        border: tier.gold || tier.highlight ? 'none' : '1px solid rgba(13,148,136,0.3)',
-                      }}
-                    >
-                      Subscribe for R{tier.price}/month
-                    </button>
-                  </form>
+                  <UpgradeButton
+                    tier={tier.id}
+                    price={tier.price}
+                    action={tier.payfast.action}
+                    fields={tier.payfast.fields}
+                    colour={tier.colour}
+                    gold={tier.gold}
+                    highlight={tier.highlight}
+                  />
                 )}
               </div>
             </div>
