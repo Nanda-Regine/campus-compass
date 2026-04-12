@@ -10,6 +10,9 @@ import { checkRateLimit } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
+  defaultHeaders: {
+    'anthropic-beta': 'prompt-caching-2024-07-31',
+  },
 })
 
 // ─── Detect heavy tutoring topic from conversation history ────
@@ -321,6 +324,8 @@ export async function POST(request: NextRequest) {
       {
         type: 'text',
         text: buildDynamicContext(ctx, usageGuidance),
+        // @ts-expect-error — cache_control supported at runtime, not in all SDK types
+        cache_control: { type: 'ephemeral' },
       },
     ]
 
@@ -341,6 +346,13 @@ export async function POST(request: NextRequest) {
       assistantMessage += formatResourceLinks(topicResources)
     }
 
+    // Extract cache token usage for cost monitoring
+    const usage = response.usage as Record<string, number> & { cache_creation_input_tokens?: number; cache_read_input_tokens?: number }
+    const cacheCreationTokens = usage?.cache_creation_input_tokens ?? 0
+    const cacheReadTokens = usage?.cache_read_input_tokens ?? 0
+    const inputTokens = usage?.input_tokens ?? 0
+    const outputTokens = usage?.output_tokens ?? 0
+
     // Increment message counter on profile
     const messagesUsed = ctx.messageCount + 1
     await supabase.from('profiles').update({ nova_messages_used: messagesUsed }).eq('id', user.id)
@@ -353,6 +365,19 @@ export async function POST(request: NextRequest) {
       crisis_detected: isCrisis,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' }).then(() => {}, () => {})
+
+    // Log cache token usage for cost monitoring (best-effort)
+    if (cacheCreationTokens > 0 || cacheReadTokens > 0 || inputTokens > 0) {
+      supabase.from('nova_messages').insert({
+        user_id: user.id,
+        role: 'assistant',
+        content: assistantMessage.slice(0, 500), // excerpt only
+        cache_creation_input_tokens: cacheCreationTokens,
+        cache_read_input_tokens: cacheReadTokens,
+        input_tokens: inputTokens,
+        output_tokens: outputTokens,
+      }).then(() => {}, () => {})
+    }
 
     return NextResponse.json({
       message: assistantMessage,
