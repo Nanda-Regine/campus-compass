@@ -54,7 +54,6 @@ export interface Expense {
   description: string | null
   amount: number
   expense_date: string
-  date: string
   month_year: string | null
   receipt_url: string | null
   created_at: string
@@ -103,10 +102,12 @@ export interface TimetableEntry {
   id: string
   user_id: string
   module_id: string | null
-  day_of_week: DayOfWeek
+  day_of_week: number | DayOfWeek  // INTEGER in DB (1=Mon…7=Sun)
+  day_of_week_text: DayOfWeek | null  // human-readable text, used for display/conflict detection
   start_time: string
   end_time: string | null
   venue: string | null
+  slot_type: string | null
   created_at: string
   // Joined
   module?: Module
@@ -197,30 +198,37 @@ export interface DashboardSummary {
 export type FundingType = 'nsfas' | 'bursary' | 'self_funded' | 'family' | 'scholarship' | 'other'
 
 export type ExpenseCategory =
-  | 'Food'
-  | 'Transport'
-  | 'Data'
-  | 'Stationery'
-  | 'Accommodation'
-  | 'Entertainment'
-  | 'Health'
-  | 'Clothing'
-  | 'Other'
+  | 'food'
+  | 'transport'
+  | 'data'
+  | 'stationery'
+  | 'accommodation'
+  | 'entertainment'
+  | 'health'
+  | 'clothing'
+  | 'airtime'
+  | 'laundry'
+  | 'toiletries'
+  | 'savings'
+  | 'other'
 
 export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
-  'Food', 'Transport', 'Data', 'Stationery',
-  'Accommodation', 'Entertainment', 'Health', 'Clothing', 'Other',
+  'food', 'transport', 'data', 'stationery',
+  'accommodation', 'entertainment', 'health', 'clothing',
+  'airtime', 'laundry', 'toiletries', 'savings', 'other',
 ]
 
 export const CATEGORY_ICONS: Record<ExpenseCategory, string> = {
-  Food: '🍔', Transport: '🚌', Data: '📱', Stationery: '📖',
-  Accommodation: '🏠', Entertainment: '🎮', Health: '💊', Clothing: '👕', Other: '💳',
+  food: '🍔', transport: '🚌', data: '📱', stationery: '📖',
+  accommodation: '🏠', entertainment: '🎮', health: '💊', clothing: '👕',
+  airtime: '📞', laundry: '🧺', toiletries: '🧴', savings: '🏦', other: '💳',
 }
 
 export const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
-  Food: '#f97316', Transport: '#3b82f6', Data: '#a855f7',
-  Stationery: '#f59e0b', Accommodation: '#0d9488', Entertainment: '#ec4899',
-  Health: '#22c55e', Clothing: '#8b5cf6', Other: '#6b7280',
+  food: '#f97316', transport: '#3b82f6', data: '#a855f7',
+  stationery: '#f59e0b', accommodation: '#0d9488', entertainment: '#ec4899',
+  health: '#22c55e', clothing: '#8b5cf6', airtime: '#06b6d4',
+  laundry: '#84cc16', toiletries: '#fb923c', savings: '#34d399', other: '#6b7280',
 }
 
 export type ModuleColour = 'teal' | 'coral' | 'purple' | 'amber' | 'blue' | 'green'

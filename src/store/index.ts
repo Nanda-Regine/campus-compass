@@ -45,7 +45,7 @@ interface AppState {
   setIsOnline:         (online: boolean) => void
   setUserId:           (id: string) => void
   setProfile:          (profile: Profile) => void
-  setBudget:           (budget: Budget) => void
+  setBudget:           (budget: Budget | null) => void
   setSubscription:     (sub: Subscription) => void
   setTasks:            (tasks: Task[]) => void
   setExams:            (exams: Exam[]) => void
