@@ -127,7 +127,29 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   if (daysToNextExam !== null && daysToNextExam <= 5) stressSignals.push(`exam in ${daysToNextExam} days`)
   if (urgentTasks.length >= 3) stressSignals.push(`${urgentTasks.length} tasks due within 3 days`)
 
-  const tier = ((profile as Record<string, unknown>)?.plan as NovaTier | null) || 'free'
+  const p = profile as Record<string, unknown> | null
+  // subscription_tier is the canonical column (set by PayFast webhook)
+  // fall back to plan (legacy) then free
+  const tier = (
+    (p?.subscription_tier as NovaTier | null) ||
+    (p?.plan as NovaTier | null) ||
+    'free'
+  ) as NovaTier
+
+  // ─── Monthly reset check ──────────────────────────────────────
+  // If nova_messages_reset_at is null or in a prior month, reset the counter
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const lastResetKey = (p?.nova_messages_reset_at as string | null)?.slice(0, 7) ?? ''
+  let messageCount = (p?.nova_messages_used as number) || 0
+
+  if (lastResetKey !== currentMonthKey) {
+    // New month — reset counter
+    await supabase
+      .from('profiles')
+      .update({ nova_messages_used: 0, nova_messages_reset_at: now.toISOString() })
+      .eq('id', userId)
+    messageCount = 0
+  }
 
   return {
     profile,
@@ -153,7 +175,7 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
       totalExamsAhead: exams?.length || 0,
     },
     stressSignals,
-    messageCount: (profile as Record<string, unknown>)?.nova_messages_used as number || 0,
+    messageCount,
     subscriptionTier: tier,
   }
 }
@@ -417,13 +439,17 @@ export async function GET(request: NextRequest) {
         .single(),
       supabase
         .from('profiles')
-        .select('plan, nova_messages_used, nova_messages_limit')
+        .select('plan, subscription_tier, nova_messages_used, nova_messages_limit, nova_messages_reset_at')
         .eq('id', user.id)
         .single(),
     ])
 
     const p = profile as Record<string, unknown> | null
-    const tier = (p?.plan as NovaTier | null) || 'free'
+    const tier = (
+      (p?.subscription_tier as NovaTier | null) ||
+      (p?.plan as NovaTier | null) ||
+      'free'
+    ) as NovaTier
     const messageCount = (p?.nova_messages_used as number) || 0
     const messageLimit = tier === 'nova_unlimited' ? -1
       : tier === 'premium' ? NOVA_PREMIUM_HARD_CAP

@@ -15,6 +15,7 @@ ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE DEFAULT LOWER(SUBSTRING(MD5(RANDOM()::TEXT) FROM 1 FOR 8)),
   ADD COLUMN IF NOT EXISTS ai_language TEXT,
   ADD COLUMN IF NOT EXISTS nova_messages_limit INTEGER NOT NULL DEFAULT 15,
+  ADD COLUMN IF NOT EXISTS nova_messages_reset_at TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'free';
 
 -- Drop old constraint (had fewer valid values)
@@ -543,6 +544,32 @@ DO $$ BEGIN
   CREATE POLICY "own_rows" ON public.nova_abuse_flags FOR ALL USING (auth.uid() = user_id);
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+
+-- ─────────────────────────────────────────────────────────────
+-- 19. APP FEEDBACK
+-- ─────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.app_feedback (
+  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id    UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  rating     INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  category   TEXT,
+  message    TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.app_feedback ENABLE ROW LEVEL SECURITY;
+-- Users can insert their own feedback; admins read via service role
+DO $$ BEGIN
+  CREATE POLICY "insert_own" ON public.app_feedback FOR INSERT WITH CHECK (auth.uid() = user_id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE POLICY "select_own" ON public.app_feedback FOR SELECT USING (auth.uid() = user_id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_feedback_user ON public.app_feedback(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_rating ON public.app_feedback(rating, created_at DESC);
 
 -- ─────────────────────────────────────────────────────────────
 -- DONE
