@@ -156,15 +156,24 @@ export default function SetupFlow() {
         return
       }
 
-      // Save profile
+      // Save profile — full data set for Nova context and onboarding gate
       const profileData = {
         name: name.trim(),
         full_name: name.trim(),
         emoji,
         university,
+        faculty,
         year_of_study: YEAR_MAP[year] ?? 1,
         funding_type: funding as FundingType,
+        nsfas_monthly_amount: funding === 'nsfas'
+          ? (parseFloat(nsfasLiving) || 0) + (parseFloat(nsfasAccom) || 0) + (parseFloat(nsfasBooks) || 0)
+          : null,
+        accommodation_type: living || null,
+        dietary_preferences: diet !== 'No restrictions' ? [diet] : [],
+        dietary_pref: diet,
+        living_situation: living || null,
         onboarding_complete: true,
+        onboarding_completed: true,
       }
 
       const { data: profile, error: profileError } = await supabase
