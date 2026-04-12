@@ -17,6 +17,7 @@ const schema = z.object({
   email:           z.string().email('Enter a valid email'),
   password:        z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
+  popia_consent:   z.literal(true, { errorMap: () => ({ message: 'You must accept the Privacy Policy to continue' }) }),
 }).refine(d => d.password === d.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -41,7 +42,7 @@ export default function SignupForm() {
   })
 
   const onSubmit = async (data: FormData) => {
-    const { error } = await signUp(data.email, data.password, data.name)
+    const { error } = await signUp(data.email, data.password, data.name, true)
     if (!error) setSubmitted(true)
   }
 
@@ -147,11 +148,26 @@ export default function SignupForm() {
               {...register('confirmPassword')}
             />
 
-            <p className="font-mono text-[0.6rem] text-white/25 leading-relaxed">
-              By signing up, you agree to our{' '}
-              <a href="#" className="text-teal-500 hover:underline">Terms</a> and{' '}
-              <a href="#" className="text-teal-500 hover:underline">Privacy Policy</a>.
-            </p>
+            {/* POPIA explicit consent — required by POPIA s11 */}
+            <div className="rounded-xl border border-white/8 bg-white/3 px-3 py-3">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 rounded border-white/20 bg-white/5 text-teal-500 focus:ring-teal-500 focus:ring-offset-0 shrink-0"
+                  {...register('popia_consent')}
+                />
+                <span className="font-mono text-[0.6rem] text-white/45 leading-relaxed">
+                  I have read and agree to the{' '}
+                  <Link href="/terms" className="text-teal-500 hover:text-teal-400 underline">Terms &amp; Conditions</Link>
+                  {' '}and{' '}
+                  <Link href="/privacy" className="text-teal-500 hover:text-teal-400 underline">Privacy Policy</Link>
+                  {' '}(POPIA — Reg. 2026-005658). I consent to VarsityOS processing my personal information as described.
+                </span>
+              </label>
+              {errors.popia_consent && (
+                <p className="mt-1.5 font-mono text-[0.6rem] text-red-400">{errors.popia_consent.message}</p>
+              )}
+            </div>
 
             <Button type="submit" fullWidth loading={loading} className="mt-1">
               Create free account 🚀

@@ -572,6 +572,91 @@ CREATE INDEX IF NOT EXISTS idx_feedback_user ON public.app_feedback(user_id, cre
 CREATE INDEX IF NOT EXISTS idx_feedback_rating ON public.app_feedback(rating, created_at DESC);
 
 -- ─────────────────────────────────────────────────────────────
+-- 20. POPIA CONSENT — add to profiles + index
+-- ─────────────────────────────────────────────────────────────
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS popia_consent    BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS popia_consent_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS subscription_tier TEXT DEFAULT 'free';  -- safe if already added
+
+-- Re-apply constraint idempotently
+ALTER TABLE public.profiles
+  DROP CONSTRAINT IF EXISTS profiles_subscription_tier_check;
+ALTER TABLE public.profiles
+  ADD CONSTRAINT profiles_subscription_tier_check
+    CHECK (subscription_tier IN ('free','scholar','premium','nova_unlimited'));
+
+CREATE INDEX IF NOT EXISTS idx_profiles_popia ON public.profiles(popia_consent) WHERE popia_consent = false;
+
+-- ─────────────────────────────────────────────────────────────
+-- 21. DASHBOARD SUMMARY VIEW
+-- Aggregates per-user KPIs for the dashboard server component.
+-- Uses SECURITY INVOKER so RLS on base tables is honoured.
+-- ─────────────────────────────────────────────────────────────
+CREATE OR REPLACE VIEW public.dashboard_summary
+WITH (security_invoker = true)
+AS
+SELECT
+  p.id                                                      AS user_id,
+  p.full_name,
+  p.university,
+  p.year_of_study,
+  p.plan,
+  COALESCE(p.subscription_tier, p.plan, 'free')             AS tier,
+  p.nova_messages_used,
+  p.nova_messages_limit,
+  p.streak_count,
+  p.last_activity_date,
+
+  -- Budget: current-month net
+  COALESCE((
+    SELECT SUM(amount) FROM public.income_entries ie
+    WHERE ie.user_id = p.id
+      AND ie.month_year = TO_CHAR(NOW(), 'YYYY-MM')
+  ), 0)                                                      AS income_this_month,
+  COALESCE((
+    SELECT SUM(amount) FROM public.expenses ex
+    WHERE ex.user_id = p.id
+      AND ex.month_year = TO_CHAR(NOW(), 'YYYY-MM')
+  ), 0)                                                      AS expenses_this_month,
+
+  -- Tasks
+  (SELECT COUNT(*) FROM public.tasks t
+   WHERE t.user_id = p.id AND t.status != 'done')           AS open_tasks,
+  (SELECT COUNT(*) FROM public.tasks t
+   WHERE t.user_id = p.id AND t.status = 'done')            AS done_tasks,
+  (SELECT COUNT(*) FROM public.tasks t
+   WHERE t.user_id = p.id AND t.status = 'overdue')         AS overdue_tasks,
+
+  -- Upcoming exams (next 30 days)
+  (SELECT COUNT(*) FROM public.exams e
+   WHERE e.user_id = p.id
+     AND e.exam_date BETWEEN NOW() AND NOW() + INTERVAL '30 days') AS upcoming_exams,
+
+  -- Study hours this week
+  COALESCE((
+    SELECT SUM(duration_minutes) / 60.0
+    FROM public.study_sessions ss
+    WHERE ss.user_id = p.id
+      AND ss.started_at >= date_trunc('week', NOW())
+  ), 0)                                                      AS study_hours_this_week,
+
+  -- Savings
+  COALESCE((
+    SELECT SUM(current_amount) FROM public.savings_goals sg
+    WHERE sg.user_id = p.id AND sg.is_completed = false
+  ), 0)                                                      AS total_savings,
+
+  -- Notifications unread
+  (SELECT COUNT(*) FROM public.notifications n
+   WHERE n.user_id = p.id AND n.is_read = false)            AS unread_notifications
+
+FROM public.profiles p;
+
+-- Grant to authenticated users only
+GRANT SELECT ON public.dashboard_summary TO authenticated;
+
+-- ─────────────────────────────────────────────────────────────
 -- DONE
 -- ─────────────────────────────────────────────────────────────
 SELECT 'MASTER_MIGRATION complete ✓' AS result,

@@ -135,7 +135,7 @@ export default async function UpgradePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, is_premium, subscription_tier, plan')
+    .select('full_name, is_premium, subscription_tier, plan')
     .eq('id', user.id)
     .single()
 
@@ -151,7 +151,7 @@ export default async function UpgradePage() {
     ...tier,
     payfast: buildPayFastForm(
       user.id,
-      profile?.name || 'Student',
+      (profile as { full_name?: string | null } | null)?.full_name || 'Student',
       user.email || '',
       tier.id,
       tier.price,

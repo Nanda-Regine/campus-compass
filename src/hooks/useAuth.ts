@@ -12,10 +12,10 @@ export function useAuth() {
   const supabase = createClient()
   const { reset } = useAppStore()
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, popiaConsent = false) => {
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -24,6 +24,14 @@ export function useAuth() {
         },
       })
       if (error) throw error
+      // Record POPIA consent immediately — profile row created by handle_new_user trigger
+      if (popiaConsent && data.user) {
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          popia_consent: true,
+          popia_consent_at: new Date().toISOString(),
+        }, { onConflict: 'id' })
+      }
       toast.success('Check your email to confirm your account!')
       return { error: null }
     } catch (err: unknown) {
