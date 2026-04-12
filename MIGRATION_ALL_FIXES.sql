@@ -17,14 +17,26 @@ ALTER TABLE public.tasks
   ADD COLUMN IF NOT EXISTS recurrence_end_date DATE,
   ADD COLUMN IF NOT EXISTS completed_at        TIMESTAMPTZ;
 
--- Migrate old data
-UPDATE public.tasks SET description = notes  WHERE description IS NULL AND notes IS NOT NULL;
-UPDATE public.tasks SET status = CASE WHEN done = TRUE THEN 'done' ELSE 'todo' END
-  WHERE status = 'todo';
-UPDATE public.tasks SET completed_at = done_at WHERE completed_at IS NULL AND done_at IS NOT NULL;
+-- Migrate old data (conditional — only if old columns exist)
+DO $$
+BEGIN
+  -- notes → description (old schema had 'notes', new has 'description')
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tasks' AND column_name = 'notes') THEN
+    UPDATE public.tasks SET description = notes WHERE description IS NULL AND notes IS NOT NULL;
+  END IF;
+  -- done → status (old schema had 'done BOOLEAN', new has 'status TEXT')
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tasks' AND column_name = 'done') THEN
+    UPDATE public.tasks SET status = CASE WHEN done = TRUE THEN 'done' ELSE 'todo' END
+      WHERE status = 'todo';
+  END IF;
+  -- done_at → completed_at
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tasks' AND column_name = 'done_at') THEN
+    UPDATE public.tasks SET completed_at = done_at WHERE completed_at IS NULL AND done_at IS NOT NULL;
+  END IF;
+END $$;
 
--- Normalise task_type to lowercase
-UPDATE public.tasks SET task_type = LOWER(task_type) WHERE task_type != LOWER(task_type);
+-- Normalise task_type to lowercase (safe — won't fail if already lowercase)
+UPDATE public.tasks SET task_type = LOWER(task_type) WHERE task_type IS NOT NULL AND task_type != LOWER(task_type);
 
 -- Remove old check constraints if they conflict, then add new ones
 ALTER TABLE public.tasks DROP CONSTRAINT IF EXISTS tasks_status_check;
