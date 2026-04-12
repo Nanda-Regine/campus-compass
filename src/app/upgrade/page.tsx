@@ -82,14 +82,15 @@ function buildPayFastForm(
   itemName: string,
 ) {
   const isSandbox = process.env.NEXT_PUBLIC_PAYFAST_SANDBOX === 'true'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za'
+  // Always use production HTTPS URL for PayFast (HTTPS required)
+  const appUrl = 'https://varsityos.co.za'
   const passphrase = process.env.PAYFAST_PASSPHRASE || ''
 
   const data: Record<string, string> = {
     merchant_id:      process.env.PAYFAST_MERCHANT_ID!,
     merchant_key:     process.env.PAYFAST_MERCHANT_KEY!,
-    return_url:       `${appUrl}/dashboard?upgraded=1&tier=${tierId}`,
-    cancel_url:       `${appUrl}/upgrade?cancelled=1`,
+    return_url:       `${appUrl}/dashboard`,
+    cancel_url:       `${appUrl}/upgrade`,
     notify_url:       `${appUrl}/api/payfast/notify`,
     name_first:       name.split(' ')[0] || 'Student',
     email_address:    email,

@@ -173,7 +173,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
     await supabase.from('tasks').delete().eq('id', id)
   }
 
-  const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'Assignment', priority: 'normal' }) }
+  const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'assignment', priority: 'normal' }) }
 
   const todayCount = pendingTasks.filter(t => isToday(t.due_date) || isOverdue(t.due_date)).length
   const weekCount  = pendingTasks.filter(t => isThisWeek(t.due_date) || isOverdue(t.due_date)).length
