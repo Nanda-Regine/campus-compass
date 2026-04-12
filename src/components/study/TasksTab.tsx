@@ -123,7 +123,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
           due_date:  data.due_date || null,
           priority:  data.priority,
           module_id: data.module_id || null,
-          notes:     data.notes || null,
+          description: data.notes || null,
         })
         .select('*, module:modules(id,module_name,color)')
         .single()

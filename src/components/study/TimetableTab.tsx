@@ -7,7 +7,7 @@ import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
-import { MODULE_COLOURS, WEEKDAYS, TIMETABLE_HOURS, type Module, type TimetableEntry, DAYS_OF_WEEK } from '@/types'
+import { MODULE_COLOURS, WEEKDAYS, TIMETABLE_HOURS, type Module, type TimetableEntry, DAYS_OF_WEEK, type DayOfWeek } from '@/types'
 import { cn, fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -17,6 +17,11 @@ interface Props {
   modules:   Module[]
   userId:    string
   supabase:  SupabaseClient
+}
+
+const DAY_TO_INT: Record<DayOfWeek, number> = {
+  Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4,
+  Friday: 5, Saturday: 6, Sunday: 7,
 }
 
 export default function TimetableTab({ timetable, modules, userId, supabase }: Props) {
@@ -44,12 +49,13 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
       const { data: entry, error } = await supabase
         .from('timetable_slots')
         .insert({
-          user_id:     userId,
-          module_id:   data.module_id || null,
-          day_of_week: data.day_of_week,
-          start_time:  data.start_time,
-          end_time:    data.end_time || null,
-          venue:       data.venue || null,
+          user_id:          userId,
+          module_id:        data.module_id || null,
+          day_of_week:      DAY_TO_INT[data.day_of_week as DayOfWeek] ?? 1,
+          day_of_week_text: data.day_of_week,
+          start_time:       data.start_time,
+          end_time:         data.end_time || null,
+          venue:            data.venue || null,
         })
         .select('*, module:modules(id,module_name,color)')
         .single()
@@ -109,8 +115,11 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                 {fmt.time(hour)}
               </div>
               {WEEKDAYS.map(day => {
-                const entry = timetable.find(e => e.day_of_week === day && e.start_time === hour + ':00')
-                           ?? timetable.find(e => e.day_of_week === day && e.start_time === hour)
+                const matchDay = (e: TimetableEntry) =>
+                  (e as unknown as { day_of_week_text?: string }).day_of_week_text === day ||
+                  e.day_of_week === day
+                const entry = timetable.find(e => matchDay(e) && e.start_time === hour + ':00')
+                           ?? timetable.find(e => matchDay(e) && e.start_time === hour)
                 const mod = entry?.module || modules.find(m => m.id === entry?.module_id)
                 const col = mod?.color ? MODULE_COLOURS[mod.color] : null
 

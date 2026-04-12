@@ -104,9 +104,10 @@ function buildPayFastForm(
     cycles:           '0',  // Indefinite
   }
 
+  // Do NOT sort — PayFast verifies in the order fields arrive in the form POST,
+  // which is insertion order. Sorting would cause a signature mismatch.
   const queryString = Object.entries(data)
     .filter(([, v]) => v !== '')
-    .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%20/g, '+')}`)
     .join('&')
 
