@@ -30,7 +30,7 @@ export default async function BudgetPage() {
   return (
     <BudgetClient
       initialData={{
-        budget: budget!,
+        budget: budget ?? null,
         expenses: expenses || [],
         profile: profile!,
         isPremium,

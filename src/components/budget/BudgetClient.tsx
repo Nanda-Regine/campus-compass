@@ -15,7 +15,7 @@ import ReceiptScanner from '@/components/budget/ReceiptScanner'
 
 interface BudgetClientProps {
   initialData: {
-    budget: Budget
+    budget: Budget | null
     expenses: Expense[]
     profile: { name: string; funding_type: string | null; university: string | null; year_of_study: string | null; is_premium: boolean } | null
     isPremium: boolean
@@ -23,15 +23,36 @@ interface BudgetClientProps {
   }
 }
 
-type TabId = 'overview' | 'expenses' | 'nsfas' | 'ai_coach' | 'appeal'
+type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal'
 
 const TABS = [
   { id: 'overview' as TabId, label: 'Overview', icon: '📊' },
   { id: 'expenses' as TabId, label: 'Expenses', icon: '💳' },
+  { id: 'wallet' as TabId, label: 'Wallet', icon: '💼' },
   { id: 'nsfas' as TabId, label: 'NSFAS', icon: '🏛️' },
   { id: 'ai_coach' as TabId, label: 'AI Coach', icon: '🤖' },
   { id: 'appeal' as TabId, label: 'Appeal', icon: '📝' },
 ]
+
+interface IncomeEntry {
+  id: string
+  source_type: string
+  label: string
+  amount: number
+  received_date: string
+  is_recurring: boolean
+}
+
+interface SavingsGoal {
+  id: string
+  name: string
+  emoji: string
+  color: string
+  target_amount: number
+  current_amount: number
+  deadline: string | null
+  is_completed: boolean
+}
 
 interface AIInsight {
   healthScore: number
@@ -56,15 +77,32 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   const { setExpenses } = useAppStore()
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [expenses, setLocalExpenses] = useState<Expense[]>(initialData.expenses)
-  const [budget] = useState<Budget>(initialData.budget)
+  const [budget] = useState<Budget | null>(initialData.budget)
   const [aiInsights, setAiInsights] = useState<AIInsight | null>(null)
   const [insightsLoading, setInsightsLoading] = useState(false)
   const [budgetData, setBudgetData] = useState<{ categoryTotals: Record<string, number> } | null>(null)
 
+  // Wallet state
+  const [incomeEntries, setIncomeEntries] = useState<IncomeEntry[]>([])
+  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([])
+  const [walletLoaded, setWalletLoaded] = useState(false)
+  const [addingGoal, setAddingGoal] = useState(false)
+  const [goalName, setGoalName] = useState('')
+  const [goalTarget, setGoalTarget] = useState('')
+  const [goalEmoji, setGoalEmoji] = useState('🎯')
+  const [goalDeadline, setGoalDeadline] = useState('')
+  const [showGoalForm, setShowGoalForm] = useState(false)
+  const [addingIncome, setAddingIncome] = useState(false)
+  const [incomeLabel, setIncomeLabel] = useState('')
+  const [incomeAmount, setIncomeAmount] = useState('')
+  const [incomeType, setIncomeType] = useState('other')
+  const [incomeDate, setIncomeDate] = useState(new Date().toISOString().split('T')[0])
+  const [showIncomeForm, setShowIncomeForm] = useState(false)
+
   // Add expense form
   const [desc, setDesc] = useState('')
   const [amount, setAmount] = useState('')
-  const [category, setCategory] = useState('Food')
+  const [category, setCategory] = useState('food')
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [addingExpense, setAddingExpense] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -75,7 +113,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   const [appealLetter, setAppealLetter] = useState('')
   const [appealLoading, setAppealLoading] = useState(false)
 
-  const totalBudget = calcTotalBudget(budget)
+  const totalBudget = budget ? calcTotalBudget(budget) : 0
   const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
   const remaining = totalBudget - totalSpent
   const spentPct = totalBudget > 0 ? Math.min(100, Math.round((totalSpent / totalBudget) * 100)) : 0
@@ -105,7 +143,85 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
     if (activeTab === 'ai_coach' && !aiInsights) {
       loadInsights()
     }
+    if (activeTab === 'wallet' && !walletLoaded) {
+      loadWalletData()
+    }
   }, [activeTab])
+
+  const loadWalletData = async () => {
+    const [{ data: income }, { data: goals }] = await Promise.all([
+      supabase.from('income_entries').select('id,source_type,label,amount,received_date,is_recurring')
+        .eq('user_id', initialData.userId)
+        .gte('received_date', currentMonthRange().start)
+        .order('received_date', { ascending: false }),
+      supabase.from('savings_goals').select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
+        .eq('user_id', initialData.userId)
+        .eq('is_completed', false)
+        .order('created_at', { ascending: true }),
+    ])
+    setIncomeEntries((income ?? []) as IncomeEntry[])
+    setSavingsGoals((goals ?? []) as SavingsGoal[])
+    setWalletLoaded(true)
+  }
+
+  const addIncome = async () => {
+    if (!incomeLabel.trim() || !incomeAmount || parseFloat(incomeAmount) <= 0) {
+      toast.error('Enter a label and valid amount')
+      return
+    }
+    setAddingIncome(true)
+    try {
+      const { data, error } = await supabase.from('income_entries').insert({
+        user_id: initialData.userId,
+        source_type: incomeType,
+        label: incomeLabel.trim(),
+        amount: parseFloat(incomeAmount),
+        received_date: incomeDate,
+        month_year: incomeDate.slice(0, 7),
+      }).select('id,source_type,label,amount,received_date,is_recurring').single()
+      if (error) throw error
+      setIncomeEntries(prev => [data as IncomeEntry, ...prev])
+      setIncomeLabel(''); setIncomeAmount(''); setShowIncomeForm(false)
+      toast.success('Income recorded!')
+    } catch { toast.error('Failed to record income') }
+    finally { setAddingIncome(false) }
+  }
+
+  const addGoal = async () => {
+    if (!goalName.trim() || !goalTarget || parseFloat(goalTarget) <= 0) {
+      toast.error('Enter a goal name and target amount')
+      return
+    }
+    setAddingGoal(true)
+    try {
+      const { data, error } = await supabase.from('savings_goals').insert({
+        user_id: initialData.userId,
+        name: goalName.trim(),
+        emoji: goalEmoji,
+        color: '#0d9488',
+        target_amount: parseFloat(goalTarget),
+        deadline: goalDeadline || null,
+      }).select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed').single()
+      if (error) throw error
+      setSavingsGoals(prev => [...prev, data as SavingsGoal])
+      setGoalName(''); setGoalTarget(''); setGoalDeadline(''); setShowGoalForm(false)
+      toast.success('Savings goal created!')
+    } catch { toast.error('Failed to create goal') }
+    finally { setAddingGoal(false) }
+  }
+
+  const contributeToGoal = async (goalId: string, current: number, target: number) => {
+    const amtStr = window.prompt('How much are you adding? (R)')
+    const amt = parseFloat(amtStr || '')
+    if (!amt || amt <= 0) return
+    const newAmount = Math.min(current + amt, target)
+    const { error } = await supabase.from('savings_goals').update({ current_amount: newAmount, is_completed: newAmount >= target, completed_at: newAmount >= target ? new Date().toISOString() : null }).eq('id', goalId)
+    if (!error) {
+      setSavingsGoals(prev => prev.map(g => g.id === goalId ? { ...g, current_amount: newAmount, is_completed: newAmount >= target } : g).filter(g => !g.is_completed))
+      await supabase.from('savings_contributions').insert({ user_id: initialData.userId, goal_id: goalId, amount: amt, contribution_date: new Date().toISOString().split('T')[0] })
+      toast.success(newAmount >= target ? 'Goal completed! 🎉' : `+${fmt.currencyShort(amt)} added!`)
+    }
+  }
 
   const addExpense = async () => {
     if (!desc.trim() || !amount || parseFloat(amount) <= 0) {
@@ -455,6 +571,191 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─── Wallet Tab ─── */}
+        {activeTab === 'wallet' && (
+          <>
+            {/* Income this month */}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-display font-bold text-white text-base">Income this month</div>
+                <div className="font-mono text-[0.6rem] text-white/30">
+                  {fmt.currencyShort(incomeEntries.reduce((s, e) => s + e.amount, 0))} received
+                </div>
+              </div>
+              <button
+                onClick={() => setShowIncomeForm(!showIncomeForm)}
+                className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-1.5 rounded-xl transition-all"
+              >
+                + Log income
+              </button>
+            </div>
+
+            {showIncomeForm && (
+              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+                <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Record income</div>
+                <input
+                  className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  placeholder="e.g. NSFAS deposit, Part-time pay"
+                  value={incomeLabel}
+                  onChange={e => setIncomeLabel(e.target.value)}
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    placeholder="Amount (R)"
+                    value={incomeAmount}
+                    onChange={e => setIncomeAmount(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
+                    value={incomeDate}
+                    onChange={e => setIncomeDate(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {[['nsfas','🏛️ NSFAS'],['bursary','📜 Bursary'],['part_time','💼 Work'],['pocket_money','💵 Pocket money'],['family','👨‍👩‍👧 Family'],['scholarship','🎓 Scholarship'],['other','💳 Other']].map(([val, label]) => (
+                    <button key={val} onClick={() => setIncomeType(val)}
+                      className={cn('px-2.5 py-1 rounded-full font-mono text-[0.58rem] border transition-all',
+                        incomeType === val ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/5 border-white/10 text-white/50 hover:text-white'
+                      )}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setShowIncomeForm(false)} className="flex-1 font-display text-sm border border-white/15 text-white/50 hover:text-white py-2.5 rounded-xl transition-all">Cancel</button>
+                  <button onClick={addIncome} disabled={addingIncome} className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white py-2.5 rounded-xl transition-all disabled:opacity-50">
+                    {addingIncome ? 'Saving…' : 'Record'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {incomeEntries.length === 0 && !showIncomeForm ? (
+              <div className="text-center py-8 bg-[#111a18] border border-white/7 rounded-2xl">
+                <div className="text-3xl mb-2">💵</div>
+                <p className="font-display font-bold text-white text-sm">No income logged this month</p>
+                <p className="font-mono text-[0.6rem] text-white/30 mt-1">Track NSFAS, bursary, shifts, and more.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {incomeEntries.map(entry => {
+                  const icons: Record<string, string> = { nsfas:'🏛️', bursary:'📜', part_time:'💼', pocket_money:'💵', family:'👨‍👩‍👧', scholarship:'🎓', gift:'🎁', side_hustle:'⚡', other:'💳' }
+                  return (
+                    <div key={entry.id} className="flex items-center gap-3 bg-[#111a18] border border-white/7 rounded-xl px-4 py-3">
+                      <div className="w-9 h-9 bg-teal-600/15 rounded-xl flex items-center justify-center text-lg flex-shrink-0">
+                        {icons[entry.source_type] || '💳'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-body text-sm text-white truncate">{entry.label}</div>
+                        <div className="font-mono text-[0.58rem] text-white/30">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</div>
+                      </div>
+                      <div className="font-display font-bold text-sm text-teal-400">+{fmt.currencyShort(entry.amount)}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Savings Goals */}
+            <div className="flex items-center justify-between mt-2">
+              <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">Savings goals</div>
+              <button
+                onClick={() => setShowGoalForm(!showGoalForm)}
+                className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400 transition-colors"
+              >
+                + New goal
+              </button>
+            </div>
+
+            {showGoalForm && (
+              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+                <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Create savings goal</div>
+                <div className="flex gap-2">
+                  <input
+                    className="w-12 bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-2 py-2.5 text-lg text-center outline-none transition-all"
+                    value={goalEmoji}
+                    onChange={e => setGoalEmoji(e.target.value)}
+                    maxLength={2}
+                  />
+                  <input
+                    className="flex-1 bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    placeholder="Goal name (e.g. New laptop)"
+                    value={goalName}
+                    onChange={e => setGoalName(e.target.value)}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="number"
+                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    placeholder="Target amount (R)"
+                    value={goalTarget}
+                    onChange={e => setGoalTarget(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
+                    value={goalDeadline}
+                    onChange={e => setGoalDeadline(e.target.value)}
+                    placeholder="Deadline (optional)"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setShowGoalForm(false)} className="flex-1 font-display text-sm border border-white/15 text-white/50 hover:text-white py-2.5 rounded-xl transition-all">Cancel</button>
+                  <button onClick={addGoal} disabled={addingGoal} className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white py-2.5 rounded-xl transition-all disabled:opacity-50">
+                    {addingGoal ? 'Saving…' : 'Create Goal'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {savingsGoals.length === 0 && !showGoalForm ? (
+              <div className="text-center py-8 bg-[#111a18] border border-white/7 rounded-2xl">
+                <div className="text-3xl mb-2">🎯</div>
+                <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
+                <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a target and track progress toward it.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {savingsGoals.map(goal => {
+                  const pct = goal.target_amount > 0 ? Math.min(100, Math.round((goal.current_amount / goal.target_amount) * 100)) : 0
+                  return (
+                    <div key={goal.id} className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{goal.emoji}</span>
+                          <div>
+                            <div className="font-display font-bold text-white text-sm">{goal.name}</div>
+                            {goal.deadline && (
+                              <div className="font-mono text-[0.55rem] text-white/30">By {fmt.dateShort(goal.deadline)}</div>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => contributeToGoal(goal.id, goal.current_amount, goal.target_amount)}
+                          className="font-mono text-[0.6rem] bg-teal-600/15 hover:bg-teal-600/30 text-teal-400 px-3 py-1 rounded-lg transition-all border border-teal-600/20"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                      <div className="h-2 bg-white/8 rounded-full overflow-hidden mb-2">
+                        <div className="h-full bg-teal-500 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(goal.current_amount)}</div>
+                        <div className="font-mono text-[0.58rem] text-white/30">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             )}
           </>
