@@ -17,11 +17,15 @@ interface DrawerProps {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard', icon: '🏠', label: 'Dashboard' },
-  { href: '/study',     icon: '📚', label: 'Study Planner' },
-  { href: '/budget',    icon: '💰', label: 'Budget & NSFAS' },
-  { href: '/meals',     icon: '🍲', label: 'Meal Prep' },
-  { href: '/nova',      icon: '🌟', label: 'Nova — AI Companion' },
+  { href: '/dashboard',    icon: '🏠', label: 'Dashboard' },
+  { href: '/study',        icon: '📚', label: 'Study Planner' },
+  { href: '/budget',       icon: '💰', label: 'Budget & NSFAS' },
+  { href: '/meals',        icon: '🍲', label: 'Meal Prep' },
+  { href: '/nova',         icon: '🌟', label: 'Nova — AI Companion' },
+  { href: '/work',         icon: '💼', label: 'Work & Shifts' },
+  { href: '/groups',       icon: '👥', label: 'Study Groups' },
+  { href: '/campus-life',  icon: '🎪', label: 'Campus Life' },
+  { href: '/streak',       icon: '🔥', label: 'Streaks & Goals' },
 ]
 
 export default function Drawer({ open, onClose }: DrawerProps) {
