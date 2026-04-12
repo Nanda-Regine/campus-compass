@@ -135,12 +135,14 @@ export default async function UpgradePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, is_premium, subscription_tier')
+    .select('name, is_premium, subscription_tier, plan')
     .eq('id', user.id)
     .single()
 
-  const currentTier = (profile as { subscription_tier?: string | null } | null)?.subscription_tier
-    || (profile?.is_premium ? 'premium' : 'free')
+  const currentTier =
+    (profile as { subscription_tier?: string | null } | null)?.subscription_tier ||
+    (profile as { plan?: string | null } | null)?.plan ||
+    (profile?.is_premium ? 'premium' : 'free')
 
   // Already on Nova Unlimited — no higher tier to offer
   if (currentTier === 'nova_unlimited') redirect('/dashboard')
