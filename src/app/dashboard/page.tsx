@@ -66,7 +66,7 @@ export default async function DashboardPage() {
     <DashboardClient
       initialData={{
         profile:        profile!,
-        budget:         budget!,
+        budget:         budget ?? null,
         tasks:          tasks ?? [],
         exams:          exams ?? [],
         modules:        modules ?? [],

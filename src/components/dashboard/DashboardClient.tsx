@@ -10,7 +10,7 @@ import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
   type Profile, type Budget, type Task, type Exam,
   type Module, type TimetableEntry, type Expense,
-  type Subscription, MODULE_COLOURS, DAYS_OF_WEEK,
+  type Subscription, MODULE_COLOURS, DAYS_OF_WEEK, CATEGORY_ICONS,
 } from '@/types'
 import {
   fmt, getDaysUntil, getTaskUrgency,
@@ -42,7 +42,7 @@ interface CheckInData {
 interface DashboardClientProps {
   initialData: {
     profile: Profile
-    budget: Budget
+    budget: Budget | null
     tasks: Task[]
     exams: Exam[]
     modules: Module[]
@@ -155,7 +155,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   const todayName = DAYS_OF_WEEK[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]
   const todayClasses = allTT
-    .filter(e => e.day_of_week === todayName)
+    .filter(e => {
+      const text = (e as unknown as { day_of_week_text?: string }).day_of_week_text
+      return text === todayName || e.day_of_week === todayName
+    })
     .sort((a, bb) => a.start_time.localeCompare(bb.start_time))
 
   const pendingTasks = allTasks.filter(t => t.status !== 'done').slice(0, 5)
@@ -377,6 +380,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             { href: '/nova',                   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
             { href: '/dashboard/work',         icon: '💼', label: 'Work',            colour: 'blue',   sub: 'Shifts & earnings' },
             { href: '/dashboard/campus-life',  icon: '🏛️', label: 'Campus Life',    colour: 'green',  sub: '10 guides by Nova' },
+            { href: '/dashboard/groups',       icon: '👥', label: 'Study Groups',   colour: 'indigo', sub: 'Assignments & tasks' },
           ].map(item => {
             const colorMap = {
               teal:   { border: 'hover:border-teal-600/40',   icon: 'bg-teal-600/15',   text: 'text-teal-400' },
@@ -385,6 +389,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               purple: { border: 'hover:border-purple-500/40', icon: 'bg-purple-500/15', text: 'text-purple-400' },
               blue:   { border: 'hover:border-blue-500/40',   icon: 'bg-blue-500/15',   text: 'text-blue-400' },
               green:  { border: 'hover:border-green-500/40',  icon: 'bg-green-500/15',  text: 'text-green-400' },
+              indigo: { border: 'hover:border-indigo-500/40', icon: 'bg-indigo-500/15', text: 'text-indigo-400' },
             }
             const c = colorMap[item.colour as keyof typeof colorMap]
             return (
@@ -546,9 +551,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <div key={exp.id} className={cn('flex items-center justify-between px-4 py-3', i < 3 && 'border-b border-white/5')}>
                   <div className="flex items-center gap-3">
                     <div className="text-base">
-                      {['🍔','🚌','📱','📖','🏠','🎮','💊','💳'][
-                        ['Food','Transport','Data','Stationery','Accommodation','Entertainment','Health','Other'].indexOf(exp.category)
-                      ] ?? '💳'}
+                      {CATEGORY_ICONS[exp.category] ?? '💳'}
                     </div>
                     <div>
                       <div className="font-body text-sm text-white truncate max-w-[160px]">{exp.description}</div>
