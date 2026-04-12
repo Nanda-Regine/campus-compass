@@ -69,14 +69,14 @@ const jsonLd = {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  { icon: '💰', title: 'Budget & NSFAS',    desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.' },
-  { icon: '🏦', title: 'Flexible Wallet',   desc: 'Manage your own spending buckets beyond NSFAS — part-time income, bursaries, family support.', isNew: true },
-  { icon: '🎯', title: 'Savings Goals',     desc: 'Set goals like a laptop or textbooks, track progress, and celebrate every milestone with confetti.', isNew: true },
-  { icon: '📚', title: 'Study Planner',     desc: 'Timetable, exam countdowns, tasks, and AI study plans built around your actual schedule.' },
-  { icon: '🍲', title: 'Meal Prep',         desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.' },
-  { icon: '🌟', title: 'Nova AI',           desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support. 15 free messages/month.' },
-  { icon: '💼', title: 'Work & Shifts',     desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.' },
-  { icon: '👥', title: 'Group Assignments', desc: 'Create group spaces, share tasks and deadlines, and collaborate with classmates — no WhatsApp chaos.', isNew: true },
+  { icon: '💰', title: 'Budget & NSFAS',    desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.', accent: '#3b82f6' },
+  { icon: '🏦', title: 'Flexible Wallet',   desc: 'Manage your own spending buckets beyond NSFAS — part-time income, bursaries, family support.', isNew: true, accent: '#0d9488' },
+  { icon: '🎯', title: 'Savings Goals',     desc: 'Set goals like a laptop or textbooks, track progress, and celebrate every milestone with confetti.', isNew: true, accent: '#06b6d4' },
+  { icon: '📚', title: 'Study Planner',     desc: 'Timetable, exam countdowns, tasks, and AI study plans built around your actual schedule.', accent: '#8b5cf6' },
+  { icon: '🍲', title: 'Meal Prep',         desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.', accent: '#e07858' },
+  { icon: '🌟', title: 'Nova AI',           desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support. 15 free messages/month.', accent: '#0d9488' },
+  { icon: '💼', title: 'Work & Shifts',     desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.', accent: '#d4a847' },
+  { icon: '👥', title: 'Group Assignments', desc: 'Create group spaces, share tasks and deadlines, and collaborate with classmates — no WhatsApp chaos.', isNew: true, accent: '#3b82f6' },
 ]
 
 const PAIN_POINTS = [
@@ -98,54 +98,58 @@ const PRICING = [
     name: 'Free',
     price: 'R0',
     sub: 'forever, no catch',
-    colour: 'neutral',
     features: ['Full Study Planner', 'Budget & NSFAS tracker', 'Flexible Wallet', 'Savings Goals', 'Meal Prep & Work tracker', '15 Nova messages / month', 'Works offline (PWA)'],
     cta: 'Get started free',
     href: '/auth/signup',
     highlight: false,
     gold: false,
+    accentColor: '#3b82f6',
+    checkColor: '#3b82f6',
   },
   {
     name: 'Scholar',
     price: 'R39',
     sub: 'per month',
-    colour: 'coral',
     features: ['Everything in Free', '100 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
     cta: 'Go Scholar',
     href: '/upgrade',
     highlight: true,
     badge: 'Best value',
     gold: false,
+    accentColor: '#e07858',
+    checkColor: '#e07858',
   },
   {
     name: 'Premium',
     price: 'R79',
     sub: 'per month',
-    colour: 'teal',
     features: ['Everything in Scholar', '250 Nova messages / month', 'CSV data export', 'Early access to new features', 'Priority support'],
     cta: 'Go Premium',
     href: '/upgrade',
     highlight: false,
     gold: false,
+    accentColor: '#0d9488',
+    checkColor: '#0d9488',
   },
   {
     name: 'Nova Unlimited',
     price: 'R129',
     sub: 'per month',
-    colour: 'gold',
     features: ['Everything in Premium', 'Unlimited Nova messages', 'First access to new Nova features', 'Direct feedback channel to the builder'],
     cta: 'Go Unlimited',
     href: '/upgrade',
     highlight: false,
     badge: 'Most Nova',
     gold: true,
+    accentColor: '#d4a847',
+    checkColor: '#d4a847',
   },
 ]
 
 const TESTIMONIALS = [
-  { quote: "Nova talked me through a full breakdown before my CHEM3 exam. Didn't feel like a chatbot — it felt like someone who actually got it.", name: 'Lethabo M.', role: '3rd year BSc, Wits', colour: 'teal' },
-  { quote: "I finally know exactly where my NSFAS money goes. The budget tracker is the first thing I open every month.", name: 'Ayasha P.', role: '2nd year Law, UCT', colour: 'coral' },
-  { quote: "Set up my whole semester timetable in 10 minutes. No more missed assignments buried in WhatsApp.", name: 'Siyanda D.', role: '1st year Engineering, UKZN', colour: 'amber' },
+  { quote: "Nova talked me through a full breakdown before my CHEM3 exam. Didn't feel like a chatbot — it felt like someone who actually got it.", name: 'Lethabo M.', role: '3rd year BSc, Wits', accent: '#0d9488' },
+  { quote: "I finally know exactly where my NSFAS money goes. The budget tracker is the first thing I open every month.", name: 'Ayasha P.', role: '2nd year Law, UCT', accent: '#e07858' },
+  { quote: "Set up my whole semester timetable in 10 minutes. No more missed assignments buried in WhatsApp.", name: 'Siyanda D.', role: '1st year Engineering, UKZN', accent: '#3b82f6' },
 ]
 
 const UNIVERSITIES = ['UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UJ', 'UWC', 'NMU', 'Rhodes', 'UFH', 'WSU', 'UNISA', 'DUT', 'CPUT', 'TUT']
@@ -157,25 +161,29 @@ export default function LandingPage() {
     <>
       <Script id="json-ld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} strategy="afterInteractive" />
 
-      <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#0b0907' }}>
+      <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#060c18' }}>
 
         {/* ── 1. NAVBAR ──────────────────────────────────────────────────────── */}
         <nav
           className="sticky top-0 z-50 flex items-center justify-between px-5 py-3.5 max-w-6xl mx-auto"
           aria-label="Main navigation"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', background: 'rgba(11,9,7,0.9)' }}
+          style={{ borderBottom: '1px solid rgba(59,130,246,0.12)', backdropFilter: 'blur(20px)', background: 'rgba(6,12,24,0.92)' }}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white/10">
+            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(13,148,136,0.4)', background: 'rgba(13,148,136,0.15)' }}>
               <Image src="/logo.jpg" alt="VarsityOS" width={32} height={32} className="object-contain" />
             </div>
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.45)' }}>
+            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.55)' }}>
               Log in
             </Link>
-            <Link href="/auth/signup" className="font-display text-xs font-bold px-4 py-2 rounded-lg" style={{ background: '#0d9488', color: '#fff' }}>
+            <Link
+              href="/auth/signup"
+              className="font-display text-xs font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', color: '#fff', boxShadow: '0 2px 12px rgba(59,130,246,0.3)' }}
+            >
               Get started free
             </Link>
           </div>
@@ -183,48 +191,50 @@ export default function LandingPage() {
 
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
         <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" aria-labelledby="hero-heading">
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
-            aria-hidden="true"
-            style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(211,107,73,0.13) 0%, rgba(13,148,136,0.09) 40%, transparent 70%)' }}
-          />
+          {/* Vivid multi-color background glow */}
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(59,130,246,0.22) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+            <div style={{ position: 'absolute', top: '-40px', right: '-100px', width: '500px', height: '400px', background: 'radial-gradient(ellipse, rgba(13,148,136,0.2) 0%, transparent 65%)', filter: 'blur(50px)' }} />
+            <div style={{ position: 'absolute', top: '80px', left: '-60px', width: '400px', height: '300px', background: 'radial-gradient(ellipse, rgba(224,120,88,0.15) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+          </div>
+
           <div className="relative">
             <div
               className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs mb-7"
-              style={{ background: 'rgba(211,107,73,0.1)', border: '1px solid rgba(211,107,73,0.2)', color: '#d9845a' }}
+              style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', color: '#93c5fd' }}
             >
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#d9845a' }} aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#3b82f6' }} aria-hidden="true" />
               Built for 11 million SA students
             </div>
 
             <h1 id="hero-heading" className="font-display font-black text-white leading-[1.05] mb-5" style={{ fontSize: 'clamp(2.4rem, 7vw, 4.5rem)' }}>
               Your varsity life,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #e07858, #e8a87c)' }}>
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #3b82f6, #06b6d4, #0d9488)' }}>
                 finally under control.
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Budget, savings goals, study planner, group projects, meal prep, and Nova — your AI companion who actually understands SA student life. Works offline. No app store needed.
             </p>
 
             <div className="flex items-center justify-center gap-3 flex-wrap mb-5">
               <Link
                 href="/auth/signup"
-                className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"
-                style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)', color: '#fff', boxShadow: '0 4px 24px rgba(13,148,136,0.3)' }}
+                className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
+                style={{ background: 'linear-gradient(135deg, #3b82f6, #0d9488)', color: '#fff', boxShadow: '0 4px 24px rgba(59,130,246,0.4)' }}
               >
                 Start for free — no card needed
               </Link>
               <Link
                 href="/auth/login"
-                className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all"
-                style={{ border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.55)' }}
+                className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10"
+                style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)' }}
               >
                 I have an account
               </Link>
             </div>
-            <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>Free forever · Works offline · Install on your phone</p>
+            <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>Free forever · Works offline · Install on your phone</p>
           </div>
         </section>
 
@@ -233,33 +243,42 @@ export default function LandingPage() {
           {/* Stat bar */}
           <div
             className="grid grid-cols-2 sm:grid-cols-4 rounded-2xl overflow-hidden mb-6"
-            style={{ border: '1px solid rgba(255,255,255,0.07)', background: '#120e0a' }}
+            style={{ border: '1px solid rgba(59,130,246,0.2)', background: 'linear-gradient(135deg, rgba(59,130,246,0.08), rgba(13,148,136,0.06))', backdropFilter: 'blur(10px)' }}
           >
             {[
-              { value: 'R0', label: 'forever', sub: 'no credit card' },
-              { value: '8+', label: 'tools, one app', sub: 'no switching' },
-              { value: '15+', label: 'SA universities', sub: 'UCT to TUT' },
-              { value: '📶', label: 'Works offline', sub: 'load shedding ready' },
+              { value: 'R0', label: 'forever', sub: 'no credit card', color: '#3b82f6' },
+              { value: '8+', label: 'tools, one app', sub: 'no switching', color: '#0d9488' },
+              { value: '15+', label: 'SA universities', sub: 'UCT to TUT', color: '#06b6d4' },
+              { value: '📶', label: 'Works offline', sub: 'load shedding ready', color: '#e07858' },
             ].map((stat, i) => (
-              <div key={stat.label} className="flex flex-col items-center justify-center py-6 px-4 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.06)' : undefined }}>
-                <span className="font-display font-black text-2xl sm:text-3xl text-white mb-0.5">{stat.value}</span>
-                <span className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>{stat.label}</span>
-                <span className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>{stat.sub}</span>
+              <div key={stat.label} className="flex flex-col items-center justify-center py-6 px-4 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.07)' : undefined }}>
+                <span className="font-display font-black text-2xl sm:text-3xl mb-0.5" style={{ color: stat.color }}>{stat.value}</span>
+                <span className="font-display text-xs text-white/70">{stat.label}</span>
+                <span className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{stat.sub}</span>
               </div>
             ))}
           </div>
 
           {/* University trust */}
-          <p className="font-mono text-xs text-center uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.22)' }}>
+          <p className="font-mono text-xs text-center uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
             For students at South African universities
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2" role="list">
-            {UNIVERSITIES.map(uni => (
-              <span key={uni} role="listitem" className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.33)' }}>
+            {UNIVERSITIES.map((uni, i) => (
+              <span
+                key={uni}
+                role="listitem"
+                className="font-mono text-xs px-3 py-1 rounded-full transition-all"
+                style={{
+                  background: i % 3 === 0 ? 'rgba(59,130,246,0.1)' : i % 3 === 1 ? 'rgba(13,148,136,0.1)' : 'rgba(6,182,212,0.08)',
+                  border: i % 3 === 0 ? '1px solid rgba(59,130,246,0.25)' : i % 3 === 1 ? '1px solid rgba(13,148,136,0.25)' : '1px solid rgba(6,182,212,0.2)',
+                  color: i % 3 === 0 ? '#93c5fd' : i % 3 === 1 ? '#5eead4' : '#67e8f9',
+                }}
+              >
                 {uni}
               </span>
             ))}
-            <span className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.22)' }}>+ more</span>
+            <span className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>+ more</span>
           </div>
         </section>
 
@@ -267,20 +286,23 @@ export default function LandingPage() {
         <section className="px-5 py-20 max-w-6xl mx-auto" aria-labelledby="problem-heading">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
-              <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: 'rgba(217,120,84,0.7)' }}>Sound familiar?</p>
+              <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#fb923c' }}>Sound familiar?</p>
               <h2 id="problem-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
                 SA varsity life is hard<br />enough without the chaos.
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {PAIN_POINTS.map((p) => (
+              {PAIN_POINTS.map((p, i) => (
                 <div
                   key={p.text}
                   className="flex items-start gap-4 rounded-2xl p-5"
-                  style={{ background: 'rgba(217,120,84,0.05)', border: '1px solid rgba(217,120,84,0.12)' }}
+                  style={{
+                    background: i % 2 === 0 ? 'rgba(224,120,88,0.07)' : 'rgba(239,68,68,0.06)',
+                    border: i % 2 === 0 ? '1px solid rgba(224,120,88,0.2)' : '1px solid rgba(239,68,68,0.15)',
+                  }}
                 >
                   <span className="text-2xl flex-shrink-0 mt-0.5" aria-hidden="true">{p.icon}</span>
-                  <p className="font-display text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{p.text}</p>
+                  <p className="font-display text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>{p.text}</p>
                 </div>
               ))}
             </div>
@@ -293,47 +315,47 @@ export default function LandingPage() {
         {/* ── 5. SOLUTION ────────────────────────────────────────────────────── */}
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="solution-heading">
           <div className="text-center mb-8">
-            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: 'rgba(13,148,136,0.8)' }}>Enter VarsityOS</p>
+            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#5eead4' }}>Enter VarsityOS</p>
             <h2 id="solution-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
               Everything you need.<br />One place. Built for SA.
             </h2>
           </div>
 
           {/* App preview */}
-          <div className="rounded-3xl p-5 sm:p-8 relative overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.08), transparent 60%)' }} />
-            <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(211,107,73,0.06), transparent 60%)' }} />
+          <div className="rounded-3xl p-5 sm:p-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #080f1c, #071018)', border: '1px solid rgba(59,130,246,0.15)' }}>
+            <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 60%)' }} />
+            <div className="absolute bottom-0 left-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(13,148,136,0.1), transparent 60%)' }} />
 
             <div className="relative grid sm:grid-cols-3 gap-3">
               {/* Budget card */}
-              <div className="rounded-2xl p-4" style={{ background: '#1a1410', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Budget · March</p>
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.18)' }}>
+                <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: '#93c5fd' }}>Budget · March</p>
                 <div className="space-y-2.5 mb-4">
                   {[
-                    { label: 'NSFAS food', amount: 'R890', pct: 72, colour: '#0d9488' },
-                    { label: 'Transport', amount: 'R340', pct: 45, colour: '#d97b54' },
+                    { label: 'NSFAS food', amount: 'R890', pct: 72, colour: '#3b82f6' },
+                    { label: 'Transport', amount: 'R340', pct: 45, colour: '#e07858' },
                     { label: 'Books', amount: 'R210', pct: 30, colour: '#d4a847' },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="flex justify-between mb-1">
-                        <span className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
-                        <span className="font-mono text-xs" style={{ color: item.colour }}>{item.amount}</span>
+                        <span className="font-display text-xs text-white/70">{item.label}</span>
+                        <span className="font-mono text-xs font-bold" style={{ color: item.colour }}>{item.amount}</span>
                       </div>
-                      <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.07)' }}>
-                        <div className="h-1 rounded-full" style={{ width: `${item.pct}%`, background: item.colour, opacity: 0.7 }} />
+                      <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                        <div className="h-1.5 rounded-full" style={{ width: `${item.pct}%`, background: item.colour }} />
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="rounded-xl px-3 py-2" style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.15)' }}>
-                  <p className="font-mono text-[0.6rem] text-teal-400">R1,840 remaining this month</p>
+                <div className="rounded-xl px-3 py-2" style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                  <p className="font-mono text-[0.6rem]" style={{ color: '#93c5fd' }}>R1,840 remaining this month</p>
                 </div>
               </div>
 
               {/* Study + streak */}
               <div className="flex flex-col gap-3">
-                <div className="rounded-2xl p-4 flex-1" style={{ background: '#1a1410', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Upcoming</p>
+                <div className="rounded-2xl p-4 flex-1" style={{ background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.18)' }}>
+                  <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: '#c4b5fd' }}>Upcoming</p>
                   <div className="space-y-2">
                     {[
                       { label: 'CHEM3 exam', date: 'Mon 14 Apr', urgent: true },
@@ -341,39 +363,39 @@ export default function LandingPage() {
                       { label: 'Group presentation', date: 'Fri 18 Apr', urgent: false },
                     ].map(item => (
                       <div key={item.label} className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: item.urgent ? '#d97b54' : 'rgba(255,255,255,0.2)' }} />
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: item.urgent ? '#f87171' : 'rgba(255,255,255,0.25)' }} />
                         <div className="flex-1 min-w-0">
-                          <p className="font-display text-xs truncate" style={{ color: 'rgba(255,255,255,0.7)' }}>{item.label}</p>
-                          <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.3)' }}>{item.date}</p>
+                          <p className="font-display text-xs truncate text-white/80">{item.label}</p>
+                          <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.date}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(217,120,84,0.08)', border: '1px solid rgba(217,120,84,0.15)' }}>
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(224,120,88,0.1)', border: '1px solid rgba(224,120,88,0.25)' }}>
                   <div className="flex items-center gap-2">
                     <span className="text-xl" aria-hidden="true">🔥</span>
                     <div>
                       <p className="font-display font-bold text-white text-sm">12 day streak</p>
-                      <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>Keep it going</p>
+                      <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Keep it going</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Nova chat */}
-              <div className="rounded-2xl p-4" style={{ background: '#1a1410', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(13,148,136,0.08)', border: '1px solid rgba(13,148,136,0.2)' }}>
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)' }}>✦</div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }}>✦</div>
                   <p className="font-display font-bold text-xs text-white">Nova</p>
-                  <span className="font-mono text-[0.5rem] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.15)', color: '#4db6ac' }}>AI companion</span>
+                  <span className="font-mono text-[0.5rem] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.2)', color: '#5eead4', border: '1px solid rgba(13,148,136,0.3)' }}>AI companion</span>
                 </div>
                 <div className="space-y-2">
-                  <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                    <p className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>stressed about exams + not sleeping 😔</p>
+                  <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <p className="font-display text-xs text-white/75">stressed about exams + not sleeping 😔</p>
                   </div>
-                  <div className="rounded-xl rounded-tr-sm px-3 py-2" style={{ background: 'rgba(13,148,136,0.12)', border: '1px solid rgba(13,148,136,0.15)' }}>
-                    <p className="font-display text-xs leading-relaxed text-teal-300">Let&apos;s start with tonight — what&apos;s actually keeping you awake?</p>
+                  <div className="rounded-xl rounded-tr-sm px-3 py-2" style={{ background: 'rgba(13,148,136,0.15)', border: '1px solid rgba(13,148,136,0.25)' }}>
+                    <p className="font-display text-xs leading-relaxed" style={{ color: '#5eead4' }}>Let&apos;s start with tonight — what&apos;s actually keeping you awake?</p>
                   </div>
                 </div>
               </div>
@@ -390,55 +412,78 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {FEATURES.map((f) => (
-              <article key={f.title} className="rounded-2xl p-5 relative" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <article
+                key={f.title}
+                className="rounded-2xl p-5 relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(145deg, rgba(6,12,24,0.9), ${f.accent}0d)`,
+                  border: `1px solid ${f.accent}30`,
+                  boxShadow: `0 4px 20px ${f.accent}10`,
+                }}
+              >
+                {/* Subtle top accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${f.accent}80, transparent)` }} />
                 {f.isNew && (
-                  <span className="absolute top-3 right-3 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.15)', color: '#4db6ac', border: '1px solid rgba(13,148,136,0.25)' }}>New</span>
+                  <span className="absolute top-3 right-3 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
                 )}
                 <div className="text-2xl mb-3" aria-hidden="true">{f.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-1.5">{f.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{f.desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{f.desc}</p>
               </article>
             ))}
           </div>
         </section>
 
-        {/* ── Nova spotlight (within solution context) ──────────────────────── */}
+        {/* ── Nova spotlight ─────────────────────────────────────────────────── */}
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="nova-heading">
-          <div className="rounded-3xl p-6 sm:p-10 overflow-hidden relative" style={{ background: '#0e1714', border: '1px solid rgba(13,148,136,0.18)' }}>
-            <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.08), transparent 60%)' }} />
+          <div
+            className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
+            style={{ background: 'linear-gradient(135deg, #060f1a, #071814)', border: '1px solid rgba(13,148,136,0.25)' }}
+          >
+            <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.15), transparent 60%)' }} />
+            <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(59,130,246,0.1), transparent 60%)' }} />
             <div className="relative grid lg:grid-cols-2 gap-10 items-start">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-xs mb-5" style={{ background: 'rgba(13,148,136,0.1)', border: '1px solid rgba(13,148,136,0.2)', color: '#4db6ac' }}>✦ Nova AI companion</div>
+                <div
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-xs mb-5"
+                  style={{ background: 'rgba(13,148,136,0.15)', border: '1px solid rgba(13,148,136,0.35)', color: '#5eead4' }}
+                >
+                  ✦ Nova AI companion
+                </div>
                 <h2 id="nova-heading" className="font-display font-black text-3xl sm:text-4xl text-white mb-4">
                   Not a chatbot.<br />Someone who gets it.
                 </h2>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>
                   Nova runs on a comprehensive SA student knowledge base — NSFAS rules, load-shedding strategies, CBT techniques, imposter syndrome coaching, real-rand financial guidance. It knows the difference between ordinary stress and a crisis.
                 </p>
                 <div className="space-y-3">
                   {[
-                    { icon: '🧠', label: 'CBT-based mental health support', desc: 'Crisis detection + SADAG & LifeLine hotlines built in' },
-                    { icon: '📖', label: 'Evidence-based study strategies', desc: 'Spaced repetition, retrieval practice, load-shedding plans' },
-                    { icon: '💳', label: 'Real NSFAS & money coaching', desc: 'N+ rules, debt prevention, side hustles around lectures' },
-                    { icon: '🌍', label: 'SA student life, deeply understood', desc: 'Township backgrounds, language barriers, family pressure, res culture' },
+                    { icon: '🧠', label: 'CBT-based mental health support', desc: 'Crisis detection + SADAG & LifeLine hotlines built in', accent: '#0d9488' },
+                    { icon: '📖', label: 'Evidence-based study strategies', desc: 'Spaced repetition, retrieval practice, load-shedding plans', accent: '#3b82f6' },
+                    { icon: '💳', label: 'Real NSFAS & money coaching', desc: 'N+ rules, debt prevention, side hustles around lectures', accent: '#06b6d4' },
+                    { icon: '🌍', label: 'SA student life, deeply understood', desc: 'Township backgrounds, language barriers, family pressure, res culture', accent: '#0d9488' },
                   ].map(item => (
-                    <div key={item.label} className="flex items-start gap-3 rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div
+                      key={item.label}
+                      className="flex items-start gap-3 rounded-xl p-3"
+                      style={{ background: `${item.accent}0d`, border: `1px solid ${item.accent}25` }}
+                    >
                       <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                       <div>
                         <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
-                        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.desc}</p>
+                        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="rounded-2xl p-5" style={{ background: '#0b1210', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)' }}>✦</div>
+                <div className="rounded-2xl p-5" style={{ background: 'rgba(6,12,24,0.8)', border: '1px solid rgba(13,148,136,0.2)' }}>
+                  <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', boxShadow: '0 0 16px rgba(13,148,136,0.4)' }}>✦</div>
                     <div>
                       <p className="font-display font-bold text-white text-sm">Nova</p>
-                      <p className="font-mono text-[0.55rem] text-teal-400">Online · SA Student AI</p>
+                      <p className="font-mono text-[0.55rem]" style={{ color: '#5eead4' }}>Online · SA Student AI</p>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -447,11 +492,11 @@ export default function LandingPage() {
                         <div
                           className="max-w-[85%] rounded-2xl px-4 py-2.5"
                           style={{
-                            background: msg.role === 'user' ? 'rgba(255,255,255,0.07)' : 'rgba(13,148,136,0.12)',
-                            border: msg.role === 'nova' ? '1px solid rgba(13,148,136,0.18)' : undefined,
+                            background: msg.role === 'user' ? 'rgba(59,130,246,0.12)' : 'rgba(13,148,136,0.15)',
+                            border: msg.role === 'nova' ? '1px solid rgba(13,148,136,0.25)' : '1px solid rgba(59,130,246,0.2)',
                           }}
                         >
-                          <p className="font-display text-xs leading-relaxed" style={{ color: msg.role === 'nova' ? '#b2dfdb' : 'rgba(255,255,255,0.7)' }}>
+                          <p className="font-display text-xs leading-relaxed" style={{ color: msg.role === 'nova' ? '#5eead4' : 'rgba(255,255,255,0.8)' }}>
                             {msg.text}
                           </p>
                         </div>
@@ -459,11 +504,11 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <div className="mt-4 pt-3 flex items-center gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div className="flex-1 rounded-xl px-3 py-2 font-display text-xs" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.07)' }}>Talk to Nova...</div>
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'rgba(13,148,136,0.2)' }} aria-hidden="true">↑</div>
+                    <div className="flex-1 rounded-xl px-3 py-2 font-display text-xs" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.08)' }}>Talk to Nova...</div>
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }} aria-hidden="true">↑</div>
                   </div>
                 </div>
-                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
+                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
               </div>
             </div>
           </div>
@@ -473,20 +518,42 @@ export default function LandingPage() {
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="how-heading">
           <div className="text-center mb-10">
             <h2 id="how-heading" className="font-display font-black text-3xl text-white">Up and running in 3 minutes.</h2>
-            <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.4)' }}>No app store. No credit card. Just sign up.</p>
+            <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>No app store. No credit card. Just sign up.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
             {[
-              { step: '01', icon: '✉️', title: 'Create your account', desc: 'Sign up with email or Google in under a minute. No payment details required.' },
-              { step: '02', icon: '🎓', title: 'Set up your profile', desc: 'Add your university, degree, and year. We personalise everything around you.' },
-              { step: '03', icon: '🚀', title: 'Take control', desc: 'Add your modules, load your budget or NSFAS, set savings goals, and meet Nova. Everything syncs and works offline.' },
+              { step: '01', icon: '✉️', title: 'Create your account', desc: 'Sign up with email or Google in under a minute. No payment details required.', accent: '#3b82f6' },
+              { step: '02', icon: '🎓', title: 'Set up your profile', desc: 'Add your university, degree, and year. We personalise everything around you.', accent: '#0d9488' },
+              { step: '03', icon: '🚀', title: 'Take control', desc: 'Add your modules, load your budget or NSFAS, set savings goals, and meet Nova. Everything syncs and works offline.', accent: '#06b6d4' },
             ].map((step, i) => (
-              <div key={step.step} className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <span className="absolute top-4 right-5 font-display font-black text-5xl pointer-events-none select-none" style={{ color: 'rgba(255,255,255,0.04)', lineHeight: 1 }} aria-hidden="true">{step.step}</span>
+              <div
+                key={step.step}
+                className="rounded-2xl p-5 relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(145deg, rgba(6,12,24,0.95), ${step.accent}0d)`,
+                  border: `1px solid ${step.accent}30`,
+                }}
+              >
+                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${step.accent}, transparent)` }} />
+                <span
+                  className="absolute top-4 right-5 font-display font-black text-5xl pointer-events-none select-none"
+                  style={{ color: `${step.accent}18`, lineHeight: 1 }}
+                  aria-hidden="true"
+                >
+                  {step.step}
+                </span>
                 <div className="text-2xl mb-3" aria-hidden="true">{step.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-2">{step.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{step.desc}</p>
-                {i < 2 && <div className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 font-display text-lg" style={{ color: 'rgba(255,255,255,0.18)' }} aria-hidden="true">→</div>}
+                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{step.desc}</p>
+                {i < 2 && (
+                  <div
+                    className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 font-display text-lg font-bold"
+                    style={{ color: step.accent }}
+                    aria-hidden="true"
+                  >
+                    →
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -496,55 +563,70 @@ export default function LandingPage() {
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="pricing-heading">
           <div className="text-center mb-10">
             <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Start free. Upgrade only when you need more Nova.</p>
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Start free. Upgrade only when you need more Nova.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
-            {PRICING.map((tier) => {
-              const isHighlight = tier.highlight
-              const isGold = tier.gold
-              return (
-                <div
-                  key={tier.name}
-                  className="relative rounded-2xl p-6"
+            {PRICING.map((tier) => (
+              <div
+                key={tier.name}
+                className="relative rounded-2xl p-6"
+                style={{
+                  background: tier.gold
+                    ? 'linear-gradient(145deg, rgba(212,168,71,0.12), rgba(6,12,24,0.95))'
+                    : tier.highlight
+                      ? 'linear-gradient(145deg, rgba(224,120,88,0.12), rgba(6,12,24,0.95))'
+                      : 'linear-gradient(145deg, rgba(59,130,246,0.06), rgba(6,12,24,0.95))',
+                  border: tier.gold
+                    ? '1px solid rgba(212,168,71,0.45)'
+                    : tier.highlight
+                      ? '1px solid rgba(224,120,88,0.4)'
+                      : '1px solid rgba(59,130,246,0.2)',
+                  boxShadow: tier.gold
+                    ? '0 0 40px rgba(212,168,71,0.1)'
+                    : tier.highlight
+                      ? '0 0 40px rgba(224,120,88,0.1)'
+                      : '0 0 20px rgba(59,130,246,0.06)',
+                }}
+              >
+                {/* Top accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${tier.accentColor}, transparent)` }} />
+
+                {tier.badge && (
+                  <div
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[0.6rem] uppercase tracking-widest px-3 py-1 rounded-full text-white"
+                    style={{ background: tier.accentColor, boxShadow: `0 4px 12px ${tier.accentColor}40` }}
+                  >
+                    {tier.badge}
+                  </div>
+                )}
+
+                <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: tier.accentColor }}>{tier.name}</div>
+                <div className="font-display font-black text-4xl text-white mb-0.5">{tier.price}</div>
+                <div className="font-mono text-xs mb-5" style={{ color: 'rgba(255,255,255,0.3)' }}>{tier.sub}</div>
+
+                <ul className="space-y-2.5 mb-6">
+                  {tier.features.map(f => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                      <span className="text-xs flex-shrink-0 font-bold" style={{ color: tier.checkColor }} aria-hidden="true">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={tier.href}
+                  className="block text-center font-display font-bold text-sm py-2.5 rounded-xl transition-all hover:opacity-90"
                   style={{
-                    background: isGold ? 'linear-gradient(145deg, #1a1508, #1c1609)' : isHighlight ? 'linear-gradient(145deg, #1c0e08, #200f08)' : '#120e0a',
-                    border: isGold ? '1px solid rgba(212,168,71,0.4)' : isHighlight ? '1px solid rgba(217,120,84,0.35)' : '1px solid rgba(255,255,255,0.09)',
-                    boxShadow: isGold ? '0 0 40px rgba(212,168,71,0.08)' : isHighlight ? '0 0 40px rgba(217,120,84,0.08)' : undefined,
+                    background: tier.gold || tier.highlight ? tier.accentColor : 'transparent',
+                    color: tier.gold || tier.highlight ? '#fff' : tier.accentColor,
+                    border: tier.gold || tier.highlight ? undefined : `1px solid ${tier.accentColor}50`,
+                    boxShadow: tier.gold || tier.highlight ? `0 4px 16px ${tier.accentColor}40` : undefined,
                   }}
                 >
-                  {tier.badge && (
-                    <div
-                      className="absolute -top-3 left-1/2 -translate-x-1/2 font-mono text-[0.6rem] uppercase tracking-widest px-3 py-1 rounded-full"
-                      style={{ background: isGold ? '#d4a847' : '#d97b54', color: '#fff' }}
-                    >
-                      {tier.badge}
-                    </div>
-                  )}
-                  <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: isGold ? '#d4a847' : isHighlight ? '#e8956e' : 'rgba(255,255,255,0.3)' }}>{tier.name}</div>
-                  <div className="font-display font-black text-4xl text-white mb-0.5">{tier.price}</div>
-                  <div className="font-mono text-xs mb-5" style={{ color: 'rgba(255,255,255,0.25)' }}>{tier.sub}</div>
-                  <ul className="space-y-2.5 mb-6">
-                    {tier.features.map(f => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                        <span className="text-xs flex-shrink-0" style={{ color: isGold ? '#d4a847' : isHighlight ? '#e8956e' : '#4db6ac' }} aria-hidden="true">✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={tier.href}
-                    className="block text-center font-display font-bold text-sm py-2.5 rounded-xl transition-all"
-                    style={{
-                      background: isGold ? '#d4a847' : isHighlight ? '#d97b54' : 'transparent',
-                      color: isGold || isHighlight ? '#fff' : 'rgba(255,255,255,0.55)',
-                      border: isGold || isHighlight ? undefined : '1px solid rgba(255,255,255,0.12)',
-                    }}
-                  >
-                    {tier.cta}
-                  </Link>
-                </div>
-              )
-            })}
+                  {tier.cta}
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -554,23 +636,23 @@ export default function LandingPage() {
             <h2 id="testimonials-heading" className="font-display font-black text-3xl text-white">What students are saying</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {TESTIMONIALS.map((t) => {
-              const colours: Record<string, { bg: string; border: string; nameColor: string }> = {
-                teal:  { bg: '#0e1714', border: 'rgba(13,148,136,0.2)',   nameColor: '#4db6ac' },
-                coral: { bg: '#160e0b', border: 'rgba(217,120,84,0.2)',   nameColor: '#e8956e' },
-                amber: { bg: '#14110a', border: 'rgba(212,168,71,0.2)',   nameColor: '#d4a847' },
-              }
-              const c = colours[t.colour]
-              return (
-                <blockquote key={t.name} className="rounded-2xl p-5" style={{ background: c.bg, border: `1px solid ${c.border}` }}>
-                  <p className="font-display text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.65)' }}>&ldquo;{t.quote}&rdquo;</p>
-                  <footer>
-                    <p className="font-display font-bold text-xs" style={{ color: c.nameColor }}>{t.name}</p>
-                    <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.28)' }}>{t.role}</p>
-                  </footer>
-                </blockquote>
-              )
-            })}
+            {TESTIMONIALS.map((t) => (
+              <blockquote
+                key={t.name}
+                className="rounded-2xl p-5 relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(145deg, ${t.accent}0d, rgba(6,12,24,0.9))`,
+                  border: `1px solid ${t.accent}30`,
+                }}
+              >
+                <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${t.accent}80, transparent)` }} />
+                <p className="font-display text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.75)' }}>&ldquo;{t.quote}&rdquo;</p>
+                <footer>
+                  <p className="font-display font-bold text-xs" style={{ color: t.accent }}>{t.name}</p>
+                  <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.role}</p>
+                </footer>
+              </blockquote>
+            ))}
           </div>
         </section>
 
@@ -586,16 +668,20 @@ export default function LandingPage() {
               { q: 'What makes Nova different from ChatGPT?', a: 'Nova is built specifically for SA students. It knows NSFAS rules, understands load shedding, speaks to imposter syndrome in first-gen students, uses CBT techniques, and detects mental health crises with instant access to SA helplines. It speaks your reality.' },
               { q: 'Which universities does VarsityOS work for?', a: 'All SA universities — UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, TUT, and more.' },
               { q: 'Does VarsityOS work offline (during load shedding)?', a: "Yes. VarsityOS is a Progressive Web App (PWA). Once loaded, your budget, tasks, timetable, and study data are available offline. Changes sync automatically when you reconnect. Open it in Chrome or Safari and tap 'Add to Home Screen' to install it like a native app." },
-              { q: 'I\'m not on NSFAS — can I still use it?', a: "Absolutely. The Flexible Wallet lets you track any income source — bursaries, family support, part-time work. The budget and savings tools work for every SA student, not just NSFAS recipients." },
+              { q: "I'm not on NSFAS — can I still use it?", a: "Absolutely. The Flexible Wallet lets you track any income source — bursaries, family support, part-time work. The budget and savings tools work for every SA student, not just NSFAS recipients." },
               { q: 'What does the Scholar plan include vs Premium vs Nova Unlimited?', a: 'Scholar (R39/month) gives you 100 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 250 Nova messages, CSV export, and early access to new features. Nova Unlimited (R129/month) removes all Nova limits entirely — unlimited messages, first access to new Nova capabilities, and a direct line to the builder.' },
               { q: 'Is my data safe? How does VarsityOS comply with POPIA?', a: 'VarsityOS is registered under POPIA (Act 4 of 2013), Registration No. 2026-005658. Your data is stored securely in South Africa via Supabase. We never sell your data. You can request deletion at any time. See our Privacy Policy for full details.' },
             ].map((faq, i) => (
-              <details key={i} className="rounded-2xl group overflow-hidden" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <details
+                key={i}
+                className="rounded-2xl group overflow-hidden"
+                style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(59,130,246,0.12)' }}
+              >
                 <summary className="font-display font-bold text-sm cursor-pointer flex items-center justify-between gap-3 px-5 py-4 text-white" style={{ listStyle: 'none' }}>
                   {faq.q}
-                  <span className="text-xs flex-shrink-0 transition-transform group-open:rotate-180" style={{ color: 'rgba(255,255,255,0.3)' }}>▼</span>
+                  <span className="text-xs flex-shrink-0 transition-transform group-open:rotate-180" style={{ color: '#3b82f6' }}>▼</span>
                 </summary>
-                <p className="text-sm leading-relaxed px-5 pb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>{faq.a}</p>
+                <p className="text-sm leading-relaxed px-5 pb-4" style={{ color: 'rgba(255,255,255,0.6)' }}>{faq.a}</p>
               </details>
             ))}
           </div>
@@ -605,34 +691,36 @@ export default function LandingPage() {
         <section className="px-5 pb-24 max-w-6xl mx-auto">
           <div
             className="rounded-3xl px-8 py-16 text-center relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #1a0e08 0%, #0b1a14 60%, #0e1714 100%)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'linear-gradient(135deg, #06112a 0%, #071c1a 60%, #060c18 100%)', border: '1px solid rgba(59,130,246,0.2)' }}
           >
-            <div className="absolute top-0 left-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top left, rgba(217,120,84,0.1), transparent 60%)' }} />
-            <div className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom right, rgba(13,148,136,0.1), transparent 60%)' }} />
+            <div className="absolute top-0 left-0 w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 60%)' }} />
+            <div className="absolute bottom-0 right-0 w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom right, rgba(13,148,136,0.18), transparent 60%)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(ellipse, rgba(6,182,212,0.06), transparent 65%)' }} />
+
             <div className="relative">
               <div className="text-5xl mb-5" aria-hidden="true">🧭</div>
               <h2 className="font-display font-black text-white mb-3" style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}>
                 Ready to actually get on top of it?
               </h2>
-              <p className="text-sm max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <p className="text-sm max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 Your budget, your studies, your mental health — in one app built for the reality of SA varsity life. Free to start.
               </p>
               <Link
                 href="/auth/signup"
                 className="inline-block font-display font-bold text-base px-10 py-4 rounded-xl transition-all hover:-translate-y-0.5"
-                style={{ background: 'linear-gradient(135deg, #e07858, #c96040)', color: '#fff', boxShadow: '0 4px 24px rgba(217,120,84,0.3)' }}
+                style={{ background: 'linear-gradient(135deg, #3b82f6, #0d9488)', color: '#fff', boxShadow: '0 4px 32px rgba(59,130,246,0.45)' }}
               >
                 Create your free account
               </Link>
-              <p className="font-mono text-xs mt-4" style={{ color: 'rgba(255,255,255,0.2)' }}>No credit card · No app store · Works on any device</p>
-              <div className="mt-6 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="font-mono text-[0.6rem] mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>Already using VarsityOS? A quick review helps the next student find us.</p>
+              <p className="font-mono text-xs mt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>No credit card · No app store · Works on any device</p>
+              <div className="mt-6 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <p className="font-mono text-[0.6rem] mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>Already using VarsityOS? A quick review helps the next student find us.</p>
                 <a
                   href="https://g.page/r/CdPIXBcTmJE6EAI/review"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 font-mono text-xs px-5 py-2.5 rounded-xl transition-all hover:opacity-80"
-                  style={{ background: 'rgba(212,168,71,0.12)', color: '#d4a847', border: '1px solid rgba(212,168,71,0.25)' }}
+                  style={{ background: 'rgba(212,168,71,0.12)', color: '#d4a847', border: '1px solid rgba(212,168,71,0.3)' }}
                 >
                   ⭐ Leave a Google Review
                 </a>
@@ -642,13 +730,13 @@ export default function LandingPage() {
         </section>
 
         {/* ── 12. FOOTER ─────────────────────────────────────────────────────── */}
-        <footer className="px-5 py-8 max-w-6xl mx-auto" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <footer className="px-5 py-8 max-w-6xl mx-auto" style={{ borderTop: '1px solid rgba(59,130,246,0.1)' }}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-white/10">
+              <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 8px rgba(13,148,136,0.3)' }}>
                 <Image src="/logo.jpg" alt="VarsityOS" width={28} height={28} className="object-contain" />
               </div>
-              <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>VarsityOS</span>
+              <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>VarsityOS</span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <p className="font-mono text-[0.6rem] text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>
@@ -657,34 +745,32 @@ export default function LandingPage() {
                   href="https://creativelynanda.co.za"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-bold transition-colors"
-                  style={{ color: '#4db6ac' }}
+                  className="font-bold transition-colors hover:opacity-80"
+                  style={{ color: '#5eead4' }}
                 >
                   Nanda Regine
                 </a>
                 {' '}· Mirembe Muse (Pty) Ltd
               </p>
-              <a
-                href="https://creativelynanda.co.za"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-[0.58rem] transition-colors"
-                style={{ color: 'rgba(77,182,172,0.5)' }}
-              >
-                creativelynanda.co.za ↗
-              </a>
-              <p className="font-mono text-[0.52rem] text-center mt-1" style={{ color: 'rgba(255,255,255,0.15)' }}>
-                POPIA Reg. No. 2026-005658
+              <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                POPIA Reg. 2026-005658 · East London, Eastern Cape, South Africa
               </p>
             </div>
-            <nav aria-label="Footer navigation">
-              <div className="flex items-center gap-4">
-                {[{ href: '/terms', label: 'Terms' }, { href: '/privacy', label: 'Privacy' }, { href: '/auth/login', label: 'Log in' }, { href: '/auth/signup', label: 'Sign up' }].map(link => (
-                  <Link key={link.href} href={link.href} className="font-mono text-[0.6rem] transition-colors" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
+            <nav className="flex items-center gap-4" aria-label="Footer navigation">
+              {[
+                { href: '/privacy', label: 'Privacy' },
+                { href: '/terms', label: 'Terms' },
+                { href: '/auth/signup', label: 'Sign up' },
+              ].map(link => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="font-mono text-[0.6rem] transition-colors hover:text-white/60"
+                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                >
+                  {link.label}
+                </a>
+              ))}
             </nav>
           </div>
         </footer>
