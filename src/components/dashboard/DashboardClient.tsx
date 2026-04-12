@@ -378,9 +378,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             { href: '/budget',                 icon: '💰', label: 'Budget',         colour: 'coral',  sub: `${recentExp.length} expenses` },
             { href: '/meals',                  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'AI recipes + planner' },
             { href: '/nova',                   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
-            { href: '/work',         icon: '💼', label: 'Work',            colour: 'blue',   sub: 'Shifts & earnings' },
-            { href: '/campus-life',  icon: '🏛️', label: 'Campus Life',    colour: 'green',  sub: '10 guides by Nova' },
-            { href: '/groups',       icon: '👥', label: 'Study Groups',   colour: 'indigo', sub: 'Assignments & tasks' },
+            { href: '/dashboard/work',        icon: '💼', label: 'Work',         colour: 'blue',   sub: 'Shifts & earnings' },
+            { href: '/dashboard/campus-life', icon: '🏛️', label: 'Campus Life', colour: 'green',  sub: '10 guides by Nova' },
+            { href: '/dashboard/groups',      icon: '👥', label: 'Study Groups', colour: 'indigo', sub: 'Assignments & tasks' },
           ].map(item => {
             const colorMap = {
               teal:   { border: 'hover:border-teal-600/40',   icon: 'bg-teal-600/15',   text: 'text-teal-400' },
