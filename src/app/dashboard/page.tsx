@@ -23,15 +23,14 @@ export default async function DashboardPage() {
     { data: modules },
     { data: timetable },
     { data: recentExpenses },
-    { data: subscription },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
-    supabase.from('budgets').select('*').eq('user_id', user.id).single(),
+    supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
     supabase
       .from('tasks')
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
-      .neq('status', 'done')
+      .not('status', 'eq', 'done')
       .order('due_date', { ascending: true, nullsFirst: false }),
     supabase
       .from('exams')
@@ -56,7 +55,6 @@ export default async function DashboardPage() {
       .lte('expense_date', end)
       .order('expense_date', { ascending: false })
       .limit(10),
-    supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
   ])
 
   // Redirect to setup if profile incomplete
@@ -72,7 +70,7 @@ export default async function DashboardPage() {
         modules:        modules ?? [],
         timetable:      timetable ?? [],
         recentExpenses: recentExpenses ?? [],
-        subscription:   subscription ?? null,
+        subscription:   null,
       }}
     />
   )

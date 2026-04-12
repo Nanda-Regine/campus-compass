@@ -19,16 +19,14 @@ export default async function MealsPage() {
     { data: groceryItems },
     { data: profile },
     { data: budget },
-    { data: subscription },
   ] = await Promise.all([
     supabase.from('meal_plans').select('*').eq('user_id', user.id).eq('week_start', weekStartStr),
     supabase.from('grocery_items').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('profiles').select('dietary_pref, living_situation, is_premium').eq('id', user.id).single(),
-    supabase.from('budgets').select('food_budget').eq('user_id', user.id).single(),
-    supabase.from('subscriptions').select('plan').eq('user_id', user.id).single(),
+    supabase.from('profiles').select('dietary_pref, living_situation, is_premium, subscription_tier').eq('id', user.id).single(),
+    supabase.from('budgets').select('food_budget').eq('user_id', user.id).maybeSingle(),
   ])
 
-  const isPremium = profile?.is_premium || subscription?.plan === 'premium'
+  const isPremium = profile?.is_premium || profile?.subscription_tier === 'premium' || profile?.subscription_tier === 'scholar'
 
   return (
     <MealsClient
