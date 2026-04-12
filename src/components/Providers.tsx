@@ -83,23 +83,35 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Load budget
+    // Load budget (maybeSingle — new users won't have a row yet)
     const { data: budget } = await supabase
       .from('budgets')
       .select('*')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
     if (budget) setBudget(budget as Budget)
 
-    // Load subscription
-    const { data: sub } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', userId)
-      .single()
-
-    if (sub) setSubscription(sub as Subscription)
+    // Derive subscription from profile (no separate subscriptions table)
+    if (profile) {
+      const p = profile as Profile
+      const tier = p.subscription_tier || (p.is_premium ? 'premium' : 'free')
+      const derivedSub: Subscription = {
+        id: p.id,
+        user_id: p.id,
+        payfast_payment_id: null,
+        payfast_subscription_token: null,
+        plan: tier as Subscription['plan'],
+        status: 'active',
+        amount: null,
+        billing_date: null,
+        next_billing_date: null,
+        cancelled_at: null,
+        created_at: p.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+      setSubscription(derivedSub)
+    }
 
     // Load Nova proactive insights
     const { data: insights } = await supabase

@@ -347,7 +347,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract cache token usage for cost monitoring
-    const usage = response.usage as Record<string, number> & { cache_creation_input_tokens?: number; cache_read_input_tokens?: number }
+    const usage = response.usage as unknown as Record<string, number> & { cache_creation_input_tokens?: number; cache_read_input_tokens?: number }
     const cacheCreationTokens = usage?.cache_creation_input_tokens ?? 0
     const cacheReadTokens = usage?.cache_read_input_tokens ?? 0
     const inputTokens = usage?.input_tokens ?? 0
