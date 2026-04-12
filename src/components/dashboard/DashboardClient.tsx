@@ -378,9 +378,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             { href: '/budget',                 icon: '💰', label: 'Budget',         colour: 'coral',  sub: `${recentExp.length} expenses` },
             { href: '/meals',                  icon: '🍲', label: 'Meal Prep',      colour: 'amber',  sub: 'AI recipes + planner' },
             { href: '/nova',                   icon: '🌟', label: 'Nova',            colour: 'purple', sub: 'AI companion' },
-            { href: '/dashboard/work',         icon: '💼', label: 'Work',            colour: 'blue',   sub: 'Shifts & earnings' },
-            { href: '/dashboard/campus-life',  icon: '🏛️', label: 'Campus Life',    colour: 'green',  sub: '10 guides by Nova' },
-            { href: '/dashboard/groups',       icon: '👥', label: 'Study Groups',   colour: 'indigo', sub: 'Assignments & tasks' },
+            { href: '/work',         icon: '💼', label: 'Work',            colour: 'blue',   sub: 'Shifts & earnings' },
+            { href: '/campus-life',  icon: '🏛️', label: 'Campus Life',    colour: 'green',  sub: '10 guides by Nova' },
+            { href: '/groups',       icon: '👥', label: 'Study Groups',   colour: 'indigo', sub: 'Assignments & tasks' },
           ].map(item => {
             const colorMap = {
               teal:   { border: 'hover:border-teal-600/40',   icon: 'bg-teal-600/15',   text: 'text-teal-400' },
@@ -575,7 +575,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">⭐</div>
               <div className="flex-1">
                 <div className="font-display font-bold text-amber-400 text-sm">Upgrade to Premium</div>
-                <div className="font-mono text-[0.6rem] text-white/30">200 messages/month · AI recipes · Financial coach · R79/month</div>
+                <div className="font-mono text-[0.6rem] text-white/30">Up to 250 Nova messages · AI recipes · Budget coach · from R39/month</div>
               </div>
               <div className="font-mono text-[0.6rem] text-amber-400 flex-shrink-0">→</div>
             </div>
