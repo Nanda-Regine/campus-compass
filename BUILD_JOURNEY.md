@@ -154,7 +154,7 @@ Nova is not a generic chatbot — she is purpose-built for SA students.
 
 ---
 
-## Phase 6 — Scale & Security (March 2026) — IN PROGRESS
+## Phase 6 — Scale & Security (March 2026) — COMPLETE
 
 ### Security hardening
 - [x] Rate limiting on all AI routes — sliding window, 429 with graceful UI
@@ -185,6 +185,66 @@ Nova is not a generic chatbot — she is purpose-built for SA students.
 - [ ] Student noticeboard — campus events, subletting, textbook swaps
 - [ ] WhatsApp bot integration (SA's primary communication channel)
 - [ ] pgvector semantic search across study notes
+
+---
+
+## Phase 7 — Data Architecture & PWA (April 2026) — COMPLETE
+
+### Database Schema Overhaul
+- [x] `profiles.id → auth.users(id) ON DELETE CASCADE` FK added safely (idempotent DO block)
+- [x] 17 missing profile columns added: `name`, `emoji`, `degree_name`, `faculty`,
+      `accommodation_type`, `dietary_preferences[]`, `languages[]`, `study_style`,
+      `biggest_challenges[]`, `emergency_contact_name`, `emergency_contact_number`,
+      `onboarding_completed`, `nsfas_monthly_amount`, `subscription_tier`,
+      `dietary_pref`, `living_situation`, `ai_language`
+- [x] `handle_new_user()` SECURITY DEFINER trigger — auto-creates profile on every signup
+- [x] `trg_sync_profile_derived` — keeps `subscription_tier`, `onboarding_completed`, `name`
+      in sync automatically on every INSERT/UPDATE
+- [x] `nova_messages` cache token columns: `cache_creation_input_tokens`,
+      `cache_read_input_tokens`, `input_tokens`, `output_tokens`
+- [x] `service_role_all` RLS policy on profiles for admin operations
+- [x] Migration: `supabase/migrations/20260412000000_schema_fixes.sql` — verified live ✓
+
+### Auth Flow — Onboarding Gate
+- [x] Middleware rewritten with full onboarding-aware routing
+- [x] Unauthenticated → `/auth/login?redirectTo=[path]`
+- [x] Authenticated + `onboarding_completed=false` → `/setup`
+- [x] Authenticated + onboarding done → `/dashboard`
+- [x] `/setup` revisited after completion → `/dashboard`
+- [x] OAuth `?code=` on wrong path → `/auth/callback`
+- [x] Checks both `onboarding_complete` and `onboarding_completed` (OR) — backward compat
+
+### SetupFlow — Complete Profile Capture
+- [x] Saves all missing fields on finish: `faculty`, `accommodation_type`,
+      `dietary_preferences[]`, `dietary_pref`, `living_situation`, `nsfas_monthly_amount`
+- [x] `nsfas_monthly_amount` = sum of living + accom + books allocations (NSFAS users only)
+- [x] Sets both `onboarding_complete` and `onboarding_completed` to `true`
+
+### Nova Context Builder (`src/lib/nova/context.ts`)
+- [x] `buildNovaContext(userId)` — 7 parallel Supabase queries via `Promise.all`:
+      profile, budget, expenses (30d), upcoming exams (14d), overdue tasks,
+      study sessions (7d), last conversation messages
+- [x] In-memory Map cache with 60s TTL — zero Upstash dependency
+- [x] `invalidateNovaContext(userId)` — cache busting for mutation routes
+- [x] `formatNovaContext()` — structured prompt string with crisis flag detection
+- [x] Crisis thresholds: overdue tasks ≥ 3, budget > 90%, exam within 3 days
+
+### Prompt Caching — Cost Optimisation
+- [x] `anthropic-beta: prompt-caching-2024-07-31` header on Anthropic client
+- [x] Block 1 (5000-line knowledge base) — `cache_control: ephemeral` (already had this)
+- [x] Block 2 (dynamic student context) — `cache_control: ephemeral` added
+- [x] Both blocks now cached — up to 90% cost reduction on repeat sessions
+- [x] Token usage logged to `nova_messages` after every API call (best-effort, non-blocking):
+      `cache_creation_input_tokens`, `cache_read_input_tokens`, `input_tokens`, `output_tokens`
+
+### PWA Install Prompt (`src/components/PWAInstallPrompt.tsx`)
+- [x] Intercepts `beforeinstallprompt` — no native banner, full custom UI control
+- [x] Shows after 10 seconds, first visit only (localStorage `pwa_install_dismissed`)
+- [x] Forest green (#1B4332) card, gold (#D4A017) CTA — matches brand
+- [x] iOS Safari: `/iP(ad|hone|od)/` detection → step-by-step Share modal
+- [x] Both "Add to Home Screen" and "Maybe Later" write `dismissed=true` to localStorage
+- [x] Mounted via `src/app/dashboard/layout.tsx` — active on all `/dashboard` routes
+- [x] Works offline — explains load-shedding value prop inline
 
 ### Performance
 - [ ] Supabase Edge Functions for AI calls (lower cold start latency)
@@ -242,6 +302,9 @@ Nova is not a generic chatbot — she is purpose-built for SA students.
 | 2026-01 | Prompt caching architecture | 5000-line knowledge base cached — massive cost savings at scale |
 | 2026-02 | Zustand over Redux | Minimal boilerplate, fine for this data shape |
 | 2026-03 | Service role isolated to webhooks | Security boundary — never expose service role to client code |
+| 2026-04 | In-memory cache for Nova context | Upstash not configured — Map + TTL is zero-dependency, sufficient at current scale |
+| 2026-04 | Cache both prompt blocks | Dynamic context changes per session not per message — ephemeral on Block 2 safe |
+| 2026-04 | Custom PWA banner over native | `beforeinstallprompt` gives full control — timed, branded, localStorage-dismissed |
 
 ---
 
@@ -257,6 +320,12 @@ Nova is not a generic chatbot — she is purpose-built for SA students.
 | `fa22a7e` | Multilingual AI across all agents |
 | `aec9d96` | Performance: Haiku for structured routes + Nova soft cap |
 | `effa986` | Offline support — persisted store + improved SW |
+| `a3a430d` | Schema fixes migration — FK, 17 columns, triggers, RLS |
+| `5134725` | Onboarding-aware middleware routing |
+| `33db95d` | SetupFlow saves all profile fields on completion |
+| `059a9f1` | Nova context builder — parallel fetch, 60s cache |
+| `be2175c` | Prompt caching beta + cache token cost monitoring |
+| `9beb38d` | PWA install prompt + dashboard layout |
 
 ---
 
