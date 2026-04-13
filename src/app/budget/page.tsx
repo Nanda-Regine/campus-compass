@@ -17,10 +17,12 @@ export default async function BudgetPage() {
     { data: budget },
     { data: expenses },
     { data: profile },
+    { data: incomeEntries },
   ] = await Promise.all([
     supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
     supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end).order('expense_date', { ascending: false }),
     supabase.from('profiles').select('name, funding_type, university, year_of_study, is_premium, subscription_tier').eq('id', user.id).single(),
+    supabase.from('income_entries').select('id,source_type,label,amount,received_date,is_recurring').eq('user_id', user.id).gte('received_date', start).order('received_date', { ascending: false }),
   ])
 
   const isPremium = profile?.is_premium || profile?.subscription_tier === 'premium' || profile?.subscription_tier === 'scholar'
@@ -33,6 +35,7 @@ export default async function BudgetPage() {
         profile: profile!,
         isPremium,
         userId: user.id,
+        incomeEntries: incomeEntries ?? [],
       }}
     />
   )
