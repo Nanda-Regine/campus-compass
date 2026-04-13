@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name, email')
+      .select('full_name, email')
       .eq('id', user.id)
       .single()
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       assignment_id: assignment.id,
       user_id: user.id,
       email: user.email || '',
-      display_name: profile?.name || user.email || 'You',
+      display_name: profile?.full_name || user.email || 'You',
       role: 'leader',
       status: 'joined',
       joined_at: new Date().toISOString(),

@@ -30,10 +30,6 @@ CREATE POLICY "member_all" ON public.group_tasks FOR ALL USING (
   assignment_id IN (
     SELECT assignment_id FROM public.group_members WHERE user_id = auth.uid()
   )
-  OR group_id IN (
-    SELECT group_id FROM public.group_members
-    WHERE user_id = auth.uid() AND group_id IS NOT NULL
-  )
 );
 
 -- Fix group_members visibility
@@ -197,3 +193,37 @@ CREATE TABLE IF NOT EXISTS public.payment_logs (
 
 ALTER TABLE public.payment_logs ENABLE ROW LEVEL SECURITY;
 CREATE INDEX IF NOT EXISTS idx_payment_logs_user ON public.payment_logs(user_id, created_at DESC);
+
+-- ─── work_shifts: add columns required by the shifts API ─────────────────────
+ALTER TABLE public.work_shifts
+  ADD COLUMN IF NOT EXISTS student_id    UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS job_id        UUID REFERENCES public.part_time_jobs(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS duration_hours NUMERIC(5,2),
+  ADD COLUMN IF NOT EXISTS earnings      NUMERIC(10,2),
+  ADD COLUMN IF NOT EXISTS has_study_conflict BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS conflict_type TEXT,
+  ADD COLUMN IF NOT EXISTS conflict_detail TEXT;
+
+-- Backfill student_id from user_id if that column exists
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'work_shifts' AND column_name = 'user_id') THEN
+    UPDATE public.work_shifts SET student_id = user_id WHERE student_id IS NULL;
+  END IF;
+END $$;
+
+-- Make employer_name nullable (master migration may not have run)
+ALTER TABLE public.work_shifts
+  ALTER COLUMN employer_name DROP NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_work_shifts_student ON public.work_shifts(student_id, shift_date DESC);
+
+-- ─── profiles: add subscription_tier if missing ───────────────────────────────
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS subscription_tier TEXT,
+  ADD COLUMN IF NOT EXISTS plan TEXT;
+
+-- Backfill subscription_tier from is_premium
+UPDATE public.profiles
+  SET subscription_tier = 'premium'
+  WHERE is_premium = true AND subscription_tier IS NULL;
