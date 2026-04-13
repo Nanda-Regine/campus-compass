@@ -45,6 +45,7 @@ export default async function StudyPage() {
         tasks:     tasks     ?? [],
         timetable: timetable ?? [],
         exams:     exams     ?? [],
+        userId:    user.id,
       }}
     />
   )
