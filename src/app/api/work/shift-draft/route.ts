@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   }
 
   const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-sonnet-4-5',
     max_tokens: 300,
     system: `You write professional but warm shift request messages for a part-time worker who is also a full-time university student in South Africa. Keep it brief (under 5 sentences), honest, and non-apologetic. The student's academic commitments are legitimate. Never grovel. Never over-explain. Format it ready to paste into WhatsApp.`,
     messages: [{

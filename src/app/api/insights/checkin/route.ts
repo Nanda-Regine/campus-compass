@@ -74,7 +74,7 @@ Tone: warm, real, South African-coded. NOT corporate. NOT a list. 3 flowing para
 Maximum 180 words total.`
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-4-5',
       max_tokens: 400,
       messages: [{ role: 'user', content: prompt }],
     })
