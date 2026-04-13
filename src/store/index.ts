@@ -179,7 +179,7 @@ export const useAppStore = create<AppState>()(
       name: 'varsityos-store',
       version: 2,
       migrate: (persistedState, version) => {
-        if (version < 2) return { ...initialState }
+        if (version < 2) return { ...initialState } as unknown as AppState
         return persistedState as AppState
       },
       partialize: (state) => { const { isOnline: _o, ...rest } = state; return rest },
