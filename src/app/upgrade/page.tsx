@@ -26,7 +26,7 @@ const TIERS = [
       { icon: '📚', label: 'AI Study Plans & Exam Prep' },
       { icon: '⚡', label: 'Priority support' },
     ],
-    itemName: 'VarsityOS Scholar — Monthly',
+    itemName: 'VarsityOS Scholar - Monthly',
     colour: '#e8956e',
     gold: false,
   },
@@ -45,7 +45,7 @@ const TIERS = [
       { icon: '📥', label: 'CSV Export Reports' },
       { icon: '🚀', label: 'Early access to new features' },
     ],
-    itemName: 'VarsityOS Premium — Monthly',
+    itemName: 'VarsityOS Premium - Monthly',
     colour: '#0d9488',
     gold: false,
   },
@@ -65,7 +65,7 @@ const TIERS = [
       { icon: '🚀', label: 'First access to new Nova features' },
       { icon: '💬', label: 'Direct feedback channel to builder' },
     ],
-    itemName: 'VarsityOS Nova Unlimited — Monthly',
+    itemName: 'VarsityOS Nova Unlimited - Monthly',
     colour: '#d4a847',
     gold: true,
   },
@@ -84,7 +84,7 @@ function buildPayFastForm(
   const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
   // Always use production HTTPS URL for PayFast (HTTPS required)
   const appUrl = 'https://varsityos.co.za'
-  const passphrase = process.env.PAYFAST_PASSPHRASE || ''
+  const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
 
   const data: Record<string, string> = {
     merchant_id:      process.env.PAYFAST_MERCHANT_ID!,
