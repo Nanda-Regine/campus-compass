@@ -177,11 +177,12 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'varsityos-store',
-      // Don't persist online status — always re-detect on load
-      partialize: (state) => {
-        const { isOnline: _isOnline, ...rest } = state
-        return rest
+      version: 2,
+      migrate: (persistedState, version) => {
+        if (version < 2) return { ...initialState }
+        return persistedState as AppState
       },
+      partialize: (state) => { const { isOnline: _o, ...rest } = state; return rest },
     }
   )
 )
