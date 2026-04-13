@@ -23,6 +23,7 @@ export default async function DashboardPage() {
     { data: modules },
     { data: timetable },
     { data: recentExpenses },
+    { data: incomeEntries },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
@@ -55,6 +56,12 @@ export default async function DashboardPage() {
       .lte('expense_date', end)
       .order('expense_date', { ascending: false })
       .limit(10),
+    supabase
+      .from('income_entries')
+      .select('id,source_type,label,amount,received_date,is_recurring')
+      .eq('user_id', user.id)
+      .gte('received_date', start)
+      .order('received_date', { ascending: false }),
   ])
 
   // Redirect to setup if profile incomplete
@@ -70,6 +77,7 @@ export default async function DashboardPage() {
         modules:        modules ?? [],
         timetable:      timetable ?? [],
         recentExpenses: recentExpenses ?? [],
+        incomeEntries:  incomeEntries ?? [],
         subscription:   null,
       }}
     />

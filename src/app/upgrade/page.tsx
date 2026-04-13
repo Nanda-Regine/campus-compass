@@ -81,7 +81,7 @@ function buildPayFastForm(
   price: number,
   itemName: string,
 ) {
-  const isSandbox = process.env.NEXT_PUBLIC_PAYFAST_SANDBOX === 'true'
+  const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
   // Always use production HTTPS URL for PayFast (HTTPS required)
   const appUrl = 'https://varsityos.co.za'
   const passphrase = process.env.PAYFAST_PASSPHRASE || ''

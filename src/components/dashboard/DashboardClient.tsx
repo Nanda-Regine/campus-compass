@@ -39,6 +39,15 @@ interface CheckInData {
   }
 }
 
+interface IncomeEntry {
+  id: string
+  source_type: string
+  label: string
+  amount: number
+  received_date: string
+  is_recurring: boolean
+}
+
 interface DashboardClientProps {
   initialData: {
     profile: Profile
@@ -48,6 +57,7 @@ interface DashboardClientProps {
     modules: Module[]
     timetable: TimetableEntry[]
     recentExpenses: Expense[]
+    incomeEntries: IncomeEntry[]
     subscription: Subscription | null
   }
 }
@@ -147,7 +157,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const allTT     = timetable.length ? timetable : initialData.timetable
   const recentExp = expenses.length  ? expenses  : initialData.recentExpenses
 
-  const totalBudget = b ? calcTotalBudget(b) : 0
+  const baseBudget  = b ? calcTotalBudget(b) : 0
+  const totalIncome = initialData.incomeEntries.reduce((s, e) => s + e.amount, 0)
+  const totalBudget = baseBudget + totalIncome
   const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
   const remaining   = totalBudget - monthSpent
   const spentPct    = fmt.pct(monthSpent, totalBudget)
@@ -165,7 +177,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const overdueTasks = allTasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < new Date())
   const nextExam     = allExams[0] ?? null
   const ls           = getLoadSheddingStatus()
-  const isPremium    = p?.is_premium || initialData.subscription?.plan === 'premium'
+  const isPremium    = p?.is_premium || p?.subscription_tier === 'premium' || p?.subscription_tier === 'scholar'
 
   const insightIcon: Record<string, string> = {
     study_nudge: '📚',

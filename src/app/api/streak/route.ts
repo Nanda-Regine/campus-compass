@@ -17,12 +17,12 @@ export async function GET() {
 
     const { data: completions } = await supabase
       .from('tasks')
-      .select('done_at')
+      .select('completed_at')
       .eq('user_id', user.id)
-      .eq('done', true)
-      .not('done_at', 'is', null)
-      .gte('done_at', since.toISOString())
-      .order('done_at', { ascending: false })
+      .eq('status', 'done')
+      .not('completed_at', 'is', null)
+      .gte('completed_at', since.toISOString())
+      .order('completed_at', { ascending: false })
 
     if (!completions || completions.length === 0) {
       return NextResponse.json({ streak: 0, longestStreak: 0, todayDone: false })
@@ -30,7 +30,7 @@ export async function GET() {
 
     // Get unique dates (SAST) where tasks were completed
     const uniqueDates = new Set(
-      completions.map(c => new Date(c.done_at!).toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' }))
+      completions.map(c => new Date(c.completed_at!).toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' }))
     )
 
     const today = new Date().toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })
