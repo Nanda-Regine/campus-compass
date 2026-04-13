@@ -3,11 +3,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   // Validate next to prevent open redirect attacks — must be a relative path
   const rawNext = searchParams.get('next') ?? ''
   const next = rawNext.startsWith('/') && !rawNext.startsWith('//') && !rawNext.includes('://') ? rawNext : '/dashboard'
+
+  // Always use the canonical app URL to avoid Vercel internal URLs being used as origin
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za').replace(/\/$/, '')
 
   if (code) {
     const supabase = createServerSupabaseClient()
@@ -25,14 +28,14 @@ export async function GET(request: NextRequest) {
             .single()
 
           if (!profile?.onboarding_complete) {
-            return NextResponse.redirect(`${origin}/setup`)
+            return NextResponse.redirect(`${appUrl}/setup`)
           }
         }
       }
 
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${appUrl}${next}`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth/login?error=callback_failed`)
+  return NextResponse.redirect(`${appUrl}/auth/login?error=callback_failed`)
 }
