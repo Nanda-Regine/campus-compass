@@ -20,6 +20,7 @@ interface BudgetClientProps {
     profile: { name: string; funding_type: string | null; university: string | null; year_of_study: string | null; is_premium: boolean } | null
     isPremium: boolean
     userId: string
+    incomeEntries: IncomeEntry[]
   }
 }
 
@@ -83,7 +84,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   const [budgetData, setBudgetData] = useState<{ categoryTotals: Record<string, number> } | null>(null)
 
   // Wallet state
-  const [incomeEntries, setIncomeEntries] = useState<IncomeEntry[]>([])
+  const [incomeEntries, setIncomeEntries] = useState<IncomeEntry[]>(initialData.incomeEntries)
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([])
   const [walletLoaded, setWalletLoaded] = useState(false)
   const [addingGoal, setAddingGoal] = useState(false)
@@ -114,10 +115,12 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   const [appealLoading, setAppealLoading] = useState(false)
 
   const totalBudget = budget ? calcTotalBudget(budget) : 0
+  const totalIncome = incomeEntries.reduce((s, e) => s + e.amount, 0)
+  const effectiveTotal = totalBudget + totalIncome
   const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
-  const remaining = totalBudget - totalSpent
-  const spentPct = totalBudget > 0 ? Math.min(100, Math.round((totalSpent / totalBudget) * 100)) : 0
-  const overBudget = totalSpent > totalBudget
+  const remaining = effectiveTotal - totalSpent
+  const spentPct = effectiveTotal > 0 ? Math.min(100, Math.round((totalSpent / effectiveTotal) * 100)) : 0
+  const overBudget = totalSpent > effectiveTotal
 
   const categoryTotals = budgetData?.categoryTotals || expenses.reduce((acc, e) => {
     acc[e.category] = (acc[e.category] || 0) + e.amount
@@ -140,26 +143,22 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   }
 
   useEffect(() => {
+    loadWalletData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     if (activeTab === 'ai_coach' && !aiInsights) {
       loadInsights()
-    }
-    if (activeTab === 'wallet' && !walletLoaded) {
-      loadWalletData()
     }
   }, [activeTab])
 
   const loadWalletData = async () => {
-    const [{ data: income }, { data: goals }] = await Promise.all([
-      supabase.from('income_entries').select('id,source_type,label,amount,received_date,is_recurring')
-        .eq('user_id', initialData.userId)
-        .gte('received_date', currentMonthRange().start)
-        .order('received_date', { ascending: false }),
-      supabase.from('savings_goals').select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
-        .eq('user_id', initialData.userId)
-        .eq('is_completed', false)
-        .order('created_at', { ascending: true }),
-    ])
-    setIncomeEntries((income ?? []) as IncomeEntry[])
+    const { data: goals } = await supabase
+      .from('savings_goals').select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
+      .eq('user_id', initialData.userId)
+      .eq('is_completed', false)
+      .order('created_at', { ascending: true })
     setSavingsGoals((goals ?? []) as SavingsGoal[])
     setWalletLoaded(true)
   }
@@ -238,6 +237,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
           amount: parseFloat(amount),
           category,
           expense_date: date,
+          month_year: date.slice(0, 7),
         })
         .select()
         .single()
@@ -349,7 +349,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                   </div>
                   <div className="font-display font-black text-2xl text-white mt-0.5">
                     {fmt.currencyShort(totalSpent)}
-                    <span className="text-white/30 font-normal text-base"> of {fmt.currencyShort(totalBudget)}</span>
+                    <span className="text-white/30 font-normal text-base"> of {fmt.currencyShort(effectiveTotal)}</span>
                   </div>
                 </div>
                 <div className={cn(
@@ -376,11 +376,12 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               </div>
 
               {/* Stats row */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-4 gap-3">
                 {[
                   { label: 'Remaining', value: fmt.currencyShort(Math.max(0, remaining)), colour: overBudget ? 'text-red-400' : 'text-teal-400' },
                   { label: 'Spent', value: fmt.currencyShort(totalSpent), colour: 'text-white' },
                   { label: 'Budget', value: fmt.currencyShort(totalBudget), colour: 'text-white/60' },
+                  { label: 'Income', value: fmt.currencyShort(totalIncome), colour: 'text-teal-400' },
                 ].map(stat => (
                   <div key={stat.label} className="text-center">
                     <div className={cn('font-display font-black text-lg', stat.colour)}>{stat.value}</div>
