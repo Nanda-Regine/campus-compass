@@ -4,9 +4,12 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 const ALLOWED_JOB_FIELDS = [
-  'employer_name', 'job_title', 'job_type', 'pay_rate', 'pay_type',
-  'hours_per_week', 'start_date', 'end_date', 'notes', 'is_active',
-  'contact_name', 'contact_email', 'contact_phone', 'location',
+  'employer_name', 'job_type', 'role_title', 'location',
+  'is_on_campus', 'is_remote', 'pay_type', 'pay_rate',
+  'contracted_hours_per_week', 'max_comfortable_hours',
+  'start_date', 'end_date', 'notes', 'is_active',
+  'status', 'block_exam_periods',
+  'contact_name', 'contact_email', 'contact_phone',
 ]
 
 function pickAllowed(body: Record<string, unknown>) {
