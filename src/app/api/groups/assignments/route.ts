@@ -74,10 +74,13 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('group_assignments insert error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
 
     // Auto-add creator as leader
-    await supabase.from('group_members').insert({
+    const { error: memberError } = await supabase.from('group_members').insert({
       assignment_id: assignment.id,
       user_id: user.id,
       email: user.email || '',
@@ -87,10 +90,16 @@ export async function POST(request: NextRequest) {
       joined_at: new Date().toISOString(),
     })
 
+    if (memberError) {
+      console.error('group_members insert error:', memberError)
+      // Assignment was created — still return it even if member insert failed
+    }
+
     return NextResponse.json({ assignment })
   } catch (error) {
-    console.error('Groups POST error:', error)
-    return NextResponse.json({ error: 'Failed to create group assignment' }, { status: 500 })
+    const msg = error instanceof Error ? error.message : 'Failed to create group assignment'
+    console.error('Groups POST error:', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
 

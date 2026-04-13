@@ -36,7 +36,13 @@ BEGIN
   END IF;
 END $$;
 
--- Make employer_name nullable (old schema had it NOT NULL)
+-- Make user_id and employer_name nullable — API only uses student_id now
+DO $$
+BEGIN
+  ALTER TABLE public.work_shifts ALTER COLUMN user_id DROP NOT NULL;
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;
+
 ALTER TABLE public.work_shifts
   ALTER COLUMN employer_name DROP NOT NULL;
 
