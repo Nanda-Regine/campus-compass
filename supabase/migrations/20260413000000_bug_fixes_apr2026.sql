@@ -37,8 +37,10 @@ CREATE POLICY "member_all" ON public.group_tasks FOR ALL USING (
 );
 
 -- Fix group_members visibility
-DROP POLICY IF EXISTS "member_view" ON public.group_members;
-DROP POLICY IF EXISTS "own_row" ON public.group_members;
+DROP POLICY IF EXISTS "member_view"   ON public.group_members;
+DROP POLICY IF EXISTS "own_row"       ON public.group_members;
+DROP POLICY IF EXISTS "member_write"  ON public.group_members;
+DROP POLICY IF EXISTS "member_delete" ON public.group_members;
 CREATE POLICY "member_view" ON public.group_members FOR SELECT USING (
   user_id = auth.uid()
   OR assignment_id IN (
