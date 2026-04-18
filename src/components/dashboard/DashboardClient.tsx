@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import TopBar from '@/components/layout/TopBar'
+import PullToRefresh from '@/components/ui/PullToRefresh'
 import PWAInstallBanner from '@/components/PWAInstallBanner'
 import DashboardGreeting from '@/components/dashboard/DashboardGreeting'
 import MoodCheckin from '@/components/dashboard/MoodCheckin'
@@ -124,6 +125,32 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     fetch('/api/push/check-exams').catch(() => {})
   }, [])
 
+  const handleRefresh = useCallback(async () => {
+    try {
+      const [tasksRes, examsRes, insightsRes] = await Promise.all([
+        fetch('/api/study/sessions').catch(() => null),
+        fetch('/api/insights').catch(() => null),
+        Promise.resolve(null),
+      ])
+      if (insightsRes?.ok) {
+        const data = await insightsRes.json()
+        setNovaInsights(data.insights || [])
+      }
+      // Reload page data via store refresh — re-fetch key tables
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const [{ data: tasks }, { data: exams }] = await Promise.all([
+        supabase.from('tasks').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+        supabase.from('exams').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+      ])
+      if (tasks) store.setTasks(tasks)
+      if (exams) store.setExams(exams)
+      void tasksRes
+    } catch { /* silent */ }
+  }, [store])
+
   const loadCheckIn = useCallback(async () => {
     setCheckInLoading(true)
     setShowCheckIn(true)
@@ -187,6 +214,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
+      <PullToRefresh onRefresh={handleRefresh} />
       <TopBar title="Dashboard" />
 
       <PWAInstallBanner variant="banner" />

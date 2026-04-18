@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import TopBar from '@/components/layout/TopBar'
+import PullToRefresh from '@/components/ui/PullToRefresh'
 import TasksTab from '@/components/study/TasksTab'
 import TimetableTab from '@/components/study/TimetableTab'
 import ExamsTab from '@/components/study/ExamsTab'
@@ -48,6 +49,21 @@ export default function StudyClient({ initialData }: StudyClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const handleRefresh = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const [{ data: tasks }, { data: exams }, { data: timetable }, { data: modules }] = await Promise.all([
+      supabase.from('tasks').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+      supabase.from('exams').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+      supabase.from('timetable_slots').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+      supabase.from('modules').select('*').eq('user_id', user.id),
+    ])
+    if (tasks)     store.setTasks(tasks)
+    if (exams)     store.setExams(exams)
+    if (timetable) store.setTimetable(timetable)
+    if (modules)   store.setModules(modules)
+  }, [supabase, store])
+
   const userId    = initialData.userId
   const modules   = store.modules.length   ? store.modules   : initialData.modules
   const tasks     = store.tasks.length     ? store.tasks     : initialData.tasks
@@ -59,6 +75,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
 
   return (
     <div className="min-h-screen bg-[#080f0e] pb-24">
+      <PullToRefresh onRefresh={handleRefresh} />
       <TopBar title="Study Planner" />
 
       <div className="sticky top-[57px] z-20 bg-[#080f0e] border-b border-white/7">
