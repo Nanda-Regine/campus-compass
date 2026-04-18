@@ -541,6 +541,12 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="text-3xl mb-3">💳</div>
                 <p className="font-display font-bold text-white text-sm">No expenses logged yet</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Add your first expense to start tracking.</p>
+                <button
+                  onClick={() => setShowAddForm(true)}
+                  className="mt-4 font-mono text-[0.65rem] text-teal-400 border border-teal-600/25 bg-teal-600/10 hover:bg-teal-600/20 px-4 py-2 rounded-xl transition-all"
+                >
+                  + Log your first expense →
+                </button>
               </div>
             ) : (
               <div className="space-y-2">

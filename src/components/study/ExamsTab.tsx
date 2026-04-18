@@ -158,6 +158,12 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
           <p className="font-mono text-[0.6rem] text-white/30 mt-1 max-w-xs mx-auto">
             Add your upcoming exams to track countdowns and get AI prep guides.
           </p>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="mt-4 font-mono text-[0.65rem] text-teal-400 border border-teal-600/25 bg-teal-600/10 hover:bg-teal-600/20 px-4 py-2 rounded-xl transition-all"
+          >
+            + Add your first exam →
+          </button>
         </div>
       ) : (
         <>
