@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -77,6 +77,29 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
   const [selectedCategory, setSelectedCategory] = useState<TaskCategoryGroup | 'all'>('all')
   const [assistModal, setAssistModal]   = useState<{ open: boolean; task: Task | null }>({ open: false, task: null })
   const [formCategory, setFormCategory] = useState<TaskCategoryGroup>('academic')
+  const [swipingId, setSwipingId] = useState<string | null>(null)
+  const [swipeDx, setSwipeDx] = useState(0)
+  const swipeStart = useRef<{ id: string; x: number } | null>(null)
+
+  const handleSwipeStart = useCallback((id: string, x: number) => {
+    swipeStart.current = { id, x }
+  }, [])
+
+  const handleSwipeMove = useCallback((x: number) => {
+    if (!swipeStart.current) return
+    const dx = x - swipeStart.current.x
+    if (dx > 0) {
+      setSwipingId(swipeStart.current.id)
+      setSwipeDx(Math.min(dx, 100))
+    }
+  }, [])
+
+  const handleSwipeEnd = useCallback((toggleDone: (task: Task) => void, task: Task) => {
+    if (swipeDx > 60) toggleDone(task)
+    swipeStart.current = null
+    setSwipingId(null)
+    setSwipeDx(0)
+  }, [swipeDx])
 
   useEffect(() => {
     if (triggerAdd) openAdd()
@@ -273,14 +296,32 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
             const grp = getGroupForType(task.task_type)
             const grpDef = grp ? TASK_CATEGORY_GROUPS[grp] : null
 
+            const isSwiping = swipingId === task.id && task.status !== 'done'
+
             return (
               <div
                 key={task.id}
                 className={cn(
-                  'flex items-start gap-3 bg-[#111a18] border rounded-xl px-4 py-3 transition-all group',
+                  'relative flex items-start gap-3 bg-[#111a18] border rounded-xl px-4 py-3 transition-all group overflow-hidden',
                   task.status === 'done' ? 'opacity-50 border-white/5' : 'border-white/8 hover:border-white/15'
                 )}
+                onTouchStart={task.status !== 'done' ? (e) => handleSwipeStart(task.id, e.touches[0].clientX) : undefined}
+                onTouchMove={task.status !== 'done' ? (e) => handleSwipeMove(e.touches[0].clientX) : undefined}
+                onTouchEnd={task.status !== 'done' ? () => handleSwipeEnd(toggleDone, task) : undefined}
               >
+                {isSwiping && (
+                  <div
+                    className="absolute inset-0 rounded-xl flex items-center px-4 pointer-events-none transition-opacity"
+                    style={{
+                      background: `rgba(13,148,136,${Math.min(swipeDx / 100, 0.35)})`,
+                      opacity: swipeDx > 10 ? 1 : 0,
+                    }}
+                  >
+                    <svg width="18" height="14" viewBox="0 0 18 14" fill="none" style={{ opacity: Math.min(swipeDx / 60, 1) }}>
+                      <path d="M1 7l5 5L17 1" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
                 <button
                   onClick={() => toggleDone(task)}
                   className={cn(
