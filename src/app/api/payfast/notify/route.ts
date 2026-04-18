@@ -25,18 +25,29 @@ function getClientIp(request: NextRequest): string {
   )
 }
 
+// PHP urlencode-compatible encoder (PayFast signs params using PHP's urlencode)
+function phpUrlencode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
+    .replace(/%20/g, '+')
+}
+
 // Verify PayFast MD5 signature per their ITN specification
 function verifySignature(data: Record<string, string>, passphrase: string | undefined): boolean {
   const { signature, ...rest } = data
 
   // Build query string from all params except signature, in received order
-  // PayFast expects params in the order they were received
   const paramString = Object.entries(rest)
-    .map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%20/g, '+')}`)
+    .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
     .join('&')
 
   const stringToHash = passphrase
-    ? `${paramString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
+    ? `${paramString}&passphrase=${phpUrlencode(passphrase)}`
     : paramString
 
   const computed = crypto.createHash('md5').update(stringToHash).digest('hex')
@@ -112,12 +123,11 @@ export async function POST(request: NextRequest) {
     } catch { /* non-fatal */ }
 
     if (data.payment_status === 'COMPLETE' && userId) {
-      // Determine nova_messages_limit for this plan
       const novaLimit = tier === 'nova_unlimited' ? 9999
         : tier === 'premium' ? 250
         : 100 // scholar
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({
           plan: tier,
@@ -126,11 +136,27 @@ export async function POST(request: NextRequest) {
           nova_messages_limit: novaLimit,
         })
         .eq('id', userId)
+
+      if (updateError) {
+        console.error('[PayFast ITN] Profile upgrade failed', { userId, tier, error: updateError.message })
+        try {
+          await supabase.from('payment_logs').insert({
+            payfast_payment_id: data.pf_payment_id ?? null,
+            amount: parseFloat(data.amount_gross ?? '0'),
+            status: 'UPGRADE_FAILED',
+            item_name: data.item_name ?? null,
+            raw_data: { ...data, upgrade_error: updateError.message },
+            user_id: userId,
+          })
+        } catch { /* non-fatal */ }
+      } else {
+        console.log(`[PayFast ITN] Upgraded user ${userId} to ${tier}`)
+      }
     }
 
     // Handle subscription cancellation — revert to free tier
     if (data.payment_status === 'CANCELLED' && userId) {
-      await supabase
+      const { error: cancelError } = await supabase
         .from('profiles')
         .update({
           plan: 'free',
@@ -139,6 +165,12 @@ export async function POST(request: NextRequest) {
           nova_messages_limit: 15,
         })
         .eq('id', userId)
+
+      if (cancelError) {
+        console.error('[PayFast ITN] Profile cancellation failed', { userId, error: cancelError.message })
+      } else {
+        console.log(`[PayFast ITN] Cancelled subscription for user ${userId}`)
+      }
     }
 
     // PayFast REQUIRES 200 — always
