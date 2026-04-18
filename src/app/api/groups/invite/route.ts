@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     const { data: invite } = await serviceSupabase
       .from('group_invites')
-      .select('assignment_id, expires_at, accepted_at, group_assignments(title, subject, due_date, created_by, profiles!group_assignments_created_by_fkey(name))')
+      .select('assignment_id, expires_at, accepted_at, group_assignments(title, subject, due_date, created_by, profiles!group_assignments_created_by_fkey(full_name))')
       .eq('token', token)
       .single()
 
@@ -101,7 +101,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name')
+      .select('full_name')
       .eq('id', user.id)
       .single()
 
@@ -110,15 +110,15 @@ export async function PATCH(request: NextRequest) {
       p_token: token,
       p_user_id: user.id,
       p_email: user.email || '',
-      p_name: profile?.name || user.email || 'Student',
+      p_name: profile?.full_name || user.email || 'Student',
     })
 
     if (result.error) throw result.error
 
-    const data = result.data as { error?: string; success?: boolean; assignment_id?: string; assignment_title?: string }
+    const data = result.data as { ok?: boolean; error?: string; assignment_id?: string; assignment_title?: string; already_member?: boolean }
     if (data?.error) return NextResponse.json({ error: data.error }, { status: 400 })
 
-    return NextResponse.json({ success: true, assignment_id: data?.assignment_id, assignment_title: data?.assignment_title })
+    return NextResponse.json({ success: true, assignment_id: data?.assignment_id, assignment_title: data?.assignment_title ?? null })
   } catch (error) {
     console.error('Invite PATCH error:', error)
     return NextResponse.json({ error: 'Failed to accept invite' }, { status: 500 })

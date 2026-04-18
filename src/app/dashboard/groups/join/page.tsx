@@ -12,7 +12,7 @@ interface InviteData {
       title: string
       subject: string | null
       due_date: string | null
-      profiles: { name: string } | null
+      profiles: { full_name: string } | null
     }
   }
 }
@@ -55,7 +55,7 @@ function JoinGroupContent() {
         return
       }
       if (!res.ok) { toast.error(data.error || 'Failed to join'); return }
-      toast.success(`Joined "${data.assignment_title}"!`)
+      toast.success(data.assignment_title ? `Joined "${data.assignment_title}"!` : 'Successfully joined the group!')
       router.push(`/dashboard/groups`)
     } catch {
       toast.error('Something went wrong')
@@ -91,7 +91,7 @@ function JoinGroupContent() {
   }
 
   const assignment = inviteData?.invite?.group_assignments
-  const creatorName = assignment?.profiles?.name || 'A classmate'
+  const creatorName = assignment?.profiles?.full_name || 'A classmate'
 
   return (
     <div className="min-h-screen bg-[#080f0e] flex items-center justify-center px-6">
