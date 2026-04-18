@@ -190,12 +190,12 @@ export default function LandingPage() {
         </nav>
 
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
-        <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" aria-labelledby="hero-heading">
+        <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
           {/* Vivid multi-color background glow */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: '700px', height: '500px', background: 'radial-gradient(ellipse, rgba(59,130,246,0.22) 0%, transparent 65%)', filter: 'blur(40px)' }} />
-            <div style={{ position: 'absolute', top: '-40px', right: '-100px', width: '500px', height: '400px', background: 'radial-gradient(ellipse, rgba(13,148,136,0.2) 0%, transparent 65%)', filter: 'blur(50px)' }} />
-            <div style={{ position: 'absolute', top: '80px', left: '-60px', width: '400px', height: '300px', background: 'radial-gradient(ellipse, rgba(224,120,88,0.15) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+            <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: 'min(700px, 180vw)', height: '500px', background: 'radial-gradient(ellipse, rgba(59,130,246,0.22) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+            <div style={{ position: 'absolute', top: '-40px', right: '-100px', width: 'min(500px, 130vw)', height: '400px', background: 'radial-gradient(ellipse, rgba(13,148,136,0.2) 0%, transparent 65%)', filter: 'blur(50px)' }} />
+            <div style={{ position: 'absolute', top: '80px', left: '-60px', width: 'min(400px, 110vw)', height: '300px', background: 'radial-gradient(ellipse, rgba(224,120,88,0.15) 0%, transparent 65%)', filter: 'blur(40px)' }} />
           </div>
 
           <div className="relative">
@@ -251,7 +251,18 @@ export default function LandingPage() {
               { value: '15+', label: 'SA universities', sub: 'UCT to TUT', color: '#06b6d4' },
               { value: '📶', label: 'Works offline', sub: 'load shedding ready', color: '#e07858' },
             ].map((stat, i) => (
-              <div key={stat.label} className="flex flex-col items-center justify-center py-6 px-4 text-center" style={{ borderRight: i < 3 ? '1px solid rgba(255,255,255,0.07)' : undefined }}>
+              <div
+                key={stat.label}
+                className={[
+                  'flex flex-col items-center justify-center py-6 px-4 text-center',
+                  // Mobile 2-col: top-row items (0,1) get border-b; left-column items (0,2) get border-r
+                  // Desktop 4-col (sm): items 0,1,2 get border-r only, no border-b
+                  i < 2 ? 'border-b border-white/[0.07] sm:border-b-0' : '',
+                  i === 0 ? 'border-r border-white/[0.07]' :
+                  i === 1 ? 'sm:border-r sm:border-white/[0.07]' :
+                  i === 2 ? 'border-r border-white/[0.07]' : '',
+                ].filter(Boolean).join(' ')}
+              >
                 <span className="font-display font-black text-2xl sm:text-3xl mb-0.5" style={{ color: stat.color }}>{stat.value}</span>
                 <span className="font-display text-xs text-white/70">{stat.label}</span>
                 <span className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{stat.sub}</span>
@@ -438,7 +449,7 @@ export default function LandingPage() {
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="nova-heading">
           <div
             className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
-            style={{ background: 'linear-gradient(135deg, #060f1a, #071814)', border: '1px solid rgba(13,148,136,0.25)' }}
+            style={{ background: 'linear-gradient(135deg, #060f1a, #071814)', border: '1px solid rgba(13,148,136,0.25)', transform: 'translateZ(0)' }}
           >
             <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.15), transparent 60%)' }} />
             <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(59,130,246,0.1), transparent 60%)' }} />
@@ -691,11 +702,11 @@ export default function LandingPage() {
         <section className="px-5 pb-24 max-w-6xl mx-auto">
           <div
             className="rounded-3xl px-8 py-16 text-center relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #06112a 0%, #071c1a 60%, #060c18 100%)', border: '1px solid rgba(59,130,246,0.2)' }}
+            style={{ background: 'linear-gradient(135deg, #06112a 0%, #071c1a 60%, #060c18 100%)', border: '1px solid rgba(59,130,246,0.2)', transform: 'translateZ(0)' }}
           >
-            <div className="absolute top-0 left-0 w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 60%)' }} />
-            <div className="absolute bottom-0 right-0 w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom right, rgba(13,148,136,0.18), transparent 60%)' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(ellipse, rgba(6,182,212,0.06), transparent 65%)' }} />
+            <div className="absolute top-0 left-0 w-full sm:w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 60%)' }} />
+            <div className="absolute bottom-0 right-0 w-full sm:w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom right, rgba(13,148,136,0.18), transparent 60%)' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full sm:w-[600px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(ellipse, rgba(6,182,212,0.06), transparent 65%)' }} />
 
             <div className="relative">
               <div className="text-5xl mb-5" aria-hidden="true">🧭</div>
