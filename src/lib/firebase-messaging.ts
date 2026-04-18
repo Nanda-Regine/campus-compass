@@ -1,7 +1,5 @@
 // Firebase Cloud Messaging — client-side subscription logic
-// Requires: npm install firebase  (install once disk space is freed)
 // Called after user authenticates to subscribe them to push notifications.
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ─── Firebase config from env ─────────────────────────────────
 const firebaseConfig = {
@@ -13,17 +11,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let messagingInstance: any = null
+import type { Messaging } from 'firebase/messaging'
 
-async function getMessaging(): Promise<any> {
+let messagingInstance: Messaging | null = null
+
+async function getMessaging(): Promise<Messaging | null> {
   if (messagingInstance) return messagingInstance
   if (typeof window === 'undefined') return null
 
   try {
-    // Dynamic imports so missing package only fails at runtime, not build time
-    const { initializeApp, getApps } = await import('firebase/app' as any)
-    const { getMessaging: getFCM, isSupported } = await import('firebase/messaging' as any)
+    const { initializeApp, getApps } = await import('firebase/app')
+    const { getMessaging: getFCM, isSupported } = await import('firebase/messaging')
 
     const supported = await isSupported()
     if (!supported) return null
@@ -57,7 +55,7 @@ export async function subscribeToPush(): Promise<string | null> {
     const messaging = await getMessaging()
     if (!messaging) return null
 
-    const { getToken } = await import('firebase/messaging' as any)
+    const { getToken } = await import('firebase/messaging')
     const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
     const token = await getToken(messaging, {
       // FIREBASE_VAPID_KEY comes from Firebase Console → Project Settings → Cloud Messaging

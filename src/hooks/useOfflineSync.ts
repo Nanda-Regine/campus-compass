@@ -28,8 +28,8 @@ export function useOfflineSync() {
         const { data } = await query
         if (!data) return
         const tx = db.transaction(storeName as Parameters<typeof db.transaction>[0], 'readwrite')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await Promise.all([...data.map(r => (tx as any).store.put(r)), tx.done])
+        const store = tx.objectStore(storeName as Parameters<typeof db.transaction>[0])
+        await Promise.all([...data.map(r => store.put(r)), tx.done])
       }
 
       await Promise.allSettled([
