@@ -7,6 +7,8 @@ import Script from 'next/script'
 import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { GlobalFAB } from '@/components/layout/GlobalFAB'
+import OnboardingTooltip from '@/components/OnboardingTooltip'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import ConsentBanner from '@/components/ConsentBanner'
 import './globals.css'
@@ -308,6 +310,8 @@ a.appendChild(r);
           <div className="pb-16 md:pb-0">
             {children}
           </div>
+          <GlobalFAB />
+          <OnboardingTooltip />
           <BottomNav />
         </Providers>
         <Toaster
