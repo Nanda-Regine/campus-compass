@@ -128,6 +128,11 @@ function buildPayFastForm(
 
   data.signature = createHash('md5').update(sigSource).digest('hex')
 
+  console.log('[PayFast] merchant_id:', data.merchant_id)
+  console.log('[PayFast] action:', isSandbox ? 'SANDBOX' : 'PRODUCTION')
+  console.log('[PayFast] queryString:', queryString)
+  console.log('[PayFast] signature:', data.signature)
+
   return {
     action: isSandbox
       ? 'https://sandbox.payfast.co.za/eng/process'
