@@ -161,114 +161,131 @@ export default async function UpgradePage() {
   }))
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
       <TopBar title="Upgrade" />
 
       <div className="max-w-sm mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <div className="text-4xl mb-3">⭐</div>
-          <h1 className="font-display font-black text-2xl text-white mb-1">Unlock more Nova</h1>
-          <p className="font-mono text-xs text-white/40">Monthly subscription · Cancel anytime</p>
+          <div style={{
+            width: 56, height: 56, borderRadius: 'var(--radius-lg)',
+            background: 'var(--nova-dim)', border: '0.5px solid var(--nova-border)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 16px', fontSize: '1.5rem',
+          }}>✦</div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--text-primary)', marginBottom: 4 }}>
+            Unlock more Nova
+          </h1>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+            Monthly subscription · Cancel anytime
+          </p>
         </div>
 
         {/* Free tier info card */}
         <div
-          className="rounded-2xl p-4 mb-4 relative overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
+          className="card-base"
+          style={{ padding: 16, marginBottom: 16, position: 'relative', overflow: 'hidden' }}
         >
-          <div className="absolute top-2 right-2 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.12)', color: '#4db6ac', border: '1px solid rgba(13,148,136,0.2)' }}>
-            Works offline
+          <div style={{
+            position: 'absolute', top: 10, right: 10,
+            fontFamily: 'var(--font-mono)', fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+            padding: '2px 8px', borderRadius: 'var(--radius-pill)',
+            background: 'var(--teal-dim)', color: 'var(--teal)', border: '0.5px solid var(--teal-border)',
+          }}>Works offline</div>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-tertiary)', marginBottom: 6 }}>
+            Free — forever
+          </p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 14 }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.75rem', color: 'var(--text-primary)' }}>R0</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>/month</span>
           </div>
-          <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Free — forever</p>
-          <div className="flex items-baseline gap-1 mb-3">
-            <span className="font-display font-black text-3xl text-white">R0</span>
-            <span className="font-mono text-xs text-white/30">/month</span>
-          </div>
-          <ul className="space-y-1.5">
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[
-              { icon: '🌟', label: '15 Nova messages / month' },
-              { icon: '📚', label: 'Full Study Planner' },
-              { icon: '💰', label: 'Budget & NSFAS tracker' },
-              { icon: '🏦', label: 'Flexible Wallet + Savings Goals' },
-              { icon: '🍲', label: 'Meal Prep & Work tracker' },
+              { label: '15 Nova messages / month' },
+              { label: 'Full Study Planner' },
+              { label: 'Budget & NSFAS tracker' },
+              { label: 'Flexible Wallet + Savings Goals' },
+              { label: 'Meal Prep & Work tracker' },
             ].map(f => (
-              <li key={f.label} className="flex items-center gap-2.5">
-                <span className="text-sm">{f.icon}</span>
-                <span className="font-display text-xs text-white/50">{f.label}</span>
+              <li key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 14, height: 14, color: 'var(--teal)', fontSize: '0.6rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>✓</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{f.label}</span>
               </li>
             ))}
           </ul>
           {currentTier === 'free' && (
-            <div className="mt-3 font-mono text-[0.6rem] text-white/30 text-center py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
+            <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', textAlign: 'center', padding: '8px', borderRadius: 'var(--radius-sm)', background: 'var(--bg-surface)' }}>
               Your current plan
             </div>
           )}
         </div>
 
         {/* Paid tier cards */}
-        <div className="space-y-4 mb-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
           {tiersWithForms.map(tier => (
             <div
               key={tier.id}
-              className="relative rounded-2xl overflow-hidden"
               style={{
-                background: tier.gold
-                  ? 'linear-gradient(135deg, rgba(212,168,71,0.1), rgba(212,168,71,0.04))'
+                position: 'relative',
+                borderRadius: 'var(--radius-xl)',
+                overflow: 'hidden',
+                background: tier.id === 'nova_unlimited'
+                  ? 'var(--nova-bg)'
                   : tier.highlight
-                    ? 'linear-gradient(135deg, rgba(232,149,110,0.1), rgba(232,149,110,0.04))'
-                    : 'rgba(255,255,255,0.03)',
-                border: tier.gold
-                  ? '1px solid rgba(212,168,71,0.4)'
+                    ? `linear-gradient(135deg, ${tier.colour}18, ${tier.colour}08)`
+                    : 'var(--bg-surface)',
+                border: tier.id === 'nova_unlimited'
+                  ? '0.5px solid var(--nova-border)'
                   : tier.highlight
-                    ? '1px solid rgba(232,149,110,0.35)'
-                    : '1px solid rgba(255,255,255,0.08)',
-                boxShadow: tier.gold ? '0 0 30px rgba(212,168,71,0.06)' : undefined,
+                    ? `0.5px solid ${tier.colour}60`
+                    : '0.5px solid var(--border-subtle)',
+                boxShadow: tier.id === 'nova_unlimited' ? '0 0 40px rgba(130,100,255,0.08)' : undefined,
               }}
             >
               {tier.badge && (
-                <div
-                  className="absolute top-0 right-0 font-mono text-[0.55rem] uppercase tracking-widest px-3 py-1 rounded-bl-xl"
-                  style={{ background: tier.colour, color: tier.gold ? '#1a1200' : '#fff' }}
-                >
+                <div style={{
+                  position: 'absolute', top: 0, right: 0,
+                  fontFamily: 'var(--font-mono)', fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+                  padding: '4px 12px',
+                  borderRadius: '0 var(--radius-xl) 0 var(--radius-md)',
+                  background: tier.colour,
+                  color: tier.gold ? '#1a1200' : '#fff',
+                }}>
                   {tier.badge}
                 </div>
               )}
 
-              <div className="p-5">
-                {/* Header */}
-                <div className="flex items-end justify-between mb-4">
+              <div style={{ padding: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 16 }}>
                   <div>
-                    <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-1"
-                      style={{ color: tier.colour }}>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: tier.colour, marginBottom: 4 }}>
                       {tier.name}
                     </p>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display font-black text-3xl text-white">R{tier.price}</span>
-                      <span className="font-mono text-xs text-white/30">/month</span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.75rem', color: 'var(--text-primary)' }}>R{tier.price}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>/month</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-mono text-xs" style={{ color: tier.colour }}>{tier.novaMessages} Nova</p>
-                    <p className="font-mono text-[0.6rem] text-white/25">messages/mo</p>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.81rem', color: tier.colour }}>{tier.novaMessages} Nova</p>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)' }}>messages/mo</p>
                   </div>
                 </div>
 
-                {/* Features */}
-                <ul className="space-y-2 mb-4">
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                   {tier.features.map(f => (
-                    <li key={f.label} className="flex items-center gap-2.5">
-                      <span className="text-sm">{f.icon}</span>
-                      <span className="font-display text-xs text-white/70">{f.label}</span>
+                    <li key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 14, height: 14, color: tier.colour, fontSize: '0.6rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>✓</span>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{f.label}</span>
                     </li>
                   ))}
                 </ul>
 
-                {/* PayFast form or current plan */}
                 {tier.isCurrent ? (
-                  <div
-                    className="w-full font-display font-bold text-sm py-3 rounded-xl text-center"
-                    style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }}
-                  >
+                  <div style={{
+                    width: '100%', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.875rem',
+                    padding: '12px 0', borderRadius: 'var(--radius-md)', textAlign: 'center',
+                    background: 'var(--bg-surface)', color: 'var(--text-tertiary)',
+                  }}>
                     Current plan
                   </div>
                 ) : (
@@ -287,23 +304,23 @@ export default async function UpgradePage() {
           ))}
         </div>
 
-        <p className="font-mono text-[0.56rem] text-white/20 text-center mb-4">
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
           Secured by PayFast · Recurring monthly · Cancel anytime in your profile
         </p>
 
         <Link
           href="/dashboard"
-          className="block text-center font-display text-sm text-white/35 hover:text-white/60 transition-all py-2"
+          style={{ display: 'block', textAlign: 'center', fontFamily: 'var(--font-display)', fontSize: '0.875rem', color: 'var(--text-tertiary)', padding: '8px 0', textDecoration: 'none' }}
         >
           Maybe later
         </Link>
 
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <Link href="/terms" className="font-mono text-[0.55rem] text-white/20 hover:text-white/40 transition-colors">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 16 }}>
+          <Link href="/terms" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
             Terms &amp; Conditions
           </Link>
-          <span className="text-white/10 font-mono text-[0.55rem]">·</span>
-          <Link href="/privacy" className="font-mono text-[0.55rem] text-white/20 hover:text-white/40 transition-colors">
+          <span style={{ color: 'var(--border-subtle)', fontFamily: 'var(--font-mono)', fontSize: '0.55rem' }}>·</span>
+          <Link href="/privacy" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
             Privacy Policy
           </Link>
         </div>

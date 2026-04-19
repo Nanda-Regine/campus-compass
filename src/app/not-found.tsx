@@ -10,75 +10,85 @@ export default function NotFound() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-5 text-center"
-      style={{ background: '#0b0907' }}
+      style={{ background: 'var(--bg-base)' }}
     >
-      {/* Glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
         aria-hidden="true"
-        style={{ background: 'radial-gradient(ellipse, rgba(211,107,73,0.08) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse, var(--teal-glow) 0%, transparent 70%)' }}
       />
 
       <div className="relative max-w-md">
-        {/* Logo */}
         <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-8"
-          style={{ background: 'linear-gradient(135deg, #0d9488, #0f766e)' }}
+          style={{
+            width: 64, height: 64, borderRadius: 'var(--radius-xl)',
+            background: 'linear-gradient(135deg, var(--teal), #0f766e)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 32px',
+          }}
           aria-hidden="true"
         >
-          🧭
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="12" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+            <circle cx="14" cy="14" r="4" fill="white" />
+            <line x1="14" y1="2" x2="14" y2="8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="14" y1="20" x2="14" y2="26" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="2" y1="14" x2="8" y2="14" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="20" y1="14" x2="26" y2="14" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
         </div>
 
-        {/* 404 */}
         <p
-          className="font-display font-black mb-2"
-          style={{ fontSize: '6rem', lineHeight: 1, color: 'rgba(255,255,255,0.05)' }}
+          style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '6rem', lineHeight: 1, color: 'var(--border-default)', marginBottom: 0 }}
           aria-hidden="true"
         >
           404
         </p>
 
-        <h1 className="font-display font-black text-2xl text-white mb-3 -mt-6">
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.5rem', color: 'var(--text-primary)', marginTop: -24, marginBottom: 12 }}>
           Page not found
         </h1>
-        <p className="text-sm mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.7 }}>
           This page doesn&apos;t exist — or it moved. Let&apos;s get you back to your campus life.
         </p>
 
-        {/* Links */}
         <div className="flex flex-col sm:flex-row items-center gap-3 justify-center">
           <Link
             href="/dashboard"
-            className="font-display font-bold text-sm px-6 py-3 rounded-xl"
-            style={{ background: '#0d9488', color: '#fff' }}
+            style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.875rem',
+              padding: '12px 24px', borderRadius: 'var(--radius-md)',
+              background: 'var(--teal)', color: '#fff', textDecoration: 'none',
+            }}
           >
             Go to Dashboard
           </Link>
           <Link
             href="/"
-            className="font-display font-bold text-sm px-6 py-3 rounded-xl"
-            style={{ border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.55)' }}
+            style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.875rem',
+              padding: '12px 24px', borderRadius: 'var(--radius-md)',
+              border: '0.5px solid var(--border-default)', color: 'var(--text-secondary)', textDecoration: 'none',
+            }}
           >
             Back to home
           </Link>
         </div>
 
-        {/* Quick links */}
-        <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="font-mono text-xs mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>Quick links</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+        <div style={{ marginTop: 32, paddingTop: 24, borderTop: '0.5px solid var(--border-subtle)' }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)', marginBottom: 16 }}>Quick links</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
             {[
-              { href: '/study', label: 'Study Planner' },
+              { href: '/study', label: 'Study' },
               { href: '/budget', label: 'Budget' },
               { href: '/nova', label: 'Nova AI' },
-              { href: '/meals', label: 'Meal Prep' },
+              { href: '/meals', label: 'Meals' },
               { href: '/upgrade', label: 'Pricing' },
             ].map(link => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="font-mono text-xs transition-colors"
-                style={{ color: 'rgba(255,255,255,0.3)' }}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}
               >
                 {link.label}
               </Link>

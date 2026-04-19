@@ -17,6 +17,8 @@ export default function UpgradeButton({ tier, price, action, fields, colour, gol
     trackEvent('upgrade_click', { tier, price })
   }
 
+  const isAccented = gold || highlight
+
   return (
     <form action={action} method="POST">
       {Object.entries(fields).map(([name, value]) => (
@@ -25,11 +27,18 @@ export default function UpgradeButton({ tier, price, action, fields, colour, gol
       <button
         type="submit"
         onClick={handleClick}
-        className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-[0.98]"
         style={{
-          background: gold || highlight ? colour : 'rgba(13,148,136,0.2)',
-          color: gold ? '#1a1200' : highlight ? '#1a0a00' : '#2dd4bf',
-          border: gold || highlight ? 'none' : '1px solid rgba(13,148,136,0.3)',
+          width: '100%',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+          fontSize: '0.875rem',
+          padding: '12px 0',
+          borderRadius: 'var(--radius-md)',
+          border: isAccented ? 'none' : `0.5px solid ${colour}40`,
+          background: isAccented ? colour : `${colour}20`,
+          color: gold ? '#1a1200' : highlight ? '#fff' : colour,
+          cursor: 'pointer',
+          transition: 'filter var(--duration-fast) var(--ease-out)',
         }}
       >
         Subscribe for R{price}/month

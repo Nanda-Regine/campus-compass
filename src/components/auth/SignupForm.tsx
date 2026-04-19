@@ -48,7 +48,7 @@ export default function SignupForm() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#080f0e] flex flex-col items-center justify-center px-5 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: 'var(--bg-base)' }}>
         <div className="text-5xl mb-4 animate-bounce-in">📬</div>
         <h1 className="font-display font-black text-2xl text-white mb-2">Check your email!</h1>
         <p className="font-body text-sm text-white/50 max-w-xs leading-relaxed mb-6">
@@ -62,7 +62,7 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080f0e] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)' }}>
       <div className="px-5 pt-12 pb-8 text-center">
         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
@@ -75,7 +75,7 @@ export default function SignupForm() {
       </div>
 
       <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-6">
+        <div className="card-base" style={{ padding: 24 }}>
 
           <Button
             variant="outline"

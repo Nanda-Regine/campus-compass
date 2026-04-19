@@ -30,7 +30,7 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080f0e] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)' }}>
       {/* Top brand bar */}
       <div className="px-5 pt-12 pb-8 text-center">
         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
@@ -45,7 +45,7 @@ export default function LoginForm() {
 
       {/* Card */}
       <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-6">
+        <div className="card-base" style={{ padding: 24 }}>
 
           {/* Google OAuth button */}
           <Button
