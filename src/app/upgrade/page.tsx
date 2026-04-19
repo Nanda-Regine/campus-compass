@@ -105,7 +105,7 @@ function buildPayFastForm(
     notify_url:        `${appUrl}/api/payfast/notify`,
     name_first:        name.split(' ')[0] || 'Student',
     email_address:     email,
-    m_payment_id:      `${userId}|${tierId}`,
+    m_payment_id:      `${userId}_${tierId}`,
     amount:            price.toFixed(2),
     item_name:         itemName,
     subscription_type: '1',
@@ -127,11 +127,6 @@ function buildPayFastForm(
     : queryString
 
   data.signature = createHash('md5').update(sigSource).digest('hex')
-
-  console.log('[PayFast] merchant_id:', data.merchant_id)
-  console.log('[PayFast] action:', isSandbox ? 'SANDBOX' : 'PRODUCTION')
-  console.log('[PayFast] queryString:', queryString)
-  console.log('[PayFast] signature:', data.signature)
 
   return {
     action: isSandbox

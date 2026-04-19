@@ -98,9 +98,8 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id is encoded as "userId|tierId" (e.g. "abc123|scholar" or "abc123|premium")
-    // Legacy format was "userId|months" — handle both gracefully
-    const parts = (data.m_payment_id ?? '').split('|')
+    // m_payment_id is encoded as "userId_tierId" (e.g. "abc123_scholar")
+    const parts = (data.m_payment_id ?? '').split('_')
     const userId = parts[0]
     const tierOrMonths = parts[1] ?? 'premium'
 
