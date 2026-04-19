@@ -13,7 +13,6 @@ export default function ConsentBanner() {
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY) as ConsentChoice | null
     if (!stored) {
-      // Small delay so the banner doesn't flash before the page loads
       const t = setTimeout(() => setVisible(true), 1200)
       return () => clearTimeout(t)
     }
@@ -23,18 +22,15 @@ export default function ConsentBanner() {
 
   function applyConsent(c: ConsentChoice) {
     if (c === 'essential') {
-      // Disable PostHog analytics
       if (typeof window !== 'undefined' && (window as { posthog?: { opt_out_capturing?: () => void } }).posthog?.opt_out_capturing) {
         (window as { posthog?: { opt_out_capturing?: () => void } }).posthog!.opt_out_capturing!()
       }
-      // Block GTM analytics cookies (GTM is already loaded, but we suppress events)
       if (typeof window !== 'undefined') {
         ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = false
       }
     } else if (c === 'all') {
       if (typeof window !== 'undefined') {
         ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = true
-        // Re-enable PostHog if previously opted out
         const ph = (window as { posthog?: { opt_in_capturing?: () => void; has_opted_out_capturing?: () => boolean } }).posthog
         if (ph?.has_opted_out_capturing?.() && ph.opt_in_capturing) {
           ph.opt_in_capturing()
@@ -52,35 +48,73 @@ export default function ConsentBanner() {
 
   if (!visible) return null
 
+  void choice
+
   return (
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed bottom-20 md:bottom-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 60,
+        background: 'rgba(7,11,9,0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '0.5px solid var(--border-subtle)',
+        padding: '16px 20px',
+        paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+        animation: 'slideInFromBottom 300ms var(--ease-out) both',
+      }}
     >
-      <div className="pointer-events-auto w-full max-w-md bg-[#0e1a18] border border-white/12 rounded-2xl shadow-2xl p-4 animate-slide-up">
-        <div className="flex items-start gap-3 mb-3">
-          <span className="text-lg flex-shrink-0">🍪</span>
-          <div>
-            <p className="font-display font-bold text-white text-sm mb-1">Your data, your choice</p>
-            <p className="font-mono text-[0.62rem] text-white/50 leading-relaxed">
-              VarsityOS uses essential cookies to keep you logged in. We'd also like to use analytics
-              cookies (PostHog, Vercel) to improve the app. Under POPIA you can choose what to allow.{' '}
-              <a href="/privacy" className="text-teal-400 hover:underline">Privacy Policy →</a>
-            </p>
-          </div>
+      <div style={{ maxWidth: 560, margin: '0 auto' }}>
+        <div style={{ marginBottom: 12 }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)', marginBottom: 4 }}>
+            Your data, your choice
+          </p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.69rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            VarsityOS uses essential cookies to keep you logged in. We'd also like to use analytics cookies (PostHog, Vercel)
+            to improve the app. Under POPIA you can choose what to allow.{' '}
+            <a href="/privacy" style={{ color: 'var(--teal)', textDecoration: 'none' }}>Privacy Policy →</a>
+          </p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.69rem', color: 'var(--text-tertiary)', marginTop: 4 }}>
+            POPIA Reg: 2026-005658 · Mirembe Muse Pty Ltd
+          </p>
         </div>
 
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: 10 }}>
           <button
             onClick={() => handleChoice('all')}
-            className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white py-2.5 rounded-xl transition-all"
+            style={{
+              flex: 1,
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '0.875rem',
+              background: 'var(--teal)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 'var(--radius-md)',
+              padding: '10px 0',
+              cursor: 'pointer',
+            }}
           >
             Accept all
           </button>
           <button
             onClick={() => handleChoice('essential')}
-            className="flex-1 font-mono text-[0.72rem] text-white/60 hover:text-white border border-white/12 hover:border-white/25 py-2.5 rounded-xl transition-all"
+            style={{
+              flex: 1,
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.75rem',
+              background: 'transparent',
+              color: 'var(--text-tertiary)',
+              border: '0.5px solid var(--border-default)',
+              borderRadius: 'var(--radius-md)',
+              padding: '10px 0',
+              cursor: 'pointer',
+            }}
           >
             Essential only
           </button>
