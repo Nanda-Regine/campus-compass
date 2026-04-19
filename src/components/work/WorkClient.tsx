@@ -125,7 +125,7 @@ export default function WorkClient({ userId }: Props) {
           { label: 'Hours this wk', value: weekHours.toFixed(1),               color: weekHours > 25 ? 'text-red-400' : 'text-white' },
           { label: 'Earned this wk',value: `R${weekEarnings.toFixed(0)}`,      color: 'text-amber-400' },
         ].map(stat => (
-          <div key={stat.label} className="bg-[#111a18] border border-white/7 rounded-2xl p-3 text-center">
+          <div key={stat.label} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-3 text-center">
             <div className={`font-display font-black text-lg ${stat.color}`}>{stat.value}</div>
             <div className="font-mono text-[0.53rem] text-white/30 uppercase mt-0.5">{stat.label}</div>
           </div>
@@ -199,7 +199,7 @@ export default function WorkClient({ userId }: Props) {
         ) : (
           <div className="space-y-2">
             {jobs.map(job => (
-              <div key={job.id} className="group bg-[#111a18] border border-white/7 hover:border-white/12 rounded-2xl px-4 py-3.5 flex items-center gap-3 transition-all">
+              <div key={job.id} className="group bg-[var(--bg-surface)] border border-white/7 hover:border-white/12 rounded-2xl px-4 py-3.5 flex items-center gap-3 transition-all">
                 <div className="text-xl flex-shrink-0">{JOB_TYPE_LABELS[job.job_type]?.split(' ')[0] ?? '💼'}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm truncate">{job.employer_name}</div>
@@ -244,7 +244,7 @@ export default function WorkClient({ userId }: Props) {
         ) : (
           <div className="space-y-2">
             {shifts.slice(0, 5).map(shift => (
-              <div key={shift.id} className="bg-[#111a18] border border-white/7 rounded-xl px-4 py-3 flex items-center gap-3">
+              <div key={shift.id} className="bg-[var(--bg-surface)] border border-white/7 rounded-xl px-4 py-3 flex items-center gap-3">
                 <div className="w-1.5 h-8 rounded-full flex-shrink-0 bg-amber-500/60" />
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-sm text-white truncate">
@@ -279,12 +279,12 @@ export default function WorkClient({ userId }: Props) {
 
       {/* ─── Quick links ─── */}
       <div className="grid grid-cols-2 gap-3">
-        <Link href="/dashboard/work/shifts" className="bg-[#111a18] border border-white/7 hover:border-amber-500/30 rounded-2xl p-4 transition-all">
+        <Link href="/dashboard/work/shifts" className="bg-[var(--bg-surface)] border border-white/7 hover:border-amber-500/30 rounded-2xl p-4 transition-all">
           <div className="text-2xl mb-2">📅</div>
           <div className="font-display font-bold text-white text-sm">Add Shift</div>
           <div className="font-mono text-[0.58rem] text-amber-400 mt-0.5">Log your schedule →</div>
         </Link>
-        <Link href="/dashboard/work/earnings" className="bg-[#111a18] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all">
+        <Link href="/dashboard/work/earnings" className="bg-[var(--bg-surface)] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all">
           <div className="text-2xl mb-2">💸</div>
           <div className="font-display font-bold text-white text-sm">Earnings</div>
           <div className="font-mono text-[0.58rem] text-teal-400 mt-0.5">View income history →</div>

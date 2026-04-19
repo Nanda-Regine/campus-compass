@@ -38,7 +38,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
         id={selectId}
         className={cn(
           'w-full px-3.5 py-2.5 rounded-xl text-sm text-white font-body',
-          'bg-[#080f0e] border transition-all duration-150',
+          'bg-[var(--bg-base)] border transition-all duration-150',
           'focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20',
           'appearance-none cursor-pointer',
           error

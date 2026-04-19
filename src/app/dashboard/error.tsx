@@ -6,7 +6,7 @@ import Link from 'next/link'
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => { console.error(error) }, [error])
   return (
-    <div className="min-h-screen bg-[#0c0f0e] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6">
       <div className="text-center">
         <div className="text-4xl mb-4">⚠️</div>
         <p className="font-display font-bold text-white text-base mb-1">Something went wrong</p>

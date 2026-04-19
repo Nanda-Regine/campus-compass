@@ -76,7 +76,7 @@ export default function AddJobPage() {
     setForm(prev => ({ ...prev, [key]: value }))
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Add Job" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -183,7 +183,7 @@ export default function AddJobPage() {
             onChange={e => set('start_date', e.target.value)}
           />
 
-          <label className="flex items-start gap-3 cursor-pointer bg-[#111a18] border border-white/7 rounded-2xl p-4">
+          <label className="flex items-start gap-3 cursor-pointer bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
             <input
               type="checkbox"
               checked={form.block_exam_periods}

@@ -23,7 +23,7 @@ export default function TopBar({ title, action, variant = 'dark', className }: T
         className={cn(
           'sticky top-0 z-30 flex items-center justify-between px-4 py-3.5',
           variant === 'dark'
-            ? 'bg-[#080f0e] border-b border-white/7'
+            ? 'bg-[var(--bg-base)] border-b border-white/7'
             : variant === 'light'
             ? 'bg-[#f0fdfa] border-b border-teal-600/10'
             : 'bg-transparent',

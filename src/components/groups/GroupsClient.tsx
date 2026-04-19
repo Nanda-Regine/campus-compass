@@ -538,7 +538,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               <button
                 key={a.id}
                 onClick={() => { setSelected(a); setView('detail') }}
-                className="w-full text-left bg-[#111a18] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all group"
+                className="w-full text-left bg-[var(--bg-surface)] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all group"
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>

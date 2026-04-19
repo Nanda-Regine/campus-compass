@@ -21,7 +21,7 @@ export function Skeleton({ className, style }: { className?: string; style?: Rea
 
 export function SkeletonCard({ lines = 3 }: SkeletonProps) {
   return (
-    <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4 space-y-3">
+    <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4 space-y-3">
       <Skeleton className="h-4 w-2/3" />
       {Array.from({ length: lines - 1 }).map((_, i) => (
         <Skeleton key={i} className="h-3" style={{ width: `${70 + Math.random() * 30}%` } as React.CSSProperties} />

@@ -64,7 +64,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
     : 100
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Refer & Earn" />
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
@@ -90,7 +90,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
         </div>
 
         {/* Referral link card */}
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5 space-y-4">
+        <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5 space-y-4">
           <div>
             <p className="font-mono text-[0.58rem] text-white/35 uppercase tracking-widest mb-2">Your referral code</p>
             <div className="flex items-center gap-3 bg-white/3 border border-white/10 rounded-xl px-4 py-3">
@@ -138,7 +138,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
 
         {/* Next milestone */}
         {nextMilestone && referralCount < 10 && (
-          <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+          <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="font-mono text-[0.58rem] text-white/35 uppercase tracking-widest">Next milestone</p>
@@ -169,7 +169,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
         )}
 
         {/* How it works */}
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+        <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5">
           <p className="font-mono text-[0.58rem] text-white/35 uppercase tracking-widest mb-4">How it works</p>
           <div className="space-y-4">
             {HOW_IT_WORKS.map(step => (
@@ -190,7 +190,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
         </div>
 
         {/* Milestones table */}
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+        <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5">
           <p className="font-mono text-[0.58rem] text-white/35 uppercase tracking-widest mb-4">Reward milestones</p>
           <div className="space-y-2">
             {MILESTONES.map(m => {

@@ -154,7 +154,7 @@ export function FeedbackModal({ open, onClose }: Props) {
               placeholder="Tell us what's working, what's broken, or what you wish existed."
               rows={4}
               maxLength={1000}
-              className="w-full bg-[#111a18] border border-white/10 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
             />
             <div className="text-right font-mono text-[0.55rem] text-white/20 mt-1">
               {message.length}/1000

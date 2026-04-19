@@ -116,7 +116,7 @@ export default function ShiftsPage() {
   }, {})
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Shifts" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 
@@ -128,7 +128,7 @@ export default function ShiftsPage() {
 
         {/* ─── Add shift form ─── */}
         {addMode && (
-          <form onSubmit={handleAddShift} className="bg-[#111a18] border border-white/10 rounded-2xl p-4 space-y-3">
+          <form onSubmit={handleAddShift} className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-4 space-y-3">
             <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">New Shift</div>
 
             <div>
@@ -190,7 +190,7 @@ export default function ShiftsPage() {
 
         {/* ─── Draft message modal ─── */}
         {draftMode && (
-          <div className="bg-[#111a18] border border-purple-500/20 rounded-2xl p-4 space-y-3">
+          <div className="bg-[var(--bg-surface)] border border-purple-500/20 rounded-2xl p-4 space-y-3">
             <div className="font-mono text-[0.6rem] text-purple-400 uppercase tracking-widest">🌟 Nova drafted this for you</div>
             {draftLoading ? (
               <div className="space-y-2">
@@ -238,7 +238,7 @@ export default function ShiftsPage() {
               </div>
               <div className="space-y-2">
                 {monthShifts.map(shift => (
-                  <div key={shift.id} className="group bg-[#111a18] border border-white/7 hover:border-white/12 rounded-xl px-4 py-3">
+                  <div key={shift.id} className="group bg-[var(--bg-surface)] border border-white/7 hover:border-white/12 rounded-xl px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-8 rounded-full bg-amber-500/60 flex-shrink-0" />
                       <div className="flex-1 min-w-0">

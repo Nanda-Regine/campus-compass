@@ -47,7 +47,7 @@ export default function ReferralWidget() {
   if (!data) return null
 
   return (
-    <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+    <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div>

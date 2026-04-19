@@ -66,7 +66,7 @@ function JoinGroupContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080f0e] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
         <div className="font-mono text-white/40 text-sm">Loading invite…</div>
       </div>
     )
@@ -74,7 +74,7 @@ function JoinGroupContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#080f0e] flex items-center justify-center px-6">
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6">
         <div className="text-center">
           <div className="text-4xl mb-4">⚠️</div>
           <h2 className="font-display font-bold text-white text-xl mb-2">Invalid Invite</h2>
@@ -94,7 +94,7 @@ function JoinGroupContent() {
   const creatorName = assignment?.profiles?.full_name || 'A classmate'
 
   return (
-    <div className="min-h-screen bg-[#080f0e] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6">
       <div className="max-w-sm w-full text-center">
         <div className="w-16 h-16 rounded-2xl bg-teal-600/20 border border-teal-600/30 flex items-center justify-center text-3xl mx-auto mb-5">
           👥
@@ -134,7 +134,7 @@ function JoinGroupContent() {
 export default function JoinGroupPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#080f0e] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
         <div className="font-mono text-white/40 text-sm">Loading invite…</div>
       </div>
     }>

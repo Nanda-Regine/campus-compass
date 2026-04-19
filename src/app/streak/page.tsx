@@ -127,7 +127,7 @@ export default function StreakPage() {
   const streakColor = (s: number) => s >= 7 ? '#f59e0b' : s >= 3 ? '#f97316' : '#0d9488'
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Streaks & Goals" />
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-5">
@@ -210,7 +210,7 @@ export default function StreakPage() {
 
         {/* Add goal form */}
         {showAdd && (
-          <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+          <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
             {/* Emoji picker */}
             <div className="flex flex-wrap gap-1.5">
               {EMOJIS.map(e => (
@@ -295,7 +295,7 @@ export default function StreakPage() {
             {[1, 2].map(i => <div key={i} className="skeleton h-24 rounded-2xl" />)}
           </div>
         ) : goals.length === 0 ? (
-          <div className="bg-[#111a18] border border-white/7 rounded-2xl p-8 text-center">
+          <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-8 text-center">
             <div className="text-4xl mb-3">🎯</div>
             <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
             <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a goal and track your progress</p>
@@ -310,7 +310,7 @@ export default function StreakPage() {
               return (
                 <div
                   key={goal.id}
-                  className="bg-[#111a18] border border-white/7 rounded-2xl overflow-hidden"
+                  className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl overflow-hidden"
                   style={goal.is_completed ? { borderColor: `${goal.color}40` } : undefined}
                 >
                   <div className="p-4">

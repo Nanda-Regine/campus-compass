@@ -1,6 +1,6 @@
 export default function OfflinePage() {
   return (
-    <div className="min-h-screen bg-[#080f0e] flex flex-col items-center justify-center px-6 text-center">
+    <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center px-6 text-center">
       <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center text-3xl mb-6 shadow-teal">
         📶
       </div>

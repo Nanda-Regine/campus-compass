@@ -48,7 +48,7 @@ export function GlobalFAB() {
             style={{ animationDelay: `${i * 40}ms` }}
           >
             <span
-              className="font-mono text-[0.62rem] text-white/80 bg-[#111a18] border border-white/10 rounded-xl px-3 py-1.5 shadow-xl whitespace-nowrap"
+              className="font-mono text-[0.62rem] text-white/80 bg-[var(--bg-surface)] border border-white/10 rounded-xl px-3 py-1.5 shadow-xl whitespace-nowrap"
             >
               {action.label}
             </span>

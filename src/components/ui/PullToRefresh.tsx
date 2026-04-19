@@ -17,7 +17,7 @@ export default function PullToRefresh({ onRefresh }: Props) {
       style={{ transform: `translateY(${refreshing ? 48 : Math.min(pullDistance, 48)}px)` }}
     >
       <div
-        className="flex items-center gap-2 bg-[#111a18] border border-white/10 rounded-full px-4 py-2 shadow-xl"
+        className="flex items-center gap-2 bg-[var(--bg-surface)] border border-white/10 rounded-full px-4 py-2 shadow-xl"
         style={{ marginTop: '-40px' }}
       >
         <svg

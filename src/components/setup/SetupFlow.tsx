@@ -226,7 +226,7 @@ export default function SetupFlow() {
     i < step ? 'bg-teal-600' : i === step ? 'bg-coral' : 'bg-white/10'
 
   return (
-    <div className="min-h-screen bg-[#080f0e] flex flex-col">
+    <div className="min-h-screen bg-[var(--bg-base)] flex flex-col">
       {/* Header gradient */}
       <div
         className="px-5 pt-12 pb-8 text-center"

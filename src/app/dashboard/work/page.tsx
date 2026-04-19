@@ -9,7 +9,7 @@ export default async function WorkPage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Work" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <WorkClient userId={user.id} />

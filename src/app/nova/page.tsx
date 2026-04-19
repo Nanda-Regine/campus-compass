@@ -198,7 +198,7 @@ export default function NovaPage() {
   const usageLeft = messageLimit - messageCount
 
   return (
-    <div className="chat-page-height flex flex-col bg-[#080f0e]">
+    <div className="chat-page-height flex flex-col bg-[var(--bg-base)]">
       <TopBar
         title="Nova"
         action={
@@ -352,7 +352,7 @@ export default function NovaPage() {
                         ? 'bg-teal-600/20 border border-teal-600/30 text-white rounded-tr-sm'
                         : msg.isCrisis
                         ? 'bg-red-500/10 border border-red-500/20 text-white rounded-tl-sm'
-                        : 'bg-[#111a18] border border-white/7 text-white/90 rounded-tl-sm'
+                        : 'bg-[var(--bg-surface)] border border-white/7 text-white/90 rounded-tl-sm'
                     )}
                   >
                     <p className="whitespace-pre-wrap">
@@ -400,7 +400,7 @@ export default function NovaPage() {
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-900/60 to-teal-900/60 border border-purple-500/20 flex items-center justify-center text-base flex-shrink-0">
                   🌟
                 </div>
-                <div className="bg-[#111a18] border border-white/7 rounded-2xl rounded-tl-sm px-4 py-3">
+                <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl rounded-tl-sm px-4 py-3">
                   <div className="flex gap-1.5 items-center h-5">
                     {[0, 1, 2].map(i => (
                       <div
@@ -463,7 +463,7 @@ export default function NovaPage() {
       )}
 
       {/* Input area */}
-      <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[#080f0e]">
+      <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[var(--bg-base)]">
         {!isUnlimited && !isPremium && usageLeft <= 3 && usageLeft > 0 && (
           <div className="mb-2 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
             <span className="font-mono text-[0.6rem] text-amber-400">
@@ -518,7 +518,7 @@ export default function NovaPage() {
                 placeholder="Talk to Nova…"
                 rows={1}
                 maxLength={2000}
-                className="w-full bg-[#111a18] border border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
+                className="w-full bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
                 style={{ minHeight: '44px', maxHeight: '120px' }}
                 onInput={e => {
                   const target = e.target as HTMLTextAreaElement

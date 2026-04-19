@@ -101,7 +101,7 @@ export default async function CampusLifePage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Campus Life" />
 
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
@@ -145,7 +145,7 @@ export default async function CampusLifePage() {
         </div>
 
         {/* Crisis resources */}
-        <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+        <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
           <div className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest mb-3">
             Crisis support — free, 24/7
           </div>

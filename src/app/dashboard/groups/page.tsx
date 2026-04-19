@@ -9,7 +9,7 @@ export default async function GroupsPage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="flex flex-col h-screen bg-[#080f0e]">
+    <div className="flex flex-col h-screen bg-[var(--bg-base)]">
       <TopBar title="Group Assignments" />
       <div className="flex-1 overflow-hidden">
         <GroupsClient userId={user.id} />

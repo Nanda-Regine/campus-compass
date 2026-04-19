@@ -92,7 +92,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
       <nav
         className={cn(
           'fixed top-0 left-0 h-full w-72 z-50 flex flex-col',
-          'bg-[#080f0e] border-r border-white/7',
+          'bg-[var(--bg-base)] border-r border-white/7',
           'transition-transform duration-300 cubic-bezier(0.32,0,0.15,1)',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -179,7 +179,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 font-mono text-[0.7rem] text-white/70 focus:outline-none focus:border-teal-600/50 disabled:opacity-40"
               >
                 {SA_LANGUAGES.map(l => (
-                  <option key={l.value} value={l.value} className="bg-[#111a18]">
+                  <option key={l.value} value={l.value} className="bg-[var(--bg-surface)]">
                     {l.label}
                   </option>
                 ))}

@@ -302,7 +302,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
               <div
                 key={task.id}
                 className={cn(
-                  'relative flex items-start gap-3 bg-[#111a18] border rounded-xl px-4 py-3 transition-all group overflow-hidden',
+                  'relative flex items-start gap-3 bg-[var(--bg-surface)] border rounded-xl px-4 py-3 transition-all group overflow-hidden',
                   task.status === 'done' ? 'opacity-50 border-white/5' : 'border-white/8 hover:border-white/15'
                 )}
                 onTouchStart={task.status !== 'done' ? (e) => handleSwipeStart(task.id, e.touches[0].clientX) : undefined}

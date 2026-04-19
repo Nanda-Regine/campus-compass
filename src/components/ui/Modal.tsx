@@ -43,7 +43,7 @@ export default function Modal({ open, onClose, title, children, footer, size = '
     >
       <div
         className={cn(
-          'w-full bg-[#111a18] border border-white/10 flex flex-col animate-slide-up',
+          'w-full bg-[var(--bg-surface)] border border-white/10 flex flex-col animate-slide-up',
           'rounded-t-3xl sm:rounded-3xl',
           size === 'lg' ? 'max-w-2xl max-h-[92vh]' : 'max-w-lg max-h-[88vh]'
         )}

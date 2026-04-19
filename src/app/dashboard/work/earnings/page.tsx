@@ -56,7 +56,7 @@ export default function EarningsPage() {
   const thisMonth = sorted[0]
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Earnings" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 
@@ -79,7 +79,7 @@ export default function EarningsPage() {
 
         {/* ─── Current month context ─── */}
         {thisMonth && thisMonth.earnings > 0 && (
-          <div className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+          <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
             <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">
               {thisMonth.label}
             </div>
@@ -122,7 +122,7 @@ export default function EarningsPage() {
           ) : (
             <div className="space-y-2">
               {sorted.map(m => (
-                <div key={m.month} className="bg-[#111a18] border border-white/7 rounded-2xl px-4 py-3.5 flex items-center gap-4">
+                <div key={m.month} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl px-4 py-3.5 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="font-display font-bold text-white text-sm">{m.label}</div>
                     <div className="font-mono text-[0.58rem] text-white/35 mt-0.5">

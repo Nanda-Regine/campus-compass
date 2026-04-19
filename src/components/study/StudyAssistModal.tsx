@@ -116,7 +116,7 @@ export default function StudyAssistModal({
               value={gradeModuleName}
               onChange={e => setGradeModuleName(e.target.value)}
               placeholder="e.g. Organic Chemistry"
-              className="w-full bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -129,7 +129,7 @@ export default function StudyAssistModal({
                 value={currentGrade}
                 onChange={e => setCurrentGrade(e.target.value)}
                 placeholder="e.g. 58"
-                className="w-full bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
               />
             </div>
             <div>
@@ -141,7 +141,7 @@ export default function StudyAssistModal({
                 value={targetGrade}
                 onChange={e => setTargetGrade(e.target.value)}
                 placeholder="e.g. 75"
-                className="w-full bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
               />
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function StudyAssistModal({
               value={assessmentWeights}
               onChange={e => setAssessmentWeights(e.target.value)}
               placeholder="e.g. Assignments 30%, Exam 70%"
-              className="w-full bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
             />
           </div>
           <button
@@ -190,7 +190,7 @@ export default function StudyAssistModal({
                 )}
                 <div className="space-y-3">
                   {plan?.dailyPlan?.map((day, i) => (
-                    <div key={i} className="bg-[#111a18] border border-teal-600/20 rounded-xl p-4">
+                    <div key={i} className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-display font-bold text-sm text-teal-400">{day.day}</span>
                         <span className="font-mono text-[0.58rem] text-white/30">{day.hours}h</span>
@@ -231,7 +231,7 @@ export default function StudyAssistModal({
                   <div className="space-y-3">
                     <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest">Prep Phases</div>
                     {guide.prepPhases.map((phase, i) => (
-                      <div key={i} className="bg-[#111a18] border border-purple-500/20 rounded-xl p-4">
+                      <div key={i} className="bg-[var(--bg-surface)] border border-purple-500/20 rounded-xl p-4">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <span className="font-display font-bold text-sm text-purple-300">{phase.phase}</span>
                           <span className="font-mono text-[0.55rem] text-white/30 flex-shrink-0">{phase.days}</span>
@@ -252,7 +252,7 @@ export default function StudyAssistModal({
                     <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">Study Techniques</div>
                     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                       {guide.studyTechniques.map((t, i) => (
-                        <div key={i} className="flex-shrink-0 bg-[#111a18] border border-white/7 rounded-xl p-3 w-40">
+                        <div key={i} className="flex-shrink-0 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 w-40">
                           <div className="font-display font-bold text-xs text-white mb-1">{t.name}</div>
                           <p className="font-mono text-[0.55rem] text-white/40 leading-relaxed">{t.description}</p>
                         </div>
@@ -263,7 +263,7 @@ export default function StudyAssistModal({
                 {(guide?.dayBeforeTips || guide?.examDayTips) && (
                   <div className="grid grid-cols-2 gap-3">
                     {guide.dayBeforeTips && guide.dayBeforeTips.length > 0 && (
-                      <div className="bg-[#111a18] border border-white/7 rounded-xl p-3">
+                      <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3">
                         <div className="font-mono text-[0.55rem] text-amber-400 uppercase tracking-widest mb-2">Day Before</div>
                         <ul className="space-y-1.5">
                           {guide.dayBeforeTips.map((tip, i) => (
@@ -273,7 +273,7 @@ export default function StudyAssistModal({
                       </div>
                     )}
                     {guide.examDayTips && guide.examDayTips.length > 0 && (
-                      <div className="bg-[#111a18] border border-white/7 rounded-xl p-3">
+                      <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3">
                         <div className="font-mono text-[0.55rem] text-teal-400 uppercase tracking-widest mb-2">Exam Day</div>
                         <ul className="space-y-1.5">
                           {guide.examDayTips.map((tip, i) => (
@@ -324,7 +324,7 @@ export default function StudyAssistModal({
                   )}
                 </div>
                 {res?.explanation && (
-                  <div className="bg-[#111a18] border border-white/7 rounded-xl p-4">
+                  <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl p-4">
                     <p className="font-body text-sm text-white/70 leading-relaxed">{res.explanation}</p>
                   </div>
                 )}
@@ -336,7 +336,7 @@ export default function StudyAssistModal({
                     <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">Alternative targets</div>
                     <div className="flex gap-2">
                       {res.alternativeScenarios.map((s, i) => (
-                        <div key={i} className="flex-1 bg-[#111a18] border border-white/7 rounded-xl p-3 text-center">
+                        <div key={i} className="flex-1 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 text-center">
                           <div className="font-display font-black text-lg text-white">{s.requiredScore}%</div>
                           <div className="font-mono text-[0.55rem] text-white/30 mt-0.5">{s.label}</div>
                         </div>
@@ -385,7 +385,7 @@ export default function StudyAssistModal({
                   </div>
                 )}
                 {analysis?.topPriority && (
-                  <div className="bg-[#111a18] border border-white/7 rounded-xl px-4 py-3">
+                  <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl px-4 py-3">
                     <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest mb-1">Top priority</div>
                     <p className="font-display font-bold text-sm text-white">{analysis.topPriority}</p>
                   </div>
