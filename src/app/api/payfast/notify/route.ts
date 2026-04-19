@@ -11,7 +11,14 @@ const PAYFAST_IPS = [
   '197.97.145.146',
   '197.97.145.147',
   '197.97.145.148',
-  // Sandbox IPs
+  '41.74.179.194',
+  '41.74.179.195',
+  '41.74.179.196',
+  '41.74.179.197',
+  '102.216.36.3',
+  '102.216.36.4',
+  '102.216.36.5',
+  '102.216.36.6',
   '127.0.0.1',
   '::1',
 ]
@@ -121,7 +128,7 @@ export async function POST(request: NextRequest) {
       })
     } catch { /* non-fatal */ }
 
-    if (data.payment_status === 'COMPLETE' && userId) {
+    if ((data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT') && userId) {
       const novaLimit = tier === 'nova_unlimited' ? 9999
         : tier === 'premium' ? 250
         : 100 // scholar
