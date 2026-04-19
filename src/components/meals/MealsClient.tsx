@@ -199,11 +199,11 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Meal Prep" />
 
       {/* Tabs */}
-      <div className="sticky top-[57px] z-20 bg-[#080f0e] border-b border-white/7">
+      <div className="sticky top-[57px] z-20 bg-[var(--bg-base)] border-b border-white/7">
         <div className="flex px-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
           {TABS.map(tab => (
             <button
@@ -240,7 +240,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             )}
 
             {/* AI Weekly Plan Generator */}
-            <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl">📅</div>
                 <div>
@@ -266,7 +266,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   </div>
 
                   {generatedPlan.days.slice(0, 5).map(day => (
-                    <div key={day.day} className="bg-[#080f0e] border border-white/7 rounded-xl p-3">
+                    <div key={day.day} className="bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded-xl p-3">
                       <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-2">{day.day}</div>
                       <div className="space-y-1.5">
                         {(['breakfast', 'lunch', 'supper'] as const).map(slot => (
@@ -291,7 +291,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                       <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest mb-2">Shopping list</div>
                       <div className="space-y-1.5">
                         {generatedPlan.shoppingList.map((item, i) => (
-                          <div key={i} className="flex items-center justify-between bg-[#080f0e] border border-white/7 rounded-lg px-3 py-2">
+                          <div key={i} className="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded-lg px-3 py-2">
                             <div>
                               <div className="font-body text-sm text-white">{item.item}</div>
                               <div className="font-mono text-[0.55rem] text-white/30">Used: {item.usedIn.join(', ')}</div>
@@ -307,7 +307,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             </div>
 
             {/* AI Recipe from ingredients */}
-            <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-teal-600/15 rounded-xl flex items-center justify-center text-xl">👨‍🍳</div>
                 <div>
@@ -321,7 +321,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   value={ingredients}
                   onChange={e => setIngredients(e.target.value)}
                   placeholder="e.g. eggs, onions, tomatoes, pasta, tin of tuna, soya sauce..."
-                  className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/25 outline-none transition-all resize-none font-body"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/25 outline-none transition-all resize-none font-body"
                   rows={3}
                 />
                 <div className="grid grid-cols-2 gap-3">
@@ -351,7 +351,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                       value={maxBudget}
                       onChange={e => setMaxBudget(e.target.value)}
                       placeholder="e.g. 50"
-                      className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                      className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -375,7 +375,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               <div className="font-mono text-[0.58rem] text-white/30">{initialData.weekStart}</div>
             </div>
             {WEEKDAYS.map(day => (
-              <div key={day} className="bg-[#111a18] border border-white/7 rounded-2xl overflow-hidden">
+              <div key={day} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-white/5 flex items-center justify-between">
                   <div className="font-display font-bold text-white text-sm">{day}</div>
                   <div className="font-mono text-[0.55rem] text-white/25 uppercase">{day.slice(0, 3)}</div>
@@ -411,14 +411,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 onChange={e => setGroceryInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && addGroceryItem()}
                 placeholder="Add grocery item…"
-                className="flex-1 bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="flex-1 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
               />
               <input
                 type="number"
                 value={groceryPrice}
                 onChange={e => setGroceryPrice(e.target.value)}
                 placeholder="R"
-                className="w-20 bg-[#111a18] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="w-20 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
               />
               <button
                 onClick={addGroceryItem}
@@ -461,7 +461,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   <div
                     key={item.id}
                     className={cn(
-                      'flex items-center gap-3 bg-[#111a18] border rounded-xl px-4 py-3 transition-all group',
+                      'flex items-center gap-3 bg-[var(--bg-surface)] border rounded-xl px-4 py-3 transition-all group',
                       item.checked ? 'border-white/5 opacity-50' : 'border-white/8'
                     )}
                   >
@@ -526,7 +526,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest mb-2">Ingredients</div>
                   <div className="space-y-1.5">
                     {generatedRecipe.ingredients.map((ing, i) => (
-                      <div key={i} className="flex items-center gap-3 bg-[#111a18] rounded-xl px-3 py-2">
+                      <div key={i} className="flex items-center gap-3 bg-[var(--bg-surface)] rounded-xl px-3 py-2">
                         <div className="w-1.5 h-1.5 bg-teal-600 rounded-full flex-shrink-0" />
                         <div className="flex-1 font-body text-sm text-white">{ing.item}</div>
                         <div className="font-mono text-[0.58rem] text-white/40">{ing.amount}</div>
@@ -571,7 +571,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-3">Budget SA Recipes</div>
               <div className="space-y-3">
                 {SAMPLE_RECIPES.map(recipe => (
-                  <div key={recipe.name} className="bg-[#111a18] border border-white/7 hover:border-white/15 rounded-2xl p-4 transition-all">
+                  <div key={recipe.name} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-white/15 rounded-2xl p-4 transition-all">
                     <div className="flex items-start gap-3">
                       <div className="text-2xl flex-shrink-0">{recipe.icon}</div>
                       <div className="flex-1">

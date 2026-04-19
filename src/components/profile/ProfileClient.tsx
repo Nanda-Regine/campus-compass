@@ -198,7 +198,7 @@ export default function ProfileClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0b0907] pb-24">
+      <div className="min-h-screen bg-\[var(--bg-base)\] pb-24">
         <TopBar title="Profile" />
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-3">
           {[...Array(4)].map((_, i) => (

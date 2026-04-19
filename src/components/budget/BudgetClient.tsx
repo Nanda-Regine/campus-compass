@@ -310,11 +310,11 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
     : 'text-white'
 
   return (
-    <div className="min-h-screen bg-[#080f0e] pb-24">
+    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
       <TopBar title="Budget & NSFAS" />
 
       {/* Tab bar */}
-      <div className="sticky top-[57px] z-20 bg-[#080f0e] border-b border-white/7">
+      <div className="sticky top-[57px] z-20 bg-[var(--bg-base)] border-b border-white/7">
         <div className="flex px-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
           {TABS.map(tab => (
             <button
@@ -341,7 +341,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
         {activeTab === 'overview' && (
           <>
             {/* Big donut-style ring */}
-            <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest">
@@ -393,7 +393,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
 
             {/* Category breakdown */}
             {Object.keys(categoryTotals).length > 0 && (
-              <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
                 <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-4">
                   Spending by category
                 </div>
@@ -469,10 +469,10 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
 
             {/* Add expense form */}
             {showAddForm && (
-              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+              <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Log expense</div>
                 <input
-                  className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                   placeholder="What did you spend on?"
                   value={desc}
                   onChange={e => setDesc(e.target.value)}
@@ -480,14 +480,14 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={amount}
                     onChange={e => setAmount(e.target.value)}
                   />
                   <input
                     type="date"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
                     value={date}
                     onChange={e => setDate(e.target.value)}
                   />
@@ -553,7 +553,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 {expenses.map(exp => (
                   <div
                     key={exp.id}
-                    className="group flex items-center gap-3 bg-[#111a18] border border-white/7 hover:border-white/15 rounded-xl px-4 py-3 transition-all"
+                    className="group flex items-center gap-3 bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-white/15 rounded-xl px-4 py-3 transition-all"
                   >
                     <div
                       className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
@@ -603,10 +603,10 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             </div>
 
             {showIncomeForm && (
-              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+              <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Record income</div>
                 <input
-                  className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                   placeholder="e.g. NSFAS deposit, Part-time pay"
                   value={incomeLabel}
                   onChange={e => setIncomeLabel(e.target.value)}
@@ -614,14 +614,14 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={incomeAmount}
                     onChange={e => setIncomeAmount(e.target.value)}
                   />
                   <input
                     type="date"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
                     value={incomeDate}
                     onChange={e => setIncomeDate(e.target.value)}
                   />
@@ -646,7 +646,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             )}
 
             {incomeEntries.length === 0 && !showIncomeForm ? (
-              <div className="text-center py-8 bg-[#111a18] border border-white/7 rounded-2xl">
+              <div className="text-center py-8 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
                 <div className="text-3xl mb-2">💵</div>
                 <p className="font-display font-bold text-white text-sm">No income logged this month</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Track NSFAS, bursary, shifts, and more.</p>
@@ -656,7 +656,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 {incomeEntries.map(entry => {
                   const icons: Record<string, string> = { nsfas:'🏛️', bursary:'📜', part_time:'💼', pocket_money:'💵', family:'👨‍👩‍👧', scholarship:'🎓', gift:'🎁', side_hustle:'⚡', other:'💳' }
                   return (
-                    <div key={entry.id} className="flex items-center gap-3 bg-[#111a18] border border-white/7 rounded-xl px-4 py-3">
+                    <div key={entry.id} className="flex items-center gap-3 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl px-4 py-3">
                       <div className="w-9 h-9 bg-teal-600/15 rounded-xl flex items-center justify-center text-lg flex-shrink-0">
                         {icons[entry.source_type] || '💳'}
                       </div>
@@ -683,17 +683,17 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             </div>
 
             {showGoalForm && (
-              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
+              <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Create savings goal</div>
                 <div className="flex gap-2">
                   <input
-                    className="w-12 bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-2 py-2.5 text-lg text-center outline-none transition-all"
+                    className="w-12 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-2 py-2.5 text-lg text-center outline-none transition-all"
                     value={goalEmoji}
                     onChange={e => setGoalEmoji(e.target.value)}
                     maxLength={2}
                   />
                   <input
-                    className="flex-1 bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    className="flex-1 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Goal name (e.g. New laptop)"
                     value={goalName}
                     onChange={e => setGoalName(e.target.value)}
@@ -702,14 +702,14 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Target amount (R)"
                     value={goalTarget}
                     onChange={e => setGoalTarget(e.target.value)}
                   />
                   <input
                     type="date"
-                    className="bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-all"
                     value={goalDeadline}
                     onChange={e => setGoalDeadline(e.target.value)}
                     placeholder="Deadline (optional)"
@@ -725,7 +725,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             )}
 
             {savingsGoals.length === 0 && !showGoalForm ? (
-              <div className="text-center py-8 bg-[#111a18] border border-white/7 rounded-2xl">
+              <div className="text-center py-8 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
                 <div className="text-3xl mb-2">🎯</div>
                 <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a target and track progress toward it.</p>
@@ -735,7 +735,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 {savingsGoals.map(goal => {
                   const pct = goal.target_amount > 0 ? Math.min(100, Math.round((goal.current_amount / goal.target_amount) * 100)) : 0
                   return (
-                    <div key={goal.id} className="bg-[#111a18] border border-white/7 rounded-2xl p-4">
+                    <div key={goal.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{goal.emoji}</span>
@@ -805,7 +805,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                   href="https://my.nsfas.org.za"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between bg-[#111a18] border border-white/10 hover:border-teal-600/30 rounded-2xl p-4 transition-all"
+                  className="flex items-center justify-between bg-[var(--bg-surface)] border border-white/10 hover:border-teal-600/30 rounded-2xl p-4 transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 bg-teal-600/15 rounded-xl flex items-center justify-center text-lg">🔗</div>
@@ -818,7 +818,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 </a>
               </>
             ) : (
-              <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5 text-center">
+              <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5 text-center">
                 <div className="text-3xl mb-3">🏛️</div>
                 <div className="font-display font-bold text-white text-sm mb-2">Not on NSFAS</div>
                 <div className="font-mono text-[0.6rem] text-white/30 mb-4">
@@ -832,7 +832,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             )}
 
             {/* Important dates */}
-            <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-4">
                 Important NSFAS Dates
               </div>
@@ -912,7 +912,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 {/* Tips */}
                 <div className="space-y-3">
                   {aiInsights.tips.map((tip, i) => (
-                    <div key={i} className="bg-[#111a18] border border-white/7 rounded-2xl p-4 flex gap-4">
+                    <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 flex gap-4">
                       <div className="text-2xl flex-shrink-0">{tip.icon}</div>
                       <div>
                         <div className="font-display font-bold text-white text-sm mb-1">{tip.title}</div>
@@ -930,7 +930,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
 
                 {/* Projection */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#111a18] border border-white/7 rounded-xl p-4 text-center">
+                  <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
                     <div className="font-mono text-[0.55rem] text-white/30 uppercase mb-1">Projected end balance</div>
                     <div className={cn(
                       'font-display font-black text-xl',
@@ -939,7 +939,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                       {fmt.currencyShort(aiInsights.projectedEndBalance)}
                     </div>
                   </div>
-                  <div className="bg-[#111a18] border border-white/7 rounded-xl p-4 text-center">
+                  <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
                     <div className="font-mono text-[0.55rem] text-white/30 uppercase mb-1">Biggest spend</div>
                     <div className="font-display font-black text-xl text-white">
                       {aiInsights.biggestSpendCategory}
@@ -970,7 +970,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
         {/* ─── Appeal Tab ─── */}
         {activeTab === 'appeal' && (
           <>
-            <div className="bg-[#111a18] border border-white/7 rounded-2xl p-5">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="font-display font-bold text-white mb-1">NSFAS Appeal Letter Generator</div>
               <p className="font-mono text-[0.62rem] text-white/40 mb-5">
                 Describe your situation and Claude will draft a professional appeal letter. Always review before submitting.
@@ -1003,7 +1003,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                     value={appealSituation}
                     onChange={e => setAppealSituation(e.target.value)}
                     placeholder="Describe what happened and why you need to appeal. Be specific — include dates, amounts, and any supporting circumstances."
-                    className="w-full bg-[#080f0e] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/25 outline-none transition-all resize-none font-body"
+                    className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/25 outline-none transition-all resize-none font-body"
                     rows={5}
                   />
                 </div>
@@ -1019,7 +1019,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
             </div>
 
             {appealLetter && (
-              <div className="bg-[#111a18] border border-teal-600/20 rounded-2xl p-5 animate-fade-up">
+              <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-5 animate-fade-up">
                 <div className="flex items-center justify-between mb-4">
                   <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Draft Letter</div>
                   <button
