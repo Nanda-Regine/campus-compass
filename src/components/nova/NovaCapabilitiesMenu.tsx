@@ -91,9 +91,9 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
 
   return (
-    <div className="bg-[#0d1714] border-t border-white/7 animate-slide-up max-h-[75vh] overflow-y-auto">
+    <div className="bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] animate-slide-up max-h-[75vh] overflow-y-auto">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/7 sticky top-0 bg-[#0d1714] z-10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)] sticky top-0 bg-[var(--bg-surface)] z-10">
         <div>
           <h3 className="font-display font-bold text-white text-sm">What can Nova do?</h3>
           <p className="font-mono text-[0.58rem] text-white/35">Tap a category, then pick a conversation starter</p>
@@ -117,7 +117,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
                 'flex flex-col items-center gap-1.5 p-3 rounded-2xl border transition-all text-center',
                 activeCategory === i
                   ? 'bg-teal-600/20 border-teal-500/40'
-                  : 'bg-white/3 border-white/7 hover:bg-white/7 hover:border-white/15'
+                  : 'bg-white/3 border-[var(--border-subtle)] hover:bg-white/7 hover:border-white/15'
               )}
             >
               <span className="text-2xl">{cap.icon}</span>
@@ -144,7 +144,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
                     onSelectPrompt(p.message)
                     onClose()
                   }}
-                  className="w-full text-left bg-white/3 hover:bg-teal-600/10 border border-white/7 hover:border-teal-600/25 rounded-xl px-4 py-2.5 transition-all group"
+                  className="w-full text-left bg-white/3 hover:bg-teal-600/10 border border-[var(--border-subtle)] hover:border-teal-600/25 rounded-xl px-4 py-2.5 transition-all group"
                 >
                   <span className="font-body text-sm text-white/75 group-hover:text-teal-300 transition-colors">
                     {p.label}
