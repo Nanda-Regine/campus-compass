@@ -27,8 +27,8 @@ export function useOfflineSync() {
       ) => {
         const { data } = await query
         if (!data) return
-        const tx = db.transaction(storeName as Parameters<typeof db.transaction>[0], 'readwrite')
-        const store = tx.objectStore(storeName as Parameters<typeof db.transaction>[0])
+        const tx = db.transaction(storeName as never, 'readwrite')
+        const store = tx.objectStore(storeName as never)
         await Promise.all([...data.map(r => store.put(r)), tx.done])
       }
 
