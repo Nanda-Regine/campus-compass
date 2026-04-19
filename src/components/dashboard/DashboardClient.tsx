@@ -55,8 +55,8 @@ function FlameIcon({ streak }: { streak: number }) {
 
 /* ── sub-components ─────────────────────────────────────── */
 function NovaCard({ profile, subscription }: { profile: Profile; subscription: Subscription | null }) {
-  const msgLimit   = subscription?.monthly_message_limit ?? 10
-  const msgUsed    = subscription?.messages_used_this_month ?? 0
+  const msgLimit   = profile.nova_messages_limit ?? 10
+  const msgUsed    = profile.nova_messages_used ?? 0
   const remaining  = Math.max(0, msgLimit - msgUsed)
   const isUnlimited = profile?.subscription_tier === 'nova_unlimited'
 
@@ -184,14 +184,14 @@ const FEATURE_ICONS: Record<string, string> = {
 }
 
 function FeatureGrid({
-  tasks, expenses, totalBudget, remaining, modules, subscription,
+  tasks, expenses, totalBudget, remaining, modules, subscription, profile,
 }: {
   tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number;
-  modules: Module[]; subscription: Subscription | null
+  modules: Module[]; subscription: Subscription | null; profile: Profile
 }) {
-  const isUnlimited = subscription?.tier === 'nova_unlimited'
-  const msgLimit   = subscription?.monthly_message_limit ?? 10
-  const msgUsed    = subscription?.messages_used_this_month ?? 0
+  const isUnlimited = profile.subscription_tier === 'nova_unlimited'
+  const msgLimit   = profile.nova_messages_limit ?? 10
+  const msgUsed    = profile.nova_messages_used ?? 0
   const novaLeft   = Math.max(0, msgLimit - msgUsed)
 
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
@@ -612,6 +612,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               remaining={remaining}
               modules={allMods}
               subscription={sub as any}
+              profile={p}
             />
           </div>
 
