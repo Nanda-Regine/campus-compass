@@ -71,6 +71,18 @@ const TIERS = [
   },
 ]
 
+// PHP urlencode-compatible encoder — must match PayFast's server-side encoding exactly
+function phpUrlencode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
+    .replace(/%20/g, '+')
+}
+
 // ─── PayFast recurring subscription builder ───────────────────────────────────
 
 function buildPayFastForm(
@@ -82,38 +94,36 @@ function buildPayFastForm(
   itemName: string,
 ) {
   const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-  // Always use production HTTPS URL for PayFast (HTTPS required)
   const appUrl = 'https://varsityos.co.za'
   const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
 
   const data: Record<string, string> = {
-    merchant_id:      process.env.PAYFAST_MERCHANT_ID!,
-    merchant_key:     process.env.PAYFAST_MERCHANT_KEY!,
-    return_url:       `${appUrl}/dashboard`,
-    cancel_url:       `${appUrl}/upgrade`,
-    notify_url:       `${appUrl}/api/payfast/notify`,
-    name_first:       name.split(' ')[0] || 'Student',
-    email_address:    email,
-    m_payment_id:     `${userId}|${tierId}`,
-    amount:           price.toFixed(2),
-    item_name:        itemName,
-    // Recurring subscription fields
+    merchant_id:       process.env.PAYFAST_MERCHANT_ID || '',
+    merchant_key:      process.env.PAYFAST_MERCHANT_KEY || '',
+    return_url:        `${appUrl}/dashboard`,
+    cancel_url:        `${appUrl}/upgrade`,
+    notify_url:        `${appUrl}/api/payfast/notify`,
+    name_first:        name.split(' ')[0] || 'Student',
+    email_address:     email,
+    m_payment_id:      `${userId}|${tierId}`,
+    amount:            price.toFixed(2),
+    item_name:         itemName,
     subscription_type: '1',
-    billing_date:     new Date().toISOString().split('T')[0],
+    billing_date:      new Date().toISOString().split('T')[0],
     recurring_amount:  price.toFixed(2),
-    frequency:        '3',  // Monthly
-    cycles:           '0',  // Indefinite
+    frequency:         '3',
+    cycles:            '0',
   }
 
-  // Do NOT sort — PayFast verifies in the order fields arrive in the form POST,
-  // which is insertion order. Sorting would cause a signature mismatch.
+  // Do NOT sort — PayFast verifies in the order fields arrive in the form POST.
+  // Use phpUrlencode to match PayFast's PHP server-side signature computation exactly.
   const queryString = Object.entries(data)
     .filter(([, v]) => v !== '')
-    .map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%20/g, '+')}`)
+    .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
     .join('&')
 
   const sigSource = passphrase
-    ? `${queryString}&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
+    ? `${queryString}&passphrase=${phpUrlencode(passphrase)}`
     : queryString
 
   data.signature = createHash('md5').update(sigSource).digest('hex')
