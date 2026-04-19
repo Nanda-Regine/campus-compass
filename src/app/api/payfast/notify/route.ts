@@ -105,10 +105,10 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id is encoded as "userId_tierId" (e.g. "abc123_scholar")
-    const parts = (data.m_payment_id ?? '').split('_')
-    const userId = parts[0]
-    const tierOrMonths = parts[1] ?? 'premium'
+    // m_payment_id is "{uuid}_{tierId}" — UUID is always 36 chars, parse by position
+    const mpid = data.m_payment_id ?? ''
+    const userId = mpid.slice(0, 36)
+    const tierOrMonths = mpid.slice(37) || 'premium'
 
     // Determine tier: 'scholar', 'premium', or 'nova_unlimited' (legacy numeric = premium)
     const tier: 'scholar' | 'premium' | 'nova_unlimited' =
