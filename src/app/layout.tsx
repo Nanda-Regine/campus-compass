@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
+import { Sora, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'react-hot-toast'
@@ -7,23 +7,31 @@ import Script from 'next/script'
 import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { Sidebar } from '@/components/layout/Sidebar'
 import { GlobalFAB } from '@/components/layout/GlobalFAB'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import ConsentBanner from '@/components/ConsentBanner'
 import './globals.css'
 
-const displayFont = Plus_Jakarta_Sans({
+const soraFont = Sora({
   subsets: ['latin'],
   variable: '--font-display',
-  weight: ['300', '400', '500', '700', '800'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
+})
+
+const dmSansFont = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['400', '500'],
   display: 'swap',
 })
 
 const monoFont = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
-  weight: ['300', '400', '500'],
+  weight: ['400', '500', '700'],
   display: 'swap',
 })
 
@@ -292,7 +300,7 @@ a.appendChild(r);
           </Script>
         )}
       </head>
-      <body className={`${displayFont.variable} ${monoFont.variable} font-body antialiased`}>
+      <body className={`${soraFont.variable} ${dmSansFont.variable} ${monoFont.variable} antialiased`}>
         {/* ── Google Tag Manager (noscript fallback) ── */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <noscript>
@@ -305,9 +313,11 @@ a.appendChild(r);
           </noscript>
         )}
         <Providers>
+          <Sidebar />
           <OfflineBanner />
           <ConsentBanner />
-          <div className="pb-16 md:pb-0">
+          {/* lg: offset for sidebar; mobile: bottom-nav padding */}
+          <div className="lg:ml-[240px] pb-[60px] lg:pb-0">
             {children}
           </div>
           <GlobalFAB />

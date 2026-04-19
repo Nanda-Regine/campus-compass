@@ -48,9 +48,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-display)', 'sans-serif'],
-        body: ['var(--font-body)', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        display: ['Sora', 'var(--font-display)', 'sans-serif'],
+        body:    ['DM Sans', 'var(--font-body)', 'sans-serif'],
+        mono:    ['JetBrains Mono', 'var(--font-mono)', 'monospace'],
       },
       borderRadius: {
         DEFAULT: '12px',

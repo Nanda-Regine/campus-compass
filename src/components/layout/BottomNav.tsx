@@ -1,19 +1,21 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, BookOpen, DollarSign, UtensilsCrossed, Star } from 'lucide-react'
+import { Home, BookOpen, Sparkles, Wallet, UserCircle } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
-const tabs = [
-  { href: '/dashboard', icon: Home, label: 'Home' },
-  { href: '/study', icon: BookOpen, label: 'Study' },
-  { href: '/budget', icon: DollarSign, label: 'Budget' },
-  { href: '/meals', icon: UtensilsCrossed, label: 'Meals' },
-  { href: '/nova', icon: Star, label: 'Nova' },
+const TABS = [
+  { href: '/dashboard', icon: Home,       label: 'Home'   },
+  { href: '/study',     icon: BookOpen,   label: 'Study'  },
+  { href: '/nova',      icon: Sparkles,   label: 'Nova',  isNova: true },
+  { href: '/budget',    icon: Wallet,     label: 'Budget' },
+  { href: '/profile',   icon: UserCircle, label: 'Profile' },
 ]
 
-// Show bottom nav only on authenticated app pages
-const APP_PREFIXES = ['/dashboard', '/study', '/budget', '/meals', '/nova', '/profile', '/work', '/campus-life', '/groups', '/referral', '/streak', '/upgrade']
+const APP_PREFIXES = [
+  '/dashboard', '/study', '/budget', '/meals', '/nova',
+  '/profile', '/work', '/campus-life', '/groups', '/referral', '/streak', '/upgrade',
+]
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -22,31 +24,56 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
       style={{
-        background: 'rgba(18, 14, 10, 0.96)',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+        height: 60,
+        background: 'rgba(6, 10, 8, 0.92)',
+        borderTop: '0.5px solid var(--border-subtle)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        paddingBottom: 'max(0px, env(safe-area-inset-bottom))',
       }}
     >
-      <div className="flex items-center justify-around h-16">
-        {tabs.map(({ href, icon: Icon, label }) => {
-          const active = pathname.startsWith(href)
+      <div className="flex items-stretch justify-around h-full">
+        {TABS.map(({ href, icon: Icon, label, isNova }) => {
+          const active = href === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname.startsWith(href)
+
+          const activeColor = isNova ? 'var(--nova)' : 'var(--teal)'
+
           return (
             <Link
               key={href}
               href={href}
               onClick={() => !active && trackEvent('feature_opened', { feature: label.toLowerCase(), path: href })}
-              className="flex flex-col items-center gap-1 px-3 py-2 transition-all"
-              style={{ color: active ? '#2dd4bf' : 'rgba(255,255,255,0.35)' }}
+              className="flex flex-col items-center justify-center gap-1 flex-1 relative"
+              style={{
+                color: active ? activeColor : 'var(--text-tertiary)',
+                textDecoration: 'none',
+                transition: 'transform var(--duration-fast) var(--ease-spring), color var(--duration-base) var(--ease-out)',
+              }}
             >
-              <Icon size={20} strokeWidth={active ? 2.5 : 1.8} />
-              <span
-                className="font-mono"
-                style={{ fontSize: '0.6rem', letterSpacing: '0.05em', fontWeight: active ? 600 : 400 }}
-              >
+              {/* Active top indicator line */}
+              {active && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '20%',
+                    right: '20%',
+                    height: 2,
+                    borderRadius: '0 0 2px 2px',
+                    background: activeColor,
+                  }}
+                />
+              )}
+
+              <Icon
+                size={20}
+                strokeWidth={active ? 2.5 : 1.8}
+              />
+              <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, letterSpacing: '0.03em' }}>
                 {label}
               </span>
             </Link>
