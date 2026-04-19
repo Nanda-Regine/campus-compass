@@ -13,7 +13,6 @@ Sentry.init({
     }),
   ],
   beforeSend(event) {
-    // Strip PII from breadcrumbs
     if (event.request?.cookies) delete event.request.cookies
     return event
   },
