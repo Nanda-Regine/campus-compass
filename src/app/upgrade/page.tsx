@@ -3,7 +3,6 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
-import { createHash } from 'crypto'
 import UpgradeButton from '@/components/upgrade/UpgradeButton'
 
 export const dynamic = 'force-dynamic'
@@ -71,78 +70,6 @@ const TIERS = [
   },
 ]
 
-// PHP urlencode-compatible encoder — must match PayFast's server-side encoding exactly
-// PHP urlencode encodes ~ as %7E; encodeURIComponent leaves it unencoded
-function phpUrlencode(str: string): string {
-  return encodeURIComponent(str)
-    .replace(/!/g, '%21')
-    .replace(/'/g, '%27')
-    .replace(/\(/g, '%28')
-    .replace(/\)/g, '%29')
-    .replace(/\*/g, '%2A')
-    .replace(/~/g, '%7E')
-    .replace(/%20/g, '+')
-}
-
-// ─── PayFast recurring subscription builder ───────────────────────────────────
-
-function buildPayFastForm(
-  userId: string,
-  name: string,
-  email: string,
-  tierId: string,
-  price: number,
-  itemName: string,
-) {
-  const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za').trim().replace(/\/$/, '')
-  const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
-  const merchantId  = (process.env.PAYFAST_MERCHANT_ID  || '').trim()
-  const merchantKey = (process.env.PAYFAST_MERCHANT_KEY || '').trim()
-
-  if (!merchantId || !merchantKey) {
-    console.error('[PayFast] Missing PAYFAST_MERCHANT_ID or PAYFAST_MERCHANT_KEY env vars')
-  }
-
-  const data: Record<string, string> = {
-    merchant_id:  merchantId,
-    merchant_key: merchantKey,
-    return_url:   `${appUrl}/dashboard`,
-    cancel_url:   `${appUrl}/upgrade`,
-    notify_url:   `${appUrl}/api/payfast/notify`,
-    name_first:   (name.split(' ')[0] || 'Student').slice(0, 100),
-    name_last:    (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
-    email_address: email,
-    m_payment_id: `${userId}_${tierId}`,
-    amount:       price.toFixed(2),
-    item_name:    itemName,
-  }
-
-  // Do NOT sort — PayFast verifies in the order fields arrive in the form POST.
-  // Use phpUrlencode to match PayFast's PHP server-side signature computation exactly.
-  const queryString = Object.entries(data)
-    .filter(([, v]) => v !== '')
-    .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
-    .join('&')
-
-  const sigSource = passphrase
-    ? `${queryString}&passphrase=${phpUrlencode(passphrase)}`
-    : queryString
-
-  data.signature = createHash('md5').update(sigSource).digest('hex')
-
-  console.log('[PF] qs:', queryString)
-  console.log('[PF] sig:', data.signature)
-  console.log('[PF] action:', isSandbox ? 'SANDBOX' : 'PROD')
-
-  return {
-    action: isSandbox
-      ? 'https://sandbox.payfast.co.za/eng/process'
-      : 'https://www.payfast.co.za/eng/process',
-    fields: data,
-  }
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function UpgradePage() {
@@ -164,16 +91,8 @@ export default async function UpgradePage() {
   // Already on Nova Unlimited — no higher tier to offer
   if (currentTier === 'nova_unlimited') redirect('/dashboard')
 
-  const tiersWithForms = TIERS.map(tier => ({
+  const tiersWithCurrent = TIERS.map(tier => ({
     ...tier,
-    payfast: buildPayFastForm(
-      user.id,
-      (profile as { full_name?: string | null } | null)?.full_name || 'Student',
-      user.email || '',
-      tier.id,
-      tier.price,
-      tier.itemName,
-    ),
     isCurrent: currentTier === tier.id,
   }))
 
@@ -238,7 +157,7 @@ export default async function UpgradePage() {
 
         {/* Paid tier cards */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
-          {tiersWithForms.map(tier => (
+          {tiersWithCurrent.map(tier => (
             <div
               key={tier.id}
               style={{
@@ -309,8 +228,6 @@ export default async function UpgradePage() {
                   <UpgradeButton
                     tier={tier.id}
                     price={tier.price}
-                    action={tier.payfast.action}
-                    fields={tier.payfast.fields}
                     colour={tier.colour}
                     gold={tier.gold}
                     highlight={tier.highlight}

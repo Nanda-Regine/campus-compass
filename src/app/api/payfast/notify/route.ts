@@ -110,15 +110,16 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id is "{uuid}_{tierId}" — UUID is always 36 chars, parse by position
+    // m_payment_id format: "{uuid36}_{tier}_{timestamp}" (timestamp added for uniqueness)
+    // Legacy format: "{uuid36}_{tier}" — both handled by slicing
     const mpid = data.m_payment_id ?? ''
     const userId = mpid.slice(0, 36)
-    const tierOrMonths = mpid.slice(37) || 'premium'
+    // tier is between first and second underscore after the uuid
+    const tierPart = mpid.slice(37).split('_')[0] || 'premium'
 
-    // Determine tier: 'scholar', 'premium', or 'nova_unlimited' (legacy numeric = premium)
     const tier: 'scholar' | 'premium' | 'nova_unlimited' =
-      tierOrMonths === 'scholar' ? 'scholar'
-      : tierOrMonths === 'nova_unlimited' ? 'nova_unlimited'
+      tierPart === 'scholar' ? 'scholar'
+      : tierPart === 'nova_unlimited' ? 'nova_unlimited'
       : 'premium'
 
     // Always log — non-fatal
