@@ -268,6 +268,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+        {/* ── Google Analytics 4 + Google Tag ── */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-87QR50FJ7N"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-87QR50FJ7N');gtag('config','GT-PJ4PM27T');`}
+        </Script>
+
         {/* ── Google Tag Manager (head) ── */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <Script id="gtm-head" strategy="afterInteractive">
