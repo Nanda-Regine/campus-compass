@@ -114,12 +114,11 @@ export async function POST(request: NextRequest) {
     // Legacy format: "{uuid36}_{tier}" — both handled by slicing
     const mpid = data.m_payment_id ?? ''
     const userId = mpid.slice(0, 36)
-    // tier is between first and second underscore after the uuid
-    const tierPart = mpid.slice(37).split('_')[0] || 'premium'
-
+    // tier is the segment after the uuid — check known values by prefix to handle nova_unlimited's underscore
+    const afterUuid = mpid.slice(37)
     const tier: 'scholar' | 'premium' | 'nova_unlimited' =
-      tierPart === 'scholar' ? 'scholar'
-      : tierPart === 'nova_unlimited' ? 'nova_unlimited'
+      afterUuid.startsWith('nova_unlimited') ? 'nova_unlimited'
+      : afterUuid.startsWith('scholar') ? 'scholar'
       : 'premium'
 
     // Always log — non-fatal
