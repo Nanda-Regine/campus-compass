@@ -68,7 +68,6 @@ export async function GET(request: Request) {
     recurring_amount:  tierConfig.price.toFixed(2),
     frequency:         '3',
     cycles:            '0',
-    payment_method:    'cc',
   }
 
   const queryString = Object.entries(data)

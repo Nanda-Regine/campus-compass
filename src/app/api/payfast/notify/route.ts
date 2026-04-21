@@ -49,13 +49,16 @@ function phpUrlencode(str: string): string {
 function verifySignature(data: Record<string, string>, passphrase: string | undefined): boolean {
   const { signature, ...rest } = data
 
-  // Build query string from all params except signature, in received order
+  // Build query string from all params except signature, in received order.
+  // Filter empty strings — PayFast omits empty fields when building their verification hash.
   const paramString = Object.entries(rest)
+    .filter(([, v]) => v !== '')
     .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
     .join('&')
 
-  const stringToHash = passphrase
-    ? `${paramString}&passphrase=${phpUrlencode(passphrase)}`
+  const trimmedPassphrase = passphrase?.trim()
+  const stringToHash = trimmedPassphrase
+    ? `${paramString}&passphrase=${phpUrlencode(trimmedPassphrase)}`
     : paramString
 
   const computed = crypto.createHash('md5').update(stringToHash).digest('hex')

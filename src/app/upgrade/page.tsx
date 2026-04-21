@@ -127,7 +127,6 @@ function buildPayFastForm(
     recurring_amount:  price.toFixed(2),
     frequency:         '3',
     cycles:            '0',
-    payment_method:    'cc',
   }
 
   // Do NOT sort — PayFast verifies in the order fields arrive in the form POST.
