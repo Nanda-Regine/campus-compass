@@ -41,7 +41,7 @@ export default function UpgradeButton({ tier, price, action, fields, colour, gol
           transition: 'filter var(--duration-fast) var(--ease-out)',
         }}
       >
-        Subscribe for R{price}/month
+        Pay R{price} once
       </button>
     </form>
   )

@@ -26,7 +26,7 @@ const TIERS = [
       { icon: '📚', label: 'AI Study Plans & Exam Prep' },
       { icon: '⚡', label: 'Priority support' },
     ],
-    itemName: 'VarsityOS Scholar - Monthly',
+    itemName: 'VarsityOS Scholar',
     colour: '#e8956e',
     gold: false,
   },
@@ -45,7 +45,7 @@ const TIERS = [
       { icon: '📥', label: 'CSV Export Reports' },
       { icon: '🚀', label: 'Early access to new features' },
     ],
-    itemName: 'VarsityOS Premium - Monthly',
+    itemName: 'VarsityOS Premium',
     colour: '#0d9488',
     gold: false,
   },
@@ -65,7 +65,7 @@ const TIERS = [
       { icon: '🚀', label: 'First access to new Nova features' },
       { icon: '💬', label: 'Direct feedback channel to builder' },
     ],
-    itemName: 'VarsityOS Nova Unlimited - Monthly',
+    itemName: 'VarsityOS Nova Unlimited',
     colour: '#d4a847',
     gold: true,
   },
@@ -104,29 +104,18 @@ function buildPayFastForm(
     console.error('[PayFast] Missing PAYFAST_MERCHANT_ID or PAYFAST_MERCHANT_KEY env vars')
   }
 
-  // billing_date: today in SAST (UTC+2). PayFast requires billing_date >= today.
-  // Using today means the subscription starts immediately — consistent with amount > 0 first charge.
-  const now = new Date()
-  now.setMinutes(now.getMinutes() + 120) // shift to SAST
-  const billingDate = now.toISOString().split('T')[0]
-
   const data: Record<string, string> = {
-    merchant_id:       merchantId,
-    merchant_key:      merchantKey,
-    return_url:        `${appUrl}/dashboard`,
-    cancel_url:        `${appUrl}/upgrade`,
-    notify_url:        `${appUrl}/api/payfast/notify`,
-    name_first:        (name.split(' ')[0] || 'Student').slice(0, 100),
-    name_last:         (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
-    email_address:     email,
-    m_payment_id:      `${userId}_${tierId}`,
-    amount:            price.toFixed(2),
-    item_name:         itemName,
-    subscription_type: '1',
-    billing_date:      billingDate,
-    recurring_amount:  price.toFixed(2),
-    frequency:         '3',
-    cycles:            '0',
+    merchant_id:  merchantId,
+    merchant_key: merchantKey,
+    return_url:   `${appUrl}/dashboard`,
+    cancel_url:   `${appUrl}/upgrade`,
+    notify_url:   `${appUrl}/api/payfast/notify`,
+    name_first:   (name.split(' ')[0] || 'Student').slice(0, 100),
+    name_last:    (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
+    email_address: email,
+    m_payment_id: `${userId}_${tierId}`,
+    amount:       price.toFixed(2),
+    item_name:    itemName,
   }
 
   // Do NOT sort — PayFast verifies in the order fields arrive in the form POST.
@@ -204,7 +193,7 @@ export default async function UpgradePage() {
             Unlock more Nova
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-            Monthly subscription · Cancel anytime
+            One-time payment · Instant access
           </p>
         </div>
 
@@ -333,7 +322,7 @@ export default async function UpgradePage() {
         </div>
 
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
-          Secured by PayFast · Recurring monthly · Cancel anytime in your profile
+          Secured by PayFast · One-time payment · No hidden charges
         </p>
 
         <Link

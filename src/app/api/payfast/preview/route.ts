@@ -56,27 +56,18 @@ export async function GET(request: Request) {
       }, { status: 500 })
     }
 
-    const now = new Date()
-    now.setMinutes(now.getMinutes() + 120)
-    const billingDate = now.toISOString().split('T')[0]
-
     const data: Record<string, string> = {
-      merchant_id:       merchantId,
-      merchant_key:      merchantKey,
-      return_url:        `${appUrl}/dashboard`,
-      cancel_url:        `${appUrl}/upgrade`,
-      notify_url:        `${appUrl}/api/payfast/notify`,
-      name_first:        (name.split(' ')[0] || 'Student').slice(0, 100),
-      name_last:         (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
-      email_address:     email,
-      m_payment_id:      `${user.id}_${tierId}`,
-      amount:            tierConfig.price.toFixed(2),
-      item_name:         tierConfig.itemName,
-      subscription_type: '1',
-      billing_date:      billingDate,
-      recurring_amount:  tierConfig.price.toFixed(2),
-      frequency:         '3',
-      cycles:            '0',
+      merchant_id:   merchantId,
+      merchant_key:  merchantKey,
+      return_url:    `${appUrl}/dashboard`,
+      cancel_url:    `${appUrl}/upgrade`,
+      notify_url:    `${appUrl}/api/payfast/notify`,
+      name_first:    (name.split(' ')[0] || 'Student').slice(0, 100),
+      name_last:     (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
+      email_address: email,
+      m_payment_id:  `${user.id}_${tierId}`,
+      amount:        tierConfig.price.toFixed(2),
+      item_name:     tierConfig.itemName,
     }
 
     const queryString = Object.entries(data)
@@ -101,7 +92,6 @@ export async function GET(request: Request) {
       fields: { ...data, merchant_key: '****' },
       queryString,
       signature,
-      billingDate,
       email,
     })
   } catch (error) {
