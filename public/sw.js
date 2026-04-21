@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'varsityos-v8';
+const CACHE_VERSION = 'varsityos-v9';
 const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const DATA_CACHE    = `${CACHE_VERSION}-data`;
 const OFFLINE_URL   = '/offline';
@@ -21,6 +21,16 @@ const BYPASS = [
   'fonts.gstatic.com',
   'posthog.com',
 ];
+
+// Auth paths — let browser handle natively (redirect chains break SW respondWith)
+const AUTH_BYPASS_PATHS = ['/auth/'];
+
+function isAuthBypass(url) {
+  try {
+    const path = new URL(url).pathname;
+    return AUTH_BYPASS_PATHS.some(p => path.startsWith(p));
+  } catch { return false; }
+}
 
 // Routes that require auth — never serve from cache (always network first)
 const AUTH_ROUTES = [
@@ -86,6 +96,9 @@ self.addEventListener('fetch', e => {
 
   // External services — don't intercept at all
   if (shouldBypass(url)) return;
+
+  // Auth routes — let browser handle redirect chains natively
+  if (isAuthBypass(url)) return;
 
   // chrome-extension and non-http — don't intercept
   if (!url.startsWith('http')) return;
