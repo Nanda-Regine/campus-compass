@@ -1,6 +1,8 @@
+export const runtime = 'nodejs'
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createServiceRoleClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 
 // PayFast production IP ranges (from PayFast documentation)
@@ -19,8 +21,6 @@ const PAYFAST_IPS = [
   '102.216.36.4',
   '102.216.36.5',
   '102.216.36.6',
-  '127.0.0.1',
-  '::1',
 ]
 
 function getClientIp(request: NextRequest): string {
@@ -33,6 +33,7 @@ function getClientIp(request: NextRequest): string {
 }
 
 // PHP urlencode-compatible encoder (PayFast signs params using PHP's urlencode)
+// PHP encodes ~ as %7E; encodeURIComponent leaves it unencoded
 function phpUrlencode(str: string): string {
   return encodeURIComponent(str)
     .replace(/!/g, '%21')
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     const data: Record<string, string> = {}
     params.forEach((value, key) => { data[key] = value })
 
-    const supabase = createServiceRoleClient()
+    const supabase = createAdminClient()
 
     // ─── IP whitelist check ────────────────────────────────────────────────
     const clientIp = getClientIp(request)

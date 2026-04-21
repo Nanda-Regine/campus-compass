@@ -89,8 +89,9 @@ Respond with valid JSON only (no markdown):
     })
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-    const clean = rawText.replace(/```json|```/g, '').trim()
-    const recipe = JSON.parse(clean)
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error('No JSON in response')
+    const recipe = JSON.parse(jsonMatch[0])
 
     return NextResponse.json({ recipe })
   } catch (error) {
@@ -144,13 +145,14 @@ Respond with valid JSON only (no markdown):
 
     const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1500,
+      max_tokens: 2500,
       messages: [{ role: 'user', content: prompt }],
     })
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-    const clean = rawText.replace(/```json|```/g, '').trim()
-    const plan = JSON.parse(clean)
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error('No JSON in response')
+    const plan = JSON.parse(jsonMatch[0])
 
     return NextResponse.json({ plan })
   } catch (error) {

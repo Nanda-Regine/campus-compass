@@ -72,6 +72,7 @@ const TIERS = [
 ]
 
 // PHP urlencode-compatible encoder — must match PayFast's server-side encoding exactly
+// PHP urlencode encodes ~ as %7E; encodeURIComponent leaves it unencoded
 function phpUrlencode(str: string): string {
   return encodeURIComponent(str)
     .replace(/!/g, '%21')
@@ -79,6 +80,7 @@ function phpUrlencode(str: string): string {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
 }
 
@@ -95,10 +97,21 @@ function buildPayFastForm(
   const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za').trim().replace(/\/$/, '')
   const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
+  const merchantId  = (process.env.PAYFAST_MERCHANT_ID  || '').trim()
+  const merchantKey = (process.env.PAYFAST_MERCHANT_KEY || '').trim()
+
+  if (!merchantId || !merchantKey) {
+    console.error('[PayFast] Missing PAYFAST_MERCHANT_ID or PAYFAST_MERCHANT_KEY env vars')
+  }
+
+  // billing_date: use tomorrow in UTC — always in the future, avoids SAST midnight edge cases
+  const tomorrow = new Date()
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+  const billingDate = tomorrow.toISOString().split('T')[0]
 
   const data: Record<string, string> = {
-    merchant_id:       process.env.PAYFAST_MERCHANT_ID || '',
-    merchant_key:      process.env.PAYFAST_MERCHANT_KEY || '',
+    merchant_id:       merchantId,
+    merchant_key:      merchantKey,
     return_url:        `${appUrl}/dashboard`,
     cancel_url:        `${appUrl}/upgrade`,
     notify_url:        `${appUrl}/api/payfast/notify`,
@@ -109,7 +122,7 @@ function buildPayFastForm(
     amount:            price.toFixed(2),
     item_name:         itemName,
     subscription_type: '1',
-    billing_date:      new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().split('T')[0],
+    billing_date:      billingDate,
     recurring_amount:  price.toFixed(2),
     frequency:         '3',
     cycles:            '0',
