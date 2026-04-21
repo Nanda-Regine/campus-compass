@@ -86,43 +86,13 @@ export async function POST(request: Request) {
 
     data.signature = createHash('md5').update(sigSource).digest('hex')
 
-    const pfEndpoint = isSandbox
-      ? 'https://sandbox.payfast.co.za/onsite/process'
-      : 'https://www.payfast.co.za/onsite/process'
+    const action = isSandbox
+      ? 'https://sandbox.payfast.co.za/eng/process'
+      : 'https://www.payfast.co.za/eng/process'
 
-    console.log('[PayFast] POST', pfEndpoint, 'merchant:', merchantId.slice(0, 4) + '****')
+    console.log('[PayFast] fields ready, merchant:', merchantId.slice(0, 4) + '****', 'sandbox:', isSandbox)
 
-    const pfRes = await fetch(pfEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(data).toString(),
-    })
-
-    const responseText = await pfRes.text()
-
-    if (!pfRes.ok) {
-      console.error('[PayFast] initiate error:', pfRes.status, responseText)
-      return NextResponse.json({
-        error: `PayFast returned ${pfRes.status}`,
-        detail: responseText,
-      }, { status: 502 })
-    }
-
-    let pfJson: { uuid?: string }
-    try {
-      pfJson = JSON.parse(responseText)
-    } catch {
-      console.error('[PayFast] Non-JSON response:', responseText)
-      return NextResponse.json({ error: 'PayFast response parse error', detail: responseText }, { status: 502 })
-    }
-
-    if (!pfJson.uuid) {
-      console.error('[PayFast] No UUID in response:', pfJson)
-      return NextResponse.json({ error: 'PayFast returned no UUID', detail: pfJson }, { status: 502 })
-    }
-
-    console.log('[PayFast] UUID obtained:', pfJson.uuid)
-    return NextResponse.json({ uuid: pfJson.uuid, isSandbox })
+    return NextResponse.json({ action, fields: data })
 
   } catch (error) {
     console.error('[PayFast] initiate exception:', error)

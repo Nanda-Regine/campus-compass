@@ -3,35 +3,12 @@
 import { useState } from 'react'
 import { trackEvent } from '@/lib/analytics'
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    payfast_do_onsite_payment: (data: { uuid: string }, callback?: (result: boolean) => void) => void
-  }
-}
-
 interface Props {
   tier: string
   price: number
   colour: string
   gold?: boolean
   highlight?: boolean
-}
-
-function loadPayFastScript(isSandbox: boolean): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const src = isSandbox
-      ? 'https://sandbox.payfast.co.za/onsite/engine.js'
-      : 'https://www.payfast.co.za/onsite/engine.js'
-
-    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return }
-
-    const script = document.createElement('script')
-    script.src = src
-    script.onload = () => resolve()
-    script.onerror = () => reject(new Error('Failed to load PayFast script'))
-    document.head.appendChild(script)
-  })
 }
 
 export default function UpgradeButton({ tier, price, colour, gold, highlight }: Props) {
@@ -58,18 +35,21 @@ export default function UpgradeButton({ tier, price, colour, gold, highlight }: 
         return
       }
 
-      await loadPayFastScript(json.isSandbox)
+      // Build and submit a hidden form to PayFast
+      const form = document.createElement('form')
+      form.method = 'POST'
+      form.action = json.action
 
-      if (typeof window.payfast_do_onsite_payment !== 'function') {
-        setError('Payment script unavailable. Please refresh and try again.')
-        setLoading(false)
-        return
+      for (const [name, value] of Object.entries(json.fields as Record<string, string>)) {
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = name
+        input.value = value
+        form.appendChild(input)
       }
 
-      window.payfast_do_onsite_payment({ uuid: json.uuid }, (result: boolean) => {
-        setLoading(false)
-        if (result) window.location.href = '/dashboard'
-      })
+      document.body.appendChild(form)
+      form.submit()
     } catch (err) {
       console.error('[PayFast]', err)
       setError('Network error. Check your connection and try again.')
@@ -100,7 +80,7 @@ export default function UpgradeButton({ tier, price, colour, gold, highlight }: 
           transition: 'filter var(--duration-fast) var(--ease-out)',
         }}
       >
-        {loading ? 'Setting up payment…' : `Pay R${price} once`}
+        {loading ? 'Redirecting to PayFast…' : `Pay R${price} once`}
       </button>
       {error && (
         <p style={{
