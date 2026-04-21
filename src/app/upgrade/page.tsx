@@ -104,10 +104,11 @@ function buildPayFastForm(
     console.error('[PayFast] Missing PAYFAST_MERCHANT_ID or PAYFAST_MERCHANT_KEY env vars')
   }
 
-  // billing_date: use tomorrow in UTC — always in the future, avoids SAST midnight edge cases
-  const tomorrow = new Date()
-  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
-  const billingDate = tomorrow.toISOString().split('T')[0]
+  // billing_date: today in SAST (UTC+2). PayFast requires billing_date >= today.
+  // Using today means the subscription starts immediately — consistent with amount > 0 first charge.
+  const now = new Date()
+  now.setMinutes(now.getMinutes() + 120) // shift to SAST
+  const billingDate = now.toISOString().split('T')[0]
 
   const data: Record<string, string> = {
     merchant_id:       merchantId,
@@ -115,8 +116,8 @@ function buildPayFastForm(
     return_url:        `${appUrl}/dashboard`,
     cancel_url:        `${appUrl}/upgrade`,
     notify_url:        `${appUrl}/api/payfast/notify`,
-    name_first:        name.split(' ')[0] || 'Student',
-    name_last:         name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student',
+    name_first:        (name.split(' ')[0] || 'Student').slice(0, 100),
+    name_last:         (name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student').slice(0, 100),
     email_address:     email,
     m_payment_id:      `${userId}_${tierId}`,
     amount:            price.toFixed(2),
@@ -126,6 +127,7 @@ function buildPayFastForm(
     recurring_amount:  price.toFixed(2),
     frequency:         '3',
     cycles:            '0',
+    payment_method:    'cc',
   }
 
   // Do NOT sort — PayFast verifies in the order fields arrive in the form POST.
