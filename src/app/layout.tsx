@@ -268,25 +268,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+        {/* ── Google Tag Manager ── */}
+        <Script
+          id="gtm-head"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W7R77VP9');`,
+          }}
+        />
+
         {/* ── Google Analytics 4 + Google Tag ── */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-87QR50FJ7N"
           strategy="afterInteractive"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-87QR50FJ7N');gtag('config','GT-PJ4PM27T');`}
-        </Script>
-
-        {/* ── Google Tag Manager (head) ── */}
-        {process.env.NEXT_PUBLIC_GTM_ID && (
-          <Script id="gtm-head" strategy="afterInteractive">
-            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');`}
-          </Script>
-        )}
+        <Script
+          id="gtag-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-87QR50FJ7N');gtag('config','GT-PJ4PM27T');`,
+          }}
+        />
 
         {/* ── Hotjar ── */}
         {process.env.NEXT_PUBLIC_HOTJAR_ID && (
@@ -311,16 +313,14 @@ a.appendChild(r);
       </head>
       <body className={`${soraFont.variable} ${dmSansFont.variable} ${monoFont.variable} antialiased`}>
         {/* ── Google Tag Manager (noscript fallback) ── */}
-        {process.env.NEXT_PUBLIC_GTM_ID && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
-        )}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W7R77VP9"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
         <Providers>
           <Sidebar />
           <OfflineBanner />
