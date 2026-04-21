@@ -164,9 +164,7 @@ export default function ModulesTab({ modules, userId, supabase }: Props) {
             error={errors.name?.message}
             {...register('name')}
           />
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Module code (optional)" placeholder="e.g. PSY101" {...register('code')} />
-          </div>
+          <Input label="Module code (optional)" placeholder="e.g. PSY101" {...register('code')} />
 
           {/* Colour picker */}
           <div>

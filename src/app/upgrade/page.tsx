@@ -79,7 +79,6 @@ function phpUrlencode(str: string): string {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
-    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
 }
 
@@ -94,7 +93,7 @@ function buildPayFastForm(
   itemName: string,
 ) {
   const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-  const appUrl = 'https://varsityos.co.za'
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za').trim().replace(/\/$/, '')
   const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
 
   const data: Record<string, string> = {
@@ -104,12 +103,13 @@ function buildPayFastForm(
     cancel_url:        `${appUrl}/upgrade`,
     notify_url:        `${appUrl}/api/payfast/notify`,
     name_first:        name.split(' ')[0] || 'Student',
+    name_last:         name.split(' ').slice(1).join(' ') || name.split(' ')[0] || 'Student',
     email_address:     email,
     m_payment_id:      `${userId}_${tierId}`,
     amount:            price.toFixed(2),
     item_name:         itemName,
     subscription_type: '1',
-    billing_date:      new Date().toISOString().split('T')[0],
+    billing_date:      new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().split('T')[0],
     recurring_amount:  price.toFixed(2),
     frequency:         '3',
     cycles:            '0',
@@ -127,6 +127,10 @@ function buildPayFastForm(
     : queryString
 
   data.signature = createHash('md5').update(sigSource).digest('hex')
+
+  console.log('[PF] qs:', queryString)
+  console.log('[PF] sig:', data.signature)
+  console.log('[PF] action:', isSandbox ? 'SANDBOX' : 'PROD')
 
   return {
     action: isSandbox

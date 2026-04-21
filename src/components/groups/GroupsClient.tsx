@@ -464,58 +464,56 @@ export default function GroupsClient({ userId }: { userId: string }) {
         </button>
       </div>
 
-      {/* New assignment form */}
-      {showNewForm && (
-        <div className="mx-4 mb-3 bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3 animate-fade-in">
-          <h3 className="font-display font-bold text-white text-sm">New Group Assignment</h3>
-          <input
-            value={newTitle}
-            onChange={e => setNewTitle(e.target.value)}
-            placeholder="Assignment title *"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
-          />
-          <input
-            value={newSubject}
-            onChange={e => setNewSubject(e.target.value)}
-            placeholder="Subject / Module (e.g. Marketing 201)"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
-          />
-          <textarea
-            value={newDesc}
-            onChange={e => setNewDesc(e.target.value)}
-            placeholder="Description (optional)"
-            rows={2}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 resize-none font-body"
-          />
-          <div>
-            <label className="font-mono text-[0.6rem] text-white/40 mb-1 block">Due date</label>
+      {/* Assignment list + new form (both inside scroll container so mobile button stays reachable) */}
+      <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6 space-y-3">
+        {showNewForm && (
+          <div className="mb-1 bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3 animate-fade-in">
+            <h3 className="font-display font-bold text-white text-sm">New Group Assignment</h3>
             <input
-              type="date"
-              value={newDueDate}
-              onChange={e => setNewDueDate(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none focus:border-teal-600 font-body"
+              value={newTitle}
+              onChange={e => setNewTitle(e.target.value)}
+              placeholder="Assignment title *"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
             />
+            <input
+              value={newSubject}
+              onChange={e => setNewSubject(e.target.value)}
+              placeholder="Subject / Module (e.g. Marketing 201)"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
+            />
+            <textarea
+              value={newDesc}
+              onChange={e => setNewDesc(e.target.value)}
+              placeholder="Description (optional)"
+              rows={2}
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 resize-none font-body"
+            />
+            <div>
+              <label className="font-mono text-[0.6rem] text-white/40 mb-1 block">Due date</label>
+              <input
+                type="date"
+                value={newDueDate}
+                onChange={e => setNewDueDate(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none focus:border-teal-600 font-body"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={createAssignment}
+                disabled={creating || !newTitle.trim()}
+                className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2.5 rounded-xl transition-all"
+              >
+                {creating ? 'Creating…' : 'Create Group'}
+              </button>
+              <button
+                onClick={() => setShowNewForm(false)}
+                className="px-4 font-mono text-sm text-white/40 hover:text-white/70 border border-white/10 rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={createAssignment}
-              disabled={creating || !newTitle.trim()}
-              className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2.5 rounded-xl transition-all"
-            >
-              {creating ? 'Creating…' : 'Create Group'}
-            </button>
-            <button
-              onClick={() => setShowNewForm(false)}
-              className="px-4 font-mono text-sm text-white/40 hover:text-white/70 border border-white/10 rounded-xl transition-all"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Assignment list */}
-      <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-3">
+        )}
         {assignments.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl mb-3">👥</div>

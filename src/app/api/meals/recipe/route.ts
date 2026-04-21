@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkRateLimit } from '@/lib/rateLimit'
 
+export const dynamic = 'force-dynamic'
+
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 export async function POST(request: NextRequest) {
