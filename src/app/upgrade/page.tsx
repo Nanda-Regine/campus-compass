@@ -112,7 +112,7 @@ export default async function UpgradePage() {
             Unlock more Nova
           </h1>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-            One-time payment · Instant access
+            Monthly subscription · Cancel anytime
           </p>
         </div>
 
@@ -239,7 +239,7 @@ export default async function UpgradePage() {
         </div>
 
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
-          Secured by PayFast · One-time payment · No hidden charges
+          Secured by PayFast · Monthly subscription · Cancel anytime
         </p>
 
         <Link

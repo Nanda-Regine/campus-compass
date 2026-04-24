@@ -80,7 +80,7 @@ export default function UpgradeButton({ tier, price, colour, gold, highlight }: 
           transition: 'filter var(--duration-fast) var(--ease-out)',
         }}
       >
-        {loading ? 'Redirecting to PayFast…' : `Pay R${price} once`}
+        {loading ? 'Redirecting to PayFast…' : `Subscribe · R${price}/month`}
       </button>
       {error && (
         <p style={{

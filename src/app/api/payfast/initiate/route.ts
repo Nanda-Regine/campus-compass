@@ -53,6 +53,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'PayFast not configured' }, { status: 500 })
     }
 
+    if (!passphrase) {
+      console.error('[PayFast] Passphrase required for recurring billing')
+      return NextResponse.json({ error: 'PayFast not configured' }, { status: 500 })
+    }
+
     const nameParts = name.split(/\s+/)
     const nameFirst = (nameParts[0] || 'Student').slice(0, 100)
     const nameLast  = (nameParts.slice(1).join(' ') || nameFirst).slice(0, 100)
@@ -60,39 +65,45 @@ export async function POST(request: Request) {
     // m_payment_id: {uuid36}_{tier}_{timestamp} — notify route parses userId as first 36 chars
     const mPaymentId = `${user.id}_${tierId}_${Date.now()}`
 
-    const data: Record<string, string> = {
-      merchant_id:   merchantId,
-      merchant_key:  merchantKey,
-      return_url:    `${appUrl}/dashboard`,
-      cancel_url:    `${appUrl}/upgrade`,
-      notify_url:    `${appUrl}/api/payfast/notify`,
-      name_first:    nameFirst,
-      name_last:     nameLast,
-      email_address: email,
-      m_payment_id:  mPaymentId,
-      amount:        tierConfig.price.toFixed(2),
-      item_name:     tierConfig.itemName,
-    }
+    // Field order MUST follow PayFast docs exactly — do NOT sort alphabetically.
+    // PayFast docs: "Do not use the API signature format, which uses alphabetical ordering!"
+    const fields: [string, string][] = [
+      ['merchant_id',      merchantId],
+      ['merchant_key',     merchantKey],
+      ['return_url',       `${appUrl}/dashboard`],
+      ['cancel_url',       `${appUrl}/upgrade`],
+      ['notify_url',       `${appUrl}/api/payfast/notify`],
+      ['name_first',       nameFirst],
+      ['name_last',        nameLast],
+      ['email_address',    email],
+      ['m_payment_id',     mPaymentId],
+      ['amount',           tierConfig.price.toFixed(2)],
+      ['item_name',        tierConfig.itemName],
+      // Recurring billing (subscription_type=1 = subscription, frequency=3 = monthly, cycles=0 = indefinite)
+      ['subscription_type', '1'],
+      ['recurring_amount',  tierConfig.price.toFixed(2)],
+      ['frequency',         '3'],
+      ['cycles',            '0'],
+    ]
 
-    // Signature: all non-empty fields sorted alphabetically (PayFast requirement)
-    const queryString = Object.keys(data).sort()
-      .filter(k => data[k] !== '')
-      .map(k => `${k}=${phpUrlencode(data[k])}`)
+    const queryString = fields
+      .filter(([, v]) => v !== '')
+      .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
       .join('&')
 
-    const sigSource = passphrase
-      ? `${queryString}&passphrase=${phpUrlencode(passphrase)}`
-      : queryString
+    const sigSource = `${queryString}&passphrase=${phpUrlencode(passphrase)}`
+    const signature = createHash('md5').update(sigSource).digest('hex')
 
-    data.signature = createHash('md5').update(sigSource).digest('hex')
+    const formFields: Record<string, string> = Object.fromEntries(fields)
+    formFields.signature = signature
 
     const action = isSandbox
       ? 'https://sandbox.payfast.co.za/eng/process'
       : 'https://www.payfast.co.za/eng/process'
 
-    console.log('[PayFast] fields ready, merchant:', merchantId.slice(0, 4) + '****', 'sandbox:', isSandbox)
+    console.log('[PayFast] subscription initiated, merchant:', merchantId.slice(0, 4) + '****', 'tier:', tierId, 'sandbox:', isSandbox)
 
-    return NextResponse.json({ action, fields: data })
+    return NextResponse.json({ action, fields: formFields })
 
   } catch (error) {
     console.error('[PayFast] initiate exception:', error)

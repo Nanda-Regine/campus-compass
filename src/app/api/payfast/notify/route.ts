@@ -162,6 +162,20 @@ export async function POST(request: NextRequest) {
         } catch { /* non-fatal */ }
       } else {
         console.log(`[PayFast ITN] Upgraded user ${userId} to ${tier}`)
+
+        // Also upsert into subscriptions table for subscription management
+        // Requires migration 20260425000000_subscriptions_payfast_token.sql to be run first
+        try {
+          await supabase.from('subscriptions').upsert({
+            user_id: userId,
+            plan: tier,
+            status: 'active',
+            payfast_subscription_token: data.token ?? null,
+            payfast_payment_id: data.pf_payment_id ?? null,
+            amount: parseFloat(data.amount_gross ?? '0'),
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'user_id' })
+        } catch { /* non-fatal — run migration 20260425000000 to enable */ }
       }
     }
 
@@ -181,6 +195,16 @@ export async function POST(request: NextRequest) {
         console.error('[PayFast ITN] Profile cancellation failed', { userId, error: cancelError.message })
       } else {
         console.log(`[PayFast ITN] Cancelled subscription for user ${userId}`)
+        // Update subscriptions record (non-fatal — requires migration 20260425000000)
+        try {
+          await supabase.from('subscriptions').upsert({
+            user_id: userId,
+            plan: 'free',
+            status: 'cancelled',
+            cancelled_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'user_id' })
+        } catch { /* non-fatal */ }
       }
     }
 
