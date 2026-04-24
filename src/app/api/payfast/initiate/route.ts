@@ -74,10 +74,10 @@ export async function POST(request: Request) {
       item_name:     tierConfig.itemName,
     }
 
-    // Signature: all non-empty fields in insertion order, phpUrlencode-encoded
-    const queryString = Object.entries(data)
-      .filter(([, v]) => v !== '')
-      .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
+    // Signature: all non-empty fields sorted alphabetically (PayFast requirement)
+    const queryString = Object.keys(data).sort()
+      .filter(k => data[k] !== '')
+      .map(k => `${k}=${phpUrlencode(data[k])}`)
       .join('&')
 
     const sigSource = passphrase
