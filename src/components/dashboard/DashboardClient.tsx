@@ -8,10 +8,10 @@ import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
   type Profile, type Budget, type Task, type Exam,
   type Module, type TimetableEntry, type Expense,
-  type Subscription, MODULE_COLOURS, DAYS_OF_WEEK,
+  type Subscription,
 } from '@/types'
 import {
-  fmt, getDaysUntil, getTaskUrgency,
+  fmt, getDaysUntil,
   calcTotalBudget, cn,
 } from '@/lib/utils'
 
@@ -59,25 +59,23 @@ function NovaCard({ profile, subscription }: { profile: Profile; subscription: S
   const msgUsed    = profile.nova_messages_used ?? 0
   const remaining  = Math.max(0, msgLimit - msgUsed)
   const isUnlimited = profile?.subscription_tier === 'nova_unlimited'
+  const tier = profile?.subscription_tier || profile?.plan || 'free'
 
   return (
     <div
       style={{
         background: 'var(--nova-bg)',
-        border: '0.5px solid var(--nova-border)',
+        border: '0.5px solid rgba(255,255,255,0.15)',
         borderRadius: 'var(--radius-xl)',
         padding: '20px 24px',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Top highlight */}
       <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,rgba(130,100,255,0.7) 0%,rgba(130,100,255,0.2) 50%,transparent 100%)', pointerEvents: 'none' }} />
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        {/* Left */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          {/* Nova orb */}
           <div
             className="nova-orb flex-shrink-0"
             style={{
@@ -90,10 +88,14 @@ function NovaCard({ profile, subscription }: { profile: Profile; subscription: S
             <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>
               {isUnlimited ? 'Unlimited conversations' : `${remaining} msgs left this month`}
             </div>
+            {tier !== 'free' && (
+              <div style={{ fontSize: 10, color: 'var(--nova)', marginTop: 2, textTransform: 'capitalize', letterSpacing: '0.05em' }}>
+                {tier.replace('_', ' ')} plan
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right */}
         <Link href="/nova" style={{ flexShrink: 0 }}>
           <button
             style={{
@@ -110,6 +112,108 @@ function NovaCard({ profile, subscription }: { profile: Profile; subscription: S
   )
 }
 
+function NovaCheckInBubble({ message }: { message: string | null }) {
+  if (!message) return null
+  return (
+    <div
+      className="nova-checkin-bubble"
+      style={{
+        display: 'flex', alignItems: 'flex-start', gap: 12,
+        background: 'rgba(45,212,191,0.04)',
+        border: '0.5px solid rgba(45,212,191,0.30)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '12px 16px',
+      }}
+    >
+      <span style={{ fontSize: 18, flexShrink: 0 }}>💜</span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--teal)', marginBottom: 4 }}>Nova</div>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{message}</div>
+      </div>
+      <Link href="/nova" style={{ flexShrink: 0, textDecoration: 'none', alignSelf: 'center' }}>
+        <span style={{ fontSize: 12, color: 'var(--teal)' }}>Chat →</span>
+      </Link>
+    </div>
+  )
+}
+
+function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
+  const now = new Date()
+  const jsDay = now.getDay()
+  const dbDay = jsDay === 0 ? 7 : jsDay
+
+  const todaySlots = timetable
+    .filter(s => (s.day_of_week as number) === dbDay)
+    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+
+  if (!todaySlots.length) return null
+
+  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  const displaySlots = todaySlots.slice(0, 3)
+  const hasMore = todaySlots.length > 3
+
+  return (
+    <section>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--teal)', display: 'inline-block', flexShrink: 0 }} />
+          <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--teal)', fontWeight: 600 }}>Today&apos;s Classes</span>
+        </div>
+        <Link href="/study/timetable" style={{ fontSize: 12, color: 'var(--teal)', textDecoration: 'none' }}>See full timetable →</Link>
+      </div>
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+        {displaySlots.map(slot => {
+          const isNow = slot.start_time && slot.end_time
+            ? currentTime >= slot.start_time && currentTime <= slot.end_time
+            : false
+          const colour = (slot.module as Module | undefined)?.color ?? (slot.module as Module | undefined)?.colour ?? '#0d9488'
+          const moduleName = (slot.module as Module | undefined)?.module_name || 'Class'
+
+          return (
+            <div
+              key={slot.id}
+              style={{
+                flexShrink: 0,
+                minWidth: 140,
+                padding: '10px 12px',
+                background: 'var(--bg-surface)',
+                border: `0.5px solid ${isNow ? colour + '60' : 'rgba(255,255,255,0.10)'}`,
+                borderLeft: `2px solid ${colour}`,
+                borderRadius: `0 var(--radius-md) var(--radius-md) 0`,
+                position: 'relative',
+              }}
+            >
+              {isNow && (
+                <span style={{
+                  position: 'absolute', top: 6, right: 8,
+                  fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
+                  color: colour, textTransform: 'uppercase',
+                }}>NOW</span>
+              )}
+              <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>
+                {moduleName}
+              </div>
+              {(slot.start_time || slot.venue) && (
+                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                  {slot.start_time && `${slot.start_time}${slot.end_time ? ` – ${slot.end_time}` : ''}`}
+                  {slot.venue && ` · ${slot.venue}`}
+                </div>
+              )}
+            </div>
+          )
+        })}
+        {hasMore && (
+          <Link href="/study/timetable" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+            <div style={{ fontSize: 12, color: 'var(--teal)', padding: '10px 12px', whiteSpace: 'nowrap' }}>
+              +{todaySlots.length - 3} more →
+            </div>
+          </Link>
+        )}
+      </div>
+    </section>
+  )
+}
+
 function UrgentTasksStrip({ tasks, today }: { tasks: Task[]; today: string }) {
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
 
@@ -122,7 +226,7 @@ function UrgentTasksStrip({ tasks, today }: { tasks: Task[]; today: string }) {
   if (!urgent.length) return null
 
   return (
-    <section>
+    <section style={{ border: '0.5px solid rgba(255,255,255,0.10)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--danger)', display: 'inline-block', flexShrink: 0 }} />
@@ -185,50 +289,69 @@ const FEATURE_ICONS: Record<string, string> = {
 
 function FeatureGrid({
   tasks, expenses, totalBudget, remaining, modules, subscription, profile,
+  mealPlanExists, shiftsThisWeek, activeGroups,
 }: {
   tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number;
-  modules: Module[]; subscription: Subscription | null; profile: Profile
+  modules: Module[]; subscription: Subscription | null; profile: Profile;
+  mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number;
 }) {
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
   const msgLimit   = profile.nova_messages_limit ?? 10
   const msgUsed    = profile.nova_messages_used ?? 0
   const novaLeft   = Math.max(0, msgLimit - msgUsed)
 
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0)
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
-  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) <= weekAhead).length
 
-  const subtitles: Record<string, string> = {
-    Study:  tasksDueWeek > 0 ? `${tasksDueWeek} task${tasksDueWeek > 1 ? 's' : ''} due` : 'All clear',
-    Budget: remaining >= 0 ? `R${Math.round(remaining)} left` : 'Over budget',
-    Meals:  'Plan your week',
-    Work:   'Track shifts',
-    Nova:   isUnlimited ? 'Unlimited' : `${novaLeft} msgs left`,
-    Groups: `${modules.length} module${modules.length !== 1 ? 's' : ''}`,
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
+
+  const budgetPct = totalBudget > 0 ? (remaining / totalBudget) * 100 : 100
+  const budgetColor = budgetPct < 10 ? 'var(--danger)' : budgetPct < 30 ? 'var(--gold)' : 'var(--teal)'
+
+  const subtitles: Record<string, { text: string; color?: string }> = {
+    Study: overdueTasks > 0
+      ? { text: `${overdueTasks} overdue`, color: 'var(--danger)' }
+      : tasksDueWeek > 0
+        ? { text: `${tasksDueWeek} due this week`, color: 'var(--teal)' }
+        : { text: 'All clear ✓', color: 'var(--teal)' },
+    Budget: totalBudget > 0
+      ? { text: remaining >= 0 ? `R${Math.round(remaining)} left` : 'Over budget', color: budgetColor }
+      : { text: 'Set budget →', color: 'var(--gold)' },
+    Meals: mealPlanExists
+      ? { text: 'Week planned ✓', color: 'var(--teal)' }
+      : { text: 'Plan your week →', color: 'var(--meals-orange)' },
+    Work: shiftsThisWeek > 0
+      ? { text: `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead`, color: 'var(--work-blue)' }
+      : { text: 'No shifts soon', color: 'var(--text-tertiary)' },
+    Nova: isUnlimited
+      ? { text: 'Unlimited', color: 'var(--nova)' }
+      : { text: `${novaLeft} msgs left`, color: novaLeft < 5 ? 'var(--danger)' : 'var(--nova)' },
+    Groups: activeGroups > 0
+      ? { text: `${activeGroups} group${activeGroups > 1 ? 's' : ''}`, color: 'var(--groups-green)' }
+      : { text: 'Join a group →', color: 'var(--text-tertiary)' },
   }
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-      {FEATURE_CARDS.map(({ href, label, accent, iconBg }) => (
-        <Link
-          key={href}
-          href={href}
-          style={{ textDecoration: 'none' }}
-        >
-          <div
-            className="card-base"
-            style={{ padding: 16, minHeight: 100, cursor: 'pointer' }}
-          >
-            {/* Left accent bar (visible on hover via CSS — simplified: always visible at 40% on cards) */}
-            <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, borderRadius: '2px 0 0 2px', opacity: 0.5 }} />
-
-            <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-              {FEATURE_ICONS[label]}
+      {FEATURE_CARDS.map(({ href, label, accent, iconBg }) => {
+        const subtitle = subtitles[label]
+        return (
+          <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+            <div
+              className="card-base"
+              style={{ padding: 16, minHeight: 100, cursor: 'pointer', border: '0.5px solid rgba(255,255,255,0.10)' }}
+            >
+              <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, borderRadius: '2px 0 0 2px', opacity: 0.5 }} />
+              <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                {FEATURE_ICONS[label]}
+              </div>
+              <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginTop: 10 }}>{label}</div>
+              <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginTop: 10 }}>{label}</div>
-            <div style={{ fontSize: 12, color: accent, marginTop: 2 }}>{subtitles[label]}</div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        )
+      })}
     </div>
   )
 }
@@ -239,10 +362,11 @@ function HeroStatsCard({
   profile: Profile; remaining: number; totalBudget: number;
   tasks: Task[]; exams: Exam[]; streakDays: number
 }) {
-  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < new Date())
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0)
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate)
+  const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
   const tasksDueWeek = tasks.filter(t => {
-    const wk = new Date(); wk.setDate(wk.getDate() + 7)
-    return t.status !== 'done' && t.due_date && new Date(t.due_date) <= wk
+    return t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead
   }).length
 
   const nextExam = exams[0]
@@ -259,13 +383,10 @@ function HeroStatsCard({
         overflow: 'hidden',
       }}
     >
-      {/* Top highlight */}
       <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,rgba(0,181,150,0.5) 0%,rgba(0,181,150,0.1) 40%,transparent 70%)', pointerEvents: 'none' }} />
-      {/* Ambient glows */}
       <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 15% 25%,rgba(0,181,150,0.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 75%,rgba(201,168,76,0.05) 0%,transparent 45%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Name + greeting */}
         <div style={{ marginBottom: 12 }}>
           <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
             {getGreeting()}, {profile?.full_name?.split(' ')[0] ?? 'Student'} 🌱
@@ -275,7 +396,6 @@ function HeroStatsCard({
           )}
         </div>
 
-        {/* Stats 2×2 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           {[
             {
@@ -311,7 +431,6 @@ function HeroStatsCard({
           ))}
         </div>
 
-        {/* Overdue warning */}
         {overdueTasks.length > 0 && (
           <div style={{
             marginTop: 12, background: 'var(--danger-dim)', border: '0.5px solid var(--danger-border)',
@@ -400,7 +519,6 @@ function BudgetPreviewCard({ monthSpent, totalBudget, expenses }: { monthSpent: 
         <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 12, color: 'var(--text-secondary)' }}>{pct}%</span>
       </div>
 
-      {/* Progress bar */}
       <div style={{ height: 6, background: 'var(--border-subtle)', borderRadius: 3, overflow: 'hidden', marginBottom: 10 }}>
         <div
           className="progress-bar-fill"
@@ -408,7 +526,6 @@ function BudgetPreviewCard({ monthSpent, totalBudget, expenses }: { monthSpent: 
         />
       </div>
 
-      {/* Category pills */}
       {topCats.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
           {topCats.map(([cat, amt]) => (
@@ -473,6 +590,10 @@ function UpgradeCard() {
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const store = useAppStore()
   const [novaInsights, setNovaInsights] = useState<NovaInsight[]>([])
+  const [mealPlanExists, setMealPlanExists] = useState(false)
+  const [shiftsThisWeek, setShiftsThisWeek] = useState(0)
+  const [activeGroups, setActiveGroups] = useState(0)
+  const [novaCheckin, setNovaCheckin] = useState<string | null>(null)
 
   useEffect(() => {
     store.setProfile(initialData.profile)
@@ -500,6 +621,63 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   // Load proactive insights
   useEffect(() => {
     fetch('/api/insights').then(r => r.ok ? r.json() : null).then(d => { if (d) setNovaInsights(d.insights ?? []) }).catch(() => {})
+  }, [])
+
+  // Parallel client-side fetch: meals, shifts, groups
+  useEffect(() => {
+    const fetchLiveData = async () => {
+      try {
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const now = new Date()
+        const jsDay = now.getDay()
+        const weekStart = new Date(now); weekStart.setDate(now.getDate() - jsDay + (jsDay === 0 ? -6 : 1))
+        weekStart.setHours(0, 0, 0, 0)
+        const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
+        const weekStartStr = weekStart.toISOString().split('T')[0]
+        const weekEndStr = weekEnd.toISOString().split('T')[0]
+        const todayStr = now.toISOString().split('T')[0]
+        const sevenDays = new Date(now); sevenDays.setDate(now.getDate() + 7)
+        const sevenDaysStr = sevenDays.toISOString().split('T')[0]
+
+        const [mealsRes, shiftsRes, groupsRes] = await Promise.allSettled([
+          supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStartStr).lte('week_start', weekEndStr),
+          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDaysStr),
+          supabase.from('group_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+        ])
+
+        if (mealsRes.status === 'fulfilled') setMealPlanExists((mealsRes.value.count ?? 0) > 0)
+        if (shiftsRes.status === 'fulfilled') setShiftsThisWeek(shiftsRes.value.count ?? 0)
+        if (groupsRes.status === 'fulfilled') setActiveGroups(groupsRes.value.count ?? 0)
+      } catch { /* silent */ }
+    }
+    fetchLiveData()
+  }, [])
+
+  // Nova check-in — localStorage cached per day
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    const cachedDate = localStorage.getItem('nova_last_checkin_date')
+    const cachedMsg = localStorage.getItem('nova_checkin_message')
+
+    if (cachedDate === today && cachedMsg) {
+      setNovaCheckin(cachedMsg)
+      return
+    }
+
+    fetch('/api/nova/checkin')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.message) {
+          setNovaCheckin(d.message)
+          localStorage.setItem('nova_last_checkin_date', today)
+          localStorage.setItem('nova_checkin_message', d.message)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   // Exam push check (once per session)
@@ -557,7 +735,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const remaining   = totalBudget - monthSpent
 
   const isPremium   = p?.is_premium || ['premium', 'scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
-  const streakDays  = 0 // streak API not yet wired to dashboard state — default 0
+  const streakDays  = 0
 
   const todayDateStr = new Date().toDateString()
 
@@ -565,10 +743,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     <div className="page-enter min-h-screen" style={{ background: 'var(--bg-base)' }}>
       <PullToRefresh onRefresh={handleRefresh} />
 
-      {/* Page padding — desktop: sidebar already handles left margin */}
       <div style={{ padding: '24px 24px', maxWidth: 1400, margin: '0 auto' }}>
 
-        {/* Nova proactive insights (full-width, above grid) */}
+        {/* Nova proactive insights */}
         {novaInsights.map(insight => (
           <div
             key={insight.id}
@@ -603,7 +780,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           {/* ── LEFT COLUMN ── */}
           <div style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
             <NovaCard profile={p} subscription={sub} />
+            <NovaCheckInBubble message={novaCheckin} />
             <MoodCheckin userId={p.id} />
+            <TodaysClasses timetable={initialData.timetable} />
             <UrgentTasksStrip tasks={allTasks} today={todayDateStr} />
             <FeatureGrid
               tasks={allTasks}
@@ -611,8 +790,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               totalBudget={totalBudget}
               remaining={remaining}
               modules={allMods}
-              subscription={sub as any}
+              subscription={sub as Subscription | null}
               profile={p}
+              mealPlanExists={mealPlanExists}
+              shiftsThisWeek={shiftsThisWeek}
+              activeGroups={activeGroups}
             />
           </div>
 
