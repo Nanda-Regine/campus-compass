@@ -62,7 +62,7 @@ export default function MoodCheckin({ userId }: Props) {
   }
 
   return (
-    <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl px-4 py-3.5">
+    <div className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl px-4 py-3.5">
       <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-3">
         How are you feeling today?
       </div>
