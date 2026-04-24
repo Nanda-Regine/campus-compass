@@ -82,6 +82,12 @@ const jsonLd = {
         { '@type': 'Question', name: 'Can I track my part-time job earnings on VarsityOS?', acceptedAnswer: { '@type': 'Answer', text: "Yes. The Work module lets you log part-time jobs, record shifts and hours, track earnings, and get conflict alerts when a shift clashes with your lecture timetable or an exam." } },
         { '@type': 'Question', name: 'What is the Flexible Wallet feature?', acceptedAnswer: { '@type': 'Answer', text: "The Flexible Wallet lets you manage spending from sources beyond NSFAS — such as bursaries, family support, part-time income, or allowances. You can create custom spending buckets and track each separately." } },
         { '@type': 'Question', name: 'How does the meal planner work for SA students?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS includes budget-friendly SA meal recipes under R50, a weekly meal planner, and an AI Recipe Generator that creates recipes based on what you have in your pantry and your weekly food budget." } },
+        { '@type': 'Question', name: 'Can I use VarsityOS if I have a bursary instead of NSFAS?', acceptedAnswer: { '@type': 'Answer', text: "Yes. The Flexible Wallet lets you track any funding source — Funza Lushaka, ISFAP, Ikusasa, employer bursaries, family support, or part-time income. Create separate spending buckets for each and track them independently alongside your study budget." } },
+        { '@type': 'Question', name: 'Does VarsityOS work for UNISA distance learning students?', acceptedAnswer: { '@type': 'Answer', text: "Yes. UNISA students can use the Study Planner for self-paced modules, track assignment due dates, set exam reminders, and use Nova for study support — even without a fixed class timetable. The offline PWA is especially useful when data is limited." } },
+        { '@type': 'Question', name: 'I live in digs, not res. Can I still use the meal planner?', acceptedAnswer: { '@type': 'Answer', text: "Absolutely. The meal planner and AI Recipe Generator are designed for students cooking in digs with a limited weekly food budget. Input what you have in your pantry and your spend limit — Nova generates budget-friendly SA recipes under R50." } },
+        { '@type': 'Question', name: 'What is the NSFAS N+ rule and how does VarsityOS help?', acceptedAnswer: { '@type': 'Answer', text: "The N+ rule means NSFAS only funds you for the minimum time to complete your qualification plus a limited number of extra years. VarsityOS helps you track module credits, flag failed or repeated modules, and Nova explains the N+ implications at your specific university so you can act before funding is cut." } },
+        { '@type': 'Question', name: 'Can Nova help with imposter syndrome as a first-generation South African student?', acceptedAnswer: { '@type': 'Answer', text: "Yes. Nova is trained to recognise first-generation student challenges — the feeling of not belonging at varsity, pressure from family, financial anxiety, and academic overwhelm. Nova uses CBT-based techniques to help reframe these thoughts and gives practical, SA-specific advice that generic AI assistants don't provide." } },
+        { '@type': 'Question', name: 'Which bursaries does VarsityOS support tracking?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS supports tracking any bursary or funding source including NSFAS, Funza Lushaka, ISFAP (Ikusasa Student Financial Aid Programme), employer bursaries, DHET funded bursaries, provincial bursaries, and SRC emergency funds. The Flexible Wallet lets you create a separate budget bucket for each source." } },
       ],
     },
   ],
@@ -101,10 +107,10 @@ const FEATURES = [
 ]
 
 const PAIN_POINTS = [
-  { icon: '💸', text: "Your NSFAS money runs out 10 days before month-end — and you're not sure where it went." },
-  { icon: '😰', text: "You missed another deadline because it was buried in a WhatsApp group at 11pm." },
-  { icon: '🌑', text: "Load shedding hit during your only study block. No plan B." },
-  { icon: '🤯', text: "You're stressed, you can't afford a therapist, and generic wellness apps don't understand SA." },
+  { icon: '💸', text: "Your NSFAS allowance runs out 10 days before month-end — eish — and you genuinely don't know where it went." },
+  { icon: '😰', text: "You missed another deadline because it was buried in a WhatsApp group at 11pm. Hectic." },
+  { icon: '🌑', text: "Load shedding killed your only study block. No plan B, no data, no laptop battery." },
+  { icon: '🤯', text: "You're stressed, you can't afford a therapist, and generic wellness apps don't understand life at a South African varsity." },
 ]
 
 const NOVA_CHAT = [
@@ -168,12 +174,15 @@ const PRICING = [
 ]
 
 const TESTIMONIALS = [
-  { quote: "Nova talked me through a full breakdown before my CHEM3 exam. Didn't feel like a chatbot — it felt like someone who actually got it.", name: 'Lethabo M.', role: '3rd year BSc, Wits', accent: '#0d9488' },
-  { quote: "I finally know exactly where my NSFAS money goes. The budget tracker is the first thing I open every month.", name: 'Ayasha P.', role: '2nd year Law, UCT', accent: '#e07858' },
-  { quote: "Set up my whole semester timetable in 10 minutes. No more missed assignments buried in WhatsApp.", name: 'Siyanda D.', role: '1st year Engineering, UKZN', accent: '#3b82f6' },
+  { quote: "Nova talked me through a full breakdown before my CHEM3 exam. It didn't feel like a chatbot — it felt like someone who actually got what it's like being a first-gen student at varsity.", name: 'Lethabo M.', role: '3rd year BSc, Wits', accent: '#0d9488' },
+  { quote: "I finally know exactly where my NSFAS money goes. Lekker app — the budget tracker is the first thing I open every month.", name: 'Ayasha P.', role: '2nd year Law, UCT', accent: '#e07858' },
+  { quote: "Set up my whole semester timetable in 10 minutes. Sharp. No more missed assignments buried in WhatsApp groups.", name: 'Siyanda D.', role: '1st year Engineering, UKZN', accent: '#3b82f6' },
+  { quote: "I'm from a kasi in Limpopo and my digs has terrible wifi. VarsityOS works offline. That alone makes it lekker.", name: 'Tshepiso K.', role: '2nd year Education, UL', accent: '#d4a847' },
+  { quote: "Eish, I didn't know I could track my bursary money separately from NSFAS. The Flexible Wallet is exactly what I needed.", name: 'Nomvula B.', role: '3rd year Commerce, UJ', accent: '#8b5cf6' },
+  { quote: "Load shedding messes with my study schedule constantly. Nova helped me build a study plan that actually works around it.", name: 'Rorisang M.', role: '1st year BCom, CUT', accent: '#06b6d4' },
 ]
 
-const UNIVERSITIES = ['UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UJ', 'UWC', 'NMU', 'Rhodes', 'UFH', 'WSU', 'UNISA', 'DUT', 'CPUT', 'TUT']
+const UNIVERSITIES = ['UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UJ', 'UWC', 'NMU', 'Rhodes', 'UFH', 'WSU', 'UNISA', 'DUT', 'CPUT', 'TUT', 'UL', 'CUT', 'MUT', 'VUT', 'SPU']
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -703,6 +712,11 @@ export default function LandingPage() {
               { q: "I'm not on NSFAS — can I still use it?", a: "Absolutely. The Flexible Wallet lets you track any income source — bursaries, family support, part-time work. The budget and savings tools work for every SA student, not just NSFAS recipients." },
               { q: 'What does the Scholar plan include vs Premium vs Nova Unlimited?', a: 'Scholar (R39/month) gives you 100 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 250 Nova messages, CSV export, and early access to new features. Nova Unlimited (R129/month) removes all Nova limits entirely — unlimited messages, first access to new Nova capabilities, and a direct line to the builder.' },
               { q: 'Is my data safe? How does VarsityOS comply with POPIA?', a: 'VarsityOS is registered under POPIA (Act 4 of 2013), Registration No. 2026-005658. Your data is stored securely in South Africa via Supabase. We never sell your data. You can request deletion at any time. See our Privacy Policy for full details.' },
+              { q: 'Can I use VarsityOS if I have a bursary instead of NSFAS?', a: 'Yes. The Flexible Wallet lets you track any funding source — Funza Lushaka, ISFAP, Ikusasa, employer bursaries, family support, or part-time income. Create separate spending buckets for each and track them independently alongside your study budget.' },
+              { q: 'Does VarsityOS work for UNISA distance learning students?', a: 'Yes. UNISA students can use the Study Planner for self-paced modules, track assignment due dates, set exam reminders, and use Nova for study support — even without a fixed class timetable. The offline PWA is especially useful when data is limited.' },
+              { q: 'I live in digs, not res. Can I still use the meal planner?', a: 'Absolutely. The meal planner and AI Recipe Generator are designed for students cooking in digs with a limited weekly food budget. Input what you have in your pantry and your spend limit — Nova generates budget-friendly SA recipes under R50.' },
+              { q: 'What is the N+ rule and how does VarsityOS help?', a: 'The N+ rule means NSFAS only funds you for the minimum time to complete your qualification plus a limited number of extra years (typically N+2 or N+1 depending on your institution). VarsityOS helps you track module credits, flag failed or repeated modules, and Nova explains the N+ implications at your specific university so you can act before funding is cut.' },
+              { q: 'Can Nova help with imposter syndrome as a first-gen student?', a: "Yes. Nova is trained to recognise first-generation student challenges — the feeling of not belonging at varsity, pressure from family, financial anxiety, and academic overwhelm. Nova uses CBT-based techniques to help reframe these thoughts and gives practical, SA-specific advice that generic AI assistants don't provide." },
             ].map((faq, i) => (
               <details
                 key={i}
@@ -735,7 +749,7 @@ export default function LandingPage() {
                 Ready to actually get on top of it?
               </h2>
               <p className="text-sm max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Your budget, your studies, your mental health — in one app built for the reality of SA varsity life. Free to start.
+                Your NSFAS, your budget, your studies, your mental health — one lekker app built for the reality of SA varsity life. Free to start. No app store. Works offline.
               </p>
               <Link
                 href="/auth/signup"
