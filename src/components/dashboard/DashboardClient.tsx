@@ -551,11 +551,15 @@ function ExamCountdownCard({ exams }: { exams: Exam[] }) {
   )
 }
 
-function BudgetRingCard({ monthSpent, totalBudget, expenses }: { monthSpent: number; totalBudget: number; expenses: Expense[] }) {
+function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: {
+  monthSpent: number; totalBudget: number; expenses: Expense[]; compact?: boolean
+}) {
   const pct       = totalBudget > 0 ? Math.min(100, Math.round((monthSpent / totalBudget) * 100)) : 0
   const ringColor = pct > 85 ? 'var(--danger)' : pct > 60 ? '#C9A84C' : 'var(--teal)'
 
-  const r      = 38
+  const r    = compact ? 26 : 38
+  const size = compact ? 64 : 96
+  const sw   = compact ? 6 : 8
   const circ   = 2 * Math.PI * r
   const offset = circ * (1 - pct / 100)
 
@@ -568,19 +572,19 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses }: { monthSpent: num
       background: 'rgba(255,255,255,0.04)',
       border: '1px solid rgba(255,255,255,0.08)',
       borderRadius: 14,
-      padding: 16,
+      padding: compact ? 12 : 16,
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
     }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginBottom: 12 }}>This Month</div>
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginBottom: compact ? 8 : 12 }}>This Month</div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <div style={{ flexShrink: 0, position: 'relative', width: 96, height: 96 }}>
-          <svg width="96" height="96" viewBox="0 0 96 96" style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx="48" cy="48" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+      <div style={{ display: 'flex', flexDirection: compact ? 'column' : 'row', alignItems: 'center', gap: compact ? 6 : 16 }}>
+        <div style={{ flexShrink: 0, position: 'relative', width: size, height: size }}>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={sw} />
             <circle
-              cx="48" cy="48" r={r} fill="none"
-              stroke={ringColor} strokeWidth="8"
+              cx={size/2} cy={size/2} r={r} fill="none"
+              stroke={ringColor} strokeWidth={sw}
               strokeLinecap="round"
               strokeDasharray={circ}
               strokeDashoffset={offset}
@@ -591,17 +595,19 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses }: { monthSpent: num
             position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
           }}>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 16, fontWeight: 700, color: ringColor, lineHeight: 1 }}>{pct}%</div>
-            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>used</div>
+            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 11 : 16, fontWeight: 700, color: ringColor, lineHeight: 1 }}>{pct}%</div>
+            {!compact && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>used</div>}
           </div>
         </div>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div>
-            <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 18, fontWeight: 700, color: '#C9A84C' }}>R{Math.round(monthSpent)}</span>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}> of R{Math.round(totalBudget)}</span>
+        <div style={{ flex: compact ? 'unset' : 1, minWidth: 0, textAlign: compact ? 'center' : 'left' }}>
+          <div style={{ lineHeight: compact ? 1.3 : 1 }}>
+            <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 13 : 18, fontWeight: 700, color: '#C9A84C' }}>R{Math.round(monthSpent)}</span>
+            {!compact && <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}> of R{Math.round(totalBudget)}</span>}
           </div>
-          {topCats.length > 0 && (
+          {compact ? (
+            <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>of R{Math.round(totalBudget)}</div>
+          ) : topCats.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 10 }}>
               {topCats.map(([cat, amt]) => (
                 <span key={cat} style={{
@@ -925,7 +931,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             {allExams.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
                 <ExamCountdownCard exams={allExams} />
-                <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+                <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} compact />
               </div>
             ) : (
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
