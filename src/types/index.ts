@@ -256,7 +256,7 @@ export type TaskType =
   // Finance
   | 'payment_due' | 'budget_review'
 
-export type TaskPriority = 'normal' | 'high' | 'urgent'
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'
 export const DAYS_OF_WEEK: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']

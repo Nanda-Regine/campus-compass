@@ -23,7 +23,8 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
-  { value: 'normal', label: 'Normal' },
+  { value: 'low',    label: 'Low' },
+  { value: 'medium', label: 'Medium' },
   { value: 'high',   label: 'High' },
   { value: 'urgent', label: 'Urgent' },
 ]
@@ -108,7 +109,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { category: 'academic', task_type: 'Assignment', priority: 'normal' },
+    defaultValues: { category: 'academic', task_type: 'Assignment', priority: 'medium' },
   })
 
   // ── Filter tasks by view ────────────────────────────────────
@@ -196,7 +197,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
     await supabase.from('tasks').delete().eq('id', id)
   }
 
-  const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'Assignment', priority: 'normal' }) }
+  const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'Assignment', priority: 'medium' }) }
 
   const todayCount = pendingTasks.filter(t => isToday(t.due_date) || isOverdue(t.due_date)).length
   const weekCount  = pendingTasks.filter(t => isThisWeek(t.due_date) || isOverdue(t.due_date)).length
@@ -292,7 +293,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
               normal:  'bg-white/5 text-white/40 border-white/10',
             }[urgency]
             const modColour = task.module?.color ? MODULE_COLOURS[task.module.color] : null
-            const priorityIcon = { normal: '', high: '🔺', urgent: '🚨' }[task.priority]
+            const priorityIcon = ({ low: '', medium: '', high: '🔺', urgent: '🚨' } as Record<string, string>)[task.priority] ?? ''
             const grp = getGroupForType(task.task_type)
             const grpDef = grp ? TASK_CATEGORY_GROUPS[grp] : null
 
