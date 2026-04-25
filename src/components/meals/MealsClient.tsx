@@ -134,22 +134,36 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     if (!mealName.trim()) return
     setSavingSlot(true)
     try {
-      const { data, error } = await supabase
+      const { data: existing } = await supabase
         .from('meal_plans')
-        .upsert({
-          user_id: initialData.userId,
-          week_start: initialData.weekStart,
-          day_of_week: day,
-          meal_slot: slot,
-          meal_name: mealName.trim(),
-        }, { onConflict: 'user_id,week_start,day_of_week,meal_slot' })
-        .select()
-        .single()
-      if (error) throw error
-      setLocalMeals(prev => {
-        const filtered = prev.filter(m => !(m.day_of_week === day && m.meal_slot === slot))
-        return [...filtered, data as MealPlan]
-      })
+        .select('id')
+        .eq('user_id', initialData.userId)
+        .eq('week_start', initialData.weekStart)
+        .eq('day_of_week', day)
+        .eq('meal_slot', slot)
+        .maybeSingle()
+
+      let saved: MealPlan
+      if (existing) {
+        const { data, error } = await supabase
+          .from('meal_plans')
+          .update({ meal_name: mealName.trim() })
+          .eq('id', existing.id)
+          .select()
+          .single()
+        if (error) throw error
+        saved = data as MealPlan
+      } else {
+        const { data, error } = await supabase
+          .from('meal_plans')
+          .insert({ user_id: initialData.userId, week_start: initialData.weekStart, day_of_week: day, meal_slot: slot, meal_name: mealName.trim() })
+          .select()
+          .single()
+        if (error) throw error
+        saved = data as MealPlan
+      }
+
+      setLocalMeals(prev => [...prev.filter(m => !(m.day_of_week === day && m.meal_slot === slot)), saved])
       setEditingSlot(null)
       setEditValue('')
       toast.success('Meal saved')
