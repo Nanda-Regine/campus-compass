@@ -37,23 +37,18 @@ export default function Modal({ open, onClose, title, children, footer, size = '
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center p-0 sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(8,15,14,0.75)', backdropFilter: 'blur(6px)' }}
       onClick={(e) => e.target === overlayRef.current && onClose()}
     >
       <div
         className={cn(
-          'w-full bg-[var(--bg-surface)] border border-white/10 flex flex-col animate-slide-up',
-          'rounded-t-3xl sm:rounded-3xl',
-          size === 'lg' ? 'max-w-2xl max-h-[92vh]' : 'max-w-lg max-h-[88vh]'
+          'w-full bg-[var(--bg-surface)] border border-white/10 flex flex-col animate-fade-up',
+          'rounded-2xl',
+          size === 'lg' ? 'max-w-2xl max-h-[90vh]' : 'max-w-lg max-h-[88vh]'
         )}
         style={{ paddingBottom: 'max(20px, env(safe-area-inset-bottom))' }}
       >
-        {/* Handle bar — mobile only */}
-        <div className="flex justify-center pt-3 pb-1 sm:hidden">
-          <div className="w-10 h-1 bg-white/20 rounded-full" />
-        </div>
-
         {/* Header */}
         {title && (
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/7">
