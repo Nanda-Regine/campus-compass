@@ -1,4 +1,4 @@
-# Campus Compass — Build Journey
+# VarsityOS — Build Journey
 
 > The story of building South Africa's most ambitious student super-app.
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
@@ -8,7 +8,7 @@
 
 ## Vision
 
-Campus Compass is not just an app — it is infrastructure for South African student success.
+VarsityOS is not just an app — it is infrastructure for South African student success.
 Every feature is built around one question: **what does a first-generation SA university student
 actually need to survive and thrive?** NSFAS budgeting, load-shedding awareness, 11 languages,
 crisis support, part-time work balancing — all woven together with an AI companion named Nova.
