@@ -96,9 +96,23 @@ interface GeneratedPlan {
   mealPrepTip: string
 }
 
+const QUICK_SUGGESTIONS: Record<string, string[]> = {
+  breakfast: ['Oats', 'Eggs & toast', 'Rooibos + rusks', 'Yoghurt & fruit', 'PB toast'],
+  lunch: ['Sandwich', 'Rice & chicken', 'Pap & vleis', 'Leftover dinner', 'Noodles'],
+  supper: ['Pasta', 'Rice & beans', 'Chakalaka & pap', 'Stir fry', 'Braai'],
+  snack: ['Fruit', 'Biscuits', 'Nuts', 'Yoghurt'],
+}
+
 export default function MealsClient({ initialData }: MealsClientProps) {
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState<TabId>('ai_plan')
+
+  // Weekly tab edit state
+  const [localMeals, setLocalMeals] = useState<MealPlan[]>(initialData.mealPlans)
+  const [editingSlot, setEditingSlot] = useState<{ day: string; slot: string } | null>(null)
+  const [editValue, setEditValue] = useState('')
+  const [savingSlot, setSavingSlot] = useState(false)
+  const [aiSuggesting, setAiSuggesting] = useState(false)
 
   // Grocery state
   const [groceryItems, setGroceryItems] = useState<GroceryItem[]>(initialData.groceryItems)
@@ -115,6 +129,52 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   // AI Meal Plan state
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan | null>(null)
   const [planLoading, setPlanLoading] = useState(false)
+
+  const saveMeal = async (day: string, slot: string, mealName: string) => {
+    if (!mealName.trim()) return
+    setSavingSlot(true)
+    try {
+      const { data, error } = await supabase
+        .from('meal_plans')
+        .upsert({
+          user_id: initialData.userId,
+          week_start: initialData.weekStart,
+          day_of_week: day,
+          meal_slot: slot,
+          meal_name: mealName.trim(),
+        }, { onConflict: 'user_id,week_start,day_of_week,meal_slot' })
+        .select()
+        .single()
+      if (error) throw error
+      setLocalMeals(prev => {
+        const filtered = prev.filter(m => !(m.day_of_week === day && m.meal_slot === slot))
+        return [...filtered, data as MealPlan]
+      })
+      setEditingSlot(null)
+      setEditValue('')
+      toast.success('Meal saved')
+    } catch { toast.error('Failed to save meal') }
+    finally { setSavingSlot(false) }
+  }
+
+  const aiSuggestMeal = async (day: string, slot: string) => {
+    setAiSuggesting(true)
+    try {
+      const res = await fetch('/api/meals/recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ingredients: 'typical student pantry: eggs, bread, rice, pasta, tinned tuna, onions, tomatoes, chicken',
+          mealType: slot,
+          maxBudget: initialData.foodBudget > 0 ? Math.round(initialData.foodBudget / 21) : 30,
+          servings: 1,
+        }),
+      })
+      const data = await res.json()
+      if (data.recipe?.name) setEditValue(data.recipe.name)
+    } catch { toast.error('Suggestion failed') }
+    finally { setAiSuggesting(false) }
+  }
 
   const groceryTotal = groceryItems.filter(i => !i.checked).reduce((s, i) => s + (i.price || 0), 0)
 
@@ -382,15 +442,77 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 </div>
                 <div className="divide-y divide-white/5">
                   {MEAL_SLOTS.map(slot => {
-                    const meal = initialData.mealPlans.find(m => m.day_of_week === day && m.meal_slot === slot)
+                    const meal = localMeals.find(m => m.day_of_week === day && m.meal_slot === slot)
+                    const isEditing = editingSlot?.day === day && editingSlot?.slot === slot
                     return (
-                      <div key={slot} className="flex items-center gap-3 px-4 py-2.5">
-                        <div className="font-mono text-[0.55rem] text-white/30 uppercase w-16 flex-shrink-0">{slot}</div>
-                        <div className="flex-1 font-body text-sm text-white/70">
-                          {meal?.meal_name || <span className="text-white/20">—</span>}
-                        </div>
-                        {meal?.cost && (
-                          <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(meal.cost)}</div>
+                      <div key={slot}>
+                        {isEditing ? (
+                          <div className="px-4 py-3 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <div className="font-mono text-[0.55rem] text-white/30 uppercase w-16 flex-shrink-0">{slot}</div>
+                              <input
+                                autoFocus
+                                value={editValue}
+                                onChange={e => setEditValue(e.target.value)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter') saveMeal(day, slot, editValue)
+                                  if (e.key === 'Escape') { setEditingSlot(null); setEditValue('') }
+                                }}
+                                placeholder={`e.g. ${QUICK_SUGGESTIONS[slot.toLowerCase()]?.[0] ?? 'Enter meal name'}`}
+                                className="flex-1 bg-[var(--bg-base)] border border-teal-600/40 focus:border-teal-500 rounded-lg px-2.5 py-1.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                              />
+                            </div>
+                            <div className="flex items-center gap-2 pl-[4.5rem]">
+                              <button
+                                onClick={() => saveMeal(day, slot, editValue)}
+                                disabled={savingSlot || !editValue.trim()}
+                                className="font-mono text-[0.6rem] bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white px-3 py-1.5 rounded-lg transition-all"
+                              >
+                                {savingSlot ? '…' : 'Save'}
+                              </button>
+                              <button
+                                onClick={() => aiSuggestMeal(day, slot)}
+                                disabled={aiSuggesting}
+                                className="font-mono text-[0.6rem] bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-400 px-3 py-1.5 rounded-lg transition-all disabled:opacity-40"
+                              >
+                                {aiSuggesting ? '✦ …' : '✦ AI'}
+                              </button>
+                              <button
+                                onClick={() => { setEditingSlot(null); setEditValue('') }}
+                                className="font-mono text-[0.6rem] text-white/30 hover:text-white/60 px-2 py-1.5 transition-all"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                            <div className="flex gap-1.5 pl-[4.5rem] flex-wrap">
+                              {(QUICK_SUGGESTIONS[slot.toLowerCase()] ?? []).map(s => (
+                                <button
+                                  key={s}
+                                  onClick={() => setEditValue(s)}
+                                  className="font-mono text-[0.55rem] bg-white/5 hover:bg-white/10 border border-white/10 text-white/50 hover:text-white/80 px-2 py-1 rounded-full transition-all"
+                                >
+                                  {s}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setEditingSlot({ day, slot }); setEditValue(meal?.meal_name ?? '') }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors group"
+                          >
+                            <div className="font-mono text-[0.55rem] text-white/30 uppercase w-16 flex-shrink-0">{slot}</div>
+                            <div className="flex-1 font-body text-sm">
+                              {meal?.meal_name
+                                ? <span className="text-white/70">{meal.meal_name}</span>
+                                : <span className="text-white/20 group-hover:text-white/35 transition-colors">+ Add meal</span>
+                              }
+                            </div>
+                            {meal?.cost && (
+                              <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(meal.cost)}</div>
+                            )}
+                            <span className="opacity-0 group-hover:opacity-100 font-mono text-[0.55rem] text-white/25 transition-opacity flex-shrink-0">✎</span>
+                          </button>
                         )}
                       </div>
                     )
