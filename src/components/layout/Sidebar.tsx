@@ -118,8 +118,8 @@ export function Sidebar() {
             ? pathname === '/dashboard'
             : pathname.startsWith(href)
 
-          const activeColor = isNova ? 'var(--nova)' : 'var(--teal)'
-          const activeBg    = isNova ? 'var(--nova-dim)' : 'var(--teal-dim)'
+          const activeColor = isNova ? 'var(--nova)' : '#C9A84C'
+          const activeBg    = isNova ? 'var(--nova-dim)' : 'rgba(201,164,76,0.1)'
 
           return (
             <Link
@@ -165,9 +165,9 @@ export function Sidebar() {
         {/* Avatar */}
         <div style={{
           width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-          background: 'var(--teal-dim)', border: '0.5px solid var(--teal-border)',
+          background: 'linear-gradient(135deg, #2D4A22, #C9A84C)', border: '0.5px solid rgba(201,164,76,0.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 700, color: 'var(--teal)',
+          fontSize: 12, fontWeight: 700, color: '#F5EFD6',
         }}>
           {initials}
         </div>
