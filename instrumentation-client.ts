@@ -14,8 +14,21 @@ Sentry.init({
       blockAllMedia: false,
     }),
   ],
-  beforeSend(event) {
+  beforeSend(event, hint) {
     if (event.request?.cookies) delete event.request.cookies
+
+    // Drop browser extension noise (password managers, autofill injecting into DOM)
+    const originalException = hint?.originalException
+    if (
+      typeof originalException === 'string' &&
+      originalException.includes('Object Not Found Matching Id')
+    ) {
+      return null
+    }
+    if (event.exception?.values?.[0]?.value?.includes('Object Not Found Matching Id')) {
+      return null
+    }
+
     return event
   },
 })

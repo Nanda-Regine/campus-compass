@@ -15,6 +15,10 @@ export function useAuth() {
   const signUp = async (email: string, password: string, name: string, popiaConsent = false) => {
     setLoading(true)
     try {
+      // Clear any partial/ghost session before creating a new one.
+      // Prevents IndexedDB lock contention on interrupted signups.
+      await supabase.auth.signOut({ scope: 'local' })
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
