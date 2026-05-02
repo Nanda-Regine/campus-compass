@@ -792,7 +792,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
-              {!isPremium && <UpgradeCard />}
+              {!isPremium && <div className="hidden lg:block"><UpgradeCard /></div>}
             </div>
           </div>
 
