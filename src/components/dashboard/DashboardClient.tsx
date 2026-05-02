@@ -592,6 +592,170 @@ function UpgradeBar() {
   )
 }
 
+/* ── MobileTodayClasses ─────────────────────────────────── */
+function MobileTodayClasses({ timetable }: { timetable: TimetableEntry[] }) {
+  const now = new Date()
+  const jsDay = now.getDay()
+  const dbDay = jsDay === 0 ? 7 : jsDay
+  const todaySlots = timetable
+    .filter(s => (s.day_of_week as number) === dbDay)
+    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+
+  return (
+    <div className="block md:hidden" style={{ background: '#0d1520', border: '1px solid rgba(26,158,117,0.2)', borderRadius: 14, padding: '12px 14px' }}>
+      <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', marginBottom: 10, fontWeight: 600 }}>Today&apos;s Classes</div>
+      {todaySlots.length === 0 ? (
+        <div style={{ fontSize: 12, color: '#5a5c70' }}>No classes today — enjoy your day ✦</div>
+      ) : (
+        <div>
+          {todaySlots.map((slot, i) => {
+            const moduleName = (slot.module as Module | undefined)?.module_name || 'Class'
+            return (
+              <div key={slot.id}>
+                {i > 0 && <div style={{ height: 1, background: '#1a2a20' }} />}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1a9e75', flexShrink: 0, display: 'inline-block' }} />
+                  <span style={{ fontSize: 12, color: '#e8e6f0', flex: 1 }}>{moduleName}</span>
+                  {slot.start_time && (
+                    <span style={{ fontSize: 10, color: '#1a9e75' }}>
+                      {slot.start_time}{slot.end_time ? `–${slot.end_time}` : ''}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── MobileTasksToday ───────────────────────────────────── */
+const TASK_CAT_STYLE: Record<string, { bg: string; color: string }> = {
+  Study:  { bg: 'rgba(26,95,106,0.2)',    color: '#1a9e75' },
+  Budget: { bg: 'rgba(201,168,76,0.15)',  color: '#c9a84c' },
+  Meals:  { bg: 'rgba(232,131,74,0.12)',  color: '#e8834a' },
+  Work:   { bg: 'rgba(122,153,184,0.12)', color: '#7a99b8' },
+}
+
+function MobileTasksToday({ tasks, onComplete }: { tasks: Task[]; onComplete: (id: string) => void }) {
+  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
+  const todayTasks = tasks
+    .filter(t => {
+      if (!t.due_date) return false
+      const due = new Date(t.due_date); due.setHours(0, 0, 0, 0)
+      return due.getTime() <= todayDate.getTime()
+    })
+    .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
+    .slice(0, 5)
+
+  const allDone = todayTasks.length > 0 && todayTasks.every(t => t.status === 'done')
+
+  return (
+    <div className="block md:hidden" style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', fontWeight: 600 }}>Tasks Today</div>
+        <Link href="/study" style={{ fontSize: 10, color: '#9b6fd4', textDecoration: 'none' }}>See all →</Link>
+      </div>
+      {todayTasks.length === 0 ? (
+        <div style={{ fontSize: 12, color: '#5a5c70' }}>No tasks today 🎉</div>
+      ) : allDone ? (
+        <div style={{ fontSize: 12, color: '#4ecf9e' }}>All done for today ✦</div>
+      ) : (
+        <div>
+          {todayTasks.map((task, i) => {
+            const isDone = task.status === 'done'
+            const due = new Date(task.due_date!); due.setHours(0, 0, 0, 0)
+            const isOverdue = due.getTime() < todayDate.getTime()
+            const diffDays = isOverdue ? Math.round((todayDate.getTime() - due.getTime()) / 86400000) : 0
+            const modName = task.module?.module_name ?? 'Study'
+            const catS = TASK_CAT_STYLE[modName] ?? { bg: '#1e1f2e', color: '#5a5c70' }
+            return (
+              <div key={task.id}>
+                {i > 0 && <div style={{ height: 1, background: '#1e1f2e' }} />}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
+                  <button
+                    onClick={() => !isDone && onComplete(task.id)}
+                    aria-label="Complete task"
+                    style={{ width: 14, height: 14, borderRadius: 4, border: isDone ? 'none' : '1px solid #3a3b4e', background: isDone ? '#4ecf9e' : 'transparent', flexShrink: 0, cursor: isDone ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                  >
+                    {isDone && <span style={{ fontSize: 9, color: '#0a0b10', lineHeight: 1 }}>✓</span>}
+                  </button>
+                  <span style={{ fontSize: 11, color: isDone ? 'rgba(255,255,255,0.3)' : '#e8e6f0', flex: 1, textDecoration: isDone ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {task.title}
+                  </span>
+                  {isOverdue && !isDone ? (
+                    <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 9999, background: 'rgba(255,107,107,0.1)', color: '#ff6b6b', border: '0.5px solid rgba(255,107,107,0.25)', flexShrink: 0 }}>{diffDays}d late</span>
+                  ) : !isDone && (
+                    <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 9999, background: catS.bg, color: catS.color, flexShrink: 0 }}>{modName}</span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ── ModulePillList (desktop only) ──────────────────────── */
+const MODULE_PILLS = [
+  { href: '/study',            label: 'Study',  icon: '📚', iconBg: 'rgba(26,95,106,0.12)',    subColor: '#1a9e75' },
+  { href: '/budget',           label: 'Budget', icon: '💰', iconBg: 'rgba(201,168,76,0.10)',   subColor: '#c9a84c' },
+  { href: '/meals',            label: 'Meals',  icon: '🍲', iconBg: 'rgba(232,131,74,0.10)',   subColor: '#e8834a' },
+  { href: '/dashboard/work',   label: 'Work',   icon: '💼', iconBg: 'rgba(122,153,184,0.10)',  subColor: '#7a99b8' },
+  { href: '/nova',             label: 'Nova',   icon: '✨', iconBg: 'rgba(155,111,212,0.12)',  subColor: '#9b6fd4' },
+  { href: '/dashboard/groups', label: 'Groups', icon: '👥', iconBg: 'rgba(112,144,208,0.10)',  subColor: '#7090d0' },
+]
+
+function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists, shiftsThisWeek, activeGroups }: {
+  tasks: Task[]; totalBudget: number; remaining: number
+  profile: Profile; mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
+}) {
+  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
+  const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
+  const isUnlimited = profile.subscription_tier === 'nova_unlimited'
+  const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
+
+  const subtitles: Record<string, string> = {
+    Study:  overdueTasks > 0 ? `${overdueTasks} overdue` : tasksDueWeek > 0 ? `${tasksDueWeek} due this week` : 'All clear ✓',
+    Budget: totalBudget > 0 ? (remaining >= 0 ? `R${Math.round(remaining)} remaining` : 'Over budget') : 'Set budget →',
+    Meals:  mealPlanExists ? 'Week planned ✓' : 'Plan your week →',
+    Work:   shiftsThisWeek > 0 ? `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead` : 'No shifts soon',
+    Nova:   isUnlimited ? 'Unlimited' : `${novaLeft} msgs left`,
+    Groups: activeGroups > 0 ? `${activeGroups} group${activeGroups > 1 ? 's' : ''}` : 'Join a group →',
+  }
+
+  return (
+    <div className="hidden md:block" style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '10px 12px' }}>
+      <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', marginBottom: 6, fontWeight: 600 }}>Your Modules</div>
+      {MODULE_PILLS.map(({ href, label, icon, iconBg, subColor }, i) => (
+        <div key={href}>
+          {i > 0 && <div style={{ height: 1, background: '#1e1f2e' }} />}
+          <Link href={href} style={{ textDecoration: 'none' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 8px', borderRadius: 9, cursor: 'pointer', transition: 'all 0.12s', border: '1px solid transparent' }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#12131e'; el.style.borderColor = '#2e2f40' }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.borderColor = 'transparent' }}
+            >
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, flexShrink: 0 }}>{icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>{label}</div>
+                <div style={{ fontSize: 11, color: subColor, marginTop: 1 }}>{subtitles[label]}</div>
+              </div>
+              <span style={{ fontSize: 16, color: '#3a3b4e', flexShrink: 0 }}>›</span>
+            </div>
+          </Link>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 /* ── main component ─────────────────────────────────────── */
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const store = useAppStore()
@@ -701,6 +865,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     } catch { /* silent */ }
   }, [store])
 
+  const handleCompleteTask = useCallback(async (taskId: string) => {
+    const currentTasks = store.tasks.length ? store.tasks : initialData.tasks
+    store.setTasks(currentTasks.map(t => t.id === taskId ? { ...t, status: 'done' } : t))
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      await supabase.from('tasks').update({ status: 'done' }).eq('id', taskId)
+    } catch { /* silent */ }
+  }, [store, initialData.tasks])
+
   const dismissInsight = async (id: string) => {
     setNovaInsights(prev => prev.filter(i => i.id !== id))
     await fetch('/api/insights', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
@@ -772,14 +946,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             {/* Column 1 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <NovaBanner profile={p} subscription={sub} checkinMessage={novaCheckin} />
-              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} />
               <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 16px' }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
                 <MoodCheckin userId={p.id} />
               </div>
-              <TodaysClasses timetable={initialData.timetable} />
-              <UrgentTasksStrip tasks={allTasks} />
-              <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} />
+              <MobileTodayClasses timetable={initialData.timetable} />
+              <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} />
+              <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
+              <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
+              <div className="md:hidden"><FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} /></div>
+              <ModulePillList tasks={allTasks} totalBudget={totalBudget} remaining={remaining} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} />
             </div>
 
             {/* Column 2 */}
@@ -792,21 +969,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
-              {!isPremium && <div className="hidden lg:block"><UpgradeCard /></div>}
             </div>
-          </div>
-
-          {/* Mobile: exam + budget, upgrade */}
-          <div className="lg:hidden mt-4 space-y-4">
-            {allExams.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3">
-                <ExamCountdownCard exams={allExams} />
-                <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} compact />
-              </div>
-            ) : (
-              <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
-            )}
-            {!isPremium && <UpgradeCard />}
           </div>
 
           {!isPremium && <UpgradeBar />}
