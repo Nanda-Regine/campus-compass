@@ -365,7 +365,7 @@ a.appendChild(r);
           <OfflineBanner />
           <ConsentBanner />
           {/* lg: offset for sidebar; mobile: bottom-nav padding */}
-          <div className="lg:ml-[240px] pb-[60px] lg:pb-0">
+          <div className="lg:ml-[48px] pb-[60px] lg:pb-0">
             {children}
           </div>
           <GlobalFAB />

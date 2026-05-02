@@ -46,6 +46,21 @@ const config: Config = {
           bg2: '#ccfbf1',
           border: 'rgba(13,148,136,0.12)',
         },
+        // Jewel-tone dashboard tokens
+        jewel: {
+          base:    '#0a0b10',
+          card:    '#0d0e14',
+          border:  '#1e1f2e',
+          'nova-purple': '#9b6fd4',
+          'nova-bg':     '#12102a',
+          teal:    '#4ecf9e',
+          study:   '#1a9e75',
+          gold:    '#c9a84c',
+          orange:  '#e8834a',
+          steel:   '#7a99b8',
+          blue:    '#7090d0',
+          coral:   '#ff6b6b',
+        },
       },
       fontFamily: {
         display: ['Sora', 'var(--font-display)', 'sans-serif'],

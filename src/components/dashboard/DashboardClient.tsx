@@ -10,14 +10,11 @@ import {
   type Module, type TimetableEntry, type Expense,
   type Subscription,
 } from '@/types'
-import {
-  fmt, getDaysUntil,
-  calcTotalBudget, cn,
-} from '@/lib/utils'
+import { fmt, getDaysUntil, calcTotalBudget, cn } from '@/lib/utils'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
-interface IncomeEntry  { id: string; source_type: string; label: string; amount: number; received_date: string; is_recurring: boolean }
+interface IncomeEntry { id: string; source_type: string; label: string; amount: number; received_date: string; is_recurring: boolean }
 
 interface DashboardClientProps {
   initialData: {
@@ -41,115 +38,242 @@ function getGreeting() {
   return 'Good evening'
 }
 
-function FlameIcon({ streak }: { streak: number }) {
-  if (streak === 0) return <span style={{ color: 'var(--text-tertiary)' }}>—</span>
-  if (streak <= 2)  return <span>🔥</span>
-  if (streak <= 6)  return <span style={{ color: 'var(--teal)' }}>🔥</span>
-  if (streak <= 13) return <span style={{ color: 'var(--gold)' }}>🔥</span>
-  return (
-    <span style={{ filter: 'drop-shadow(0 0 4px rgba(201,168,76,0.4))', background: 'linear-gradient(135deg,var(--teal),var(--gold))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-      🔥
-    </span>
-  )
+function getWeekBadge() {
+  const now = new Date()
+  const day = now.getDay()
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - (day === 0 ? 6 : day - 1))
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekStart.getDate() + 6)
+  const f = (d: Date) => d.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' })
+  return `${f(weekStart)} – ${f(weekEnd)}`
 }
 
-/* ── CSS animations injected once ───────────────────────── */
+function FlameIcon({ streak }: { streak: number }) {
+  if (streak === 0) return <span style={{ color: 'rgba(255,255,255,0.3)' }}>—</span>
+  return <span>🔥</span>
+}
+
+/* ── CSS animations ─────────────────────────────────────── */
 const DASH_STYLES = `
-@keyframes novaOrbPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.3), 0 0 24px rgba(45,74,34,0.4); }
-  50%       { box-shadow: 0 0 0 8px rgba(201,168,76,0), 0 0 40px rgba(45,74,34,0.6); }
+@keyframes novaPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.4); opacity: 1; }
 }
 @keyframes dotGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,76,0.6); }
-  50%       { box-shadow: 0 0 0 5px rgba(231,76,76,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0.6); }
+  50%       { box-shadow: 0 0 0 5px rgba(255,107,107,0); }
 }
-@keyframes barFill {
-  from { width: 0%; }
-}
+@keyframes barFill { from { width: 0%; } }
 @keyframes dashFadeUp {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.nova-orb-gold  { animation: novaOrbPulse 3s ease-in-out infinite; }
-.dot-urgent     { animation: dotGlow 1.8s ease-in-out infinite; }
-.bar-fill-anim  { animation: barFill 1s ease-out both; }
-.dash-card-in   { animation: dashFadeUp 0.35s ease-out both; }
+@keyframes shimmerSkeleton {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.nova-pulse-ring { animation: novaPulse 2.4s ease-in-out infinite; }
+.dot-urgent      { animation: dotGlow 1.8s ease-in-out infinite; }
+.bar-fill-anim   { animation: barFill 1s ease-out both; }
+.dash-card-in    { animation: dashFadeUp 0.35s ease-out both; }
+.skeleton-row {
+  background: linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmerSkeleton 1.4s infinite;
+  border-radius: 6px;
+}
 `
 
-/* ── sub-components ─────────────────────────────────────── */
-function NovaBanner({
-  profile, subscription, checkinMessage,
-}: {
+/* ── StudyTipsCard ──────────────────────────────────────── */
+interface StudyTip { text: string; source: string }
+
+function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile }) {
+  const [tips, setTips] = useState<StudyTip[] | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!exam) return
+    const today = new Date().toISOString().split('T')[0]
+    const cacheKey = `study_tips_${exam.id}_${today}`
+    const cached = localStorage.getItem(cacheKey)
+    if (cached) {
+      try { setTips(JSON.parse(cached)); return } catch { /* ignore */ }
+    }
+    setLoading(true)
+    const subject = (exam.module as Module | undefined)?.module_name ?? 'General'
+    const daysUntil = Math.max(0, getDaysUntil(exam.exam_date))
+    fetch('/api/dashboard/study-tips', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        examName: exam.exam_name ?? (exam as unknown as { name?: string }).name ?? 'Upcoming exam',
+        examSubject: subject,
+        daysUntil,
+        degreeProgram: (profile as unknown as { university?: string }).university ?? 'University',
+      }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.tips) { setTips(d.tips); localStorage.setItem(cacheKey, JSON.stringify(d.tips)) }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [exam, profile])
+
+  if (!exam) return null
+
+  return (
+    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
+      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9b6fd4 0%,rgba(155,111,212,0.15) 100%)' }} />
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 8, fontWeight: 600 }}>Nova Study Tips</div>
+      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 10 }}>
+        {(exam.module as Module | undefined)?.module_name ?? ''} · {Math.max(0, getDaysUntil(exam.exam_date))}d to go
+      </div>
+      {loading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[60, 80, 70].map((w, i) => <div key={i} className="skeleton-row" style={{ height: 14, width: `${w}%` }} />)}
+        </div>
+      )}
+      {!loading && tips && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {tips.map((tip, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(155,111,212,0.06)', borderRadius: 8, border: '0.5px solid rgba(155,111,212,0.15)' }}>
+              <span style={{ fontSize: 12, flexShrink: 0, color: '#9b6fd4', fontWeight: 700, lineHeight: 1.5 }}>{i + 1}</span>
+              <div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{tip.text}</div>
+                <div style={{ fontSize: 10, color: 'rgba(155,111,212,0.65)', marginTop: 2 }}>{tip.source}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {!loading && !tips && (
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', textAlign: 'center', padding: '12px 0' }}>Tips unavailable</div>
+      )}
+    </div>
+  )
+}
+
+/* ── CoachSummaryCard ──────────────────────────────────── */
+interface CoachInsight { tag: string; text: string }
+
+function CoachSummaryCard({ userId, totalBudget, amountSpent, expenses }: {
+  userId: string; totalBudget: number; amountSpent: number; expenses: Expense[]
+}) {
+  const [insights, setInsights] = useState<CoachInsight[] | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (totalBudget <= 0) return
+    const now = new Date()
+    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const week = Math.ceil(now.getDate() / 7)
+    const cacheKey = `coach_summary_${userId}_${month}_w${week}`
+    const cached = localStorage.getItem(cacheKey)
+    if (cached) {
+      try { setInsights(JSON.parse(cached)); return } catch { /* ignore */ }
+    }
+    setLoading(true)
+    const catMap: Record<string, number> = {}
+    expenses.forEach(e => { catMap[e.category] = (catMap[e.category] ?? 0) + e.amount })
+    const topCategories = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c]) => c).join(', ') || 'General'
+    const percentUsed = Math.round((amountSpent / totalBudget) * 100)
+    const daysRemaining = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
+
+    fetch('/api/dashboard/coach-summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ totalBudget, amountSpent, percentUsed, topCategories, daysRemaining, savingsGoals: 'None' }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.insights) { setInsights(d.insights); localStorage.setItem(cacheKey, JSON.stringify(d.insights)) }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [userId, totalBudget, amountSpent, expenses])
+
+  if (totalBudget <= 0) return null
+
+  const tagColors: Record<string, string> = {
+    'Watch out': '#ff6b6b', 'Money tip': '#c9a84c',
+    'Goal progress': '#4ecf9e', 'Well done': '#4ecf9e',
+  }
+
+  return (
+    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
+      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#c9a84c 0%,rgba(201,168,76,0.15) 100%)' }} />
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a84c', marginBottom: 10, fontWeight: 600 }}>Budget Coach</div>
+      {loading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[70, 85, 65].map((w, i) => <div key={i} className="skeleton-row" style={{ height: 14, width: `${w}%` }} />)}
+        </div>
+      )}
+      {!loading && insights && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+          {insights.map((ins, i) => {
+            const color = tagColors[ins.tag] ?? '#c9a84c'
+            return (
+              <div key={i} style={{ padding: '8px 10px', background: `${color}12`, borderRadius: 8, border: `0.5px solid ${color}28` }}>
+                <div style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color, fontWeight: 700, marginBottom: 3 }}>{ins.tag}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>{ins.text}</div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+      {!loading && !insights && (
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', textAlign: 'center', padding: '12px 0' }}>Set a budget to get insights</div>
+      )}
+    </div>
+  )
+}
+
+/* ── NovaBanner ─────────────────────────────────────────── */
+function NovaBanner({ profile, subscription, checkinMessage }: {
   profile: Profile; subscription: Subscription | null; checkinMessage: string | null
 }) {
   const msgLimit    = profile.nova_messages_limit ?? 10
   const msgUsed     = profile.nova_messages_used ?? 0
   const remaining   = Math.max(0, msgLimit - msgUsed)
   const isUnlimited = profile?.subscription_tier === 'nova_unlimited'
-  const tier        = profile?.subscription_tier || profile?.plan || 'free'
+  void subscription
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, rgba(45,74,34,0.55) 0%, rgba(10,15,30,0.9) 100%)',
-      border: '1px solid rgba(201,168,76,0.18)',
-      borderRadius: 16,
-      padding: '20px 22px',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#C9A84C 0%,rgba(201,168,76,0.2) 50%,transparent 100%)', pointerEvents: 'none' }} />
-      <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 10% 50%,rgba(45,74,34,0.3) 0%,transparent 60%)', pointerEvents: 'none' }} />
+    <div style={{ background: 'linear-gradient(135deg,#12102a 0%,#1a1530 50%,#0d0e14 100%)', border: '1px solid rgba(155,111,212,0.22)', borderRadius: 16, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
+      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#9b6fd4 0%,rgba(155,111,212,0.2) 50%,transparent 100%)', pointerEvents: 'none' }} />
+      <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 5% 50%,rgba(155,111,212,0.1) 0%,transparent 60%)', pointerEvents: 'none' }} />
+      <span style={{ position: 'absolute', right: -20, top: -20, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle,rgba(155,111,212,0.07) 0%,transparent 70%)', pointerEvents: 'none' }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
-              className="nova-orb-gold"
-              style={{
-                width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
-                background: 'radial-gradient(circle at 35% 35%,#C9A84C 0%,#2D4A22 55%,#1a3015 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 20, color: '#fff',
-              }}
-            >
-              ✦
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div className="nova-pulse-ring" style={{ position: 'absolute', inset: -6, borderRadius: '50%', background: 'rgba(155,111,212,0.15)', pointerEvents: 'none' }} />
+              <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg,#9b6fd4 0%,#6b3fa0 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#fff', boxShadow: '0 0 20px rgba(155,111,212,0.4)' }}>
+                ✦
+              </div>
             </div>
             <div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: '#C9A84C', letterSpacing: '-0.01em' }}>Nova</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: '#c5a8f0', letterSpacing: '-0.01em' }}>Nova</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
                 {isUnlimited ? 'Unlimited conversations' : `${remaining} msgs left this month`}
               </div>
-              {tier !== 'free' && (
-                <div style={{ fontSize: 10, color: '#C9A84C', marginTop: 2, textTransform: 'capitalize', letterSpacing: '0.05em' }}>
-                  {tier.replace('_', ' ')} plan
-                </div>
-              )}
             </div>
           </div>
-
           <Link href="/nova">
-            <button style={{
-              background: 'linear-gradient(135deg,#C9A84C 0%,#E8C46A 100%)',
-              color: '#0a0f1e', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13,
-              border: 'none', borderRadius: 10, padding: '9px 16px', cursor: 'pointer', whiteSpace: 'nowrap',
-            }}>
+            <button style={{ background: 'linear-gradient(135deg,#9b6fd4 0%,#b589e8 100%)', color: '#fff', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, border: 'none', borderRadius: 10, padding: '9px 16px', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(155,111,212,0.3)' }}>
               Chat with Nova →
             </button>
           </Link>
         </div>
 
         {checkinMessage && (
-          <div style={{
-            marginTop: 14,
-            background: 'rgba(201,168,76,0.07)',
-            border: '0.5px solid rgba(201,168,76,0.2)',
-            borderRadius: 10,
-            padding: '10px 14px',
-            display: 'flex', alignItems: 'flex-start', gap: 10,
-          }}>
+          <div style={{ marginTop: 14, background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
             <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>💜</span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: 3 }}>Nova Check-in</div>
+              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 3 }}>Nova Check-in</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{checkinMessage}</div>
             </div>
           </div>
@@ -159,152 +283,78 @@ function NovaBanner({
   )
 }
 
-function StatCardsRow({
-  profile, remaining, totalBudget, tasks, exams, streakDays,
-}: {
-  profile: Profile; remaining: number; totalBudget: number;
-  tasks: Task[]; exams: Exam[]; streakDays: number
+/* ── StatCardsRow ─────────────────────────────────────── */
+function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays }: {
+  remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number
 }) {
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
-  const tasksDueWeek = tasks.filter(t =>
-    t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead
-  ).length
-
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
   const nextExam = exams[0]
   const daysToExam = nextExam ? getDaysUntil(nextExam.exam_date) : null
 
   const cards = [
-    {
-      value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`,
-      label: 'Budget left',
-      accent: remaining >= 0 ? '#C9A84C' : 'var(--danger)',
-    },
-    {
-      value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—',
-      label: 'Days to exam',
-      accent: '#6495ED',
-    },
-    {
-      value: String(tasksDueWeek + overdueTasks),
-      label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead',
-      accent: overdueTasks > 0 ? 'var(--danger)' : 'var(--teal)',
-    },
-    {
-      value: String(streakDays),
-      label: 'Study streak',
-      accent: 'var(--teal)',
-      suffix: <FlameIcon streak={streakDays} />,
-    },
+    { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left', accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
+    { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—', label: 'Days to exam', accent: '#7090d0' },
+    { value: String(tasksDueWeek + overdueTasks), label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
+    { value: String(streakDays), label: 'Study streak', accent: '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
   ]
 
   return (
     <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 2 }} className="scrollbar-none">
       {cards.map(({ value, label, accent, suffix }, i) => (
-        <div
-          key={label}
-          className="dash-card-in"
-          style={{
-            flexShrink: 0,
-            minWidth: 110,
-            flex: '1 0 110px',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 14,
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            padding: '14px 14px 12px',
-            position: 'relative',
-            overflow: 'hidden',
-            animationDelay: `${i * 0.06}s`,
-          }}
-        >
-          <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, borderRadius: '14px 14px 0 0', opacity: 0.9 }} />
+        <div key={label} className="dash-card-in" style={{ flexShrink: 0, minWidth: 110, flex: '1 0 110px', background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px 14px 12px', position: 'relative', overflow: 'hidden', animationDelay: `${i * 0.06}s` }}>
+          <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, borderRadius: '14px 14px 0 0' }} />
           <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 22, fontWeight: 700, color: accent, lineHeight: 1 }}>
             {value}{suffix && <span style={{ marginLeft: 4 }}>{suffix}</span>}
           </div>
-          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginTop: 6 }}>
-            {label}
-          </div>
+          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginTop: 6 }}>{label}</div>
         </div>
       ))}
     </div>
   )
 }
 
+/* ── TodaysClasses ─────────────────────────────────────── */
 function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
   const now = new Date()
   const jsDay = now.getDay()
   const dbDay = jsDay === 0 ? 7 : jsDay
-
-  const todaySlots = timetable
-    .filter(s => (s.day_of_week as number) === dbDay)
-    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
-
+  const todaySlots = timetable.filter(s => (s.day_of_week as number) === dbDay).sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
   if (!todaySlots.length) return null
-
-  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`
   const displaySlots = todaySlots.slice(0, 3)
-  const hasMore = todaySlots.length > 3
 
   return (
     <section>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--teal)', display: 'inline-block', flexShrink: 0 }} />
-          <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--teal)', fontWeight: 600 }}>Today&apos;s Classes</span>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ecf9e', display: 'inline-block' }} />
+          <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4ecf9e', fontWeight: 600 }}>Today&apos;s Classes</span>
         </div>
-        <Link href="/study/timetable" style={{ fontSize: 12, color: 'var(--teal)', textDecoration: 'none' }}>See full timetable →</Link>
+        <Link href="/study/timetable" style={{ fontSize: 12, color: '#4ecf9e', textDecoration: 'none' }}>See all →</Link>
       </div>
       <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
         {displaySlots.map(slot => {
-          const isNow = slot.start_time && slot.end_time
-            ? currentTime >= slot.start_time && currentTime <= slot.end_time
-            : false
-          const colour = (slot.module as Module | undefined)?.color ?? (slot.module as Module | undefined)?.colour ?? '#0d9488'
+          const isNow = slot.start_time && slot.end_time ? currentTime >= slot.start_time && currentTime <= slot.end_time : false
+          const colour = (slot.module as Module | undefined)?.color ?? (slot.module as Module | undefined)?.colour ?? '#4ecf9e'
           const moduleName = (slot.module as Module | undefined)?.module_name || 'Class'
-
           return (
-            <div
-              key={slot.id}
-              style={{
-                flexShrink: 0,
-                minWidth: 140,
-                padding: '10px 12px',
-                background: 'rgba(255,255,255,0.04)',
-                border: `1px solid ${isNow ? colour + '60' : 'rgba(255,255,255,0.08)'}`,
-                borderLeft: `2px solid ${colour}`,
-                borderRadius: `0 var(--radius-md) var(--radius-md) 0`,
-                position: 'relative',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-              }}
-            >
-              {isNow && (
-                <span style={{
-                  position: 'absolute', top: 6, right: 8,
-                  fontSize: 9, fontWeight: 700, letterSpacing: '0.1em',
-                  color: colour, textTransform: 'uppercase',
-                }}>NOW</span>
-              )}
-              <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>
-                {moduleName}
-              </div>
+            <div key={slot.id} style={{ flexShrink: 0, minWidth: 140, padding: '10px 12px', background: '#0d0e14', border: `1px solid ${isNow ? colour + '60' : '#1e1f2e'}`, borderLeft: `2px solid ${colour}`, borderRadius: '0 10px 10px 0', position: 'relative' }}>
+              {isNow && <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: colour, textTransform: 'uppercase' }}>NOW</span>}
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>{moduleName}</div>
               {(slot.start_time || slot.venue) && (
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
-                  {slot.start_time && `${slot.start_time}${slot.end_time ? ` – ${slot.end_time}` : ''}`}
-                  {slot.venue && ` · ${slot.venue}`}
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>
+                  {slot.start_time && `${slot.start_time}${slot.end_time ? ` – ${slot.end_time}` : ''}`}{slot.venue && ` · ${slot.venue}`}
                 </div>
               )}
             </div>
           )
         })}
-        {hasMore && (
+        {todaySlots.length > 3 && (
           <Link href="/study/timetable" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-            <div style={{ fontSize: 12, color: 'var(--teal)', padding: '10px 12px', whiteSpace: 'nowrap' }}>
-              +{todaySlots.length - 3} more →
-            </div>
+            <div style={{ fontSize: 12, color: '#4ecf9e', padding: '10px 12px', whiteSpace: 'nowrap' }}>+{todaySlots.length - 3} more →</div>
           </Link>
         )}
       </div>
@@ -312,66 +362,33 @@ function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
   )
 }
 
-function UrgentTasksStrip({ tasks, today }: { tasks: Task[]; today: string }) {
+/* ── UrgentTasksStrip ─────────────────────────────────── */
+function UrgentTasksStrip({ tasks }: { tasks: Task[] }) {
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
-
-  const urgent = tasks
-    .filter(t => t.status !== 'done' && t.due_date)
-    .filter(t => new Date(t.due_date!) <= todayDate)
-    .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
-    .slice(0, 3)
-
+  const urgent = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date!) <= todayDate).sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime()).slice(0, 3)
   if (!urgent.length) return null
 
   return (
-    <section style={{
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 14,
-      padding: '12px 14px',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-    }}>
+    <section style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span
-            className="dot-urgent"
-            style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--danger)', display: 'inline-block', flexShrink: 0 }}
-          />
-          <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--danger)', fontWeight: 600 }}>Urgent</span>
+          <span className="dot-urgent" style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff6b6b', display: 'inline-block', flexShrink: 0 }} />
+          <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#ff6b6b', fontWeight: 600 }}>Urgent</span>
         </div>
-        <Link href="/study" style={{ fontSize: 12, color: 'var(--teal)', textDecoration: 'none' }}>See all →</Link>
+        <Link href="/study" style={{ fontSize: 12, color: '#4ecf9e', textDecoration: 'none' }}>See all →</Link>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {urgent.map(task => {
           const due = new Date(task.due_date!); due.setHours(0,0,0,0)
           const isToday = due.getTime() === todayDate.getTime()
           const diffDays = Math.round((todayDate.getTime() - due.getTime()) / 86400000)
-
           return (
-            <div
-              key={task.id}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '10px 14px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '0.5px solid rgba(255,255,255,0.07)',
-                borderLeft: `2px solid ${isToday ? '#C9A84C' : 'var(--danger)'}`,
-                borderRadius: `0 10px 10px 0`,
-              }}
-            >
+            <div key={task.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.05)', borderLeft: `2px solid ${isToday ? '#c9a84c' : '#ff6b6b'}`, borderRadius: '0 8px 8px 0' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.title}</div>
-                {task.module && (
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.module.module_name}</div>
-                )}
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.title}</div>
+                {task.module && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.module.module_name}</div>}
               </div>
-              <span style={{
-                flexShrink: 0, fontSize: 11, padding: '2px 8px', borderRadius: 'var(--radius-sm)',
-                background: isToday ? 'var(--gold-dim)' : 'var(--danger-dim)',
-                color: isToday ? 'var(--gold)' : 'var(--danger)',
-                border: `0.5px solid ${isToday ? 'var(--gold-border)' : 'var(--danger-border)'}`,
-              }}>
+              <span style={{ flexShrink: 0, fontSize: 11, padding: '2px 8px', borderRadius: 9999, background: isToday ? 'rgba(201,168,76,0.1)' : 'rgba(255,107,107,0.1)', color: isToday ? '#c9a84c' : '#ff6b6b', border: `0.5px solid ${isToday ? 'rgba(201,168,76,0.25)' : 'rgba(255,107,107,0.25)'}` }}>
                 {isToday ? 'Due today' : `${diffDays}d late`}
               </span>
             </div>
@@ -382,64 +399,40 @@ function UrgentTasksStrip({ tasks, today }: { tasks: Task[]; today: string }) {
   )
 }
 
+/* ── FeatureGrid ─────────────────────────────────────── */
 const FEATURE_CARDS = [
-  { href: '/study',             label: 'Study',       accent: 'var(--teal)',         iconBg: 'var(--teal-dim)' },
-  { href: '/budget',            label: 'Budget',      accent: '#C9A84C',             iconBg: 'rgba(201,168,76,0.1)' },
-  { href: '/meals',             label: 'Meals',       accent: 'var(--meals-orange)', iconBg: 'rgba(231,122,60,0.12)' },
-  { href: '/dashboard/work',    label: 'Work',        accent: 'var(--work-blue)',    iconBg: 'rgba(74,144,217,0.12)' },
-  { href: '/nova',              label: 'Nova',        accent: 'var(--nova)',         iconBg: 'var(--nova-dim)' },
-  { href: '/dashboard/groups',  label: 'Groups',      accent: 'var(--groups-green)', iconBg: 'rgba(80,200,120,0.12)' },
+  { href: '/study',            label: 'Study',  accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.1)' },
+  { href: '/budget',           label: 'Budget', accent: '#c9a84c', iconBg: 'rgba(201,168,76,0.1)' },
+  { href: '/meals',            label: 'Meals',  accent: '#e8834a', iconBg: 'rgba(232,131,74,0.1)' },
+  { href: '/dashboard/work',   label: 'Work',   accent: '#7090d0', iconBg: 'rgba(112,144,208,0.1)' },
+  { href: '/nova',             label: 'Nova',   accent: '#9b6fd4', iconBg: 'rgba(155,111,212,0.1)' },
+  { href: '/dashboard/groups', label: 'Groups', accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.1)' },
 ]
+const FEATURE_ICONS: Record<string, string> = { Study: '📚', Budget: '💰', Meals: '🍲', Work: '💼', Nova: '✨', Groups: '👥' }
 
-const FEATURE_ICONS: Record<string, string> = {
-  Study: '📚', Budget: '💰', Meals: '🍲', Work: '💼', Nova: '✨', Groups: '👥',
-}
-
-function FeatureGrid({
-  tasks, expenses, totalBudget, remaining, modules, subscription, profile,
-  mealPlanExists, shiftsThisWeek, activeGroups,
-}: {
-  tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number;
-  modules: Module[]; subscription: Subscription | null; profile: Profile;
-  mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number;
+function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups }: {
+  tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number
+  modules: Module[]; subscription: Subscription | null; profile: Profile
+  mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
 }) {
-  const _unused = cn(modules.length, subscription)
+  void cn(modules.length, subscription)
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
-  const msgLimit   = profile.nova_messages_limit ?? 10
-  const msgUsed    = profile.nova_messages_used ?? 0
-  const novaLeft   = Math.max(0, msgLimit - msgUsed)
-
+  const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
-
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
-
   const budgetPct   = totalBudget > 0 ? Math.min(100, (remaining / totalBudget) * 100) : 100
-  const budgetColor = budgetPct < 10 ? 'var(--danger)' : budgetPct < 30 ? '#C9A84C' : 'var(--teal)'
+  const budgetColor = budgetPct < 10 ? '#ff6b6b' : budgetPct < 30 ? '#c9a84c' : '#4ecf9e'
   const novaPct     = isUnlimited ? 100 : Math.min(100, (novaLeft / (profile.nova_messages_limit ?? 10)) * 100)
 
   const subtitles: Record<string, { text: string; color?: string; pct: number; barColor: string }> = {
-    Study: overdueTasks > 0
-      ? { text: `${overdueTasks} overdue`, color: 'var(--danger)', pct: 30, barColor: 'var(--danger)' }
-      : tasksDueWeek > 0
-        ? { text: `${tasksDueWeek} due this week`, color: 'var(--teal)', pct: 70, barColor: 'var(--teal)' }
-        : { text: 'All clear ✓', color: 'var(--teal)', pct: 100, barColor: 'var(--teal)' },
-    Budget: totalBudget > 0
-      ? { text: remaining >= 0 ? `R${Math.round(remaining)} left` : 'Over budget', color: budgetColor, pct: Math.max(0, budgetPct), barColor: budgetColor }
-      : { text: 'Set budget →', color: '#C9A84C', pct: 0, barColor: '#C9A84C' },
-    Meals: mealPlanExists
-      ? { text: 'Week planned ✓', color: 'var(--teal)', pct: 90, barColor: 'var(--teal)' }
-      : { text: 'Plan your week →', color: 'var(--meals-orange)', pct: 10, barColor: 'var(--meals-orange)' },
-    Work: shiftsThisWeek > 0
-      ? { text: `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead`, color: 'var(--work-blue)', pct: 80, barColor: 'var(--work-blue)' }
-      : { text: 'No shifts soon', color: 'var(--text-tertiary)', pct: 0, barColor: 'var(--work-blue)' },
-    Nova: isUnlimited
-      ? { text: 'Unlimited', color: 'var(--nova)', pct: 100, barColor: 'var(--nova)' }
-      : { text: `${novaLeft} msgs left`, color: novaLeft < 5 ? 'var(--danger)' : 'var(--nova)', pct: novaPct, barColor: novaLeft < 5 ? 'var(--danger)' : 'var(--nova)' },
-    Groups: activeGroups > 0
-      ? { text: `${activeGroups} group${activeGroups > 1 ? 's' : ''}`, color: 'var(--groups-green)', pct: 70, barColor: 'var(--groups-green)' }
-      : { text: 'Join a group →', color: 'var(--text-tertiary)', pct: 0, barColor: 'var(--groups-green)' },
+    Study:  overdueTasks > 0 ? { text: `${overdueTasks} overdue`, color: '#ff6b6b', pct: 30, barColor: '#ff6b6b' } : tasksDueWeek > 0 ? { text: `${tasksDueWeek} due this week`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : { text: 'All clear ✓', color: '#4ecf9e', pct: 100, barColor: '#4ecf9e' },
+    Budget: totalBudget > 0 ? { text: remaining >= 0 ? `R${Math.round(remaining)} left` : 'Over budget', color: budgetColor, pct: Math.max(0, budgetPct), barColor: budgetColor } : { text: 'Set budget →', color: '#c9a84c', pct: 0, barColor: '#c9a84c' },
+    Meals:  mealPlanExists ? { text: 'Week planned ✓', color: '#4ecf9e', pct: 90, barColor: '#4ecf9e' } : { text: 'Plan your week →', color: '#e8834a', pct: 10, barColor: '#e8834a' },
+    Work:   shiftsThisWeek > 0 ? { text: `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead`, color: '#7090d0', pct: 80, barColor: '#7090d0' } : { text: 'No shifts soon', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#7090d0' },
+    Nova:   isUnlimited ? { text: 'Unlimited', color: '#9b6fd4', pct: 100, barColor: '#9b6fd4' } : { text: `${novaLeft} msgs left`, color: novaLeft < 5 ? '#ff6b6b' : '#9b6fd4', pct: novaPct, barColor: novaLeft < 5 ? '#ff6b6b' : '#9b6fd4' },
+    Groups: activeGroups > 0 ? { text: `${activeGroups} group${activeGroups > 1 ? 's' : ''}`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : { text: 'Join a group →', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#4ecf9e' },
   }
 
   return (
@@ -449,40 +442,16 @@ function FeatureGrid({
         return (
           <Link key={href} href={href} style={{ textDecoration: 'none' }}>
             <div
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 14,
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                padding: 16,
-                minHeight: 100,
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'border-color 0.2s ease, background 0.2s ease',
-              }}
-              onMouseEnter={e => {
-                ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)'
-                ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'
-              }}
-              onMouseLeave={e => {
-                ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'
-                ;(e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'
-              }}
+              style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, minHeight: 100, cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'border-color 0.2s ease, background 0.2s ease' }}
+              onMouseEnter={e => { ;(e.currentTarget as HTMLElement).style.borderColor = accent + '50'; ;(e.currentTarget as HTMLElement).style.background = '#0f1016' }}
+              onMouseLeave={e => { ;(e.currentTarget as HTMLElement).style.borderColor = '#1e1f2e'; ;(e.currentTarget as HTMLElement).style.background = '#0d0e14' }}
             >
-              <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, borderRadius: '2px 0 0 2px', opacity: 0.6 }} />
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                {FEATURE_ICONS[label]}
-              </div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginTop: 10 }}>{label}</div>
+              <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.6 }} />
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
+              <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 10 }}>{label}</div>
               <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
-
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.05)' }}>
-                <div
-                  className="bar-fill-anim"
-                  style={{ height: '100%', width: `${subtitle.pct}%`, background: subtitle.barColor, borderRadius: 3 }}
-                />
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)' }}>
+                <div className="bar-fill-anim" style={{ height: '100%', width: `${subtitle.pct}%`, background: subtitle.barColor, borderRadius: 3 }} />
               </div>
             </div>
           </Link>
@@ -492,58 +461,41 @@ function FeatureGrid({
   )
 }
 
+/* ── ExamCountdownCard ──────────────────────────────────── */
 function ExamCountdownCard({ exams }: { exams: Exam[] }) {
   const next = exams[0]
   if (!next) return null
-
   const days = getDaysUntil(next.exam_date)
-  const urgencyColor = days <= 1 ? 'var(--danger)' : days <= 3 ? '#C9A84C' : '#6495ED'
+  const urgencyColor = days <= 1 ? '#ff6b6b' : days <= 3 ? '#c9a84c' : '#7090d0'
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg,rgba(10,15,44,0.9) 0%,rgba(6,12,36,0.95) 100%)',
-      border: '1px solid rgba(100,149,237,0.2)',
-      borderRadius: 14,
-      padding: '16px 16px 16px 20px',
-      position: 'relative',
-      overflow: 'hidden',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-    }}>
-      <span style={{ position: 'absolute', left: 0, top: 16, bottom: 16, width: 2, background: '#6495ED', borderRadius: '0 1px 1px 0' }} />
-      <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 80% 20%,rgba(100,149,237,0.08) 0%,transparent 60%)', pointerEvents: 'none' }} />
-
+    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px 16px 16px 20px', position: 'relative', overflow: 'hidden' }}>
+      <span style={{ position: 'absolute', left: 0, top: 16, bottom: 16, width: 2, background: '#7090d0', borderRadius: '0 1px 1px 0' }} />
+      <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 80% 20%,rgba(112,144,208,0.06) 0%,transparent 60%)', pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginBottom: 6 }}>Next Exam</div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{next.exam_name}</div>
-        {next.module && <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{next.module.module_name}</div>}
-        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
-          {fmt.dateFull(next.exam_date)}
-          {next.start_time && ` · ${fmt.time(next.start_time)}`}
-          {next.venue && ` · ${next.venue}`}
+        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>Next Exam</div>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {next.exam_name}
         </div>
-
+        {next.module && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.42)', marginTop: 2 }}>{next.module.module_name}</div>}
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginTop: 4 }}>
+          {fmt.dateFull(next.exam_date)}{next.start_time && ` · ${fmt.time(next.start_time)}`}{next.venue && ` · ${next.venue}`}
+        </div>
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
           <div>
             {days < 0 ? (
-              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 48, fontWeight: 700, color: 'rgba(255,255,255,0.3)', lineHeight: 1 }}>✓</div>
+              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 48, fontWeight: 700, color: 'rgba(255,255,255,0.18)', lineHeight: 1 }}>✓</div>
             ) : days === 0 ? (
-              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 28, fontWeight: 700, color: 'var(--danger)', lineHeight: 1 }}>TODAY</div>
+              <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 28, fontWeight: 700, color: '#ff6b6b', lineHeight: 1 }}>TODAY</div>
             ) : (
               <div>
                 <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 48, fontWeight: 700, color: urgencyColor, lineHeight: 1 }}>{days}</div>
-                <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>DAYS</div>
+                <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>DAYS</div>
               </div>
             )}
           </div>
           {exams.length > 1 && (
-            <div style={{
-              fontSize: 11, padding: '2px 8px', borderRadius: 9999,
-              background: 'rgba(100,149,237,0.1)', color: '#6495ED',
-              border: '0.5px solid rgba(100,149,237,0.25)',
-            }}>
-              +{exams.length - 1} more
-            </div>
+            <div style={{ fontSize: 11, padding: '2px 8px', borderRadius: 9999, background: 'rgba(112,144,208,0.1)', color: '#7090d0', border: '0.5px solid rgba(112,144,208,0.25)' }}>+{exams.length - 1} more</div>
           )}
         </div>
       </div>
@@ -551,70 +503,43 @@ function ExamCountdownCard({ exams }: { exams: Exam[] }) {
   )
 }
 
+/* ── BudgetRingCard ─────────────────────────────────────── */
 function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: {
   monthSpent: number; totalBudget: number; expenses: Expense[]; compact?: boolean
 }) {
   const pct       = totalBudget > 0 ? Math.min(100, Math.round((monthSpent / totalBudget) * 100)) : 0
-  const ringColor = pct > 85 ? 'var(--danger)' : pct > 60 ? '#C9A84C' : 'var(--teal)'
-
-  const r    = compact ? 26 : 38
-  const size = compact ? 64 : 96
-  const sw   = compact ? 6 : 8
-  const circ   = 2 * Math.PI * r
-  const offset = circ * (1 - pct / 100)
-
+  const ringColor = pct > 85 ? '#ff6b6b' : pct > 60 ? '#c9a84c' : '#4ecf9e'
+  const r = compact ? 26 : 38; const size = compact ? 64 : 96; const sw = compact ? 6 : 8
+  const circ = 2 * Math.PI * r; const offset = circ * (1 - pct / 100)
   const catMap: Record<string, number> = {}
   expenses.forEach(e => { catMap[e.category] = (catMap[e.category] ?? 0) + e.amount })
   const topCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3)
 
   return (
-    <div style={{
-      background: 'rgba(255,255,255,0.04)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: 14,
-      padding: compact ? 12 : 16,
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
-    }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', marginBottom: compact ? 8 : 12 }}>This Month</div>
-
+    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: compact ? 12 : 16 }}>
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: compact ? 8 : 12 }}>This Month</div>
       <div style={{ display: 'flex', flexDirection: compact ? 'column' : 'row', alignItems: 'center', gap: compact ? 6 : 16 }}>
         <div style={{ flexShrink: 0, position: 'relative', width: size, height: size }}>
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={sw} />
-            <circle
-              cx={size/2} cy={size/2} r={r} fill="none"
-              stroke={ringColor} strokeWidth={sw}
-              strokeLinecap="round"
-              strokeDasharray={circ}
-              strokeDashoffset={offset}
-              className="ring-fill-animated"
-            />
+            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={sw} />
+            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={ringColor} strokeWidth={sw} strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} />
           </svg>
-          <div style={{
-            position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-          }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 11 : 16, fontWeight: 700, color: ringColor, lineHeight: 1 }}>{pct}%</div>
-            {!compact && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>used</div>}
+            {!compact && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>used</div>}
           </div>
         </div>
-
         <div style={{ flex: compact ? 'unset' : 1, minWidth: 0, textAlign: compact ? 'center' : 'left' }}>
-          <div style={{ lineHeight: compact ? 1.3 : 1 }}>
-            <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 13 : 18, fontWeight: 700, color: '#C9A84C' }}>R{Math.round(monthSpent)}</span>
-            {!compact && <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}> of R{Math.round(totalBudget)}</span>}
+          <div>
+            <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 13 : 18, fontWeight: 700, color: '#c9a84c' }}>R{Math.round(monthSpent)}</span>
+            {!compact && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)' }}> of R{Math.round(totalBudget)}</span>}
           </div>
           {compact ? (
-            <div style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 2 }}>of R{Math.round(totalBudget)}</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>of R{Math.round(totalBudget)}</div>
           ) : topCats.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 10 }}>
               {topCats.map(([cat, amt]) => (
-                <span key={cat} style={{
-                  fontSize: 10, padding: '3px 8px', borderRadius: 9999,
-                  background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.1)',
-                  color: 'rgba(255,255,255,0.55)',
-                }}>
+                <span key={cat} style={{ fontSize: 10, padding: '3px 8px', borderRadius: 9999, background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)' }}>
                   {cat} · R{Math.round(amt)}
                 </span>
               ))}
@@ -626,51 +551,44 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: 
   )
 }
 
+/* ── UpgradeCard ─────────────────────────────────────── */
 function UpgradeCard() {
   return (
     <Link href="/upgrade" style={{ textDecoration: 'none', display: 'block' }}>
-      <div style={{
-        background: 'linear-gradient(135deg,rgba(20,15,4,0.95) 0%,rgba(14,12,6,0.95) 100%)',
-        border: '1px solid rgba(201,168,76,0.25)',
-        borderRadius: 14,
-        padding: 16,
-        position: 'relative',
-        overflow: 'hidden',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-      }}>
-        <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#C9A84C 0%,rgba(201,168,76,0.2) 60%,transparent 100%)' }} />
-        <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 90% 10%,rgba(201,168,76,0.07) 0%,transparent 50%)', pointerEvents: 'none' }} />
-
+      <div style={{ background: 'linear-gradient(135deg,rgba(20,15,4,0.98) 0%,rgba(14,12,6,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
+        <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#c9a84c 0%,rgba(201,168,76,0.15) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
-            Go further with Nova
-          </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 10 }}>
-            More messages. More tools. More you.
-          </div>
-
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.9)', marginBottom: 4 }}>Go further with Nova</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>More messages. More tools. More you.</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
-            {['250 msgs/mo', 'AI Meal Prep', 'Grade Calc', 'Priority support'].map(f => (
-              <span key={f} style={{
-                fontSize: 10, padding: '3px 9px', borderRadius: 9999,
-                background: 'rgba(201,168,76,0.1)', border: '0.5px solid rgba(201,168,76,0.25)', color: '#C9A84C',
-              }}>{f}</span>
+            {['250 msgs/mo', 'AI Meal Prep', 'Grade Calc'].map(f => (
+              <span key={f} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(201,168,76,0.08)', border: '0.5px solid rgba(201,168,76,0.22)', color: '#c9a84c' }}>{f}</span>
             ))}
           </div>
-
-          <div style={{ fontSize: 13, color: '#C9A84C', fontFamily: 'JetBrains Mono,monospace', marginBottom: 12 }}>From R39/month</div>
-
-          <button style={{
-            width: '100%', background: 'linear-gradient(135deg,#C9A84C 0%,#E8C46A 100%)',
-            color: '#0E0C06', fontFamily: 'Sora,sans-serif', fontWeight: 700, border: 'none', borderRadius: 10,
-            padding: '10px 0', fontSize: 14, cursor: 'pointer',
-          }}>
+          <div style={{ fontSize: 13, color: '#c9a84c', fontFamily: 'JetBrains Mono,monospace', marginBottom: 12 }}>From R39/month</div>
+          <button style={{ width: '100%', background: 'linear-gradient(135deg,#c9a84c 0%,#e8c46a 100%)', color: '#0E0C06', fontFamily: 'Sora,sans-serif', fontWeight: 700, border: 'none', borderRadius: 10, padding: '10px 0', fontSize: 14, cursor: 'pointer' }}>
             Upgrade now →
           </button>
         </div>
       </div>
     </Link>
+  )
+}
+
+/* ── UpgradeBar ─────────────────────────────────────────── */
+function UpgradeBar() {
+  return (
+    <div style={{ margin: '16px -24px -20px', padding: '14px 24px', background: 'linear-gradient(90deg,rgba(155,111,212,0.07) 0%,rgba(201,168,76,0.07) 100%)', borderTop: '0.5px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+      <div>
+        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>Unlock unlimited Nova messages</span>
+        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginLeft: 8 }}>from R39/month</span>
+      </div>
+      <Link href="/upgrade" style={{ textDecoration: 'none' }}>
+        <button style={{ background: 'linear-gradient(135deg,#9b6fd4 0%,#c9a84c 100%)', color: '#fff', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 12, border: 'none', borderRadius: 8, padding: '7px 16px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+          Upgrade →
+        </button>
+      </Link>
+    </div>
   )
 }
 
@@ -683,6 +601,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [activeGroups, setActiveGroups] = useState(0)
   const [novaCheckin, setNovaCheckin] = useState<string | null>(null)
 
+  // 1. Store init
   useEffect(() => {
     store.setProfile(initialData.profile)
     store.setBudget(initialData.budget)
@@ -695,7 +614,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Apply pending referral on first load
+  // 2. Pending referral apply
   useEffect(() => {
     const pendingRef = localStorage.getItem('pending_ref')
     if (!pendingRef) return
@@ -706,12 +625,12 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       .catch(() => {})
   }, [])
 
-  // Load proactive insights
+  // 3. Load proactive nova insights
   useEffect(() => {
     fetch('/api/insights').then(r => r.ok ? r.json() : null).then(d => { if (d) setNovaInsights(d.insights ?? []) }).catch(() => {})
   }, [])
 
-  // Parallel client-side fetch: meals, shifts, groups
+  // 4. Parallel client-side fetch: meals, shifts, groups
   useEffect(() => {
     const fetchLiveData = async () => {
       try {
@@ -719,24 +638,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
-
         const now = new Date()
         const jsDay = now.getDay()
-        const weekStart = new Date(now); weekStart.setDate(now.getDate() - jsDay + (jsDay === 0 ? -6 : 1))
-        weekStart.setHours(0, 0, 0, 0)
+        const weekStart = new Date(now); weekStart.setDate(now.getDate() - jsDay + (jsDay === 0 ? -6 : 1)); weekStart.setHours(0,0,0,0)
         const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
-        const weekStartStr = weekStart.toISOString().split('T')[0]
-        const weekEndStr = weekEnd.toISOString().split('T')[0]
         const todayStr = now.toISOString().split('T')[0]
         const sevenDays = new Date(now); sevenDays.setDate(now.getDate() + 7)
-        const sevenDaysStr = sevenDays.toISOString().split('T')[0]
-
         const [mealsRes, shiftsRes, groupsRes] = await Promise.allSettled([
-          supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStartStr).lte('week_start', weekEndStr),
-          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDaysStr),
+          supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStart.toISOString().split('T')[0]).lte('week_start', weekEnd.toISOString().split('T')[0]),
+          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDays.toISOString().split('T')[0]),
           supabase.from('group_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
         ])
-
         if (mealsRes.status === 'fulfilled') setMealPlanExists((mealsRes.value.count ?? 0) > 0)
         if (shiftsRes.status === 'fulfilled') setShiftsThisWeek(shiftsRes.value.count ?? 0)
         if (groupsRes.status === 'fulfilled') setActiveGroups(groupsRes.value.count ?? 0)
@@ -745,44 +657,31 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     fetchLiveData()
   }, [])
 
-  // Nova check-in — localStorage cached per day
+  // 5. Nova check-in — localStorage cached per day
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
     const cachedDate = localStorage.getItem('nova_last_checkin_date')
     const cachedMsg  = localStorage.getItem('nova_checkin_message')
-
-    if (cachedDate === today && cachedMsg) {
-      setNovaCheckin(cachedMsg)
-      return
-    }
-
+    if (cachedDate === today && cachedMsg) { setNovaCheckin(cachedMsg); return }
     fetch('/api/nova/checkin')
       .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        if (d?.message) {
-          setNovaCheckin(d.message)
-          localStorage.setItem('nova_last_checkin_date', today)
-          localStorage.setItem('nova_checkin_message', d.message)
-        }
-      })
+      .then(d => { if (d?.message) { setNovaCheckin(d.message); localStorage.setItem('nova_last_checkin_date', today); localStorage.setItem('nova_checkin_message', d.message) } })
       .catch(() => {})
   }, [])
 
-  // Exam push check (once per session)
+  // 6. Exam push check (once per session)
   useEffect(() => {
     if (sessionStorage.getItem('push_checked')) return
     sessionStorage.setItem('push_checked', '1')
     fetch('/api/push/check-exams').catch(() => {})
   }, [])
 
-  // FCM push notification subscription (once per session, after auth)
+  // 7. FCM push notification subscription (once per session)
   useEffect(() => {
     if (sessionStorage.getItem('fcm_init')) return
     sessionStorage.setItem('fcm_init', '1')
     const userId = initialData.profile.id
-    import('@/lib/firebase-messaging')
-      .then(({ initPushNotifications }) => initPushNotifications(userId))
-      .catch(() => {})
+    import('@/lib/firebase-messaging').then(({ initPushNotifications }) => initPushNotifications(userId)).catch(() => {})
   }, [])
 
   const handleRefresh = useCallback(async () => {
@@ -798,7 +697,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         supabase.from('exams').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
       ])
       if (tasks) store.setTasks(tasks)
-      if (exams) store.setExams(exams)
+      if (exams)  store.setExams(exams)
     } catch { /* silent */ }
   }, [store])
 
@@ -821,112 +720,83 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const totalBudget = baseBudget + totalIncome
   const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
   const remaining   = totalBudget - monthSpent
-
-  const isPremium  = p?.is_premium || ['premium', 'scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
-  const streakDays = 0
-
-  const todayDateStr = new Date().toDateString()
+  const isPremium   = p?.is_premium || ['premium', 'scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
+  const streakDays  = 0
 
   return (
     <>
       <style>{DASH_STYLES}</style>
+      <div className="page-enter min-h-screen" style={{ background: '#0a0b10' }}>
 
-      <div
-        className="page-enter min-h-screen"
-        style={{ background: 'linear-gradient(135deg,#0a0f1e 0%,#0d1a2e 40%,#0f1a10 100%)' }}
-      >
         {/* Ambient orbs */}
         <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle,rgba(45,74,34,0.25) 0%,transparent 70%)', filter: 'blur(40px)' }} />
-          <div style={{ position: 'absolute', top: '40%', right: '-8%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle,rgba(10,15,44,0.6) 0%,transparent 70%)', filter: 'blur(50px)' }} />
-          <div style={{ position: 'absolute', bottom: '10%', left: '20%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 70%)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', top: '-5%', left: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle,rgba(155,111,212,0.07) 0%,transparent 70%)', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', bottom: '15%', right: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle,rgba(78,207,158,0.05) 0%,transparent 70%)', filter: 'blur(50px)' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '30%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(201,168,76,0.04) 0%,transparent 70%)', filter: 'blur(40px)' }} />
         </div>
 
         <PullToRefresh onRefresh={handleRefresh} />
 
-        <div style={{ padding: '24px 24px', maxWidth: 1400, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-
-          {/* Greeting */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.95)', letterSpacing: '-0.02em' }}>
-              {getGreeting()}, {p?.full_name?.split(' ')[0] ?? 'Student'} 🌱
-            </div>
-            {p?.university && (
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>{p.university}</div>
-            )}
+        {/* Topbar */}
+        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: 'rgba(10,11,16,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div>
+            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.9)', letterSpacing: '-0.01em' }}>
+              {getGreeting()}, {p?.full_name?.split(' ')[0] ?? 'Student'}
+            </span>
+            {p?.university && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginLeft: 8 }}>{p.university}</span>}
           </div>
+          <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 9999, background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            {getWeekBadge()}
+          </div>
+        </div>
+
+        <div style={{ padding: '20px 24px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
           {/* Nova proactive insights */}
           {novaInsights.map(insight => (
-            <div
-              key={insight.id}
-              className="animate-fade-up"
-              style={{
-                display: 'flex', alignItems: 'flex-start', gap: 12,
-                background: 'var(--nova-dim)', border: '0.5px solid var(--nova-border)',
-                borderRadius: 12, padding: '12px 16px', marginBottom: 12,
-              }}
-            >
+            <div key={insight.id} className="dash-card-in" style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 12 }}>
               <span style={{ fontSize: 20, flexShrink: 0 }}>
                 {{ study_nudge: '📚', budget_warning: '💰', stress_alert: '💙' }[insight.insight_type] ?? '🌟'}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--nova)', marginBottom: 4 }}>Nova</div>
-                <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{insight.content}</div>
+                <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 4 }}>Nova</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{insight.content}</div>
               </div>
-              <button
-                onClick={() => dismissInsight(insight.id)}
-                aria-label="Dismiss insight"
-                style={{ color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, flexShrink: 0, padding: 0 }}
-              >
-                ✕
-              </button>
+              <button onClick={() => dismissInsight(insight.id)} aria-label="Dismiss" style={{ color: 'rgba(255,255,255,0.25)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, flexShrink: 0, padding: 0 }}>✕</button>
             </div>
           ))}
 
-          {/* Two-column layout */}
-          <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+          {/* 3-column bento grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
 
-            {/* ── LEFT COLUMN ── */}
-            <div style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Column 1 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <NovaBanner profile={p} subscription={sub} checkinMessage={novaCheckin} />
-              <StatCardsRow
-                profile={p}
-                remaining={remaining}
-                totalBudget={totalBudget}
-                tasks={allTasks}
-                exams={allExams}
-                streakDays={streakDays}
-              />
-              <MoodCheckin userId={p.id} />
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} />
+              <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 16px' }}>
+                <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
+                <MoodCheckin userId={p.id} />
+              </div>
               <TodaysClasses timetable={initialData.timetable} />
-              <UrgentTasksStrip tasks={allTasks} today={todayDateStr} />
-              <FeatureGrid
-                tasks={allTasks}
-                expenses={recentExp}
-                totalBudget={totalBudget}
-                remaining={remaining}
-                modules={allMods}
-                subscription={sub as Subscription | null}
-                profile={p}
-                mealPlanExists={mealPlanExists}
-                shiftsThisWeek={shiftsThisWeek}
-                activeGroups={activeGroups}
-              />
+              <UrgentTasksStrip tasks={allTasks} />
+              <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} />
             </div>
 
-            {/* ── RIGHT COLUMN (desktop only, sticky) ── */}
-            <div
-              className="hidden lg:flex flex-col gap-4"
-              style={{ width: 320, flexShrink: 0, position: 'sticky', top: 24, alignSelf: 'flex-start' }}
-            >
+            {/* Column 2 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
+              <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
+            </div>
+
+            {/* Column 3 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
               {!isPremium && <UpgradeCard />}
             </div>
           </div>
 
-          {/* Mobile: exam + budget side-by-side, upgrade below */}
+          {/* Mobile: exam + budget, upgrade */}
           <div className="lg:hidden mt-4 space-y-4">
             {allExams.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
@@ -938,6 +808,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             )}
             {!isPremium && <UpgradeCard />}
           </div>
+
+          {!isPremium && <UpgradeBar />}
         </div>
       </div>
     </>
