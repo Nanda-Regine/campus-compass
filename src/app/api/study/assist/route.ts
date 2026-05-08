@@ -92,11 +92,12 @@ Respond with valid JSON only:
       if (!plan) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
 
       // Save as a nova insight for dashboard display
-      if (plan.warningFlags?.length > 0) {
+      const warningFlags = Array.isArray(plan.warningFlags) ? (plan.warningFlags as unknown[]) : []
+      if (warningFlags.length > 0) {
         await supabase.from('nova_insights').insert({
           user_id: user.id,
           insight_type: 'study_nudge',
-          content: `Study plan for "${taskTitle}": ${plan.warningFlags[0]}`,
+          content: `Study plan for "${taskTitle}": ${warningFlags[0]}`,
         })
       }
 
