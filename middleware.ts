@@ -1,5 +1,3 @@
-// NOTE: Arcjet requires `npm install @arcjet/next` — install once disk space is freed.
-// Until then this file falls back to Supabase-only session management.
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
@@ -13,12 +11,15 @@ const AI_ROUTES = [
   '/api/insights/checkin',
 ]
 
-// ─── Lazy-load Arcjet so the build succeeds without it ────────
+// ─── Arcjet: shield + bot detection + sliding window rate limits ───
+// ARCJET_KEY must be set in Vercel env vars. When unset, middleware
+// skips Arcjet and falls through to Supabase session management only.
 async function getArcjet() {
+  if (!process.env.ARCJET_KEY) return null
   try {
-    const { default: arcjet, shield, detectBot, slidingWindow } = await import('@arcjet/next' as string)
+    const { default: arcjet, shield, detectBot, slidingWindow } = await import('@arcjet/next')
     const base = arcjet({
-      key: process.env.ARCJET_KEY!,
+      key: process.env.ARCJET_KEY,
       rules: [
         shield({ mode: 'LIVE' }),
         detectBot({

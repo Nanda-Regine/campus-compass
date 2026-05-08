@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import DashboardClient from '@/components/dashboard/DashboardClient'
+import './dashboard.css'
 import { currentMonthRange } from '@/lib/utils'
 import type { Metadata } from 'next'
 

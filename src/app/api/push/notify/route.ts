@@ -15,7 +15,11 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { title, body, url = '/study' } = await req.json()
+    const rawBody = await req.json()
+    const { title, body } = rawBody
+    // Validate url: must be a relative path to prevent open-redirect via notification click
+    const rawUrl: unknown = rawBody.url
+    const url = typeof rawUrl === 'string' && rawUrl.startsWith('/') ? rawUrl.slice(0, 200) : '/study'
     if (!title || !body) return NextResponse.json({ error: 'title and body required' }, { status: 400 })
 
     const { data: subs } = await supabase

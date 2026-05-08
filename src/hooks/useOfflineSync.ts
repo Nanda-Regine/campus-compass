@@ -46,9 +46,9 @@ export function useOfflineSync() {
       await flushPendingWrites(supabase)
     }
 
-    syncToIndexedDB()
+    syncToIndexedDB().catch(() => {})
 
-    const handleOnline = () => syncToIndexedDB()
+    const handleOnline = () => { syncToIndexedDB().catch(() => {}) }
     window.addEventListener('online', handleOnline)
     return () => window.removeEventListener('online', handleOnline)
   }, [supabase])

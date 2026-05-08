@@ -98,7 +98,13 @@ TASK: Respond with valid JSON only (no markdown). Use this exact structure:
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
     const clean = rawText.replace(/```json|```/g, '').trim()
-    const insights = JSON.parse(clean)
+    let insights: unknown
+    try {
+      insights = JSON.parse(clean)
+    } catch {
+      console.error('Budget insights: AI returned non-JSON:', clean.slice(0, 200))
+      return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    }
 
     return NextResponse.json({
       insights,

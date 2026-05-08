@@ -65,51 +65,52 @@ export async function POST(request: Request) {
     // m_payment_id: {uuid36}_{tier}_{timestamp} — notify route parses userId as first 36 chars
     const mPaymentId = `${user.id}_${tierId}_${Date.now()}`
 
-    // Field order MUST follow PayFast docs exactly — do NOT sort alphabetically.
-    // PayFast docs: "Do not use the API signature format, which uses alphabetical ordering!"
+    // Fields for the PayFast checkout form (document order for human readability).
+    // Subscription fields: subscription_type=1 (subscription), frequency=3 (monthly), cycles=0 (indefinite).
     const fields: [string, string][] = [
-      ['merchant_id',      merchantId],
-      ['merchant_key',     merchantKey],
-      ['return_url',       `${appUrl}/dashboard`],
-      ['cancel_url',       `${appUrl}/upgrade`],
-      ['notify_url',       `${appUrl}/api/payfast/notify`],
-      ['name_first',       nameFirst],
-      ['name_last',        nameLast],
-      ['email_address',    email],
-      ['m_payment_id',     mPaymentId],
-      ['amount',           tierConfig.price.toFixed(2)],
-      ['item_name',        tierConfig.itemName],
-      // Recurring billing (subscription_type=1 = subscription, frequency=3 = monthly, cycles=0 = indefinite)
+      ['merchant_id',       merchantId],
+      ['merchant_key',      merchantKey],
+      ['return_url',        `${appUrl}/dashboard`],
+      ['cancel_url',        `${appUrl}/upgrade`],
+      ['notify_url',        `${appUrl}/api/payfast/notify`],
+      ['name_first',        nameFirst],
+      ['name_last',         nameLast],
+      ['email_address',     email],
+      ['m_payment_id',      mPaymentId],
+      ['amount',            tierConfig.price.toFixed(2)],
+      ['item_name',         tierConfig.itemName],
       ['subscription_type', '1'],
       ['recurring_amount',  tierConfig.price.toFixed(2)],
       ['frequency',         '3'],
       ['cycles',            '0'],
     ]
 
-    const queryString = fields
-      .filter(([, v]) => v !== '')
+    // PayFast signature MUST be built from fields sorted alphabetically (ksort).
+    // PayFast's server-side verification uses ksort() before computing the MD5.
+    // This is true for BOTH the checkout form and the API — do NOT use document order for the hash.
+    const filteredFields = fields.filter(([, v]) => v !== '')
+    const sortedForSig = [...filteredFields]
+      .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
       .join('&')
 
-    const sigSource = `${queryString}&passphrase=${phpUrlencode(passphrase)}`
+    const sigSource = `${sortedForSig}&passphrase=${phpUrlencode(passphrase)}`
     const signature = createHash('md5').update(sigSource).digest('hex')
 
-    const formFields: Record<string, string> = Object.fromEntries(fields)
+    // Form fields object — keep document order for the HTML form submission
+    const formFields: Record<string, string> = Object.fromEntries(filteredFields)
     formFields.signature = signature
 
     const action = isSandbox
       ? 'https://sandbox.payfast.co.za/eng/process'
       : 'https://www.payfast.co.za/eng/process'
 
-    console.log('[PayFast] subscription initiated, merchant:', merchantId.slice(0, 4) + '****', 'tier:', tierId, 'sandbox:', isSandbox)
+    console.log('[PayFast] subscription initiated | merchant:', merchantId.slice(0, 4) + '****', '| tier:', tierId, '| sandbox:', isSandbox, '| sigFields:', sortedForSig.slice(0, 80) + '...')
 
     return NextResponse.json({ action, fields: formFields })
 
   } catch (error) {
     console.error('[PayFast] initiate exception:', error)
-    return NextResponse.json({
-      error: 'Internal error',
-      detail: error instanceof Error ? error.message : 'Unknown',
-    }, { status: 500 })
+    return NextResponse.json({ error: 'Payment setup failed. Please try again.' }, { status: 500 })
   }
 }

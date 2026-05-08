@@ -54,36 +54,6 @@ function FlameIcon({ streak }: { streak: number }) {
   return <span>🔥</span>
 }
 
-/* ── CSS animations ─────────────────────────────────────── */
-const DASH_STYLES = `
-@keyframes novaPulse {
-  0%, 100% { transform: scale(1); opacity: 0.6; }
-  50%       { transform: scale(1.4); opacity: 1; }
-}
-@keyframes dotGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0.6); }
-  50%       { box-shadow: 0 0 0 5px rgba(255,107,107,0); }
-}
-@keyframes barFill { from { width: 0%; } }
-@keyframes dashFadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes shimmerSkeleton {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-.nova-pulse-ring { animation: novaPulse 2.4s ease-in-out infinite; }
-.dot-urgent      { animation: dotGlow 1.8s ease-in-out infinite; }
-.bar-fill-anim   { animation: barFill 1s ease-out both; }
-.dash-card-in    { animation: dashFadeUp 0.35s ease-out both; }
-.skeleton-row {
-  background: linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);
-  background-size: 200% 100%;
-  animation: shimmerSkeleton 1.4s infinite;
-  border-radius: 6px;
-}
-`
 
 /* ── StudyTipsCard ──────────────────────────────────────── */
 interface StudyTip { text: string; source: string }
@@ -899,8 +869,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   return (
     <>
-      <style>{DASH_STYLES}</style>
-      <div className="page-enter min-h-screen" style={{ background: '#0a0b10' }}>
+<div className="page-enter min-h-screen" style={{ background: '#0a0b10' }}>
 
         {/* Ambient orbs */}
         <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>

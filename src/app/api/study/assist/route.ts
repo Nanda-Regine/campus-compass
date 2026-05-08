@@ -6,6 +6,16 @@ import { checkRateLimit } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
+/** Parse AI JSON response safely — returns null on parse failure (caller should return 502). */
+function parseAiJson(text: string): unknown | null {
+  try {
+    return JSON.parse(text.replace(/```json|```/g, '').trim())
+  } catch {
+    console.error('[study/assist] AI JSON parse failed. Raw (first 200):', text.slice(0, 200))
+    return null
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = createServerSupabaseClient()
@@ -77,7 +87,8 @@ Respond with valid JSON only:
       })
 
       const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-      const plan = JSON.parse(rawText.replace(/```json|```/g, '').trim())
+      const plan = parseAiJson(rawText)
+      if (!plan) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
 
       // Save as a nova insight for dashboard display
       if (plan.warningFlags?.length > 0) {
@@ -120,7 +131,8 @@ Calculate precisely and explain clearly. Respond with valid JSON only:
       })
 
       const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-      const result = JSON.parse(rawText.replace(/```json|```/g, '').trim())
+      const result = parseAiJson(rawText)
+      if (!result) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ result })
     }
 
@@ -187,7 +199,8 @@ Respond with valid JSON only:
       })
 
       const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-      const analysis = JSON.parse(rawText.replace(/```json|```/g, '').trim())
+      const analysis = parseAiJson(rawText)
+      if (!analysis) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ analysis, tasks: taskList, exams: examList })
     }
 
@@ -233,7 +246,8 @@ Respond with valid JSON only:
       })
 
       const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-      const guide = JSON.parse(rawText.replace(/```json|```/g, '').trim())
+      const guide = parseAiJson(rawText)
+      if (!guide) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ guide })
     }
 

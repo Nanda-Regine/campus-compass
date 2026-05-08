@@ -259,7 +259,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const rawMessage: unknown = body?.message
     const message = typeof rawMessage === 'string' ? rawMessage.slice(0, 2000).trim() : ''
-    const history: { role: string; content: string }[] = Array.isArray(body?.history) ? body.history : []
+    // Sanitise history: enforce role whitelist at runtime (not just TypeScript cast) to
+    // prevent prompt-injection via a crafted role:'system' entry, and cap per-message
+    // content length to prevent cost-inflation attacks.
+    const history: { role: 'user' | 'assistant'; content: string }[] = Array.isArray(body?.history)
+      ? (body.history as { role: unknown; content: unknown }[])
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: typeof m.content === 'string' ? m.content.slice(0, 2000) : '',
+          }))
+          .filter(m => m.content.length > 0)
+      : []
     const mood: string | undefined = body?.mood
 
     if (!message) {
@@ -323,8 +334,8 @@ export async function POST(request: NextRequest) {
     const topicResources = detectTopicResources(message)
 
     const messages: Anthropic.MessageParam[] = [
-      ...history.slice(-20).map((msg: { role: string; content: string }) => ({
-        role: msg.role as 'user' | 'assistant',
+      ...history.slice(-20).map(msg => ({
+        role: msg.role,
         content: msg.content,
       })),
       {
