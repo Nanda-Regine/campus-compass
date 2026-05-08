@@ -7,9 +7,10 @@ import { checkRateLimit } from '@/lib/rateLimit'
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 /** Parse AI JSON response safely — returns null on parse failure (caller should return 502). */
-function parseAiJson(text: string): unknown | null {
+function parseAiJson(text: string): Record<string, unknown> | null {
   try {
-    return JSON.parse(text.replace(/```json|```/g, '').trim())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return JSON.parse(text.replace(/```json|```/g, '').trim()) as Record<string, unknown>
   } catch {
     console.error('[study/assist] AI JSON parse failed. Raw (first 200):', text.slice(0, 200))
     return null
