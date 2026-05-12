@@ -6,14 +6,16 @@ import { NextResponse } from 'next/server'
 import { createHash } from 'crypto'
 
 function phpUrlencode(str: string): string {
+  // Replicate PHP urlencode(): encode everything except A-Za-z0-9-_.~, spaces→+
+  // Note: PHP urlencode does NOT encode ~; encodeURIComponent does not encode !*'()~
   return encodeURIComponent(str)
     .replace(/!/g, '%21')
     .replace(/'/g, '%27')
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
-    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
+  // ~ is intentionally left unencoded — PHP urlencode keeps it as-is
 }
 
 const TIERS: Record<string, { price: number; itemName: string }> = {

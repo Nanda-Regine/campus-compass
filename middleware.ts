@@ -39,6 +39,12 @@ async function getArcjet() {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // PayFast ITN webhook has its own IP + signature verification — skip Arcjet
+  // so bot detection doesn't block the server-to-server callback
+  if (pathname === '/api/payfast/notify') {
+    return NextResponse.next()
+  }
+
   // ── 1. Arcjet security gate (all matched routes) ────────────
   if (process.env.ARCJET_KEY) {
     const aj = await getArcjet()

@@ -42,8 +42,8 @@ function phpUrlencode(str: string): string {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
-    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
+  // ~ is intentionally left unencoded — PHP urlencode keeps it as-is
 }
 
 // Verify PayFast MD5 signature per their ITN specification
