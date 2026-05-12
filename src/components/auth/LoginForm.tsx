@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react'
 
 const schema = z.object({
   email:    z.string().email('Enter a valid email'),
@@ -19,14 +20,19 @@ type FormData = z.infer<typeof schema>
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
   const { loading, signIn, signInWithGoogle } = useAuth()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
   const onSubmit = async (data: FormData) => {
-    await signIn(data.email, data.password)
+    setAuthError(null)
+    const { error } = await signIn(data.email, data.password, redirectTo)
+    if (error) setAuthError('Incorrect email or password. Please try again.')
   }
 
   return (
@@ -111,6 +117,13 @@ export default function LoginForm() {
                 Forgot password?
               </Link>
             </div>
+
+            {authError && (
+              <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5">
+                <AlertCircle size={14} className="text-red-400 shrink-0" />
+                <p className="font-mono text-[0.65rem] text-red-400">{authError}</p>
+              </div>
+            )}
 
             <Button type="submit" fullWidth loading={loading} className="mt-2">
               Sign in

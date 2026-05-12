@@ -10,7 +10,7 @@ import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react'
 
 const schema = z.object({
   name:            z.string().min(2, 'Name must be at least 2 characters'),
@@ -27,6 +27,7 @@ type FormData = z.infer<typeof schema>
 export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
   const { loading, signUp, signInWithGoogle } = useAuth()
   const searchParams = useSearchParams()
 
@@ -42,8 +43,10 @@ export default function SignupForm() {
   })
 
   const onSubmit = async (data: FormData) => {
+    setAuthError(null)
     const { error } = await signUp(data.email, data.password, data.name, true)
     if (!error) setSubmitted(true)
+    else setAuthError(error)
   }
 
   if (submitted) {
@@ -168,6 +171,13 @@ export default function SignupForm() {
                 <p className="mt-1.5 font-mono text-[0.6rem] text-red-400">{errors.popia_consent.message}</p>
               )}
             </div>
+
+            {authError && (
+              <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5">
+                <AlertCircle size={14} className="text-red-400 shrink-0" />
+                <p className="font-mono text-[0.65rem] text-red-400">{authError}</p>
+              </div>
+            )}
 
             <Button type="submit" fullWidth loading={loading} className="mt-1">
               Create free account 🚀
