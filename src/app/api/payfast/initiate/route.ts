@@ -91,8 +91,9 @@ export async function POST(request: Request) {
     // PayFast's server-side verification uses ksort() before computing the MD5.
     // This is true for BOTH the checkout form and the API — do NOT use document order for the hash.
     const filteredFields = fields.filter(([, v]) => v !== '')
+    // Use binary string comparison (not localeCompare) to match PHP ksort() exactly
     const sortedForSig = [...filteredFields]
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
       .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
       .join('&')
 
@@ -107,7 +108,9 @@ export async function POST(request: Request) {
       ? 'https://sandbox.payfast.co.za/eng/process'
       : 'https://www.payfast.co.za/eng/process'
 
-    console.log('[PayFast] subscription initiated | merchant:', merchantId.slice(0, 4) + '****', '| tier:', tierId, '| sandbox:', isSandbox, '| sigFields:', sortedForSig.slice(0, 80) + '...')
+    console.log('[PayFast] initiate | merchant:', merchantId.slice(0, 4) + '****', '| tier:', tierId, '| sandbox:', isSandbox)
+    console.log('[PayFast] sig source:', sigSource.replace(passphrase, '***'))
+    console.log('[PayFast] signature:', signature)
 
     return NextResponse.json({ action, fields: formFields })
 
