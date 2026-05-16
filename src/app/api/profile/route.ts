@@ -25,11 +25,18 @@ export async function GET() {
     const p = profile as Record<string, unknown> | null
     const novaMessagesUsed = (p?.nova_messages_used as number) ?? 0
     const plan = (p?.plan as string) ?? 'free'
-    const novaLimit = plan === 'nova_unlimited' ? -1
+    // null = unlimited (ProfileClient checks === null)
+    const novaLimit: number | null = plan === 'nova_unlimited' ? null
       : plan === 'premium' ? 250
       : plan === 'scholar' ? 100
       : 15
     const totalStudyMinutes = (sessions ?? []).reduce((sum, s) => sum + ((s as Record<string, unknown>).duration_minutes as number ?? 0), 0)
+
+    // Fetch referral stats inline so profile page has everything in one request
+    const [{ data: referralProfile }, { count: referralCount }] = await Promise.all([
+      supabase.from('profiles').select('referral_code, referral_credits').eq('id', user.id).single(),
+      supabase.from('referrals').select('id', { count: 'exact', head: true }).eq('referrer_id', user.id),
+    ])
 
     return NextResponse.json({
       profile,
@@ -37,6 +44,9 @@ export async function GET() {
         novaMessagesUsed,
         novaLimit,
         totalStudyMinutesThisMonth: totalStudyMinutes,
+        referralCount: referralCount || 0,
+        referralCredits: (referralProfile as Record<string, unknown> | null)?.referral_credits as number || 0,
+        referralCode: (referralProfile as Record<string, unknown> | null)?.referral_code as string | null || null,
       },
     })
   } catch (error) {
