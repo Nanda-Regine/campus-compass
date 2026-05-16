@@ -60,18 +60,34 @@ const EMOJI_OPTIONS = ['🎓', '📚', '🌟', '⚡', '🔥', '💡', '🚀', '�
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function StatCard({ label, value, sub, colour }: { label: string; value: string; sub?: string; colour: string }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl p-4 flex flex-col" style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.07)' }}>
-      <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{label}</p>
-      <p className="font-display font-black text-xl" style={{ color: colour }}>{value}</p>
-      {sub && <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>{sub}</p>}
+    <div className="space-y-1.5">
+      <label className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        {label}
+      </label>
+      {children}
     </div>
   )
 }
 
-function SelectField({ label, value, options, onChange }: {
-  label: string
+function TextInput({ value, onChange, placeholder, maxLength }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; maxLength?: number
+}) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      maxLength={maxLength}
+      className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none transition-all focus:ring-1 focus:ring-teal-500/40"
+      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+    />
+  )
+}
+
+function SelectInput({ value, options, onChange }: {
   value: string
   options: { value: string; label: string }[] | string[]
   onChange: (v: string) => void
@@ -80,22 +96,34 @@ function SelectField({ label, value, options, onChange }: {
     typeof o === 'string' ? { value: o, label: o } : o
   )
   return (
-    <div>
-      <label className="font-mono text-[0.6rem] uppercase tracking-widest block mb-1.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-        {label}
-      </label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        className="w-full rounded-xl px-3 py-2.5 font-display text-sm text-white outline-none appearance-none"
-        style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.1)' }}
-      >
-        <option value="">Not set</option>
-        {normalised.map(o => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
-    </div>
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none appearance-none transition-all focus:ring-1 focus:ring-teal-500/40"
+      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+    >
+      <option value="">Not set</option>
+      {normalised.map(o => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+  )
+}
+
+function SaveButton({ onClick, saving, label = 'Save changes' }: { onClick: () => void; saving: boolean; label?: string }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={saving}
+      className="w-full font-display font-bold text-sm py-3.5 rounded-xl transition-all disabled:opacity-50 active:scale-[0.98]"
+      style={{
+        background: saving ? 'rgba(13,148,136,0.5)' : 'linear-gradient(135deg, #0d9488 0%, #0891b2 100%)',
+        color: '#fff',
+        boxShadow: saving ? 'none' : '0 4px 20px rgba(13,148,136,0.3)',
+      }}
+    >
+      {saving ? 'Saving…' : label}
+    </button>
   )
 }
 
@@ -110,7 +138,6 @@ export default function ProfileClient() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  // Editable fields
   const [name, setName] = useState('')
   const [emoji, setEmoji] = useState('🎓')
   const [university, setUniversity] = useState('')
@@ -124,7 +151,6 @@ export default function ProfileClient() {
   const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'account'>('profile')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
-  // Account deletion state
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [showFeedback, setShowFeedback] = useState(false)
@@ -138,7 +164,6 @@ export default function ProfileClient() {
         const p: ProfileData = data.profile
         setProfile(p)
         setStats(data.stats)
-        // Populate form
         setName(p.name ?? '')
         setEmoji(p.emoji ?? '🎓')
         setUniversity(p.university ?? '')
@@ -198,136 +223,183 @@ export default function ProfileClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-\[var(--bg-base)\] pb-24">
+      <div className="min-h-screen pb-24" style={{ background: '#0a0a0a' }}>
         <TopBar title="Profile" />
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: '#161009' }} />
+            <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
           ))}
         </div>
       </div>
     )
   }
 
-  const planLabel = profile?.is_premium ? 'Premium' : 'Free'
-  const planColour = profile?.is_premium ? '#0d9488' : 'rgba(255,255,255,0.35)'
+  const isPremium = profile?.is_premium ?? false
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#0b0907' }}>
+    <div className="min-h-screen pb-28" style={{ background: '#0a0a0a' }}>
       <TopBar title="Profile" />
 
-      <div className="max-w-2xl mx-auto px-4 py-5">
+      <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
 
-        {/* ── Avatar + name header ──────────────────────────────────────────── */}
-        <div
-          className="rounded-2xl p-5 mb-4 relative overflow-hidden"
-          style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}
-        >
-          <div
-            className="absolute top-0 right-0 w-48 h-48 pointer-events-none"
-            aria-hidden="true"
-            style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.08), transparent 65%)' }}
-          />
-          <div className="flex items-center gap-4 relative">
-            {/* Emoji avatar */}
-            <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-              title="Change avatar"
-              aria-label="Change avatar emoji"
-            >
-              {emoji}
-            </button>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="font-display font-black text-white text-lg">{profile?.name || 'Student'}</h1>
-                <span
-                  className="font-mono text-[0.55rem] uppercase tracking-widest px-2 py-0.5 rounded-full"
-                  style={{ background: profile?.is_premium ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.07)', color: planColour, border: `1px solid ${profile?.is_premium ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.1)'}` }}
+        {/* ── Hero card ────────────────────────────────────────────────────── */}
+        <div className="relative rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f1a18 0%, #0c1215 100%)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          {/* Gradient orbs */}
+          <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%)' }} />
+          <div className="absolute -bottom-6 -left-6 w-36 h-36 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(8,145,178,0.08) 0%, transparent 70%)' }} />
+
+          <div className="relative p-5">
+            <div className="flex items-start gap-4">
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
+                <button
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-3xl transition-all active:scale-95"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(13,148,136,0.2) 0%, rgba(8,145,178,0.15) 100%)',
+                    border: '1px solid rgba(13,148,136,0.25)',
+                    boxShadow: '0 0 24px rgba(13,148,136,0.15)',
+                  }}
+                  aria-label="Change avatar emoji"
                 >
-                  {planLabel}
-                </span>
+                  {emoji}
+                </button>
+                <div
+                  className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5rem]"
+                  style={{ background: '#0d9488', border: '2px solid #0a0a0a' }}
+                >
+                  ✏️
+                </div>
               </div>
-              <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                {profile?.email}
-              </p>
-              {profile?.university && (
-                <p className="font-display text-xs mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                  {profile.university}
-                  {profile.year_of_study && ` · ${profile.year_of_study}`}
-                </p>
-              )}
-            </div>
-          </div>
 
-          {/* Emoji picker */}
-          {showEmojiPicker && (
-            <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Choose avatar</p>
-              <div className="flex flex-wrap gap-2">
-                {EMOJI_OPTIONS.map(e => (
-                  <button
-                    key={e}
-                    onClick={() => { setEmoji(e); setShowEmojiPicker(false) }}
-                    className={cn(
-                      'w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all',
-                      emoji === e ? 'scale-110' : 'opacity-60 hover:opacity-100'
-                    )}
-                    style={{ background: emoji === e ? 'rgba(13,148,136,0.2)' : 'rgba(255,255,255,0.05)', border: emoji === e ? '1px solid rgba(13,148,136,0.3)' : '1px solid rgba(255,255,255,0.07)' }}
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0 pt-0.5">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <h1 className="font-display font-black text-white text-xl leading-tight">{profile?.name || 'Student'}</h1>
+                  <span
+                    className="font-mono text-[0.5rem] uppercase tracking-widest px-2.5 py-1 rounded-full flex-shrink-0"
+                    style={{
+                      background: isPremium ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.06)',
+                      color: isPremium ? '#4db6ac' : 'rgba(255,255,255,0.35)',
+                      border: `1px solid ${isPremium ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                    }}
                   >
-                    {e}
-                  </button>
-                ))}
+                    {isPremium ? '★ Premium' : 'Free'}
+                  </span>
+                </div>
+                <p className="font-mono text-[0.6rem] mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  {profile?.email}
+                </p>
+                {profile?.university && (
+                  <p className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                    {profile.university}{profile.year_of_study && ` · ${profile.year_of_study}`}
+                  </p>
+                )}
               </div>
             </div>
-          )}
+
+            {/* Emoji picker */}
+            {showEmojiPicker && (
+              <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Choose your avatar</p>
+                <div className="flex flex-wrap gap-2">
+                  {EMOJI_OPTIONS.map(e => (
+                    <button
+                      key={e}
+                      onClick={() => { setEmoji(e); setShowEmojiPicker(false) }}
+                      className={cn(
+                        'w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all active:scale-90',
+                        emoji === e ? 'scale-110' : 'opacity-50 hover:opacity-90'
+                      )}
+                      style={{
+                        background: emoji === e ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.05)',
+                        border: emoji === e ? '1px solid rgba(13,148,136,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                        boxShadow: emoji === e ? '0 0 12px rgba(13,148,136,0.2)' : 'none',
+                      }}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* ── Stats row ────────────────────────────────────────────────────── */}
+        {/* ── Stats strip ──────────────────────────────────────────────────── */}
         {stats && (
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <StatCard
-              label="Nova this month"
-              value={stats.novaLimit === null ? `${stats.novaMessagesUsed}` : `${stats.novaMessagesUsed}/${stats.novaLimit}`}
-              sub={stats.novaLimit === null ? 'unlimited' : 'messages'}
-              colour="#4db6ac"
-            />
-            <StatCard
-              label="Study time"
-              value={stats.totalStudyMinutesThisMonth >= 60
-                ? `${Math.floor(stats.totalStudyMinutesThisMonth / 60)}h ${stats.totalStudyMinutesThisMonth % 60}m`
-                : `${stats.totalStudyMinutesThisMonth}m`}
-              sub="this month"
-              colour="#d4a847"
-            />
-            <StatCard
-              label="Referrals"
-              value={`${stats.referralCount}`}
-              sub={`+${stats.referralCredits} msgs earned`}
-              colour="#d97b54"
-            />
+          <div className="grid grid-cols-3 gap-2.5">
+            {/* Nova messages */}
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(13,148,136,0.07)', border: '1px solid rgba(13,148,136,0.15)' }}>
+              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(77,182,172,0.6)' }}>Nova</p>
+              <p className="font-display font-black text-xl" style={{ color: '#4db6ac' }}>
+                {stats.novaLimit === null ? stats.novaMessagesUsed : `${stats.novaMessagesUsed}`}
+              </p>
+              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                {stats.novaLimit === null ? 'unlimited' : `/ ${stats.novaLimit} msgs`}
+              </p>
+              {stats.novaLimit !== null && (
+                <div className="h-1 rounded-full mt-0.5" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                  <div
+                    className="h-1 rounded-full"
+                    style={{
+                      width: `${Math.min(100, (stats.novaMessagesUsed / stats.novaLimit) * 100)}%`,
+                      background: 'linear-gradient(90deg, #0d9488, #0891b2)',
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Study time */}
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(212,168,71,0.07)', border: '1px solid rgba(212,168,71,0.15)' }}>
+              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(212,168,71,0.6)' }}>Study</p>
+              <p className="font-display font-black text-xl" style={{ color: '#d4a847' }}>
+                {stats.totalStudyMinutesThisMonth >= 60
+                  ? `${Math.floor(stats.totalStudyMinutesThisMonth / 60)}h`
+                  : `${stats.totalStudyMinutesThisMonth}m`}
+              </p>
+              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>this month</p>
+            </div>
+
+            {/* Referrals */}
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(217,120,84,0.07)', border: '1px solid rgba(217,120,84,0.15)' }}>
+              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(217,120,84,0.6)' }}>Refs</p>
+              <p className="font-display font-black text-xl" style={{ color: '#d97b54' }}>{stats.referralCount}</p>
+              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>+{stats.referralCredits} earned</p>
+            </div>
           </div>
         )}
 
         {/* ── Section tabs ─────────────────────────────────────────────────── */}
         <div
-          className="flex gap-1 mb-4 p-1 rounded-xl"
-          style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex gap-1 p-1 rounded-2xl"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
           role="tablist"
         >
-          {(['profile', 'preferences', 'account'] as const).map(tab => (
+          {([
+            { id: 'profile', icon: '👤', label: 'Profile' },
+            { id: 'preferences', icon: '⚙️', label: 'Prefs' },
+            { id: 'account', icon: '🔐', label: 'Account' },
+          ] as const).map(tab => (
             <button
-              key={tab}
+              key={tab.id}
               role="tab"
-              aria-selected={activeSection === tab}
-              onClick={() => setActiveSection(tab)}
+              aria-selected={activeSection === tab.id}
+              onClick={() => setActiveSection(tab.id)}
               className={cn(
-                'flex-1 py-2 rounded-lg font-display font-bold text-xs capitalize transition-all',
-                activeSection === tab ? 'bg-teal-600/20 text-teal-400' : 'text-white/40 hover:text-white/60'
+                'flex-1 py-2.5 rounded-xl font-display font-bold text-xs transition-all flex items-center justify-center gap-1.5',
+                activeSection === tab.id
+                  ? 'text-white'
+                  : 'text-white/35 hover:text-white/55'
               )}
+              style={activeSection === tab.id ? {
+                background: 'linear-gradient(135deg, rgba(13,148,136,0.25) 0%, rgba(8,145,178,0.2) 100%)',
+                boxShadow: '0 1px 12px rgba(13,148,136,0.12)',
+              } : {}}
             >
-              {tab}
+              <span className="text-sm">{tab.icon}</span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
@@ -335,109 +407,52 @@ export default function ProfileClient() {
         {/* ── Profile tab ──────────────────────────────────────────────────── */}
         {activeSection === 'profile' && (
           <div className="space-y-3">
-            {/* Name */}
-            <div className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <div className="mb-4">
-                <label className="font-mono text-[0.6rem] uppercase tracking-widest block mb-1.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  Display name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="Your name"
-                  maxLength={60}
-                  className="w-full rounded-xl px-3 py-2.5 font-display text-sm text-white outline-none"
-                  style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.1)' }}
-                />
-              </div>
-
-              <SelectField
-                label="University"
-                value={university}
-                options={[...SA_UNIVERSITIES]}
-                onChange={setUniversity}
-              />
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <Field label="Display name">
+                <TextInput value={name} onChange={setName} placeholder="Your name" maxLength={60} />
+              </Field>
+              <Field label="University">
+                <SelectInput value={university} options={[...SA_UNIVERSITIES]} onChange={setUniversity} />
+              </Field>
             </div>
 
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <SelectField
-                label="Year of study"
-                value={yearOfStudy}
-                options={YEAR_OPTIONS}
-                onChange={setYearOfStudy}
-              />
-
-              <div>
-                <label className="font-mono text-[0.6rem] uppercase tracking-widest block mb-1.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  Faculty / Department
-                </label>
-                <input
-                  type="text"
-                  value={faculty}
-                  onChange={e => setFaculty(e.target.value)}
-                  placeholder="e.g. Science and Technology"
-                  maxLength={80}
-                  className="w-full rounded-xl px-3 py-2.5 font-display text-sm text-white outline-none"
-                  style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.1)' }}
-                />
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Year of study">
+                  <SelectInput value={yearOfStudy} options={YEAR_OPTIONS} onChange={setYearOfStudy} />
+                </Field>
+                <Field label="Funding type">
+                  <SelectInput value={fundingType} options={FUNDING_OPTIONS} onChange={setFundingType} />
+                </Field>
               </div>
-
-              <SelectField
-                label="Funding type"
-                value={fundingType}
-                options={FUNDING_OPTIONS}
-                onChange={setFundingType}
-              />
+              <Field label="Faculty / Department">
+                <TextInput value={faculty} onChange={setFaculty} placeholder="e.g. Science and Technology" maxLength={80} />
+              </Field>
             </div>
 
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all disabled:opacity-50"
-              style={{ background: '#0d9488', color: '#fff' }}
-            >
-              {saving ? 'Saving…' : 'Save profile'}
-            </button>
+            <SaveButton onClick={handleSave} saving={saving} label="Save profile" />
           </div>
         )}
 
         {/* ── Preferences tab ──────────────────────────────────────────────── */}
         {activeSection === 'preferences' && (
           <div className="space-y-3">
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <SelectField
-                label="Living situation"
-                value={livingSituation}
-                options={LIVING_OPTIONS}
-                onChange={setLivingSituation}
-              />
-              <SelectField
-                label="Dietary preference"
-                value={dietaryPref}
-                options={DIETARY_OPTIONS}
-                onChange={setDietaryPref}
-              />
-              <SelectField
-                label="Nova language"
-                value={aiLanguage}
-                options={SA_LANGUAGES.map(l => ({ value: l.value, label: l.label }))}
-                onChange={setAiLanguage}
-              />
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <Field label="Living situation">
+                <SelectInput value={livingSituation} options={LIVING_OPTIONS} onChange={setLivingSituation} />
+              </Field>
+              <Field label="Dietary preference">
+                <SelectInput value={dietaryPref} options={DIETARY_OPTIONS} onChange={setDietaryPref} />
+              </Field>
+              <Field label="Nova language">
+                <SelectInput value={aiLanguage} options={SA_LANGUAGES.map(l => ({ value: l.value, label: l.label }))} onChange={setAiLanguage} />
+              </Field>
             </div>
 
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="w-full font-display font-bold text-sm py-3 rounded-xl transition-all disabled:opacity-50"
-              style={{ background: '#0d9488', color: '#fff' }}
-            >
-              {saving ? 'Saving…' : 'Save preferences'}
-            </button>
+            <SaveButton onClick={handleSave} saving={saving} label="Save preferences" />
 
-            {/* Referral section */}
-            <div className="pt-2">
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <div className="pt-1">
+              <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
                 Referral program
               </p>
               <ReferralWidget />
@@ -448,26 +463,30 @@ export default function ProfileClient() {
         {/* ── Account tab ──────────────────────────────────────────────────── */}
         {activeSection === 'account' && (
           <div className="space-y-3">
+
             {/* Subscription */}
-            <div className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Subscription</p>
+            <div className="rounded-2xl p-5" style={{ background: isPremium ? 'rgba(13,148,136,0.06)' : 'rgba(255,255,255,0.03)', border: isPremium ? '1px solid rgba(13,148,136,0.2)' : '1px solid rgba(255,255,255,0.07)' }}>
+              <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>Subscription</p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-display font-bold text-white text-sm">{planLabel} plan</p>
-                  {profile?.is_premium && profile.premium_until && (
-                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  <p className="font-display font-bold text-white">{isPremium ? '★ Premium' : 'Free plan'}</p>
+                  {isPremium && profile?.premium_until ? (
+                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(77,182,172,0.6)' }}>
                       Active until {new Date(profile.premium_until).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                  )}
-                  {!profile?.is_premium && (
+                  ) : (
                     <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>15 Nova messages / month</p>
                   )}
                 </div>
-                {!profile?.is_premium && (
+                {!isPremium && (
                   <a
                     href="/upgrade"
-                    className="font-display font-bold text-xs px-4 py-2 rounded-xl"
-                    style={{ background: 'rgba(217,120,84,0.15)', color: '#e8956e', border: '1px solid rgba(217,120,84,0.25)' }}
+                    className="font-display font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(217,120,84,0.2) 0%, rgba(217,120,84,0.12) 100%)',
+                      color: '#e8956e',
+                      border: '1px solid rgba(217,120,84,0.3)',
+                    }}
                   >
                     Upgrade ↗
                   </a>
@@ -476,114 +495,129 @@ export default function ProfileClient() {
             </div>
 
             {/* Account info */}
-            <div className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Account</p>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span className="font-display text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Email</span>
-                  <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{profile?.email}</span>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="px-5 pt-5 pb-3">
+                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Account details</p>
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="flex justify-between items-center px-5 py-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Email</span>
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.55)' }}>{profile?.email}</span>
                 </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="font-display text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>Member since</span>
-                  <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <div className="flex justify-between items-center px-5 py-3.5">
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Member since</span>
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.55)' }}>
                     {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }) : '—'}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="rounded-2xl p-5 space-y-2" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Actions</p>
-
-              <button
-                onClick={handleLogout}
-                className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all"
-                style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}
-              >
-                Sign out
-              </button>
-
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all"
-                style={{ background: 'rgba(239,68,68,0.05)', color: 'rgba(239,68,68,0.7)', border: '1px solid rgba(239,68,68,0.15)' }}
-              >
-                Delete my account
-              </button>
-
-              <p className="font-mono text-[0.55rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.18)' }}>
-                POPIA: you may request deletion of all your data at any time
-              </p>
-            </div>
-
-            {/* Feedback & Reviews */}
-            <div className="rounded-2xl p-5" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.6rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Feedback &amp; Reviews</p>
-              <div className="space-y-2">
+            {/* Feedback */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="px-5 pt-5 pb-3">
+                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Feedback & reviews</p>
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
                 <button
                   onClick={() => setShowFeedback(true)}
-                  className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all flex items-center gap-2"
-                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
+                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.07)' }}
                 >
-                  <span>📝</span>
+                  <span className="text-base">📝</span>
                   <span>Send feedback</span>
                 </button>
                 <a
                   href="https://g.page/r/CdPIXBcTmJE6EAI/review"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-left font-display text-sm py-2.5 px-4 rounded-xl transition-all flex items-center gap-2"
-                  style={{ background: 'rgba(245,158,11,0.06)', color: 'rgba(251,191,36,0.8)', border: '1px solid rgba(245,158,11,0.15)' }}
+                  className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
+                  style={{ background: 'rgba(245,158,11,0.07)', color: 'rgba(251,191,36,0.85)', border: '1px solid rgba(245,158,11,0.18)' }}
                 >
-                  <span>⭐</span>
-                  <span>Review on Google →</span>
+                  <span className="text-base">⭐</span>
+                  <span>Review on Google</span>
+                  <span className="ml-auto text-xs opacity-60">→</span>
                 </a>
-                <p className="font-mono text-[0.56rem] text-white/25 text-center">Your review helps other students find VarsityOS</p>
+                <p className="font-mono text-[0.54rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.18)' }}>Your review helps other students find VarsityOS</p>
               </div>
             </div>
+
+            {/* Actions */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="px-5 pt-5 pb-3">
+                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Actions</p>
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
+                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.07)' }}
+                >
+                  <span className="text-base">🚪</span>
+                  <span>Sign out</span>
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
+                  style={{ background: 'rgba(239,68,68,0.04)', color: 'rgba(239,68,68,0.7)', border: '1px solid rgba(239,68,68,0.14)' }}
+                >
+                  <span className="text-base">🗑️</span>
+                  <span>Delete my account</span>
+                </button>
+                <p className="font-mono text-[0.52rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.16)' }}>
+                  POPIA: you may request deletion of all your data at any time
+                </p>
+              </div>
+            </div>
+
           </div>
         )}
 
-      <FeedbackModal open={showFeedback} onClose={() => setShowFeedback(false)} />
       </div>
 
-      {/* ── Account deletion confirmation modal ─────────────────────────────── */}
+      <FeedbackModal open={showFeedback} onClose={() => setShowFeedback(false)} />
+
+      {/* ── Account deletion modal ───────────────────────────────────────────── */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)' }}>
-          <div className="w-full max-w-sm rounded-2xl p-6" style={{ background: '#120e0a', border: '1px solid rgba(239,68,68,0.3)' }}>
-            <h2 className="font-display font-black text-white text-lg mb-2">Delete account?</h2>
-            <p className="font-mono text-xs mb-4" style={{ color: 'rgba(255,255,255,0.5)' }}>
-              This will permanently delete your account and <strong className="text-white">all your data</strong> — study plans, budget history, Nova conversations, everything. This cannot be undone.
-            </p>
-            <p className="font-mono text-[0.65rem] mb-2" style={{ color: 'rgba(239,68,68,0.8)' }}>
-              Type <strong>DELETE</strong> to confirm
-            </p>
-            <input
-              type="text"
-              value={deleteConfirmText}
-              onChange={e => setDeleteConfirmText(e.target.value)}
-              placeholder="DELETE"
-              className="w-full rounded-xl px-3 py-2.5 font-mono text-sm text-white outline-none mb-4"
-              style={{ background: '#1a1009', border: '1px solid rgba(239,68,68,0.3)' }}
-              autoFocus
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => { setShowDeleteModal(false); setDeleteConfirmText('') }}
-                className="flex-1 font-display font-bold text-sm py-2.5 rounded-xl transition-all"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteAccount}
-                disabled={deleteConfirmText !== 'DELETE' || deleting}
-                className="flex-1 font-display font-bold text-sm py-2.5 rounded-xl transition-all disabled:opacity-40"
-                style={{ background: 'rgba(239,68,68,0.85)', color: '#fff' }}
-              >
-                {deleting ? 'Deleting…' : 'Delete everything'}
-              </button>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-sm rounded-2xl overflow-hidden" style={{ background: '#0f0c09', border: '1px solid rgba(239,68,68,0.25)' }}>
+            <div className="p-6">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
+                ⚠️
+              </div>
+              <h2 className="font-display font-black text-white text-lg mb-2">Delete your account?</h2>
+              <p className="font-mono text-xs mb-5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                This permanently deletes your account and <strong className="text-white/70">all data</strong> — study plans, budget history, Nova conversations. Cannot be undone.
+              </p>
+              <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(239,68,68,0.7)' }}>
+                Type <strong className="text-red-400">DELETE</strong> to confirm
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={e => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                className="w-full rounded-xl px-4 py-3 font-mono text-sm text-white outline-none mb-4 focus:ring-1 focus:ring-red-500/40"
+                style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.25)' }}
+                autoFocus
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowDeleteModal(false); setDeleteConfirmText('') }}
+                  className="flex-1 font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-95"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE' || deleting}
+                  className="flex-1 font-display font-bold text-sm py-3 rounded-xl transition-all disabled:opacity-30 active:scale-95"
+                  style={{ background: 'rgba(239,68,68,0.9)', color: '#fff' }}
+                >
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
