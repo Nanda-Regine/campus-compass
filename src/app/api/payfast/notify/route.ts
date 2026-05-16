@@ -110,12 +110,16 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id format: "{uuid36}_{tier}_{timestamp}" (timestamp added for uniqueness)
-    // Legacy format: "{uuid36}_{tier}" — both handled by slicing
+    // m_payment_id formats supported (newest to oldest):
+    //   "varsityos_{uuid36}_{tier}_{timestamp}"  — routed via universal hub (new)
+    //   "{uuid36}_{tier}_{timestamp}"            — direct notify (legacy)
+    //   "{uuid36}_{tier}"                        — legacy without timestamp
     const mpid = data.m_payment_id ?? ''
-    const userId = mpid.slice(0, 36)
+    // Strip optional "varsityos_" prefix so the rest of the parsing is unchanged
+    const stripped = mpid.startsWith('varsityos_') ? mpid.slice(10) : mpid
+    const userId = stripped.slice(0, 36)
     // tier is the segment after the uuid — check known values by prefix to handle nova_unlimited's underscore
-    const afterUuid = mpid.slice(37)
+    const afterUuid = stripped.slice(37)
     const tier: 'scholar' | 'premium' | 'nova_unlimited' =
       afterUuid.startsWith('nova_unlimited') ? 'nova_unlimited'
       : afterUuid.startsWith('scholar') ? 'scholar'
