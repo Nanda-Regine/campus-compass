@@ -185,7 +185,7 @@ export default function ProfileClient() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, emoji, university, year_of_study: yearOfStudy,
+          name, full_name: name, emoji, university, year_of_study: yearOfStudy,
           faculty, funding_type: fundingType,
           dietary_pref: dietaryPref, living_situation: livingSituation,
           ai_language: aiLanguage,

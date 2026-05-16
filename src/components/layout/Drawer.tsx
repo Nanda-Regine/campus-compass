@@ -103,7 +103,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
           {/* Logo */}
           <div className="flex items-center gap-3 mb-5">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center flex-shrink-0">
-              <Image src="/logo.jpg" alt="VarsityOS" width={40} height={40} className="object-contain" />
+              <Image src="/varsityOS.png" alt="VarsityOS" width={40} height={40} className="object-contain" />
             </div>
             <div>
               <div className="font-display font-bold text-white text-sm leading-tight">VarsityOS</div>

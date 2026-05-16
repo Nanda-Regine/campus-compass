@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,9 +28,9 @@ export async function GET() {
     const plan = (p?.plan as string) ?? 'free'
     // null = unlimited (ProfileClient checks === null)
     const novaLimit: number | null = plan === 'nova_unlimited' ? null
-      : plan === 'premium' ? 250
-      : plan === 'scholar' ? 100
-      : 15
+      : plan === 'premium' ? NOVA_PREMIUM_HARD_CAP
+      : plan === 'scholar' ? NOVA_SCHOLAR_LIMIT
+      : NOVA_FREE_LIMIT
     const totalStudyMinutes = (sessions ?? []).reduce((sum, s) => sum + ((s as Record<string, unknown>).duration_minutes as number ?? 0), 0)
 
     // Fetch referral stats inline so profile page has everything in one request

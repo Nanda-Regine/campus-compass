@@ -201,7 +201,7 @@ export default function LandingPage() {
         >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(13,148,136,0.4)', background: 'rgba(13,148,136,0.15)' }}>
-              <Image src="/logo.jpg" alt="VarsityOS" width={32} height={32} className="object-contain" />
+              <Image src="/varsityOS.png" alt="VarsityOS" width={32} height={32} className="object-contain" />
             </div>
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
@@ -780,7 +780,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 8px rgba(13,148,136,0.3)' }}>
-                <Image src="/logo.jpg" alt="VarsityOS" width={28} height={28} className="object-contain" />
+                <Image src="/varsityOS.png" alt="VarsityOS" width={28} height={28} className="object-contain" />
               </div>
               <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>VarsityOS</span>
             </div>

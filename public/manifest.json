@@ -14,9 +14,9 @@
   "lang": "en-ZA",
   "dir": "ltr",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/varsityOS.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/varsityOS.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/varsityOS.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
     {
@@ -33,28 +33,28 @@
       "short_name": "Study",
       "description": "Track tasks, timetable, exams and use Pomodoro timer",
       "url": "/study",
-      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{ "src": "/varsityOS.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Budget & NSFAS",
       "short_name": "Budget",
       "description": "Track NSFAS allowances and log expenses",
       "url": "/budget",
-      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{ "src": "/varsityOS.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Nova AI",
       "short_name": "Nova",
       "description": "Chat with your AI study and wellness companion",
       "url": "/nova",
-      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{ "src": "/varsityOS.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Meal Prep",
       "short_name": "Meals",
       "description": "Plan affordable student meals with AI recipes",
       "url": "/meals",
-      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+      "icons": [{ "src": "/varsityOS.png", "sizes": "96x96", "type": "image/png" }]
     }
   ],
   "related_applications": [],

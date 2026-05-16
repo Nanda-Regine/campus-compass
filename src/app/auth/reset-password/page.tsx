@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { Eye, EyeOff, Lock } from 'lucide-react'
+import { Eye, EyeOff, Lock, AlertCircle } from 'lucide-react'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
@@ -18,6 +18,7 @@ export default function ResetPasswordPage() {
   const [updated, setUpdated] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [validationError, setValidationError] = useState('')
+  const [resetError, setResetError] = useState('')
   const { loading, resetPassword, updatePassword } = useAuth()
 
   // Detect if the user arrived here after a password-reset link (session already set by callback)
@@ -30,8 +31,14 @@ export default function ResetPasswordPage() {
 
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault()
+    setResetError('')
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setResetError('Please enter a valid email address')
+      return
+    }
     const { error } = await resetPassword(email)
     if (!error) setSent(true)
+    else setResetError(error)
   }
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -97,7 +104,7 @@ export default function ResetPasswordPage() {
         <div className="px-5 pt-12 pb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
-              <Image src="/logo.jpg" alt="VarsityOS" width={40} height={40} className="object-contain" />
+              <Image src="/varsityOS.png" alt="VarsityOS" width={40} height={40} className="object-contain" />
             </div>
             <span className="font-display font-bold text-white">VarsityOS</span>
           </Link>
@@ -169,9 +176,15 @@ export default function ResetPasswordPage() {
               type="email"
               placeholder="you@university.ac.za"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={e => { setEmail(e.target.value); setResetError('') }}
               required
             />
+            {resetError && (
+              <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5">
+                <AlertCircle size={14} className="text-red-400 shrink-0" />
+                <p className="font-mono text-[0.65rem] text-red-400">{resetError}</p>
+              </div>
+            )}
             <Button type="submit" fullWidth loading={loading}>
               Send reset link
             </Button>
