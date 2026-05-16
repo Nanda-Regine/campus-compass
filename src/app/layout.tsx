@@ -12,6 +12,7 @@ import { GlobalFAB } from '@/components/layout/GlobalFAB'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
 import ConsentBanner from '@/components/ConsentBanner'
+import PageTransition from '@/components/PageTransition'
 import './globals.css'
 
 const soraFont = Sora({
@@ -189,12 +190,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '192x192' },
-      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '48x48' },
-      { url: '/favicon.jpg', type: 'image/jpeg', sizes: '32x32' },
+      { url: '/favicon.ico', type: 'image/x-icon', sizes: '48x48' },
+      { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
     ],
-    apple: { url: '/favicon.jpg', sizes: '180x180', type: 'image/jpeg' },
-    shortcut: { url: '/favicon.jpg', type: 'image/jpeg' },
+    apple: { url: '/icon-192.png', sizes: '180x180', type: 'image/png' },
+    shortcut: { url: '/favicon.ico', type: 'image/x-icon' },
   },
   alternates: {
     canonical: APP_URL,
@@ -364,9 +365,9 @@ a.appendChild(r);
           <Sidebar />
           <OfflineBanner />
           <ConsentBanner />
-          {/* lg: offset for sidebar; mobile: bottom-nav padding */}
-          <div className="lg:ml-[48px] pb-[60px] lg:pb-0">
-            {children}
+          {/* md+: offset for sidebar; mobile: bottom-nav padding */}
+          <div className="md:ml-[48px] pb-[60px] md:pb-0">
+            <PageTransition>{children}</PageTransition>
           </div>
           <GlobalFAB />
           <OnboardingTooltip />

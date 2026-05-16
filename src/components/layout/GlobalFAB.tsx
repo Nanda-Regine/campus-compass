@@ -6,12 +6,48 @@ import { cn } from '@/lib/utils'
 
 const APP_PREFIXES = ['/dashboard', '/study', '/budget', '/meals', '/nova', '/profile', '/work', '/campus-life', '/groups']
 
-const ACTIONS = [
-  { label: 'Add Task',     icon: '📋', color: '#0d9488', href: '/study?tab=tasks&add=1' },
-  { label: 'Log Expense',  icon: '💳', color: '#f59e0b', href: '/budget?add=1' },
-  { label: 'Add Exam',     icon: '📝', color: '#a855f7', href: '/study?tab=exams&add=1' },
-  { label: 'Chat with Nova', icon: '🌟', color: '#f472b6', href: '/nova' },
-]
+// ─── Context-aware actions per route ─────────────────────────────────────────
+type Action = { label: string; icon: string; color: string; href: string }
+
+function getActionsForPath(pathname: string): Action[] {
+  if (pathname.startsWith('/study')) {
+    return [
+      { label: 'Add Task',    icon: '📋', color: '#0d9488', href: '/study?tab=tasks&add=1' },
+      { label: 'Add Exam',    icon: '📝', color: '#a855f7', href: '/study?tab=exams&add=1' },
+      { label: 'Pomodoro',    icon: '⏱️', color: '#f59e0b', href: '/study?tab=pomodoro' },
+      { label: 'Chat Nova',   icon: '🌟', color: '#f472b6', href: '/nova' },
+    ]
+  }
+  if (pathname.startsWith('/budget')) {
+    return [
+      { label: 'Log Expense', icon: '💳', color: '#f59e0b', href: '/budget?add=1' },
+      { label: 'Add Income',  icon: '💰', color: '#22c55e', href: '/budget?add_income=1' },
+      { label: 'Add Task',    icon: '📋', color: '#0d9488', href: '/study?tab=tasks&add=1' },
+      { label: 'Chat Nova',   icon: '🌟', color: '#f472b6', href: '/nova' },
+    ]
+  }
+  if (pathname.startsWith('/meals')) {
+    return [
+      { label: 'Add Meal',    icon: '🍽️', color: '#f97316', href: '/meals?add=1' },
+      { label: 'AI Recipe',   icon: '✨', color: '#f472b6', href: '/meals?ai=1' },
+      { label: 'Log Expense', icon: '💳', color: '#f59e0b', href: '/budget?add=1' },
+    ]
+  }
+  if (pathname.startsWith('/campus-life') || pathname.startsWith('/groups')) {
+    return [
+      { label: 'Add Post',    icon: '📣', color: '#6366f1', href: pathname + '?post=1' },
+      { label: 'Add Task',    icon: '📋', color: '#0d9488', href: '/study?tab=tasks&add=1' },
+      { label: 'Chat Nova',   icon: '🌟', color: '#f472b6', href: '/nova' },
+    ]
+  }
+  // Default — dashboard, profile, work, etc.
+  return [
+    { label: 'Add Task',     icon: '📋', color: '#0d9488', href: '/study?tab=tasks&add=1' },
+    { label: 'Log Expense',  icon: '💳', color: '#f59e0b', href: '/budget?add=1' },
+    { label: 'Add Exam',     icon: '📝', color: '#a855f7', href: '/study?tab=exams&add=1' },
+    { label: 'Chat with Nova', icon: '🌟', color: '#f472b6', href: '/nova' },
+  ]
+}
 
 export function GlobalFAB() {
   const pathname = usePathname()
@@ -19,8 +55,10 @@ export function GlobalFAB() {
   const [open, setOpen] = useState(false)
 
   const show = APP_PREFIXES.some(p => pathname.startsWith(p))
-  // Don't show on Nova page (already on chat) or study page (has its own FAB)
+  // Don't show on Nova page (already on chat) or study page at pomodoro tab (has own controls)
   const suppress = pathname.startsWith('/nova')
+
+  const actions = getActionsForPath(pathname)
 
   useEffect(() => {
     setOpen(false)
@@ -40,7 +78,7 @@ export function GlobalFAB() {
 
       {/* Action items */}
       <div className="fixed bottom-[4.5rem] right-4 z-50 flex flex-col items-end gap-2.5 md:hidden">
-        {open && ACTIONS.map((action, i) => (
+        {open && actions.map((action, i) => (
           <button
             key={action.label}
             onClick={() => { setOpen(false); router.push(action.href) }}

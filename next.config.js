@@ -1,4 +1,56 @@
 const { withSentryConfig } = require('@sentry/nextjs')
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  // Don't generate SW in development — avoids cache confusion
+  disable: process.env.NODE_ENV === 'development',
+  // Runtime cache: cache API responses and pages for offline use
+  runtimeCaching: [
+    // Google Fonts
+    {
+      urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'google-fonts',
+        expiration: { maxEntries: 4, maxAgeSeconds: 365 * 24 * 60 * 60 },
+      },
+    },
+    // Static assets
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|ico|webp|avif)$/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'static-images',
+        expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
+      },
+    },
+    // App pages — network first, fall back to cache
+    {
+      urlPattern: /^https:\/\/varsityos\.co\.za\/.*/i,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages',
+        expiration: { maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 },
+        networkTimeoutSeconds: 10,
+      },
+    },
+    // Supabase API — network only (always fresh data)
+    {
+      urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
+      handler: 'NetworkOnly',
+    },
+    // Anthropic API — network only
+    {
+      urlPattern: /^https:\/\/api\.anthropic\.com\/.*/i,
+      handler: 'NetworkOnly',
+    },
+  ],
+  // Fallback to offline page when network fails
+  fallbacks: {
+    document: '/offline',
+  },
+})
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -71,7 +123,7 @@ const nextConfig = {
   },
 }
 
-module.exports = withSentryConfig(nextConfig, {
+module.exports = withSentryConfig(withPWA(nextConfig), {
   org: 'varsityos',
   project: 'varsityos-web',
   silent: true,

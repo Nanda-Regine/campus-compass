@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { currentMonthRange } from '@/lib/utils'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -13,7 +16,7 @@ export async function GET(_request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const rl = checkRateLimit(user.id, 'checkin', 5, 60_000)
+    const rl = await checkRateLimitAsync(user.id, 'checkin', 5, 60_000)
     if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded.' }, { status: 429 })
 
     const { start, end } = currentMonthRange()
@@ -73,15 +76,6 @@ Write a check-in that feels like it's from a caring friend who's been watching t
 Tone: warm, real, South African-coded. NOT corporate. NOT a list. 3 flowing paragraphs.
 Maximum 180 words total.`
 
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 400,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const checkIn = response.content[0].type === 'text' ? response.content[0].text : ''
-
-    // Also generate 3 personalised action items
     const actionPrompt = `Based on this student's data, give exactly 3 specific, actionable next steps.${checkinLangNote}
 
 DATA: ${completedThisMonth} tasks done this month, ${overdueTasks.length} overdue, ${exams?.length || 0} exams ahead, R${remaining.toFixed(0)} remaining budget.
@@ -91,14 +85,30 @@ Respond with valid JSON only — array of 3 objects:
   { "icon": <emoji>, "action": <specific action, max 8 words>, "urgency": <"now" | "today" | "this week"> }
 ]`
 
-    const actionResponse = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: actionPrompt }],
-    })
+    // Parallelize both AI calls to halve response time
+    const [checkInResponse, actionResponse] = await Promise.all([
+      anthropic.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+      anthropic.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: actionPrompt }],
+      }),
+    ])
+
+    const checkIn = checkInResponse.content[0].type === 'text' ? checkInResponse.content[0].text : ''
 
     const rawActions = actionResponse.content[0].type === 'text' ? actionResponse.content[0].text : '[]'
-    const actions = JSON.parse(rawActions.replace(/```json|```/g, '').trim())
+    let actions: unknown[]
+    try {
+      actions = JSON.parse(rawActions.replace(/```json|```/g, '').trim())
+      if (!Array.isArray(actions)) actions = []
+    } catch {
+      actions = []
+    }
 
     return NextResponse.json({
       checkIn,

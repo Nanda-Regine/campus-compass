@@ -1,50 +1,58 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { WifiOff, RefreshCw } from 'lucide-react'
+
 export default function OfflinePage() {
+  const [retrying, setRetrying] = useState(false)
+
+  useEffect(() => {
+    const handleOnline = () => { window.location.reload() }
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [])
+
+  const handleRetry = () => {
+    setRetrying(true)
+    setTimeout(() => window.location.reload(), 500)
+  }
+
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center text-3xl mb-6 shadow-teal">
-        📶
-      </div>
-
-      <h1 className="font-display font-black text-2xl text-white mb-2">
-        You&apos;re offline
-      </h1>
-      <p className="font-mono text-xs text-white/40 mb-10 max-w-xs">
-        No data connection detected. Here&apos;s what you can still access:
-      </p>
-
-      <div className="w-full max-w-xs space-y-3 mb-10">
-        {[
-          { icon: '🏠', label: 'Dashboard',     note: 'Last saved data' },
-          { icon: '📚', label: 'Study Planner', note: 'Tasks, exams, timetable' },
-          { icon: '💰', label: 'Budget',        note: 'Expenses & summary' },
-          { icon: '🍲', label: 'Meal Prep',     note: 'Meal plans & grocery list' },
-        ].map(item => (
-          <div
-            key={item.label}
-            className="flex items-center gap-3 bg-white/5 border border-white/7 rounded-xl px-4 py-3"
-          >
-            <span className="text-xl">{item.icon}</span>
-            <div className="text-left">
-              <div className="font-display text-sm text-white">{item.label}</div>
-              <div className="font-mono text-[0.6rem] text-white/35">{item.note}</div>
-            </div>
-            <span className="ml-auto font-mono text-[0.55rem] text-teal-400 uppercase tracking-wide">Available</span>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
+      style={{ background: '#080f0e' }}
+    >
+      <div className="w-full max-w-sm space-y-6">
+        <div className="flex justify-center">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center bg-white/5 border border-white/10">
+            <WifiOff className="w-9 h-9 text-white/30" />
           </div>
-        ))}
-
-        <div className="flex items-center gap-3 bg-white/3 border border-white/5 rounded-xl px-4 py-3 opacity-50">
-          <span className="text-xl">🌟</span>
-          <div className="text-left">
-            <div className="font-display text-sm text-white/50">Nova AI</div>
-            <div className="font-mono text-[0.6rem] text-white/25">Needs data connection</div>
-          </div>
-          <span className="ml-auto font-mono text-[0.55rem] text-white/25 uppercase tracking-wide">Offline</span>
         </div>
+        <div className="space-y-2">
+          <h1 className="text-xl font-bold text-white">You&apos;re offline</h1>
+          <p className="text-white/50 text-sm leading-relaxed">
+            Load shedding or no data? VarsityOS saves your cached pages so you can keep studying.
+            Connect to the internet to sync your latest data.
+          </p>
+        </div>
+        <button
+          onClick={handleRetry}
+          disabled={retrying}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
+          style={{
+            background: retrying
+              ? 'rgba(255,255,255,0.05)'
+              : 'linear-gradient(135deg, #0d9488 0%, #0891b2 100%)',
+            opacity: retrying ? 0.7 : 1,
+          }}
+        >
+          <RefreshCw className={retrying ? 'w-4 h-4 animate-spin' : 'w-4 h-4'} />
+          {retrying ? 'Retrying…' : 'Try again'}
+        </button>
+        <p className="text-white/20 text-xs">
+          VarsityOS reloads automatically when your connection returns.
+        </p>
       </div>
-
-      <p className="font-mono text-[0.6rem] text-white/20">
-        VarsityOS saves your data locally so you&apos;re never left empty-handed.
-      </p>
     </div>
   )
 }

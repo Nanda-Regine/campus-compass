@@ -8,12 +8,8 @@ export default function PWARegister() {
   const setIsOnline = useAppStore(s => s.setIsOnline)
 
   useEffect(() => {
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js', { scope: '/' })
-        .catch(err => console.warn('SW registration failed:', err))
-    }
+    // Service worker is auto-registered by next-pwa (sw.js generated at build time)
+    // We just handle online/offline state + toast notifications here
 
     // Set initial online state
     setIsOnline(navigator.onLine)

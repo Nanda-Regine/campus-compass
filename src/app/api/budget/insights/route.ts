@@ -3,7 +3,10 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { currentMonthRange } from '@/lib/utils'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -14,7 +17,7 @@ export async function GET(_request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Rate limit: max 5 budget analyses per minute
-    const rateCheck = checkRateLimit(user.id, 'budget-insights', 5, 60_000)
+    const rateCheck = await checkRateLimitAsync(user.id, 'budget-insights', 5, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
     }
@@ -39,8 +42,8 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'No budget data found' }, { status: 404 })
     }
 
-    const totalBudget = budget.monthly_budget +
-      (budget.nsfas_enabled ? budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books : 0)
+    const totalBudget = (budget.monthly_budget ?? 0) +
+      (budget.nsfas_enabled ? ((budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)) : 0)
     const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
     const remaining = totalBudget - totalSpent
     const spentPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
@@ -130,7 +133,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const rateCheck = checkRateLimit(user.id, 'nsfas-appeal', 3, 60_000)
+    const rateCheck = await checkRateLimitAsync(user.id, 'nsfas-appeal', 3, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
     }

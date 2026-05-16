@@ -1,6 +1,9 @@
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 // POPIA-compliant account deletion — purges all personal data in dependency order
 export async function DELETE() {
@@ -10,7 +13,7 @@ export async function DELETE() {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Rate limit: 1 deletion attempt per hour per user
-    const rateCheck = checkRateLimit(user.id, 'account_delete', 1, 60 * 60 * 1000)
+    const rateCheck = await checkRateLimitAsync(user.id, 'account_delete', 1, 60 * 60 * 1000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }

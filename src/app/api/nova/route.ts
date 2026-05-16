@@ -1,3 +1,6 @@
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
@@ -6,7 +9,7 @@ import type { NovaTier } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
 import { detectPrebuilt, detectTopicResources, formatResourceLinks } from '@/lib/nova-resources'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -248,7 +251,7 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // ─── Rate limiting: max 15 Nova messages per minute per user ──────────
-    const rateCheck = checkRateLimit(user.id, 'nova', 15, 60_000)
+    const rateCheck = await checkRateLimitAsync(user.id, 'nova', 15, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({
         error: 'Too many messages — please wait a moment before sending again.',

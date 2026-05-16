@@ -2,8 +2,9 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
+export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Rate limit: 6 receipt scans per minute
-    const rl = checkRateLimit(user.id, 'receipt-ocr', 6, 60_000)
+    const rl = await checkRateLimitAsync(user.id, 'receipt-ocr', 6, 60_000)
     if (!rl.allowed) return NextResponse.json({ error: 'Too many scans — wait a moment' }, { status: 429 })
 
     const formData = await request.formData()

@@ -1,6 +1,9 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
   const supabase = createServerSupabaseClient()
@@ -10,7 +13,7 @@ export async function POST(req: NextRequest) {
   const rateLimitKey = user?.id
     ? `user_${user.id}`
     : `ip_${req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'anonymous'}`
-  const rateCheck = checkRateLimit(`feedback_${rateLimitKey}`, 'feedback', 5, 60 * 60 * 1000)
+  const rateCheck = await checkRateLimitAsync(`feedback_${rateLimitKey}`, 'feedback', 5, 60 * 60 * 1000)
   if (!rateCheck.allowed) {
     return NextResponse.json({ error: 'Too many submissions — please try again later.' }, { status: 429 })
   }

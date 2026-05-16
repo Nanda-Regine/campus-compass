@@ -2,7 +2,10 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { checkRateLimit } from '@/lib/rateLimit'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -23,7 +26,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const rateCheck = checkRateLimit(user.id, 'study-assist', 10, 60_000)
+    const rateCheck = await checkRateLimitAsync(user.id, 'study-assist', 10, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
     }

@@ -50,7 +50,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden lg:flex flex-col fixed left-0 top-0 bottom-0 z-40 items-center"
+      className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 z-40 items-center"
       style={{
         width: 48,
         background: '#0a0b10',
