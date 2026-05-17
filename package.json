@@ -42,15 +42,15 @@
     "zustand": "^4.5.4"
   },
   "overrides": {
-    "workbox-build": "6.6.0",
-    "workbox-webpack-plugin": "6.6.0",
-    "workbox-precaching": "6.6.0",
-    "workbox-routing": "6.6.0",
-    "workbox-strategies": "6.6.0",
-    "workbox-expiration": "6.6.0",
-    "workbox-cacheable-response": "6.6.0",
-    "workbox-core": "6.6.0",
-    "workbox-window": "6.6.0"
+    "workbox-build": "6.5.4",
+    "workbox-webpack-plugin": "6.5.4",
+    "workbox-precaching": "6.5.4",
+    "workbox-routing": "6.5.4",
+    "workbox-strategies": "6.5.4",
+    "workbox-expiration": "6.5.4",
+    "workbox-cacheable-response": "6.5.4",
+    "workbox-core": "6.5.4",
+    "workbox-window": "6.5.4"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",
