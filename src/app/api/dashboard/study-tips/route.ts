@@ -35,7 +35,13 @@ export async function POST(request: NextRequest) {
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
     const clean = rawText.replace(/```json|```/g, '').trim()
-    const data = JSON.parse(clean)
+    let data: unknown
+    try {
+      data = JSON.parse(clean)
+    } catch {
+      console.error('[dashboard/study-tips] JSON parse failed. Raw:', clean.slice(0, 200))
+      return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    }
 
     return NextResponse.json(data)
   } catch (error) {

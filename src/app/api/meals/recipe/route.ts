@@ -91,8 +91,14 @@ Respond with valid JSON only (no markdown):
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
     const jsonMatch = rawText.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error('No JSON in response')
-    const recipe = JSON.parse(jsonMatch[0])
+    if (!jsonMatch) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    let recipe: unknown
+    try {
+      recipe = JSON.parse(jsonMatch[0])
+    } catch {
+      console.error('[meals/recipe] POST JSON parse failed. Raw:', rawText.slice(0, 200))
+      return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    }
 
     return NextResponse.json({ recipe })
   } catch (error) {
@@ -107,6 +113,10 @@ export async function GET(_request: NextRequest) {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Rate limit: 4 weekly meal plans per minute (2500-token request)
+    const rlPlan = await checkRateLimitAsync(user.id, 'meals-plan', 4, 60_000)
+    if (!rlPlan.allowed) return NextResponse.json({ error: 'Too many requests — wait a moment' }, { status: 429 })
 
     const [{ data: profile }, { data: budget }] = await Promise.all([
       supabase.from('profiles').select('dietary_pref, living_situation, ai_language').eq('id', user.id).single(),
@@ -152,8 +162,14 @@ Respond with valid JSON only (no markdown):
 
     const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
     const jsonMatch = rawText.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error('No JSON in response')
-    const plan = JSON.parse(jsonMatch[0])
+    if (!jsonMatch) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    let plan: unknown
+    try {
+      plan = JSON.parse(jsonMatch[0])
+    } catch {
+      console.error('[meals/recipe] GET JSON parse failed. Raw:', rawText.slice(0, 200))
+      return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
+    }
 
     return NextResponse.json({ plan })
   } catch (error) {

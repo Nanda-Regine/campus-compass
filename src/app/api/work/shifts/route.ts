@@ -5,35 +5,50 @@ import { detectShiftConflicts } from '@/lib/workSchedule/conflictDetector'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { searchParams } = new URL(req.url)
-  const from = searchParams.get('from') // YYYY-MM-DD
-  const to   = searchParams.get('to')   // YYYY-MM-DD
+    const { searchParams } = new URL(req.url)
+    const from = searchParams.get('from') // YYYY-MM-DD
+    const to   = searchParams.get('to')   // YYYY-MM-DD
 
-  let query = supabase
-    .from('work_shifts')
-    .select('*, job:part_time_jobs(*)')
-    .eq('student_id', user.id)
-    .order('shift_date', { ascending: true })
+    let query = supabase
+      .from('work_shifts')
+      .select('*, job:part_time_jobs(*)')
+      .eq('student_id', user.id)
+      .order('shift_date', { ascending: true })
 
-  if (from) query = query.gte('shift_date', from)
-  if (to)   query = query.lte('shift_date', to)
+    if (from) query = query.gte('shift_date', from)
+    if (to)   query = query.lte('shift_date', to)
 
-  const { data, error } = await query
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ shifts: data })
+    const { data, error } = await query
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ shifts: data })
+  } catch (error) {
+    console.error('Shifts GET error:', error)
+    return NextResponse.json({ error: 'Failed to load shifts' }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
+  try {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
   const { job_id, shift_date, start_time, end_time, status = 'scheduled', notes } = body
+
+  // Validate required fields and time format
+  if (!job_id || !shift_date || !start_time || !end_time) {
+    return NextResponse.json({ error: 'job_id, shift_date, start_time, end_time are required' }, { status: 400 })
+  }
+  const timeRegex = /^\d{2}:\d{2}$/
+  if (!timeRegex.test(start_time) || !timeRegex.test(end_time)) {
+    return NextResponse.json({ error: 'start_time and end_time must be HH:MM format' }, { status: 400 })
+  }
 
   // Fetch job to calculate earnings
   const { data: job } = await supabase
@@ -104,52 +119,68 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ shift: data, conflicts })
+  } catch (error) {
+    console.error('Shifts POST error:', error)
+    return NextResponse.json({ error: 'Failed to create shift' }, { status: 500 })
+  }
 }
 
 export async function PATCH(req: Request) {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = await req.json()
-  const { id } = body as { id?: string }
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+    const body = await req.json()
+    const { id } = body as { id?: string }
+    if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
-  // Whitelist — never allow student_id, earnings, conflict fields to be overwritten by client
-  const ALLOWED = ['status', 'notes', 'shift_date', 'start_time', 'end_time']
-  const safeUpdates = Object.fromEntries(
-    Object.entries(body as Record<string, unknown>).filter(([k]) => ALLOWED.includes(k))
-  )
-  if (Object.keys(safeUpdates).length === 0) {
-    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    // Whitelist — never allow student_id, earnings, conflict fields to be overwritten by client
+    const ALLOWED = ['status', 'notes', 'shift_date', 'start_time', 'end_time']
+    const safeUpdates = Object.fromEntries(
+      Object.entries(body as Record<string, unknown>).filter(([k]) => ALLOWED.includes(k))
+    )
+    if (Object.keys(safeUpdates).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    }
+
+    const { data, error } = await supabase
+      .from('work_shifts')
+      .update(safeUpdates)
+      .eq('id', id)
+      .eq('student_id', user.id)
+      .select()
+      .single()
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ shift: data })
+  } catch (error) {
+    console.error('Shifts PATCH error:', error)
+    return NextResponse.json({ error: 'Failed to update shift' }, { status: 500 })
   }
-
-  const { data, error } = await supabase
-    .from('work_shifts')
-    .update(safeUpdates)
-    .eq('id', id)
-    .eq('student_id', user.id)
-    .select()
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ shift: data })
 }
 
 export async function DELETE(req: Request) {
-  const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id } = await req.json()
-  const { error } = await supabase
-    .from('work_shifts')
-    .delete()
-    .eq('id', id)
-    .eq('student_id', user.id)
+    const { id } = await req.json()
+    if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ ok: true })
+    const { error } = await supabase
+      .from('work_shifts')
+      .delete()
+      .eq('id', id)
+      .eq('student_id', user.id)
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error('Shifts DELETE error:', error)
+    return NextResponse.json({ error: 'Failed to delete shift' }, { status: 500 })
+  }
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
