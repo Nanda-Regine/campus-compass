@@ -76,9 +76,17 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // ─── IP whitelist check ────────────────────────────────────────────────
+    // Bypass: requests forwarded by the universal PayFast hub on creativelynanda.co.za
+    // authenticate themselves with x-hub-secret so we skip IP validation.
     const clientIp = getClientIp(request)
     const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-    if (!isSandbox && !PAYFAST_IPS.includes(clientIp)) {
+    const hubSecret = process.env.HUB_INTERNAL_SECRET
+    const fromHub =
+      hubSecret &&
+      request.headers.get('x-hub-secret') === hubSecret &&
+      request.headers.get('x-hub-source') === 'creativelynanda'
+
+    if (!isSandbox && !fromHub && !PAYFAST_IPS.includes(clientIp)) {
       console.warn(`[PayFast ITN] Rejected request from unknown IP: ${clientIp}`)
       try {
         await supabase.from('payment_logs').insert({
@@ -91,6 +99,9 @@ export async function POST(request: NextRequest) {
         })
       } catch { /* non-fatal */ }
       return new NextResponse('OK', { status: 200 })
+    }
+    if (fromHub) {
+      console.info('[PayFast ITN] Accepted via hub forward — IP check bypassed')
     }
 
     // ─── MD5 signature verification ───────────────────────────────────────
