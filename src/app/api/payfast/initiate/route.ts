@@ -96,16 +96,14 @@ export async function POST(request: Request) {
     // PayFast's server-side verification uses ksort() before computing the MD5.
     // This is true for BOTH the checkout form and the API — do NOT use document order for the hash.
     const filteredFields = fields.filter(([, v]) => v !== '')
-    // Use binary string comparison (not localeCompare) to match PHP ksort() exactly
-    const sortedForSig = [...filteredFields]
-      .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
-      .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
-      .join('&')
 
-    const sigSource = `${sortedForSig}&passphrase=${phpUrlencode(passphrase)}`
+    // Signature MUST use the same field order the form submits to PayFast.
+    // PayFast verifies by rebuilding the hash from received (submission) order — NOT sorted.
+    const sigSource = filteredFields
+      .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
+      .join('&') + `&passphrase=${phpUrlencode(passphrase)}`
     const signature = createHash('md5').update(sigSource).digest('hex')
 
-    // Form fields object — keep document order for the HTML form submission
     const formFields: Record<string, string> = Object.fromEntries(filteredFields)
     formFields.signature = signature
 
