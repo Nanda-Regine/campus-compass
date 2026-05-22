@@ -34,7 +34,7 @@ function getClientIp(request: NextRequest): string {
 }
 
 // PHP urlencode-compatible encoder (PayFast signs params using PHP's urlencode)
-// PHP encodes ~ as %7E; encodeURIComponent leaves it unencoded
+// PHP urlencode encodes everything except A-Za-z0-9-_. — including ~ as %7E
 function phpUrlencode(str: string): string {
   return encodeURIComponent(str)
     .replace(/!/g, '%21')
@@ -42,19 +42,20 @@ function phpUrlencode(str: string): string {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
-  // ~ is intentionally left unencoded — PHP urlencode keeps it as-is
 }
 
 // Verify PayFast MD5 signature per their ITN specification
 function verifySignature(data: Record<string, string>, passphrase: string | undefined): boolean {
   const { signature, ...rest } = data
 
-  // Build query string from all params except signature, in received order.
+  // PayFast builds the ITN signature from alphabetically sorted (ksort) params.
   // Filter empty strings — PayFast omits empty fields when building their verification hash.
   const paramString = Object.entries(rest)
     .filter(([, v]) => v !== '')
-    .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}=${phpUrlencode(v.trim())}`)
     .join('&')
 
   const trimmedPassphrase = passphrase?.trim()

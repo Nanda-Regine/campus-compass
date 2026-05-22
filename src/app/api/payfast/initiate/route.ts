@@ -14,8 +14,8 @@ function phpUrlencode(str: string): string {
     .replace(/\(/g, '%28')
     .replace(/\)/g, '%29')
     .replace(/\*/g, '%2A')
+    .replace(/~/g, '%7E')
     .replace(/%20/g, '+')
-  // ~ is intentionally left unencoded — PHP urlencode keeps it as-is
 }
 
 const TIERS: Record<string, { price: number; itemName: string }> = {
@@ -97,10 +97,11 @@ export async function POST(request: Request) {
     // This is true for BOTH the checkout form and the API — do NOT use document order for the hash.
     const filteredFields = fields.filter(([, v]) => v !== '')
 
-    // Signature MUST use the same field order the form submits to PayFast.
-    // PayFast verifies by rebuilding the hash from received (submission) order — NOT sorted.
-    const sigSource = filteredFields
-      .map(([k, v]) => `${k}=${phpUrlencode(v)}`)
+    // PayFast verifies the signature by sorting received params with ksort() (alphabetical)
+    // before computing the MD5. The signature MUST be built from alphabetically sorted fields.
+    const sortedFields = [...filteredFields].sort(([a], [b]) => a.localeCompare(b))
+    const sigSource = sortedFields
+      .map(([k, v]) => `${k}=${phpUrlencode(v.trim())}`)
       .join('&') + `&passphrase=${phpUrlencode(passphrase)}`
     const signature = createHash('md5').update(sigSource).digest('hex')
 
