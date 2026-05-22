@@ -68,18 +68,14 @@ export async function POST(request: Request) {
     // Universal hub on creativelynanda.co.za parses the "varsityos_" prefix to route to this app's Supabase.
     const mPaymentId = `varsityos_${user.id}_${tierId}_${Date.now()}`
 
-    // Universal PayFast hub — single notify/return/cancel URL for all Mirembe Muse apps.
-    // Return/cancel pages detect the ?app=varsityos param and redirect to the right place.
-    const HUB_URL = 'https://creativelynanda.co.za'
-
     // Fields for the PayFast checkout form (document order for human readability).
     // Subscription fields: subscription_type=1 (subscription), frequency=3 (monthly), cycles=0 (indefinite).
     const fields: [string, string][] = [
       ['merchant_id',       merchantId],
       ['merchant_key',      merchantKey],
-      ['return_url',        `${HUB_URL}/payfast/return?app=varsityos`],
-      ['cancel_url',        `${HUB_URL}/payfast/cancel?app=varsityos`],
-      ['notify_url',        `${HUB_URL}/api/payfast/universal-notify`],
+      ['return_url',        `${appUrl}/upgrade?payment=success`],
+      ['cancel_url',        `${appUrl}/upgrade?payment=cancelled`],
+      ['notify_url',        `${appUrl}/api/payfast/notify`],
       ['name_first',        nameFirst],
       ['name_last',         nameLast],
       ['email_address',     email],
