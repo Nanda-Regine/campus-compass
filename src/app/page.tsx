@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'VarsityOS — Free Student Super-App for South African University Students',
@@ -189,7 +188,7 @@ const UNIVERSITIES = ['UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UJ', 'UWC', 'NMU', 'Rh
 export default function LandingPage() {
   return (
     <>
-      <Script id="json-ld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} strategy="afterInteractive" />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#060c18' }}>
 
