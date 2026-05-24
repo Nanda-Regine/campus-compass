@@ -25,9 +25,14 @@ const withPWA = require('@ducanh2912/next-pwa').default({
         expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
       },
     },
-    // App pages — network first, fall back to cache
+    // App pages — network first, fall back to cache.
+    // Explicitly excludes /_next/* so that workbox's precache (not this
+    // runtime-cache bucket) owns all content-addressed JS/CSS chunks.
+    // Without this exclusion the "pages" cache can serve a stale webpack
+    // runtime or page chunk after a new deployment, causing the
+    // "a[e] is not a function" module-ID mismatch on /streak and similar pages.
     {
-      urlPattern: /^https:\/\/varsityos\.co\.za\/.*/i,
+      urlPattern: /^https:\/\/varsityos\.co\.za\/(?!_next\/).*/i,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'pages',
