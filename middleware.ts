@@ -71,6 +71,6 @@ export const config = {
      * Match all request paths EXCEPT static files and public assets.
      * API routes are included so Arcjet can protect them.
      */
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|robots.txt|sitemap.xml|icons/|images/).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|manifest\\.json|manifest\\.webmanifest|sw\\.js|workbox-|firebase-messaging-sw\\.js|robots\\.txt|sitemap\\.xml|icons/|images/|_next/data).*)',
   ],
 }
