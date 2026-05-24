@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
 import UpgradeButton from '@/components/upgrade/UpgradeButton'
+import UpgradeErrorBoundary from '@/components/upgrade/UpgradeErrorBoundary'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Upgrade — VarsityOS' }
@@ -97,6 +98,7 @@ export default async function UpgradePage() {
   }))
 
   return (
+    <UpgradeErrorBoundary>
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
       <TopBar title="Upgrade" />
 
@@ -260,5 +262,6 @@ export default async function UpgradePage() {
         </div>
       </div>
     </div>
+    </UpgradeErrorBoundary>
   )
 }
