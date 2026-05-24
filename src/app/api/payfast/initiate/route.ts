@@ -45,7 +45,6 @@ export async function POST(request: Request) {
     const email = user.email || ''
 
     const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
-    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za').trim().replace(/\/$/, '')
     const passphrase = (process.env.PAYFAST_PASSPHRASE || '').trim()
     const merchantId  = (process.env.PAYFAST_MERCHANT_ID  || '').trim()
     const merchantKey = (process.env.PAYFAST_MERCHANT_KEY || '').trim()
@@ -73,9 +72,9 @@ export async function POST(request: Request) {
     const fields: [string, string][] = [
       ['merchant_id',       merchantId],
       ['merchant_key',      merchantKey],
-      ['return_url',        `${appUrl}/upgrade?payment=success`],
-      ['cancel_url',        `${appUrl}/upgrade?payment=cancelled`],
-      ['notify_url',        `${appUrl}/api/payfast/notify`],
+      ['return_url',        'https://creativelynanda.co.za/payfast/return?app=varsityos'],
+      ['cancel_url',        'https://creativelynanda.co.za/payfast/cancel?app=varsityos'],
+      ['notify_url',        'https://creativelynanda.co.za/api/payfast/universal-notify'],
       ['name_first',        nameFirst],
       ['name_last',         nameLast],
       ['email_address',     email],
