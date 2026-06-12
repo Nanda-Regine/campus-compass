@@ -464,9 +464,9 @@ ALUMNI — GIVE BACK
 - [x] **Personalised daily brief**: Nova welcome screen replaced with data-driven `NovaDailyBrief` component showing live brief cards (exam countdown, urgent tasks, wellness score, XP level) + clickable quick-start prompts that pre-fill real student questions
 - [x] XP level lookup replicated server-side (no `'use client'` import needed)
 
-### Sprint 8B — Social + Platform (Month 5+) 👥
-- [ ] Notes marketplace
-- [ ] Study twin matching
+### Sprint 8B — Social + Platform (Month 5+) 👥 ✅
+- [x] Notes marketplace — community notes with Google Drive / OneDrive links, browse by module, save/bookmark, per-institution filtering
+- [x] Study twin matching — opt-in directory, same-university matching by faculty, WhatsApp connect + Nova intro helper
 - [ ] Peer tutoring marketplace
 
 ### Phase 4 — Native (2026) 📱
