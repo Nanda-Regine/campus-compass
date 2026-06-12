@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import TopBar from '@/components/layout/TopBar'
-import StudyTwins from '@/components/social/StudyTwins'
+import SocialClient from '@/components/social/SocialClient'
 
-export const metadata = { title: 'Study Twins · VarsityOS' }
+export const metadata = { title: 'Campus Feed · VarsityOS' }
 
 export default async function SocialPage() {
   const cookieStore = cookies()
@@ -26,7 +26,7 @@ export default async function SocialPage() {
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)' }}>
       <TopBar title="Social" />
-      <StudyTwins
+      <SocialClient
         userId={user.id}
         userInstitution={profile?.university ?? null}
         initialOptIn={profile?.study_twin_opt_in ?? false}
