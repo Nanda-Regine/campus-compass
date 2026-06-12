@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "study": "Study Tracker",
+    "budget": "Budget",
+    "meals": "Meals",
+    "nova": "Nova AI",
+    "profile": "My Profile",
+    "work": "Work & Income",
+    "campusLife": "Campus Life",
+    "groups": "Study Groups",
+    "referral": "Referrals",
+    "career": "Career Hub",
+    "bursaries": "Bursaries",
+    "notes": "Notes Marketplace",
+    "social": "Social & Study Twins",
+    "tutoring": "Peer Tutoring",
+    "more": "More"
+  },
+  "dayMode": {
+    "wake":      "Wake",
+    "commute":   "Commute",
+    "class":     "Class",
+    "study":     "Study",
+    "windDown":  "Wind Down",
+    "sleep":     "Rest",
+    "greeting":  "Hey {name}!",
+    "keepGoing": "Keep going — you've got this! 🔥",
+    "noClass":   "No classes right now.",
+    "upNext":    "Up next",
+    "inClass":   "In class"
+  },
+  "common": {
+    "loading":       "Loading...",
+    "saving":        "Saving...",
+    "save":          "Save",
+    "cancel":        "Cancel",
+    "delete":        "Delete",
+    "confirm":       "Confirm",
+    "close":         "Close",
+    "submit":        "Submit",
+    "share":         "Share",
+    "search":        "Search",
+    "back":          "Back",
+    "viewAll":       "View all",
+    "noResults":     "No results found",
+    "error":         "Something went wrong",
+    "unauthorized":  "Please sign in to continue"
+  },
+  "tutoring": {
+    "findTutors":    "Find Tutors",
+    "mySessions":    "My Sessions",
+    "becomeTutor":   "Become Tutor",
+    "editProfile":   "Edit Profile",
+    "bookSession":   "Book Session",
+    "verified":      "Verified",
+    "pendingReview": "Pending review",
+    "ratePerHour":   "R{rate}/hr"
+  },
+  "feed": {
+    "post":       "Post",
+    "reply":      "Reply",
+    "report":     "Report",
+    "categories": {
+      "general":    "General",
+      "opportunity":"Opportunity",
+      "academic":   "Academic",
+      "campus":     "Campus",
+      "sell_swap":  "Sell/Swap"
+    }
+  },
+  "notes": {
+    "title":      "Notes Marketplace",
+    "browse":     "Browse",
+    "saved":      "Saved",
+    "myNotes":    "My Notes",
+    "newest":     "Newest",
+    "mostSaved":  "Most Saved",
+    "mostViewed": "Most Viewed"
+  },
+  "nova": {
+    "greeting":   "Hey {name}, what's on your mind?",
+    "placeholder":"Ask me anything…",
+    "send":       "Send"
+  }
+}

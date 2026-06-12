@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "study": "Studeer Opspoor",
+    "budget": "Begroting",
+    "meals": "Maaltye",
+    "nova": "Nova KI",
+    "profile": "My Profiel",
+    "work": "Werk & Inkomste",
+    "campusLife": "Kampuslewe",
+    "groups": "Studeergroepe",
+    "referral": "Verwysings",
+    "career": "Loopbaan",
+    "bursaries": "Beurse",
+    "notes": "Aantekeninge",
+    "social": "Sosiaal & Studeermaats",
+    "tutoring": "Tutor",
+    "more": "Meer"
+  },
+  "dayMode": {
+    "wake":      "Wakker",
+    "commute":   "Pendel",
+    "class":     "Klas",
+    "study":     "Studeer",
+    "windDown":  "Ontspan",
+    "sleep":     "Rus",
+    "greeting":  "Hallo {name}!",
+    "keepGoing": "Hou aan — jy kan dit doen! 🔥",
+    "noClass":   "Geen klasse nou.",
+    "upNext":    "Volgende",
+    "inClass":   "In klas"
+  },
+  "common": {
+    "loading":       "Laai...",
+    "saving":        "Stoor...",
+    "save":          "Stoor",
+    "cancel":        "Kanselleer",
+    "delete":        "Vee uit",
+    "confirm":       "Bevestig",
+    "close":         "Sluit",
+    "submit":        "Dien in",
+    "share":         "Deel",
+    "search":        "Soek",
+    "back":          "Terug",
+    "viewAll":       "Sien alles",
+    "noResults":     "Geen resultate gevind",
+    "error":         "Iets het verkeerd gegaan",
+    "unauthorized":  "Meld asseblief aan om voort te gaan"
+  },
+  "tutoring": {
+    "findTutors":    "Vind Tutors",
+    "mySessions":    "My Sessies",
+    "becomeTutor":   "Word Tutor",
+    "editProfile":   "Wysig Profiel",
+    "bookSession":   "Bespreek Sessie",
+    "verified":      "Geverifieer",
+    "pendingReview": "Wag op hersiening",
+    "ratePerHour":   "R{rate}/uur"
+  },
+  "feed": {
+    "post":       "Plaas",
+    "reply":      "Antwoord",
+    "report":     "Rapporteer",
+    "categories": {
+      "general":    "Algemeen",
+      "opportunity":"Geleentheid",
+      "academic":   "Akademies",
+      "campus":     "Kampus",
+      "sell_swap":  "Verkoop/Ruil"
+    }
+  },
+  "notes": {
+    "title":      "Aantekeninge Markplek",
+    "browse":     "Blaai",
+    "saved":      "Gestoor",
+    "myNotes":    "My Aantekeninge",
+    "newest":     "Nuutste",
+    "mostSaved":  "Meeste Gestoor",
+    "mostViewed": "Meeste Bekyk"
+  },
+  "nova": {
+    "greeting":   "Hallo {name}, waaraan dink jy?",
+    "placeholder":"Vra my enigiets…",
+    "send":       "Stuur"
+  }
+}
