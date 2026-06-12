@@ -467,7 +467,7 @@ ALUMNI — GIVE BACK
 ### Sprint 8B — Social + Platform (Month 5+) 👥 ✅
 - [x] Notes marketplace — community notes with Google Drive / OneDrive links, browse by module, save/bookmark, per-institution filtering
 - [x] Study twin matching — opt-in directory, same-university matching by faculty, WhatsApp connect + Nova intro helper
-- [ ] Peer tutoring marketplace
+- [x] Peer tutoring marketplace — tutor profiles, in-app booking, push notification to tutor, confirm/complete/cancel flow, star reviews, R/hr pricing
 
 ### Phase 4 — Native (2026) 📱
 - [ ] Expo monorepo setup

@@ -7,7 +7,7 @@ import {
   Home, BookOpen, Sparkles, Wallet,
   Utensils, Briefcase, Users, UserCircle,
   Flame, Gift, MoreHorizontal, X, TrendingUp, GraduationCap,
-  BookMarked,
+  BookMarked, School,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
@@ -25,6 +25,7 @@ const MORE_ITEMS = [
   { href: '/dashboard/work',   icon: Briefcase,     label: 'Work',     accent: '#7090d0' },
   { href: '/notes',            icon: BookMarked,    label: 'Notes',    accent: '#4ecf9e' },
   { href: '/social',           icon: Users,         label: 'Social',   accent: '#9b6fd4' },
+  { href: '/tutoring',         icon: School,        label: 'Tutoring', accent: '#c9a84c' },
   { href: '/dashboard/groups', icon: Users,         label: 'Groups',   accent: '#4ecf9e' },
   { href: '/streak',           icon: Flame,         label: 'Streak',   accent: '#f59e0b' },
   { href: '/referral',         icon: Gift,          label: 'Referral', accent: '#9b6fd4' },
@@ -35,7 +36,7 @@ const MORE_ITEMS = [
 const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova',
   '/profile', '/work', '/campus-life', '/groups', '/referral', '/streak', '/upgrade',
-  '/career', '/bursaries', '/notes', '/social',
+  '/career', '/bursaries', '/notes', '/social', '/tutoring',
 ]
 
 export function BottomNav() {
