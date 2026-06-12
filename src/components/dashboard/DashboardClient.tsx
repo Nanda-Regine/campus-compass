@@ -15,6 +15,8 @@ import { ShareButton } from '@/components/ui/ShareButton'
 import DayModeBanner from '@/components/dashboard/DayModeBanner'
 import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
 import { getDataSaverEnabled } from '@/lib/dataSaver'
+import LevelCard from '@/components/gamification/LevelCard'
+import DailyChallenges from '@/components/gamification/DailyChallenges'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -997,6 +999,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
                 <MoodCheckin userId={p.id} />
               </div>
+              <LevelCard />
+              <DailyChallenges />
               <MobileTodayClasses timetable={initialData.timetable} />
               <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} />

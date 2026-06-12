@@ -11,6 +11,8 @@ import { SA_UNIVERSITIES, SA_LANGUAGES } from '@/types'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
+import BadgesPanel from '@/components/gamification/BadgesPanel'
+import VarsityScore from '@/components/gamification/VarsityScore'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -150,7 +152,7 @@ export default function ProfileClient() {
   const [livingSituation, setLivingSituation] = useState('')
   const [aiLanguage, setAiLanguage] = useState('')
 
-  const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'account'>('profile')
+  const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'account' | 'progress'>('profile')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -382,6 +384,7 @@ export default function ProfileClient() {
           {([
             { id: 'profile', icon: '👤', label: 'Profile' },
             { id: 'preferences', icon: '⚙️', label: 'Prefs' },
+            { id: 'progress', icon: '🏆', label: 'Progress' },
             { id: 'account', icon: '🔐', label: 'Account' },
           ] as const).map(tab => (
             <button
@@ -458,6 +461,18 @@ export default function ProfileClient() {
                 Referral program
               </p>
               <ReferralWidget />
+            </div>
+          </div>
+        )}
+
+        {/* ── Progress tab ─────────────────────────────────────────────────── */}
+        {activeSection === 'progress' && (
+          <div className="space-y-5">
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <VarsityScore />
+            </div>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <BadgesPanel />
             </div>
           </div>
         )}

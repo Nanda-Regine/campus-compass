@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { dispatchXP } from '@/lib/xp-engine'
 
 /* ── Types ─────────────────────────────────────────────────── */
 interface Props {
@@ -135,7 +136,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         setInput={setSkillInput}
         placeholder="Type a skill + Enter"
         suggestions={SKILL_SUGGESTIONS.filter(s => !skills.includes(s))}
-        onAdd={v => { addChip(skills, setSkills, v); setSkillInput(''); setTimeout(save, 0) }}
+        onAdd={v => { addChip(skills, setSkills, v); setSkillInput(''); setTimeout(save, 0); dispatchXP('cv_skill_added') }}
         onRemove={v => { setSkills(skills.filter(s => s !== v)); setTimeout(save, 0) }}
       />
 
@@ -370,7 +371,10 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
       ]
       setMessages(updatedMessages)
       setQIndex(nextQ)
-      if (isDone) setDone(true)
+      if (isDone) {
+        setDone(true)
+        dispatchXP('mock_interview_complete')
+      }
     } catch {
       setMessages([...newMessages, { role: 'system', text: 'Evaluation failed. Try again.' }])
     }
@@ -604,6 +608,8 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
     try { return JSON.parse(localStorage.getItem('career_skills') ?? '[]') } catch { return [] }
   })
   const [skillInput, setSkillInput] = useState('')
+
+  useEffect(() => { dispatchXP('skills_gap_viewed') }, [])
 
   const moduleNames = modules.map(m => m.module_name.toLowerCase())
 

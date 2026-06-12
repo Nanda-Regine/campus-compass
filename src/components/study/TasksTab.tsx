@@ -8,6 +8,7 @@ import { useAppStore } from '@/store'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { dispatchXP } from '@/lib/xp-engine'
 import Select from '@/components/ui/Select'
 import {
   type Task, type Module, type TaskPriority,
@@ -186,7 +187,9 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
       import('@/lib/confetti').then(({ triggerConfetti }) => {
         triggerConfetti(pendingAfter === 0 ? 'all_done' : 'task')
       })
+      dispatchXP('task_complete')
       if (pendingAfter === 0) {
+        dispatchXP('all_tasks_done')
         toast.success('All tasks done! You crushed it today 🎉', { duration: 3000 })
       }
     }

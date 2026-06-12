@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, type CSSProperties } from 'react'
 import { Plus, Trash2, ChevronLeft, Layers, BookOpen, Edit3, Check } from 'lucide-react'
 import type { Module } from '@/types'
+import { dispatchXP } from '@/lib/xp-engine'
 import { MODULE_COLOURS } from '@/types'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -442,6 +443,7 @@ function StudyScreen({
     onRate(card.id, q)
     const next = idx + 1
     if (next >= dueCards.length) {
+      dispatchXP('flashcard_review')
       setDone(true)
     } else {
       setIdx(next)

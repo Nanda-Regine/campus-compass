@@ -413,11 +413,27 @@ ALUMNI — GIVE BACK
 - [ ] WhatsApp Bot (zero-data access)
 - [ ] Language support (isiZulu + Afrikaans MVP)
 
-### Sprint 7 — Social + Platform (Month 4+) 👥
+### Sprint 7 — Gamification OS (Month 4) 🎮 ✅
+- [x] XP engine (`src/lib/xp-engine.ts`) — 11 XP events, daily caps, localStorage state
+- [x] Level system — 7 levels (Fresher → Graduate) with emoji, color, XP thresholds
+- [x] Badge system — 16 badges with unlock conditions checked against XP state
+- [x] Daily challenges — seeded PRNG picks 3/day from pool of 12, auto-detects completions
+- [x] VarsityOS Score — composite 0-1000 score (Academic 400 + Wellness 300 + Career 200 + Discovery 100)
+- [x] LevelCard component — compact XP progress bar for Dashboard
+- [x] DailyChallenges component — 3 challenges with auto/manual completion, reacts to XP events
+- [x] BadgesPanel component — 16 badges grid (unlocked + locked), hover tooltip
+- [x] VarsityScore component — ring chart, 4-pillar breakdown, rating label
+- [x] XP wired: TasksTab (task_complete + all_tasks_done), PomodoroTimer (pomodoro_session)
+- [x] XP wired: FlashcardsTab (flashcard_review on session end)
+- [x] XP wired: WellnessTab (wellness_checkin on save)
+- [x] XP wired: CareerClient (cv_skill_added, mock_interview_complete, skills_gap_viewed)
+- [x] LevelCard + DailyChallenges added to Dashboard Column 1
+- [x] Progress tab (VarsityScore + BadgesPanel) added to Profile
+
+### Sprint 8 — Social + Platform (Month 5+) 👥
 - [ ] Notes marketplace
 - [ ] Study twin matching
 - [ ] Peer tutoring marketplace
-- [ ] Gamification 2.0 (XP, levels, VarsityOS Score)
 
 ### Phase 4 — Native (2026) 📱
 - [ ] Expo monorepo setup

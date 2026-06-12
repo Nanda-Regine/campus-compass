@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { dispatchXP } from '@/lib/xp-engine'
 
 /* ── Types ─────────────────────────────────────────────────── */
 interface CheckIn {
@@ -199,6 +200,7 @@ export default function WellnessTab() {
     setCheckins(updated)
     setTodayCheckin(entry)
     setSaved(true)
+    dispatchXP('wellness_checkin')
   }
 
   const handleEdit = () => {
