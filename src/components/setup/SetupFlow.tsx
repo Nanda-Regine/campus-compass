@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -14,6 +14,25 @@ import ExamPushBanner from '@/components/study/ExamPushBanner'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { dispatchXP } from '@/lib/xp-engine'
+
+const TVET_N_PROGRAMS = [
+  'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering',
+  'Fitting & Turning', 'Boilermaking', 'Plumbing', 'Welding',
+  'Business Studies', 'Finance', 'Management Assistant', 'Marketing',
+  'Human Resources Management', 'Public Management', 'Legal Secretary',
+  'Computer Science', 'Information Technology',
+]
+
+const TVET_NCV_PROGRAMS = [
+  'Agriculture', 'Civil Construction', 'Electrical Infrastructure Construction',
+  'Engineering Fabrication', 'Finance, Economics & Accounting',
+  'Hospitality', 'Information & Communication Technology',
+  'Management', 'Marketing', 'Office Administration',
+  'Primary Agriculture', 'Transport & Logistics',
+]
+
+const TVET_N_LEVELS = ['N1','N2','N3','N4','N5','N6']
+const TVET_NCV_LEVELS = ['NCV L2','NCV L3','NCV L4']
 
 // Detect SA university from email domain
 const UNIVERSITY_DOMAINS: Record<string, string> = {
@@ -72,11 +91,6 @@ const DIETS = ['No restrictions','Vegetarian','Vegan','Halaal','Kosher','Lactose
 
 const MODULE_COLOURS: ModuleColour[] = ['teal','coral','purple','amber','blue','green']
 
-interface StepProps {
-  onNext: () => void
-  onBack?: () => void
-}
-
 export default function SetupFlow() {
   const router = useRouter()
   const supabase = createClient()
@@ -85,6 +99,15 @@ export default function SetupFlow() {
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
   const [detectedUniversity, setDetectedUniversity] = useState<string | null>(null)
+
+  // Searchable institution combobox
+  const [uniQuery, setUniQuery] = useState('')
+  const [uniDropdownOpen, setUniDropdownOpen] = useState(false)
+  const uniRef = useRef<HTMLDivElement>(null)
+
+  // TVET-specific module state
+  const [tvetLevel, setTvetLevel] = useState('')
+  const [tvetProgram, setTvetProgram] = useState('')
 
   // Auto-detect university from email domain on mount
   useEffect(() => {
@@ -117,6 +140,20 @@ export default function SetupFlow() {
   const [living,       setLiving]       = useState('')
   const [diet,         setDiet]         = useState('No restrictions')
 
+  // Close combobox on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (uniRef.current && !uniRef.current.contains(e.target as Node)) {
+        setUniDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const isTVET = university.includes('TVET')
+  const tvetPrograms = tvetLevel.startsWith('NCV') ? TVET_NCV_PROGRAMS : TVET_N_PROGRAMS
+
   const totalSteps = 6
 
   const goNext = () => setStep(s => Math.min(s + 1, totalSteps - 1))
@@ -127,6 +164,14 @@ export default function SetupFlow() {
     if (!val || modules.includes(val)) return
     setModules(prev => [...prev, val])
     setModuleInput('')
+  }
+
+  const addTvetModule = () => {
+    if (!tvetLevel || !tvetProgram) { toast.error('Select a level and program'); return }
+    const label = `${tvetLevel} — ${tvetProgram}`
+    if (modules.includes(label)) return
+    setModules(prev => [...prev, label])
+    setTvetProgram('')
   }
 
   const removeModule = (m: string) => setModules(prev => prev.filter(x => x !== m))
@@ -238,7 +283,7 @@ export default function SetupFlow() {
         style={{ background: 'linear-gradient(160deg, #0d9488 0%, #0f766e 60%, #134e4a 100%)' }}
       >
         <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur border border-white/25 flex items-center justify-center mx-auto mb-4 overflow-hidden">
-          <Image src="/varsityOS.png" alt="VarsityOS" width={56} height={56} className="object-contain" />
+          <Image src="/favicon.jpg" alt="VarsityOS" width={56} height={56} className="object-contain" />
         </div>
         <div className="font-display font-black text-xl text-white">VarsityOS</div>
         <div className="font-mono text-[0.6rem] text-white/60 tracking-widest uppercase mt-1">
@@ -313,13 +358,61 @@ export default function SetupFlow() {
               )}
 
               <div className="space-y-4">
-                <Select
-                  label="University / Institution"
-                  value={university}
-                  onChange={e => setUniversity(e.target.value)}
-                  placeholder="Select your university…"
-                  options={SA_UNIVERSITIES.map(u => ({ value: u, label: u }))}
-                />
+                {/* Searchable institution combobox */}
+                <div>
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">
+                    University / Institution
+                  </div>
+                  <div ref={uniRef} className="relative">
+                    <input
+                      type="text"
+                      placeholder={university || 'Search 100+ institutions…'}
+                      value={uniDropdownOpen ? uniQuery : (university || '')}
+                      onFocus={() => { setUniDropdownOpen(true); setUniQuery('') }}
+                      onChange={e => setUniQuery(e.target.value)}
+                      className="w-full bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-all font-body"
+                    />
+                    {university && !uniDropdownOpen && (
+                      <button
+                        type="button"
+                        onClick={() => { setUniversity(''); setUniQuery('') }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 text-xs"
+                      >
+                        ✕
+                      </button>
+                    )}
+                    {uniDropdownOpen && (
+                      <div className="absolute z-50 left-0 right-0 top-[calc(100%+4px)] bg-[#0f1412] border border-white/10 rounded-xl shadow-2xl max-h-52 overflow-y-auto">
+                        {SA_UNIVERSITIES
+                          .filter(u => u.toLowerCase().includes(uniQuery.toLowerCase()))
+                          .slice(0, 40)
+                          .map(u => (
+                            <button
+                              key={u}
+                              type="button"
+                              onMouseDown={() => {
+                                setUniversity(u)
+                                setUniQuery('')
+                                setUniDropdownOpen(false)
+                              }}
+                              className={cn(
+                                'w-full text-left px-4 py-2.5 text-sm font-body transition-colors',
+                                university === u
+                                  ? 'bg-teal-600/20 text-teal-400'
+                                  : 'text-white/70 hover:bg-white/5 hover:text-white'
+                              )}
+                            >
+                              {u}
+                            </button>
+                          ))
+                        }
+                        {SA_UNIVERSITIES.filter(u => u.toLowerCase().includes(uniQuery.toLowerCase())).length === 0 && (
+                          <div className="px-4 py-3 font-mono text-[0.62rem] text-white/30">No match found</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div>
                   <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Year of Study</div>
                   <div className="flex flex-wrap gap-2">
@@ -399,10 +492,15 @@ export default function SetupFlow() {
           {step === 3 && (
             <div>
               <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 4 of 6</div>
-              <h2 className="font-display font-black text-xl text-white mb-1">What are you studying?</h2>
-              <p className="text-sm text-white/50 mb-5">Add your modules. You can edit these anytime.</p>
+              <h2 className="font-display font-black text-xl text-white mb-1">
+                {isTVET ? 'What are you studying at TVET?' : 'What are you studying?'}
+              </h2>
+              <p className="text-sm text-white/50 mb-5">
+                {isTVET ? 'Select your N-level or NCV programme.' : 'Add your modules. You can edit these anytime.'}
+              </p>
 
               <div className="space-y-4">
+                {/* Existing modules list */}
                 {modules.length > 0 && (
                   <div className="space-y-2">
                     {modules.map((m, i) => (
@@ -414,31 +512,76 @@ export default function SetupFlow() {
                           />
                           <span className="text-sm text-white font-body">{m}</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeModule(m)}
-                          className="text-white/25 hover:text-red-400 transition-colors text-sm ml-2"
-                        >
-                          ✕
-                        </button>
+                        <button type="button" onClick={() => removeModule(m)} className="text-white/25 hover:text-red-400 transition-colors text-sm ml-2">✕</button>
                       </div>
                     ))}
                   </div>
                 )}
 
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="e.g. Introduction to Psychology"
-                    value={moduleInput}
-                    onChange={e => setModuleInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addModule() } }}
-                  />
-                  <Button onClick={addModule} variant="teal" size="md" className="flex-shrink-0 px-4">
-                    Add
-                  </Button>
-                </div>
+                {isTVET ? (
+                  /* TVET: level + program selectors */
+                  <div className="space-y-3">
+                    <div>
+                      <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Study Level</div>
+                      <div className="flex flex-wrap gap-2">
+                        {[...TVET_N_LEVELS, ...TVET_NCV_LEVELS].map(lvl => (
+                          <button
+                            key={lvl}
+                            type="button"
+                            onClick={() => { setTvetLevel(lvl); setTvetProgram('') }}
+                            className={cn(
+                              'px-3 py-1.5 rounded-xl text-xs font-mono border transition-all',
+                              tvetLevel === lvl
+                                ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
+                                : 'bg-white/5 border-white/8 text-white/50 hover:text-white hover:bg-white/10'
+                            )}
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    {tvetLevel && (
+                      <div>
+                        <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Programme</div>
+                        <div className="flex flex-wrap gap-2">
+                          {tvetPrograms.map(prog => (
+                            <button
+                              key={prog}
+                              type="button"
+                              onClick={() => setTvetProgram(prog)}
+                              className={cn(
+                                'px-3 py-1.5 rounded-xl text-xs font-body border transition-all',
+                                tvetProgram === prog
+                                  ? 'bg-coral/20 border-coral/50 text-orange-300'
+                                  : 'bg-white/5 border-white/8 text-white/50 hover:text-white hover:bg-white/10'
+                              )}
+                            >
+                              {prog}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <Button onClick={addTvetModule} variant="teal" size="md" className="w-full" disabled={!tvetLevel || !tvetProgram}>
+                      + Add {tvetLevel && tvetProgram ? `${tvetLevel} — ${tvetProgram}` : 'programme'}
+                    </Button>
+                  </div>
+                ) : (
+                  /* University: free-text module input */
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="e.g. Introduction to Psychology"
+                      value={moduleInput}
+                      onChange={e => setModuleInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addModule() } }}
+                    />
+                    <Button onClick={addModule} variant="teal" size="md" className="flex-shrink-0 px-4">Add</Button>
+                  </div>
+                )}
+
                 <p className="font-mono text-[0.6rem] text-white/25">
-                  This step is optional — you can skip and add modules later.
+                  This step is optional — you can skip and add subjects later.
                 </p>
               </div>
             </div>

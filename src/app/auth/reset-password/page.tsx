@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
         <div className="px-5 pt-12 pb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
-              <Image src="/varsityOS.png" alt="VarsityOS" width={40} height={40} className="object-contain" />
+              <Image src="/favicon.jpg" alt="VarsityOS" width={40} height={40} className="object-contain" />
             </div>
             <span className="font-display font-bold text-white">VarsityOS</span>
           </Link>

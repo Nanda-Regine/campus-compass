@@ -337,12 +337,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
+      { url: '/favicon.jpg', type: 'image/jpeg', sizes: 'any' },
       { url: '/favicon.ico', type: 'image/x-icon', sizes: '48x48' },
       { url: '/icon-192.png', type: 'image/png', sizes: '192x192' },
       { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
     ],
-    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    shortcut: { url: '/favicon.ico', type: 'image/x-icon' },
+    apple: { url: '/favicon.jpg', sizes: '180x180', type: 'image/jpeg' },
+    shortcut: { url: '/favicon.jpg', type: 'image/jpeg' },
   },
   alternates: {
     canonical: APP_URL,

@@ -12,8 +12,9 @@ function SignupSkeleton() {
       {/* Brand bar */}
       <div className="px-5 pt-12 pb-8 text-center">
         <div className="inline-flex items-center gap-2.5 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-teal-400 flex items-center justify-center text-xl">
-            🧭
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/favicon.jpg" alt="VarsityOS" width={40} height={40} style={{ objectFit: 'contain' }} />
           </div>
           <span className="font-display font-bold text-white">VarsityOS</span>
         </div>

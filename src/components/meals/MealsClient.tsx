@@ -7,6 +7,7 @@ import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
 import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import NutritionTab from './NutritionTab'
 
 interface MealsClientProps {
   initialData: {
@@ -20,13 +21,14 @@ interface MealsClientProps {
   }
 }
 
-type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes'
+type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes' | 'nutrition'
 
 const TABS = [
-  { id: 'ai_plan' as TabId, label: 'AI Planner', icon: '🤖' },
-  { id: 'weekly' as TabId, label: 'Weekly', icon: '📅' },
-  { id: 'grocery' as TabId, label: 'Groceries', icon: '🛒' },
-  { id: 'recipes' as TabId, label: 'AI Recipes', icon: '👨‍🍳' },
+  { id: 'ai_plan'   as TabId, label: 'AI Planner', icon: '🤖' },
+  { id: 'weekly'    as TabId, label: 'Weekly',     icon: '📅' },
+  { id: 'grocery'   as TabId, label: 'Groceries',  icon: '🛒' },
+  { id: 'recipes'   as TabId, label: 'Recipes',    icon: '👨‍🍳' },
+  { id: 'nutrition' as TabId, label: 'Nutrition',  icon: '🥗' },
 ]
 
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -273,11 +275,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     await supabase.from('grocery_items').delete().in('id', checkedIds)
   }
 
+  const today = new Date().toISOString().split('T')[0]
+
   const TAB_ACCENTS: Record<TabId, string> = {
-    ai_plan: '#f59e0b',
-    weekly:  '#4ecf9e',
-    grocery: '#7090d0',
-    recipes: '#e8834a',
+    ai_plan:   '#f59e0b',
+    weekly:    '#4ecf9e',
+    grocery:   '#7090d0',
+    recipes:   '#e8834a',
+    nutrition: '#FB7185',
   }
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
@@ -746,6 +751,15 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               </button>
             )}
           </>
+        )}
+
+        {/* ─── Nutrition Tab ─── */}
+        {activeTab === 'nutrition' && (
+          <NutritionTab
+            supabase={supabase}
+            userId={initialData.userId}
+            today={today}
+          />
         )}
       </div>
     </div>

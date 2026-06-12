@@ -328,7 +328,7 @@ export default function DemoPage() {
       <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'rgba(5,4,12,0.92)', borderBottom: '1px solid rgba(148,111,255,0.12)', backdropFilter: 'blur(20px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 30, height: 30, borderRadius: '50%', overflow: 'hidden', background: 'rgba(13,148,136,0.15)' }}>
-            <Image src="/varsityOS.png" alt="VarsityOS" width={30} height={30} style={{ objectFit: 'contain' }} />
+            <Image src="/favicon.jpg" alt="VarsityOS" width={30} height={30} style={{ objectFit: 'contain' }} />
           </div>
           <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 14 }}>VarsityOS</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#0d9488', background: 'rgba(13,148,136,0.12)', border: '1px solid rgba(13,148,136,0.3)', borderRadius: 9999, padding: '2px 8px' }}>Interactive Demo</span>

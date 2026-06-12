@@ -8,7 +8,7 @@ import {
   Utensils, Briefcase, Users, UserCircle,
   Flame, Gift, MoreHorizontal, X, TrendingUp, GraduationCap,
   BookMarked, School, Shield, Heart, Rocket, Tag, Vote,
-  Leaf, Coins, Receipt, Briefcase as BriefcaseIcon, MonitorSmartphone, Activity,
+  Leaf, Coins, Receipt, Briefcase as BriefcaseIcon, MonitorSmartphone, Activity, Moon,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
@@ -58,12 +58,13 @@ const MORE_SECTIONS = [
     ],
   },
   {
-    label: 'Health', color: '#FB7185',
+    label: 'Health & Body', color: '#FB7185',
     items: [
-      { href: '/meals',   icon: Utensils, label: 'Meals',   accent: '#e8834a' },
-      { href: '/health',  icon: Heart,    label: 'Health',  accent: '#FB7185' },
-      { href: '/fitness', icon: Activity, label: 'Fitness', accent: '#FB7185' },
-      { href: '/safety',  icon: Shield,   label: 'Safety',  accent: '#34D399' },
+      { href: '/meals',   icon: Utensils, label: 'Nutrition', accent: '#e8834a' },
+      { href: '/sleep',   icon: Moon,     label: 'Sleep',    accent: '#818CF8' },
+      { href: '/health',  icon: Heart,    label: 'Health',   accent: '#FB7185' },
+      { href: '/fitness', icon: Activity, label: 'Fitness',  accent: '#FB7185' },
+      { href: '/safety',  icon: Shield,   label: 'Safety',   accent: '#34D399' },
     ],
   },
   {
@@ -87,7 +88,7 @@ const APP_PREFIXES = [
   '/career', '/bursaries', '/notes', '/social', '/tutoring', '/safety',
   '/health', '/growth', '/entrepreneur', '/discounts', '/civic',
   '/stokvel', '/tax', '/jobs', '/skills',
-  '/textbooks', '/mentors', '/fitness', '/study-groups',
+  '/textbooks', '/mentors', '/fitness', '/study-groups', '/sleep',
 ]
 
 export function BottomNav() {
