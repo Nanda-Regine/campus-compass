@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback, type CSSProperties } from 'react'
+import { useState, useEffect, useRef, useCallback, type CSSProperties } from 'react'
 import { Plus, Trash2, Calculator, TrendingUp, Info } from 'lucide-react'
 import type { Module } from '@/types'
+import { loadGradesData, saveGradesData, type DBModuleGrade, type GpaRow } from '@/lib/db/grades'
 
 /* ── Types ─────────────────────────────────────────────── */
 interface Assessment {
@@ -393,12 +394,13 @@ function GradeCalcCard({
 }
 
 /* ── GPA Calculator ─────────────────────────────────────── */
-function GpaCalculator({ modules }: { modules: Module[] }) {
-  const [rows, setRows] = useState<{ id: string; name: string; mark: string; credits: string }[]>(() =>
-    modules.length > 0
-      ? modules.map(m => ({ id: uid(), name: m.module_name, mark: '', credits: String(m.credits ?? 16) }))
-      : [{ id: uid(), name: '', mark: '', credits: '16' }]
-  )
+function GpaCalculator({
+  modules, rows, setRows,
+}: {
+  modules: Module[]
+  rows: GpaRow[]
+  setRows: React.Dispatch<React.SetStateAction<GpaRow[]>>
+}) {
 
   function addRow() {
     setRows(r => [...r, { id: uid(), name: '', mark: '', credits: '16' }])
@@ -592,8 +594,31 @@ const inputStyle: CSSProperties = {
 
 /* ── Main Tab ───────────────────────────────────────────── */
 export default function GradesTab({ modules }: { modules: Module[] }) {
-  const [view, setView] = useState<'calc' | 'gpa'>('calc')
-  const [moduleGrades, setModuleGrades] = useState<ModuleGrade[]>(() => [makeModuleGrade(modules[0])])
+  const [view, setView]               = useState<'calc' | 'gpa'>('calc')
+  const [moduleGrades, setModuleGrades] = useState<ModuleGrade[]>([makeModuleGrade(modules[0])])
+  const [gpaRows, setGpaRows]         = useState<GpaRow[]>([{ id: uid(), name: '', mark: '', credits: '16' }])
+  const [loaded, setLoaded]           = useState(false)
+  const saveTimer                     = useRef<ReturnType<typeof setTimeout>>()
+
+  // Load from DB on mount
+  useEffect(() => {
+    loadGradesData().then(({ modules: dbModules, gpaRows: dbRows }) => {
+      if (dbModules.length > 0) setModuleGrades(dbModules as ModuleGrade[])
+      if (dbRows.length > 0)    setGpaRows(dbRows)
+      setLoaded(true)
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Debounced auto-save — 800 ms after last change
+  useEffect(() => {
+    if (!loaded) return
+    clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      saveGradesData(moduleGrades as DBModuleGrade[], gpaRows).catch(() => {})
+    }, 800)
+    return () => clearTimeout(saveTimer.current)
+  }, [moduleGrades, gpaRows, loaded])
 
   const addModule = useCallback(() => {
     setModuleGrades(prev => [...prev, makeModuleGrade()])
@@ -668,7 +693,9 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
         </>
       )}
 
-      {view === 'gpa' && <GpaCalculator modules={modules} />}
+      {view === 'gpa' && (
+        <GpaCalculator modules={modules} rows={gpaRows} setRows={setGpaRows} />
+      )}
     </div>
   )
 }

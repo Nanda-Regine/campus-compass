@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, type CSSProperties } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { Search, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react'
 import { BURSARIES, filterBursaries, type Bursary, type BursaryBasisFilter } from '@/lib/bursary-data'
+import { loadSavedBursaries, saveBursary, unsaveBursary } from '@/lib/db/saved-bursaries'
 
 // ── Basis filter options ──────────────────────────────────────────────────────
 
@@ -22,7 +23,13 @@ const FIELD_GROUPS = [
 
 // ── Bursary card ─────────────────────────────────────────────────────────────
 
-function BursaryCard({ b }: { b: Bursary }) {
+function BursaryCard({
+  b, saved, onToggleSave,
+}: {
+  b: Bursary
+  saved: boolean
+  onToggleSave: (b: Bursary) => void
+}) {
   const [open, setOpen] = useState(false)
 
   const typeColor = b.type === 'bursary' ? '#4ecf9e' : b.type === 'scholarship' ? '#7090d0' : '#f59e0b'
@@ -89,8 +96,21 @@ function BursaryCard({ b }: { b: Bursary }) {
           </div>
         </div>
 
-        <div style={{ flexShrink: 0, color: 'rgba(255,255,255,0.25)', paddingTop: 2 }}>
-          {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <button
+            onClick={e => { e.stopPropagation(); onToggleSave(b) }}
+            title={saved ? 'Remove from saved' : 'Save bursary'}
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+              color: saved ? typeColor : 'rgba(255,255,255,0.2)',
+              transition: 'color 0.15s',
+            }}
+          >
+            {saved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+          </button>
+          <div style={{ color: 'rgba(255,255,255,0.25)', paddingTop: 2 }}>
+            {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </div>
         </div>
       </button>
 
@@ -207,11 +227,28 @@ const chip: CSSProperties = {
 // ── Main client component ────────────────────────────────────────────────────
 
 export default function BursaryClient() {
-  const [query,  setQuery]  = useState('')
-  const [field,  setField]  = useState('')
-  const [basis,  setBasis]  = useState<BursaryBasisFilter>('all')
+  const [query,     setQuery]     = useState('')
+  const [field,     setField]     = useState('')
+  const [basis,     setBasis]     = useState<BursaryBasisFilter>('all')
+  const [showSaved, setShowSaved] = useState(false)
+  const [savedIds,  setSavedIds]  = useState<Set<string>>(new Set())
 
-  const results = filterBursaries(BURSARIES, query, field, basis)
+  useEffect(() => {
+    loadSavedBursaries().then(ids => setSavedIds(new Set(ids)))
+  }, [])
+
+  function handleToggleSave(b: Bursary) {
+    if (savedIds.has(b.id)) {
+      setSavedIds(prev => { const s = new Set(prev); s.delete(b.id); return s })
+      unsaveBursary(b.id).catch(() => {})
+    } else {
+      setSavedIds(prev => new Set([...prev, b.id]))
+      saveBursary(b.id, b.name).catch(() => {})
+    }
+  }
+
+  const filtered = filterBursaries(BURSARIES, query, field, basis)
+  const results  = showSaved ? filtered.filter(b => savedIds.has(b.id)) : filtered
   const dueCount = results.length
 
   return (
@@ -309,27 +346,51 @@ export default function BursaryClient() {
               </button>
             ))}
           </div>
+
+          {/* Saved toggle */}
+          <button
+            onClick={() => setShowSaved(v => !v)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '7px 12px', borderRadius: 8, cursor: 'pointer',
+              fontFamily: 'var(--font-mono)', fontSize: '0.56rem', flexShrink: 0,
+              background: showSaved ? 'rgba(240,180,41,0.15)' : 'rgba(255,255,255,0.04)',
+              color: showSaved ? '#f0b429' : 'rgba(255,255,255,0.35)',
+              border: `0.5px solid ${showSaved ? 'rgba(240,180,41,0.3)' : 'rgba(255,255,255,0.08)'}`,
+              transition: 'all 0.15s',
+            }}
+          >
+            <BookmarkCheck size={12} />
+            Saved {savedIds.size > 0 ? `(${savedIds.size})` : ''}
+          </button>
         </div>
 
         {/* Result count */}
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)' }}>
-          {dueCount} result{dueCount === 1 ? '' : 's'} {query || field ? '· filtered' : ''}
+          {dueCount} result{dueCount === 1 ? '' : 's'} {showSaved ? '· saved only' : query || field ? '· filtered' : ''}
         </div>
 
         {/* Bursary list */}
         {results.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
-            <div style={{ fontSize: 28 }}>🔍</div>
+            <div style={{ fontSize: 28 }}>{showSaved ? '🔖' : '🔍'}</div>
             <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-primary)', fontSize: 14, marginTop: 10 }}>
-              No results
+              {showSaved ? 'No saved bursaries yet' : 'No results'}
             </p>
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 4 }}>
-              Try different search terms or clear filters.
+              {showSaved ? 'Tap the bookmark icon on any bursary to save it here.' : 'Try different search terms or clear filters.'}
             </p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {results.map(b => <BursaryCard key={b.id} b={b} />)}
+            {results.map(b => (
+              <BursaryCard
+                key={b.id}
+                b={b}
+                saved={savedIds.has(b.id)}
+                onToggleSave={handleToggleSave}
+              />
+            ))}
           </div>
         )}
 

@@ -437,7 +437,14 @@ ALUMNI — GIVE BACK
 - [x] **XP engine** → background Supabase sync on every `dispatchXP` + `completeDailyChallenge`; `initXPFromDB()` for cross-device restore
 - [x] **UX**: Cosmic Campus dark + Ubuntu Sunrise light design system — gradient text utilities, glow borders, `bg-cosmic` radial overlay, gamification animations (`xp-pop`, `badge-unlock`, `challenge-check`, `level-up`)
 
-### Sprint 8 — Social + Platform (Month 5+) 👥
+### Sprint 8A — Complete DB Persistence (Month 5) 🗄️ ✅
+- [x] **GradesTab → Supabase**: `student_grades_data` table (JSONB) stores grade calculator modules + GPA rows; debounced auto-save 800 ms after any change; loads on mount
+- [x] **ExamReadinessPanel → Supabase**: `exam_confidence` table; per-exam confidence slider scores persist cross-device; replaced localStorage `readConf`/`writeConf` with DB calls
+- [x] **Bursary favourites**: `saved_bursaries` table; bookmark button on every bursary card; Saved filter tab with count badge; save/unsave syncs to DB
+- [x] DB layer: `src/lib/db/grades.ts`, `exam-confidence.ts`, `saved-bursaries.ts`
+- [x] GpaCalculator rows state lifted to parent GradesTab so both views share one save cycle
+
+### Sprint 8B — Social + Platform (Month 5+) 👥
 - [ ] Notes marketplace
 - [ ] Study twin matching
 - [ ] Peer tutoring marketplace

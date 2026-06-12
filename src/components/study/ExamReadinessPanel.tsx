@@ -3,19 +3,12 @@
 import { useState, useEffect, type CSSProperties } from 'react'
 import { type Exam, type Task, MODULE_COLOURS } from '@/types'
 import { getDaysUntil } from '@/lib/utils'
+import { loadExamConfidences, saveExamConfidence } from '@/lib/db/exam-confidence'
 
 interface Props {
   exams:   Exam[]
   tasks:   Task[]
 }
-
-function confKey(id: string) { return `varsityos_exam_conf_${id}` }
-
-function readConf(id: string): number {
-  if (typeof window === 'undefined') return 0
-  return parseInt(localStorage.getItem(confKey(id)) ?? '0', 10)
-}
-function writeConf(id: string, v: number) { localStorage.setItem(confKey(id), String(v)) }
 
 type Grade = 'excellent' | 'good' | 'fair' | 'at-risk' | 'critical'
 
@@ -135,16 +128,16 @@ export default function ExamReadinessPanel({ exams, tasks }: Props) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const c: Record<string, number> = {}
-    upcoming.forEach(e => { c[e.id] = readConf(e.id) })
-    setConfs(c)
-    setMounted(true)
+    loadExamConfidences().then(dbConfs => {
+      setConfs(dbConfs)
+      setMounted(true)
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exams])
 
   function handleConf(id: string, v: number) {
-    writeConf(id, v)
     setConfs(prev => ({ ...prev, [id]: v }))
+    saveExamConfidence(id, v).catch(() => {})
   }
 
   if (!mounted) return null
