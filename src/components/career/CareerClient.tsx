@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { dispatchXP } from '@/lib/xp-engine'
 import { loadCVProfile, saveCVProfile } from '@/lib/db/cv'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 /* ── Types ─────────────────────────────────────────────────── */
 interface Props {
@@ -106,7 +107,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
       {/* Summary */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
         <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontWeight: 600 }}>Personal summary</div>
         <textarea
           value={summary}
@@ -119,7 +120,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
       </div>
 
       {/* Education (auto) */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>Education</div>
           <span style={{ fontSize: 9, padding: '2px 7px', borderRadius: 9999, background: 'rgba(78,207,158,0.1)', color: '#4ecf9e', border: '0.5px solid rgba(78,207,158,0.2)' }}>Auto-filled</span>
@@ -219,14 +220,14 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         </button>
         <button
           onClick={handleCopy}
-          style={{ flex: 1, padding: '11px 0', borderRadius: 11, background: copied ? '#4ecf9e' : 'rgba(78,207,158,0.15)', color: copied ? '#0a0b10' : '#4ecf9e', border: '1px solid rgba(78,207,158,0.25)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora,sans-serif', transition: 'all 0.2s' }}
+          style={{ flex: 1, padding: '11px 0', borderRadius: 11, background: copied ? '#4ecf9e' : 'rgba(78,207,158,0.15)', color: copied ? '#000' : '#4ecf9e', border: '1px solid rgba(78,207,158,0.25)', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'Sora,sans-serif', transition: 'all 0.2s' }}
         >
           {copied ? 'Copied!' : 'Copy text'}
         </button>
       </div>
 
       {preview && (
-        <div style={{ background: '#0a0b10', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px', fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+        <div style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px', fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
           {cvText}
         </div>
       )}
@@ -251,7 +252,7 @@ function ChipSection({ title, chips, input, setInput, placeholder, suggestions, 
   placeholder: string; suggestions: string[]; onAdd: (v: string) => void; onRemove: (v: string) => void
 }) {
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px' }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
       <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontWeight: 600 }}>{title}</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: chips.length ? 10 : 0 }}>
         {chips.map(c => (
@@ -439,7 +440,7 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
   if (!started) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '18px 16px' }}>
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '18px 16px' }}>
           <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 14, fontWeight: 600 }}>Choose a role to interview for</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
             {ROLE_PRESETS.map(p => (
@@ -507,7 +508,7 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
       </div>
 
       {/* Chat */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px', display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 420, overflowY: 'auto' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px', display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 420, overflowY: 'auto' }}>
         {messages.map((msg, i) => (
           <div key={i}>
             {msg.role === 'interviewer' && (
@@ -703,21 +704,18 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
   if (!selected) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '18px 16px' }}>
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '18px 16px' }}>
           <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 14, fontWeight: 600 }}>Choose your target career</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
             {CAREER_PATHS.map(cp => (
               <button
                 key={cp.label}
                 onClick={() => handleSelect(cp)}
-                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 11, border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
+                style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 14px', borderRadius: 14, border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
               >
-                <span style={{ fontSize: 22, flexShrink: 0 }}>{cp.icon}</span>
-                <div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{cp.label}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 1 }}>{cp.field}</div>
-                </div>
-                <span style={{ marginLeft: 'auto', color: 'rgba(255,255,255,0.2)', fontSize: 16 }}>›</span>
+                <span style={{ fontSize: 22 }}>{cp.icon}</span>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 600, lineHeight: 1.3 }}>{cp.label}</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 'auto' }}>{cp.field}</div>
               </button>
             ))}
           </div>
@@ -742,7 +740,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {/* Career header */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
           <span style={{ fontSize: 28 }}>{selected.icon}</span>
           <div style={{ flex: 1 }}>
@@ -776,7 +774,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
       </div>
 
       {/* Your skills (manual) */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px 16px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
         <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontWeight: 600 }}>Your skills & experience</div>
         {addedSkills.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 10 }}>
@@ -809,7 +807,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
       <SkillGroup title="Nice to have" required={false} items={selected.niceToHave} matched={niceMatched} />
 
       {/* Certifications */}
-      <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px 16px' }}>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
         <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10, fontWeight: 600 }}>Recommended certifications</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {selected.certifications.map((cert, i) => (
@@ -839,7 +837,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
 function SkillGroup({ title, required, items, matched }: { title: string; required: boolean; items: string[]; matched: string[] }) {
   const matchSet = new Set(matched)
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px 16px' }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
         <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>{title}</div>
         {required && <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 9999, background: 'rgba(255,107,107,0.08)', color: '#ff6b6b', border: '0.5px solid rgba(255,107,107,0.2)' }}>Required</span>}
@@ -866,9 +864,9 @@ function SkillGroup({ title, required, items, matched }: { title: string; requir
 ══════════════════════════════════════════════════════════════ */
 
 const TABS = [
-  { id: 'cv',        label: 'CV Builder',    icon: '📄' },
-  { id: 'interview', label: 'Mock Interview', icon: '🎤' },
-  { id: 'skills',    label: 'Skills Gap',    icon: '🎯' },
+  { id: 'cv',        label: 'CV Builder',    icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
+  { id: 'interview', label: 'Mock Interview', icon: '🎤', accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
+  { id: 'skills',    label: 'Skills Gap',    icon: '🎯', accent: '#c084fc', glow: 'rgba(192,132,252,0.2)' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -876,14 +874,33 @@ type TabId = typeof TABS[number]['id']
 export default function CareerClient({ userId: _userId, profile, modules }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('cv')
 
+  const activeTabConfig = TABS.find(t => t.id === activeTab)!
+
   return (
-    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      {/* Deep navy velvet — professional ambition texture */}
+      <AmbientImage zone="career" opacity={0.05} blurPx={10} saturation={1.2} overlayColor="transparent" />
 
       {/* Header */}
-      <div style={{ padding: '20px 20px 0', borderBottom: '0.5px solid var(--border-subtle)' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.25rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 12 }}>
-          Career OS
-        </h1>
+      <div style={{
+        padding: '20px 20px 0',
+        background: `linear-gradient(180deg, ${activeTabConfig.glow.replace('0.2', '0.06')} 0%, transparent 100%)`,
+        borderBottom: '0.5px solid var(--border-subtle)',
+        transition: 'background 0.3s ease',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: `${activeTabConfig.accent}18`, border: `1px solid ${activeTabConfig.accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>
+            {activeTabConfig.icon}
+          </div>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              Career OS
+            </h1>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
+              {profile.yearOfStudy || 'Student'} · {profile.university || 'SA University'}
+            </div>
+          </div>
+        </div>
 
         {/* Tab bar */}
         <div className="flex gap-0 overflow-x-auto scrollbar-none">
@@ -897,16 +914,15 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
                   position: 'relative', display: 'flex', alignItems: 'center', gap: 6,
                   padding: '10px 14px', fontFamily: 'var(--font-display)', fontSize: '0.78rem',
                   fontWeight: active ? 700 : 400,
-                  color: active ? '#7090d0' : 'var(--text-tertiary)',
-                  background: 'transparent', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                  transition: 'color 0.15s', flexShrink: 0,
+                  color: active ? tab.accent : 'var(--text-tertiary)',
+                  background: active ? `${tab.accent}0c` : 'transparent',
+                  border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                  transition: 'all 0.15s', flexShrink: 0,
+                  borderBottom: active ? `2px solid ${tab.accent}` : '2px solid transparent',
                 }}
               >
                 <span>{tab.icon}</span>
                 {tab.label}
-                {active && (
-                  <span style={{ position: 'absolute', bottom: 0, left: 4, right: 4, height: 2, borderRadius: '2px 2px 0 0', background: '#7090d0' }} />
-                )}
               </button>
             )
           })}

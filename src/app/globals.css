@@ -38,10 +38,10 @@
 }
 
 @keyframes pulse-glow {
-  0%   { box-shadow: 0 0 0 0   rgba(0, 229, 176, 0.6), 0 0 0 0   rgba(0, 229, 176, 0.3); }
-  40%  { box-shadow: 0 0 0 8px rgba(0, 229, 176, 0.2), 0 0 24px 6px rgba(0, 229, 176, 0.15); }
-  70%  { box-shadow: 0 0 0 14px rgba(0, 229, 176, 0.05), 0 0 40px 12px rgba(0, 229, 176, 0.08); }
-  100% { box-shadow: 0 0 0 0   rgba(0, 229, 176, 0),  0 0 0 0   rgba(0, 229, 176, 0); }
+  0%   { box-shadow: 0 0 0 0   rgba(168, 85, 247, 0.6), 0 0 0 0   rgba(0, 207, 160, 0.3); }
+  40%  { box-shadow: 0 0 0 8px rgba(168, 85, 247, 0.2), 0 0 24px 6px rgba(0, 207, 160, 0.15); }
+  70%  { box-shadow: 0 0 0 14px rgba(168, 85, 247, 0.05), 0 0 40px 12px rgba(0, 207, 160, 0.08); }
+  100% { box-shadow: 0 0 0 0   rgba(168, 85, 247, 0),  0 0 0 0   rgba(0, 207, 160, 0); }
 }
 
 @keyframes float {
@@ -91,8 +91,8 @@
 }
 
 @keyframes pulse-teal {
-  0%, 100% { box-shadow: 0 0 0 0   rgba(0, 229, 176, 0.4); }
-  50%      { box-shadow: 0 0 0 8px rgba(0, 229, 176, 0); }
+  0%, 100% { box-shadow: 0 0 0 0   rgba(0, 207, 160, 0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(0, 207, 160, 0); }
 }
 
 @keyframes tier-gradient {
@@ -141,88 +141,133 @@ html:not(.light) {
   --duration-slow:  350ms;
   --duration-xslow: 600ms;
 
-  /* ── Surfaces — Cosmic Campus ── */
-  --bg-base:           #07080F;
-  --bg-surface:        #0D0F1C;
-  --bg-elevated:       #131525;
-  --bg-glass:          rgba(13, 15, 28, 0.72);
-  --bg-surface-hover:  rgba(255, 255, 255, 0.045);
-  --bg-surface-raised: rgba(255, 255, 255, 0.06);
-  --bg-hero:           linear-gradient(135deg, #0C1128 0%, #090B1A 50%, #07080F 100%);
+  /* ── Surfaces — Ancestral Cosmos ── */
+  --bg-base:           #05040C;
+  --bg-surface:        #0A0917;
+  --bg-elevated:       #100F24;
+  --bg-glass:          rgba(10, 9, 23, 0.78);
+  --bg-surface-hover:  rgba(168, 85, 247, 0.05);
+  --bg-surface-raised: rgba(168, 85, 247, 0.08);
+  --bg-hero:           linear-gradient(135deg, #0D0B26 0%, #080617 50%, #05040C 100%);
 
   /* Legacy surface compat */
-  --dark-bg:       #07080F;
-  --dark-bg2:      #0D0F1C;
-  --dark-surface:  rgba(255, 255, 255, 0.035);
-  --dark-surface2: rgba(255, 255, 255, 0.06);
+  --dark-bg:       #05040C;
+  --dark-bg2:      #0A0917;
+  --dark-surface:  rgba(168, 85, 247, 0.04);
+  --dark-surface2: rgba(168, 85, 247, 0.08);
 
-  /* ── Borders ── */
-  --border-subtle:   rgba(255, 255, 255, 0.08);
-  --border-default:  rgba(255, 255, 255, 0.12);
-  --border-emphasis: rgba(255, 255, 255, 0.20);
-  --border-accent:   rgba(0, 229, 176, 0.35);
-  --dark-border:     rgba(255, 255, 255, 0.08);
-  --dark-border2:    rgba(255, 255, 255, 0.14);
+  /* ── Borders — Amethyst-tinted ── */
+  --border-subtle:   rgba(148, 111, 255, 0.10);
+  --border-default:  rgba(148, 111, 255, 0.18);
+  --border-emphasis: rgba(148, 111, 255, 0.30);
+  --border-accent:   rgba(0, 207, 160, 0.35);
+  --dark-border:     rgba(148, 111, 255, 0.10);
+  --dark-border2:    rgba(148, 111, 255, 0.18);
 
-  /* ── Text ── */
-  --text-primary:   #F0EFF8;
-  --text-secondary: #8B8FA8;
-  --text-tertiary:  #5A5D77;
-  --text-muted:     #4A4D65;
-  --text-label:     rgba(255, 255, 255, 0.38);
-  --text-light:     #F0EFF8;
-  --text-light2:    #8B8FA8;
-  --text-light3:    #5A5D77;
+  /* ── Text — Purple-warm white ── */
+  --text-primary:   #EDE8F8;
+  --text-secondary: #8A85B0;
+  --text-tertiary:  #56507A;
+  --text-muted:     #3D395E;
+  --text-label:     rgba(237, 232, 248, 0.38);
+  --text-light:     #EDE8F8;
+  --text-light2:    #8A85B0;
+  --text-light3:    #56507A;
 
-  /* ── Primary — Electric Teal ── */
-  --teal:         #00E5B0;
-  --teal-light:   #33EDBE;
-  --teal-dim:     rgba(0, 229, 176, 0.12);
-  --teal-border:  rgba(0, 229, 176, 0.30);
-  --teal-glow:    rgba(0, 229, 176, 0.10);
+  /* ── Primary — Jade ── */
+  --teal:         #00CFA0;
+  --teal-light:   #1ADAA8;
+  --teal-dim:     rgba(0, 207, 160, 0.12);
+  --teal-border:  rgba(0, 207, 160, 0.28);
+  --teal-glow:    rgba(0, 207, 160, 0.10);
 
-  /* ── Secondary — Vivid Violet ── */
-  --purple:       #9B6FFF;
-  --nova:         #9B6FFF;
-  --nova-deep:    #5A3DB8;
-  --nova-dim:     rgba(155, 111, 255, 0.13);
-  --nova-border:  rgba(155, 111, 255, 0.28);
-  --nova-bg:      linear-gradient(135deg, #1A1230 0%, #11102A 100%);
-  --purple-dim:   rgba(155, 111, 255, 0.13);
+  /* ── Secondary — Amethyst ── */
+  --purple:       #A855F7;
+  --nova:         #A855F7;
+  --nova-deep:    #7C3AED;
+  --nova-dim:     rgba(168, 85, 247, 0.14);
+  --nova-border:  rgba(168, 85, 247, 0.32);
+  --nova-bg:      linear-gradient(135deg, #1C0D3A 0%, #120B28 100%);
+  --purple-dim:   rgba(168, 85, 247, 0.14);
 
-  /* ── Gold — Warm Amber ── */
-  --gold:         #F0B429;
-  --gold-bright:  #F5C842;
-  --gold-dim:     rgba(240, 180, 41, 0.13);
-  --gold-border:  rgba(240, 180, 41, 0.30);
+  /* ── Gold — Kente Bronze ── */
+  --gold:         #D4A84B;
+  --gold-bright:  #E8BF6A;
+  --gold-dim:     rgba(212, 168, 75, 0.13);
+  --gold-border:  rgba(212, 168, 75, 0.30);
 
-  /* ── Red — Coral ── */
-  --red:          #FF6B6B;
-  --danger:       #FF6B6B;
-  --danger-dim:   rgba(255, 107, 107, 0.13);
-  --danger-border: rgba(255, 107, 107, 0.30);
+  /* ── Red — Deep Crimson ── */
+  --red:          #E05A6B;
+  --danger:       #E05A6B;
+  --danger-dim:   rgba(224, 90, 107, 0.13);
+  --danger-border: rgba(224, 90, 107, 0.30);
 
   /* ── Feature card accents ── */
-  --meals-orange:  #FF8C42;
-  --work-blue:     #4A9EF5;
-  --groups-green:  #50E878;
-  --campus-purple: #9B6FFF;
-  --exam-blue:     #6495ED;
-  --exam-blue-dim:    rgba(100, 149, 237, 0.12);
-  --exam-blue-border: rgba(100, 149, 237, 0.28);
+  --meals-orange:  #E87040;
+  --work-blue:     #5B9CF5;
+  --groups-green:  #2EE88A;
+  --campus-purple: #A855F7;
+  --exam-blue:     #7A9EED;
+  --exam-blue-dim:    rgba(122, 158, 237, 0.12);
+  --exam-blue-border: rgba(122, 158, 237, 0.28);
 
   /* Legacy compat */
-  --coral:        #FF8C42;
-  --coral-light:  #FFAA6A;
-  --coral-dim:    rgba(255, 140, 66, 0.13);
-  --amber:        #F0B429;
-  --green:        #22c55e;
-  --blue:         #4A9EF5;
+  --coral:        #E87040;
+  --coral-light:  #F09060;
+  --coral-dim:    rgba(232, 112, 64, 0.13);
+  --amber:        #D4A84B;
+  --green:        #2EE88A;
+  --blue:         #5B9CF5;
 
-  /* ── Shadows ── */
-  --shadow-glow: 0 0 0 1px rgba(0, 229, 176, 0.25), 0 0 20px rgba(0, 229, 176, 0.12), 0 0 48px rgba(0, 229, 176, 0.06);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45), 0 1px 4px rgba(0, 0, 0, 0.30);
-  --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+  /* ── Life Domain Pillars ── */
+  /* Body OS — Fitness, Health, Vitality */
+  --rose:         #F472B6;
+  --rose-dim:     rgba(244, 114, 182, 0.12);
+  --rose-border:  rgba(244, 114, 182, 0.28);
+  --rose-glow:    rgba(244, 114, 182, 0.10);
+
+  /* Safety OS — Protection, Calm Action */
+  --emerald:        #10B981;
+  --emerald-dim:    rgba(16, 185, 129, 0.12);
+  --emerald-border: rgba(16, 185, 129, 0.28);
+  --emerald-glow:   rgba(16, 185, 129, 0.10);
+
+  /* Movement OS — Navigation, Maps, Weather */
+  --sky:         #38BDF8;
+  --sky-dim:     rgba(56, 189, 248, 0.12);
+  --sky-border:  rgba(56, 189, 248, 0.28);
+  --sky-glow:    rgba(56, 189, 248, 0.10);
+
+  /* Growth OS — Philosophy, Habits, Wisdom */
+  --indigo:        #818CF8;
+  --indigo-dim:    rgba(129, 140, 248, 0.12);
+  --indigo-border: rgba(129, 140, 248, 0.28);
+  --indigo-glow:   rgba(129, 140, 248, 0.10);
+
+  /* Entrepreneurship — Action, Growth, Build */
+  --lime:        #A3E635;
+  --lime-dim:    rgba(163, 230, 53, 0.12);
+  --lime-border: rgba(163, 230, 53, 0.28);
+  --lime-glow:   rgba(163, 230, 53, 0.10);
+
+  /* ── Orchestration / Risk State Colors ── */
+  --risk-safe:          var(--teal);
+  --risk-safe-dim:      rgba(0, 229, 176, 0.12);
+  --risk-safe-border:   rgba(0, 229, 176, 0.25);
+  --risk-watch:         var(--gold);
+  --risk-watch-dim:     rgba(240, 180, 41, 0.12);
+  --risk-watch-border:  rgba(240, 180, 41, 0.28);
+  --risk-warning:       var(--coral);
+  --risk-warning-dim:   rgba(255, 140, 66, 0.12);
+  --risk-warning-border: rgba(255, 140, 66, 0.28);
+  --risk-critical:      var(--danger);
+  --risk-critical-dim:  rgba(255, 107, 107, 0.12);
+  --risk-critical-border: rgba(255, 107, 107, 0.28);
+
+  /* ── Shadows — Cosmic depth ── */
+  --shadow-glow: 0 0 0 1px rgba(0, 207, 160, 0.22), 0 0 24px rgba(168, 85, 247, 0.18), 0 0 48px rgba(0, 207, 160, 0.07);
+  --shadow-card: 0 4px 28px rgba(5, 4, 12, 0.65), 0 1px 4px rgba(5, 4, 12, 0.45);
+  --shadow-elevated: 0 8px 48px rgba(5, 4, 12, 0.75), 0 2px 8px rgba(168, 85, 247, 0.15);
 }
 
 /* ── CSS Variables — Light Theme (Ubuntu Sunrise) ─────────── */
@@ -249,88 +294,128 @@ html.light {
   --duration-slow:  350ms;
   --duration-xslow: 600ms;
 
-  /* ── Surfaces — Ubuntu Sunrise ── */
-  --bg-base:           #FAFAF5;
+  /* ── Surfaces — Ubuntu Dawn ── */
+  --bg-base:           #FBF7EE;
   --bg-surface:        #FFFFFF;
-  --bg-elevated:       #F5F4EF;
-  --bg-glass:          rgba(255, 255, 255, 0.80);
-  --bg-surface-hover:  rgba(0, 0, 0, 0.035);
-  --bg-surface-raised: rgba(0, 0, 0, 0.05);
-  --bg-hero:           linear-gradient(135deg, #E8F8F3 0%, #EEF7F2 50%, #FAFAF5 100%);
+  --bg-elevated:       #F5EDE0;
+  --bg-glass:          rgba(255, 255, 255, 0.82);
+  --bg-surface-hover:  rgba(0, 0, 0, 0.032);
+  --bg-surface-raised: rgba(0, 0, 0, 0.055);
+  --bg-hero:           linear-gradient(135deg, #F0E8D4 0%, #F7F1E7 50%, #FBF7EE 100%);
 
   /* Legacy surface compat */
-  --dark-bg:       #FAFAF5;
+  --dark-bg:       #FBF7EE;
   --dark-bg2:      #FFFFFF;
   --dark-surface:  rgba(0, 0, 0, 0.04);
   --dark-surface2: rgba(0, 0, 0, 0.06);
 
-  /* ── Borders ── */
-  --border-subtle:   rgba(0, 0, 0, 0.06);
-  --border-default:  rgba(0, 0, 0, 0.10);
-  --border-emphasis: rgba(0, 0, 0, 0.18);
-  --border-accent:   rgba(13, 148, 136, 0.35);
-  --dark-border:     rgba(0, 0, 0, 0.06);
-  --dark-border2:    rgba(0, 0, 0, 0.12);
+  /* ── Borders — Warm gold-tinted ── */
+  --border-subtle:   rgba(139, 100, 20, 0.09);
+  --border-default:  rgba(139, 100, 20, 0.15);
+  --border-emphasis: rgba(139, 100, 20, 0.25);
+  --border-accent:   rgba(11, 174, 136, 0.35);
+  --dark-border:     rgba(139, 100, 20, 0.09);
+  --dark-border2:    rgba(139, 100, 20, 0.16);
 
-  /* ── Text ── */
-  --text-primary:   #0F172A;
-  --text-secondary: #475569;
-  --text-tertiary:  #94A3B8;
-  --text-muted:     #CBD5E1;
-  --text-label:     rgba(0, 0, 0, 0.45);
-  --text-light:     #0F172A;
-  --text-light2:    #475569;
-  --text-light3:    #94A3B8;
+  /* ── Text — Warm earth tones ── */
+  --text-primary:   #1A1208;
+  --text-secondary: #5C4A2A;
+  --text-tertiary:  #8C7550;
+  --text-muted:     #C0A870;
+  --text-label:     rgba(26, 18, 8, 0.45);
+  --text-light:     #1A1208;
+  --text-light2:    #5C4A2A;
+  --text-light3:    #8C7550;
 
-  /* ── Primary — Rich Teal ── */
-  --teal:         #0D9488;
-  --teal-light:   #14B8A6;
-  --teal-dim:     rgba(13, 148, 136, 0.10);
-  --teal-border:  rgba(13, 148, 136, 0.30);
-  --teal-glow:    rgba(13, 148, 136, 0.08);
+  /* ── Primary — Deep Jade ── */
+  --teal:         #0BAE88;
+  --teal-light:   #0EC9A0;
+  --teal-dim:     rgba(11, 174, 136, 0.10);
+  --teal-border:  rgba(11, 174, 136, 0.28);
+  --teal-glow:    rgba(11, 174, 136, 0.08);
 
-  /* ── Secondary — Deep Violet ── */
-  --purple:       #7C3AED;
-  --nova:         #7C3AED;
-  --nova-deep:    #5B21B6;
-  --nova-dim:     rgba(124, 58, 237, 0.10);
-  --nova-border:  rgba(124, 58, 237, 0.25);
-  --nova-bg:      linear-gradient(135deg, #EDE9FA 0%, #E8E2F8 100%);
-  --purple-dim:   rgba(124, 58, 237, 0.10);
+  /* ── Secondary — Deep Amethyst ── */
+  --purple:       #8B3FE8;
+  --nova:         #8B3FE8;
+  --nova-deep:    #6D28D9;
+  --nova-dim:     rgba(139, 63, 232, 0.10);
+  --nova-border:  rgba(139, 63, 232, 0.25);
+  --nova-bg:      linear-gradient(135deg, #EDE5FA 0%, #E5D8F8 100%);
+  --purple-dim:   rgba(139, 63, 232, 0.10);
 
-  /* ── Gold — Warm Golden ── */
-  --gold:         #D97706;
-  --gold-bright:  #F59E0B;
-  --gold-dim:     rgba(217, 119, 6, 0.10);
-  --gold-border:  rgba(217, 119, 6, 0.28);
+  /* ── Gold — Dark Bronze ── */
+  --gold:         #C07C10;
+  --gold-bright:  #D9920C;
+  --gold-dim:     rgba(192, 124, 16, 0.10);
+  --gold-border:  rgba(192, 124, 16, 0.28);
 
-  /* ── Red ── */
-  --red:          #EF4444;
-  --danger:       #EF4444;
-  --danger-dim:   rgba(239, 68, 68, 0.10);
-  --danger-border: rgba(239, 68, 68, 0.28);
+  /* ── Red — Deep Crimson ── */
+  --red:          #D94054;
+  --danger:       #D94054;
+  --danger-dim:   rgba(217, 64, 84, 0.10);
+  --danger-border: rgba(217, 64, 84, 0.28);
 
   /* ── Feature card accents ── */
-  --meals-orange:  #EA580C;
-  --work-blue:     #2563EB;
-  --groups-green:  #16A34A;
-  --campus-purple: #7C3AED;
-  --exam-blue:     #3B5BDB;
-  --exam-blue-dim:    rgba(59, 91, 219, 0.10);
-  --exam-blue-border: rgba(59, 91, 219, 0.25);
+  --meals-orange:  #C04A12;
+  --work-blue:     #1D5FCC;
+  --groups-green:  #0D7A3C;
+  --campus-purple: #8B3FE8;
+  --exam-blue:     #2A4FC0;
+  --exam-blue-dim:    rgba(42, 79, 192, 0.10);
+  --exam-blue-border: rgba(42, 79, 192, 0.25);
 
   /* Legacy compat */
-  --coral:        #EA580C;
-  --coral-light:  #FB923C;
-  --coral-dim:    rgba(234, 88, 12, 0.10);
-  --amber:        #D97706;
-  --green:        #16a34a;
-  --blue:         #2563EB;
+  --coral:        #C04A12;
+  --coral-light:  #D96030;
+  --coral-dim:    rgba(192, 74, 18, 0.10);
+  --amber:        #C07C10;
+  --green:        #0D7A3C;
+  --blue:         #1D5FCC;
+
+  /* ── Life Domain Pillars ── */
+  --rose:         #DB2777;
+  --rose-dim:     rgba(219, 39, 119, 0.10);
+  --rose-border:  rgba(219, 39, 119, 0.25);
+  --rose-glow:    rgba(219, 39, 119, 0.08);
+
+  --emerald:        #059669;
+  --emerald-dim:    rgba(5, 150, 105, 0.10);
+  --emerald-border: rgba(5, 150, 105, 0.25);
+  --emerald-glow:   rgba(5, 150, 105, 0.08);
+
+  --sky:         #0284C7;
+  --sky-dim:     rgba(2, 132, 199, 0.10);
+  --sky-border:  rgba(2, 132, 199, 0.25);
+  --sky-glow:    rgba(2, 132, 199, 0.08);
+
+  --indigo:        #4F46E5;
+  --indigo-dim:    rgba(79, 70, 229, 0.10);
+  --indigo-border: rgba(79, 70, 229, 0.25);
+  --indigo-glow:   rgba(79, 70, 229, 0.08);
+
+  --lime:        #65A30D;
+  --lime-dim:    rgba(101, 163, 13, 0.10);
+  --lime-border: rgba(101, 163, 13, 0.25);
+  --lime-glow:   rgba(101, 163, 13, 0.08);
+
+  /* ── Orchestration / Risk State Colors ── */
+  --risk-safe:           var(--teal);
+  --risk-safe-dim:       rgba(11, 174, 136, 0.10);
+  --risk-safe-border:    rgba(11, 174, 136, 0.25);
+  --risk-watch:          var(--gold);
+  --risk-watch-dim:      rgba(192, 124, 16, 0.10);
+  --risk-watch-border:   rgba(192, 124, 16, 0.25);
+  --risk-warning:        var(--coral);
+  --risk-warning-dim:    rgba(192, 74, 18, 0.10);
+  --risk-warning-border: rgba(192, 74, 18, 0.25);
+  --risk-critical:       var(--danger);
+  --risk-critical-dim:   rgba(217, 64, 84, 0.10);
+  --risk-critical-border: rgba(217, 64, 84, 0.25);
 
   /* ── Shadows ── */
-  --shadow-glow: 0 0 0 1px rgba(13, 148, 136, 0.20), 0 0 20px rgba(13, 148, 136, 0.10), 0 0 48px rgba(13, 148, 136, 0.05);
-  --shadow-card: 0 2px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-elevated: 0 4px 24px rgba(15, 23, 42, 0.12), 0 1px 6px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 0 1px rgba(11, 174, 136, 0.20), 0 0 20px rgba(139, 63, 232, 0.10), 0 0 48px rgba(11, 174, 136, 0.05);
+  --shadow-card: 0 2px 12px rgba(26, 18, 8, 0.08), 0 1px 3px rgba(26, 18, 8, 0.06);
+  --shadow-elevated: 0 4px 24px rgba(26, 18, 8, 0.12), 0 1px 6px rgba(26, 18, 8, 0.08);
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */
@@ -371,13 +456,13 @@ h1, h2, h3, h4, h5, h6, .font-display {
 /* ── Text selection ──────────────────────────────────────── */
 
 ::selection {
-  background: rgba(0, 229, 176, 0.22);
+  background: rgba(168, 85, 247, 0.28);
   color: var(--text-primary);
 }
 
 [data-theme="light"] ::selection,
 html.light ::selection {
-  background: rgba(13, 148, 136, 0.18);
+  background: rgba(139, 63, 232, 0.18);
   color: var(--text-primary);
 }
 
@@ -676,6 +761,42 @@ html.light .shimmer {
   border-color: var(--danger-border);
 }
 
+.badge-pill-rose {
+  background: var(--rose-dim);
+  color: var(--rose);
+  border-color: var(--rose-border);
+}
+
+.badge-pill-emerald {
+  background: var(--emerald-dim);
+  color: var(--emerald);
+  border-color: var(--emerald-border);
+}
+
+.badge-pill-sky {
+  background: var(--sky-dim);
+  color: var(--sky);
+  border-color: var(--sky-border);
+}
+
+.badge-pill-indigo {
+  background: var(--indigo-dim);
+  color: var(--indigo);
+  border-color: var(--indigo-border);
+}
+
+.badge-pill-lime {
+  background: var(--lime-dim);
+  color: var(--lime);
+  border-color: var(--lime-border);
+}
+
+/* Risk state badge pills */
+.badge-pill-safe     { background: var(--risk-safe-dim);     color: var(--risk-safe);     border-color: var(--risk-safe-border); }
+.badge-pill-watch    { background: var(--risk-watch-dim);    color: var(--risk-watch);    border-color: var(--risk-watch-border); }
+.badge-pill-warning  { background: var(--risk-warning-dim);  color: var(--risk-warning);  border-color: var(--risk-warning-border); }
+.badge-pill-critical { background: var(--risk-critical-dim); color: var(--risk-critical); border-color: var(--risk-critical-border); }
+
 /* ── Tier Badge — Animated Gradient (Nova Unlimited) ─────── */
 
 .tier-unlimited {
@@ -820,6 +941,41 @@ body.modal-open { overflow: hidden; }
   background-clip: text;
 }
 
+.text-gradient-body {
+  background: linear-gradient(135deg, var(--rose), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-safety {
+  background: linear-gradient(135deg, var(--emerald), var(--sky));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-growth {
+  background: linear-gradient(135deg, var(--indigo), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-enterprise {
+  background: linear-gradient(135deg, var(--lime), var(--teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-finance {
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .text-gradient-aurora {
   background: linear-gradient(270deg, var(--teal), var(--purple), var(--gold), var(--teal));
   background-size: 300% 300%;
@@ -868,6 +1024,26 @@ body.modal-open { overflow: hidden; }
   box-shadow: 0 0 16px var(--gold-dim), inset 0 0 12px var(--gold-dim);
 }
 
+.neon-rose {
+  border: 1px solid var(--rose-border);
+  box-shadow: 0 0 16px var(--rose-glow), inset 0 0 12px var(--rose-glow);
+}
+
+.neon-emerald {
+  border: 1px solid var(--emerald-border);
+  box-shadow: 0 0 16px var(--emerald-glow), inset 0 0 12px var(--emerald-glow);
+}
+
+.neon-sky {
+  border: 1px solid var(--sky-border);
+  box-shadow: 0 0 16px var(--sky-glow), inset 0 0 12px var(--sky-glow);
+}
+
+.neon-indigo {
+  border: 1px solid var(--indigo-border);
+  box-shadow: 0 0 16px var(--indigo-glow), inset 0 0 12px var(--indigo-glow);
+}
+
 /* ── Surface Variants ────────────────────────────────────── */
 
 .surface-teal {
@@ -887,21 +1063,95 @@ body.modal-open { overflow: hidden; }
   border: 1px solid var(--danger-border);
 }
 
-/* ── Cosmic BG Accent (subtle page-level depth) ──────────── */
+.surface-rose    { background: var(--rose-dim);    border: 1px solid var(--rose-border); }
+.surface-emerald { background: var(--emerald-dim); border: 1px solid var(--emerald-border); }
+.surface-sky     { background: var(--sky-dim);     border: 1px solid var(--sky-border); }
+.surface-indigo  { background: var(--indigo-dim);  border: 1px solid var(--indigo-border); }
+.surface-lime    { background: var(--lime-dim);    border: 1px solid var(--lime-border); }
+
+/* Risk state surfaces */
+.surface-safe     { background: var(--risk-safe-dim);     border: 1px solid var(--risk-safe-border); }
+.surface-watch    { background: var(--risk-watch-dim);    border: 1px solid var(--risk-watch-border); }
+.surface-warning  { background: var(--risk-warning-dim);  border: 1px solid var(--risk-warning-border); }
+.surface-critical { background: var(--risk-critical-dim); border: 1px solid var(--risk-critical-border); }
+
+/* ── Cosmic BG Accent (Afrofuturist nebula depth) ──────────── */
 
 .bg-cosmic {
   background:
-    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(0, 229, 176, 0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 35% at 80% 100%, rgba(155, 111, 255, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 55% at 15% -5%,  rgba(168, 85, 247, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 105%, rgba(0, 207, 160, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,  rgba(212, 168, 75, 0.06) 0%, transparent 70%),
     var(--bg-base);
 }
 
 [data-theme="light"] .bg-cosmic,
 html.light .bg-cosmic {
   background:
-    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(13, 148, 136, 0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 35% at 80% 100%, rgba(124, 58, 237, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 55% at 15% -5%,  rgba(139, 63, 232, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 105%, rgba(11, 174, 136, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,  rgba(192, 124, 16, 0.04) 0%, transparent 70%),
     var(--bg-base);
+}
+
+/* ── Afrofuturist Patterns ───────────────────────────────── */
+
+/* Kente diamond grid */
+.pattern-kente {
+  background-image:
+    linear-gradient(45deg,  rgba(212, 168, 75, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(212, 168, 75, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg,  transparent 75%, rgba(212, 168, 75, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(212, 168, 75, 0.05) 75%);
+  background-size: 18px 18px;
+  background-position: 0 0, 0 9px, 9px -9px, -9px 0px;
+}
+
+/* Adinkra dot constellation */
+.pattern-adinkra {
+  background-image:
+    radial-gradient(circle, rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+    radial-gradient(circle, rgba(212, 168, 75, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* Subtle cosmic grid */
+.pattern-cosmic-grid {
+  background-image:
+    linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── Cosmic Card (Afrofuturist card with ambient nebula) ──── */
+
+.card-cosmic {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-cosmic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 100% 80% at 0% 0%, rgba(168, 85, 247, 0.07) 0%, transparent 65%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Nova Oracle Card ────────────────────────────────────── */
+
+.nova-oracle {
+  background: var(--nova-bg);
+  border: 1px solid var(--nova-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 0 0 1px var(--nova-border),
+              0 0 40px rgba(168, 85, 247, 0.12),
+              var(--shadow-card);
 }
 
 /* ── Reduced Motion ──────────────────────────────────────── */

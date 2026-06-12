@@ -5,6 +5,7 @@ import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
 import UpgradeButton from '@/components/upgrade/UpgradeButton'
 import UpgradeErrorBoundary from '@/components/upgrade/UpgradeErrorBoundary'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Upgrade — VarsityOS' }
@@ -99,7 +100,8 @@ export default async function UpgradePage() {
 
   return (
     <UpgradeErrorBoundary>
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="nsfas" opacity={0.07} blurPx={6} saturation={1.5} overlayColor="transparent" />
       <TopBar title="Upgrade" />
 
       <div className="max-w-sm mx-auto px-4 py-8">

@@ -12,11 +12,12 @@ import {
 } from '@/types'
 import { fmt, getDaysUntil, calcTotalBudget, cn } from '@/lib/utils'
 import { ShareButton } from '@/components/ui/ShareButton'
-import DayModeBanner from '@/components/dashboard/DayModeBanner'
+import DayModeBanner, { getDayMode, type DayMode } from '@/components/dashboard/DayModeBanner'
 import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
 import { getDataSaverEnabled } from '@/lib/dataSaver'
 import LevelCard from '@/components/gamification/LevelCard'
 import DailyChallenges from '@/components/gamification/DailyChallenges'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -34,6 +35,64 @@ interface DashboardClientProps {
     incomeEntries: IncomeEntry[]
     subscription: Subscription | null
   }
+}
+
+/* ── DayMode-driven design tokens ─────────────────────────── */
+const DASH_THEME: Record<DayMode, {
+  heroBg: string; accent: string; accentDim: string; accentGlow: string
+  orb1: string; orb2: string; border: string
+}> = {
+  wake: {
+    // Dawn — warm Kente gold breaking through deep cosmos
+    heroBg: 'linear-gradient(145deg,#1A0E00 0%,#2E1A00 45%,#180C04 75%,#05040C 100%)',
+    accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.12)', accentGlow: 'rgba(212,168,75,0.30)',
+    orb1: 'rgba(212,168,75,0.18)', orb2: 'rgba(232,191,106,0.10)',
+    border: 'rgba(212,168,75,0.26)',
+  },
+  commute: {
+    // Morning transit — sapphire sky before the city wakes
+    heroBg: 'linear-gradient(145deg,#020E22 0%,#041830 45%,#020810 75%,#05040C 100%)',
+    accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.12)', accentGlow: 'rgba(91,156,245,0.30)',
+    orb1: 'rgba(91,156,245,0.18)', orb2: 'rgba(147,197,253,0.10)',
+    border: 'rgba(91,156,245,0.26)',
+  },
+  class: {
+    // Lecture hours — deep jade focus, ancestral knowledge
+    heroBg: 'linear-gradient(145deg,#001A10 0%,#002818 45%,#000E08 75%,#05040C 100%)',
+    accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.12)', accentGlow: 'rgba(0,207,160,0.30)',
+    orb1: 'rgba(0,207,160,0.18)', orb2: 'rgba(26,218,168,0.10)',
+    border: 'rgba(0,207,160,0.26)',
+  },
+  study: {
+    // Deep study — full amethyst cosmos, full power
+    heroBg: 'linear-gradient(145deg,#0C0820 0%,#1A0C38 45%,#0A0618 75%,#05040C 100%)',
+    accent: '#A855F7', accentDim: 'rgba(168,85,247,0.13)', accentGlow: 'rgba(168,85,247,0.32)',
+    orb1: 'rgba(168,85,247,0.20)', orb2: 'rgba(139,92,246,0.12)',
+    border: 'rgba(168,85,247,0.26)',
+  },
+  'wind-down': {
+    // Copper sunset — warm and slow, day releasing
+    heroBg: 'linear-gradient(145deg,#1A0800 0%,#2C1200 45%,#120600 75%,#05040C 100%)',
+    accent: '#E87040', accentDim: 'rgba(232,112,64,0.12)', accentGlow: 'rgba(232,112,64,0.30)',
+    orb1: 'rgba(232,112,64,0.18)', orb2: 'rgba(240,144,96,0.10)',
+    border: 'rgba(232,112,64,0.26)',
+  },
+  sleep: {
+    // Deep night — near-black cosmic stillness, stars barely visible
+    heroBg: 'linear-gradient(145deg,#05040C 0%,#080617 45%,#040310 75%,#05040C 100%)',
+    accent: '#6A7FA8', accentDim: 'rgba(106,127,168,0.10)', accentGlow: 'rgba(106,127,168,0.22)',
+    orb1: 'rgba(106,127,168,0.12)', orb2: 'rgba(148,111,255,0.06)',
+    border: 'rgba(106,127,168,0.18)',
+  },
+}
+
+const MODE_LABEL: Record<DayMode, { label: string; emoji: string }> = {
+  wake:        { label: 'Wake',       emoji: '🌅' },
+  commute:     { label: 'Commute',    emoji: '🚌' },
+  class:       { label: 'Class',      emoji: '🎓' },
+  study:       { label: 'Study',      emoji: '📚' },
+  'wind-down': { label: 'Wind Down',  emoji: '🌙' },
+  sleep:       { label: 'Night',      emoji: '🌃' },
 }
 
 /* ── helpers ─────────────────────────────────────────────── */
@@ -100,7 +159,7 @@ function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile 
   if (!exam) return null
 
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
       <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9b6fd4 0%,rgba(155,111,212,0.15) 100%)' }} />
       <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 8, fontWeight: 600 }}>Nova Study Tips</div>
       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 10 }}>
@@ -178,7 +237,7 @@ function CoachSummaryCard({ userId, totalBudget, amountSpent, expenses }: {
   }
 
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
       <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#c9a84c 0%,rgba(201,168,76,0.15) 100%)' }} />
       <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#c9a84c', marginBottom: 10, fontWeight: 600 }}>Budget Coach</div>
       {loading && (
@@ -206,51 +265,115 @@ function CoachSummaryCard({ userId, totalBudget, amountSpent, expenses }: {
   )
 }
 
-/* ── NovaBanner ─────────────────────────────────────────── */
-function NovaBanner({ profile, subscription, checkinMessage }: {
-  profile: Profile; subscription: Subscription | null; checkinMessage: string | null
+/* ── OSCommandHero ─────────────────────────────────────── */
+function OSCommandHero({ timetable, tasks, exams, hour, firstName, profile, subscription, checkinMessage }: {
+  timetable: TimetableEntry[]
+  tasks: Task[]
+  exams: Exam[]
+  hour: number
+  firstName: string
+  profile: Profile
+  subscription: Subscription | null
+  checkinMessage: string | null
 }) {
-  const msgLimit    = profile.nova_messages_limit ?? 10
-  const msgUsed     = profile.nova_messages_used ?? 0
-  const remaining   = Math.max(0, msgLimit - msgUsed)
-  const isUnlimited = profile?.subscription_tier === 'nova_unlimited'
+  const mode   = getDayMode(hour)
+  const theme  = DASH_THEME[mode]
+  const meta   = MODE_LABEL[mode]
+  const isUnlimited = profile.subscription_tier === 'nova_unlimited'
+  const novaLeft    = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
   void subscription
 
   return (
-    <div style={{ background: 'linear-gradient(135deg,#12102a 0%,#1a1530 50%,#0d0e14 100%)', border: '1px solid rgba(155,111,212,0.22)', borderRadius: 16, padding: '20px 22px', position: 'relative', overflow: 'hidden' }}>
-      <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#9b6fd4 0%,rgba(155,111,212,0.2) 50%,transparent 100%)', pointerEvents: 'none' }} />
-      <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 5% 50%,rgba(155,111,212,0.1) 0%,transparent 60%)', pointerEvents: 'none' }} />
-      <span style={{ position: 'absolute', right: -20, top: -20, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle,rgba(155,111,212,0.07) 0%,transparent 70%)', pointerEvents: 'none' }} />
+    <div
+      className="dash-card-in"
+      style={{ borderRadius: 20, border: `1px solid ${theme.border}`, overflow: 'hidden', position: 'relative' }}
+    >
+      {/* Background gradient */}
+      <div style={{ position: 'absolute', inset: 0, background: theme.heroBg, zIndex: 0 }} />
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <div className="nova-pulse-ring" style={{ position: 'absolute', inset: -6, borderRadius: '50%', background: 'rgba(155,111,212,0.15)', pointerEvents: 'none' }} />
-              <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg,#9b6fd4 0%,#6b3fa0 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#fff', boxShadow: '0 0 20px rgba(155,111,212,0.4)' }}>
-                ✦
-              </div>
-            </div>
-            <div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: '#c5a8f0', letterSpacing: '-0.01em' }}>Nova</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
-                {isUnlimited ? 'Unlimited conversations' : `${remaining} msgs left this month`}
-              </div>
+      {/* Ambient texture — real image layer beneath gradient */}
+      <AmbientImage zone="dashboard" opacity={0.07} blurPx={4} saturation={1.5}
+        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.2) 0%,rgba(5,4,12,0.0) 100%)" />
+
+      {/* Internal floating orbs */}
+      <div
+        className="orb-float"
+        style={{
+          position: 'absolute', top: -60, right: -50, width: 240, height: 240, borderRadius: '50%',
+          background: `radial-gradient(circle, ${theme.orb1} 0%, transparent 70%)`,
+          filter: 'blur(35px)', pointerEvents: 'none', zIndex: 0,
+        }}
+      />
+      <div
+        className="orb-float-r"
+        style={{
+          position: 'absolute', bottom: -30, left: -30, width: 160, height: 160, borderRadius: '50%',
+          background: `radial-gradient(circle, ${theme.orb2} 0%, transparent 70%)`,
+          filter: 'blur(24px)', pointerEvents: 'none', zIndex: 0,
+        }}
+      />
+
+      {/* Top accent line */}
+      <div
+        className="hero-line-glow"
+        style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+          background: `linear-gradient(90deg, ${theme.accent} 0%, ${theme.accent}55 60%, transparent 100%)`,
+          zIndex: 1,
+        }}
+      />
+
+      <div style={{ position: 'relative', zIndex: 1, padding: '20px 22px 22px' }}>
+
+        {/* Mode badge row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 7,
+            padding: '5px 12px 5px 9px', borderRadius: 9999,
+            background: theme.accentDim, border: `0.5px solid ${theme.accent}45`,
+          }}>
+            <span style={{ fontSize: 13 }}>{meta.emoji}</span>
+            <span style={{ fontSize: 9, fontFamily: 'JetBrains Mono,monospace', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: theme.accent }}>
+              {meta.label}
+            </span>
+            <span className="status-live" style={{ width: 5, height: 5, borderRadius: '50%', background: theme.accent, display: 'inline-block', marginLeft: 2 }} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: 'rgba(255,255,255,0.3)' }}>
+              {isUnlimited ? '∞ msgs' : `${novaLeft} left`}
+            </span>
+            <div style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: `linear-gradient(135deg,${theme.accent} 0%,${theme.accent}99 100%)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 15, boxShadow: `0 0 16px ${theme.accentGlow}`,
+            }}>
+              ✦
             </div>
           </div>
-          <Link href="/nova">
-            <button style={{ background: 'linear-gradient(135deg,#9b6fd4 0%,#b589e8 100%)', color: '#fff', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, border: 'none', borderRadius: 10, padding: '9px 16px', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(155,111,212,0.3)' }}>
-              Chat with Nova →
-            </button>
-          </Link>
         </div>
 
+        {/* Day context strip */}
+        <DayModeBanner timetable={timetable} tasks={tasks} exams={exams} hour={hour} firstName={firstName} />
+        {mode === 'sleep' && (
+          <div style={{ padding: '10px 14px', background: theme.accentDim, border: `0.5px solid ${theme.accent}30`, borderRadius: 10 }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>Night mode · all systems resting 🌃</span>
+          </div>
+        )}
+
+        {/* Nova check-in */}
         {checkinMessage && (
-          <div style={{ marginTop: 14, background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-            <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>💜</span>
+          <div style={{
+            marginTop: 14, padding: '12px 14px',
+            background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.07)',
+            borderRadius: 12, display: 'flex', alignItems: 'flex-start', gap: 10,
+          }}>
+            <span style={{ fontSize: 13, color: theme.accent, flexShrink: 0, marginTop: 1 }}>✦</span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 3 }}>Nova Check-in</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{checkinMessage}</div>
+              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: theme.accent, marginBottom: 3, fontWeight: 600 }}>
+                Nova · Daily check-in
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>{checkinMessage}</div>
             </div>
             <ShareButton
               variant="icon"
@@ -260,8 +383,124 @@ function NovaBanner({ profile, subscription, checkinMessage }: {
             />
           </div>
         )}
+
+        {/* Action row */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
+          <Link href="/nova" style={{ flex: 1, textDecoration: 'none' }}>
+            <button style={{
+              width: '100%',
+              background: `linear-gradient(135deg,${theme.accent} 0%,${theme.accent}cc 100%)`,
+              color: '#fff',
+              fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13,
+              border: 'none', borderRadius: 10, padding: '11px 0',
+              cursor: 'pointer',
+              boxShadow: `0 4px 22px ${theme.accentGlow}`,
+            }}>
+              Chat with Nova →
+            </button>
+          </Link>
+          <Link href="/study" style={{ textDecoration: 'none' }}>
+            <button style={{
+              background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.13)',
+              color: 'rgba(255,255,255,0.72)', fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 13,
+              borderRadius: 10, padding: '11px 18px', cursor: 'pointer', whiteSpace: 'nowrap',
+            }}>
+              Study →
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
+  )
+}
+
+/* ── PriorityCommandStrip ────────────────────────────────── */
+function PriorityCommandStrip({ tasks, exams, totalBudget, remaining }: {
+  tasks: Task[]; exams: Exam[]; totalBudget: number; remaining: number
+}) {
+  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
+
+  const overdueList = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate)
+  const dueTodayList = tasks.filter(t => {
+    if (t.status === 'done' || !t.due_date) return false
+    const d = new Date(t.due_date); d.setHours(0, 0, 0, 0)
+    return d.getTime() === todayDate.getTime()
+  })
+  const nextExam    = exams[0]
+  const daysToExam  = nextExam ? getDaysUntil(nextExam.exam_date) : null
+  const budgetPct   = totalBudget > 0 ? Math.round((remaining / totalBudget) * 100) : 100
+
+  const items: Array<{ label: string; value: string; color: string; href: string; urgent: boolean }> = []
+
+  if (overdueList.length > 0) {
+    const first = overdueList[0].title
+    items.push({
+      label: `${overdueList.length} overdue`,
+      value: first.length > 22 ? first.slice(0, 22) + '…' : first,
+      color: '#ff6b6b', href: '/study', urgent: true,
+    })
+  } else if (dueTodayList.length > 0) {
+    items.push({
+      label: 'Due today',
+      value: `${dueTodayList.length} task${dueTodayList.length > 1 ? 's' : ''}`,
+      color: '#c9a84c', href: '/study', urgent: false,
+    })
+  }
+
+  if (daysToExam !== null && daysToExam >= 0 && daysToExam <= 14) {
+    const modName = (nextExam!.module as Module | undefined)?.module_name ?? nextExam!.exam_name ?? 'Exam'
+    items.push({
+      label: daysToExam === 0 ? 'Exam TODAY' : `${daysToExam}d to exam`,
+      value: modName.length > 22 ? modName.slice(0, 22) + '…' : modName,
+      color: daysToExam <= 2 ? '#ff6b6b' : daysToExam <= 5 ? '#c9a84c' : '#7090d0',
+      href: '/study', urgent: daysToExam <= 2,
+    })
+  }
+
+  if (totalBudget > 0 && budgetPct < 20) {
+    items.push({
+      label: `${budgetPct}% budget left`,
+      value: `R${Math.round(remaining)} remaining`,
+      color: budgetPct < 10 ? '#ff6b6b' : '#c9a84c',
+      href: '/budget', urgent: budgetPct < 10,
+    })
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <section>
+      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', fontWeight: 600, marginBottom: 8 }}>
+        ◈ Priority right now
+      </div>
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 2 }} className="scrollbar-none">
+        {items.map((item, i) => (
+          <Link key={i} href={item.href} style={{ textDecoration: 'none', flexShrink: 0 }}>
+            <div
+              className="priority-slide"
+              style={{
+                padding: '11px 14px', minWidth: 148,
+                background: `${item.color}10`,
+                border: `1px solid ${item.color}38`,
+                borderRadius: 12, position: 'relative', overflow: 'hidden',
+                animationDelay: `${i * 0.08}s`,
+              }}
+            >
+              <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: item.color, borderRadius: '2px 0 0 2px' }} />
+              {item.urgent && (
+                <span className="dot-urgent" style={{ position: 'absolute', top: 8, right: 8, width: 5, height: 5, borderRadius: '50%', background: item.color }} />
+              )}
+              <div style={{ fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase', color: item.color, fontWeight: 700, marginBottom: 4 }}>
+                {item.label}
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {item.value}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -277,21 +516,35 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streak
   const daysToExam = nextExam ? getDaysUntil(nextExam.exam_date) : null
 
   const cards = [
-    { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left', accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
-    { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—', label: 'Days to exam', accent: '#7090d0' },
-    { value: String(tasksDueWeek + overdueTasks), label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
-    { value: String(streakDays), label: streakTodayDone ? 'Streak safe ✓' : 'Study streak', accent: streakTodayDone ? '#4ecf9e' : streakDays > 0 ? '#f59e0b' : '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
+    { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left',    accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
+    { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—',           label: 'Days to exam',  accent: daysToExam !== null && daysToExam <= 3 ? '#ff6b6b' : '#7090d0' },
+    { value: String(tasksDueWeek + overdueTasks),                                                      label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
+    { value: String(streakDays), label: streakTodayDone ? 'Streak safe ✓' : 'Study streak',           accent: streakTodayDone ? '#4ecf9e' : streakDays > 0 ? '#f59e0b' : '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
   ]
 
   return (
     <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 2 }} className="scrollbar-none">
       {cards.map(({ value, label, accent, suffix }, i) => (
-        <div key={label} className="dash-card-in" style={{ flexShrink: 0, minWidth: 110, flex: '1 0 110px', background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '14px 14px 12px', position: 'relative', overflow: 'hidden', animationDelay: `${i * 0.06}s` }}>
-          <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent, borderRadius: '14px 14px 0 0' }} />
-          <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 22, fontWeight: 700, color: accent, lineHeight: 1 }}>
+        <div
+          key={label}
+          className="dash-card-in"
+          style={{
+            flexShrink: 0, minWidth: 112, flex: '1 0 112px',
+            background: `${accent}0d`,
+            border: `1px solid ${accent}38`,
+            borderRadius: 14, padding: '15px 14px 12px',
+            position: 'relative', overflow: 'hidden',
+            animationDelay: `${i * 0.06}s`,
+          }}
+        >
+          <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${accent} 0%,${accent}40 100%)`, borderRadius: '14px 14px 0 0' }} />
+          <div style={{
+            fontFamily: 'JetBrains Mono,monospace', fontSize: 24, fontWeight: 700, color: accent, lineHeight: 1,
+            textShadow: `0 0 24px ${accent}55`,
+          }}>
             {value}{suffix && <span style={{ marginLeft: 4 }}>{suffix}</span>}
           </div>
-          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginTop: 6 }}>{label}</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.42)', marginTop: 7 }}>{label}</div>
         </div>
       ))}
     </div>
@@ -323,7 +576,7 @@ function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
           const colour = (slot.module as Module | undefined)?.color ?? (slot.module as Module | undefined)?.colour ?? '#4ecf9e'
           const moduleName = (slot.module as Module | undefined)?.module_name || 'Class'
           return (
-            <div key={slot.id} style={{ flexShrink: 0, minWidth: 140, padding: '10px 12px', background: '#0d0e14', border: `1px solid ${isNow ? colour + '60' : '#1e1f2e'}`, borderLeft: `2px solid ${colour}`, borderRadius: '0 10px 10px 0', position: 'relative' }}>
+            <div key={slot.id} style={{ flexShrink: 0, minWidth: 140, padding: '10px 12px', background: 'var(--bg-surface)', border: `1px solid ${isNow ? colour + '60' : 'var(--border-subtle)'}`, borderLeft: `2px solid ${colour}`, borderRadius: '0 10px 10px 0', position: 'relative' }}>
               {isNow && <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: colour, textTransform: 'uppercase' }}>NOW</span>}
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>{moduleName}</div>
               {(slot.start_time || slot.venue) && (
@@ -351,7 +604,7 @@ function UrgentTasksStrip({ tasks }: { tasks: Task[] }) {
   if (!urgent.length) return null
 
   return (
-    <section style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 14px' }}>
+    <section style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span className="dot-urgent" style={{ width: 7, height: 7, borderRadius: '50%', background: '#ff6b6b', display: 'inline-block', flexShrink: 0 }} />
@@ -424,9 +677,9 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
         return (
           <Link key={href} href={href} style={{ textDecoration: 'none' }}>
             <div
-              style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: 16, minHeight: 100, cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'border-color 0.2s ease, background 0.2s ease' }}
-              onMouseEnter={e => { ;(e.currentTarget as HTMLElement).style.borderColor = accent + '50'; ;(e.currentTarget as HTMLElement).style.background = '#0f1016' }}
-              onMouseLeave={e => { ;(e.currentTarget as HTMLElement).style.borderColor = '#1e1f2e'; ;(e.currentTarget as HTMLElement).style.background = '#0d0e14' }}
+              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: 16, minHeight: 100, cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'border-color 0.2s ease, background 0.2s ease' }}
+              onMouseEnter={e => { ;(e.currentTarget as HTMLElement).style.borderColor = accent + '50' }}
+              onMouseLeave={e => { ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border-subtle)' }}
             >
               <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.6 }} />
               <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
@@ -451,7 +704,7 @@ function ExamCountdownCard({ exams }: { exams: Exam[] }) {
   const urgencyColor = days <= 1 ? '#ff6b6b' : days <= 3 ? '#c9a84c' : '#7090d0'
 
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '16px 16px 16px 20px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '16px 16px 16px 20px', position: 'relative', overflow: 'hidden' }}>
       <span style={{ position: 'absolute', left: 0, top: 16, bottom: 16, width: 2, background: '#7090d0', borderRadius: '0 1px 1px 0' }} />
       <span style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 80% 20%,rgba(112,144,208,0.06) 0%,transparent 60%)', pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -471,7 +724,7 @@ function ExamCountdownCard({ exams }: { exams: Exam[] }) {
               <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 28, fontWeight: 700, color: '#ff6b6b', lineHeight: 1 }}>TODAY</div>
             ) : (
               <div>
-                <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 48, fontWeight: 700, color: urgencyColor, lineHeight: 1 }}>{days}</div>
+                <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 48, fontWeight: 700, color: urgencyColor, lineHeight: 1, textShadow: `0 0 30px ${urgencyColor}50` }}>{days}</div>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>DAYS</div>
               </div>
             )}
@@ -508,13 +761,13 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: 
   const topCats = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3)
 
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: compact ? 12 : 16 }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: compact ? 12 : 16 }}>
       <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: compact ? 8 : 12 }}>This Month</div>
       <div style={{ display: 'flex', flexDirection: compact ? 'column' : 'row', alignItems: 'center', gap: compact ? 6 : 16 }}>
         <div style={{ flexShrink: 0, position: 'relative', width: size, height: size }}>
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
             <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={sw} />
-            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={ringColor} strokeWidth={sw} strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} />
+            <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={ringColor} strokeWidth={sw} strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} style={{ filter: `drop-shadow(0 0 8px ${ringColor}60)` }} />
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 11 : 16, fontWeight: 700, color: ringColor, lineHeight: 1 }}>{pct}%</div>
@@ -540,30 +793,6 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: 
         </div>
       </div>
     </div>
-  )
-}
-
-/* ── UpgradeCard ─────────────────────────────────────── */
-function UpgradeCard() {
-  return (
-    <Link href="/upgrade" style={{ textDecoration: 'none', display: 'block' }}>
-      <div style={{ background: 'linear-gradient(135deg,rgba(20,15,4,0.98) 0%,rgba(14,12,6,0.98) 100%)', border: '1px solid rgba(201,168,76,0.22)', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
-        <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,#c9a84c 0%,rgba(201,168,76,0.15) 100%)' }} />
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.9)', marginBottom: 4 }}>Go further with Nova</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>More messages. More tools. More you.</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
-            {['250 msgs/mo', 'AI Meal Prep', 'Grade Calc'].map(f => (
-              <span key={f} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(201,168,76,0.08)', border: '0.5px solid rgba(201,168,76,0.22)', color: '#c9a84c' }}>{f}</span>
-            ))}
-          </div>
-          <div style={{ fontSize: 13, color: '#c9a84c', fontFamily: 'JetBrains Mono,monospace', marginBottom: 12 }}>From R39/month</div>
-          <button style={{ width: '100%', background: 'linear-gradient(135deg,#c9a84c 0%,#e8c46a 100%)', color: '#0E0C06', fontFamily: 'Sora,sans-serif', fontWeight: 700, border: 'none', borderRadius: 10, padding: '10px 0', fontSize: 14, cursor: 'pointer' }}>
-            Upgrade now →
-          </button>
-        </div>
-      </div>
-    </Link>
   )
 }
 
@@ -645,7 +874,7 @@ function MobileTasksToday({ tasks, onComplete }: { tasks: Task[]; onComplete: (i
   const allDone = todayTasks.length > 0 && todayTasks.every(t => t.status === 'done')
 
   return (
-    <div className="block md:hidden" style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 14px' }}>
+    <div className="block md:hidden" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', fontWeight: 600 }}>Tasks Today</div>
         <Link href="/study" style={{ fontSize: 10, color: '#9b6fd4', textDecoration: 'none' }}>See all →</Link>
@@ -662,17 +891,17 @@ function MobileTasksToday({ tasks, onComplete }: { tasks: Task[]; onComplete: (i
             const isOverdue = due.getTime() < todayDate.getTime()
             const diffDays = isOverdue ? Math.round((todayDate.getTime() - due.getTime()) / 86400000) : 0
             const modName = task.module?.module_name ?? 'Study'
-            const catS = TASK_CAT_STYLE[modName] ?? { bg: '#1e1f2e', color: '#5a5c70' }
+            const catS = TASK_CAT_STYLE[modName] ?? { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)' }
             return (
               <div key={task.id}>
-                {i > 0 && <div style={{ height: 1, background: '#1e1f2e' }} />}
+                {i > 0 && <div style={{ height: 1, background: 'var(--border-subtle)' }} />}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}>
                   <button
                     onClick={() => !isDone && onComplete(task.id)}
                     aria-label="Complete task"
                     style={{ width: 14, height: 14, borderRadius: 4, border: isDone ? 'none' : '1px solid #3a3b4e', background: isDone ? '#4ecf9e' : 'transparent', flexShrink: 0, cursor: isDone ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                   >
-                    {isDone && <span style={{ fontSize: 9, color: '#0a0b10', lineHeight: 1 }}>✓</span>}
+                    {isDone && <span style={{ fontSize: 9, color: '#000', lineHeight: 1 }}>✓</span>}
                   </button>
                   <span style={{ fontSize: 11, color: isDone ? 'rgba(255,255,255,0.3)' : '#e8e6f0', flex: 1, textDecoration: isDone ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {task.title}
@@ -723,11 +952,11 @@ function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists
   }
 
   return (
-    <div className="hidden md:block" style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '10px 12px' }}>
+    <div className="hidden md:block" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '10px 12px' }}>
       <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', marginBottom: 6, fontWeight: 600 }}>Your Modules</div>
       {MODULE_PILLS.map(({ href, label, icon, iconBg, subColor }, i) => (
         <div key={href}>
-          {i > 0 && <div style={{ height: 1, background: '#1e1f2e' }} />}
+          {i > 0 && <div style={{ height: 1, background: 'var(--border-subtle)' }} />}
           <Link href={href} style={{ textDecoration: 'none' }}>
             <div
               style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 8px', borderRadius: 9, cursor: 'pointer', transition: 'all 0.12s', border: '1px solid transparent' }}
@@ -818,7 +1047,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   // 5. Nova check-in — localStorage cached per day; skipped in Data Saver mode
   useEffect(() => {
-    if (getDataSaverEnabled()) return  // protect prepaid data
+    if (getDataSaverEnabled()) return
     const today = new Date().toISOString().split('T')[0]
     const cachedDate = localStorage.getItem('nova_last_checkin_date')
     const cachedMsg  = localStorage.getItem('nova_checkin_message')
@@ -829,7 +1058,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       .catch(() => {})
   }, [])
 
-  // 6. Streak — session-cached so pull-to-refresh can update it
+  // 6. Streak — session-cached
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
     const cached = sessionStorage.getItem(`streak_${today}`)
@@ -860,7 +1089,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     fetch('/api/push/check-exams').catch(() => {})
   }, [])
 
-  // 8. FCM push notification subscription (once per session)
+  // 8. FCM push notification subscription
   useEffect(() => {
     if (sessionStorage.getItem('fcm_init')) return
     sessionStorage.setItem('fcm_init', '1')
@@ -868,7 +1097,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     import('@/lib/firebase-messaging').then(({ initPushNotifications }) => initPushNotifications(userId)).catch(() => {})
   }, [])
 
-  // 9. Keep currentHour in sync — re-render Day Mode banner on the hour
+  // 9. Keep currentHour in sync
   useEffect(() => {
     const update = () => setCurrentHour(new Date().getHours())
     const now = new Date()
@@ -939,32 +1168,60 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
   const remaining   = totalBudget - monthSpent
   const isPremium   = p?.is_premium || ['premium', 'scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
+  const firstName   = p?.full_name?.split(' ')[0] ?? 'Student'
+
+  // Mode-driven design tokens — everything derives from this
+  const mode  = getDayMode(currentHour)
+  const theme = DASH_THEME[mode]
 
   return (
     <>
-<div className="page-enter min-h-screen" style={{ background: '#0a0b10' }}>
+      <div className="page-enter min-h-screen" style={{ background: 'var(--bg-base)' }}>
 
-        {/* Ambient orbs */}
+        {/* Mode-driven ambient orbs — much more vivid than before */}
         <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', top: '-5%', left: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle,rgba(155,111,212,0.07) 0%,transparent 70%)', filter: 'blur(60px)' }} />
-          <div style={{ position: 'absolute', bottom: '15%', right: '-5%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle,rgba(78,207,158,0.05) 0%,transparent 70%)', filter: 'blur(50px)' }} />
-          <div style={{ position: 'absolute', top: '50%', left: '30%', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle,rgba(201,168,76,0.04) 0%,transparent 70%)', filter: 'blur(40px)' }} />
+          <div className="orb-float" style={{
+            position: 'absolute', top: '-6%', left: '-10%', width: 620, height: 620, borderRadius: '50%',
+            background: `radial-gradient(circle, ${theme.orb1} 0%, transparent 70%)`,
+            filter: 'blur(75px)',
+          }} />
+          <div className="orb-float-r" style={{
+            position: 'absolute', bottom: '12%', right: '-8%', width: 520, height: 520, borderRadius: '50%',
+            background: `radial-gradient(circle, ${theme.orb2} 0%, transparent 70%)`,
+            filter: 'blur(65px)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '48%', left: '28%', width: 360, height: 360, borderRadius: '50%',
+            background: 'radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%)',
+            filter: 'blur(50px)',
+          }} />
         </div>
 
         <PullToRefresh onRefresh={handleRefresh} />
 
-        {/* Topbar */}
-        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: 'rgba(10,11,16,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        {/* Topbar with mode indicator */}
+        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: 'rgba(10,11,16,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.9)', letterSpacing: '-0.01em' }}>
-              {getGreeting()}, {p?.full_name?.split(' ')[0] ?? 'Student'}
+            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em' }}>
+              {getGreeting()}, {firstName}
             </span>
-            {p?.university && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginLeft: 8 }}>{p.university}</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+              <span className="status-live" style={{ width: 5, height: 5, borderRadius: '50%', background: theme.accent, display: 'inline-block' }} />
+              <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: theme.accent, letterSpacing: '0.06em' }}>
+                {MODE_LABEL[mode].label} mode{p?.university ? ` · ${p.university}` : ''}
+              </span>
+            </div>
           </div>
           <div style={{ fontSize: 11, padding: '4px 10px', borderRadius: 9999, background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap', flexShrink: 0 }}>
             {getWeekBadge()}
           </div>
         </div>
+
+        {/* Mode accent line below topbar */}
+        <div style={{
+          position: 'sticky', top: 60, zIndex: 29, height: 1,
+          background: `linear-gradient(90deg, ${theme.accent}70 0%, ${theme.accent}25 50%, transparent 100%)`,
+        }} />
 
         <div style={{ padding: '20px 24px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
@@ -987,23 +1244,39 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
             {/* Column 1 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <DayModeBanner
+
+              {/* OS Command Hero — mode-adaptive, replaces bland DayModeBanner + NovaBanner */}
+              <OSCommandHero
                 timetable={initialData.timetable}
                 tasks={allTasks}
                 exams={allExams}
                 hour={currentHour}
-                firstName={p?.full_name?.split(' ')[0] ?? 'Student'}
+                firstName={firstName}
+                profile={p}
+                subscription={sub}
+                checkinMessage={novaCheckin}
               />
-              <NovaBanner profile={p} subscription={sub} checkinMessage={novaCheckin} />
-              <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 16px' }}>
+
+              {/* Priority command strip — what matters right now */}
+              <PriorityCommandStrip
+                tasks={allTasks}
+                exams={allExams}
+                totalBudget={totalBudget}
+                remaining={remaining}
+              />
+
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 16px' }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
                 <MoodCheckin userId={p.id} />
               </div>
+
               <LevelCard />
               <DailyChallenges />
               <MobileTodayClasses timetable={initialData.timetable} />
               <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
+
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} />
+
               <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
               <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
               <div className="md:hidden"><FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} /></div>
@@ -1022,6 +1295,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <LoadSheddingWidget />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
             </div>
+
           </div>
 
           {!isPremium && <UpgradeBar />}

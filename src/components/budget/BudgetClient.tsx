@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/store'
@@ -12,6 +13,7 @@ import { fmt, calcTotalBudget, cn, exportToCSV, currentMonthRange } from '@/lib/
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import ReceiptScanner from '@/components/budget/ReceiptScanner'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface BudgetClientProps {
   initialData: {
@@ -75,6 +77,7 @@ const NSFAS_DATES = [
 
 export default function BudgetClient({ initialData }: BudgetClientProps) {
   const supabase = createClient()
+  const router = useRouter()
   const { setExpenses } = useAppStore()
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [expenses, setLocalExpenses] = useState<Expense[]>(initialData.expenses)
@@ -144,6 +147,23 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
 
   useEffect(() => {
     loadWalletData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // File Handling API — when a PDF is opened from the Files app, route to Nova for analysis
+  useEffect(() => {
+    if (!('launchQueue' in window)) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).launchQueue.setConsumer(async (launchParams: { files: FileSystemFileHandle[] }) => {
+      if (!launchParams.files.length) return
+      const fileHandle = launchParams.files[0]
+      const file = await fileHandle.getFile()
+      if (file.type === 'application/pdf') {
+        toast('Bank statement detected — opening Nova to analyse it', { icon: '📄' })
+        const prompt = `I just opened my bank statement (${file.name}). Can you help me understand my spending and give me a budget health check based on the filename and context?`
+        router.push(`/nova?prompt=${encodeURIComponent(prompt)}`)
+      }
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -310,7 +330,9 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
     : 'text-white'
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      {/* Kente gold fire — subtle texture for the finance domain */}
+      <AmbientImage zone="budget" opacity={0.055} blurPx={8} saturation={1.4} overlayColor="transparent" />
       <TopBar title="Budget & NSFAS" />
 
       {/* Tab bar */}
@@ -340,54 +362,70 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
         {/* ─── Overview Tab ─── */}
         {activeTab === 'overview' && (
           <>
-            {/* Big donut-style ring */}
+            {/* Budget Overview — SVG donut ring */}
             <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-4">
+              {/* Month + health status */}
+              <div className="flex items-center justify-between mb-5">
                 <div>
-                  <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest">
+                  <div className="font-mono text-[0.56rem] text-white/35 uppercase tracking-widest">
                     {new Date().toLocaleString('en-ZA', { month: 'long', year: 'numeric' })}
                   </div>
-                  <div className="font-display font-black text-2xl text-white mt-0.5">
-                    {fmt.currencyShort(totalSpent)}
-                    <span className="text-white/30 font-normal text-base"> of {fmt.currencyShort(effectiveTotal)}</span>
-                  </div>
+                  <div className="font-display font-bold text-white text-sm mt-0.5">Budget overview</div>
                 </div>
                 <div className={cn(
-                  'font-mono text-[0.65rem] font-bold px-3 py-1.5 rounded-full border',
+                  'font-mono text-[0.6rem] font-bold px-3 py-1.5 rounded-full border',
                   overBudget
                     ? 'bg-red-500/10 text-red-400 border-red-500/20'
                     : spentPct > 80
                     ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                     : 'bg-teal-600/10 text-teal-400 border-teal-600/20'
                 )}>
-                  {overBudget ? '⚠️ Over budget' : `${spentPct}% spent`}
+                  {overBudget ? '⚠ Over budget' : spentPct > 80 ? '⚡ Almost out' : '✓ On track'}
                 </div>
               </div>
 
-              {/* Progress ring bar */}
-              <div className="h-3 bg-white/8 rounded-full overflow-hidden mb-4">
-                <div
-                  className={cn(
-                    'h-full rounded-full transition-all duration-700',
-                    overBudget ? 'bg-red-500' : spentPct > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-teal-600 to-teal-400'
-                  )}
-                  style={{ width: `${Math.min(100, spentPct)}%` }}
-                />
-              </div>
-
-              {/* Stats row */}
-              <div className="grid grid-cols-4 gap-3">
-                {[
-                  { label: 'Remaining', value: fmt.currencyShort(Math.max(0, remaining)), colour: overBudget ? 'text-red-400' : 'text-teal-400' },
-                  { label: 'Spent', value: fmt.currencyShort(totalSpent), colour: 'text-white' },
-                  { label: 'Budget', value: fmt.currencyShort(totalBudget), colour: 'text-white/60' },
-                  { label: 'Income', value: fmt.currencyShort(totalIncome), colour: 'text-teal-400' },
-                ].map(stat => (
-                  <div key={stat.label} className="text-center">
-                    <div className={cn('font-display font-black text-lg', stat.colour)}>{stat.value}</div>
-                    <div className="font-mono text-[0.55rem] text-white/30 uppercase">{stat.label}</div>
+              {/* Donut + stats */}
+              <div className="flex items-center gap-5">
+                {/* SVG donut */}
+                <div className="relative flex-shrink-0">
+                  <svg width="108" height="108" viewBox="0 0 108 108" style={{ transform: 'rotate(-90deg)' }}>
+                    <circle cx="54" cy="54" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="11" />
+                    <circle
+                      cx="54" cy="54" r="42" fill="none"
+                      stroke={overBudget ? '#ef4444' : spentPct > 80 ? '#f59e0b' : '#0d9488'}
+                      strokeWidth="11" strokeLinecap="round"
+                      strokeDasharray={`${(Math.min(100, spentPct) / 100) * 263.9} 263.9`}
+                      style={{
+                        transition: 'stroke-dasharray 0.9s cubic-bezier(0.34,1.56,0.64,1)',
+                        filter: `drop-shadow(0 0 8px ${overBudget ? 'rgba(239,68,68,0.4)' : spentPct > 80 ? 'rgba(245,158,11,0.35)' : 'rgba(13,148,136,0.4)'})`,
+                      }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className={cn(
+                      'font-display font-black text-xl leading-none',
+                      overBudget ? 'text-red-400' : spentPct > 80 ? 'text-amber-400' : 'text-teal-400'
+                    )}>
+                      {spentPct}%
+                    </div>
+                    <div className="font-mono text-[0.45rem] text-white/25 uppercase tracking-widest mt-0.5">spent</div>
                   </div>
-                ))}
+                </div>
+
+                {/* Stats grid */}
+                <div className="flex-1 grid grid-cols-2 gap-x-4 gap-y-3">
+                  {[
+                    { label: 'Remaining', value: fmt.currencyShort(Math.max(0, remaining)), colour: overBudget ? 'text-red-400' : 'text-teal-400' },
+                    { label: 'Spent',  value: fmt.currencyShort(totalSpent),    colour: 'text-white' },
+                    { label: 'Budget', value: fmt.currencyShort(totalBudget),   colour: 'text-white/55' },
+                    { label: 'Income', value: fmt.currencyShort(totalIncome),   colour: 'text-teal-400' },
+                  ].map(stat => (
+                    <div key={stat.label}>
+                      <div className={cn('font-display font-black text-base leading-none', stat.colour)}>{stat.value}</div>
+                      <div className="font-mono text-[0.48rem] text-white/25 uppercase tracking-wide mt-1">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 

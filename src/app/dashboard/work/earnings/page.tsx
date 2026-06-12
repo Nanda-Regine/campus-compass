@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import TopBar from '@/components/layout/TopBar'
 import { type WorkShift } from '@/types'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface MonthSummary {
   month: string
@@ -56,7 +57,8 @@ export default function EarningsPage() {
   const thisMonth = sorted[0]
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="budget" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Earnings" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 

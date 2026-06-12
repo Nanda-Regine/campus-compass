@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import TopBar from '@/components/layout/TopBar'
 import ReferralWidget from '@/components/referral/ReferralWidget'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { SA_UNIVERSITIES, SA_LANGUAGES } from '@/types'
 import { cn } from '@/lib/utils'
@@ -13,6 +14,8 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
 import BadgesPanel from '@/components/gamification/BadgesPanel'
 import VarsityScore from '@/components/gamification/VarsityScore'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { getStoredLocale, type AppLocale } from '@/lib/i18n/IntlProvider'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -151,6 +154,9 @@ export default function ProfileClient() {
   const [dietaryPref, setDietaryPref] = useState('')
   const [livingSituation, setLivingSituation] = useState('')
   const [aiLanguage, setAiLanguage] = useState('')
+  const [uiLocale, setUiLocale] = useState<AppLocale>('en')
+
+  useEffect(() => { setUiLocale(getStoredLocale()) }, [])
 
   const [activeSection, setActiveSection] = useState<'profile' | 'preferences' | 'account' | 'progress'>('profile')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
@@ -227,7 +233,7 @@ export default function ProfileClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pb-24" style={{ background: '#0a0a0a' }}>
+      <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
         <TopBar title="Profile" />
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-3">
           {[...Array(4)].map((_, i) => (
@@ -241,16 +247,19 @@ export default function ProfileClient() {
   const isPremium = profile?.is_premium ?? false
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen pb-28" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="wellness" opacity={0.05} blurPx={10} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Profile" />
 
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
 
         {/* ── Hero card ────────────────────────────────────────────────────── */}
-        <div className="relative rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f1a18 0%, #0c1215 100%)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="relative rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f1a18 0%, #0c1215 100%)', border: '1px solid rgba(13,148,136,0.18)', boxShadow: '0 0 40px rgba(13,148,136,0.06)' }}>
           {/* Gradient orbs */}
-          <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%)' }} />
-          <div className="absolute -bottom-6 -left-6 w-36 h-36 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(8,145,178,0.08) 0%, transparent 70%)' }} />
+          <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(13,148,136,0.14) 0%, transparent 70%)' }} />
+          <div className="absolute -bottom-6 -left-6 w-36 h-36 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(8,145,178,0.1) 0%, transparent 70%)' }} />
+          {/* Top accent line */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #0d9488, #0891b2, transparent)' }} />
 
           <div className="relative p-5">
             <div className="flex items-start gap-4">
@@ -270,7 +279,7 @@ export default function ProfileClient() {
                 </button>
                 <div
                   className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5rem]"
-                  style={{ background: '#0d9488', border: '2px solid #0a0a0a' }}
+                  style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}
                 >
                   ✏️
                 </div>
@@ -334,13 +343,14 @@ export default function ProfileClient() {
         {stats && (
           <div className="grid grid-cols-3 gap-2.5">
             {/* Nova messages */}
-            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(13,148,136,0.07)', border: '1px solid rgba(13,148,136,0.15)' }}>
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(13,148,136,0.07)', border: '1px solid rgba(13,148,136,0.18)' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #0d9488, transparent)' }} />
               <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(77,182,172,0.6)' }}>Nova</p>
               <p className="font-display font-black text-xl" style={{ color: '#4db6ac' }}>
                 {stats.novaLimit === null ? stats.novaMessagesUsed : `${stats.novaMessagesUsed}`}
               </p>
               <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                {stats.novaLimit === null ? 'unlimited' : `/ ${stats.novaLimit} msgs`}
+                {stats.novaLimit === null ? 'unlimited' : `/ ${stats.novaLimit}`}
               </p>
               {stats.novaLimit !== null && (
                 <div className="h-1 rounded-full mt-0.5" style={{ background: 'rgba(255,255,255,0.07)' }}>
@@ -349,6 +359,7 @@ export default function ProfileClient() {
                     style={{
                       width: `${Math.min(100, (stats.novaMessagesUsed / stats.novaLimit) * 100)}%`,
                       background: 'linear-gradient(90deg, #0d9488, #0891b2)',
+                      transition: 'width 0.6s ease',
                     }}
                   />
                 </div>
@@ -356,7 +367,8 @@ export default function ProfileClient() {
             </div>
 
             {/* Study time */}
-            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(212,168,71,0.07)', border: '1px solid rgba(212,168,71,0.15)' }}>
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(212,168,71,0.07)', border: '1px solid rgba(212,168,71,0.18)' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d4a847, transparent)' }} />
               <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(212,168,71,0.6)' }}>Study</p>
               <p className="font-display font-black text-xl" style={{ color: '#d4a847' }}>
                 {stats.totalStudyMinutesThisMonth >= 60
@@ -367,7 +379,8 @@ export default function ProfileClient() {
             </div>
 
             {/* Referrals */}
-            <div className="rounded-2xl p-4 flex flex-col gap-1.5" style={{ background: 'rgba(217,120,84,0.07)', border: '1px solid rgba(217,120,84,0.15)' }}>
+            <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(217,120,84,0.07)', border: '1px solid rgba(217,120,84,0.18)' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
               <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(217,120,84,0.6)' }}>Refs</p>
               <p className="font-display font-black text-xl" style={{ color: '#d97b54' }}>{stats.referralCount}</p>
               <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>+{stats.referralCredits} earned</p>
@@ -455,6 +468,10 @@ export default function ProfileClient() {
             </div>
 
             <SaveButton onClick={handleSave} saving={saving} label="Save preferences" />
+
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <LanguageSwitcher currentLocale={uiLocale} onChange={setUiLocale} />
+            </div>
 
             <div className="pt-1">
               <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
@@ -620,7 +637,7 @@ export default function ProfileClient() {
       {/* ── Account deletion modal ───────────────────────────────────────────── */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
-          <div className="w-full max-w-sm rounded-2xl overflow-hidden" style={{ background: '#0f0c09', border: '1px solid rgba(239,68,68,0.25)' }}>
+          <div className="w-full max-w-sm rounded-2xl overflow-hidden" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(239,68,68,0.25)' }}>
             <div className="p-6">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: 'rgba(239,68,68,0.1)' }}>
                 ⚠️

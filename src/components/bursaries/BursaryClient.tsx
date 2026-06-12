@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Search, ChevronDown, ChevronUp, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react'
 import { BURSARIES, filterBursaries, type Bursary, type BursaryBasisFilter } from '@/lib/bursary-data'
 import { loadSavedBursaries, saveBursary, unsaveBursary } from '@/lib/db/saved-bursaries'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ── Basis filter options ──────────────────────────────────────────────────────
 
@@ -252,7 +253,9 @@ export default function BursaryClient() {
   const dueCount = results.length
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      {/* Holographic iridescent — cosmic funding energy */}
+      <AmbientImage zone="nsfas" opacity={0.05} blurPx={10} saturation={1.5} overlayColor="transparent" />
       {/* Page header */}
       <div style={{
         padding: '20px 20px 0',

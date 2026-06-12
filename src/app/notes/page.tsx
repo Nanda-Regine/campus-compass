@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import TopBar from '@/components/layout/TopBar'
 import NotesMarketplace from '@/components/notes/NotesMarketplace'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Notes Marketplace · VarsityOS' }
 
@@ -24,7 +25,8 @@ export default async function NotesPage() {
     .single()
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="study" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Notes" />
       <NotesMarketplace
         userId={user.id}

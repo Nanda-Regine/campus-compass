@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TopBar from '@/components/layout/TopBar'
+import CampusLifeHub from '@/components/campus/CampusLifeHub'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const GUIDES = [
   {
@@ -100,11 +102,27 @@ export default async function CampusLifePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  const { data: profile } = await supabase
+    .from('profiles').select('university').eq('id', user.id).single()
+  const institution = profile?.university ?? ''
+
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      {/* Bold multi-colour — community energy */}
+      <AmbientImage zone="community" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Campus Life" />
 
+      {/* Campus Life OS hub — Library, Events, Safety, Map */}
+      <div className="max-w-2xl mx-auto">
+        <CampusLifeHub institution={institution} />
+      </div>
+
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
+
+        {/* Wellness guides header */}
+        <div className="font-mono text-[0.6rem] uppercase tracking-widest px-1 pt-2 pb-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+          Real talk — open a Nova conversation
+        </div>
 
         {/* Header */}
         <div

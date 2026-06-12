@@ -8,6 +8,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import { type JobType, type PayType, JOB_TYPE_LABELS } from '@/types'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const JOB_TYPES: JobType[] = ['retail','food_service','tutoring','call_centre','campus_job','freelance','gig','other']
 const PAY_TYPES: { value: PayType; label: string }[] = [
@@ -76,7 +77,8 @@ export default function AddJobPage() {
     setForm(prev => ({ ...prev, [key]: value }))
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="career" opacity={0.055} blurPx={8} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Add Job" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">

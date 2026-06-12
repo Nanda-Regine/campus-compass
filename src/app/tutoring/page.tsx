@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import TopBar from '@/components/layout/TopBar'
 import TutoringMarketplace from '@/components/tutoring/TutoringMarketplace'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Peer Tutoring · VarsityOS' }
 
@@ -24,7 +25,8 @@ export default async function TutoringPage() {
     .single()
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="schedule" opacity={0.055} blurPx={8} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Tutoring" />
       <TutoringMarketplace
         userId={user.id}

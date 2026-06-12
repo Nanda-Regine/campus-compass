@@ -6,6 +6,7 @@ import TopBar from '@/components/layout/TopBar'
 import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
 import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface MealsClientProps {
   initialData: {
@@ -272,29 +273,49 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     await supabase.from('grocery_items').delete().in('id', checkedIds)
   }
 
+  const TAB_ACCENTS: Record<TabId, string> = {
+    ai_plan: '#f59e0b',
+    weekly:  '#4ecf9e',
+    grocery: '#7090d0',
+    recipes: '#e8834a',
+  }
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      {/* Terracotta earth tones — African soil energy for the food domain */}
+      <AmbientImage zone="meals" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Meal Prep" />
 
       {/* Tabs */}
-      <div className="sticky top-[57px] z-20 bg-[var(--bg-base)] border-b border-white/7">
+      <div className="sticky top-[57px] z-20 border-b border-white/7" style={{ background: 'var(--bg-base)', transition: 'background 0.3s' }}>
+        {/* Budget bar */}
+        {initialData.foodBudget > 0 && (
+          <div className="flex items-center gap-2 px-4 pt-2 pb-0 max-w-2xl mx-auto">
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
+            {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
+            )}
+          </div>
+        )}
         <div className="flex px-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'flex-shrink-0 flex items-center gap-1.5 px-3 py-3 font-display text-xs font-bold transition-all relative whitespace-nowrap',
-                activeTab === tab.id ? 'text-teal-400' : 'text-white/40 hover:text-white/70'
-              )}
-            >
-              <span className="hidden sm:inline">{tab.icon}</span>
-              {tab.label}
-              {activeTab === tab.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-t-full" />
-              )}
-            </button>
-          ))}
+          {TABS.map(tab => {
+            const tabAccent = TAB_ACCENTS[tab.id]
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-3 font-display text-xs font-bold transition-all relative whitespace-nowrap"
+                style={{
+                  color: activeTab === tab.id ? tabAccent : 'rgba(255,255,255,0.4)',
+                  borderBottom: activeTab === tab.id ? `2px solid ${tabAccent}` : '2px solid transparent',
+                }}
+              >
+                <span className="hidden sm:inline">{tab.icon}</span>
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -303,16 +324,6 @@ export default function MealsClient({ initialData }: MealsClientProps) {
         {/* ─── AI Planner Tab ─── */}
         {activeTab === 'ai_plan' && (
           <>
-            {/* Budget context */}
-            {initialData.foodBudget > 0 && (
-              <div className="bg-teal-900/20 border border-teal-600/20 rounded-2xl px-4 py-3 flex items-center gap-3">
-                <span className="text-teal-400">💰</span>
-                <div className="font-mono text-[0.62rem] text-teal-400">
-                  Food budget: {fmt.currencyShort(initialData.foodBudget)}/month · {fmt.currencyShort(initialData.foodBudget / 30)}/day
-                </div>
-              </div>
-            )}
-
             {/* AI Weekly Plan Generator */}
             <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="flex items-center gap-3 mb-3">

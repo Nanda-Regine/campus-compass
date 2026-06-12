@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata: Metadata = {
   title: 'VarsityOS — Free Student Super-App for South African University & TVET Students',
@@ -232,7 +233,7 @@ export default function LandingPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#060c18' }}>
+      <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#05040C' }}>
 
         {/* ── 1. NAVBAR ──────────────────────────────────────────────────────── */}
         <nav
@@ -241,7 +242,7 @@ export default function LandingPage() {
           style={{ borderBottom: '1px solid rgba(59,130,246,0.12)', backdropFilter: 'blur(20px)', background: 'rgba(6,12,24,0.92)' }}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(13,148,136,0.4)', background: 'rgba(13,148,136,0.15)' }}>
+            <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(168,85,247,0.4)', background: 'rgba(168,85,247,0.12)' }}>
               <Image src="/varsityOS.png" alt="VarsityOS" width={32} height={32} className="object-contain" />
             </div>
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
@@ -256,7 +257,7 @@ export default function LandingPage() {
             <Link
               href="/auth/signup"
               className="font-display text-xs font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
-              style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', color: '#fff', boxShadow: '0 2px 12px rgba(59,130,246,0.3)' }}
+              style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 2px 12px rgba(168,85,247,0.35)' }}
             >
               Get started free
             </Link>
@@ -265,25 +266,28 @@ export default function LandingPage() {
 
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
         <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
-          {/* Vivid multi-color background glow */}
+          {/* Ambient hero image — cinematic Afrofuturist layer */}
+          <AmbientImage zone="onboarding" opacity={0.09} blurPx={5} saturation={1.4}
+            overlayColor="linear-gradient(180deg,rgba(5,4,12,0.35) 0%,rgba(5,4,12,0.15) 100%)" />
+          {/* Afrofuturist nebula glow */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-            <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: 'min(700px, 180vw)', height: '500px', background: 'radial-gradient(ellipse, rgba(59,130,246,0.22) 0%, transparent 65%)', filter: 'blur(40px)' }} />
-            <div style={{ position: 'absolute', top: '-40px', right: '-100px', width: 'min(500px, 130vw)', height: '400px', background: 'radial-gradient(ellipse, rgba(13,148,136,0.2) 0%, transparent 65%)', filter: 'blur(50px)' }} />
-            <div style={{ position: 'absolute', top: '80px', left: '-60px', width: 'min(400px, 110vw)', height: '300px', background: 'radial-gradient(ellipse, rgba(224,120,88,0.15) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+            <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: 'min(700px, 180vw)', height: '500px', background: 'radial-gradient(ellipse, rgba(168,85,247,0.20) 0%, transparent 65%)', filter: 'blur(40px)' }} />
+            <div style={{ position: 'absolute', top: '-40px', right: '-100px', width: 'min(500px, 130vw)', height: '400px', background: 'radial-gradient(ellipse, rgba(0,207,160,0.16) 0%, transparent 65%)', filter: 'blur(50px)' }} />
+            <div style={{ position: 'absolute', top: '80px', left: '-60px', width: 'min(400px, 110vw)', height: '300px', background: 'radial-gradient(ellipse, rgba(212,168,75,0.12) 0%, transparent 65%)', filter: 'blur(40px)' }} />
           </div>
 
           <div className="relative">
             <div
               className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs mb-7"
-              style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', color: '#93c5fd' }}
+              style={{ background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.30)', color: '#c084fc' }}
             >
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#3b82f6' }} aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#A855F7' }} aria-hidden="true" />
               Built for 11 million SA students
             </div>
 
             <h1 id="hero-heading" className="font-display font-black text-white leading-[1.05] mb-5" style={{ fontSize: 'clamp(2.4rem, 7vw, 4.5rem)' }}>
               Your varsity life,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #3b82f6, #06b6d4, #0d9488)' }}>
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0, #D4A84B)' }}>
                 finally under control.
               </span>
             </h1>
@@ -296,7 +300,7 @@ export default function LandingPage() {
               <Link
                 href="/auth/signup"
                 className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
-                style={{ background: 'linear-gradient(135deg, #3b82f6, #0d9488)', color: '#fff', boxShadow: '0 4px 24px rgba(59,130,246,0.4)' }}
+                style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 4px 24px rgba(168,85,247,0.45)' }}
               >
                 Start for free — no card needed
               </Link>

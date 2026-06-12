@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ─── Demo screens data ────────────────────────────────────────────────────────
 
@@ -320,10 +321,11 @@ export default function DemoPage() {
   const demo = DEMOS[active]
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#060c18', color: '#fff', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100dvh', background: '#05040C', color: '#fff', overflowX: 'hidden', position: 'relative' }}>
+      <AmbientImage zone="dashboard" opacity={0.07} blurPx={6} saturation={1.4} overlayColor="transparent" />
 
       {/* Nav */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'rgba(6,12,24,0.92)', borderBottom: '1px solid rgba(59,130,246,0.1)', backdropFilter: 'blur(20px)' }}>
+      <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'rgba(5,4,12,0.92)', borderBottom: '1px solid rgba(148,111,255,0.12)', backdropFilter: 'blur(20px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 30, height: 30, borderRadius: '50%', overflow: 'hidden', background: 'rgba(13,148,136,0.15)' }}>
             <Image src="/varsityOS.png" alt="VarsityOS" width={30} height={30} style={{ objectFit: 'contain' }} />

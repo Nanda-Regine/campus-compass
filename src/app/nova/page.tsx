@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface Resource {
   title: string
@@ -131,37 +132,59 @@ function NovaDailyBrief({
       className="flex flex-col items-center justify-start px-4 pt-6 pb-2 animate-fade-up"
       style={{ minHeight: '50vh' }}
     >
-      {/* Avatar */}
-      <div
-        style={{
-          width: 72, height: 72, borderRadius: 22,
-          background: 'linear-gradient(135deg, rgba(88,28,135,0.5) 0%, rgba(13,92,80,0.5) 100%)',
-          border: '1px solid rgba(192,132,252,0.2)',
+      {/* Avatar with animated pulse rings */}
+      <div style={{ position: 'relative', marginBottom: 18, flexShrink: 0 }}>
+        {/* Outer pulse ring */}
+        <div style={{
+          position: 'absolute', inset: -12,
+          borderRadius: 32, border: '1px solid rgba(192,132,252,0.12)',
+          animation: 'novaPulse 3s ease-in-out infinite',
+        }} />
+        {/* Mid pulse ring */}
+        <div style={{
+          position: 'absolute', inset: -6,
+          borderRadius: 28, border: '1px solid rgba(192,132,252,0.18)',
+          animation: 'novaPulse 3s ease-in-out infinite 0.5s',
+        }} />
+        <div style={{
+          width: 76, height: 76, borderRadius: 22,
+          background: 'linear-gradient(135deg, rgba(88,28,135,0.65) 0%, rgba(13,92,80,0.65) 100%)',
+          border: '1px solid rgba(192,132,252,0.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 32, marginBottom: 16, flexShrink: 0,
-        }}
-      >
-        🌟
+          fontSize: 34, boxShadow: '0 0 30px rgba(155,111,212,0.2)',
+        }}>
+          🌟
+        </div>
+        {/* Live indicator */}
+        <div style={{
+          position: 'absolute', bottom: 2, right: 2,
+          width: 12, height: 12, borderRadius: '50%',
+          background: '#4ecf9e', border: '2px solid var(--bg-base)',
+          boxShadow: '0 0 6px rgba(78,207,158,0.6)',
+          animation: 'statusLive 2s ease-in-out infinite',
+        }} />
       </div>
 
       {/* Greeting */}
       <h2
         style={{
           fontFamily: 'var(--font-display)', fontWeight: 900,
-          fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: 4, textAlign: 'center',
+          fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: 4, textAlign: 'center',
+          letterSpacing: '-0.02em',
         }}
       >
         {greeting}{firstName ? `, ${firstName}` : ''}
       </h2>
       <p
         style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-          color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 20, lineHeight: 1.6,
+          fontFamily: 'var(--font-mono)', fontSize: '0.63rem',
+          color: 'rgba(255,255,255,0.38)', textAlign: 'center', marginBottom: 20, lineHeight: 1.6,
+          maxWidth: 280,
         }}
       >
         {cards.length > 0
-          ? "Here's your daily brief — I'm ready to help."
-          : "Your AI companion for varsity life. I already know your semester."}
+          ? "Your daily brief is ready — I already know your semester."
+          : "Your AI companion for varsity life. Ask me anything."}
       </p>
 
       {/* Brief cards */}
@@ -179,16 +202,32 @@ function NovaDailyBrief({
               onClick={() => card.prompt && onPrompt(card.prompt)}
               disabled={!card.prompt}
               style={{
-                background: `${card.color}10`,
-                border: `0.5px solid ${card.color}30`,
-                borderRadius: 14, padding: '10px 12px',
+                background: `${card.color}0d`,
+                border: `1px solid ${card.color}25`,
+                borderRadius: 16, padding: '12px 14px',
                 textAlign: 'left', cursor: card.prompt ? 'pointer' : 'default',
-                transition: 'background 0.15s',
+                transition: 'all 0.2s',
+                position: 'relative', overflow: 'hidden',
               }}
             >
-              <div style={{ fontSize: 16, marginBottom: 4 }}>{card.icon}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', marginBottom: 2 }}>{card.label}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.8rem', color: card.color }}>{card.value}</div>
+              {/* Top accent line */}
+              <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+                background: `linear-gradient(90deg, ${card.color}60, transparent)`,
+                borderRadius: '16px 16px 0 0',
+              }} />
+              <div style={{ fontSize: 18, marginBottom: 6 }}>{card.icon}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'rgba(255,255,255,0.3)', marginBottom: 2, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                {card.label}
+              </div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: card.color, letterSpacing: '-0.01em' }}>
+                {card.value}
+              </div>
+              {card.prompt && (
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.46rem', color: card.color, opacity: 0.5, marginTop: 4 }}>
+                  Tap to ask →
+                </div>
+              )}
             </button>
           ))}
         </div>
@@ -295,10 +334,18 @@ export default function NovaPage() {
     loadHistory()
   }, [router])
 
-  // Pre-fill input from ?prompt= URL parameter (e.g. from Bursary Finder)
+  // Pre-fill input from ?prompt= (bursary deep-links) or ?text=/?url= (Web Share Target API)
   useEffect(() => {
     const prompt = searchParams.get('prompt')
-    if (prompt) setInput(decodeURIComponent(prompt))
+    const sharedText = searchParams.get('text')
+    const sharedUrl = searchParams.get('url')
+    const sharedTitle = searchParams.get('title')
+    if (prompt) {
+      setInput(decodeURIComponent(prompt))
+    } else if (sharedText || sharedUrl) {
+      const parts = [sharedTitle, sharedText, sharedUrl].filter(Boolean)
+      setInput(parts.join(' — '))
+    }
   }, [searchParams])
 
   const sendMessage = async (messageText?: string) => {
@@ -394,7 +441,10 @@ export default function NovaPage() {
   const usageLeft = messageLimit - messageCount
 
   return (
-    <div className="chat-page-height flex flex-col bg-[var(--bg-base)]">
+    <div className="chat-page-height flex flex-col bg-[var(--bg-base)]" style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* Nova deep-space ambient — grainy nebula behind the chat */}
+      <AmbientImage zone="nova" opacity={0.08} blurPx={6} saturation={1.6}
+        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.5) 0%,rgba(10,9,23,0.2) 100%)" />
       <TopBar
         title="Nova"
         action={

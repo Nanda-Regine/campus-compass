@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import TopBar from '@/components/layout/TopBar'
 import { fmt } from '@/lib/utils'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface StreakData {
   streak: number
@@ -127,7 +128,8 @@ export default function StreakPage() {
   const streakColor = (s: number) => s >= 7 ? '#f59e0b' : s >= 3 ? '#f97316' : '#0d9488'
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="habits" opacity={0.06} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Streaks & Goals" />
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-5">

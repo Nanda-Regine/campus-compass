@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import TopBar from '@/components/layout/TopBar'
 import SocialClient from '@/components/social/SocialClient'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Campus Feed · VarsityOS' }
 
@@ -24,7 +25,8 @@ export default async function SocialPage() {
     .single()
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="community" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Social" />
       <SocialClient
         userId={user.id}

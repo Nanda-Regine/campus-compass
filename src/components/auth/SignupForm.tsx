@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react'
 
 const schema = z.object({
@@ -65,7 +66,8 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+      <AmbientImage zone="onboarding" opacity={0.07} blurPx={6} saturation={1.4} overlayColor="transparent" />
       <div className="px-5 pt-12 pb-8 text-center">
         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
