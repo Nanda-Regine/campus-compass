@@ -444,6 +444,16 @@ ALUMNI — GIVE BACK
 - [x] DB layer: `src/lib/db/grades.ts`, `exam-confidence.ts`, `saved-bursaries.ts`
 - [x] GpaCalculator rows state lifted to parent GradesTab so both views share one save cycle
 
+### Sprint 8B — Onboarding + Push Notifications (Month 5) 🔔 ✅
+- [x] **SetupFlow upgraded to 6 steps**: Added Step 6 — "Stay on track" push notification opt-in with `ExamPushBanner` inline, notification type preview list, and PWA install prompt
+- [x] **XP dispatch on onboarding complete**: `dispatchXP('task_complete')` fires at the end of setup so the student's journey starts with a reward
+- [x] **Supabase admin client** (`src/lib/supabase/admin.ts`): service role client for server-to-server operations — bypasses RLS, used only in cron routes
+- [x] **`push-notify.ts` helper**: shared server util to send push to all subscriptions for a user, auto-cleans stale (410) subscriptions
+- [x] **Vercel Cron — exam reminders** (`/api/cron/exam-reminders`): runs daily at 09:00 SAST, sends reminders to all subscribed users for exams 1, 3, and 7 days away — fully background, no user action needed
+- [x] **Vercel Cron — wellness nudge** (`/api/cron/wellness-nudge`): runs daily at 19:00 SAST, sends evening check-in prompt to users who haven't logged a wellness entry today
+- [x] **`vercel.json`**: cron schedule configuration for both jobs
+- [x] **VAPID keys generated** — add to Vercel env vars: `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`
+
 ### Sprint 8C — Nova Intelligence Upgrade (Month 5) 🧠 ✅
 - [x] **`buildStudentContext` enriched**: 5 new parallel Supabase queries — wellness check-ins (last 7 days), XP state, exam confidence map, grade module averages, saved bursaries
 - [x] **Wellness context**: latest score + trend (improving/stable/declining) + days since last check-in — injected into every Nova conversation

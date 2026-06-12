@@ -10,8 +10,10 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import PWAInstallBanner from '@/components/PWAInstallBanner'
+import ExamPushBanner from '@/components/study/ExamPushBanner'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
+import { dispatchXP } from '@/lib/xp-engine'
 
 // Detect SA university from email domain
 const UNIVERSITY_DOMAINS: Record<string, string> = {
@@ -115,7 +117,7 @@ export default function SetupFlow() {
   const [living,       setLiving]       = useState('')
   const [diet,         setDiet]         = useState('No restrictions')
 
-  const totalSteps = 5
+  const totalSteps = 6
 
   const goNext = () => setStep(s => Math.min(s + 1, totalSteps - 1))
   const goBack = () => setStep(s => Math.max(s - 1, 0))
@@ -210,6 +212,9 @@ export default function SetupFlow() {
         await supabase.from('modules').insert(moduleRows)
       }
 
+      // Award XP for completing onboarding
+      dispatchXP('task_complete', 'Completed VarsityOS onboarding')
+
       toast.success('All set! Welcome to VarsityOS 🎉')
       router.push('/dashboard')
       router.refresh()
@@ -254,7 +259,7 @@ export default function SetupFlow() {
           {/* STEP 0 — Name & avatar */}
           {step === 0 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 1 of 5</div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 1 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Hey! What&apos;s your name?</h2>
               <p className="text-sm text-white/50 mb-5">Let&apos;s personalise your VarsityOS.</p>
 
@@ -293,7 +298,7 @@ export default function SetupFlow() {
           {/* STEP 1 — University */}
           {step === 1 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 2 of 5</div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 2 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Where are you studying?</h2>
               <p className="text-sm text-white/50 mb-5">We&apos;ll customise your experience.</p>
 
@@ -349,7 +354,7 @@ export default function SetupFlow() {
           {/* STEP 2 — Funding & budget */}
           {step === 2 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 3 of 5</div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 3 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">How are you funded?</h2>
               <p className="text-sm text-white/50 mb-5">We&apos;ll help you track every rand.</p>
 
@@ -393,7 +398,7 @@ export default function SetupFlow() {
           {/* STEP 3 — Modules */}
           {step === 3 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 4 of 5</div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 4 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">What are you studying?</h2>
               <p className="text-sm text-white/50 mb-5">Add your modules. You can edit these anytime.</p>
 
@@ -442,7 +447,7 @@ export default function SetupFlow() {
           {/* STEP 4 — Food & living */}
           {step === 4 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 5 of 5</div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 5 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Food & living situation</h2>
               <p className="text-sm text-white/50 mb-5">Help us give you the most relevant tips.</p>
 
@@ -489,8 +494,40 @@ export default function SetupFlow() {
                   onChange={e => setFoodBudget(e.target.value)}
                 />
 
-                {/* PWA install prompt on last step */}
-                <div className="pt-2">
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 — Notifications opt-in */}
+          {step === 5 && (
+            <div>
+              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Almost done!</div>
+              <h2 className="font-display font-black text-xl text-white mb-1">Stay on track 🔔</h2>
+              <p className="text-sm text-white/50 mb-5">
+                Get exam reminders and wellness nudges — even when the app is closed.
+              </p>
+
+              <div className="space-y-4">
+                <ExamPushBanner />
+
+                <div className="p-4 bg-white/3 border border-white/8 rounded-xl space-y-2.5">
+                  {([
+                    ['📚', '3 days before each exam'],
+                    ['⚡', '24 hours before exam day'],
+                    ['💚', 'Evening wellness check-in nudge'],
+                  ] as [string, string][]).map(([icon, text]) => (
+                    <div key={text} className="flex items-center gap-3">
+                      <span className="text-base">{icon}</span>
+                      <span className="font-mono text-[0.62rem] text-white/50">{text}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="font-mono text-[0.57rem] text-white/25">
+                  You can turn these off any time in your Profile settings.
+                </p>
+
+                <div className="pt-1">
                   <PWAInstallBanner variant="card" />
                 </div>
               </div>
