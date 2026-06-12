@@ -18,6 +18,11 @@ import { getDataSaverEnabled } from '@/lib/dataSaver'
 import LevelCard from '@/components/gamification/LevelCard'
 import DailyChallenges from '@/components/gamification/DailyChallenges'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import InterventionBanner from '@/components/orchestration/InterventionBanner'
+import InterventionModal from '@/components/orchestration/InterventionModal'
+import DailyBrief from '@/components/orchestration/DailyBrief'
+import SundayPlanning from '@/components/orchestration/SundayPlanning'
+import WeatherWidget from '@/components/dashboard/WeatherWidget'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -760,70 +765,76 @@ const LIFE_DOMAINS = [
   {
     name: 'Mind', emoji: '🧠', color: '#00CFA0',
     modules: [
-      { label: 'Study',      href: '/study',            icon: '📚' },
-      { label: 'Exams',      href: '/study',            icon: '✏️' },
-      { label: 'Flashcards', href: '/study/flashcards', icon: '🃏' },
-      { label: 'Streak',     href: '/streak',           icon: '🔥' },
+      { label: 'Study Tools', href: '/study',         icon: '📚' },
+      { label: 'Flashcards',  href: '/study',         icon: '🃏' },
+      { label: 'Streak',      href: '/streak',        icon: '🔥' },
+      { label: 'Nova AI',     href: '/nova',          icon: '✦' },
     ],
   },
   {
     name: 'Body', emoji: '🌿', color: '#FF6B9E',
     modules: [
-      { label: 'Meals',    href: '/meals',    icon: '🍲' },
-      { label: 'Wellness', href: '/wellness', icon: '💆' },
+      { label: 'Fitness',   href: '/fitness', icon: '💪' },
+      { label: 'Health',    href: '/health',  icon: '🏥' },
+      { label: 'Meals',     href: '/meals',   icon: '🍲' },
     ],
   },
   {
     name: 'Money', emoji: '💰', color: '#D4A84B',
     modules: [
       { label: 'Budget',    href: '/budget',    icon: '📊' },
-      { label: 'NSFAS',     href: '/budget',    icon: '🎓' },
       { label: 'Bursaries', href: '/bursaries', icon: '🏆' },
+      { label: 'Stokvel',   href: '/stokvel',   icon: '🪙' },
+      { label: 'Tax',       href: '/tax',       icon: '🧾' },
+      { label: 'Discounts', href: '/discounts', icon: '🏷️' },
     ],
   },
   {
     name: 'Safety', emoji: '🛡️', color: '#10B981',
     modules: [
-      { label: 'Emergency SOS', href: '/dashboard', icon: '🚨' },
-      { label: 'Load Shedding', href: '/dashboard', icon: '⚡' },
+      { label: 'Safety OS',     href: '/safety',    icon: '🚨' },
+      { label: 'Civic Rights',  href: '/civic',     icon: '🗳️' },
     ],
   },
   {
     name: 'Movement', emoji: '🚌', color: '#38BDF8',
     modules: [
-      { label: 'Campus Life',  href: '/campus-life', icon: '🏫' },
-      { label: 'Transport',    href: '/campus-life', icon: '🗺️' },
+      { label: 'Campus Life', href: '/dashboard/campus-life', icon: '🏫' },
+      { label: 'Fitness',     href: '/fitness',               icon: '🏃' },
     ],
   },
   {
     name: 'Growth', emoji: '📈', color: '#818CF8',
     modules: [
-      { label: 'Career OS',        href: '/career', icon: '💼' },
-      { label: 'Entrepreneurship', href: '/career', icon: '🚀' },
+      { label: 'Goals',       href: '/growth',      icon: '🌿' },
+      { label: 'Skills',      href: '/skills',      icon: '🖥️' },
+      { label: 'Entrepreneur',href: '/entrepreneur',icon: '🚀' },
     ],
   },
   {
     name: 'Community', emoji: '🌍', color: '#A855F7',
     modules: [
-      { label: 'Campus Feed', href: '/social',           icon: '📢' },
-      { label: 'Groups',      href: '/dashboard/groups', icon: '👥' },
-      { label: 'Notes',       href: '/notes',            icon: '📝' },
-      { label: 'Tutoring',    href: '/tutoring',         icon: '🎓' },
+      { label: 'Social Feed',    href: '/social',       icon: '📢' },
+      { label: 'Study Groups',   href: '/study-groups', icon: '👥' },
+      { label: 'Textbooks',      href: '/textbooks',    icon: '📗' },
+      { label: 'Notes Market',   href: '/notes',        icon: '📝' },
+      { label: 'Tutoring',       href: '/tutoring',     icon: '🎓' },
     ],
   },
   {
     name: 'Work', emoji: '💼', color: '#7090D0',
     modules: [
-      { label: 'Part-time Jobs', href: '/dashboard/work', icon: '💰' },
-      { label: 'Shifts',         href: '/dashboard/work', icon: '📅' },
+      { label: 'SA Jobs',    href: '/jobs',           icon: '🧑‍💻' },
+      { label: 'Shifts',     href: '/dashboard/work', icon: '📅' },
+      { label: 'Career OS',  href: '/career',         icon: '💼' },
     ],
   },
   {
     name: 'Future', emoji: '✨', color: '#9b6fd4',
     modules: [
-      { label: 'Nova AI',   href: '/nova',      icon: '✦' },
-      { label: 'Career',    href: '/career',    icon: '🌟' },
-      { label: 'Bursaries', href: '/bursaries', icon: '🏆' },
+      { label: 'Mentors',    href: '/mentors',    icon: '🤝' },
+      { label: 'Career OS',  href: '/career',     icon: '🌟' },
+      { label: 'Bursaries',  href: '/bursaries',  icon: '🏆' },
     ],
   },
 ]
@@ -1406,6 +1417,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
         <div style={{ padding: '20px 24px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
+          {/* Orchestration — intervention banner (urgency 1-4) */}
+          <div style={{ marginBottom: 12 }}>
+            <InterventionBanner />
+          </div>
+
           {/* Nova proactive insights */}
           {novaInsights.map(insight => (
             <div key={insight.id} className="dash-card-in" style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 12 }}>
@@ -1451,6 +1467,15 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <MoodCheckin userId={p.id} />
               </div>
 
+              {/* Orchestration — daily brief */}
+              <DailyBrief />
+
+              {/* Weekly planning ritual */}
+              <SundayPlanning />
+
+              {/* Weather + outfit intelligence */}
+              <WeatherWidget />
+
               <LevelCard />
               <DailyChallenges />
               <MobileTodayClasses timetable={initialData.timetable} />
@@ -1488,6 +1513,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           {!isPremium && <UpgradeBar />}
         </div>
       </div>
+
+      {/* Orchestration — crisis modal (urgency 5, modal variant) */}
+      <InterventionModal />
     </>
   )
 }

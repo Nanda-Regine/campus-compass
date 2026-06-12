@@ -16,19 +16,70 @@ interface DrawerProps {
   onClose: () => void
 }
 
-const NAV_ITEMS = [
-  { href: '/dashboard',    icon: '🏠', label: 'Dashboard' },
-  { href: '/study',        icon: '📚', label: 'Study Planner' },
-  { href: '/budget',       icon: '💰', label: 'Budget & NSFAS' },
-  { href: '/meals',        icon: '🍲', label: 'Meal Prep' },
-  { href: '/nova',         icon: '🌟', label: 'Nova — AI Companion' },
-  { href: '/bursaries',    icon: '🎓', label: 'Bursaries & Scholarships' },
-  { href: '/career',       icon: '💼', label: 'Career OS' },
-  { href: '/dashboard/work',        icon: '🏢', label: 'Work & Shifts' },
-  { href: '/dashboard/groups',      icon: '👥', label: 'Study Groups' },
-  { href: '/dashboard/campus-life', icon: '🎪', label: 'Campus Life' },
-  { href: '/streak',                icon: '🔥', label: 'Streaks & Goals' },
+const NAV_SECTIONS = [
+  {
+    section: 'Core',
+    items: [
+      { href: '/dashboard',    icon: '🏠', label: 'Dashboard' },
+      { href: '/study',        icon: '📚', label: 'Study Planner' },
+      { href: '/nova',         icon: '🌟', label: 'Nova — AI Companion' },
+      { href: '/budget',       icon: '💰', label: 'Budget & NSFAS' },
+      { href: '/streak',       icon: '🔥', label: 'Streaks & Goals' },
+    ],
+  },
+  {
+    section: 'Academic',
+    items: [
+      { href: '/study',              icon: '📚', label: 'Study Tools' },
+      { href: '/study-groups',       icon: '👥', label: 'Study Groups' },
+      { href: '/tutoring',           icon: '🎓', label: 'Peer Tutoring' },
+      { href: '/notes',              icon: '📖', label: 'Notes Marketplace' },
+      { href: '/textbooks',          icon: '📗', label: 'Textbook Marketplace' },
+      { href: '/dashboard/campus-life', icon: '🎪', label: 'Campus Life' },
+    ],
+  },
+  {
+    section: 'Money',
+    items: [
+      { href: '/budget',        icon: '💰', label: 'Budget & NSFAS' },
+      { href: '/bursaries',     icon: '🎓', label: 'Bursaries & Scholarships' },
+      { href: '/stokvel',       icon: '🪙', label: 'Stokvel OS' },
+      { href: '/tax',           icon: '🧾', label: 'Tax Return Helper' },
+      { href: '/discounts',     icon: '🏷️', label: 'Student Discounts' },
+    ],
+  },
+  {
+    section: 'Career & Growth',
+    items: [
+      { href: '/career',        icon: '💼', label: 'Career OS' },
+      { href: '/jobs',          icon: '🧑‍💻', label: 'SA Job Board' },
+      { href: '/mentors',       icon: '🤝', label: 'Alumni Mentors' },
+      { href: '/skills',        icon: '🖥️', label: 'Digital Skills Academy' },
+      { href: '/entrepreneur',  icon: '🚀', label: 'Entrepreneur OS' },
+      { href: '/growth',        icon: '🌿', label: 'Growth & Goals' },
+      { href: '/dashboard/work',icon: '🏢', label: 'Work & Shifts' },
+    ],
+  },
+  {
+    section: 'Health & Body',
+    items: [
+      { href: '/health',    icon: '🏥', label: 'Health & Wellness' },
+      { href: '/fitness',   icon: '💪', label: 'Fitness Tracker' },
+      { href: '/meals',     icon: '🍲', label: 'Meal Prep' },
+    ],
+  },
+  {
+    section: 'Community & Safety',
+    items: [
+      { href: '/social',    icon: '💬', label: 'Social & Study Twins' },
+      { href: '/safety',    icon: '🛡️', label: 'Safety OS' },
+      { href: '/civic',     icon: '🗳️', label: 'Civic Education' },
+    ],
+  },
 ]
+
+// Flat list for active-state detection
+const NAV_ITEMS = NAV_SECTIONS.flatMap(s => s.items)
 
 export default function Drawer({ open, onClose }: DrawerProps) {
   const pathname = usePathname()
@@ -136,31 +187,35 @@ export default function Drawer({ open, onClose }: DrawerProps) {
 
         {/* Nav links */}
         <div className="flex-1 overflow-y-auto py-4 px-3">
-          <div className="font-mono text-[0.56rem] tracking-[0.18em] uppercase text-white/25 px-3 mb-2">
-            Modules
-          </div>
-          {NAV_ITEMS.map(item => {
-            const active = pathname === item.href || pathname.startsWith(item.href + '/')
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 mb-0.5',
-                  active
-                    ? 'bg-teal-600/15 text-teal-400 border border-teal-600/20'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
-                )}
-              >
-                <span className="text-base w-5 text-center">{item.icon}</span>
-                <span className="font-display">{item.label}</span>
-                {item.href === '/nova' && !isPremium && (
-                  <span className="ml-auto font-mono text-[0.52rem] text-white/30">10/mo free</span>
-                )}
-              </Link>
-            )
-          })}
+          {NAV_SECTIONS.map(section => (
+            <div key={section.section} className="mb-4">
+              <div className="font-mono text-[0.56rem] tracking-[0.18em] uppercase text-white/25 px-3 mb-1.5">
+                {section.section}
+              </div>
+              {section.items.map(item => {
+                const active = pathname === item.href || pathname.startsWith(item.href + '/')
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 mb-0.5',
+                      active
+                        ? 'bg-teal-600/15 text-teal-400 border border-teal-600/20'
+                        : 'text-white/60 hover:text-white hover:bg-white/5'
+                    )}
+                  >
+                    <span className="text-base w-5 text-center">{item.icon}</span>
+                    <span className="font-display">{item.label}</span>
+                    {item.href === '/nova' && !isPremium && (
+                      <span className="ml-auto font-mono text-[0.52rem] text-white/30">10/mo free</span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
 
           <div className="border-t border-white/7 mt-4 pt-4">
             <div className="font-mono text-[0.56rem] tracking-[0.18em] uppercase text-white/25 px-3 mb-2">
