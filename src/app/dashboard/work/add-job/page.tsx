@@ -78,7 +78,7 @@ export default function AddJobPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="career" opacity={0.055} blurPx={8} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="career" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Add Job" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">

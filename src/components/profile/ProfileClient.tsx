@@ -248,7 +248,7 @@ export default function ProfileClient() {
 
   return (
     <div className="min-h-screen pb-28" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="wellness" opacity={0.05} blurPx={10} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="wellness" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Profile" />
 
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">

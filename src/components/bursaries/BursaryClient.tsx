@@ -255,7 +255,7 @@ export default function BursaryClient() {
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
       {/* Holographic iridescent — cosmic funding energy */}
-      <AmbientImage zone="nsfas" opacity={0.05} blurPx={10} saturation={1.5} overlayColor="transparent" />
+      <AmbientImage zone="nsfas" opacity={0.38} blurPx={5} saturation={1.5} overlayColor="transparent" />
       {/* Page header */}
       <div style={{
         padding: '20px 20px 0',

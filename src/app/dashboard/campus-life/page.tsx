@@ -109,7 +109,7 @@ export default async function CampusLifePage() {
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
       {/* Bold multi-colour — community energy */}
-      <AmbientImage zone="community" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
+      <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Campus Life" />
 
       {/* Campus Life OS hub — Library, Events, Safety, Map */}

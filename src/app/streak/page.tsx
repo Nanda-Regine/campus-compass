@@ -129,7 +129,7 @@ export default function StreakPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="habits" opacity={0.06} blurPx={8} saturation={1.3} overlayColor="transparent" />
+      <AmbientImage zone="habits" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Streaks & Goals" />
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-5">

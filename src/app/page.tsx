@@ -267,8 +267,8 @@ export default function LandingPage() {
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
         <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
           {/* Ambient hero image — cinematic Afrofuturist layer */}
-          <AmbientImage zone="onboarding" opacity={0.09} blurPx={5} saturation={1.4}
-            overlayColor="linear-gradient(180deg,rgba(5,4,12,0.35) 0%,rgba(5,4,12,0.15) 100%)" />
+          <AmbientImage zone="onboarding" opacity={0.38} blurPx={4} saturation={1.4}
+            overlayColor="linear-gradient(180deg,rgba(5,4,12,0.10) 0%,rgba(5,4,12,0.04) 100%)" />
           {/* Afrofuturist nebula glow */}
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-60%)', width: 'min(700px, 180vw)', height: '500px', background: 'radial-gradient(ellipse, rgba(168,85,247,0.20) 0%, transparent 65%)', filter: 'blur(40px)' }} />

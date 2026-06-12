@@ -443,8 +443,8 @@ export default function NovaPage() {
   return (
     <div className="chat-page-height flex flex-col bg-[var(--bg-base)]" style={{ position: 'relative', overflow: 'hidden' }}>
       {/* Nova deep-space ambient — grainy nebula behind the chat */}
-      <AmbientImage zone="nova" opacity={0.08} blurPx={6} saturation={1.6}
-        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.5) 0%,rgba(10,9,23,0.2) 100%)" />
+      <AmbientImage zone="nova" opacity={0.38} blurPx={5} saturation={1.6}
+        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.12) 0%,rgba(10,9,23,0.04) 100%)" />
       <TopBar
         title="Nova"
         action={

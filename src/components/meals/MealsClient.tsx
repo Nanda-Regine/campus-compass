@@ -282,7 +282,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
       {/* Terracotta earth tones — African soil energy for the food domain */}
-      <AmbientImage zone="meals" opacity={0.055} blurPx={8} saturation={1.3} overlayColor="transparent" />
+      <AmbientImage zone="meals" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Meal Prep" />
 
       {/* Tabs */}

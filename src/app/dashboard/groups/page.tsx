@@ -11,7 +11,7 @@ export default async function GroupsPage() {
 
   return (
     <div className="flex flex-col h-screen" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="community" opacity={0.05} blurPx={8} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Group Assignments" />
       <div className="flex-1 overflow-hidden">
         <GroupsClient userId={user.id} />

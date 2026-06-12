@@ -879,7 +879,7 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
   return (
     <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
       {/* Deep navy velvet — professional ambition texture */}
-      <AmbientImage zone="career" opacity={0.05} blurPx={10} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="career" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
 
       {/* Header */}
       <div style={{
