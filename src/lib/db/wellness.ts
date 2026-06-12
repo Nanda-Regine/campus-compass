@@ -1,13 +1,11 @@
 // ============================================================
 // Wellness Check-in Data Access Layer
 // Client-side: saveWellnessCheckin, loadWellnessCheckins
-// Server-side: getWellnessCheckins
 // Table: wellness_checkins (id, user_id, date, sleep, stress,
 //         social, energy, motivation, score, created_at)
 // ============================================================
 
 import { createClient } from '@/lib/supabase/client'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 // ---------------------------------------------------------------------------
 // Shared types
@@ -106,26 +104,3 @@ export async function loadWellnessCheckins(): Promise<{
   }
 }
 
-// ---------------------------------------------------------------------------
-// SERVER-SIDE: getWellnessCheckins
-// Returns all check-ins for a given userId — intended for Server Components,
-// API routes, and server actions where the userId is already known.
-// ---------------------------------------------------------------------------
-
-export async function getWellnessCheckins(userId: string): Promise<{
-  data: CheckIn[]
-  error: Error | null
-}> {
-  const supabase = createServerSupabaseClient()
-
-  const { data, error } = await supabase
-    .from('wellness_checkins')
-    .select('*')
-    .eq('user_id', userId)
-    .order('date', { ascending: false })
-
-  return {
-    data: (data as CheckIn[]) ?? [],
-    error: error ? new Error(error.message) : null,
-  }
-}
