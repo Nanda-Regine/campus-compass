@@ -4,7 +4,7 @@
 >
 > The story of building South Africa's most ambitious student operating system.
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Started: 2025 · Target: 100,000 SA students by end of 2026
+> Started: 2025 · Updated: June 2026 · Target: 100,000 SA students by end of 2026
 
 ---
 
@@ -164,7 +164,7 @@ The palette is intentionally bold and unapologetic — the darkness represents t
 
 ---
 
-## Phase 3 — Intelligence & Platform (Current — 2025) 🔄
+## Phase 3 — Intelligence & Platform (2025–2026) ✅
 
 ### The OS Transformation
 VarsityOS is evolving from a student planner to a **Student Operating System**. The difference: a planner reacts to input. An OS anticipates needs, adapts to context, and works invisibly in the background.
@@ -362,7 +362,7 @@ ALUMNI — GIVE BACK
 | Registered students | 5,000 | 25,000 | 100,000 |
 | Daily active users | 1,500 | 10,000 | 50,000 |
 | Nova conversations/day | 500 | 5,000 | 30,000 |
-| Universities represented | 15 | 26 | 26 (all SA) |
+| Institutions supported | 100+ (unis+TVET+private) | 100+ | 100+ |
 | Average session length | 8 min | 12 min | 15 min |
 | Day 30 retention | 35% | 45% | 55% |
 | Students on paid tiers | 200 | 2,000 | 12,000 |
@@ -396,8 +396,9 @@ ALUMNI — GIVE BACK
 
 ### Sprint 4 — Financial Intelligence (Month 2) 💰 ✅
 - [x] NSFAS Oracle (800+ word deep knowledge base)
-- [x] Bursary finder — 21 curated SA bursaries with search + filters
+- [x] Bursary finder — 100+ curated SA bursaries with search, filters, deadline countdowns, and Nova deep-links
 - [x] Nova ?prompt= deep-link from bursary cards
+- [x] Saved bursaries — bookmark any bursary, persisted to Supabase `saved_bursaries` table
 
 ### Sprint 5 — Wellness + Career OS (Month 2-3) 🧠 ✅
 - [x] Burnout predictor + 5-dimension mood check-in (WellnessTab)
@@ -465,9 +466,42 @@ ALUMNI — GIVE BACK
 - [x] XP level lookup replicated server-side (no `'use client'` import needed)
 
 ### Sprint 8B — Social + Platform (Month 5+) 👥 ✅
-- [x] Notes marketplace — community notes with Google Drive / OneDrive links, browse by module, save/bookmark, per-institution filtering
-- [x] Study twin matching — opt-in directory, same-university matching by faculty, WhatsApp connect + Nova intro helper
-- [x] Peer tutoring marketplace — tutor profiles, in-app booking, push notification to tutor, confirm/complete/cancel flow, star reviews, R/hr pricing
+- [x] **Notes Marketplace** (`/notes`): community notes via Google Drive / OneDrive links; browse by module code; save/bookmark toggle; per-institution filter; uploader profile join; `community_notes` + `note_saves` tables (Supabase, RLS)
+- [x] **Study Twins** (`/social`): opt-in directory; matches by university + faculty; optional WhatsApp number; TwinCard + TwinGroup components; Nova intro helper deep-link; `study_twin_opt_in` + `whatsapp_number` columns on `profiles`
+- [x] **Peer Tutoring Marketplace** (`/tutoring`): full lifecycle (pending → confirmed → completed); tutor profiles with subjects array, rate/hr, bio, availability; `BecomeATutorModal`; `BookSessionModal` (subject picker, date, duration pills, payment method — Cash/EFT/PayFast online); push notification to tutor on book, to student on confirm/complete; star reviews on completed sessions; `tutors`, `tutoring_sessions`, `tutor_reviews` tables (Supabase, RLS, star average trigger)
+- [x] **Navigation**: Notes, Social, Tutoring added to BottomNav `MORE_ITEMS` and `APP_PREFIXES`
+- [x] **Institution list** (`src/types/index.ts`): `SA_UNIVERSITIES` expanded from 26 → 100+ entries covering all 26 public universities, all 50 TVET colleges by province, and 17 major private HEIs
+
+### Sprint 9 — Growth, SEO & Discovery (June 2026) 🔍 ✅
+- [x] **SEO flood** (`src/app/layout.tsx`): keywords expanded from ~100 → 300+ terms; full coverage of all 26 public universities (abbreviation + full name + `"student app"` variant); all 50 TVET colleges; 17 private HEIs; NSFAS 2025/2026 payment dates/appeals; peer tutoring, notes sharing, bursary finder, study twins; N2–N6 TVET terms; load shedding; data saver mode; city/province-specific; student cultural terms (lekker, eish, kasi, Mzansi)
+- [x] **Landing page refresh** (`src/app/page.tsx`):
+  - Title + description updated to explicitly mention TVET colleges
+  - Page-level `keywords` array added (30 high-intent terms)
+  - `FEATURES` expanded from 8 → 12 cards (added Notes Marketplace, Peer Tutoring, Study Twins, Bursary Finder with `New` badges)
+  - Features grid: `lg:grid-cols-4` → `lg:grid-cols-3` for 12-card layout
+  - `UNIVERSITIES` chips expanded from 20 → 40+ (includes TVET colleges and private HEIs)
+  - Stats bar: `8+ tools` → `15+ tools`; `15+ SA universities` → `100+ institutions · unis · TVETs · private`
+  - Institution label updated: "For students at all 26 public universities · all 50 TVET colleges · private HEIs"
+  - Hero description updated to mention bursaries, notes, tutoring
+  - Hero CTA: replaced "I have an account" with "▶ See interactive demo" (teal border)
+  - Nav: added "See demo" link (desktop only)
+  - 6 new FAQ entries: TVET support, Notes Marketplace mechanics, Peer Tutoring lifecycle, Bursary Finder, Study Twins
+  - JSON-LD `featureList`: 14 → 22 features (added tutoring, notes, bursary, study twins, flashcards, data saver, gamification)
+  - JSON-LD `FAQPage`: 5 new Q&As for structured data
+- [x] **Interactive demo page** (`src/app/demo/page.tsx`):
+  - New `/demo` route — standalone conversion page, no auth required
+  - 6 tabbed feature demos: Budget & NSFAS, Nova AI, Study Planner, Peer Tutoring, Notes Marketplace, Bursary Finder
+  - Each tab: tagline + description + 4 bullet points + feature-coloured CTA button
+  - Live-rendered UI previews for each feature (Budget tracker with categories + AI coaching card; Nova CBT conversation; Study planner with flashcard queue + streak; Tutor marketplace with booking button; Notes cards with save + filter; Bursary list with deadline urgency)
+  - Social proof strip with 4 testimonials (including TVET student from Capricorn)
+  - Final conversion CTA with gradient background
+  - TypeScript clean, no extra dependencies
+
+### Sprint 10 — Tutoring Payments + Onboarding Polish (Upcoming) 💳
+- [ ] **PayFast one-time payment for tutoring**: when student selects "Pay online" and tutor confirms booking, initiate PayFast payment before session is marked active
+- [ ] **Onboarding flow review**: audit SetupFlow 6-step onboarding for push notification opt-in step quality; add university/TVET selector improvements with full 100+ list
+- [ ] **Tutor verification badge**: manual verification flow (student card upload) to distinguish verified tutors in search results
+- [ ] **Notes quality scoring**: save count + view count to surface high-quality notes at top of browse feed
 
 ### Phase 4 — Native (2026) 📱
 - [ ] Expo monorepo setup
@@ -489,6 +523,11 @@ ALUMNI — GIVE BACK
 | Mid 2025 | PWA over native app | Zero distribution cost, instant updates, no Play Store cut |
 | June 2025 | TWA for Android | Play Store presence + zero extra codebase + 0% billing cut |
 | June 2025 | Ubuntu as core philosophy | Product decisions grounded in African values, not Silicon Valley defaults |
+| Late 2025 | Inngest for scheduled jobs | Durable execution + built-in retries over plain Vercel crons |
+| Early 2026 | Notes Marketplace via Drive links | No Supabase Storage bucket needed; SA students already use Google Drive |
+| Early 2026 | Tutoring: PayFast one-time payment | Peer tutors need ZAR payments; in-app payments make VarsityOS a true marketplace |
+| June 2026 | SA_UNIVERSITIES expanded to 100+ | All 26 public unis + all 50 TVET colleges + 17 private HEIs for correct institution matching |
+| June 2026 | /demo page over product screenshots | Interactive previews convert better; browsers need to see the real UI before trusting a free app |
 | 2026 (planned) | Expo native | When background audio / widgets / biometrics become essential |
 
 ---
