@@ -13,6 +13,7 @@ import StudyAssistModal from '@/components/study/StudyAssistModal'
 import PomodoroTimer from '@/components/study/PomodoroTimer'
 import GradesTab from '@/components/study/GradesTab'
 import FlashcardsTab from '@/components/study/FlashcardsTab'
+import WellnessTab from '@/components/study/WellnessTab'
 
 interface StudyClientProps {
   initialData: {
@@ -30,6 +31,7 @@ const TABS = [
   { id: 'exams',      label: 'Exams',    emoji: '◎' },
   { id: 'grades',     label: 'Grades',   emoji: '🎓' },
   { id: 'flashcards', label: 'Cards',    emoji: '🃏' },
+  { id: 'wellness',   label: 'Wellness', emoji: '🧠' },
   { id: 'modules',    label: 'Modules',  emoji: '≡' },
   { id: 'pomodoro',   label: 'Focus',    emoji: '◷' },
 ] as const
@@ -167,6 +169,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} />}
         {activeTab === 'grades'     && <GradesTab      modules={modules} />}
         {activeTab === 'flashcards' && <FlashcardsTab modules={modules} />}
+        {activeTab === 'wellness'   && <WellnessTab />}
         {activeTab === 'modules'    && <ModulesTab    modules={modules}                    userId={userId} supabase={supabase} />}
         {activeTab === 'pomodoro'  && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
       </div>

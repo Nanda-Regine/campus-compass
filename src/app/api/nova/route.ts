@@ -32,6 +32,8 @@ const SUBJECT_PATTERNS: { keywords: string[]; name: string }[] = [
   { keywords: ['essay','thesis','argument','bibliography','citation','hypothesis','analyse'], name: 'Academic Writing' },
   { keywords: ['biology','cell','dna','protein','organism','evolution','photosynthesis','anatomy'], name: 'Biology' },
   { keywords: ['bursary','scholarship','funza','sasol inzalo','eskom bursary','transnet','old mutual bursary','apply bursary','application plan','how to apply'], name: 'Bursaries & Scholarships' },
+  { keywords: ['burnout','burnt out','exhausted','overwhelmed','can\'t cope','mental health','counselling','stress level','check-in','wellness','anxiety','depression'], name: 'Wellness & Mental Health' },
+  { keywords: ['cv','curriculum vitae','resume','job interview','interview question','skills gap','career plan','graduate programme','job application','linkedin'], name: 'Career & Job Preparation' },
 ]
 
 function detectHeavyTopic(history: { role: string; content: string }[]): string | null {

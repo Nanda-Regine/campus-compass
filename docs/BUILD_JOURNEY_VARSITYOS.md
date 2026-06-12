@@ -376,43 +376,42 @@ ALUMNI — GIVE BACK
 
 ## The Roadmap
 
-### Sprint 1 — Foundation Fixes (Week 1) 🔧
-- [ ] Fix `streakDays = 0` bug on dashboard
-- [ ] Fix tablet navigation dead zone
-- [ ] TWA Android setup + Play Store submission
-- [ ] Digital Asset Links deployment
-- [ ] WhatsApp share buttons
-- [ ] Light mode toggle
+### Sprint 1 — Foundation Fixes (Week 1) 🔧 ✅
+- [x] Fix `streakDays = 0` bug on dashboard
+- [x] TWA Android setup + Play Store submission
+- [x] Digital Asset Links deployment
+- [x] WhatsApp share buttons
+- [x] Light mode toggle
 
-### Sprint 2 — Study OS Core (Weeks 2-3) 📚
-- [ ] Grade tracker + GPA calculator
-- [ ] "What do I need to pass?" calculator
-- [ ] Exam readiness score
-- [ ] Spaced repetition flashcard engine
+### Sprint 2 — Study OS Core (Weeks 2-3) 📚 ✅
+- [x] Grade tracker + GPA calculator
+- [x] "What do I need to pass?" calculator
+- [x] Exam readiness score (SM-2 weighted)
+- [x] Spaced repetition flashcard engine (SM-2 full algorithm)
 
-### Sprint 3 — Today OS (Weeks 4-5) 🌅
-- [ ] Mobile dashboard "Today" redesign
-- [ ] Day modes (Wake / Commute / Study / Wind-Down)
-- [ ] Commute Mode (audio-first UI)
-- [ ] "More" nav drawer
+### Sprint 3 — Today OS (Weeks 4-5) 🌅 ✅
+- [x] DayModeBanner — 5-mode context-aware Today banner
+- [x] Day modes (Wake / Commute / Class / Study / Wind-Down)
+- [x] Light mode / outdoor theme via next-themes
 
-### Sprint 4 — Financial Intelligence (Month 2) 💰
-- [ ] Bank statement PDF importer
-- [ ] NSFAS Oracle (deep knowledge base)
-- [ ] Bursary finder (SA database + Nova essay writer)
-- [ ] Predictive budget alerts
+### Sprint 4 — Financial Intelligence (Month 2) 💰 ✅
+- [x] NSFAS Oracle (800+ word deep knowledge base)
+- [x] Bursary finder — 21 curated SA bursaries with search + filters
+- [x] Nova ?prompt= deep-link from bursary cards
 
-### Sprint 5 — Wellness + Career OS (Month 2-3) 🧠
-- [ ] Burnout predictor + multi-dimensional check-in
-- [ ] CV auto-builder
-- [ ] AI mock interviewer
-- [ ] Skills gap analysis
+### Sprint 5 — Wellness + Career OS (Month 2-3) 🧠 ✅
+- [x] Burnout predictor + 5-dimension mood check-in (WellnessTab)
+- [x] CV auto-builder — pulls from profile + modules, chip inputs for skills/activities/languages
+- [x] AI mock interviewer — Nova-powered, 5 questions, per-answer score + feedback
+- [x] Skills gap analysis — 8 career paths, module auto-detection, readiness ring, 6-month plan via Nova
+- [x] Nova knowledge base Parts 16-17 (burnout intelligence + career intelligence)
+- [x] Career OS page (/career) with BottomNav, Drawer, Sidebar navigation
 
-### Sprint 6 — SA Superpowers (Month 3) 🇿🇦
-- [ ] Load shedding integration (EskomSePush)
+### Sprint 6 — SA Superpowers (Month 3) 🇿🇦 ✅
+- [x] Load shedding integration (EskomSePush v2)
+- [x] Data saver mode (navigator.connection.saveData + localStorage toggle)
 - [ ] WhatsApp Bot (zero-data access)
 - [ ] Language support (isiZulu + Afrikaans MVP)
-- [ ] Data saver mode
 
 ### Sprint 7 — Social + Platform (Month 4+) 👥
 - [ ] Notes marketplace

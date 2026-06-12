@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   Home, BookOpen, Sparkles, Wallet,
   Utensils, Briefcase, Users, UserCircle,
-  Flame, Gift, MoreHorizontal, X, TrendingUp,
+  Flame, Gift, MoreHorizontal, X, TrendingUp, GraduationCap,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
@@ -18,18 +18,21 @@ const PRIMARY_TABS = [
 ]
 
 const MORE_ITEMS = [
-  { href: '/meals',            icon: Utensils,    label: 'Meals',    accent: '#e8834a' },
-  { href: '/dashboard/work',   icon: Briefcase,   label: 'Work',     accent: '#7090d0' },
-  { href: '/dashboard/groups', icon: Users,       label: 'Groups',   accent: '#4ecf9e' },
-  { href: '/streak',           icon: Flame,       label: 'Streak',   accent: '#f59e0b' },
-  { href: '/referral',         icon: Gift,        label: 'Referral', accent: '#9b6fd4' },
-  { href: '/upgrade',          icon: TrendingUp,  label: 'Upgrade',  accent: '#c9a84c' },
-  { href: '/profile',          icon: UserCircle,  label: 'Profile',  accent: '#7a99b8' },
+  { href: '/meals',            icon: Utensils,      label: 'Meals',    accent: '#e8834a' },
+  { href: '/career',           icon: GraduationCap, label: 'Career',   accent: '#7090d0' },
+  { href: '/bursaries',        icon: Gift,          label: 'Bursaries',accent: '#4ecf9e' },
+  { href: '/dashboard/work',   icon: Briefcase,     label: 'Work',     accent: '#7090d0' },
+  { href: '/dashboard/groups', icon: Users,         label: 'Groups',   accent: '#4ecf9e' },
+  { href: '/streak',           icon: Flame,         label: 'Streak',   accent: '#f59e0b' },
+  { href: '/referral',         icon: Gift,          label: 'Referral', accent: '#9b6fd4' },
+  { href: '/upgrade',          icon: TrendingUp,    label: 'Upgrade',  accent: '#c9a84c' },
+  { href: '/profile',          icon: UserCircle,    label: 'Profile',  accent: '#7a99b8' },
 ]
 
 const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova',
   '/profile', '/work', '/campus-life', '/groups', '/referral', '/streak', '/upgrade',
+  '/career', '/bursaries',
 ]
 
 export function BottomNav() {

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   Home, BookOpen, Wallet, Sparkles, Utensils,
-  Briefcase, Users, UserCircle, Wifi, WifiOff,
+  Briefcase, Users, UserCircle, Wifi, WifiOff, GraduationCap,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -11,19 +11,21 @@ import { trackEvent } from '@/lib/analytics'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const NAV_ITEMS = [
-  { href: '/dashboard',        icon: Home,       label: 'Dashboard' },
-  { href: '/study',            icon: BookOpen,   label: 'Study' },
-  { href: '/budget',           icon: Wallet,     label: 'Budget' },
-  { href: '/nova',             icon: Sparkles,   label: 'Nova',   isNova: true },
-  { href: '/meals',            icon: Utensils,   label: 'Meals' },
-  { href: '/dashboard/work',   icon: Briefcase,  label: 'Work' },
-  { href: '/dashboard/groups', icon: Users,      label: 'Groups' },
-  { href: '/profile',          icon: UserCircle, label: 'Profile' },
+  { href: '/dashboard',        icon: Home,           label: 'Dashboard' },
+  { href: '/study',            icon: BookOpen,       label: 'Study' },
+  { href: '/budget',           icon: Wallet,         label: 'Budget' },
+  { href: '/nova',             icon: Sparkles,       label: 'Nova',   isNova: true },
+  { href: '/meals',            icon: Utensils,       label: 'Meals' },
+  { href: '/career',           icon: GraduationCap,  label: 'Career' },
+  { href: '/dashboard/work',   icon: Briefcase,      label: 'Work' },
+  { href: '/dashboard/groups', icon: Users,          label: 'Groups' },
+  { href: '/profile',          icon: UserCircle,     label: 'Profile' },
 ]
 
 const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova',
   '/profile', '/work', '/campus-life', '/groups', '/referral', '/streak', '/upgrade',
+  '/career', '/bursaries',
 ]
 
 export function Sidebar() {
