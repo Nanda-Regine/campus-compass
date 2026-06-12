@@ -296,35 +296,133 @@ export const SA_LANGUAGES: { value: SALanguage; label: string }[] = [
   { value: 'isiNdebele',       label: 'isiNdebele' },
 ]
 
-// ─── SA Universities ──────────────────────────────────────────
+// ─── SA Institutions ──────────────────────────────────────────
+// All 26 public universities, all 50 public TVET colleges, major private HEIs
 
 export const SA_UNIVERSITIES = [
+  // ── Traditional Universities (11) ────────────────────────────
   'University of Cape Town (UCT)',
   'University of the Witwatersrand (Wits)',
   'University of Pretoria (UP)',
   'Stellenbosch University (SU)',
   'University of KwaZulu-Natal (UKZN)',
+  'University of the Free State (UFS)',
+  'North-West University (NWU)',
+  'Rhodes University',
+  'University of Fort Hare (UFH)',
+  'University of Limpopo (UL)',
+  'University of Venda (UNIVEN)',
+
+  // ── Comprehensive Universities (6) ───────────────────────────
   'University of Johannesburg (UJ)',
   'University of the Western Cape (UWC)',
   'Nelson Mandela University (NMU)',
-  'University of Fort Hare (UFH)',
   'Walter Sisulu University (WSU)',
-  'University of Limpopo (UL)',
-  'University of Venda (UNIVEN)',
-  'University of Zululand (UNIZULU)',
   'Sol Plaatje University (SPU)',
-  'Sefako Makgatho Health Sciences (SMU)',
-  'North-West University (NWU)',
-  'University of the Free State (UFS)',
-  'UNISA (Distance Learning)',
-  'Durban University of Technology (DUT)',
-  'Cape Peninsula University of Technology (CPUT)',
+  'University of Mpumalanga (UMP)',
+
+  // ── Universities of Technology (9) ───────────────────────────
   'Tshwane University of Technology (TUT)',
+  'Cape Peninsula University of Technology (CPUT)',
+  'Durban University of Technology (DUT)',
   'Vaal University of Technology (VUT)',
   'Central University of Technology (CUT)',
   'Mangosuthu University of Technology (MUT)',
-  'Rhodes University',
-  'Other / TVET College',
+  'University of Zululand (UNIZULU)',
+  'Sefako Makgatho Health Sciences University (SMU)',
+
+  // ── Distance / Online ─────────────────────────────────────────
+  'UNISA',
+
+  // ── Private Universities & HEIs ───────────────────────────────
+  'Varsity College (IIE)',
+  'Rosebank College (IIE)',
+  'MSC College (IIE)',
+  'Pearson Institute of Higher Education',
+  'Boston City Campus',
+  'MANCOSA',
+  'Monash South Africa',
+  'Regenesys Business School',
+  'The Da Vinci Institute',
+  'AFDA',
+  'Vega School',
+  'AAA School of Advertising',
+  'Stadio Higher Education',
+  'Richfield Graduate Institute',
+  'Regent Business School',
+  'Lyceum College',
+  'Damelin',
+
+  // ── TVET Colleges — Eastern Cape (8) ─────────────────────────
+  'Buffalo City TVET College',
+  'East Cape Midlands TVET College',
+  'Ikhala TVET College',
+  'Ingwe TVET College',
+  'King Hintsa TVET College',
+  'King Sabata Dalindyebo TVET College',
+  'Lovedale TVET College',
+  'Port Elizabeth TVET College',
+
+  // ── TVET Colleges — Free State (4) ───────────────────────────
+  'Flavius Mareka TVET College',
+  'Goldfields TVET College',
+  'Maluti TVET College',
+  'Motheo TVET College',
+
+  // ── TVET Colleges — Gauteng (9) ──────────────────────────────
+  'Central Johannesburg TVET College',
+  'Ekurhuleni East TVET College',
+  'Ekurhuleni West TVET College',
+  'Joburg South TVET College',
+  'Sedibeng TVET College',
+  'South West Gauteng TVET College',
+  'Tshwane North TVET College',
+  'Tshwane South TVET College',
+  'Western Tshwane TVET College',
+
+  // ── TVET Colleges — KwaZulu-Natal (9) ────────────────────────
+  'Coastal KZN TVET College',
+  'Elangeni TVET College',
+  'Esayidi TVET College',
+  'Majuba TVET College',
+  'Mnambithi TVET College',
+  'Mthashana TVET College',
+  'Thekwini TVET College',
+  'Umfolozi TVET College',
+  'Umgungundlovu TVET College',
+
+  // ── TVET Colleges — Limpopo (5) ──────────────────────────────
+  'Capricorn TVET College',
+  'Lephalale TVET College',
+  'Mopani South East TVET College',
+  'Sekhukhune TVET College',
+  'Vhembe TVET College',
+
+  // ── TVET Colleges — Mpumalanga (3) ───────────────────────────
+  'Ehlanzeni TVET College',
+  'Gert Sibande TVET College',
+  'Nkangala TVET College',
+
+  // ── TVET Colleges — Northern Cape (3) ────────────────────────
+  'John Taolo Gaetsewe TVET College',
+  'Namaqua TVET College',
+  'Northern Cape Rural TVET College',
+  'Northern Cape Urban TVET College',
+
+  // ── TVET Colleges — North West (3) ───────────────────────────
+  'Orbit TVET College',
+  'Taletso TVET College',
+  'Vuselela TVET College',
+
+  // ── TVET Colleges — Western Cape (6) ─────────────────────────
+  'Boland TVET College',
+  'Cape Town TVET College',
+  'False Bay TVET College',
+  'Northlink TVET College',
+  'South Cape TVET College',
+  'West Coast TVET College',
+
+  'Other',
 ] as const
 
 export type SAUniversity = typeof SA_UNIVERSITIES[number]
