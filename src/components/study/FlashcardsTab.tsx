@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback, type CSSProperties } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { Plus, Trash2, ChevronLeft, Layers, BookOpen, Edit3, Check } from 'lucide-react'
 import type { Module } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
 import { MODULE_COLOURS } from '@/types'
+import { loadDecksFromDB, saveDeckToDB, deleteDeckFromDB, updateCardInDB } from '@/lib/db/flashcards'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -631,31 +632,48 @@ export default function FlashcardsTab({ modules }: Props) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setDecks(loadDecks())
-    setMounted(true)
-  }, [])
-
-  const persist = useCallback((updated: Deck[]) => {
-    setDecks(updated)
-    saveDecks(updated)
+    async function init() {
+      const dbDecks = await loadDecksFromDB()
+      if (dbDecks.length > 0) {
+        setDecks(dbDecks)
+        saveDecks(dbDecks)
+      } else {
+        setDecks(loadDecks())
+      }
+      setMounted(true)
+    }
+    init()
   }, [])
 
   function handleSaveDeck(d: Deck) {
     const idx = decks.findIndex(x => x.id === d.id)
-    if (idx >= 0) persist(decks.map((x, i) => i === idx ? d : x))
-    else persist([...decks, d])
+    const updated = idx >= 0 ? decks.map((x, i) => i === idx ? d : x) : [...decks, d]
+    setDecks(updated)
+    saveDecks(updated)
+    saveDeckToDB(d).catch(() => {})
     setScreen({ type: 'list' })
   }
 
   function handleDeleteDeck(id: string) {
-    persist(decks.filter(d => d.id !== id))
+    const updated = decks.filter(d => d.id !== id)
+    setDecks(updated)
+    saveDecks(updated)
+    deleteDeckFromDB(id).catch(() => {})
   }
 
   function handleRate(deckId: string, cardId: string, quality: 0 | 1 | 2 | 3) {
-    persist(decks.map(d => {
+    let ratedCard: Card | undefined
+    const updated = decks.map(d => {
       if (d.id !== deckId) return d
-      return { ...d, cards: d.cards.map(c => c.id === cardId ? sm2(c, quality) : c) }
-    }))
+      return { ...d, cards: d.cards.map(c => {
+        if (c.id !== cardId) return c
+        ratedCard = sm2(c, quality)
+        return ratedCard
+      })}
+    })
+    setDecks(updated)
+    saveDecks(updated)
+    if (ratedCard) updateCardInDB(ratedCard, deckId).catch(() => {})
   }
 
   if (!mounted) return <div style={{ height: 100 }} />

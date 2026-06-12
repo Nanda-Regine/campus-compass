@@ -3,8 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { dispatchXP } from '@/lib/xp-engine'
+import {
+  loadWellnessCheckins,
+  saveWellnessCheckin,
+  type CheckIn as DBCheckIn,
+} from '@/lib/db/wellness'
 
 /* ── Types ─────────────────────────────────────────────────── */
+// Local view type — subset of the DB record we actually render
 interface CheckIn {
   date: string        // YYYY-MM-DD
   sleep: number       // 1-5
@@ -16,7 +22,6 @@ interface CheckIn {
 }
 
 /* ── Constants ─────────────────────────────────────────────── */
-const STORAGE_KEY = 'varsityos_wellness_checkins'
 const MAX_HISTORY = 30
 
 type DimKey = 'sleep' | 'stress' | 'social' | 'energy' | 'motivation'
@@ -57,14 +62,17 @@ function getRisk(score: number) {
   return RISK_LEVELS.find(r => score <= r.max) ?? RISK_LEVELS[RISK_LEVELS.length - 1]
 }
 
-function loadCheckins(): CheckIn[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
-  } catch { return [] }
-}
-
-function saveCheckins(list: CheckIn[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(-MAX_HISTORY)))
+/** Map a DB row to the local CheckIn shape */
+function fromDB(row: DBCheckIn): CheckIn {
+  return {
+    date: row.date,
+    sleep: row.sleep,
+    stress: row.stress,
+    social: row.social,
+    energy: row.energy,
+    motivation: row.motivation,
+    score: row.score,
+  }
 }
 
 function todayStr() {
@@ -176,27 +184,49 @@ export default function WellnessTab() {
   const [saved, setSaved] = useState(false)
   const [todayCheckin, setTodayCheckin] = useState<CheckIn | null>(null)
   const [view, setView] = useState<'checkin' | 'history'>('checkin')
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    const list = loadCheckins()
-    setCheckins(list)
-    const today = list.find(c => c.date === todayStr())
-    if (today) {
-      setTodayCheckin(today)
-      setDims({ sleep: today.sleep, stress: today.stress, social: today.social, energy: today.energy, motivation: today.motivation })
-      setSaved(true)
+    let cancelled = false
+    async function init() {
+      setLoading(true)
+      const { data, error } = await loadWellnessCheckins()
+      if (cancelled) return
+      if (error) {
+        console.error('[WellnessTab] Failed to load check-ins:', error)
+      }
+      // Supabase returns newest-first; reverse to oldest-first so all
+      // existing slice(-7) and slice().reverse() logic stays correct.
+      const list: CheckIn[] = data.map(fromDB).reverse()
+      // Trim to MAX_HISTORY just as the old localStorage path did
+      const trimmed = list.slice(-MAX_HISTORY)
+      setCheckins(trimmed)
+      const today = trimmed.find(c => c.date === todayStr())
+      if (today) {
+        setTodayCheckin(today)
+        setDims({ sleep: today.sleep, stress: today.stress, social: today.social, energy: today.energy, motivation: today.motivation })
+        setSaved(true)
+      }
+      setLoading(false)
     }
+    init()
+    return () => { cancelled = true }
   }, [])
 
   const liveScore = calcScore(dims)
   const risk = getRisk(todayCheckin ? todayCheckin.score : liveScore)
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const score = calcScore(dims)
     const entry: CheckIn = { date: todayStr(), score, ...dims }
+    const { error } = await saveWellnessCheckin(entry)
+    if (error) {
+      console.error('[WellnessTab] Failed to save check-in:', error)
+      return
+    }
+    // Update local state: replace any existing entry for today then keep oldest-first order
     const updated = checkins.filter(c => c.date !== todayStr())
     updated.push(entry)
-    saveCheckins(updated)
     setCheckins(updated)
     setTodayCheckin(entry)
     setSaved(true)
@@ -217,6 +247,14 @@ export default function WellnessTab() {
   const avgScore = checkins.length
     ? Math.round(checkins.slice(-7).reduce((a, c) => a + c.score, 0) / Math.min(7, checkins.slice(-7).length))
     : null
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
+        Loading wellness data…
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

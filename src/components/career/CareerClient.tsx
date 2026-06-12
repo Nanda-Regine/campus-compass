@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { dispatchXP } from '@/lib/xp-engine'
+import { loadCVProfile, saveCVProfile } from '@/lib/db/cv'
 
 /* ── Types ─────────────────────────────────────────────────── */
 interface Props {
@@ -28,27 +29,35 @@ const ACTIVITY_SUGGESTIONS = [
 ]
 
 function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: Props['modules'] }) {
-  const [skills, setSkills]         = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cv_skills') ?? '[]') } catch { return [] }
-  })
-  const [activities, setActivities] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cv_activities') ?? '[]') } catch { return [] }
-  })
-  const [languages, setLanguages]   = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cv_languages') ?? '["English"]') } catch { return ['English'] }
-  })
-  const [summary, setSummary]       = useState(() => localStorage.getItem('cv_summary') ?? '')
+  const [skills, setSkills]         = useState<string[]>([])
+  const [activities, setActivities] = useState<string[]>([])
+  const [languages, setLanguages]   = useState<string[]>(['English'])
+  const [summary, setSummary]       = useState('')
   const [skillInput, setSkillInput] = useState('')
   const [actInput, setActInput]     = useState('')
   const [langInput, setLangInput]   = useState('')
   const [preview, setPreview]       = useState(false)
   const [copied, setCopied]         = useState(false)
+  const [loaded, setLoaded]         = useState(false)
 
-  const save = () => {
-    localStorage.setItem('cv_skills', JSON.stringify(skills))
-    localStorage.setItem('cv_activities', JSON.stringify(activities))
-    localStorage.setItem('cv_languages', JSON.stringify(languages))
-    localStorage.setItem('cv_summary', summary)
+  // Load CV profile from Supabase on mount
+  useEffect(() => {
+    loadCVProfile().then(data => {
+      setSkills(data.skills.length ? data.skills : [])
+      setActivities(data.activities.length ? data.activities : [])
+      setLanguages(data.languages.length ? data.languages : ['English'])
+      setSummary(data.summary)
+      setLoaded(true)
+    })
+  }, [])
+
+  const save = (overrides?: { skills?: string[]; activities?: string[]; languages?: string[]; summary?: string }) => {
+    saveCVProfile({
+      skills:     overrides?.skills     ?? skills,
+      activities: overrides?.activities ?? activities,
+      languages:  overrides?.languages  ?? languages,
+      summary:    overrides?.summary    ?? summary,
+    }).catch(err => console.error('[CVBuilder] save error:', err))
   }
 
   const addChip = (list: string[], set: (v: string[]) => void, val: string) => {
@@ -85,6 +94,14 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
     `Please help me improve my CV. Here is my current draft:\n\n${cvText}\n\nI am a ${profile.yearOfStudy || 'university'} student at ${profile.university || 'a South African university'} studying ${profile.faculty || 'my degree'}. Please suggest improvements, better wording, and what else I should add.`
   )
 
+  if (!loaded) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
+        Loading your CV…
+      </div>
+    )
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
@@ -94,7 +111,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         <textarea
           value={summary}
           onChange={e => setSummary(e.target.value)}
-          onBlur={save}
+          onBlur={() => save({ summary })}
           placeholder="e.g. Motivated 2nd-year BCom student passionate about financial markets and data analysis. Seeking to apply analytical skills and a work ethic shaped by 3 years on NSFAS…"
           rows={3}
           style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '10px 12px', color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.6, resize: 'vertical', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
@@ -136,8 +153,18 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         setInput={setSkillInput}
         placeholder="Type a skill + Enter"
         suggestions={SKILL_SUGGESTIONS.filter(s => !skills.includes(s))}
-        onAdd={v => { addChip(skills, setSkills, v); setSkillInput(''); setTimeout(save, 0); dispatchXP('cv_skill_added') }}
-        onRemove={v => { setSkills(skills.filter(s => s !== v)); setTimeout(save, 0) }}
+        onAdd={v => {
+          const updated = v.trim() && !skills.includes(v.trim()) ? [...skills, v.trim()] : skills
+          addChip(skills, setSkills, v)
+          setSkillInput('')
+          setTimeout(() => save({ skills: updated }), 0)
+          dispatchXP('cv_skill_added')
+        }}
+        onRemove={v => {
+          const updated = skills.filter(s => s !== v)
+          setSkills(updated)
+          setTimeout(() => save({ skills: updated }), 0)
+        }}
       />
 
       {/* Activities */}
@@ -148,8 +175,17 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         setInput={setActInput}
         placeholder="Add activity + Enter"
         suggestions={ACTIVITY_SUGGESTIONS.filter(a => !activities.includes(a))}
-        onAdd={v => { addChip(activities, setActivities, v); setActInput(''); setTimeout(save, 0) }}
-        onRemove={v => { setActivities(activities.filter(a => a !== v)); setTimeout(save, 0) }}
+        onAdd={v => {
+          const updated = v.trim() && !activities.includes(v.trim()) ? [...activities, v.trim()] : activities
+          addChip(activities, setActivities, v)
+          setActInput('')
+          setTimeout(() => save({ activities: updated }), 0)
+        }}
+        onRemove={v => {
+          const updated = activities.filter(a => a !== v)
+          setActivities(updated)
+          setTimeout(() => save({ activities: updated }), 0)
+        }}
       />
 
       {/* Languages */}
@@ -160,8 +196,17 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
         setInput={setLangInput}
         placeholder="Add language + Enter"
         suggestions={['isiZulu','isiXhosa','Afrikaans','Sesotho','Setswana','Sepedi','Xitsonga','siSwati','Tshivenda','isiNdebele'].filter(l => !languages.includes(l))}
-        onAdd={v => { addChip(languages, setLanguages, v); setLangInput(''); setTimeout(save, 0) }}
-        onRemove={v => { setLanguages(languages.filter(l => l !== v)); setTimeout(save, 0) }}
+        onAdd={v => {
+          const updated = v.trim() && !languages.includes(v.trim()) ? [...languages, v.trim()] : languages
+          addChip(languages, setLanguages, v)
+          setLangInput('')
+          setTimeout(() => save({ languages: updated }), 0)
+        }}
+        onRemove={v => {
+          const updated = languages.filter(l => l !== v)
+          setLanguages(updated)
+          setTimeout(() => save({ languages: updated }), 0)
+        }}
       />
 
       {/* Actions */}
@@ -600,16 +645,23 @@ const CAREER_PATHS: CareerPath[] = [
 ]
 
 function SkillsGap({ modules }: { modules: Props['modules'] }) {
-  const [selected, setSelected] = useState<CareerPath | null>(() => {
-    const saved = localStorage.getItem('career_path')
-    return saved ? (CAREER_PATHS.find(c => c.label === saved) ?? null) : null
-  })
-  const [addedSkills, setAddedSkills] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('career_skills') ?? '[]') } catch { return [] }
-  })
+  const [selected, setSelected]     = useState<CareerPath | null>(null)
+  const [addedSkills, setAddedSkills] = useState<string[]>([])
   const [skillInput, setSkillInput] = useState('')
+  const [loaded, setLoaded]         = useState(false)
 
-  useEffect(() => { dispatchXP('skills_gap_viewed') }, [])
+  // Load career data from Supabase on mount
+  useEffect(() => {
+    loadCVProfile().then(data => {
+      if (data.careerPath) {
+        const found = CAREER_PATHS.find(c => c.label === data.careerPath)
+        if (found) setSelected(found)
+      }
+      setAddedSkills(data.careerSkills ?? [])
+      setLoaded(true)
+    })
+    dispatchXP('skills_gap_viewed')
+  }, [])
 
   const moduleNames = modules.map(m => m.module_name.toLowerCase())
 
@@ -621,7 +673,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
 
   const handleSelect = (cp: CareerPath) => {
     setSelected(cp)
-    localStorage.setItem('career_path', cp.label)
+    saveCVProfile({ careerPath: cp.label }).catch(err => console.error('[SkillsGap] save careerPath error:', err))
   }
 
   const handleAddSkill = (s: string) => {
@@ -629,9 +681,23 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
     if (v && !addedSkills.includes(v)) {
       const updated = [...addedSkills, v]
       setAddedSkills(updated)
-      localStorage.setItem('career_skills', JSON.stringify(updated))
+      saveCVProfile({ careerSkills: updated }).catch(err => console.error('[SkillsGap] save careerSkills error:', err))
     }
     setSkillInput('')
+  }
+
+  const handleRemoveSkill = (s: string) => {
+    const updated = addedSkills.filter(x => x !== s)
+    setAddedSkills(updated)
+    saveCVProfile({ careerSkills: updated }).catch(err => console.error('[SkillsGap] save careerSkills error:', err))
+  }
+
+  if (!loaded) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
+        Loading career data…
+      </div>
+    )
   }
 
   if (!selected) {
@@ -717,7 +783,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
             {addedSkills.map(s => (
               <span key={s} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', display: 'flex', alignItems: 'center', gap: 4 }}>
                 {s}
-                <button onClick={() => { const u = addedSkills.filter(x => x !== s); setAddedSkills(u); localStorage.setItem('career_skills', JSON.stringify(u)) }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(78,207,158,0.5)', fontSize: 9, padding: 0 }}>✕</button>
+                <button onClick={() => handleRemoveSkill(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(78,207,158,0.5)', fontSize: 9, padding: 0 }}>✕</button>
               </span>
             ))}
           </div>

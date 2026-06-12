@@ -414,7 +414,7 @@ ALUMNI — GIVE BACK
 - [ ] Language support (isiZulu + Afrikaans MVP)
 
 ### Sprint 7 — Gamification OS (Month 4) 🎮 ✅
-- [x] XP engine (`src/lib/xp-engine.ts`) — 11 XP events, daily caps, localStorage state
+- [x] XP engine (`src/lib/xp-engine.ts`) — 11 XP events, daily caps, Supabase sync
 - [x] Level system — 7 levels (Fresher → Graduate) with emoji, color, XP thresholds
 - [x] Badge system — 16 badges with unlock conditions checked against XP state
 - [x] Daily challenges — seeded PRNG picks 3/day from pool of 12, auto-detects completions
@@ -429,6 +429,13 @@ ALUMNI — GIVE BACK
 - [x] XP wired: CareerClient (cv_skill_added, mock_interview_complete, skills_gap_viewed)
 - [x] LevelCard + DailyChallenges added to Dashboard Column 1
 - [x] Progress tab (VarsityScore + BadgesPanel) added to Profile
+- [x] **Supabase persistence**: `user_xp_state`, `user_daily_challenges`, `wellness_checkins`, `user_cv_profile`, `flashcard_decks`, `flashcard_cards` — all 6 tables live (RLS + indexes)
+- [x] **DB access layer**: `src/lib/db/xp.ts`, `wellness.ts`, `cv.ts`, `flashcards.ts` — upsert-based, local-first pattern
+- [x] **WellnessTab** → Supabase (removed localStorage; loads last 30 check-ins on mount)
+- [x] **CareerClient** → Supabase (CV skills, career path, summary all persisted; no localStorage)
+- [x] **FlashcardsTab** → Supabase (loads decks from DB on mount; saveDeck, deleteDeck, updateCard fire-and-forget sync)
+- [x] **XP engine** → background Supabase sync on every `dispatchXP` + `completeDailyChallenge`; `initXPFromDB()` for cross-device restore
+- [x] **UX**: Cosmic Campus dark + Ubuntu Sunrise light design system — gradient text utilities, glow borders, `bg-cosmic` radial overlay, gamification animations (`xp-pop`, `badge-unlock`, `challenge-check`, `level-up`)
 
 ### Sprint 8 — Social + Platform (Month 5+) 👥
 - [ ] Notes marketplace

@@ -1,7 +1,9 @@
 'use client'
 
+import { saveXPStateToDB, saveDailyChallengesDB, loadXPStateFromDB, loadDailyChallengesFromDB } from '@/lib/db/xp'
+
 // ── XP Engine — VarsityOS Gamification Core ──────────────────────────────────
-// All state lives in localStorage. No DB changes needed.
+// localStorage is primary (instant reads); Supabase syncs in background.
 // Dispatch XP from any component: dispatchXP('task_complete')
 // Listen in the useXP hook which re-renders on each event.
 
@@ -305,6 +307,10 @@ export function dispatchXP(eventName: XPEventName, labelOverride?: string) {
 
   // Notify all listeners
   window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName, xp } }))
+
+  // Background DB sync — fire and forget
+  saveXPStateToDB(state).catch(() => {})
+  saveDailyChallengesDB(today, completion.completed).catch(() => {})
 }
 
 export function completeDailyChallenge(challengeId: string, challengeTitle: string) {
@@ -325,6 +331,33 @@ export function completeDailyChallenge(challengeId: string, challengeTitle: stri
     saveXPState(state)
   }
   window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName: 'daily_challenge_complete', xp } }))
+
+  // Background DB sync — fire and forget
+  saveXPStateToDB(state).catch(() => {})
+  saveDailyChallengesDB(today, completion.completed).catch(() => {})
+}
+
+export async function initXPFromDB(): Promise<void> {
+  if (typeof window === 'undefined') return
+  try {
+    const today = dateStr()
+    const [dbState, dbCompletedIds] = await Promise.all([
+      loadXPStateFromDB(),
+      loadDailyChallengesFromDB(today),
+    ])
+    const localState = loadXPState()
+    if (dbState.totalXP > localState.totalXP) {
+      saveXPState({ ...dbState, dailyChallenges: [] })
+    }
+    if (dbCompletedIds.length > 0) {
+      const localComp = loadChallengeCompletion()
+      const localDone = localComp.date === today ? localComp.completed : []
+      const merged = [...new Set([...localDone, ...dbCompletedIds])]
+      saveChallengeCompletion({ date: today, completed: merged })
+    }
+  } catch {
+    // silent — offline or unauthenticated
+  }
 }
 
 export function getTodayChallengesWithStatus(): (DailyChallenge & { completed: boolean })[] {
