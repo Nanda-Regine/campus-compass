@@ -38,7 +38,6 @@ interface Session {
   scheduled_date: string | null
   duration_hours: number
   total_amount: number
-  payment_method: string
   status: string
   notes: string | null
   created_at: string
@@ -321,7 +320,7 @@ function SessionCard({ session, role, userId, onConfirm, onComplete, onCancel, o
         )}
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)' }}>⏱ {session.duration_hours}h</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#4ecf9e' }}>R{Number(session.total_amount).toFixed(0)}</span>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)' }}>{session.payment_method === 'online' ? '💳' : '💵'}</span>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)' }}>💵 cash/EFT</span>
       </div>
 
       {session.notes && (

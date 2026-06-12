@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Calendar, Clock, CreditCard, Banknote } from 'lucide-react'
+import { X, Calendar, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Tutor {
@@ -30,7 +30,6 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
   const [subject, setSubject] = useState(tutor.subjects[0] ?? '')
   const [date, setDate] = useState('')
   const [duration, setDuration] = useState(1)
-  const [payMethod, setPayMethod] = useState<'in_person' | 'online'>('in_person')
   const [notes, setNotes] = useState('')
   const [booking, setBooking] = useState(false)
 
@@ -48,7 +47,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
           subject: subject.trim(),
           scheduled_date: date || null,
           duration_hours: duration,
-          payment_method: payMethod,
+          payment_method: 'in_person',
           notes,
         }),
       })
@@ -125,22 +124,12 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
             </div>
           </div>
 
-          {/* Payment */}
-          <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>Payment method</label>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" onClick={() => setPayMethod('in_person')} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '0.5px solid', borderColor: payMethod === 'in_person' ? '#c9a84c' : 'rgba(255,255,255,0.1)', background: payMethod === 'in_person' ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.04)', color: payMethod === 'in_person' ? '#c9a84c' : 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                <Banknote size={14} /> Cash / EFT
-              </button>
-              <button type="button" onClick={() => setPayMethod('online')} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '0.5px solid', borderColor: payMethod === 'online' ? '#7090d0' : 'rgba(255,255,255,0.1)', background: payMethod === 'online' ? 'rgba(112,144,208,0.1)' : 'rgba(255,255,255,0.04)', color: payMethod === 'online' ? '#7090d0' : 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                <CreditCard size={14} /> Pay online
-              </button>
-            </div>
-            {payMethod === 'online' && (
-              <div style={{ marginTop: 6, fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif' }}>
-                PayFast payment processed after tutor confirms
-              </div>
-            )}
+          {/* Payment notice */}
+          <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(201,168,76,0.07)', border: '0.5px solid rgba(201,168,76,0.2)', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <span style={{ fontSize: '1rem', flexShrink: 0, marginTop: 1 }}>💵</span>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', margin: 0, lineHeight: 1.5 }}>
+              Payment is arranged directly between you and your tutor — cash or EFT, whatever works for both of you. VarsityOS just handles the booking.
+            </p>
           </div>
 
           {/* Notes */}
@@ -151,7 +140,10 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
 
           {/* Total + Submit */}
           <div style={{ background: 'rgba(78,207,158,0.06)', border: '0.5px solid rgba(78,207,158,0.2)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>Total estimate</div>
+            <div>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>Agree to pay tutor</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>sorted directly · cash or EFT</div>
+            </div>
             <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '1rem', color: '#4ecf9e' }}>R{total.toFixed(0)}</div>
           </div>
 
