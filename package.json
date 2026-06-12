@@ -27,6 +27,7 @@
     "date-fns": "^3.6.0",
     "firebase": "^11.0.0",
     "framer-motion": "^11.3.8",
+    "inngest": "^3.54.2",
     "lucide-react": "^0.414.0",
     "next": "14.2.35",
     "next-themes": "^0.3.0",
@@ -37,7 +38,6 @@
     "react-hot-toast": "^2.4.1",
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.4.0",
-    "inngest": "^3.0.0",
     "web-push": "^3.6.7",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
