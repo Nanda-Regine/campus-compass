@@ -49,6 +49,185 @@ const RESOURCE_ICONS: Record<string, string> = {
   website: '🔗',
 }
 
+// ─── Personalised daily brief (shown when chat is empty) ─────────────────────
+
+interface BriefData {
+  name: string | null
+  nextExamName: string | null
+  daysToExam: number | null
+  urgentTaskCount: number
+  wellnessScore: number | null
+  xpLevel: string
+  totalXP: number
+}
+
+function NovaDailyBrief({
+  briefData,
+  onPrompt,
+  onShowCapabilities,
+}: {
+  briefData: BriefData | null
+  onPrompt: (msg: string) => void
+  onShowCapabilities: () => void
+}) {
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const firstName = briefData?.name || null
+
+  // Build brief cards from available data
+  const cards: { icon: string; label: string; value: string; color: string; prompt?: string }[] = []
+
+  if (briefData?.nextExamName && briefData.daysToExam !== null) {
+    const urgency = briefData.daysToExam <= 3 ? '#ff6b6b' : briefData.daysToExam <= 7 ? '#f59e0b' : '#4ecf9e'
+    cards.push({
+      icon: '📚',
+      label: 'Next exam',
+      value: `${briefData.nextExamName} · ${briefData.daysToExam}d`,
+      color: urgency,
+      prompt: `Help me prepare for ${briefData.nextExamName} — I have ${briefData.daysToExam} days left`,
+    })
+  }
+
+  if (briefData && briefData.urgentTaskCount > 0) {
+    cards.push({
+      icon: '⚡',
+      label: 'Due soon',
+      value: `${briefData.urgentTaskCount} task${briefData.urgentTaskCount === 1 ? '' : 's'}`,
+      color: '#f59e0b',
+      prompt: "What should I work on today?",
+    })
+  }
+
+  if (briefData && briefData.wellnessScore !== null && briefData.wellnessScore !== undefined) {
+    const wColor = briefData.wellnessScore >= 70 ? '#4ecf9e' : briefData.wellnessScore >= 45 ? '#f59e0b' : '#ff6b6b'
+    cards.push({
+      icon: '💚',
+      label: 'Wellness',
+      value: `${briefData.wellnessScore}/100`,
+      color: wColor,
+      prompt: briefData.wellnessScore < 50 ? "I'm feeling low — can you help me recharge?" : "How can I keep my energy up this week?",
+    })
+  }
+
+  if (briefData) {
+    cards.push({
+      icon: '✨',
+      label: briefData.xpLevel,
+      value: `${briefData.totalXP} XP`,
+      color: '#c084fc',
+    })
+  }
+
+  // Quick-start suggestions always shown
+  const suggestions = [
+    { label: 'Plan my week', prompt: "Help me plan my week" },
+    { label: 'Check my budget', prompt: "How is my budget looking?" },
+    { label: 'Study tips', prompt: "Give me study tips for varsity" },
+    { label: 'I need motivation', prompt: "I need some motivation today" },
+  ]
+
+  return (
+    <div
+      className="flex flex-col items-center justify-start px-4 pt-6 pb-2 animate-fade-up"
+      style={{ minHeight: '50vh' }}
+    >
+      {/* Avatar */}
+      <div
+        style={{
+          width: 72, height: 72, borderRadius: 22,
+          background: 'linear-gradient(135deg, rgba(88,28,135,0.5) 0%, rgba(13,92,80,0.5) 100%)',
+          border: '1px solid rgba(192,132,252,0.2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 32, marginBottom: 16, flexShrink: 0,
+        }}
+      >
+        🌟
+      </div>
+
+      {/* Greeting */}
+      <h2
+        style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: 4, textAlign: 'center',
+        }}
+      >
+        {greeting}{firstName ? `, ${firstName}` : ''}
+      </h2>
+      <p
+        style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
+          color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 20, lineHeight: 1.6,
+        }}
+      >
+        {cards.length > 0
+          ? "Here's your daily brief — I'm ready to help."
+          : "Your AI companion for varsity life. I already know your semester."}
+      </p>
+
+      {/* Brief cards */}
+      {cards.length > 0 && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: cards.length >= 4 ? '1fr 1fr' : cards.length === 3 ? '1fr 1fr' : cards.length === 2 ? '1fr 1fr' : '1fr',
+            gap: 8, width: '100%', maxWidth: 340, marginBottom: 20,
+          }}
+        >
+          {cards.map((card, i) => (
+            <button
+              key={i}
+              onClick={() => card.prompt && onPrompt(card.prompt)}
+              disabled={!card.prompt}
+              style={{
+                background: `${card.color}10`,
+                border: `0.5px solid ${card.color}30`,
+                borderRadius: 14, padding: '10px 12px',
+                textAlign: 'left', cursor: card.prompt ? 'pointer' : 'default',
+                transition: 'background 0.15s',
+              }}
+            >
+              <div style={{ fontSize: 16, marginBottom: 4 }}>{card.icon}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', marginBottom: 2 }}>{card.label}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.8rem', color: card.color }}>{card.value}</div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Quick-start prompts */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginBottom: 16, maxWidth: 340 }}>
+        {suggestions.map(s => (
+          <button
+            key={s.label}
+            onClick={() => onPrompt(s.prompt)}
+            style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+              background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.1)',
+              color: 'rgba(255,255,255,0.55)', borderRadius: 20,
+              padding: '5px 12px', cursor: 'pointer', transition: 'all 0.15s',
+            }}
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={onShowCapabilities}
+        style={{
+          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)',
+          color: '#4ecf9e', borderRadius: 12, padding: '7px 16px', cursor: 'pointer',
+        }}
+      >
+        ✦ See everything I can do
+      </button>
+    </div>
+  )
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+
 export default function NovaPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -65,6 +244,15 @@ export default function NovaPage() {
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showCapabilities, setShowCapabilities] = useState(false)
+  const [dailyBriefData, setDailyBriefData] = useState<{
+    name: string | null
+    nextExamName: string | null
+    daysToExam: number | null
+    urgentTaskCount: number
+    wellnessScore: number | null
+    xpLevel: string
+    totalXP: number
+  } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -97,6 +285,7 @@ export default function NovaPage() {
         setMessageLimit(data.messageLimit || 10)
         setIsPremium(data.isPremium || false)
         if (data.tier) setUserTier(data.tier)
+        if (data.dailyBriefData) setDailyBriefData(data.dailyBriefData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -315,26 +504,13 @@ export default function NovaPage() {
           </div>
         ) : (
           <>
-            {/* Welcome state */}
+            {/* Welcome state — personalised daily brief */}
             {showWelcome && messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center min-h-[40vh] text-center px-4 animate-fade-up">
-                <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-900/40 to-teal-900/40 border border-purple-500/20 flex items-center justify-center text-4xl mb-5">
-                  🌟
-                </div>
-                <h2 className="font-display font-black text-xl text-white mb-2">Hey, I&apos;m Nova</h2>
-                <p className="font-mono text-[0.7rem] text-white/40 max-w-xs leading-relaxed mb-1">
-                  Your AI companion for varsity life. I already know your semester — talk to me about anything.
-                </p>
-                <p className="font-mono text-[0.6rem] text-white/20 max-w-xs mb-4">
-                  Studies · Budget · Mental health · Meal ideas · Group work
-                </p>
-                <button
-                  onClick={() => setShowCapabilities(true)}
-                  className="font-mono text-[0.65rem] bg-teal-600/15 border border-teal-600/25 text-teal-400 px-4 py-2 rounded-xl hover:bg-teal-600/25 transition-all"
-                >
-                  ✦ See what I can do
-                </button>
-              </div>
+              <NovaDailyBrief
+                briefData={dailyBriefData}
+                onPrompt={(msg) => sendMessage(msg)}
+                onShowCapabilities={() => setShowCapabilities(true)}
+              />
             )}
 
             {messages.map((msg) => (

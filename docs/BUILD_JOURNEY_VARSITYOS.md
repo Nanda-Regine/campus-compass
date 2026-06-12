@@ -444,6 +444,16 @@ ALUMNI — GIVE BACK
 - [x] DB layer: `src/lib/db/grades.ts`, `exam-confidence.ts`, `saved-bursaries.ts`
 - [x] GpaCalculator rows state lifted to parent GradesTab so both views share one save cycle
 
+### Sprint 8C — Nova Intelligence Upgrade (Month 5) 🧠 ✅
+- [x] **`buildStudentContext` enriched**: 5 new parallel Supabase queries — wellness check-ins (last 7 days), XP state, exam confidence map, grade module averages, saved bursaries
+- [x] **Wellness context**: latest score + trend (improving/stable/declining) + days since last check-in — injected into every Nova conversation
+- [x] **Gamification context**: XP level + total XP — Nova knows where the student is in their journey
+- [x] **Grade-awareness**: weighted averages per module computed server-side — below-50% triggers proactive academic support signal
+- [x] **Proactive signals system**: Nova's dynamic context block includes auto-generated hints based on live data (low wellness, low exam confidence + <7 days, overdue task pile, below-50% grades) so Nova naturally brings up important things without being asked
+- [x] **Nova GET enriched**: `dailyBriefData` returned on every page load — name, next exam, urgent task count, wellness score, XP level — zero extra API cost
+- [x] **Personalised daily brief**: Nova welcome screen replaced with data-driven `NovaDailyBrief` component showing live brief cards (exam countdown, urgent tasks, wellness score, XP level) + clickable quick-start prompts that pre-fill real student questions
+- [x] XP level lookup replicated server-side (no `'use client'` import needed)
+
 ### Sprint 8B — Social + Platform (Month 5+) 👥
 - [ ] Notes marketplace
 - [ ] Study twin matching

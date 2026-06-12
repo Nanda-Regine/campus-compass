@@ -18,6 +18,19 @@ const anthropic = new Anthropic({
   },
 })
 
+// ─── XP level lookup (mirrors xp-engine.ts — server-safe, no 'use client') ─
+const XP_LEVELS = [
+  { name: 'Fresher', minXP: 0 }, { name: 'Survivor', minXP: 100 },
+  { name: 'Grinder', minXP: 300 }, { name: 'Scholar', minXP: 600 },
+  { name: 'Pioneer', minXP: 1000 }, { name: 'Legend', minXP: 1500 },
+  { name: 'Graduate', minXP: 2200 },
+]
+function getXPLevel(xp: number): string {
+  let name = 'Fresher'
+  for (const l of XP_LEVELS) { if (xp >= l.minXP) name = l.name }
+  return name
+}
+
 // ─── Detect heavy tutoring topic from conversation history ────
 const SUBJECT_PATTERNS: { keywords: string[]; name: string }[] = [
   { keywords: ['nsfas','allowance','appeal','n+ rule','n+','my.nsfas','bank detail','myNSFAS','funding','financial aid','late payment','allowance late'], name: 'NSFAS (financial aid)' },
@@ -94,6 +107,11 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     { data: exams },
     { data: modules },
     { data: expenses },
+    { data: wellnessCheckins },
+    { data: xpState },
+    { data: examConfidences },
+    { data: gradesData },
+    { data: savedBursaries },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
     supabase.from('budgets').select('*').eq('user_id', userId).single(),
@@ -101,6 +119,12 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
     supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true),
     supabase.from('expenses').select('amount').eq('user_id', userId).gte('expense_date', start).lte('expense_date', end),
+    // ── New Sprint 7/8A intelligence tables ──────────────────────
+    supabase.from('wellness_checkins').select('date, score, sleep, stress, social, energy, motivation').eq('user_id', userId).order('date', { ascending: false }).limit(7),
+    supabase.from('user_xp_state').select('total_xp, event_counts').eq('user_id', userId).maybeSingle(),
+    supabase.from('exam_confidence').select('exam_id, confidence').eq('user_id', userId),
+    supabase.from('student_grades_data').select('grade_modules').eq('user_id', userId).maybeSingle(),
+    supabase.from('saved_bursaries').select('bursary_name').eq('user_id', userId).order('saved_at', { ascending: false }).limit(5),
   ])
 
   const budgetGoal = (budget?.monthly_budget || 0) +
@@ -133,6 +157,65 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   if (spentPct > 85) stressSignals.push(`budget at ${spentPct}%`)
   if (daysToNextExam !== null && daysToNextExam <= 5) stressSignals.push(`exam in ${daysToNextExam} days`)
   if (urgentTasks.length >= 3) stressSignals.push(`${urgentTasks.length} tasks due within 3 days`)
+
+  // ── Wellness processing ──────────────────────────────────────────────────
+  type WellnessRow = { date: string; score: number; sleep: number; stress: number; social: number; energy: number; motivation: number }
+  const recentCheckins = (wellnessCheckins || []) as WellnessRow[]
+  const latestCheckin = recentCheckins[0] || null
+  const wellnessTrend: 'improving' | 'stable' | 'declining' | null =
+    recentCheckins.length >= 3
+      ? recentCheckins[0].score > recentCheckins[2].score + 5 ? 'improving'
+        : recentCheckins[0].score < recentCheckins[2].score - 5 ? 'declining'
+        : 'stable'
+      : null
+  const daysSinceCheckin = latestCheckin
+    ? Math.floor((now.getTime() - new Date(latestCheckin.date).getTime()) / (1000 * 60 * 60 * 24))
+    : null
+
+  // ── XP / Gamification ────────────────────────────────────────────────────
+  const totalXP = (xpState as { total_xp?: number } | null)?.total_xp || 0
+  const xpLevel = getXPLevel(totalXP)
+
+  // ── Exam confidence map ──────────────────────────────────────────────────
+  const confMap: Record<string, number> = {}
+  ;(examConfidences || []).forEach((r: { exam_id: string; confidence: number }) => { confMap[r.exam_id] = r.confidence })
+
+  // ── Grade module averages ─────────────────────────────────────────────────
+  interface GradeAssessment { score: string; weight: string }
+  interface GradeModule { moduleName: string; assessments: GradeAssessment[] }
+  const gradeModuleList: GradeModule[] = (gradesData as { grade_modules?: GradeModule[] } | null)?.grade_modules || []
+  const moduleAverages: { name: string; avg: number }[] = gradeModuleList
+    .map(m => {
+      const valid = m.assessments
+        .map(a => ({ score: parseFloat(a.score), weight: parseFloat(a.weight) }))
+        .filter(a => !isNaN(a.score) && !isNaN(a.weight) && a.weight > 0)
+      if (valid.length === 0) return null
+      const totalWeight = valid.reduce((s, a) => s + a.weight, 0)
+      const weightedAvg = valid.reduce((s, a) => s + (a.score / 100) * a.weight, 0) / totalWeight * 100
+      return { name: m.moduleName, avg: Math.round(weightedAvg) }
+    })
+    .filter((m): m is { name: string; avg: number } => m !== null)
+
+  // ── Saved bursaries ───────────────────────────────────────────────────────
+  const savedBursaryNames = (savedBursaries || []).map((b: { bursary_name: string }) => b.bursary_name)
+
+  // ── Proactive signals for Nova ────────────────────────────────────────────
+  // These are injected as hints so Nova naturally brings up important things
+  const proactiveSignals: string[] = []
+  if (latestCheckin && latestCheckin.score <= 40)
+    proactiveSignals.push(`⚡ Wellness score is very low (${latestCheckin.score}/100${wellnessTrend === 'declining' ? ', declining' : ''}). Lead with empathy before any practical advice.`)
+  if (wellnessTrend === 'declining' && latestCheckin && latestCheckin.score < 60)
+    proactiveSignals.push(`📉 Wellness has been declining. If relevant, gently check in on how the student is coping.`)
+  if (daysSinceCheckin !== null && daysSinceCheckin >= 4)
+    proactiveSignals.push(`💭 No wellness check-in for ${daysSinceCheckin} days. If the student seems stressed, suggest they do a quick check-in.`)
+  if (overdueTasks.length >= 4)
+    proactiveSignals.push(`⚠️ ${overdueTasks.length} overdue tasks. Acknowledge the backlog warmly — don't lecture.`)
+  const lowConfExams = exams?.filter(e => confMap[e.id] !== undefined && confMap[e.id] <= 2 && Math.ceil((new Date(e.exam_date).getTime() - now.getTime()) / (1000*60*60*24)) <= 7) || []
+  if (lowConfExams.length > 0)
+    proactiveSignals.push(`📚 ${lowConfExams.map(e => e.exam_name).join(', ')} — low confidence + within 7 days. Offer targeted help if it comes up.`)
+  const atRiskModules = moduleAverages.filter(m => m.avg < 50)
+  if (atRiskModules.length > 0)
+    proactiveSignals.push(`📉 Grade tracker shows below 50% in: ${atRiskModules.map(m => `${m.name} (${m.avg}%)`).join(', ')}. Offer academic support if relevant.`)
 
   const p = profile as Record<string, unknown> | null
   // subscription_tier is the canonical column (set by PayFast webhook)
@@ -181,6 +264,23 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
       } : null,
       totalExamsAhead: exams?.length || 0,
     },
+    wellness: {
+      latestScore: latestCheckin?.score ?? null,
+      trend: wellnessTrend,
+      daysSinceCheckin,
+      latestBreakdown: latestCheckin
+        ? { sleep: latestCheckin.sleep, stress: latestCheckin.stress, energy: latestCheckin.energy, motivation: latestCheckin.motivation }
+        : null,
+    },
+    gamification: {
+      totalXP,
+      xpLevel,
+    },
+    grades: {
+      moduleAverages,
+    },
+    savedBursaryNames,
+    proactiveSignals,
     stressSignals,
     messageCount,
     subscriptionTier: tier,
@@ -192,7 +292,7 @@ function buildDynamicContext(
   ctx: Awaited<ReturnType<typeof buildStudentContext>>,
   usageGuidance: string,
 ): string {
-  const { profile, budget, academic, stressSignals } = ctx
+  const { profile, budget, academic, wellness, gamification, grades, savedBursaryNames, proactiveSignals, stressSignals } = ctx
   const p = profile as Record<string, unknown>
   const name = (p?.full_name as string | null)?.split(' ')[0] || 'student'
   const uni = (p?.university as string | null)?.split('(')[0]?.trim() || 'university'
@@ -218,6 +318,24 @@ function buildDynamicContext(
     ? `\n- **Language:** Respond in ${language}. You may code-switch naturally. Keep any technical terms/app names in English.`
     : ''
 
+  // ── Wellness section ──────────────────────────────────────────────────────
+  const wellnessLine = wellness.latestScore !== null
+    ? `Latest check-in: ${wellness.latestScore}/100 (${wellness.trend || 'single entry'})${wellness.daysSinceCheckin !== null && wellness.daysSinceCheckin >= 3 ? ` — ${wellness.daysSinceCheckin} days ago` : ''}`
+    : 'No wellness check-ins recorded yet'
+  const wellnessBreakdown = wellness.latestBreakdown
+    ? `Sleep: ${wellness.latestBreakdown.sleep}/5, Energy: ${wellness.latestBreakdown.energy}/5, Stress: ${wellness.latestBreakdown.stress}/5, Motivation: ${wellness.latestBreakdown.motivation}/5`
+    : null
+
+  // ── Grades section ────────────────────────────────────────────────────────
+  const gradesLine = grades.moduleAverages.length > 0
+    ? grades.moduleAverages.map(m => `${m.name}: ${m.avg}%`).join(' · ')
+    : 'No grade data entered yet'
+
+  // ── Proactive signals ─────────────────────────────────────────────────────
+  const proactiveBlock = proactiveSignals.length > 0
+    ? `\n**Proactive awareness for this conversation:**\n${proactiveSignals.map(s => `- ${s}`).join('\n')}`
+    : ''
+
   return `---
 
 ## THIS STUDENT'S LIVE CONTEXT (fresh data — use this to personalise)
@@ -239,6 +357,13 @@ ${stressNote}
 **Financial Situation:**
 - ${budgetNote}
 - Funding type: ${budget.fundingType || 'unknown'}
+
+**Wellbeing & Progress (VarsityOS tracking):**
+- Wellness: ${wellnessLine}${wellnessBreakdown ? `\n- Wellness breakdown: ${wellnessBreakdown}` : ''}
+- Gamification: Level ${gamification.xpLevel} · ${gamification.totalXP} XP earned
+- Grade tracker: ${gradesLine}
+- Saved bursaries: ${savedBursaryNames.length > 0 ? savedBursaryNames.join(', ') : 'none saved yet'}
+${proactiveBlock}
 
 **Instructions for this response:**
 - You are Nova 🌟. Use the persona and knowledge from the comprehensive knowledge base above.
@@ -444,9 +569,17 @@ export async function GET(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+    const threeDaysLater = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
     const [
       { data: conversation },
       { data: profile },
+      { data: nextExam },
+      { data: urgentTaskRows },
+      { data: wellnessLatest },
+      { data: xpLatest },
     ] = await Promise.all([
       supabase
         .from('nova_conversations')
@@ -457,9 +590,35 @@ export async function GET(request: NextRequest) {
         .single(),
       supabase
         .from('profiles')
-        .select('plan, subscription_tier, nova_messages_used, nova_messages_limit, nova_messages_reset_at')
+        .select('full_name, plan, subscription_tier, nova_messages_used, nova_messages_limit, nova_messages_reset_at')
         .eq('id', user.id)
         .single(),
+      supabase
+        .from('exams')
+        .select('exam_name, exam_date')
+        .eq('user_id', user.id)
+        .gte('exam_date', today)
+        .order('exam_date', { ascending: true })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from('tasks')
+        .select('id')
+        .eq('user_id', user.id)
+        .neq('status', 'done')
+        .lte('due_date', threeDaysLater),
+      supabase
+        .from('wellness_checkins')
+        .select('score, date')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from('user_xp_state')
+        .select('total_xp')
+        .eq('user_id', user.id)
+        .maybeSingle(),
     ])
 
     const p = profile as Record<string, unknown> | null
@@ -474,11 +633,25 @@ export async function GET(request: NextRequest) {
       : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
       : NOVA_FREE_LIMIT
 
+    const xpTotal = (xpLatest as { total_xp?: number } | null)?.total_xp || 0
+    const daysToExam = nextExam
+      ? Math.ceil((new Date(nextExam.exam_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+      : null
+
     return NextResponse.json({
       messages: (conversation?.messages as unknown[]) || [],
       messageCount,
       messageLimit,
       tier,
+      dailyBriefData: {
+        name: ((p?.full_name as string | null) || '').split(' ')[0] || null,
+        nextExamName: nextExam?.exam_name || null,
+        daysToExam,
+        urgentTaskCount: urgentTaskRows?.length || 0,
+        wellnessScore: (wellnessLatest as { score?: number } | null)?.score ?? null,
+        xpLevel: getXPLevel(xpTotal),
+        totalXP: xpTotal,
+      },
     })
   } catch (error) {
     console.error('Nova GET error:', error)
