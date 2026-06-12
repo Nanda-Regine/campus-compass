@@ -57,7 +57,7 @@ interface AmbientImageProps {
   zone?: AmbientZone
   src?: string
   alt?: string
-  opacity?: number       // 0–1, default 0.13
+  opacity?: number       // 0–1, default 0.28
   blurPx?: number        // CSS blur in px, default 3
   saturation?: number    // CSS saturate multiplier, default 1.3
   overlayColor?: string  // gradient layered over the image for legibility
@@ -68,10 +68,10 @@ export function AmbientImage({
   zone,
   src,
   alt = '',
-  opacity = 0.13,
+  opacity = 0.28,
   blurPx = 3,
   saturation = 1.3,
-  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.55) 0%, rgba(10,9,23,0.35) 100%)',
+  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.30) 0%, rgba(10,9,23,0.15) 100%)',
   sizes = '100vw',
 }: AmbientImageProps) {
   const imageSrc = zone ? AMBIENT_IMAGES[zone] : src

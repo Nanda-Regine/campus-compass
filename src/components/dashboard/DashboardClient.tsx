@@ -292,8 +292,8 @@ function OSCommandHero({ timetable, tasks, exams, hour, firstName, profile, subs
       <div style={{ position: 'absolute', inset: 0, background: theme.heroBg, zIndex: 0 }} />
 
       {/* Ambient texture — real image layer beneath gradient */}
-      <AmbientImage zone="dashboard" opacity={0.07} blurPx={4} saturation={1.5}
-        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.2) 0%,rgba(5,4,12,0.0) 100%)" />
+      <AmbientImage zone="dashboard" opacity={0.20} blurPx={4} saturation={1.5}
+        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.15) 0%,rgba(5,4,12,0.0) 100%)" />
 
       {/* Internal floating orbs */}
       <div
@@ -635,14 +635,26 @@ function UrgentTasksStrip({ tasks }: { tasks: Task[] }) {
 }
 
 /* ── FeatureGrid ─────────────────────────────────────── */
-const FEATURE_CARDS = [
-  { href: '/study',            label: 'Study',  accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.1)' },
-  { href: '/budget',           label: 'Budget', accent: '#c9a84c', iconBg: 'rgba(201,168,76,0.1)' },
-  { href: '/meals',            label: 'Meals',  accent: '#e8834a', iconBg: 'rgba(232,131,74,0.1)' },
-  { href: '/dashboard/work',   label: 'Work',   accent: '#7090d0', iconBg: 'rgba(112,144,208,0.1)' },
-  { href: '/nova',             label: 'Nova',   accent: '#9b6fd4', iconBg: 'rgba(155,111,212,0.1)' },
-  { href: '/dashboard/groups', label: 'Groups', accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.1)' },
+// Bento layout: Nova (wide hero) → 2×2 core cards → Groups (wide bar)
+const FEATURE_CARDS: Array<{ href: string; label: string; accent: string; iconBg: string; wide?: boolean }> = [
+  { href: '/nova',             label: 'Nova',   accent: '#9b6fd4', iconBg: 'rgba(155,111,212,0.15)', wide: true },
+  { href: '/study',            label: 'Study',  accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.10)' },
+  { href: '/budget',           label: 'Budget', accent: '#c9a84c', iconBg: 'rgba(201,168,76,0.10)' },
+  { href: '/meals',            label: 'Meals',  accent: '#e8834a', iconBg: 'rgba(232,131,74,0.10)' },
+  { href: '/dashboard/work',   label: 'Work',   accent: '#7090d0', iconBg: 'rgba(112,144,208,0.10)' },
+  { href: '/dashboard/groups', label: 'Groups', accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.10)', wide: true },
 ]
+
+// Per-card shape tokens — intentionally varied for organic feel
+const CARD_STYLE: Record<string, { radius: number; minH: number; bg: string }> = {
+  Nova:   { radius: 22, minH: 110, bg: 'linear-gradient(135deg,rgba(155,111,212,0.12) 0%,rgba(168,85,247,0.04) 100%)' },
+  Study:  { radius: 18, minH: 124, bg: 'linear-gradient(160deg,rgba(78,207,158,0.08) 0%,rgba(26,158,117,0.02) 100%)' },
+  Budget: { radius: 14, minH: 104, bg: 'linear-gradient(135deg,rgba(201,168,76,0.08) 0%,transparent 100%)' },
+  Meals:  { radius: 20, minH: 104, bg: 'linear-gradient(135deg,rgba(232,131,74,0.08) 0%,transparent 100%)' },
+  Work:   { radius: 16, minH: 100, bg: 'linear-gradient(135deg,rgba(112,144,208,0.08) 0%,transparent 100%)' },
+  Groups: { radius: 14, minH: 52,  bg: 'linear-gradient(90deg,rgba(78,207,158,0.06) 0%,transparent 100%)' },
+}
+
 const FEATURE_ICONS: Record<string, string> = { Study: '📚', Budget: '💰', Meals: '🍲', Work: '💼', Nova: '✨', Groups: '👥' }
 
 function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups, streakDays }: {
@@ -671,23 +683,70 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-      {FEATURE_CARDS.map(({ href, label, accent, iconBg }) => {
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+      {FEATURE_CARDS.map(({ href, label, accent, iconBg, wide }) => {
         const subtitle = subtitles[label]
+        const cs = CARD_STYLE[label]
+        const isNova = label === 'Nova'
+        const isGroups = label === 'Groups'
         return (
-          <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+          <Link
+            key={href}
+            href={href}
+            style={{ textDecoration: 'none', gridColumn: wide ? '1 / -1' : undefined }}
+          >
             <div
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: 16, minHeight: 100, cursor: 'pointer', position: 'relative', overflow: 'hidden', transition: 'border-color 0.2s ease, background 0.2s ease' }}
-              onMouseEnter={e => { ;(e.currentTarget as HTMLElement).style.borderColor = accent + '50' }}
-              onMouseLeave={e => { ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border-subtle)' }}
+              style={{
+                background: cs.bg,
+                border: '1px solid var(--border-subtle)',
+                borderRadius: cs.radius,
+                padding: isGroups ? '12px 16px' : isNova ? '16px 18px' : 14,
+                minHeight: cs.minH,
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+              }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${accent}50`; el.style.boxShadow = `0 0 0 1px ${accent}18` }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'var(--border-subtle)'; el.style.boxShadow = 'none' }}
             >
-              <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.6 }} />
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 10 }}>{label}</div>
-              <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)' }}>
-                <div className="bar-fill-anim" style={{ height: '100%', width: `${subtitle.pct}%`, background: subtitle.barColor, borderRadius: 3 }} />
-              </div>
+              {isNova ? (
+                // Wide hero — side-by-side layout with accent glow orb
+                <>
+                  <div style={{ position: 'absolute', top: -20, right: -20, width: 80, height: 80, borderRadius: '50%', background: 'radial-gradient(circle,rgba(168,85,247,0.18) 0%,transparent 70%)', pointerEvents: 'none' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative' }}>
+                    <div style={{ width: 46, height: 46, borderRadius: 14, background: iconBg, border: `1px solid ${accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0, boxShadow: `0 0 18px ${accent}30` }}>✨</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', letterSpacing: '-0.01em' }}>Nova AI</div>
+                      <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
+                    </div>
+                    <span style={{ fontSize: 20, color: `${accent}70`, flexShrink: 0 }}>›</span>
+                  </div>
+                  <div style={{ marginTop: 10, height: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 2 }}>
+                    <div className="bar-fill-anim" style={{ height: '100%', width: `${novaPct}%`, background: accent, borderRadius: 2, opacity: 0.7 }} />
+                  </div>
+                </>
+              ) : isGroups ? (
+                // Compact wide bar
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 30, height: 30, borderRadius: 9, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, flexShrink: 0 }}>👥</div>
+                  <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>Groups</span>
+                  <span style={{ fontSize: 12, color: subtitle.color ?? accent, marginLeft: 4 }}>{subtitle.text}</span>
+                  <span style={{ flex: 1 }} />
+                  <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.2)' }}>›</span>
+                </div>
+              ) : (
+                // Standard portrait card
+                <>
+                  <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.55, borderRadius: '2px 0 0 2px' }} />
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
+                  <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 10 }}>{label}</div>
+                  <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)' }}>
+                    <div className="bar-fill-anim" style={{ height: '100%', width: `${subtitle.pct}%`, background: subtitle.barColor, borderRadius: 3 }} />
+                  </div>
+                </>
+              )}
             </div>
           </Link>
         )
