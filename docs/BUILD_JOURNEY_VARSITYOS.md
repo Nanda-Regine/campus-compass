@@ -468,9 +468,12 @@ ALUMNI — GIVE BACK
 ### Sprint 8B — Social + Platform (Month 5+) 👥 ✅
 - [x] **Notes Marketplace** (`/notes`): community notes via Google Drive / OneDrive links; browse by module code; save/bookmark toggle; per-institution filter; uploader profile join; `community_notes` + `note_saves` tables (Supabase, RLS)
 - [x] **Study Twins** (`/social`): opt-in directory; matches by university + faculty; optional WhatsApp number; TwinCard + TwinGroup components; Nova intro helper deep-link; `study_twin_opt_in` + `whatsapp_number` columns on `profiles`
-- [x] **Peer Tutoring Marketplace** (`/tutoring`): full lifecycle (pending → confirmed → completed); tutor profiles with subjects array, rate/hr, bio, availability; `BecomeATutorModal`; `BookSessionModal` (subject picker, date, duration pills, payment method — Cash/EFT/PayFast online); push notification to tutor on book, to student on confirm/complete; star reviews on completed sessions; `tutors`, `tutoring_sessions`, `tutor_reviews` tables (Supabase, RLS, star average trigger)
+- [x] **Peer Tutoring Marketplace** (`/tutoring`): full lifecycle (pending → confirmed → completed); tutor profiles with subjects array, rate/hr, bio, availability; `BecomeATutorModal`; `BookSessionModal` (subject picker, date, duration pills); **communication-only — payment arranged directly between student and tutor** (cash or EFT, VarsityOS does not touch money); push notification to tutor on book, to student on confirm/complete; star reviews on completed sessions; `tutors`, `tutoring_sessions`, `tutor_reviews` tables (Supabase, RLS, star average trigger)
 - [x] **Navigation**: Notes, Social, Tutoring added to BottomNav `MORE_ITEMS` and `APP_PREFIXES`
 - [x] **Institution list** (`src/types/index.ts`): `SA_UNIVERSITIES` expanded from 26 → 100+ entries covering all 26 public universities, all 50 TVET colleges by province, and 17 major private HEIs
+- [x] **Nova knowledge base Parts 18–20** (`src/lib/nova-knowledge-base.ts`): Part 18 — full VarsityOS feature map (every feature with path, trigger phrases, when/when NOT to redirect); Part 19 — 100+ bursary entries with amounts, eligibility, deadlines, obligations; Part 20 — TVET intelligence (NCV L2-L4, N1-N6 structure, all 50 colleges by province, NSFAS TVET 80% rule, SETA bursaries, trade salaries, articulation paths to universities)
+- [x] **Campus Feed** (`/social` Feed tab): every student can post and interact; institution-scoped feed with opt-in "All SA Students" scope toggle; 5 post categories (General, Opportunity, Academic, Campus, Sell/Swap); inline post composer with character counter + category picker; optimistic toggle reactions (❤️ with count); collapsible inline comment threads; cursor pagination (20 posts/page); own-post deletion; `campus_posts`, `post_reactions`, `post_comments` tables (Supabase, RLS, indexes on institution + created_at + post_id)
+- [x] **Social page updated**: `SocialClient` tabbed wrapper — Campus Feed (default) | Study Twins; lazy-loaded with `next/dynamic` for code splitting
 
 ### Sprint 9 — Growth, SEO & Discovery (June 2026) 🔍 ✅
 - [x] **SEO flood** (`src/app/layout.tsx`): keywords expanded from ~100 → 300+ terms; full coverage of all 26 public universities (abbreviation + full name + `"student app"` variant); all 50 TVET colleges; 17 private HEIs; NSFAS 2025/2026 payment dates/appeals; peer tutoring, notes sharing, bursary finder, study twins; N2–N6 TVET terms; load shedding; data saver mode; city/province-specific; student cultural terms (lekker, eish, kasi, Mzansi)
@@ -497,11 +500,12 @@ ALUMNI — GIVE BACK
   - Final conversion CTA with gradient background
   - TypeScript clean, no extra dependencies
 
-### Sprint 10 — Tutoring Payments + Onboarding Polish (Upcoming) 💳
-- [ ] **PayFast one-time payment for tutoring**: when student selects "Pay online" and tutor confirms booking, initiate PayFast payment before session is marked active
-- [ ] **Onboarding flow review**: audit SetupFlow 6-step onboarding for push notification opt-in step quality; add university/TVET selector improvements with full 100+ list
+### Sprint 10 — Onboarding Polish + Quality Signals (Upcoming) ✨
+- [ ] **Onboarding flow review**: audit SetupFlow 6-step onboarding; improve university/TVET selector with searchable full 100+ list; better onboarding for TVET students (N-level, trade subjects)
 - [ ] **Tutor verification badge**: manual verification flow (student card upload) to distinguish verified tutors in search results
-- [ ] **Notes quality scoring**: save count + view count to surface high-quality notes at top of browse feed
+- [ ] **Notes quality scoring**: save count + view count surface high-quality notes at top of browse feed
+- [ ] **Campus Feed moderation**: report-post flow; basic keyword filter for harmful content; admin view
+- [ ] **WhatsApp Bot MVP**: `/nova`, `/budget`, `/tasks`, `/exam` commands via WhatsApp Business API — zero-data access for SA prepaid users
 
 ### Phase 4 — Native (2026) 📱
 - [ ] Expo monorepo setup
@@ -525,9 +529,11 @@ ALUMNI — GIVE BACK
 | June 2025 | Ubuntu as core philosophy | Product decisions grounded in African values, not Silicon Valley defaults |
 | Late 2025 | Inngest for scheduled jobs | Durable execution + built-in retries over plain Vercel crons |
 | Early 2026 | Notes Marketplace via Drive links | No Supabase Storage bucket needed; SA students already use Google Drive |
-| Early 2026 | Tutoring: PayFast one-time payment | Peer tutors need ZAR payments; in-app payments make VarsityOS a true marketplace |
+| Early 2026 | Tutoring: communication-only, no payments | VarsityOS is a booking/connection platform — money stays between tutor and student (cash or EFT); avoids merchant liability, payout ledger, and PayFast integration complexity at this stage |
 | June 2026 | SA_UNIVERSITIES expanded to 100+ | All 26 public unis + all 50 TVET colleges + 17 private HEIs for correct institution matching |
 | June 2026 | /demo page over product screenshots | Interactive previews convert better; browsers need to see the real UI before trusting a free app |
+| June 2026 | Campus Feed institution-scoped by default | Ubuntu principle — community first at your campus, then broader SA; avoids noisy all-SA feed before critical mass |
+| June 2026 | Campus Feed Sell/Swap category | Turns the feed into a campus marketplace networking model without building a separate classifieds product |
 | 2026 (planned) | Expo native | When background audio / widgets / biometrics become essential |
 
 ---
