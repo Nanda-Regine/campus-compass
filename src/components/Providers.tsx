@@ -8,6 +8,7 @@ import { ThemeProvider } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import type { Profile, Budget, Subscription } from '@/types'
+import { IntlProvider } from '@/lib/i18n/IntlProvider'
 
 // Initialise PostHog once (client-side only)
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
@@ -34,9 +35,71 @@ function PostHogPageView() {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { setUserId, setProfile, setBudget, setSubscription, setNovaInsights, reset } = useAppStore()
-  const supabase = createClient()
 
   useEffect(() => {
+    // createClient() must only run in the browser — calling it at component
+    // scope executes during SSR prerendering when NEXT_PUBLIC_* env vars
+    // may not be available, crashing the build.
+    const supabase = createClient()
+
+    async function loadUserData(userId: string) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (profile) {
+        setProfile(profile as Profile)
+
+        if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+          const p = profile as Profile
+          posthog.identify(userId, {
+            tier: p.subscription_tier || (p.is_premium ? 'premium' : 'free'),
+            university: p.university,
+            year: p.year_of_study,
+            funding_type: p.funding_type,
+          })
+        }
+      }
+
+      const { data: budget } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle()
+
+      if (budget) setBudget(budget as Budget)
+
+      if (profile) {
+        const p = profile as Profile
+        const tier = p.subscription_tier || (p.is_premium ? 'premium' : 'free')
+        const derivedSub: Subscription = {
+          id: p.id,
+          user_id: p.id,
+          payfast_payment_id: null,
+          payfast_subscription_token: null,
+          plan: tier as Subscription['plan'],
+          status: 'active',
+          amount: null,
+          billing_date: null,
+          next_billing_date: null,
+          cancelled_at: null,
+          created_at: p.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        setSubscription(derivedSub)
+      }
+
+      const { data: insights } = await supabase
+        .from('nova_insights')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('dismissed', false)
+        .limit(5)
+      if (insights) setNovaInsights(insights)
+    }
+
     // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -61,74 +124,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function loadUserData(userId: string) {
-    // Load profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-
-    if (profile) {
-      setProfile(profile as Profile)
-
-      // Identify user in PostHog
-      if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
-        const p = profile as Profile
-        posthog.identify(userId, {
-          tier: p.subscription_tier || (p.is_premium ? 'premium' : 'free'),
-          university: p.university,
-          year: p.year_of_study,
-          funding_type: p.funding_type,
-        })
-      }
-    }
-
-    // Load budget (maybeSingle — new users won't have a row yet)
-    const { data: budget } = await supabase
-      .from('budgets')
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle()
-
-    if (budget) setBudget(budget as Budget)
-
-    // Derive subscription from profile (no separate subscriptions table)
-    if (profile) {
-      const p = profile as Profile
-      const tier = p.subscription_tier || (p.is_premium ? 'premium' : 'free')
-      const derivedSub: Subscription = {
-        id: p.id,
-        user_id: p.id,
-        payfast_payment_id: null,
-        payfast_subscription_token: null,
-        plan: tier as Subscription['plan'],
-        status: 'active',
-        amount: null,
-        billing_date: null,
-        next_billing_date: null,
-        cancelled_at: null,
-        created_at: p.created_at || new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setSubscription(derivedSub)
-    }
-
-    // Load Nova proactive insights
-    const { data: insights } = await supabase
-      .from('nova_insights')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('dismissed', false)
-      .limit(5)
-    if (insights) setNovaInsights(insights)
-  }
-
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="varsityos-theme">
       <PostHogProvider client={posthog}>
         <PostHogPageView />
-        {children}
+        <IntlProvider>
+          {children}
+        </IntlProvider>
       </PostHogProvider>
     </ThemeProvider>
   )
