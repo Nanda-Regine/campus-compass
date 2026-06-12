@@ -291,9 +291,9 @@ function OSCommandHero({ timetable, tasks, exams, hour, firstName, profile, subs
       {/* Background gradient */}
       <div style={{ position: 'absolute', inset: 0, background: theme.heroBg, zIndex: 0 }} />
 
-      {/* Ambient texture — real image layer beneath gradient */}
-      <AmbientImage zone="dashboard" opacity={0.20} blurPx={4} saturation={1.5}
-        overlayColor="linear-gradient(180deg,rgba(5,4,12,0.15) 0%,rgba(5,4,12,0.0) 100%)" />
+      {/* Ambient texture — real image layer, lighter overlay since full-page bg handles depth */}
+      <AmbientImage zone="dashboard" opacity={0.35} blurPx={3} saturation={1.6}
+        overlayColor="rgba(5,4,12,0.0)" />
 
       {/* Internal floating orbs */}
       <div
@@ -752,6 +752,125 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
         )
       })}
     </div>
+  )
+}
+
+/* ── LifeOSSection — all 9 student life domains ─────────── */
+const LIFE_DOMAINS = [
+  {
+    name: 'Mind', emoji: '🧠', color: '#00CFA0',
+    modules: [
+      { label: 'Study',      href: '/study',            icon: '📚' },
+      { label: 'Exams',      href: '/study',            icon: '✏️' },
+      { label: 'Flashcards', href: '/study/flashcards', icon: '🃏' },
+      { label: 'Streak',     href: '/streak',           icon: '🔥' },
+    ],
+  },
+  {
+    name: 'Body', emoji: '🌿', color: '#FF6B9E',
+    modules: [
+      { label: 'Meals',    href: '/meals',    icon: '🍲' },
+      { label: 'Wellness', href: '/wellness', icon: '💆' },
+    ],
+  },
+  {
+    name: 'Money', emoji: '💰', color: '#D4A84B',
+    modules: [
+      { label: 'Budget',    href: '/budget',    icon: '📊' },
+      { label: 'NSFAS',     href: '/budget',    icon: '🎓' },
+      { label: 'Bursaries', href: '/bursaries', icon: '🏆' },
+    ],
+  },
+  {
+    name: 'Safety', emoji: '🛡️', color: '#10B981',
+    modules: [
+      { label: 'Emergency SOS', href: '/dashboard', icon: '🚨' },
+      { label: 'Load Shedding', href: '/dashboard', icon: '⚡' },
+    ],
+  },
+  {
+    name: 'Movement', emoji: '🚌', color: '#38BDF8',
+    modules: [
+      { label: 'Campus Life',  href: '/campus-life', icon: '🏫' },
+      { label: 'Transport',    href: '/campus-life', icon: '🗺️' },
+    ],
+  },
+  {
+    name: 'Growth', emoji: '📈', color: '#818CF8',
+    modules: [
+      { label: 'Career OS',        href: '/career', icon: '💼' },
+      { label: 'Entrepreneurship', href: '/career', icon: '🚀' },
+    ],
+  },
+  {
+    name: 'Community', emoji: '🌍', color: '#A855F7',
+    modules: [
+      { label: 'Campus Feed', href: '/social',           icon: '📢' },
+      { label: 'Groups',      href: '/dashboard/groups', icon: '👥' },
+      { label: 'Notes',       href: '/notes',            icon: '📝' },
+      { label: 'Tutoring',    href: '/tutoring',         icon: '🎓' },
+    ],
+  },
+  {
+    name: 'Work', emoji: '💼', color: '#7090D0',
+    modules: [
+      { label: 'Part-time Jobs', href: '/dashboard/work', icon: '💰' },
+      { label: 'Shifts',         href: '/dashboard/work', icon: '📅' },
+    ],
+  },
+  {
+    name: 'Future', emoji: '✨', color: '#9b6fd4',
+    modules: [
+      { label: 'Nova AI',   href: '/nova',      icon: '✦' },
+      { label: 'Career',    href: '/career',    icon: '🌟' },
+      { label: 'Bursaries', href: '/bursaries', icon: '🏆' },
+    ],
+  },
+]
+
+function LifeOSSection() {
+  return (
+    <section>
+      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', fontWeight: 600, marginBottom: 12 }}>
+        ◈ Your Life OS · 9 Domains
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+        {LIFE_DOMAINS.map(({ name, emoji, color, modules }) => (
+          <div
+            key={name}
+            style={{
+              borderRadius: 14,
+              background: `${color}09`,
+              border: `0.5px solid ${color}30`,
+              padding: '12px 13px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{ position: 'absolute', top: -10, right: -10, width: 50, height: 50, borderRadius: '50%', background: `radial-gradient(circle,${color}20 0%,transparent 70%)`, pointerEvents: 'none' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 9 }}>
+              <span style={{ fontSize: 15 }}>{emoji}</span>
+              <span style={{ fontSize: 9, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{name}</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {modules.map(mod => (
+                <Link key={mod.label} href={mod.href} style={{ textDecoration: 'none' }}>
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 3,
+                    fontSize: 10, padding: '3px 8px', borderRadius: 999,
+                    background: `${color}14`, color,
+                    border: `0.5px solid ${color}35`,
+                    cursor: 'pointer',
+                  }}>
+                    {mod.icon} {mod.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -1235,26 +1354,29 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   return (
     <>
-      <div className="page-enter min-h-screen" style={{ background: 'var(--bg-base)' }}>
+      {/* Full-page ambient image — fixed so it persists as user scrolls */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <AmbientImage zone="dashboard" opacity={0.30} blurPx={25} saturation={1.0}
+          overlayColor="rgba(5,4,12,0.0)" />
+        {/* Mode-driven orbs float above the ambient image */}
+        <div className="orb-float" style={{
+          position: 'absolute', top: '-6%', left: '-10%', width: 620, height: 620, borderRadius: '50%',
+          background: `radial-gradient(circle, ${theme.orb1} 0%, transparent 70%)`,
+          filter: 'blur(75px)',
+        }} />
+        <div className="orb-float-r" style={{
+          position: 'absolute', bottom: '12%', right: '-8%', width: 520, height: 520, borderRadius: '50%',
+          background: `radial-gradient(circle, ${theme.orb2} 0%, transparent 70%)`,
+          filter: 'blur(65px)',
+        }} />
+        <div style={{
+          position: 'absolute', top: '48%', left: '28%', width: 360, height: 360, borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%)',
+          filter: 'blur(50px)',
+        }} />
+      </div>
 
-        {/* Mode-driven ambient orbs — much more vivid than before */}
-        <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-          <div className="orb-float" style={{
-            position: 'absolute', top: '-6%', left: '-10%', width: 620, height: 620, borderRadius: '50%',
-            background: `radial-gradient(circle, ${theme.orb1} 0%, transparent 70%)`,
-            filter: 'blur(75px)',
-          }} />
-          <div className="orb-float-r" style={{
-            position: 'absolute', bottom: '12%', right: '-8%', width: 520, height: 520, borderRadius: '50%',
-            background: `radial-gradient(circle, ${theme.orb2} 0%, transparent 70%)`,
-            filter: 'blur(65px)',
-          }} />
-          <div style={{
-            position: 'absolute', top: '48%', left: '28%', width: 360, height: 360, borderRadius: '50%',
-            background: 'radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%)',
-            filter: 'blur(50px)',
-          }} />
-        </div>
+      <div className="page-enter min-h-screen" style={{ background: 'rgba(5,4,12,0.62)' }}>
 
         <PullToRefresh onRefresh={handleRefresh} />
 
@@ -1338,8 +1460,14 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
               <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
               <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
-              <div className="md:hidden"><FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} /></div>
-              <ModulePillList tasks={allTasks} totalBudget={totalBudget} remaining={remaining} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} />
+
+              {/* Quick-access bento tiles (mobile) */}
+              <div className="md:hidden">
+                <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} />
+              </div>
+
+              {/* Full Life OS — all 9 student life domains — always visible */}
+              <LifeOSSection />
             </div>
 
             {/* Column 2 */}
