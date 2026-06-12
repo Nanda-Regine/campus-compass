@@ -90,6 +90,16 @@ const nextConfig = {
 
   async headers() {
     return [
+      // Digital Asset Links — required for TWA Android verification
+      // Google's servers fetch this to verify domain ownership before allowing TWA
+      {
+        source: '/.well-known/assetlinks.json',
+        headers: [
+          { key: 'Content-Type', value: 'application/json' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Cache-Control', value: 'public, max-age=3600' },
+        ],
+      },
       {
         source: '/(.*)',
         headers: [

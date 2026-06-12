@@ -107,6 +107,57 @@
   --blue:          #3b82f6;
 }
 
+/* ── Light / Outdoor Mode ───────────────────────────────── */
+/* Activated by next-themes adding class="light" to <html>  */
+/* Designed for high-contrast outdoor readability in SA sun  */
+html.light {
+  --bg-base:           #F2F4F0;
+  --bg-surface:        rgba(0, 0, 0, 0.04);
+  --bg-surface-hover:  rgba(0, 0, 0, 0.06);
+  --bg-surface-raised: rgba(0, 0, 0, 0.05);
+  --bg-hero:           linear-gradient(135deg, #E0F5EF 0%, #D5F0E8 50%, #CCF0E2 100%);
+
+  --text-primary:   rgba(0, 0, 0, 0.90);
+  --text-secondary: rgba(0, 0, 0, 0.60);
+  --text-tertiary:  rgba(0, 0, 0, 0.38);
+  --text-label:     rgba(0, 0, 0, 0.45);
+  --text-light:     rgba(0, 0, 0, 0.90);
+  --text-light2:    rgba(0, 0, 0, 0.60);
+  --text-light3:    rgba(0, 0, 0, 0.38);
+
+  --border-subtle:   rgba(0, 0, 0, 0.08);
+  --border-default:  rgba(0, 0, 0, 0.12);
+  --border-emphasis: rgba(0, 0, 0, 0.20);
+  --dark-border:     rgba(0, 0, 0, 0.08);
+  --dark-border2:    rgba(0, 0, 0, 0.14);
+
+  --dark-bg:       #F2F4F0;
+  --dark-bg2:      #E8EBE5;
+  --dark-surface:  rgba(0, 0, 0, 0.04);
+  --dark-surface2: rgba(0, 0, 0, 0.06);
+
+  --teal-dim:    rgba(0, 181, 150, 0.14);
+  --teal-border: rgba(0, 181, 150, 0.35);
+  --teal-glow:   rgba(0, 181, 150, 0.10);
+  --nova-dim:    rgba(155, 122, 255, 0.14);
+  --nova-border: rgba(130, 100, 255, 0.28);
+  --nova-bg:     linear-gradient(135deg, #EDE9FA 0%, #E8E2F8 100%);
+  --gold-dim:    rgba(150, 100, 0, 0.12);
+  --gold-border: rgba(150, 100, 0, 0.28);
+  --gold:        #8B6A00;
+  --exam-blue-dim:    rgba(60, 100, 200, 0.10);
+  --exam-blue-border: rgba(60, 100, 200, 0.25);
+  --danger-dim:   rgba(200, 40, 40, 0.10);
+  --danger-border: rgba(200, 40, 40, 0.28);
+}
+
+html.light body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+html.light ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+
 /* ── Base ───────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;

@@ -11,6 +11,10 @@ import {
   type Subscription,
 } from '@/types'
 import { fmt, getDaysUntil, calcTotalBudget, cn } from '@/lib/utils'
+import { ShareButton } from '@/components/ui/ShareButton'
+import DayModeBanner from '@/components/dashboard/DayModeBanner'
+import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
+import { getDataSaverEnabled } from '@/lib/dataSaver'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -246,6 +250,12 @@ function NovaBanner({ profile, subscription, checkinMessage }: {
               <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 3 }}>Nova Check-in</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{checkinMessage}</div>
             </div>
+            <ShareButton
+              variant="icon"
+              context="nova_checkin"
+              title="Nova Daily Check-in"
+              text={`Nova's message for me today 💜\n"${checkinMessage}"\n\nMy AI study companion on VarsityOS`}
+            />
           </div>
         )}
       </div>
@@ -254,8 +264,8 @@ function NovaBanner({ profile, subscription, checkinMessage }: {
 }
 
 /* ── StatCardsRow ─────────────────────────────────────── */
-function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays }: {
-  remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number
+function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streakTodayDone }: {
+  remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number; streakTodayDone: boolean
 }) {
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
@@ -268,7 +278,7 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays }: {
     { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left', accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
     { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—', label: 'Days to exam', accent: '#7090d0' },
     { value: String(tasksDueWeek + overdueTasks), label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
-    { value: String(streakDays), label: 'Study streak', accent: '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
+    { value: String(streakDays), label: streakTodayDone ? 'Streak safe ✓' : 'Study streak', accent: streakTodayDone ? '#4ecf9e' : streakDays > 0 ? '#f59e0b' : '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
   ]
 
   return (
@@ -380,10 +390,10 @@ const FEATURE_CARDS = [
 ]
 const FEATURE_ICONS: Record<string, string> = { Study: '📚', Budget: '💰', Meals: '🍲', Work: '💼', Nova: '✨', Groups: '👥' }
 
-function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups }: {
+function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups, streakDays }: {
   tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number
   modules: Module[]; subscription: Subscription | null; profile: Profile
-  mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
+  mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number; streakDays: number
 }) {
   void cn(modules.length, subscription)
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
@@ -397,7 +407,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
   const novaPct     = isUnlimited ? 100 : Math.min(100, (novaLeft / (profile.nova_messages_limit ?? 10)) * 100)
 
   const subtitles: Record<string, { text: string; color?: string; pct: number; barColor: string }> = {
-    Study:  overdueTasks > 0 ? { text: `${overdueTasks} overdue`, color: '#ff6b6b', pct: 30, barColor: '#ff6b6b' } : tasksDueWeek > 0 ? { text: `${tasksDueWeek} due this week`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : { text: 'All clear ✓', color: '#4ecf9e', pct: 100, barColor: '#4ecf9e' },
+    Study:  overdueTasks > 0 ? { text: `${overdueTasks} overdue`, color: '#ff6b6b', pct: 30, barColor: '#ff6b6b' } : tasksDueWeek > 0 ? { text: `${tasksDueWeek} due this week`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : streakDays > 0 ? { text: `${streakDays}d streak 🔥`, color: '#4ecf9e', pct: Math.min(100, (streakDays / 30) * 100), barColor: '#4ecf9e' } : { text: 'All clear ✓', color: '#4ecf9e', pct: 100, barColor: '#4ecf9e' },
     Budget: totalBudget > 0 ? { text: remaining >= 0 ? `R${Math.round(remaining)} left` : 'Over budget', color: budgetColor, pct: Math.max(0, budgetPct), barColor: budgetColor } : { text: 'Set budget →', color: '#c9a84c', pct: 0, barColor: '#c9a84c' },
     Meals:  mealPlanExists ? { text: 'Week planned ✓', color: '#4ecf9e', pct: 90, barColor: '#4ecf9e' } : { text: 'Plan your week →', color: '#e8834a', pct: 10, barColor: '#e8834a' },
     Work:   shiftsThisWeek > 0 ? { text: `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead`, color: '#7090d0', pct: 80, barColor: '#7090d0' } : { text: 'No shifts soon', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#7090d0' },
@@ -464,9 +474,19 @@ function ExamCountdownCard({ exams }: { exams: Exam[] }) {
               </div>
             )}
           </div>
-          {exams.length > 1 && (
-            <div style={{ fontSize: 11, padding: '2px 8px', borderRadius: 9999, background: 'rgba(112,144,208,0.1)', color: '#7090d0', border: '0.5px solid rgba(112,144,208,0.25)' }}>+{exams.length - 1} more</div>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+            {exams.length > 1 && (
+              <div style={{ fontSize: 11, padding: '2px 8px', borderRadius: 9999, background: 'rgba(112,144,208,0.1)', color: '#7090d0', border: '0.5px solid rgba(112,144,208,0.25)' }}>+{exams.length - 1} more</div>
+            )}
+            {days > 0 && (
+              <ShareButton
+                variant="icon"
+                context="exam_countdown"
+                title="Exam Countdown"
+                text={`My ${next.exam_name} exam is in ${days} day${days !== 1 ? 's' : ''}! 📚 Studying hard with VarsityOS`}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -734,6 +754,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [shiftsThisWeek, setShiftsThisWeek] = useState(0)
   const [activeGroups, setActiveGroups] = useState(0)
   const [novaCheckin, setNovaCheckin] = useState<string | null>(null)
+  const [streakDays, setStreakDays] = useState(0)
+  const [streakTodayDone, setStreakTodayDone] = useState(false)
+  const [currentHour, setCurrentHour] = useState(() => new Date().getHours())
 
   // 1. Store init
   useEffect(() => {
@@ -791,8 +814,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     fetchLiveData()
   }, [])
 
-  // 5. Nova check-in — localStorage cached per day
+  // 5. Nova check-in — localStorage cached per day; skipped in Data Saver mode
   useEffect(() => {
+    if (getDataSaverEnabled()) return  // protect prepaid data
     const today = new Date().toISOString().split('T')[0]
     const cachedDate = localStorage.getItem('nova_last_checkin_date')
     const cachedMsg  = localStorage.getItem('nova_checkin_message')
@@ -803,14 +827,38 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       .catch(() => {})
   }, [])
 
-  // 6. Exam push check (once per session)
+  // 6. Streak — session-cached so pull-to-refresh can update it
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    const cached = sessionStorage.getItem(`streak_${today}`)
+    if (cached) {
+      try {
+        const d = JSON.parse(cached)
+        setStreakDays(d.streak ?? 0)
+        setStreakTodayDone(d.todayDone ?? false)
+        return
+      } catch { /* ignore */ }
+    }
+    fetch('/api/streak')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d && !d.error) {
+          setStreakDays(d.streak ?? 0)
+          setStreakTodayDone(d.todayDone ?? false)
+          sessionStorage.setItem(`streak_${today}`, JSON.stringify(d))
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  // 7. Exam push check (once per session)
   useEffect(() => {
     if (sessionStorage.getItem('push_checked')) return
     sessionStorage.setItem('push_checked', '1')
     fetch('/api/push/check-exams').catch(() => {})
   }, [])
 
-  // 7. FCM push notification subscription (once per session)
+  // 8. FCM push notification subscription (once per session)
   useEffect(() => {
     if (sessionStorage.getItem('fcm_init')) return
     sessionStorage.setItem('fcm_init', '1')
@@ -818,10 +866,34 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     import('@/lib/firebase-messaging').then(({ initPushNotifications }) => initPushNotifications(userId)).catch(() => {})
   }, [])
 
+  // 9. Keep currentHour in sync — re-render Day Mode banner on the hour
+  useEffect(() => {
+    const update = () => setCurrentHour(new Date().getHours())
+    const now = new Date()
+    const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
+    const timeout = setTimeout(() => {
+      update()
+      const interval = setInterval(update, 60_000)
+      return () => clearInterval(interval)
+    }, msToNextMinute)
+    return () => clearTimeout(timeout)
+  }, [])
+
   const handleRefresh = useCallback(async () => {
     try {
-      const insightsRes = await fetch('/api/insights').catch(() => null)
+      const [insightsRes, streakRes] = await Promise.all([
+        fetch('/api/insights').catch(() => null),
+        fetch('/api/streak').catch(() => null),
+      ])
       if (insightsRes?.ok) { const d = await insightsRes.json(); setNovaInsights(d.insights ?? []) }
+      if (streakRes?.ok) {
+        const d = await streakRes.json()
+        if (!d.error) {
+          setStreakDays(d.streak ?? 0)
+          setStreakTodayDone(d.todayDone ?? false)
+          sessionStorage.setItem(`streak_${new Date().toISOString().split('T')[0]}`, JSON.stringify(d))
+        }
+      }
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -865,7 +937,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
   const remaining   = totalBudget - monthSpent
   const isPremium   = p?.is_premium || ['premium', 'scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
-  const streakDays  = 0
 
   return (
     <>
@@ -914,6 +985,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
             {/* Column 1 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <DayModeBanner
+                timetable={initialData.timetable}
+                tasks={allTasks}
+                exams={allExams}
+                hour={currentHour}
+                firstName={p?.full_name?.split(' ')[0] ?? 'Student'}
+              />
               <NovaBanner profile={p} subscription={sub} checkinMessage={novaCheckin} />
               <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 14, padding: '12px 16px' }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
@@ -921,10 +999,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </div>
               <MobileTodayClasses timetable={initialData.timetable} />
               <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
-              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} />
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} />
               <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
               <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
-              <div className="md:hidden"><FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} /></div>
+              <div className="md:hidden"><FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} /></div>
               <ModulePillList tasks={allTasks} totalBudget={totalBudget} remaining={remaining} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} />
             </div>
 
@@ -937,6 +1015,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             {/* Column 3 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+              <LoadSheddingWidget />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
             </div>
           </div>

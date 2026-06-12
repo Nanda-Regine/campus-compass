@@ -9,6 +9,8 @@ import ReferralWidget from '@/components/referral/ReferralWidget'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { SA_UNIVERSITIES, SA_LANGUAGES } from '@/types'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -509,6 +511,29 @@ export default function ProfileClient() {
                   <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.55)' }}>
                     {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }) : '—'}
                   </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Display */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="px-5 pt-5 pb-3">
+                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Display</p>
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
+                <div className="px-1 space-y-2">
+                  <div>
+                    <p className="font-mono text-[0.54rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                      Outdoor mode increases contrast for bright South African sunlight.
+                    </p>
+                    <ThemeToggle />
+                  </div>
+                  <div>
+                    <p className="font-mono text-[0.54rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                      Data Saver skips auto-loading AI content to protect your prepaid data.
+                    </p>
+                    <DataSaverToggle />
+                  </div>
                 </div>
               </div>
             </div>

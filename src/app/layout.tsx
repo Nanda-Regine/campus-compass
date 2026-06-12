@@ -365,7 +365,7 @@ a.appendChild(r);
           <Sidebar />
           <OfflineBanner />
           <ConsentBanner />
-          {/* md+: offset for sidebar; mobile: bottom-nav padding */}
+          {/* md+: sidebar offset, no bottom-nav padding; mobile: 60px reserve for bottom nav */}
           <div className="md:ml-[48px] pb-[60px] md:pb-0">
             <PageTransition>{children}</PageTransition>
           </div>

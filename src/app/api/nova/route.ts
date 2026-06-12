@@ -20,6 +20,7 @@ const anthropic = new Anthropic({
 
 // ─── Detect heavy tutoring topic from conversation history ────
 const SUBJECT_PATTERNS: { keywords: string[]; name: string }[] = [
+  { keywords: ['nsfas','allowance','appeal','n+ rule','n+','my.nsfas','bank detail','myNSFAS','funding','financial aid','late payment','allowance late'], name: 'NSFAS (financial aid)' },
   { keywords: ['calculus','derivative','integral','limit','differentiat','trigonometr'], name: 'Mathematics (Calculus)' },
   { keywords: ['statistic','regression','probability','distribution','hypothesis','variance'], name: 'Statistics' },
   { keywords: ['chemistry','organic','molecule','reaction','bond','compound','titrat'], name: 'Chemistry' },
@@ -30,6 +31,7 @@ const SUBJECT_PATTERNS: { keywords: string[]; name: string }[] = [
   { keywords: ['programming','algorithm','function','variable','loop','array','debug','syntax','class'], name: 'Computer Science' },
   { keywords: ['essay','thesis','argument','bibliography','citation','hypothesis','analyse'], name: 'Academic Writing' },
   { keywords: ['biology','cell','dna','protein','organism','evolution','photosynthesis','anatomy'], name: 'Biology' },
+  { keywords: ['bursary','scholarship','funza','sasol inzalo','eskom bursary','transnet','old mutual bursary','apply bursary','application plan','how to apply'], name: 'Bursaries & Scholarships' },
 ]
 
 function detectHeavyTopic(history: { role: string; content: string }[]): string | null {

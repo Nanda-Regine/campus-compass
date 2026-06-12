@@ -8,6 +8,7 @@ import {
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
 import { trackEvent } from '@/lib/analytics'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const NAV_ITEMS = [
   { href: '/dashboard',        icon: Home,       label: 'Dashboard' },
@@ -175,6 +176,7 @@ export function Sidebar() {
         }}>
           {initials}
         </div>
+        <ThemeToggle compact />
         <div style={{ color: online ? '#00D1A0' : 'rgba(255,255,255,0.25)' }}>
           {online ? <Wifi size={12} /> : <WifiOff size={12} />}
         </div>

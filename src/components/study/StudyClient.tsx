@@ -11,6 +11,8 @@ import ModulesTab from '@/components/study/ModulesTab'
 import { type Module, type Task, type TimetableEntry, type Exam } from '@/types'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 import PomodoroTimer from '@/components/study/PomodoroTimer'
+import GradesTab from '@/components/study/GradesTab'
+import FlashcardsTab from '@/components/study/FlashcardsTab'
 
 interface StudyClientProps {
   initialData: {
@@ -23,11 +25,13 @@ interface StudyClientProps {
 }
 
 const TABS = [
-  { id: 'tasks',     label: 'Tasks',     emoji: '✓' },
-  { id: 'timetable', label: 'Timetable', emoji: '⊞' },
-  { id: 'exams',     label: 'Exams',     emoji: '◎' },
-  { id: 'modules',   label: 'Modules',   emoji: '≡' },
-  { id: 'pomodoro',  label: 'Focus',     emoji: '◷' },
+  { id: 'tasks',      label: 'Tasks',    emoji: '✓' },
+  { id: 'timetable',  label: 'Timetable',emoji: '⊞' },
+  { id: 'exams',      label: 'Exams',    emoji: '◎' },
+  { id: 'grades',     label: 'Grades',   emoji: '🎓' },
+  { id: 'flashcards', label: 'Cards',    emoji: '🃏' },
+  { id: 'modules',    label: 'Modules',  emoji: '≡' },
+  { id: 'pomodoro',   label: 'Focus',    emoji: '◷' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -160,8 +164,10 @@ export default function StudyClient({ initialData }: StudyClientProps) {
       <div className="max-w-2xl mx-auto px-4 py-4">
         {activeTab === 'tasks'     && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} />}
         {activeTab === 'timetable' && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
-        {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   userId={userId} supabase={supabase} />}
-        {activeTab === 'modules'   && <ModulesTab   modules={modules}                     userId={userId} supabase={supabase} />}
+        {activeTab === 'exams'     && <ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} />}
+        {activeTab === 'grades'     && <GradesTab      modules={modules} />}
+        {activeTab === 'flashcards' && <FlashcardsTab modules={modules} />}
+        {activeTab === 'modules'    && <ModulesTab    modules={modules}                    userId={userId} supabase={supabase} />}
         {activeTab === 'pomodoro'  && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
       </div>
 

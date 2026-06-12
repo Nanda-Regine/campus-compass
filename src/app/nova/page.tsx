@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import TopBar from '@/components/layout/TopBar'
 import NovaCapabilitiesMenu from '@/components/nova/NovaCapabilitiesMenu'
 import { cn } from '@/lib/utils'
@@ -51,6 +51,7 @@ const RESOURCE_ICONS: Record<string, string> = {
 
 export default function NovaPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
@@ -104,6 +105,12 @@ export default function NovaPage() {
     }
     loadHistory()
   }, [router])
+
+  // Pre-fill input from ?prompt= URL parameter (e.g. from Bursary Finder)
+  useEffect(() => {
+    const prompt = searchParams.get('prompt')
+    if (prompt) setInput(decodeURIComponent(prompt))
+  }, [searchParams])
 
   const sendMessage = async (messageText?: string) => {
     const text = (messageText || input).trim()

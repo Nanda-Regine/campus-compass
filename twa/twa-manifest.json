@@ -1,0 +1,76 @@
+{
+  "packageId": "co.za.varsityos.app",
+  "host": "varsityos.co.za",
+  "name": "VarsityOS — Student OS",
+  "launcherName": "VarsityOS",
+  "display": "standalone",
+  "themeColor": "#0d9488",
+  "themeColorDark": "#0d9488",
+  "navigationColor": "#080f0e",
+  "navigationColorDark": "#080f0e",
+  "navigationDividerColor": "#111a18",
+  "navigationDividerColorDark": "#111a18",
+  "backgroundColor": "#080f0e",
+  "startUrl": "/dashboard",
+  "iconUrl": "https://varsityos.co.za/icon-512.png",
+  "maskableIconUrl": "https://varsityos.co.za/icon-maskable-512.png",
+  "monochromeIconUrl": "https://varsityos.co.za/icon-512.png",
+  "manifest": "https://varsityos.co.za/manifest.json",
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://varsityos.co.za/manifest.json",
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://varsityos.co.za/",
+  "minSdkVersion": 24,
+  "targetSdkVersion": 34,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "enableNotifications": true,
+  "shortcuts": [
+    {
+      "name": "Study Planner",
+      "short_name": "Study",
+      "url": "/study",
+      "chooseActivityLabel": "Open Study Planner"
+    },
+    {
+      "name": "Budget & NSFAS",
+      "short_name": "Budget",
+      "url": "/budget",
+      "chooseActivityLabel": "Open Budget"
+    },
+    {
+      "name": "Nova AI",
+      "short_name": "Nova",
+      "url": "/nova",
+      "chooseActivityLabel": "Chat with Nova"
+    },
+    {
+      "name": "Meal Prep",
+      "short_name": "Meals",
+      "url": "/meals",
+      "chooseActivityLabel": "Open Meal Planner"
+    }
+  ],
+  "generatedVersion": "1.13.0",
+  "signingKey": {
+    "path": "./android-release.keystore",
+    "alias": "varsityos-release"
+  },
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "playBillingEnabled": false,
+  "locations": ["https://varsityos.co.za"],
+  "enableSiteSettingsShortcut": true,
+  "isSplashScreenFadeOutEnabled": true,
+  "splashScreenFadeOutDuration": 400,
+  "features": {
+    "locationDelegation": { "enabled": false },
+    "playBilling": { "enabled": false }
+  },
+  "alphaDependencies": { "enabled": false },
+  "enableCrashReporting": false,
+  "isMonochromIconEnabled": false,
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1
+}

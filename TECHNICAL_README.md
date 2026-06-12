@@ -235,6 +235,7 @@ All schema changes are in `supabase/migrations/` with timestamp prefixes. The ca
 | `PAYFAST_SANDBOX` | Server only | `false` in prod |
 | `NEXT_PUBLIC_GTM_ID` | Client | GTM container ID |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Client | PostHog project key |
+| `ESKOMSEPUSH_API_KEY` | Server only | EskomSePush v2 API — for load shedding status + area schedules |
 
 ---
 

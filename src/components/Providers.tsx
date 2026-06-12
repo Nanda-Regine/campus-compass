@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
+import { ThemeProvider } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import type { Profile, Budget, Subscription } from '@/types'
@@ -124,9 +125,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <PostHogProvider client={posthog}>
-      <PostHogPageView />
-      {children}
-    </PostHogProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="varsityos-theme">
+      <PostHogProvider client={posthog}>
+        <PostHogPageView />
+        {children}
+      </PostHogProvider>
+    </ThemeProvider>
   )
 }

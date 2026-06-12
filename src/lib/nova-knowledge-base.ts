@@ -1,4 +1,4 @@
-// Nova AI — Comprehensive SA Student Knowledge Base
+﻿// Nova AI — Comprehensive SA Student Knowledge Base
 // Preloaded static content for Claude prompt caching (90% cost savings)
 // This entire block is cached as an ephemeral prompt — subsequent calls reuse the cache.
 
@@ -1759,4 +1759,98 @@ Typically 50% overall to pass. But many modules have sub-minimum rules: you need
 - SRC: Can refer you to campus legal support services
 
 **"I was asked to do something unethical at work, what are my rights?"**
-You have the right to refuse unethical or illegal instructions. SA whistleblower protection: Protected Disclosures Act (No. 26 of 2000) protects employees who report wrongdoing in good faith. You cannot be dismissed for reporting to CCMA, SAPS, or relevant regulatory authority. Keep records of everything.`
+You have the right to refuse unethical or illegal instructions. SA whistleblower protection: Protected Disclosures Act (No. 26 of 2000) protects employees who report wrongdoing in good faith. You cannot be dismissed for reporting to CCMA, SAPS, or relevant regulatory authority. Keep records of everything.
+
+---
+
+# PART 9: NSFAS ORACLE — DEEP EXPERTISE
+
+## myNSFAS Portal: Step-by-Step Actions
+
+**How to check your NSFAS application status:**
+1. Go to my.nsfas.org.za
+2. Login with SA ID + password (forgot password: click "Forgot Password", enter ID + email, get OTP)
+3. Dashboard shows: Application status, Funding status, Payment status
+4. Status meanings are explained in the Status Codes section below
+
+**How to update bank details on myNSFAS:**
+1. Login to my.nsfas.org.za, go to "My Profile" then "Banking Details" then "Edit"
+2. Enter: Bank name, branch code, account number
+3. Upload: Bank confirmation letter (from your bank) OR 3-month bank statement showing name + account number
+4. Wait 3-5 business days for verification
+5. CRITICAL: If your account is closed, update BEFORE the payment date. Returned payments take 4-6 weeks to reprocess.
+
+**How to submit an NSFAS appeal:**
+1. Login, click "My Applications", find rejected application, click "Appeal"
+2. You have 30 days from rejection date (after that, apply fresh next year)
+3. Choose reason: Academic (need medical/emergency docs) OR Financial change (family circumstances changed) OR Administrative error (NSFAS made mistake)
+4. Upload certified supporting documents (certify free at Post Office or police station)
+5. Submit and note your reference number. Check status after 10 business days.
+6. Appeal success rates: Admin errors around 80% if you have evidence. Medical/family around 65%. Academic failure with no documentation around 20%. Act immediately on rejection.
+
+## NSFAS 2025/2026 Allowance Amounts
+
+- Meal allowance (universities): R1,740/month, paid monthly 1st to 5th of month
+- Meal allowance (TVET colleges): R2,025/month
+- Book allowance: R6,000/year total. R3,000 paid in January, R3,000 in July. Paid to your bank, not your institution.
+- Transport: Bracket-based by distance from campus, ranges R7,500 to R40,000+ per year
+- Off-campus accommodation: Up to R45,625/year in 2025. Confirm exact tier with your Financial Aid office.
+- If book allowance not received by 20 January: Check portal bank details, then email enquiries@nsfas.org.za with your ID and student number.
+
+## N+ Rule: Complete Guide
+
+N+ rule limits how many years NSFAS funds you. N = minimum years to complete your degree. Plus 2 extra years (sometimes plus 1 for extended degrees).
+
+Years funded by degree:
+- 3-year degree (BA, BCom, BSc): Maximum 5 years funded (3 plus 2)
+- 4-year degree (BEd, LLB, B.Eng): Maximum 6 years funded (4 plus 2)
+- 5-year degree (MBChB, BVSc): Maximum 7 years funded (5 plus 2)
+- 6-year degree (BArch): Maximum 8 years funded (6 plus 2)
+- TVET: Different rules, contact NSFAS directly
+
+N+ counter rules that students miss:
+- Every year you were registered counts, even if you withdrew mid-year
+- Changing your degree does NOT reset the counter. Years already used count toward new degree.
+- Gap years (not registered anywhere) do NOT count toward N+
+- Repeating year 1 twice = 2 years counted against your limit, not 1
+
+Approaching your N+ limit:
+1. Count your remaining funded years carefully. Ask Financial Aid to confirm your exact count.
+2. Drop modules before the academic exclusion deadline rather than fail them. A withdrawal hurts less than a fail.
+3. Talk to your Academic Advisor BEFORE you fail. There are options but only before the fact.
+4. Appeal for extension: Medical, family emergency, or institutional disruption (protests, COVID) count. Submit within 30 days of funding termination.
+
+## When NSFAS is Late: Action Plan
+
+Week 1 late:
+Check portal status. Check your bank for pending deposits. Call NSFAS on 0860 067 327 (free call, weekdays 8am to 5pm). Contact your institution Financial Aid office as they can flag urgent cases directly to NSFAS.
+
+Week 2-3 late:
+Go to Financial Aid in person with your student number and ID. Ask specifically for: emergency food voucher, bridge loan, or allowance advance. Most universities have emergency funds specifically for NSFAS delays. Ask Student Affairs about the campus food bank. SRC often has emergency funds too. No shame in using these.
+
+Month or more late:
+Submit formal written complaint via the NSFAS portal. Get your SRC to escalate as a group complaint, which carries more weight than individual complaints. Contact DHET on 0800 872 222 or complaints@dhet.gov.za. If facing res eviction due to NSFAS delay, consult the campus legal clinic.
+
+Emergency food options while waiting:
+Ask Student Affairs about the campus food bank. Masingene House at UCT. Wits Student Crisis Committee food parcels. Pick n Pay No Name range and Shoprite private label are cheapest groceries. Church food programs and community organizations.
+
+## NSFAS Status Codes and What to Do
+
+"Application Received" means wait, check back in 2 weeks. "Application Under Assessment" means being reviewed, takes 4-8 weeks, do nothing. "Awaiting Documentation" means CHECK WHAT IS NEEDED AND UPLOAD IMMEDIATELY as this kills applications. "Awaiting Signature" means login and sign your NSFAS Funding Agreement right now. "Approved - Awaiting Registration" means register at your university as soon as possible so NSFAS can confirm you. "Funded" means confirm your bank details are correct. "Not Funded" means appeal within 30 days, do not delay even one day. "Cancelled" means appeal immediately with full documentation. "Payment in Progress" means wait 2-3 business days.
+
+## NSFAS Scams to Avoid
+
+1. "Pay me to help you get NSFAS" - NSFAS application is completely free. Anyone charging is stealing from you.
+2. Fake NSFAS WhatsApp groups - NSFAS only communicates via my.nsfas.org.za and their official email.
+3. "I can speed up your appeal for R500" - No private person has this ability. This is theft.
+4. Phishing websites - Always type my.nsfas.org.za directly into your browser. Never click links in SMS or WhatsApp.
+5. Bank detail helpers - Never share your NSFAS login or banking info with anyone except NSFAS directly via their official portal.
+
+## NSFAS Emergency Contacts
+
+NSFAS Helpline: 0860 067 327 (free call, weekdays 8am to 5pm SAST)
+NSFAS WhatsApp: 082 046 8553
+NSFAS Email: enquiries@nsfas.org.za
+NSFAS Portal: my.nsfas.org.za
+DHET Complaints (if NSFAS fails you): 0800 872 222 or complaints@dhet.gov.za
+`

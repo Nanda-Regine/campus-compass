@@ -9,12 +9,13 @@ import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
-import { type Exam, type Module, MODULE_COLOURS } from '@/types'
+import { type Exam, type Module, type Task, MODULE_COLOURS } from '@/types'
 import { cn, fmt, getDaysUntil } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 import ExamPushBanner from '@/components/study/ExamPushBanner'
+import ExamReadinessPanel from '@/components/study/ExamReadinessPanel'
 
 const schema = z.object({
   name:       z.string().min(2, 'Name is required'),
@@ -29,14 +30,16 @@ type FormData = z.infer<typeof schema>
 interface Props {
   exams:    Exam[]
   modules:  Module[]
+  tasks:    Task[]
   userId:   string
   supabase: SupabaseClient
 }
 
-export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
+export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Props) {
   const { addExam, removeExam } = useAppStore()
-  const [modalOpen, setModalOpen] = useState(false)
-  const [saving,    setSaving]    = useState(false)
+  const [view,       setView]       = useState<'list' | 'readiness'>('list')
+  const [modalOpen,  setModalOpen]  = useState(false)
+  const [saving,     setSaving]     = useState(false)
   const [assistModal, setAssistModal] = useState<{ open: boolean; exam: Exam | null; type: 'exam_prep' | 'conflict_check' }>({ open: false, exam: null, type: 'exam_prep' })
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
@@ -139,16 +142,52 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Sub-view toggle + action row */}
       <div className="flex items-center justify-between gap-2">
-        <button
-          onClick={() => setAssistModal({ open: true, exam: null, type: 'conflict_check' })}
-          className="font-mono text-[0.62rem] bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 text-amber-400 px-3 py-1.5 rounded-xl transition-all"
-        >
-          ⚡ Conflict check
-        </button>
-        <Button size="sm" onClick={() => setModalOpen(true)}>+ Add exam</Button>
+        {/* View toggle */}
+        <div style={{
+          display: 'flex', borderRadius: 10, overflow: 'hidden',
+          border: '0.5px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)',
+        }}>
+          {(['list', 'readiness'] as const).map(v => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              style={{
+                padding: '6px 12px',
+                fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+                fontWeight: view === v ? 700 : 400,
+                color: view === v ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+                background: view === v ? 'rgba(78,207,158,0.1)' : 'transparent',
+                border: 'none', cursor: 'pointer', transition: 'all 0.15s',
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+              }}
+            >
+              {v === 'list' ? 'List' : '% Ready'}
+            </button>
+          ))}
+        </div>
+
+        {view === 'list' && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setAssistModal({ open: true, exam: null, type: 'conflict_check' })}
+              className="font-mono text-[0.62rem] bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 text-amber-400 px-3 py-1.5 rounded-xl transition-all"
+            >
+              ⚡ Conflict
+            </button>
+            <Button size="sm" onClick={() => setModalOpen(true)}>+ Add</Button>
+          </div>
+        )}
       </div>
 
+      {/* Readiness view */}
+      {view === 'readiness' && (
+        <ExamReadinessPanel exams={exams} tasks={tasks} />
+      )}
+
+      {/* List view */}
+      {view === 'list' && <>
       <ExamPushBanner />
 
       {upcoming.length === 0 && past.length === 0 ? (
@@ -232,6 +271,7 @@ export default function ExamsTab({ exams, modules, userId, supabase }: Props) {
           <Input label="Notes (optional)" placeholder="Chapters covered, etc." {...register('notes')} />
         </form>
       </Modal>
+      </>}
     </div>
   )
 }
