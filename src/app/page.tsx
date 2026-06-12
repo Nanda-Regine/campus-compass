@@ -3,14 +3,25 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 export const metadata: Metadata = {
-  title: 'VarsityOS — Free Student Super-App for South African University Students',
+  title: 'VarsityOS — Free Student Super-App for South African University & TVET Students',
   description:
-    'VarsityOS is the free super-app built for South African university students. Track NSFAS allowances, manage your student budget, organise exams and assignments, plan affordable meals, and get AI mental health support from Nova. Works at UCT, Wits, UP, UKZN, UJ, UWC and all SA universities.',
+    'VarsityOS is the free super-app built for South African university and TVET college students. Track NSFAS allowances, manage your student budget, find bursaries, share notes, book peer tutors, plan affordable meals, and get AI mental health support from Nova. Works at all 26 public universities, all 50 TVET colleges, and private HEIs across South Africa.',
   alternates: { canonical: 'https://varsityos.co.za' },
+  keywords: [
+    'VarsityOS', 'NSFAS tracker', 'NSFAS app South Africa', 'student budget app South Africa',
+    'peer tutoring South Africa', 'study notes marketplace SA', 'bursary finder South Africa',
+    'TVET student app', 'university student app South Africa', 'Nova AI student',
+    'NSFAS 2025 2026', 'NSFAS appeal', 'NSFAS payment dates', 'bursary 2025 2026',
+    'UCT student app', 'Wits student app', 'UP student app', 'UKZN student app',
+    'UJ student app', 'TUT student app', 'CPUT student app', 'DUT student app',
+    'UNISA student app', 'load shedding study plan', 'study partner South Africa',
+    'student mental health app South Africa', 'student super app South Africa',
+    'free student app South Africa', 'TVET app South Africa',
+  ],
   openGraph: {
-    title: 'VarsityOS — Free Student Super-App for South African University Students',
+    title: 'VarsityOS — Free Student Super-App for South African University & TVET Students',
     description:
-      'Free app for SA students: NSFAS tracker, student budget manager, study planner, affordable meal prep, and Nova AI mental health companion. Built for varsity life in South Africa.',
+      'Free app for SA students: NSFAS tracker, student budget, bursary finder, notes marketplace, peer tutoring, study planner, and Nova AI mental health companion. Works at all SA universities and TVET colleges.',
     url: 'https://varsityos.co.za',
   },
 }
@@ -41,7 +52,11 @@ const jsonLd = {
         'CBT-based mental health support', 'Crisis detection with SA helpline resources',
         'Load-shedding study schedule planner', 'NSFAS N+ rule guidance',
         'Group assignment manager', 'Part-time work and shift tracker',
-        'Offline PWA — works without internet',
+        'Peer tutoring marketplace', 'Community notes sharing platform',
+        'Bursary finder with 100+ SA bursaries', 'Study twin matching',
+        'Exam readiness panel', 'Flashcards with spaced repetition (SM-2)',
+        'Daily study streaks and gamification', 'Offline PWA — works without internet',
+        'Data saver mode for prepaid users',
       ],
       audience: { '@type': 'EducationalAudience', educationalRole: 'student', geographicArea: { '@type': 'Country', name: 'South Africa' } },
       creator: { '@type': 'Organization', name: 'Mirembe Muse (Pty) Ltd', url: 'https://creativelynanda.co.za', foundingLocation: 'East London, Eastern Cape, South Africa' },
@@ -72,7 +87,7 @@ const jsonLd = {
         { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova AI messages per month. Scholar is R39/month for 100 messages, Premium is R79/month for 250 messages, and Nova Unlimited is R129/month for unlimited messages.' } },
         { '@type': 'Question', name: 'What is NSFAS and how does VarsityOS help me track it?', acceptedAnswer: { '@type': 'Answer', text: "NSFAS (National Student Financial Aid Scheme) is South Africa's government student funding programme. VarsityOS lets you log and track your NSFAS allowances, set spending categories, and monitor your balance in real time so you never run short before month-end." } },
         { '@type': 'Question', name: 'What is Nova and how does it help students?', acceptedAnswer: { '@type': 'Answer', text: "Nova is VarsityOS's AI companion built specifically for SA students. Nova provides CBT-based mental health support, crisis detection with SA helpline resources, imposter syndrome coaching, study strategies, NSFAS financial guidance, and load-shedding study plans." } },
-        { '@type': 'Question', name: 'Which South African universities does VarsityOS support?', acceptedAnswer: { '@type': 'Answer', text: 'VarsityOS works for students at all South African universities including UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, TUT, NUST, VUT, MUT, and Sol Plaatje.' } },
+        { '@type': 'Question', name: 'Which South African universities and colleges does VarsityOS support?', acceptedAnswer: { '@type': 'Answer', text: 'VarsityOS works for students at all 26 South African public universities including UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, UL, UFS, UMP, SMU, SPU, Univen, UniZulu, DUT, CPUT, TUT, CUT, VUT, and MUT — plus all 50 TVET colleges and major private HEIs including Varsity College (IIE), Rosebank College, Boston City Campus, MANCOSA, Pearson, Stadio, and Damelin.' } },
         { '@type': 'Question', name: 'Can I install VarsityOS on my phone?', acceptedAnswer: { '@type': 'Answer', text: "Yes. VarsityOS is a Progressive Web App (PWA). Open it in Chrome or Safari and tap 'Add to Home Screen'. No app store needed, and it works offline during load shedding." } },
         { '@type': 'Question', name: 'How does VarsityOS help with the NSFAS N+ rule?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS tracks your credits completed vs attempted so you can monitor your N+ standing. Nova AI can explain how the N+ rule works at your specific institution and what steps to take if you're at risk of losing funding." } },
         { '@type': 'Question', name: 'Does VarsityOS work without internet / during load shedding?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is a PWA with offline support. Your timetable, tasks, exams, expenses, and savings data sync to your device and remain accessible during load shedding or when you have no data.' } },
@@ -87,6 +102,10 @@ const jsonLd = {
         { '@type': 'Question', name: 'What is the NSFAS N+ rule and how does VarsityOS help?', acceptedAnswer: { '@type': 'Answer', text: "The N+ rule means NSFAS only funds you for the minimum time to complete your qualification plus a limited number of extra years. VarsityOS helps you track module credits, flag failed or repeated modules, and Nova explains the N+ implications at your specific university so you can act before funding is cut." } },
         { '@type': 'Question', name: 'Can Nova help with imposter syndrome as a first-generation South African student?', acceptedAnswer: { '@type': 'Answer', text: "Yes. Nova is trained to recognise first-generation student challenges — the feeling of not belonging at varsity, pressure from family, financial anxiety, and academic overwhelm. Nova uses CBT-based techniques to help reframe these thoughts and gives practical, SA-specific advice that generic AI assistants don't provide." } },
         { '@type': 'Question', name: 'Which bursaries does VarsityOS support tracking?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS supports tracking any bursary or funding source including NSFAS, Funza Lushaka, ISFAP (Ikusasa Student Financial Aid Programme), employer bursaries, DHET funded bursaries, provincial bursaries, and SRC emergency funds. The Flexible Wallet lets you create a separate budget bucket for each source." } },
+        { '@type': 'Question', name: 'Does VarsityOS work for TVET college students in South Africa?', acceptedAnswer: { '@type': 'Answer', text: "Yes. VarsityOS supports all 50 TVET colleges in South Africa including Buffalo City TVET, Northlink TVET, Tshwane South TVET, Coastal KZN TVET, Elangeni TVET, Capricorn TVET, Ehlanzeni TVET, and all others. NSFAS tracking, bursary finder, study planner, peer tutoring, and notes marketplace work for N2 through N6 and diploma students." } },
+        { '@type': 'Question', name: 'How does the Peer Tutoring marketplace work on VarsityOS?', acceptedAnswer: { '@type': 'Answer', text: "Students register as tutors by listing their subjects, setting an hourly rate, and marking availability. Other students search tutors at their university, view their profile and star ratings, and book a session. Payment can be made in cash, EFT, or online via PayFast. Both tutor and student receive push notifications at each stage — booking, confirmation, and completion." } },
+        { '@type': 'Question', name: 'What is the VarsityOS Notes Marketplace?', acceptedAnswer: { '@type': 'Answer', text: "The Notes Marketplace lets students share lecture notes, exam papers, summaries, and study guides by uploading a Google Drive or OneDrive link. Other students at your institution can browse by module code, download for free, and save notes to their library. It's a community-powered knowledge base built by students, for students." } },
+        { '@type': 'Question', name: 'What is the VarsityOS Bursary Finder?', acceptedAnswer: { '@type': 'Answer', text: "The Bursary Finder is a searchable database of 100+ South African bursaries including Funza Lushaka, ISFAP, Eskom, Sasol, Anglo American, Standard Bank, Nedbank, provincial bursaries, and more. Each entry includes the bursary amount, eligibility requirements, application deadline, and a direct application link. Nova can help identify which bursaries match your degree, institution, and province." } },
       ],
     },
   ],
@@ -95,14 +114,18 @@ const jsonLd = {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  { icon: '💰', title: 'Budget & NSFAS',    desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.', accent: '#3b82f6' },
-  { icon: '🏦', title: 'Flexible Wallet',   desc: 'Manage your own spending buckets beyond NSFAS — part-time income, bursaries, family support.', isNew: true, accent: '#0d9488' },
-  { icon: '🎯', title: 'Savings Goals',     desc: 'Set goals like a laptop or textbooks, track progress, and celebrate every milestone with confetti.', isNew: true, accent: '#06b6d4' },
-  { icon: '📚', title: 'Study Planner',     desc: 'Timetable, exam countdowns, tasks, and AI study plans built around your actual schedule.', accent: '#8b5cf6' },
-  { icon: '🍲', title: 'Meal Prep',         desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.', accent: '#e07858' },
-  { icon: '🌟', title: 'Nova AI',           desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support. 15 free messages/month.', accent: '#0d9488' },
-  { icon: '💼', title: 'Work & Shifts',     desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.', accent: '#d4a847' },
-  { icon: '👥', title: 'Group Assignments', desc: 'Create group spaces, share tasks and deadlines, and collaborate with classmates — no WhatsApp chaos.', isNew: true, accent: '#3b82f6' },
+  { icon: '💰', title: 'Budget & NSFAS',       desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.', accent: '#3b82f6' },
+  { icon: '🏦', title: 'Flexible Wallet',       desc: 'Manage spending buckets beyond NSFAS — part-time income, bursaries, family support.', accent: '#0d9488' },
+  { icon: '🎯', title: 'Savings Goals',         desc: 'Set goals like a laptop or textbooks, track progress, and celebrate milestones with confetti.', accent: '#06b6d4' },
+  { icon: '📚', title: 'Study Planner',         desc: 'Timetable, exam countdowns, flashcards with SM-2, and AI study plans around your schedule.', accent: '#8b5cf6' },
+  { icon: '🍲', title: 'Meal Prep',             desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.', accent: '#e07858' },
+  { icon: '🌟', title: 'Nova AI',               desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support.', accent: '#0d9488' },
+  { icon: '💼', title: 'Work & Shifts',         desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.', accent: '#d4a847' },
+  { icon: '👥', title: 'Group Assignments',     desc: 'Create group spaces, share tasks and deadlines — no WhatsApp chaos.', accent: '#3b82f6' },
+  { icon: '📖', title: 'Notes Marketplace',     desc: 'Share and download lecture notes, exam papers, and study guides from students at your institution.', isNew: true, accent: '#4ecf9e' },
+  { icon: '🎓', title: 'Peer Tutoring',         desc: 'Book verified peer tutors at your university. Earn money by tutoring what you know.', isNew: true, accent: '#c9a84c' },
+  { icon: '🔗', title: 'Study Twins',           desc: 'Get matched with students in your degree and year. Connect on WhatsApp or chat via Nova.', isNew: true, accent: '#9b6fd4' },
+  { icon: '🏆', title: 'Bursary Finder',        desc: 'Browse 100+ SA bursaries with amounts, deadlines, and direct application links. Never miss funding.', isNew: true, accent: '#f59e0b' },
 ]
 
 const PAIN_POINTS = [
@@ -181,7 +204,26 @@ const TESTIMONIALS = [
   { quote: "Load shedding messes with my study schedule constantly. Nova helped me build a study plan that actually works around it.", name: 'Rorisang M.', role: '1st year BCom, CUT', accent: '#06b6d4' },
 ]
 
-const UNIVERSITIES = ['UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UJ', 'UWC', 'NMU', 'Rhodes', 'UFH', 'WSU', 'UNISA', 'DUT', 'CPUT', 'TUT', 'UL', 'CUT', 'MUT', 'VUT', 'SPU']
+const UNIVERSITIES = [
+  // Traditional Universities
+  'UCT', 'Wits', 'UP', 'SU', 'UKZN', 'UWC', 'NMU', 'Rhodes', 'UFH', 'UFS', 'UL',
+  // Comprehensive
+  'UJ', 'WSU', 'UniZulu', 'SPU', 'Univen', 'UMP',
+  // Universities of Technology
+  'TUT', 'CPUT', 'DUT', 'CUT', 'VUT', 'MUT',
+  // Distance
+  'UNISA',
+  // Sefako Makgatho
+  'SMU',
+  // Private HEIs
+  'Varsity College', 'Rosebank College', 'Boston', 'MANCOSA', 'Pearson', 'Stadio', 'Damelin',
+  // TVET Colleges
+  'Buffalo City TVET', 'Ekurhuleni East TVET', 'Elangeni TVET', 'Tshwane South TVET',
+  'Northlink TVET', 'College of Cape Town', 'False Bay TVET', 'South Cape TVET',
+  'Capricorn TVET', 'Vhembe TVET', 'Ehlanzeni TVET', 'Gert Sibande TVET',
+  'Motheo TVET', 'Coastal KZN TVET', 'Umfolozi TVET', 'Majuba TVET',
+  'Boland TVET', 'West Coast TVET', 'Orbit TVET', 'Nkangala TVET',
+]
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -205,6 +247,9 @@ export default function LandingPage() {
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
           <div className="flex items-center gap-2">
+            <Link href="/demo" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors hidden sm:block" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              See demo
+            </Link>
             <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.55)' }}>
               Log in
             </Link>
@@ -244,7 +289,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Budget, savings goals, study planner, group projects, meal prep, and Nova — your AI companion who actually understands SA student life. Works offline. No app store needed.
+              Budget, NSFAS tracking, bursary finder, notes marketplace, peer tutoring, study planner, and Nova — your AI companion who actually understands SA student life. Works at all SA universities and TVET colleges. Offline ready. No app store needed.
             </p>
 
             <div className="flex items-center justify-center gap-3 flex-wrap mb-5">
@@ -256,11 +301,11 @@ export default function LandingPage() {
                 Start for free — no card needed
               </Link>
               <Link
-                href="/auth/login"
+                href="/demo"
                 className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10"
-                style={{ border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.7)' }}
+                style={{ border: '1px solid rgba(13,148,136,0.4)', color: '#5eead4' }}
               >
-                I have an account
+                ▶ See interactive demo
               </Link>
             </div>
             <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>Free forever · Works offline · Install on your phone</p>
@@ -276,8 +321,8 @@ export default function LandingPage() {
           >
             {[
               { value: 'R0', label: 'forever', sub: 'no credit card', color: '#3b82f6' },
-              { value: '8+', label: 'tools, one app', sub: 'no switching', color: '#0d9488' },
-              { value: '15+', label: 'SA universities', sub: 'UCT to TUT', color: '#06b6d4' },
+              { value: '15+', label: 'tools, one app', sub: 'notes to tutors', color: '#0d9488' },
+              { value: '100+', label: 'institutions', sub: 'unis · TVETs · private', color: '#06b6d4' },
               { value: '📶', label: 'Works offline', sub: 'load shedding ready', color: '#e07858' },
             ].map((stat, i) => (
               <div
@@ -301,7 +346,7 @@ export default function LandingPage() {
 
           {/* University trust */}
           <p className="font-mono text-xs text-center uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            For students at South African universities
+            For students at all 26 public universities · all 50 TVET colleges · private HEIs
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2" role="list">
             {UNIVERSITIES.map((uni, i) => (
@@ -450,7 +495,7 @@ export default function LandingPage() {
               Everything you need.<br />Nothing you don&apos;t.
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURES.map((f) => (
               <article
                 key={f.title}
@@ -716,6 +761,11 @@ export default function LandingPage() {
               { q: 'I live in digs, not res. Can I still use the meal planner?', a: 'Absolutely. The meal planner and AI Recipe Generator are designed for students cooking in digs with a limited weekly food budget. Input what you have in your pantry and your spend limit — Nova generates budget-friendly SA recipes under R50.' },
               { q: 'What is the N+ rule and how does VarsityOS help?', a: 'The N+ rule means NSFAS only funds you for the minimum time to complete your qualification plus a limited number of extra years (typically N+2 or N+1 depending on your institution). VarsityOS helps you track module credits, flag failed or repeated modules, and Nova explains the N+ implications at your specific university so you can act before funding is cut.' },
               { q: 'Can Nova help with imposter syndrome as a first-gen student?', a: "Yes. Nova is trained to recognise first-generation student challenges — the feeling of not belonging at varsity, pressure from family, financial anxiety, and academic overwhelm. Nova uses CBT-based techniques to help reframe these thoughts and gives practical, SA-specific advice that generic AI assistants don't provide." },
+              { q: 'Does VarsityOS work for TVET college students?', a: "Yes. VarsityOS supports all 50 TVET colleges in South Africa. NSFAS tracking, bursary finder, study planner, peer tutoring, and notes marketplace all work for N2–N6 and diploma students. You can select your TVET college during sign-up and get matched with peers at your institution." },
+              { q: 'How does the Notes Marketplace work?', a: "Students upload links to their notes (Google Drive, OneDrive, Dropbox) — lecture notes, past exam papers, summaries, and study guides. Other students at your institution can browse, save, and download them for free. No file uploads required. Share a Drive link, choose your module code, and help your campus community." },
+              { q: 'How does Peer Tutoring work on VarsityOS?', a: "Students who excel in a subject can register as tutors, set their rate per hour, and list their availability. Other students can search for tutors at their university by subject, view ratings, and book a session. You can pay in cash, EFT, or online via PayFast. Tutors get notified, confirm the booking, and review each other after the session." },
+              { q: 'What is the Bursary Finder?', a: "VarsityOS includes a searchable database of 100+ South African bursaries — from Funza Lushaka and ISFAP to Eskom, Sasol, Anglo American, and provincial bursaries. Each listing shows the amount, eligibility criteria, application deadlines, and a direct link to apply. Nova can also help you identify which bursaries match your degree and province." },
+              { q: 'What are Study Twins?', a: "Study Twins matches you with another student at your university studying the same degree and year of study. Opt in, share your WhatsApp number, and get connected with your academic match. It's designed to reduce isolation for first-gen students and help you build a study support network." },
             ].map((faq, i) => (
               <details
                 key={i}

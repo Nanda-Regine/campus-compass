@@ -47,103 +47,250 @@ export const metadata: Metadata = {
   description:
     'VarsityOS is the free super-app built for South African university students. Track NSFAS allowances, manage your student budget, plan meals on R33/day, organise assignments and exams, and get AI mental health support from Nova — all in one place.',
   keywords: [
-    // Brand
-    'VarsityOS', 'Varsity OS', 'varsityos.co.za', 'VarsityOS app',
-    // NSFAS — highest-traffic SA student keyword
+    // ── Brand ──────────────────────────────────────────────────────────────────
+    'VarsityOS', 'Varsity OS', 'varsityos.co.za', 'VarsityOS app', 'VarsityOS student app',
+    'VarsityOS South Africa', 'VarsityOS free', 'VarsityOS NSFAS',
+
+    // ── NSFAS — highest-traffic SA student keyword ──────────────────────────
     'NSFAS tracker', 'NSFAS allowance tracker', 'NSFAS app South Africa',
-    'NSFAS payment tracker', 'NSFAS budget app', 'NSFAS 2025 2026',
+    'NSFAS payment tracker', 'NSFAS budget app', 'NSFAS 2025', 'NSFAS 2026',
     'NSFAS N+ rule', 'NSFAS student financial aid', 'track NSFAS money',
-    'NSFAS monthly allowance tracker', 'NSFAS appeal app',
-    // Student budget
+    'NSFAS monthly allowance tracker', 'NSFAS appeal app', 'NSFAS appeal 2025',
+    'NSFAS appeal 2026', 'NSFAS payment dates 2025', 'NSFAS payment dates 2026',
+    'NSFAS online', 'NSFAS status check', 'NSFAS application', 'NSFAS funded student app',
+    'NSFAS allowance management', 'NSFAS food allowance tracker', 'NSFAS accommodation allowance',
+    'NSFAS transport allowance tracker', 'NSFAS book allowance', 'NSFAS balance checker',
+    'how to manage NSFAS money', 'NSFAS budget tips South Africa', 'NSFAS N+2 rule',
+    'NSFAS N+1 rule', 'NSFAS Funza Lushaka', 'NSFAS ISFAP', 'NSFAS Ikusasa',
+
+    // ── Student budget ──────────────────────────────────────────────────────
     'student budget app South Africa', 'university student budget',
     'student budget tracker South Africa', 'budget app for students',
     'free budget app students', 'student money management South Africa',
     'varsity budget tracker', 'how to budget as a student South Africa',
-    // Study planner — high search volume
+    'student spending tracker SA', 'university budget planner',
+    'student savings app', 'student wallet app South Africa',
+    'student finance app SA', 'money app for South African students',
+
+    // ── Study planner — high search volume ─────────────────────────────────
     'study planner South Africa', 'exam planner university',
     'student planner app', 'university timetable app',
     'assignment tracker app', 'exam countdown app',
     'student organiser app', 'free study planner app',
     'university assignment planner', 'study schedule app South Africa',
     'varsity study planner', 'student timetable app South Africa',
-    // Tutor / academic help
-    'student tutor app South Africa', 'AI tutor South Africa',
-    'online tutor SA students', 'study help app university',
-    'academic help app South Africa', 'AI study assistant South Africa',
-    'AI student app South Africa', 'AI homework helper South Africa',
-    // Nova AI mental health
+    'exam prep app South Africa', 'study schedule generator',
+    'flashcard app South Africa', 'spaced repetition app SA students',
+    'exam readiness app', 'grades tracker South Africa',
+    'module tracker app', 'academic planner South Africa',
+
+    // ── Peer tutoring — high intent ─────────────────────────────────────────
+    'peer tutoring app South Africa', 'find a tutor South Africa',
+    'student tutor marketplace South Africa', 'varsity tutor app',
+    'university tutor online SA', 'student tutoring platform South Africa',
+    'peer tutor near me South Africa', 'affordable tutor South Africa student',
+    'online tutoring South Africa free', 'find study partner South Africa',
+    'maths tutor South Africa student', 'accounting tutor varsity SA',
+    'engineering tutor South Africa', 'law tutor university South Africa',
+    'become a tutor South Africa student', 'earn as a tutor varsity',
+
+    // ── Notes marketplace ───────────────────────────────────────────────────
+    'student notes sharing South Africa', 'varsity notes download free',
+    'university notes marketplace', 'share lecture notes South Africa',
+    'study notes South Africa university', 'exam notes download SA',
+    'past exam papers South Africa university', 'study guide share South Africa',
+    'notes app South African students', 'community notes platform SA',
+    'UCT notes', 'Wits notes', 'UP notes', 'Stellenbosch notes', 'UKZN notes',
+    'UNISA study notes', 'UJ notes', 'TUT notes', 'CPUT notes', 'DUT notes',
+
+    // ── Bursaries — high intent ─────────────────────────────────────────────
+    'bursary finder South Africa', 'bursary app South Africa 2025',
+    'bursary app South Africa 2026', 'Funza Lushaka bursary', 'ISFAP bursary',
+    'Ikusasa Student Financial Aid Programme', 'DHET bursary', 'Eskom bursary',
+    'Sasol bursary', 'Anglo American bursary', 'De Beers bursary',
+    'Standard Bank bursary', 'Nedbank bursary', 'Absa bursary', 'FNB bursary',
+    'MTN bursary', 'Vodacom bursary', 'Old Mutual bursary', 'Investec bursary',
+    'mining bursary South Africa', 'engineering bursary South Africa',
+    'medical bursary South Africa', 'law bursary South Africa',
+    'teaching bursary South Africa', 'provincial bursary South Africa',
+    'bursary deadlines 2025', 'bursary deadlines 2026', 'bursary tracker South Africa',
+
+    // ── Nova AI mental health ───────────────────────────────────────────────
     'Nova AI student', 'AI mental health student South Africa',
     'student mental health app South Africa', 'SA student wellness app',
     'student mental health support free', 'therapy app students South Africa',
     'student counselling app', 'CBT app students South Africa',
     'student anxiety app', 'imposter syndrome university South Africa',
-    // Meals
+    'student depression support South Africa', 'student burnout app',
+    'free mental health app students SA', 'AI wellbeing app South Africa',
+
+    // ── Meals ───────────────────────────────────────────────────────────────
     'student meal planner South Africa', 'cheap student meals South Africa',
     'student recipes South Africa', 'budget meals varsity',
     'AI recipe generator students', 'meals under R50 South Africa',
-    // University-specific
-    'UCT student app', 'Wits student app', 'UP student app',
-    'UKZN student app', 'UJ student app', 'UWC student app',
-    'Stellenbosch student app', 'UNISA student app',
-    'DUT student app', 'CPUT student app', 'TUT student app',
-    'NMU student app', 'Rhodes student app', 'UFH student app',
-    'WSU student app', 'South African university app',
-    'varsity super app', 'SA university student tool',
-    // Problem-specific SA searches
-    'first gen student support South Africa', 'load shedding study plan',
-    'student financial aid South Africa', 'bursary tracker South Africa',
-    'student savings app South Africa', 'savings goals app students',
-    'part time job tracker students', 'student work shift tracker',
-    'group assignment manager South Africa', 'student collaboration app',
-    // PWA / offline
+    'student cooking South Africa', 'recipe app SA students',
+
+    // ── Traditional Universities — all 11 ──────────────────────────────────
+    'University of Cape Town student app', 'UCT student app', 'UCT app', 'UCT study app',
+    'University of the Witwatersrand student app', 'Wits student app', 'Wits app',
+    'University of Pretoria student app', 'UP student app', 'Tuks student app',
+    'Stellenbosch University student app', 'SU student app', 'Maties student app',
+    'University of KwaZulu-Natal student app', 'UKZN student app', 'UKZN app',
+    'University of the Western Cape student app', 'UWC student app',
+    'Nelson Mandela University student app', 'NMU student app', 'NMMU student app',
+    'Rhodes University student app', 'Rhodes student app', 'RU student app',
+    'University of Fort Hare student app', 'UFH student app', 'Fort Hare app',
+    'University of the Free State student app', 'UFS student app', 'Kovsies app',
+    'University of Limpopo student app', 'UL student app', 'Turfloop app',
+
+    // ── Comprehensive Universities — all 6 ─────────────────────────────────
+    'University of Johannesburg student app', 'UJ student app', 'UJ app',
+    'Walter Sisulu University student app', 'WSU student app', 'WSU app',
+    'University of Zululand student app', 'UniZulu student app', 'UNIZULU app',
+    'Sol Plaatje University student app', 'SPU student app',
+    'University of Venda student app', 'Univen student app', 'UNIVEN app',
+    'University of Mpumalanga student app', 'UMP student app',
+
+    // ── Universities of Technology — all 9 ─────────────────────────────────
+    'Tshwane University of Technology student app', 'TUT student app', 'TUT app',
+    'Cape Peninsula University of Technology student app', 'CPUT student app', 'CPUT app',
+    'Durban University of Technology student app', 'DUT student app', 'DUT app',
+    'Central University of Technology student app', 'CUT student app',
+    'Vaal University of Technology student app', 'VUT student app',
+    'Mangosuthu University of Technology student app', 'MUT student app',
+    'Walter Sisulu University student app',
+    'Namibia University of Science and Technology student app', 'NUST student app',
+    'University of South Africa student app', 'UNISA student app', 'UNISA app',
+    'UNISA distance learning app', 'UNISA myUnisa app alternative',
+
+    // ── Sefako Makgatho Health Sciences ────────────────────────────────────
+    'Sefako Makgatho Health Sciences University app', 'SMU student app', 'SMU app',
+
+    // ── Private HEIs ────────────────────────────────────────────────────────
+    'Varsity College student app', 'IIE student app', 'Varsity College IIE app',
+    'Rosebank College student app', 'Boston City Campus student app',
+    'MANCOSA student app', 'Pearson Institute student app',
+    'Monash South Africa student app', 'Stadio Higher Education student app',
+    'Regenesys student app', 'Da Vinci Institute student app',
+    'AFDA student app', 'Vega School student app', 'Damelin student app',
+    'Richfield Graduate Institute student app', 'Regent Business School student app',
+    'Lyceum College student app', 'AAA School of Advertising student app',
+    'MSC College student app', 'private university app South Africa',
+
+    // ── TVET Colleges — Eastern Cape ────────────────────────────────────────
+    'Buffalo City TVET College student app', 'East Cape Midlands TVET College app',
+    'Ikhala TVET College student app', 'Ingwe TVET College student app',
+    'King Hintsa TVET College student app', 'King Sabata Dalindyebo TVET College app',
+    'Lovedale TVET College student app', 'Port Elizabeth TVET College student app',
+
+    // ── TVET Colleges — Free State ──────────────────────────────────────────
+    'Flavius Mareka TVET College student app', 'Goldfields TVET College student app',
+    'Maluti TVET College student app', 'Motheo TVET College student app',
+
+    // ── TVET Colleges — Gauteng ─────────────────────────────────────────────
+    'Ekurhuleni East TVET College student app', 'Ekurhuleni West TVET College app',
+    'Esayidi TVET College student app', 'Orbit TVET College student app',
+    'South West Gauteng TVET College app', 'Tshwane North TVET College app',
+    'Tshwane South TVET College app', 'Western TVET College student app',
+    'Sedibeng TVET College student app',
+
+    // ── TVET Colleges — KwaZulu-Natal ──────────────────────────────────────
+    'Coastal KZN TVET College student app', 'Elangeni TVET College student app',
+    'Esayidi TVET College student app', 'Majuba TVET College student app',
+    'Mnambithi TVET College student app', 'Mthashana TVET College student app',
+    'Thekwini TVET College student app', 'Umfolozi TVET College student app',
+    'Umgungundlovu TVET College student app',
+
+    // ── TVET Colleges — Limpopo ─────────────────────────────────────────────
+    'Capricorn TVET College student app', 'Lephalale TVET College student app',
+    'Mopani South East TVET College app', 'Sekhukhune TVET College student app',
+    'Vhembe TVET College student app', 'Waterberg TVET College student app',
+
+    // ── TVET Colleges — Mpumalanga ──────────────────────────────────────────
+    'Ehlanzeni TVET College student app', 'Gert Sibande TVET College student app',
+    'Nkangala TVET College student app',
+
+    // ── TVET Colleges — Northern Cape ──────────────────────────────────────
+    'Kalahari TVET College student app', 'Namaqua TVET College student app',
+    'Northern Cape Rural TVET College app', 'Northern Cape Urban TVET College app',
+
+    // ── TVET Colleges — North West ─────────────────────────────────────────
+    'Orbit TVET College student app', 'Taletso TVET College student app',
+    'Vuselela TVET College student app',
+
+    // ── TVET Colleges — Western Cape ───────────────────────────────────────
+    'Boland TVET College student app', 'College of Cape Town student app',
+    'False Bay TVET College student app', 'Northlink TVET College student app',
+    'South Cape TVET College student app', 'West Coast TVET College student app',
+
+    // ── TVET generic terms ──────────────────────────────────────────────────
+    'TVET student app South Africa', 'TVET college app', 'N+ rule TVET',
+    'NSFAS TVET', 'TVET bursary South Africa', 'TVET study planner',
+    'TVET notes South Africa', 'TVET exam papers', 'N2 N3 N4 N5 N6 student app',
+    'TVET certificate student app', 'TVET diploma student app',
+    'TVET college South Africa app', 'free TVET student app',
+
+    // ── Study twins / social ────────────────────────────────────────────────
+    'study partner finder South Africa', 'study buddy app South Africa',
+    'find study partner university SA', 'student community app South Africa',
+    'student social app South Africa', 'university student network SA',
+    'connect with students same degree', 'study group app South Africa',
+    'WhatsApp study group alternative', 'student collaboration app SA',
+
+    // ── Load shedding ───────────────────────────────────────────────────────
+    'load shedding study plan South Africa', 'study during load shedding',
+    'load shedding schedule app SA', 'loadshedding student app',
+    'study offline load shedding', 'student app works without electricity',
+    'Eskom loadshedding student app', 'stage 6 study plan student',
+
+    // ── City/province specific ──────────────────────────────────────────────
+    'Johannesburg student app', 'Jozi student app', 'Cape Town student app',
+    'Durban student app', 'Pretoria student app', 'Tshwane student app',
+    'Bloemfontein student app', 'East London student app', 'Buffalo City student app',
+    'Polokwane student app', 'Nelspruit student app', 'Kimberley student app',
+    'Pietermaritzburg student app', 'Rustenburg student app', 'Mthatha student app',
+    'Umtata student app', 'George student app', 'Stellenbosch student app',
+    'Gauteng student app', 'Western Cape student app', 'KwaZulu-Natal student app',
+    'Eastern Cape student app', 'Limpopo student app', 'Mpumalanga student app',
+    'Northern Cape student app', 'North West student app', 'Free State student app',
+
+    // ── SA culture + community ──────────────────────────────────────────────
+    'Mzansi student app', 'kasi student South Africa', 'township student app',
+    'first generation student app SA', 'first gen university student South Africa',
+    'Black student South Africa app', 'lekker student app', 'eish student app',
+    'hectic student life app', 'SA student life organiser', 'sharp student planner',
+    'varsity life South Africa', 'res life South Africa', 'digs student South Africa',
+    'student res app South Africa', 'student life app Mzansi',
+
+    // ── PWA / offline / data saving ─────────────────────────────────────────
     'offline student app South Africa', 'student app without data',
     'student app works offline', 'PWA student app South Africa',
-    'student app no wifi', 'student app load shedding',
-    // Bursaries & alternative funding — high intent
-    'bursary tracker South Africa', 'Funza Lushaka bursary app',
-    'ISFAP student funding', 'Ikusasa student financial aid',
-    'DHET student funding South Africa', 'student stipend tracker',
-    'student allowance app South Africa', 'SRD grant student',
-    'student loan tracker South Africa', 'bursary management app',
-    // Campus life & accommodation
-    'student res app South Africa', 'digs tracker South Africa',
-    'student accommodation app', 'res life app South Africa',
-    'campus life app South Africa', 'student housing South Africa',
-    'student registration app SA', 'module registration tracker',
-    // More SA universities
-    'University of Limpopo student app', 'UL student app',
-    'University of Mpumalanga student', 'UMP student app',
-    'Sefako Makgatho student app', 'SMU student app',
-    'Sol Plaatje University app', 'SPU student app',
-    'Central University of Technology', 'CUT student app',
-    'Vaal University of Technology', 'VUT student app',
-    'Mangosuthu University of Technology', 'MUT student app',
-    'Walter Sisulu University student', 'WSU student app',
-    // SA community & culture terms
-    'Mzansi student app', 'kasi student South Africa',
-    'township student app South Africa', 'first generation student app SA',
-    'Black student South Africa app', 'lekker student app',
-    'hectic student life app', 'SA student life organiser',
-    'student app eish', 'sharp student planner',
-    'varsity life South Africa', 'res life South Africa',
-    // City-specific
-    'Jozi student app', 'Cape Town student app',
-    'Durban student app', 'Pretoria student app',
-    'Bloemfontein student app', 'East London student app',
-    'eThekwini student app', 'Tshwane student app',
-    // PWA / offline
-    'offline student app South Africa', 'student app without data',
-    'student app works offline', 'PWA student app South Africa',
-    'student app no wifi', 'student app load shedding',
-    // Long-tail
-    'free student app South Africa', 'best app for SA students',
-    'varsity life organiser', 'student mental health South Africa free',
-    'how to manage money as a student South Africa',
+    'student app no wifi', 'student app load shedding', 'data saving student app SA',
+    'student app works on 2G', 'low data student app South Africa',
+    'data saver mode student app', 'student app for Tecno Spark',
+    'student app for budget Android', 'lightweight student app SA',
+
+    // ── Gamification / streaks ──────────────────────────────────────────────
+    'student streak app South Africa', 'study streak app', 'student achievement app',
+    'gamified study app South Africa', 'student rewards app SA',
+    'study motivation app South Africa', 'XP student app',
+
+    // ── Long-tail high-intent ───────────────────────────────────────────────
+    'free student app South Africa', 'best app for SA students 2025',
+    'best student app South Africa 2026', 'varsity life organiser',
+    'student mental health South Africa free', 'how to manage money as a student South Africa',
     'student productivity app South Africa', 'varsity student helper app',
-    'first year university app South Africa', 'fresha student app SA',
-    'student money app South Africa 2025 2026',
-    'notion alternative South Africa students',
-    'free planner app South African varsity students',
+    'first year university app South Africa', 'student super app South Africa',
+    'student money app South Africa 2025', 'student money app South Africa 2026',
+    'notion alternative South Africa students', 'free planner app South African varsity',
+    'all-in-one student app South Africa', 'student app comparison South Africa',
+    'student app vs MyTutor vs Fundi', 'best free tools South African students',
+    'student app for honours students', 'postgraduate student app South Africa',
+    'student app for masters South Africa', 'FET college app South Africa',
+    'student app for engineering South Africa', 'student app for medicine South Africa',
+    'student app for law South Africa', 'student app for accounting South Africa',
+    'student app for education degree South Africa', 'student app for nursing South Africa',
+    'student app for social work South Africa', 'student app for IT South Africa',
   ],
   authors: [{ name: 'Nanda Regine', url: 'https://creativelynanda.co.za' }],
   creator: 'Nanda Regine — Mirembe Muse (Pty) Ltd',
