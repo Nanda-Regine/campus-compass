@@ -34,6 +34,7 @@ interface ProfileData {
   ai_language: string | null
   is_premium: boolean
   premium_until: string | null
+  subscription_tier: 'free' | 'scholar' | 'nova_unlimited' | null
   avatar_url: string | null
   created_at: string
 }
@@ -138,6 +139,132 @@ function SaveButton({ onClick, saving, label = 'Save changes' }: { onClick: () =
     >
       {saving ? 'Saving…' : label}
     </button>
+  )
+}
+
+// ─── Subscription section ────────────────────────────────────────────────────
+
+const TIER_DISPLAY: Record<string, { name: string; colour: string; messages: string }> = {
+  scholar:        { name: 'Nova Scholar',   colour: '#e8956e', messages: '150 messages/month' },
+  nova_unlimited: { name: 'Nova Unlimited', colour: '#d4a847', messages: 'Unlimited messages' },
+}
+
+function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | null; isPremium: boolean }) {
+  const [cancelling, setCancelling] = useState(false)
+  const [cancelled, setCancelled]   = useState(false)
+  const [cancelError, setCancelError] = useState<string | null>(null)
+  const [confirmCancel, setConfirmCancel] = useState(false)
+
+  const tier = profile?.subscription_tier || (isPremium ? 'scholar' : 'free')
+  const meta = TIER_DISPLAY[tier]
+
+  const handleCancel = async () => {
+    setCancelling(true)
+    setCancelError(null)
+    try {
+      const res = await fetch('/api/payfast/cancel', { method: 'POST' })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Cancellation failed')
+      setCancelled(true)
+      setConfirmCancel(false)
+    } catch (err) {
+      setCancelError((err as { message?: string })?.message || 'Something went wrong')
+    } finally {
+      setCancelling(false)
+    }
+  }
+
+  const tierBg = meta
+    ? `${meta.colour}12`
+    : 'rgba(255,255,255,0.03)'
+  const tierBorder = meta
+    ? `1px solid ${meta.colour}30`
+    : '1px solid rgba(255,255,255,0.07)'
+
+  return (
+    <div className="rounded-2xl p-5" style={{ background: tierBg, border: tierBorder }}>
+      <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+        Subscription
+      </p>
+
+      <div className="flex items-center justify-between mb-1">
+        <div>
+          <p className="font-display font-bold text-white">
+            {meta ? `✦ ${meta.name}` : 'Free plan'}
+          </p>
+          <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: meta ? meta.colour : 'rgba(255,255,255,0.3)' }}>
+            {meta ? meta.messages : '20 Nova messages / month'}
+          </p>
+        </div>
+
+        {/* CTA for free users or Scholar upgrading to Unlimited */}
+        {tier === 'free' && (
+          <a
+            href="/upgrade"
+            className="font-display font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95"
+            style={{ background: 'rgba(217,120,84,0.18)', color: '#e8956e', border: '1px solid rgba(217,120,84,0.3)' }}
+          >
+            Upgrade ↗
+          </a>
+        )}
+        {tier === 'scholar' && !cancelled && (
+          <a
+            href="/upgrade"
+            className="font-display font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95"
+            style={{ background: 'rgba(212,168,71,0.18)', color: '#d4a847', border: '1px solid rgba(212,168,71,0.3)' }}
+          >
+            Go Unlimited ↗
+          </a>
+        )}
+      </div>
+
+      {/* Cancel flow */}
+      {meta && !cancelled && (
+        <div style={{ marginTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}>
+          {!confirmCancel ? (
+            <button
+              onClick={() => setConfirmCancel(true)}
+              className="font-mono text-[0.58rem]"
+              style={{ color: 'rgba(255,255,255,0.22)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Cancel subscription
+            </button>
+          ) : (
+            <div>
+              <p className="font-mono text-[0.6rem] mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                Cancel subscription? You&apos;ll move to the Free plan immediately.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={handleCancel}
+                  disabled={cancelling}
+                  className="font-display font-bold text-xs px-3 py-1.5 rounded-lg"
+                  style={{ background: '#ef444420', color: '#ef4444', border: '1px solid #ef444430', cursor: cancelling ? 'wait' : 'pointer' }}
+                >
+                  {cancelling ? 'Cancelling…' : 'Yes, cancel'}
+                </button>
+                <button
+                  onClick={() => { setConfirmCancel(false); setCancelError(null) }}
+                  className="font-display font-bold text-xs px-3 py-1.5 rounded-lg"
+                  style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)', cursor: 'pointer' }}
+                >
+                  Keep plan
+                </button>
+              </div>
+              {cancelError && (
+                <p className="font-mono text-[0.58rem] mt-2" style={{ color: '#ef4444' }}>{cancelError}</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {cancelled && (
+        <p className="font-mono text-[0.6rem] mt-3" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          Subscription cancelled — you&apos;re on the Free plan now.
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -608,34 +735,7 @@ export default function ProfileClient() {
           <div className="space-y-3">
 
             {/* Subscription */}
-            <div className="rounded-2xl p-5" style={{ background: isPremium ? 'rgba(13,148,136,0.06)' : 'rgba(255,255,255,0.03)', border: isPremium ? '1px solid rgba(13,148,136,0.2)' : '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>Subscription</p>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-display font-bold text-white">{isPremium ? '★ Premium' : 'Free plan'}</p>
-                  {isPremium && profile?.premium_until ? (
-                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(77,182,172,0.6)' }}>
-                      Active until {new Date(profile.premium_until).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                  ) : (
-                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>20 Nova messages / month</p>
-                  )}
-                </div>
-                {!isPremium && (
-                  <a
-                    href="/upgrade"
-                    className="font-display font-bold text-xs px-4 py-2 rounded-xl transition-all active:scale-95"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(217,120,84,0.2) 0%, rgba(217,120,84,0.12) 100%)',
-                      color: '#e8956e',
-                      border: '1px solid rgba(217,120,84,0.3)',
-                    }}
-                  >
-                    Upgrade ↗
-                  </a>
-                )}
-              </div>
-            </div>
+            <SubscriptionSection profile={profile} isPremium={isPremium} />
 
             {/* Account info */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
