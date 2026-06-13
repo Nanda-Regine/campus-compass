@@ -281,6 +281,32 @@ Full visual modernisation pass across every component:
 
 ---
 
+## Phase 4.6 — Sprint 4 Build ✅ (2026-06-13)
+
+### New features shipped this sprint
+- ✅ **Study Velocity Tracker** — `StudyVelocityTab.tsx`: per-module pace vs required exam pace, velocity bar, in-tab session logger
+- ✅ **Exam Study Plan Generator** — "Plan" button in ExamsTab creates day-by-day task list (3-phase algorithm, up to 21 days)
+- ✅ **NSFAS Late Payment Inngest alert** — `nsfasLateAlert`: 09:00 SAST, queries overdue disbursements, personalized push
+- ✅ **Weekly Digest Inngest cron** — `weeklyDigest`: Sunday 20:00 SAST, tasks/exams/wellness summary + Sunday Planning nudge
+- ✅ **Graduation Audit — real data** — loads/saves `graduation_modules` + `degree_config` from Supabase, add/delete/seed records
+- ✅ **Skill Progress sync** — `skill_progress` table; DigitalSkillsAcademy dual-writes localStorage + Supabase
+- ✅ **Daily State Snapshot** — `dailyStateSnapshot` Inngest cron: captures burnout/academic_risk/procrastination daily
+- ✅ **Orchestration Intervention Trigger** — detects 3-day negative trends, sends targeted push alerts, logs to intervention_log
+- ✅ **Attendance Tab** — `AttendanceTab.tsx`: per-module tracking, SVG rings, 80% threshold, history drawer
+- ✅ **Nova conversation continuity** — awaited INSERT so conversationId returns to client correctly
+
+### New DB tables
+- `graduation_modules` (full academic history per student)
+- `degree_config` (degree settings per user)
+- `nsfas_disbursements` (separate from existing nsfas_tracker table — used by Inngest alert)
+- `skill_progress` (JSONB progress map per user)
+- `attendance_records` (UNIQUE per user+module+date)
+
+### Inngest functions now registered (10 total)
+`attendanceAlert` · `examReminders` · `budgetAlert` · `studyGapAlert` · `morningBrief` · `wellnessNudge` · `nsfasLateAlert` · `weeklyDigest` · `dailyStateSnapshot` · `orchestrationIntervention`
+
+---
+
 ## Phase 5 — Orchestration Layer 🔨 (Building Now)
 
 The nervous system that connects every module into a unified life OS. Without this layer, VarsityOS is a collection of tools. With it, it's an operating system.
