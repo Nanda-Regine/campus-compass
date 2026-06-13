@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -24,6 +24,7 @@ interface ProfileData {
   name: string
   email: string | null
   emoji: string
+  bio: string | null
   university: string | null
   year_of_study: string | null
   faculty: string | null
@@ -34,6 +35,12 @@ interface ProfileData {
   is_premium: boolean
   premium_until: string | null
   avatar_url: string | null
+  created_at: string
+}
+
+interface MyListing {
+  id: string; title: string; price_cents: number
+  listing_type: 'sell' | 'swap' | 'free'; is_sold: boolean; condition: string
   created_at: string
 }
 
@@ -146,6 +153,7 @@ export default function ProfileClient() {
   const [saving, setSaving] = useState(false)
 
   const [name, setName] = useState('')
+  const [bio, setBio] = useState('')
   const [emoji, setEmoji] = useState('🎓')
   const [university, setUniversity] = useState('')
   const [yearOfStudy, setYearOfStudy] = useState('')
@@ -155,6 +163,9 @@ export default function ProfileClient() {
   const [livingSituation, setLivingSituation] = useState('')
   const [aiLanguage, setAiLanguage] = useState('')
   const [uiLocale, setUiLocale] = useState<AppLocale>('en')
+  const [myListings, setMyListings] = useState<MyListing[]>([])
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { setUiLocale(getStoredLocale()) }, [])
 
@@ -175,6 +186,7 @@ export default function ProfileClient() {
         setProfile(p)
         setStats(data.stats)
         setName(p.name ?? '')
+        setBio(p.bio ?? '')
         setEmoji(p.emoji ?? '🎓')
         setUniversity(p.university ?? '')
         setYearOfStudy(p.year_of_study ?? '')
@@ -188,6 +200,42 @@ export default function ProfileClient() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    if (activeSection !== 'progress') return
+    supabase.from('textbook_listings')
+      .select('id, title, price_cents, listing_type, is_sold, condition, created_at')
+      .eq('seller_id', profile?.id ?? '')
+      .order('created_at', { ascending: false })
+      .limit(20)
+      .then(({ data }) => setMyListings((data ?? []) as MyListing[]))
+  }, [activeSection, profile?.id])
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !profile) return
+    setUploadingAvatar(true)
+    try {
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `${profile.id}/avatar.${ext}`
+      const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      if (error) throw error
+      const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path)
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: pub.publicUrl }),
+      })
+      const json = await res.json()
+      if (json.error) throw new Error(json.error)
+      setProfile(prev => prev ? { ...prev, avatar_url: pub.publicUrl } : prev)
+      toast.success('Photo updated')
+    } catch {
+      toast.error('Could not upload photo')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
   const handleSave = async () => {
     setSaving(true)
     try {
@@ -195,8 +243,8 @@ export default function ProfileClient() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, full_name: name, emoji, university, year_of_study: yearOfStudy,
-          faculty, funding_type: fundingType,
+          name, full_name: name, bio: bio || null, emoji, university,
+          year_of_study: yearOfStudy, faculty, funding_type: fundingType,
           dietary_pref: dietaryPref, living_situation: livingSituation,
           ai_language: aiLanguage,
         }),
@@ -204,7 +252,7 @@ export default function ProfileClient() {
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       toast.success('Profile saved')
-      setProfile(prev => prev ? { ...prev, name, emoji, university, year_of_study: yearOfStudy, faculty, funding_type: fundingType, dietary_pref: dietaryPref, living_situation: livingSituation, ai_language: aiLanguage } : prev)
+      setProfile(prev => prev ? { ...prev, name, bio: bio || null, emoji, university, year_of_study: yearOfStudy, faculty, funding_type: fundingType, dietary_pref: dietaryPref, living_situation: livingSituation, ai_language: aiLanguage } : prev)
     } catch {
       toast.error('Could not save profile')
     } finally {
@@ -266,23 +314,35 @@ export default function ProfileClient() {
               {/* Avatar */}
               <div className="relative flex-shrink-0">
                 <button
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-3xl transition-all active:scale-95"
+                  onClick={() => profile?.avatar_url ? setShowEmojiPicker(!showEmojiPicker) : avatarInputRef.current?.click()}
+                  className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-3xl transition-all active:scale-95 overflow-hidden"
                   style={{
                     background: 'linear-gradient(135deg, rgba(13,148,136,0.2) 0%, rgba(8,145,178,0.15) 100%)',
                     border: '1px solid rgba(13,148,136,0.25)',
                     boxShadow: '0 0 24px rgba(13,148,136,0.15)',
                   }}
-                  aria-label="Change avatar emoji"
+                  aria-label="Change avatar"
                 >
-                  {emoji}
+                  {profile?.avatar_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : emoji}
                 </button>
-                <div
-                  className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5rem]"
-                  style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}
-                >
-                  ✏️
-                </div>
+                {uploadingAvatar ? (
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.45rem]" style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}>
+                    ⏳
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5rem]"
+                    style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}
+                    aria-label="Upload photo"
+                  >
+                    📷
+                  </button>
+                )}
+                <input ref={avatarInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} />
               </div>
 
               {/* Name + meta */}
@@ -307,6 +367,9 @@ export default function ProfileClient() {
                   <p className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
                     {profile.university}{profile.year_of_study && ` · ${profile.year_of_study}`}
                   </p>
+                )}
+                {profile?.bio && (
+                  <p className="font-display text-xs mt-1 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>{profile.bio}</p>
                 )}
               </div>
             </div>
@@ -429,6 +492,18 @@ export default function ProfileClient() {
               <Field label="Display name">
                 <TextInput value={name} onChange={setName} placeholder="Your name" maxLength={60} />
               </Field>
+              <Field label="Bio (optional)">
+                <textarea
+                  value={bio}
+                  onChange={e => setBio(e.target.value)}
+                  placeholder="Tell other students a bit about yourself…"
+                  maxLength={160}
+                  rows={2}
+                  className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none transition-all focus:ring-1 focus:ring-teal-500/40 resize-none"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+                />
+                <p className="font-mono text-[0.52rem] text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{bio.length}/160</p>
+              </Field>
               <Field label="University">
                 <SelectInput value={university} options={[...SA_UNIVERSITIES]} onChange={setUniversity} />
               </Field>
@@ -490,6 +565,40 @@ export default function ProfileClient() {
             </div>
             <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <BadgesPanel />
+            </div>
+
+            {/* My textbook listings */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>My textbook listings</p>
+                <a href="/textbooks" className="font-mono text-[0.58rem]" style={{ color: 'rgba(0,229,176,0.6)', textDecoration: 'none' }}>Browse →</a>
+              </div>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                {myListings.length === 0 ? (
+                  <div className="px-5 py-4 font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    No listings yet. Go to Textbooks to sell or give away books.
+                  </div>
+                ) : myListings.map((l, i) => {
+                  const price = l.listing_type === 'free' ? 'FREE' : l.listing_type === 'swap' ? 'SWAP' : `R${(l.price_cents / 100).toFixed(0)}`
+                  const priceColor = l.listing_type === 'free' ? 'var(--teal)' : l.listing_type === 'swap' ? '#6366F1' : 'var(--gold)'
+                  return (
+                    <div
+                      key={l.id}
+                      className="flex items-center justify-between px-5 py-3"
+                      style={{ borderBottom: i < myListings.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', opacity: l.is_sold ? 0.45 : 1 }}
+                    >
+                      <div>
+                        <p className="font-display text-sm font-medium text-white">{l.title}</p>
+                        <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                          {l.condition} · {new Date(l.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
+                          {l.is_sold && <span style={{ color: 'var(--teal)', marginLeft: 5 }}>· Sold</span>}
+                        </p>
+                      </div>
+                      <span className="font-mono text-sm font-bold" style={{ color: priceColor }}>{price}</span>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         )}

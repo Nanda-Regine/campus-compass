@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 type Condition = 'new' | 'like_new' | 'good' | 'fair' | 'poor'
@@ -11,12 +11,14 @@ interface Listing {
   author: string | null; edition: string | null; subject: string | null
   university: string | null; price_cents: number; condition: Condition
   listing_type: ListingType; description: string | null
+  image_url: string | null; whatsapp_number: string | null
   is_sold: boolean; created_at: string; sellerName?: string
 }
 
 interface Interest {
   id: string; listing_id: string; buyer_id: string
-  message: string | null; created_at: string; buyerName: string
+  message: string | null; whatsapp_number: string | null
+  created_at: string; buyerName: string
 }
 
 const CONDITION_LABELS: Record<Condition, string> = {
@@ -25,6 +27,10 @@ const CONDITION_LABELS: Record<Condition, string> = {
 const CONDITION_COLOR: Record<Condition, string> = {
   new: 'var(--teal)', like_new: 'var(--teal)', good: 'var(--gold)',
   fair: 'var(--coral)', poor: 'var(--text-muted)',
+}
+
+function cleanWA(raw: string) {
+  return raw.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
 }
 
 export default function TextbookMarketplace({ userId, university }: { userId: string; university?: string }) {
@@ -47,7 +53,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
 
   async function load() {
     setLoading(true)
-    let q = supabase.from('textbook_listings').select('*').eq('is_sold', false).is('deleted_at', null)
+    let q = supabase.from('textbook_listings').select('*').eq('is_sold', false)
       .order('created_at', { ascending: false }).limit(60)
     if (university) q = q.eq('university', university)
     const { data } = await q
@@ -189,12 +195,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
               <div key={l.id}>
                 <ListingCard listing={l} userId={userId} onRefresh={load} isOwner />
                 <div style={{ marginTop: 4 }}>
-                  <InterestedBuyers
-                    listingId={l.id}
-                    listing={l}
-                    interests={interests}
-                    loading={interestsLoading}
-                  />
+                  <InterestedBuyers listingId={l.id} listing={l} interests={interests} loading={interestsLoading} />
                 </div>
               </div>
             ))
@@ -212,8 +213,11 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
 function ListingCard({ listing: l, userId, onRefresh, isOwner }: {
   listing: Listing; userId: string; onRefresh: () => void; isOwner?: boolean
 }) {
-  const [contacted, setContacted] = useState(false)
+  const [showInterest, setShowInterest] = useState(false)
+  const [buyerWA, setBuyerWA]           = useState('')
+  const [contacted, setContacted]       = useState(false)
   const supabase = createClient()
+
   const price = l.listing_type === 'free' ? 'FREE' : l.listing_type === 'swap' ? 'SWAP' : `R${(l.price_cents / 100).toFixed(0)}`
   const priceColor = l.listing_type === 'free' ? 'var(--teal)' : l.listing_type === 'swap' ? 'var(--indigo,#6366F1)' : 'var(--gold)'
 
@@ -222,49 +226,115 @@ function ListingCard({ listing: l, userId, onRefresh, isOwner }: {
     onRefresh()
   }
   const deleteListing = async () => {
-    await supabase.from('textbook_listings').update({ deleted_at: new Date().toISOString() }).eq('id', l.id)
+    await supabase.from('textbook_listings').update({ is_sold: true }).eq('id', l.id)
     onRefresh()
   }
-  const express = async () => {
-    await supabase.from('textbook_interests').upsert({ listing_id: l.id, buyer_id: userId, message: 'Interested!' })
+  const submitInterest = async () => {
+    await supabase.from('textbook_interests').upsert({
+      listing_id: l.id, buyer_id: userId,
+      message: 'Interested!',
+      whatsapp_number: buyerWA.trim() || null,
+    })
     setContacted(true)
+    setShowInterest(false)
   }
 
+  const sellerWA = l.whatsapp_number ? cleanWA(l.whatsapp_number) : null
+  const waMsg = encodeURIComponent(`Hi! I saw your "${l.title}" listing on VarsityOS. Is it still available?`)
+
   return (
-    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '13px 14px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>{l.title}</div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 1 }}>
-            {[l.author, l.edition ? `${l.edition} ed.` : null, l.subject].filter(Boolean).join(' · ')}
-          </div>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, overflow: 'hidden' }}>
+      {/* Thumbnail if image exists */}
+      {l.image_url && (
+        <div style={{ height: 110, overflow: 'hidden', position: 'relative' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={l.image_url} alt={l.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+          />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6))' }} />
+          <div style={{ position: 'absolute', bottom: 8, left: 12, fontSize: '0.95rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: priceColor }}>{price}</div>
         </div>
-        <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <div style={{ fontSize: '0.95rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: priceColor }}>{price}</div>
-          <div style={{ fontSize: '0.6rem', color: CONDITION_COLOR[l.condition], fontFamily: 'var(--font-mono)' }}>{CONDITION_LABELS[l.condition]}</div>
-        </div>
-      </div>
-      {l.description && (
-        <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 8, lineHeight: 1.5 }}>{l.description}</div>
       )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
-          {l.sellerName || 'Student'}{l.university ? ` · ${l.university}` : ''}
-        </div>
-        {isOwner ? (
-          <div style={{ display: 'flex', gap: 6 }}>
-            <button onClick={markSold} style={{ padding: '5px 10px', background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
-              Mark sold
-            </button>
-            <button onClick={deleteListing} style={{ padding: '5px 8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, color: '#f87171', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
-              Delete
-            </button>
+
+      <div style={{ padding: '13px 14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 6 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>{l.title}</div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 1 }}>
+              {[l.author, l.edition ? `${l.edition} ed.` : null, l.subject].filter(Boolean).join(' · ')}
+            </div>
           </div>
-        ) : l.seller_id !== userId ? (
-          <button onClick={express} disabled={contacted} style={{ padding: '5px 12px', background: contacted ? 'rgba(52,211,153,0.08)' : 'rgba(0,229,176,0.1)', border: `1px solid ${contacted ? 'rgba(52,211,153,0.2)' : 'rgba(0,229,176,0.25)'}`, borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: contacted ? 'default' : 'pointer' }}>
-            {contacted ? '✓ Interest sent' : 'Express interest →'}
-          </button>
-        ) : null}
+          {!l.image_url && (
+            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: priceColor }}>{price}</div>
+              <div style={{ fontSize: '0.6rem', color: CONDITION_COLOR[l.condition], fontFamily: 'var(--font-mono)' }}>{CONDITION_LABELS[l.condition]}</div>
+            </div>
+          )}
+          {l.image_url && (
+            <div style={{ fontSize: '0.6rem', color: CONDITION_COLOR[l.condition], fontFamily: 'var(--font-mono)', flexShrink: 0 }}>{CONDITION_LABELS[l.condition]}</div>
+          )}
+        </div>
+
+        {l.description && (
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 8, lineHeight: 1.5 }}>{l.description}</div>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
+            {l.sellerName || 'Student'}{l.university ? ` · ${l.university}` : ''}
+          </div>
+
+          {isOwner ? (
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={markSold} style={{ padding: '5px 10px', background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+                Mark sold
+              </button>
+              <button onClick={deleteListing} style={{ padding: '5px 8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, color: '#f87171', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+                Remove
+              </button>
+            </div>
+          ) : l.seller_id !== userId ? (
+            sellerWA ? (
+              <a
+                href={`https://wa.me/${sellerWA}?text=${waMsg}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ padding: '5px 12px', background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.25)', borderRadius: 6, color: '#25D366', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}
+              >
+                💬 WhatsApp seller
+              </a>
+            ) : contacted ? (
+              <span style={{ fontSize: '0.65rem', color: 'var(--teal)', fontFamily: 'var(--font-mono)' }}>✓ Interest sent</span>
+            ) : (
+              <button onClick={() => setShowInterest(v => !v)} style={{ padding: '5px 12px', background: 'rgba(0,229,176,0.1)', border: '1px solid rgba(0,229,176,0.25)', borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+                Express interest →
+              </button>
+            )
+          ) : null}
+        </div>
+
+        {/* Inline interest form when no seller WA */}
+        {showInterest && !sellerWA && !contacted && (
+          <div style={{ marginTop: 10, padding: '10px 12px', background: 'rgba(0,229,176,0.04)', border: '1px solid rgba(0,229,176,0.12)', borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 7 }}>
+            <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
+              Leave your WhatsApp so the seller can contact you directly (optional)
+            </div>
+            <input
+              type="tel" placeholder="e.g. 073 456 7890"
+              value={buyerWA} onChange={e => setBuyerWA(e.target.value)}
+              style={{ padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.78rem' }}
+            />
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={submitInterest} style={{ flex: 1, padding: '7px 0', background: 'rgba(0,229,176,0.1)', border: '1px solid rgba(0,229,176,0.25)', borderRadius: 7, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+                Send →
+              </button>
+              <button onClick={() => setShowInterest(false)} style={{ padding: '7px 10px', background: 'none', border: '1px solid var(--border-subtle)', borderRadius: 7, color: 'var(--text-muted)', fontSize: '0.65rem', cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -283,13 +353,9 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
     </div>
   )
 
-  const waText = encodeURIComponent(
-    `Hi! I'm selling "${listing.title}" for ${
-      listing.listing_type === 'free' ? 'free'
-      : listing.listing_type === 'swap' ? 'a swap'
-      : `R${(listing.price_cents / 100).toFixed(0)}`
-    }. Are you still interested?`
-  )
+  const priceText = listing.listing_type === 'free' ? 'free'
+    : listing.listing_type === 'swap' ? 'a swap'
+    : `R${(listing.price_cents / 100).toFixed(0)}`
 
   if (!relevant.length) return (
     <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', padding: '4px 0' }}>
@@ -314,38 +380,48 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
 
       {open && (
         <div style={{ marginTop: 6, padding: '10px 12px', background: 'rgba(0,229,176,0.04)', border: '1px solid rgba(0,229,176,0.12)', borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {relevant.map((i, idx) => (
-            <div
-              key={i.id}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                paddingTop: idx > 0 ? 8 : 0, marginTop: idx > 0 ? 0 : 0,
-                borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>{i.buyerName}</div>
-                <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)' }}>
-                  {new Date(i.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
-                </div>
-              </div>
-              <a
-                href={`https://wa.me/?text=${waText}`}
-                target="_blank"
-                rel="noopener noreferrer"
+          {relevant.map((i, idx) => {
+            const waNum = i.whatsapp_number ? cleanWA(i.whatsapp_number) : null
+            const introMsg = encodeURIComponent(
+              `Hi ${i.buyerName}! I saw you're interested in my "${listing.title}" (${priceText}). Still keen?`
+            )
+            return (
+              <div
+                key={i.id}
                 style={{
-                  fontSize: '0.6rem', color: '#25D366',
-                  background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)',
-                  borderRadius: 6, padding: '4px 9px', fontFamily: 'var(--font-mono)',
-                  fontWeight: 700, textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  paddingTop: idx > 0 ? 8 : 0,
+                  borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                 }}
               >
-                💬 WA template
-              </a>
-            </div>
-          ))}
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>{i.buyerName}</div>
+                  <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)' }}>
+                    {new Date(i.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
+                    {i.whatsapp_number && (
+                      <span style={{ marginLeft: 5, color: '#25D366' }}>· {i.whatsapp_number}</span>
+                    )}
+                  </div>
+                </div>
+                {waNum ? (
+                  <a
+                    href={`https://wa.me/${waNum}?text=${introMsg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '0.6rem', color: '#25D366', background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)', borderRadius: 6, padding: '4px 9px', fontFamily: 'var(--font-mono)', fontWeight: 700, textDecoration: 'none' }}
+                  >
+                    💬 Chat
+                  </a>
+                ) : (
+                  <span style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)' }}>
+                    No WA given
+                  </span>
+                )}
+              </div>
+            )
+          })}
           <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
-            Find these students in class or arrange campus pickup
+            Arrange campus pickup — no payments through the app
           </div>
         </div>
       )}
@@ -357,24 +433,55 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
 function SellForm({ userId, university, onDone }: { userId: string; university?: string; onDone: () => void }) {
   const [form, setForm] = useState({
     title: '', author: '', edition: '', subject: '', isbn: '', price: '',
-    condition: 'good' as Condition, listing_type: 'sell' as ListingType, description: '',
+    condition: 'good' as Condition, listing_type: 'sell' as ListingType,
+    description: '', whatsapp_number: '',
   })
-  const [saving, setSaving] = useState(false)
+  const [imageFile, setImageFile]     = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [saving, setSaving]           = useState(false)
+  const [uploadPct, setUploadPct]     = useState(0)
+  const fileRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
+
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
 
   const submit = async () => {
     if (!form.title) return
     setSaving(true)
+
+    let image_url: string | null = null
+    if (imageFile) {
+      setUploadPct(20)
+      const ext = imageFile.name.split('.').pop() ?? 'jpg'
+      const path = `${userId}/${Date.now()}.${ext}`
+      const { error } = await supabase.storage
+        .from('textbook-images')
+        .upload(path, imageFile, { upsert: true })
+      if (!error) {
+        const { data: pub } = supabase.storage.from('textbook-images').getPublicUrl(path)
+        image_url = pub.publicUrl
+      }
+      setUploadPct(60)
+    }
+
     const price_cents = form.listing_type === 'free' || form.listing_type === 'swap'
       ? 0 : Math.round(parseFloat(form.price || '0') * 100)
+
     await supabase.from('textbook_listings').insert({
       seller_id: userId, title: form.title, author: form.author || null,
       edition: form.edition || null, subject: form.subject || null,
       isbn: form.isbn || null, price_cents,
       condition: form.condition, listing_type: form.listing_type,
       description: form.description || null, university: university || null,
+      image_url, whatsapp_number: form.whatsapp_number.trim() || null,
     })
     setSaving(false)
+    setUploadPct(0)
     onDone()
   }
 
@@ -384,7 +491,36 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
         List your textbook so students at {university || 'your university'} can buy, swap, or get it for free.
+        Students connect directly — no payments through the app.
       </div>
+
+      {/* Image upload */}
+      <div>
+        <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: 5 }}>Cover photo (optional)</div>
+        <div
+          onClick={() => fileRef.current?.click()}
+          style={{
+            height: imagePreview ? 'auto' : 80, borderRadius: 10, overflow: 'hidden',
+            border: '1px dashed rgba(0,229,176,0.25)', cursor: 'pointer',
+            background: imagePreview ? 'none' : 'rgba(0,229,176,0.03)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {imagePreview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imagePreview} alt="preview" style={{ width: '100%', maxHeight: 160, objectFit: 'cover', objectPosition: 'top' }} />
+          ) : (
+            <span style={{ fontSize: '0.72rem', color: 'var(--teal)', fontFamily: 'var(--font-mono)' }}>📷 Tap to add photo</span>
+          )}
+        </div>
+        <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImage} />
+        {imagePreview && (
+          <button onClick={() => { setImageFile(null); setImagePreview(null) }} style={{ marginTop: 5, fontSize: '0.6rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            × Remove photo
+          </button>
+        )}
+      </div>
+
       {[
         { l: 'Book title *', k: 'title', p: 'e.g. Microeconomics 11th Edition' },
         { l: 'Author', k: 'author', p: 'e.g. Mankiw' },
@@ -402,6 +538,24 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
           />
         </div>
       ))}
+
+      {/* WhatsApp number */}
+      <div>
+        <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>
+          Your WhatsApp number
+          <span style={{ marginLeft: 5, color: '#25D366' }}>· buyers will contact you directly</span>
+        </div>
+        <input
+          type="tel" value={form.whatsapp_number}
+          onChange={e => f('whatsapp_number', e.target.value)}
+          placeholder="e.g. 073 456 7890"
+          style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }}
+        />
+        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', marginTop: 3 }}>
+          Shown only to potential buyers on this listing
+        </div>
+      </div>
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div>
           <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>Listing type</div>
@@ -430,8 +584,15 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
         <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>Description (optional)</div>
         <textarea value={form.description} onChange={e => f('description', e.target.value)} rows={2} placeholder="Any highlights, missing pages, etc." style={{ width: '100%', padding: '9px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.78rem', resize: 'none' }} />
       </div>
+
+      {saving && uploadPct > 0 && uploadPct < 100 && (
+        <div style={{ height: 3, borderRadius: 2, background: 'var(--border-subtle)', overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${uploadPct}%`, background: 'var(--teal)', transition: 'width 0.4s' }} />
+        </div>
+      )}
+
       <button onClick={submit} disabled={saving || !form.title} style={{ padding: '12px 0', background: 'rgba(0,229,176,0.1)', border: '1px solid rgba(0,229,176,0.25)', borderRadius: 10, color: 'var(--teal)', fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer', opacity: form.title ? 1 : 0.5 }}>
-        {saving ? 'Publishing...' : 'Publish listing →'}
+        {saving ? (imageFile ? `Uploading… ${uploadPct}%` : 'Publishing...') : 'Publish listing →'}
       </button>
     </div>
   )
@@ -444,9 +605,9 @@ function TextbookTips() {
       {[
         { e: '💰', t: 'Price textbooks right', b: 'New price ÷ 2 = good used price. Check Takealot for the current retail price. Books in Good condition typically sell for 40–60% of retail.' },
         { e: '📸', t: 'Good photos sell faster', b: "Take a clear photo of the cover and one of any highlights/notes. Buyers want to see exactly what they're getting. Most buyers in SA prefer to meet in person on campus." },
+        { e: '📱', t: 'Add your WhatsApp', b: 'Listings with a WhatsApp number get contacted directly — faster deals, no back-and-forth through the app. Add your number when listing.' },
         { e: '🔄', t: 'Swapping saves more money', b: 'A swap means both students pay nothing. Especially valuable for core curriculum books used across departments.' },
         { e: '📖', t: 'Give it away and earn karma', b: 'Books you won\'t use again can change someone\'s semester. Mark it as Free. Ubuntu principle: your success lifting others lifts the whole community.' },
-        { e: '🔍', t: 'Search by ISBN for exact editions', b: 'Different editions have different content — always verify the ISBN matches what your lecturer specified. The ISBN is on the back cover or copyright page.' },
         { e: '⚠️', t: 'Safety when meeting', b: 'Meet in a public campus area (library foyer, cafeteria). Bring a friend if the book value is high. Verify payment before handing over the book.' },
       ].map((s, i) => (
         <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 11, padding: '12px 14px', display: 'flex', gap: 12 }}>
