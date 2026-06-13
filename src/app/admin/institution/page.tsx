@@ -22,6 +22,17 @@ interface Invite {
   expires_at: string
 }
 
+interface Broadcast {
+  id: string
+  title: string
+  body: string
+  url: string | null
+  priority: 'info' | 'warning' | 'urgent'
+  sent_count: number
+  failed_count: number
+  created_at: string
+}
+
 interface AnalyticsData {
   totalStudents: number
   activeStudentsThisWeek: number
@@ -262,6 +273,16 @@ export default function InstitutionAdminPage() {
   const [genError, setGenError]       = useState('')
   const [copiedToken, setCopiedToken] = useState<string | null>(null)
 
+  // Broadcast
+  const [broadcasts, setBroadcasts]           = useState<Broadcast[]>([])
+  const [bcastTitle, setBcastTitle]           = useState('')
+  const [bcastBody, setBcastBody]             = useState('')
+  const [bcastUrl, setBcastUrl]               = useState('')
+  const [bcastPriority, setBcastPriority]     = useState<'info' | 'warning' | 'urgent'>('info')
+  const [bcastLoading, setBcastLoading]       = useState(false)
+  const [bcastError, setBcastError]           = useState('')
+  const [bcastResult, setBcastResult]         = useState<{ sent: number; failed: number; total: number } | null>(null)
+
   const loadData = useCallback(async () => {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -299,6 +320,41 @@ export default function InstitutionAdminPage() {
     setLoading(false)
   }, [])
 
+  const loadBroadcasts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/broadcast')
+      if (!res.ok) return
+      const data = await res.json()
+      setBroadcasts(data.broadcasts ?? [])
+    } catch { /* non-critical */ }
+  }, [])
+
+  const sendBroadcast = async () => {
+    if (!bcastTitle.trim() || !bcastBody.trim()) {
+      setBcastError('Title and message are required.')
+      return
+    }
+    setBcastLoading(true); setBcastError(''); setBcastResult(null)
+    try {
+      const res = await fetch('/api/admin/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: bcastTitle.trim(),
+          body: bcastBody.trim(),
+          url: bcastUrl.trim() || undefined,
+          priority: bcastPriority,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setBcastError(data.error || 'Failed to send broadcast'); return }
+      setBcastResult(data)
+      setBcastTitle(''); setBcastBody(''); setBcastUrl('')
+      await loadBroadcasts()
+    } catch { setBcastError('Network error') }
+    finally { setBcastLoading(false) }
+  }
+
   const loadAnalytics = useCallback(async () => {
     setAnalyticsLoading(true)
     setAnalyticsError('')
@@ -311,7 +367,7 @@ export default function InstitutionAdminPage() {
     finally { setAnalyticsLoading(false) }
   }, [])
 
-  useEffect(() => { loadData() }, [loadData])
+  useEffect(() => { loadData(); loadBroadcasts() }, [loadData, loadBroadcasts])
 
   useEffect(() => {
     if (view === 'analytics' && !analytics && !analyticsLoading) {
@@ -505,6 +561,138 @@ export default function InstitutionAdminPage() {
                 </div>
               )}
             </div>
+
+            {/* ── Broadcast compose ── */}
+            <div style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <span style={{ fontSize: 16 }}>📣</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>Send Announcement</span>
+                <span style={{
+                  marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)',
+                  fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em',
+                }}>
+                  max 3 / 24 h
+                </span>
+              </div>
+
+              {/* Priority selector */}
+              <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+                {(['info','warning','urgent'] as const).map(p => {
+                  const colours = { info: '#38BDF8', warning: '#f59e0b', urgent: '#ef4444' }
+                  const c = colours[p]
+                  return (
+                    <button
+                      key={p}
+                      onClick={() => setBcastPriority(p)}
+                      style={{
+                        padding: '4px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600,
+                        background: bcastPriority === p ? `${c}22` : 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${bcastPriority === p ? `${c}50` : 'rgba(255,255,255,0.07)'}`,
+                        color: bcastPriority === p ? c : 'var(--text-muted)',
+                        cursor: 'pointer', textTransform: 'capitalize',
+                      }}
+                    >
+                      {p === 'info' ? 'ℹ️' : p === 'warning' ? '⚠️' : '🚨'} {p}
+                    </button>
+                  )
+                })}
+              </div>
+
+              <input
+                value={bcastTitle}
+                onChange={e => { setBcastTitle(e.target.value.slice(0, 100)); setBcastResult(null); setBcastError('') }}
+                placeholder="Title (max 100 chars)"
+                style={inputStyle}
+              />
+              <textarea
+                value={bcastBody}
+                onChange={e => { setBcastBody(e.target.value.slice(0, 300)); setBcastResult(null); setBcastError('') }}
+                placeholder="Message (max 300 chars)"
+                rows={3}
+                style={{ ...inputStyle, resize: 'none', marginTop: 8 }}
+              />
+              <input
+                value={bcastUrl}
+                onChange={e => setBcastUrl(e.target.value)}
+                placeholder="Link URL (optional) — /dashboard or https://…"
+                style={{ ...inputStyle, marginTop: 8 }}
+              />
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  {bcastBody.length}/300
+                </span>
+                <button
+                  onClick={sendBroadcast}
+                  disabled={bcastLoading || !bcastTitle.trim() || !bcastBody.trim()}
+                  style={{
+                    padding: '8px 18px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                    background: 'rgba(239,68,68,0.14)', border: '1px solid rgba(239,68,68,0.35)',
+                    color: '#ef4444', cursor: (bcastLoading || !bcastTitle.trim() || !bcastBody.trim()) ? 'not-allowed' : 'pointer',
+                    opacity: (bcastLoading || !bcastTitle.trim() || !bcastBody.trim()) ? 0.5 : 1,
+                  }}
+                >
+                  {bcastLoading ? 'Sending…' : '📣 Send to all students'}
+                </button>
+              </div>
+
+              {bcastError && (
+                <p style={{ fontSize: 12, color: '#ef4444', marginTop: 10 }}>{bcastError}</p>
+              )}
+              {bcastResult && (
+                <div style={{
+                  marginTop: 10, padding: '10px 14px', borderRadius: 8, fontSize: 12,
+                  background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.2)',
+                  color: '#4ecf9e',
+                }}>
+                  Sent to {bcastResult.sent} of {bcastResult.total} students
+                  {bcastResult.failed > 0 && ` · ${bcastResult.failed} failed`}
+                </div>
+              )}
+            </div>
+
+            {/* ── Broadcast history ── */}
+            {broadcasts.length > 0 && (
+              <div style={cardStyle}>
+                <p style={{
+                  fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)',
+                  textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12,
+                }}>Recent broadcasts</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {broadcasts.map(b => {
+                    const pColour = b.priority === 'urgent' ? '#ef4444' : b.priority === 'warning' ? '#f59e0b' : '#38BDF8'
+                    return (
+                      <div key={b.id} style={{
+                        padding: '10px 12px', borderRadius: 10,
+                        background: `${pColour}08`, border: `1px solid ${pColour}20`,
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 3px' }}>
+                              {b.title}
+                            </p>
+                            <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '0 0 6px', lineHeight: 1.4 }}>
+                              {b.body}
+                            </p>
+                            <p style={{ fontSize: 10, color: 'var(--text-muted)', margin: 0, fontFamily: 'var(--font-mono)' }}>
+                              {new Date(b.created_at).toLocaleString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                              {' · '}{b.sent_count} reached
+                              {b.failed_count > 0 && <span style={{ color: '#ef4444' }}> · {b.failed_count} failed</span>}
+                            </p>
+                          </div>
+                          <span style={{
+                            fontSize: 9, fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                            letterSpacing: '0.08em', color: pColour, padding: '2px 7px',
+                            borderRadius: 20, border: `1px solid ${pColour}40`,
+                            background: `${pColour}10`, flexShrink: 0,
+                          }}>{b.priority}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </>
         )}
 
@@ -571,4 +759,11 @@ const chipStyle: React.CSSProperties = {
   background: 'rgba(13,148,136,0.12)', border: '1px solid rgba(13,148,136,0.3)',
   fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
   textTransform: 'uppercase', color: '#0d9488',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '9px 12px', borderRadius: 8, fontSize: 13,
+  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+  color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box',
+  fontFamily: 'inherit',
 }
