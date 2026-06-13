@@ -12,6 +12,7 @@ import {
   type Subscription,
 } from '@/types'
 import { fmt, getDaysUntil, calcTotalBudget, cn } from '@/lib/utils'
+import { NAV_MODULES } from '@/lib/navModules'
 import { ShareButton } from '@/components/ui/ShareButton'
 import DayModeBanner, { getDayMode, type DayMode } from '@/components/dashboard/DayModeBanner'
 import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
@@ -128,6 +129,10 @@ function getWeekBadge() {
 function FlameIcon({ streak }: { streak: number }) {
   if (streak === 0) return <span style={{ color: 'rgba(255,255,255,0.3)' }}>—</span>
   return <span>🔥</span>
+}
+
+function toISODate(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
 
@@ -653,14 +658,7 @@ function UrgentTasksStrip({ tasks }: { tasks: Task[] }) {
 
 /* ── FeatureGrid ─────────────────────────────────────── */
 // Bento layout: Nova (wide hero) → 2×2 core cards → Groups (wide bar)
-const FEATURE_CARDS: Array<{ href: string; label: string; accent: string; iconBg: string; wide?: boolean }> = [
-  { href: '/nova',             label: 'Nova',   accent: '#9b6fd4', iconBg: 'rgba(155,111,212,0.15)', wide: true },
-  { href: '/study',            label: 'Study',  accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.10)' },
-  { href: '/budget',           label: 'Budget', accent: '#c9a84c', iconBg: 'rgba(201,168,76,0.10)' },
-  { href: '/meals',            label: 'Meals',  accent: '#e8834a', iconBg: 'rgba(232,131,74,0.10)' },
-  { href: '/dashboard/work',   label: 'Work',   accent: '#7090d0', iconBg: 'rgba(112,144,208,0.10)' },
-  { href: '/dashboard/groups', label: 'Groups', accent: '#4ecf9e', iconBg: 'rgba(78,207,158,0.10)', wide: true },
-]
+// Nav destinations come from NAV_MODULES (shared with ModulePillList).
 
 // Per-card shape tokens — intentionally varied for organic feel
 const CARD_STYLE: Record<string, { radius: number; minH: number; bg: string }> = {
@@ -672,8 +670,6 @@ const CARD_STYLE: Record<string, { radius: number; minH: number; bg: string }> =
   Groups: { radius: 14, minH: 52,  bg: 'linear-gradient(90deg,rgba(78,207,158,0.06) 0%,transparent 100%)' },
 }
 
-const FEATURE_ICONS: Record<string, string> = { Study: '📚', Budget: '💰', Meals: '🍲', Work: '💼', Nova: '✨', Groups: '👥' }
-
 function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups, streakDays }: {
   tasks: Task[]; expenses: Expense[]; totalBudget: number; remaining: number
   modules: Module[]; subscription: Subscription | null; profile: Profile
@@ -682,10 +678,9 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
   void cn(modules.length, subscription)
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
   const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
-  const _now = new Date()
-  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
-  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
-  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  const todayStr = toISODate()
+  const _wa = new Date(); _wa.setDate(_wa.getDate() + 7)
+  const weekAheadStr = toISODate(_wa)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const budgetPct   = totalBudget > 0 ? Math.min(100, (remaining / totalBudget) * 100) : 100
@@ -703,7 +698,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
-      {FEATURE_CARDS.map(({ href, label, accent, iconBg, wide }) => {
+      {NAV_MODULES.map(({ href, label, icon, color: accent, iconBg, wideInGrid: wide }) => {
         const subtitle = subtitles[label]
         const cs = CARD_STYLE[label]
         const isNova = label === 'Nova'
@@ -758,7 +753,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
                 // Standard portrait card
                 <>
                   <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.55, borderRadius: '2px 0 0 2px' }} />
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{icon}</div>
                   <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginTop: 10 }}>{label}</div>
                   <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)' }}>
@@ -1202,23 +1197,15 @@ function PrescriptionReminderCard() {
 }
 
 /* ── ModulePillList (desktop only) ──────────────────────── */
-const MODULE_PILLS = [
-  { href: '/study',            label: 'Study',  icon: '📚', iconBg: 'rgba(26,95,106,0.12)',    subColor: '#1a9e75' },
-  { href: '/budget',           label: 'Budget', icon: '💰', iconBg: 'rgba(201,168,76,0.10)',   subColor: '#c9a84c' },
-  { href: '/meals',            label: 'Meals',  icon: '🍲', iconBg: 'rgba(232,131,74,0.10)',   subColor: '#e8834a' },
-  { href: '/dashboard/work',   label: 'Work',   icon: '💼', iconBg: 'rgba(122,153,184,0.10)',  subColor: '#7a99b8' },
-  { href: '/nova',             label: 'Nova',   icon: '✨', iconBg: 'rgba(155,111,212,0.12)',  subColor: '#9b6fd4' },
-  { href: '/dashboard/groups', label: 'Groups', icon: '👥', iconBg: 'rgba(112,144,208,0.10)',  subColor: '#7090d0' },
-]
+const PILL_ORDER = ['Study', 'Budget', 'Meals', 'Work', 'Nova', 'Groups']
 
 function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists, shiftsThisWeek, activeGroups }: {
   tasks: Task[]; totalBudget: number; remaining: number
   profile: Profile; mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
 }) {
-  const _now = new Date()
-  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
-  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
-  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  const todayStr = toISODate()
+  const _wa = new Date(); _wa.setDate(_wa.getDate() + 7)
+  const weekAheadStr = toISODate(_wa)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
@@ -1236,7 +1223,7 @@ function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists
   return (
     <div className="hidden md:block" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '10px 12px' }}>
       <div style={{ fontSize: 9, letterSpacing: '1px', textTransform: 'uppercase', color: '#5a5c70', marginBottom: 6, fontWeight: 600 }}>Your Modules</div>
-      {MODULE_PILLS.map(({ href, label, icon, iconBg, subColor }, i) => (
+      {PILL_ORDER.map(l => NAV_MODULES.find(m => m.label === l)!).map(({ href, label, icon, iconBg, color: subColor }, i) => (
         <div key={href}>
           {i > 0 && <div style={{ height: 1, background: 'var(--border-subtle)' }} />}
           <Link href={href} style={{ textDecoration: 'none' }}>
