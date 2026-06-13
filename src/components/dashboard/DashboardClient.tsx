@@ -31,6 +31,7 @@ import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import InsightsCard from '@/components/dashboard/InsightsCard'
+import DomainPulse from '@/components/dashboard/DomainPulse'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -750,162 +751,6 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
   )
 }
 
-/* ── LifeOSSection — all 9 student life domains ─────────── */
-const LIFE_DOMAINS = [
-  {
-    name: 'Mind', emoji: '🧠', color: '#00CFA0',
-    modules: [
-      { label: 'Study Tools', href: '/study',         icon: '📚' },
-      { label: 'Flashcards',  href: '/study',         icon: '🃏' },
-      { label: 'Streak',      href: '/streak',        icon: '🔥' },
-      { label: 'Nova AI',     href: '/nova',          icon: '✦' },
-    ],
-  },
-  {
-    name: 'Body', emoji: '🌿', color: '#FF6B9E',
-    modules: [
-      { label: 'Fitness',   href: '/fitness', icon: '💪' },
-      { label: 'Health',    href: '/health',  icon: '🏥' },
-      { label: 'Meals',     href: '/meals',   icon: '🍲' },
-    ],
-  },
-  {
-    name: 'Money', emoji: '💰', color: '#D4A84B',
-    modules: [
-      { label: 'Budget',    href: '/budget',    icon: '📊' },
-      { label: 'Bursaries', href: '/bursaries', icon: '🏆' },
-      { label: 'Stokvel',   href: '/stokvel',   icon: '🪙' },
-      { label: 'Tax',       href: '/tax',       icon: '🧾' },
-      { label: 'Discounts', href: '/discounts', icon: '🏷️' },
-    ],
-  },
-  {
-    name: 'Safety', emoji: '🛡️', color: '#10B981',
-    modules: [
-      { label: 'Safety OS',     href: '/safety',    icon: '🚨' },
-      { label: 'Civic Rights',  href: '/civic',     icon: '🗳️' },
-    ],
-  },
-  {
-    name: 'Movement', emoji: '🚌', color: '#38BDF8',
-    modules: [
-      { label: 'Campus Life', href: '/dashboard/campus-life', icon: '🏫' },
-      { label: 'Fitness',     href: '/fitness',               icon: '🏃' },
-    ],
-  },
-  {
-    name: 'Growth', emoji: '📈', color: '#818CF8',
-    modules: [
-      { label: 'Goals',       href: '/growth',      icon: '🌿' },
-      { label: 'Skills',      href: '/skills',      icon: '🖥️' },
-      { label: 'Entrepreneur',href: '/entrepreneur',icon: '🚀' },
-    ],
-  },
-  {
-    name: 'Community', emoji: '🌍', color: '#A855F7',
-    modules: [
-      { label: 'Social Feed',    href: '/social',       icon: '📢' },
-      { label: 'Study Groups',   href: '/study-groups', icon: '👥' },
-      { label: 'Textbooks',      href: '/textbooks',    icon: '📗' },
-      { label: 'Notes Market',   href: '/notes',        icon: '📝' },
-      { label: 'Tutoring',       href: '/tutoring',     icon: '🎓' },
-    ],
-  },
-  {
-    name: 'Work', emoji: '💼', color: '#7090D0',
-    modules: [
-      { label: 'SA Jobs',    href: '/jobs',           icon: '🧑‍💻' },
-      { label: 'Shifts',     href: '/dashboard/work', icon: '📅' },
-      { label: 'Career OS',  href: '/career',         icon: '💼' },
-    ],
-  },
-  {
-    name: 'Future', emoji: '✨', color: '#9b6fd4',
-    modules: [
-      { label: 'Mentors',    href: '/mentors',    icon: '🤝' },
-      { label: 'Career OS',  href: '/career',     icon: '🌟' },
-      { label: 'Bursaries',  href: '/bursaries',  icon: '🏆' },
-    ],
-  },
-]
-
-function LifeOSSection({ liveStats }: { liveStats?: { todayStudyMins: number; lastSleepHours: number | null; weekWorkouts: number; budgetRemaining: number; totalBudget: number } }) {
-  const domainStats = (name: string): Array<{ text: string; color: string }> => {
-    if (!liveStats) return []
-    if (name === 'Mind' && liveStats.todayStudyMins > 0) {
-      const m = liveStats.todayStudyMins
-      return [{ text: m >= 60 ? `${Math.floor(m/60)}h studied` : `${m}m studied`, color: '#00CFA0' }]
-    }
-    if (name === 'Body') {
-      const stats: Array<{ text: string; color: string }> = []
-      if (liveStats.lastSleepHours !== null) stats.push({ text: `${liveStats.lastSleepHours}h sleep`, color: '#FF6B9E' })
-      if (liveStats.weekWorkouts > 0) stats.push({ text: `${liveStats.weekWorkouts} workouts`, color: '#FF6B9E' })
-      return stats
-    }
-    if (name === 'Money' && liveStats.totalBudget > 0) {
-      return [{ text: liveStats.budgetRemaining >= 0 ? `R${Math.round(liveStats.budgetRemaining)} left` : 'Over budget', color: liveStats.budgetRemaining >= 0 ? '#D4A84B' : '#ff6b6b' }]
-    }
-    return []
-  }
-
-  return (
-    <section>
-      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600, marginBottom: 12 }}>
-        ◈ Your Life OS · 9 Domains
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-        {LIFE_DOMAINS.map(({ name, emoji, color, modules }) => {
-          const stats = domainStats(name)
-          return (
-            <div
-              key={name}
-              style={{
-                borderRadius: 14,
-                background: `${color}09`,
-                border: `0.5px solid ${color}30`,
-                padding: '12px 13px',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              <div style={{ position: 'absolute', top: -10, right: -10, width: 50, height: 50, borderRadius: '50%', background: `radial-gradient(circle,${color}20 0%,transparent 70%)`, pointerEvents: 'none' }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 9 }}>
-                <span style={{ fontSize: 15 }}>{emoji}</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{name}</span>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                {modules.map(mod => (
-                  <Link key={mod.label} href={mod.href} style={{ textDecoration: 'none' }}>
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 3,
-                      fontSize: 10, padding: '3px 8px', borderRadius: 999,
-                      background: `${color}14`, color,
-                      border: `0.5px solid ${color}35`,
-                      cursor: 'pointer',
-                    }}>
-                      {mod.icon} {mod.label}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-              {stats.length > 0 && (
-                <div style={{ marginTop: 7, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {stats.map(s => (
-                    <span key={s.text} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 9, color: s.color, fontWeight: 700, letterSpacing: '0.06em' }}>
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: s.color, flexShrink: 0, display: 'inline-block' }} />
-                      {s.text}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </section>
-  )
-}
-
 /* ── ExamCountdownCard ──────────────────────────────────── */
 function ExamCountdownCard({ exams }: { exams: Exam[] }) {
   const next = exams[0]
@@ -1499,6 +1344,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const mode  = getDayMode(currentHour)
   const theme = DASH_THEME[mode]
 
+  // Domain Pulse derived values — computed once for DomainPulse
+  const todayISOStr  = toISODate()
+  const domainOverdue   = allTasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayISOStr).length
+  const domainExamDays  = allExams.length > 0 ? getDaysUntil(allExams[0].exam_date) : null
+
   return (
     <>
       {/* Full-page ambient image — fixed so it persists as user scrolls */}
@@ -1637,8 +1487,25 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} />
               </div>
 
-              {/* Full Life OS — all 9 student life domains — always visible */}
-              <LifeOSSection liveStats={{ todayStudyMins, lastSleepHours, weekWorkouts, budgetRemaining: remaining, totalBudget }} />
+              {/* Domain Pulse — 9 life domains ranked by urgency score */}
+              <DomainPulse
+                overdueTasks={domainOverdue}
+                nextExamDays={domainExamDays}
+                streakDays={streakDays}
+                streakTodayDone={streakTodayDone}
+                todayStudyMins={todayStudyMins}
+                studyVelocity={store.studyVelocity7d}
+                lastSleepHours={lastSleepHours}
+                sleepDebt={store.sleepDebt}
+                weekWorkouts={weekWorkouts}
+                totalBudget={totalBudget}
+                remaining={remaining}
+                nsfasDelayed={store.nsfasDelayed}
+                mealPlanExists={mealPlanExists}
+                shiftsThisWeek={shiftsThisWeek}
+                activeGroups={activeGroups}
+                hour={currentHour}
+              />
             </div>
 
             {/* Column 2 */}
