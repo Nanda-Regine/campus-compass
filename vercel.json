@@ -1,8 +1,7 @@
 {
-  "crons": [
-    {
-      "path": "/api/push/daily",
-      "schedule": "0 5 * * *"
+  "functions": {
+    "src/app/api/inngest/route.ts": {
+      "maxDuration": 60
     }
-  ]
+  }
 }

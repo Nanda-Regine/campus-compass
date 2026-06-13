@@ -191,6 +191,83 @@ export const studyGapAlert = inngest.createFunction(
   },
 )
 
+// ─── Morning Brief ────────────────────────────────────────────────────────────
+// Fires daily at 07:30 SAST — after examReminders so exam-day users aren't
+// double-notified. Sends a generic "set your 3 tasks" nudge to users who have
+// no exam in the next 24 hours. Also warns users whose Nova quota is ≥ 80%.
+export const morningBrief = inngest.createFunction(
+  { id: 'morning-brief', name: 'Daily Morning Brief', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 30 7 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+    const today = new Date()
+    const todayStr     = today.toISOString().slice(0, 10)
+    const tomorrowStr  = new Date(today.getTime() + 86400000).toISOString().slice(0, 10)
+
+    const { nudgeSent, quotaSent } = await step.run('morning-brief-batch', async () => {
+      // All subscribed users
+      const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
+      if (!subs?.length) return { nudgeSent: 0, quotaSent: 0 }
+      const userIds = [...new Set(subs.map((s: { user_id: string }) => s.user_id))]
+
+      // Users who already have an exam today or tomorrow (examReminders handled them)
+      const { data: nearExams } = await supabase
+        .from('exams')
+        .select('user_id')
+        .in('user_id', userIds)
+        .in('exam_date', [todayStr, tomorrowStr])
+      const examUserSet = new Set((nearExams ?? []).map((e: { user_id: string }) => e.user_id))
+
+      // Profiles for Nova quota check
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, nova_messages_used, nova_messages_month, subscription_tier')
+        .in('id', userIds)
+
+      const currentMonth = today.toISOString().slice(0, 7)
+      let nudgeSent = 0, quotaSent = 0
+
+      for (const userId of userIds) {
+        const profile = (profiles ?? []).find((p: { id: string }) => p.id === userId) as {
+          id: string; nova_messages_used: number; nova_messages_month: string; subscription_tier: string
+        } | undefined
+
+        // Morning nudge — only for users without an imminent exam
+        if (!examUserSet.has(userId)) {
+          nudgeSent += await notifyUser(supabase, userId, {
+            title: '☀️ Good morning',
+            body: 'Set your top 3 tasks for today and make it count.',
+            url: '/dashboard',
+            tag: `morning-${todayStr}`,
+          })
+        }
+
+        // Nova quota warning (≥ 80% but not yet at limit)
+        if (profile && profile.nova_messages_month === currentMonth) {
+          const limit = profile.subscription_tier === 'nova_scholar' ? 150
+            : profile.subscription_tier === 'nova_unlimited' ? 9999
+            : 50
+          const used = profile.nova_messages_used ?? 0
+          if (used >= Math.floor(limit * 0.8) && used < limit) {
+            quotaSent += await notifyUser(supabase, userId, {
+              title: '🤖 Nova quota at 80%',
+              body: `${used}/${limit} messages used this month. Upgrade for unlimited.`,
+              url: '/nova',
+              tag: `nova-quota-${currentMonth}`,
+            })
+          }
+        }
+      }
+
+      return { nudgeSent, quotaSent }
+    })
+
+    logger.info(`Morning brief: ${nudgeSent} nudges, ${quotaSent} Nova quota warnings`)
+    return { nudgeSent, quotaSent }
+  },
+)
+
 // ─── Wellness Nudge ───────────────────────────────────────────────────────────
 // Fires daily at 19:00 SAST.
 // Sends an evening check-in prompt to users who haven't logged wellness today.
