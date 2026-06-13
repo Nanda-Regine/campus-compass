@@ -29,6 +29,7 @@
     "framer-motion": "^11.3.8",
     "inngest": "^3.54.2",
     "lucide-react": "^0.414.0",
+    "mapbox-gl": "^3.24.1",
     "next": "14.2.35",
     "next-intl": "^4.13.0",
     "next-themes": "^0.3.0",

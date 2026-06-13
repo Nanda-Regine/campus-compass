@@ -1,9 +1,23 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
-import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car } from 'lucide-react'
+import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+// Mapbox map loaded client-side only (accesses window/document)
+const MapboxRoutesMap = dynamic(
+  () => import('./MapboxRoutesMap').then(m => m.MapboxRoutesMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div style={{ height: 300, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading map…</span>
+      </div>
+    ),
+  }
+)
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -42,6 +56,9 @@ interface Props {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
+const GM_KEY      = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
 const TRANSPORT_ICONS: Record<TransportType, string> = {
   taxi: '🚕', bus: '🚌', walk: '🚶', uber: '🚗',
   lift_club: '🤝', campus_shuttle: '🚐', minibus: '🚌',
@@ -55,6 +72,26 @@ const TRANSPORT_LABELS: Record<TransportType, string> = {
 const SA_FARE_RANGES: Record<TransportType, string> = {
   taxi: 'R7–R25 typical', bus: 'R8–R30 (day pass)', walk: 'Free',
   uber: 'R40–R200+', lift_club: 'Split with driver', campus_shuttle: 'Free or R5', minibus: 'R150–R400',
+}
+
+// Google Maps Embed API mode parameter
+function gmMode(t: TransportType): string {
+  if (t === 'walk') return 'walking'
+  if (t === 'bus' || t === 'campus_shuttle') return 'transit'
+  return 'driving'
+}
+
+// Build Google Maps Embed URL (directions mode)
+function gmEmbedUrl(from: string, to: string, mode: TransportType): string {
+  const base = 'https://www.google.com/maps/embed/v1/directions'
+  const params = new URLSearchParams({
+    key: GM_KEY ?? '',
+    origin: from + ', South Africa',
+    destination: to + ', South Africa',
+    mode: gmMode(mode),
+    avoid: 'tolls',
+  })
+  return `${base}?${params.toString()}`
 }
 
 const TRANSPORT_TIPS = [
@@ -101,10 +138,19 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
   })
   const [savingLift, setSavingLift] = useState(false)
 
-  // Quick route finder state
+  // Quick route finder — separate "committed" query so iframe only updates on button press
   const [fromAddr, setFromAddr] = useState('')
-  const [toAddr, setToAddr] = useState('')
+  const [toAddr, setToAddr]     = useState('')
   const [transport, setTransport] = useState<TransportType>('taxi')
+  const [dirQuery, setDirQuery]  = useState<{ from: string; to: string; mode: TransportType } | null>(null)
+
+  const searchDirections = () => {
+    if (!fromAddr.trim() || !toAddr.trim()) {
+      toast.error('Enter a from and to location')
+      return
+    }
+    setDirQuery({ from: fromAddr.trim(), to: toAddr.trim(), mode: transport })
+  }
 
   const loadLiftPosts = async () => {
     if (liftLoaded) return
@@ -185,7 +231,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
   }
 
   const formField = 'w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600/60 transition-all font-body'
-  const label     = 'font-mono text-[0.6rem] tracking-[0.12em] uppercase text-white/40 mb-1 block'
+  const lbl       = 'font-mono text-[0.6rem] tracking-[0.12em] uppercase text-white/40 mb-1 block'
   const chip      = (active: boolean) => `px-3 py-1.5 rounded-full text-xs font-mono border transition-all ${active ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/4 border-white/8 text-white/50 hover:text-white hover:bg-white/8'}`
 
   return (
@@ -224,23 +270,35 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
 
       <div className="px-5 pt-3 space-y-4">
 
-        {/* ── Get There ─────────────────────────────────────── */}
+        {/* ── Get There — Google Maps Embed ─────────────────── */}
         {tab === 'get-there' && (
           <div className="space-y-4">
             <div className="card-base p-4 space-y-3">
-              <p className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wider">Quick Route Planner</p>
+              <p className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wider">Route Planner</p>
 
-              <div className="space-y-2">
-                <label className={label}>From</label>
-                <input className={formField} placeholder="e.g. Res A, Main Campus Gate…" value={fromAddr} onChange={e => setFromAddr(e.target.value)} />
+              <div>
+                <label className={lbl}>From</label>
+                <input
+                  className={formField}
+                  placeholder="e.g. Res A, Main Campus Gate, Rondebosch…"
+                  value={fromAddr}
+                  onChange={e => setFromAddr(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && searchDirections()}
+                />
               </div>
-              <div className="space-y-2">
-                <label className={label}>To</label>
-                <input className={formField} placeholder="e.g. Library, Pick n Pay Claremont…" value={toAddr} onChange={e => setToAddr(e.target.value)} />
+              <div>
+                <label className={lbl}>To</label>
+                <input
+                  className={formField}
+                  placeholder="e.g. Library, Pick n Pay Claremont…"
+                  value={toAddr}
+                  onChange={e => setToAddr(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && searchDirections()}
+                />
               </div>
 
               <div>
-                <label className={label}>Transport mode</label>
+                <label className={lbl}>Transport mode</label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {(Object.keys(TRANSPORT_ICONS) as TransportType[]).map(t => (
                     <button key={t} type="button" onClick={() => setTransport(t)} className={chip(transport === t)}>
@@ -250,25 +308,66 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 </div>
               </div>
 
-              {fromAddr && toAddr && (
-                <div className="rounded-xl border border-sky-500/20 bg-sky-500/8 p-3 space-y-1.5">
-                  <div className="font-mono text-[0.58rem] text-sky-400 uppercase tracking-wider">Estimated costs</div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-white font-display">{TRANSPORT_ICONS[transport]} {TRANSPORT_LABELS[transport]}</span>
-                    <span className="font-mono text-xs text-sky-300">{SA_FARE_RANGES[transport]}</span>
-                  </div>
+              <button
+                onClick={searchDirections}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-sm transition-all"
+                style={{ background: 'rgba(14,165,233,0.18)', border: '1px solid rgba(14,165,233,0.35)', color: '#38bdf8' }}
+              >
+                <Search size={14} />
+                Get Directions
+              </button>
+            </div>
+
+            {/* Google Maps Embed — shows after user searches */}
+            {dirQuery && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <span className="font-mono text-[0.58rem] text-white/30 uppercase tracking-wider">
+                    {TRANSPORT_ICONS[dirQuery.mode]} {TRANSPORT_LABELS[dirQuery.mode]} · {SA_FARE_RANGES[dirQuery.mode]}
+                  </span>
                   <a
-                    href={`https://www.google.com/maps/dir/${encodeURIComponent(fromAddr)}/${encodeURIComponent(toAddr)}`}
+                    href={`https://www.google.com/maps/dir/${encodeURIComponent(dirQuery.from + ', South Africa')}/${encodeURIComponent(dirQuery.to + ', South Africa')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 font-mono text-[0.65rem] text-teal-400 hover:text-teal-300 transition-colors"
+                    className="font-mono text-[0.62rem] text-sky-400 hover:text-sky-300 transition-colors"
                   >
-                    <Navigation size={11} />
-                    Open in Google Maps →
+                    Open full screen →
                   </a>
                 </div>
-              )}
-            </div>
+
+                {GM_KEY ? (
+                  <iframe
+                    key={`${dirQuery.from}|${dirQuery.to}|${dirQuery.mode}`}
+                    src={gmEmbedUrl(dirQuery.from, dirQuery.to, dirQuery.mode)}
+                    width="100%"
+                    height="360"
+                    style={{ border: 0, borderRadius: 16, display: 'block' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Google Maps directions"
+                  />
+                ) : (
+                  <div
+                    className="rounded-2xl flex flex-col items-center justify-center gap-3 py-10"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }}
+                  >
+                    <MapPin size={28} className="text-white/20" />
+                    <p className="font-mono text-[0.65rem] text-white/30 text-center max-w-[200px] leading-relaxed">
+                      Add <code className="text-sky-400">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> to your .env.local to enable the embedded map
+                    </p>
+                    <a
+                      href={`https://www.google.com/maps/dir/${encodeURIComponent(dirQuery.from + ', South Africa')}/${encodeURIComponent(dirQuery.to + ', South Africa')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-sky-400 hover:text-sky-300 transition-colors underline"
+                    >
+                      Open in Google Maps instead
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Default route quick view */}
             {routes.find(r => r.is_default) && (() => {
@@ -277,6 +376,12 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 <div className="card-base p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-mono text-[0.58rem] text-amber-400 uppercase tracking-wider">⭐ Your Default Route</span>
+                    <button
+                      onClick={() => { setFromAddr(def.from_address); setToAddr(def.to_address); setTransport(def.transport_type); setDirQuery({ from: def.from_address, to: def.to_address, mode: def.transport_type }) }}
+                      className="font-mono text-[0.6rem] text-sky-400 hover:text-sky-300 transition-colors"
+                    >
+                      Show on map →
+                    </button>
                   </div>
                   <div className="font-display font-bold text-white">{def.label}</div>
                   <div className="font-mono text-[0.65rem] text-white/40 mt-1">
@@ -293,9 +398,31 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
           </div>
         )}
 
-        {/* ── My Routes ─────────────────────────────────────── */}
+        {/* ── My Routes — Mapbox pins map ───────────────────── */}
         {tab === 'my-routes' && (
           <div className="space-y-3">
+            {/* Mapbox interactive map */}
+            {routes.length > 0 && (
+              <div>
+                <p className="font-mono text-[0.58rem] text-white/25 uppercase tracking-wider mb-2 px-1">
+                  📍 Teal = departure · Orange = destination
+                </p>
+                {MAPBOX_TOKEN ? (
+                  <MapboxRoutesMap routes={routes} token={MAPBOX_TOKEN} />
+                ) : (
+                  <div
+                    className="rounded-2xl flex flex-col items-center justify-center gap-2 py-8"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }}
+                  >
+                    <MapPin size={24} className="text-white/20" />
+                    <p className="font-mono text-[0.62rem] text-white/25 text-center max-w-[200px] leading-relaxed">
+                      Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable the route map
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             <button
               onClick={() => setAddingRoute(v => !v)}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-sm border border-dashed border-teal-600/30 text-teal-400 hover:bg-teal-600/8 transition-all"
@@ -308,19 +435,19 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
               <div className="card-base p-4 space-y-3">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-wider">New Route</div>
                 <div>
-                  <label className={label}>Route label</label>
+                  <label className={lbl}>Route label</label>
                   <input className={formField} placeholder="e.g. Home to Campus" value={routeForm.label} onChange={e => setRouteForm(p => ({ ...p, label: e.target.value }))} />
                 </div>
                 <div>
-                  <label className={label}>From</label>
+                  <label className={lbl}>From</label>
                   <input className={formField} placeholder="Starting point" value={routeForm.from_address} onChange={e => setRouteForm(p => ({ ...p, from_address: e.target.value }))} />
                 </div>
                 <div>
-                  <label className={label}>To</label>
+                  <label className={lbl}>To</label>
                   <input className={formField} placeholder="Destination" value={routeForm.to_address} onChange={e => setRouteForm(p => ({ ...p, to_address: e.target.value }))} />
                 </div>
                 <div>
-                  <label className={label}>Transport</label>
+                  <label className={lbl}>Transport</label>
                   <div className="flex flex-wrap gap-2">
                     {(Object.keys(TRANSPORT_ICONS) as TransportType[]).map(t => (
                       <button key={t} type="button" onClick={() => setRouteForm(p => ({ ...p, transport_type: t }))} className={chip(routeForm.transport_type === t)}>
@@ -331,11 +458,11 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 </div>
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <label className={label}>Est. minutes</label>
+                    <label className={lbl}>Est. minutes</label>
                     <input type="number" className={formField} placeholder="e.g. 20" value={routeForm.estimated_minutes} onChange={e => setRouteForm(p => ({ ...p, estimated_minutes: e.target.value }))} />
                   </div>
                   <div className="flex-1">
-                    <label className={label}>Fare (R)</label>
+                    <label className={lbl}>Fare (R)</label>
                     <input type="number" className={formField} placeholder="e.g. 12" value={routeForm.fare_rands} onChange={e => setRouteForm(p => ({ ...p, fare_rands: e.target.value }))} />
                   </div>
                 </div>
@@ -410,30 +537,30 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 <div className="font-mono text-[0.6rem] text-sky-400 uppercase tracking-wider">Post a Lift</div>
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <label className={label}>From</label>
+                    <label className={lbl}>From</label>
                     <input className={formField} placeholder="e.g. Rondebosch" value={liftForm.from_location} onChange={e => setLiftForm(p => ({ ...p, from_location: e.target.value }))} />
                   </div>
                   <div className="flex-1">
-                    <label className={label}>To</label>
+                    <label className={lbl}>To</label>
                     <input className={formField} placeholder="e.g. Main Campus" value={liftForm.to_location} onChange={e => setLiftForm(p => ({ ...p, to_location: e.target.value }))} />
                   </div>
                 </div>
                 <div>
-                  <label className={label}>Departure time</label>
+                  <label className={lbl}>Departure time</label>
                   <input type="datetime-local" className={formField} value={liftForm.departure_time} onChange={e => setLiftForm(p => ({ ...p, departure_time: e.target.value }))} />
                 </div>
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <label className={label}>Seats available</label>
+                    <label className={lbl}>Seats available</label>
                     <input type="number" min={1} max={8} className={formField} placeholder="1" value={liftForm.seats_available} onChange={e => setLiftForm(p => ({ ...p, seats_available: e.target.value }))} />
                   </div>
                   <div className="flex-1">
-                    <label className={label}>Fare share (R)</label>
+                    <label className={lbl}>Fare share (R)</label>
                     <input type="number" className={formField} placeholder="e.g. 30" value={liftForm.fare_rands} onChange={e => setLiftForm(p => ({ ...p, fare_rands: e.target.value }))} />
                   </div>
                 </div>
                 <div>
-                  <label className={label}>Recurring</label>
+                  <label className={lbl}>Recurring</label>
                   <div className="flex gap-2">
                     {(['once', 'daily', 'weekdays'] as RecurringType[]).map(r => (
                       <button key={r} type="button" onClick={() => setLiftForm(p => ({ ...p, recurring: r }))} className={chip(liftForm.recurring === r)}>
@@ -443,7 +570,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   </div>
                 </div>
                 <div>
-                  <label className={label}>WhatsApp contact (optional)</label>
+                  <label className={lbl}>WhatsApp contact (optional)</label>
                   <input className={formField} placeholder="+27 82 000 0000" value={liftForm.contact_whatsapp} onChange={e => setLiftForm(p => ({ ...p, contact_whatsapp: e.target.value }))} />
                 </div>
                 <div className="flex gap-2 pt-1">
@@ -517,7 +644,6 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
               </div>
             ))}
 
-            {/* SA transport modes overview */}
             <div className="card-base p-4">
               <div className="font-mono text-[0.6rem] text-white/35 uppercase tracking-wider mb-3">SA Fare Guide</div>
               <div className="space-y-2">
@@ -539,4 +665,3 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
     </div>
   )
 }
-
