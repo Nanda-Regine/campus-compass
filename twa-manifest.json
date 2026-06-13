@@ -1,0 +1,62 @@
+{
+  "packageId": "co.za.varsityos.app",
+  "host": "varsityos.co.za",
+  "name": "VarsityOS",
+  "launcherName": "VarsityOS",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#0d9488",
+  "navigationColor": "#080f0e",
+  "navigationColorDark": "#080f0e",
+  "navigationDividerColor": "#0d9488",
+  "navigationDividerColorDark": "#0d9488",
+  "backgroundColor": "#080f0e",
+  "enableNotifications": true,
+  "startUrl": "/dashboard",
+  "iconUrl": "https://varsityos.co.za/icon-512.png",
+  "maskableIconUrl": "https://varsityos.co.za/icon-maskable-512.png",
+  "monochromeIconUrl": "https://varsityos.co.za/icon-192.png",
+  "manifest": "https://varsityos.co.za/manifest.json",
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://varsityos.co.za/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": { "enabled": false },
+    "playBilling": { "enabled": false }
+  },
+  "alphaDependencies": { "enabled": false },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://varsityos.co.za/",
+  "minSdkVersion": 24,
+  "fingerprints": [],
+  "signingKey": {
+    "path": "android.keystore",
+    "alias": "varsityos"
+  },
+  "splashScreenFadeOutDuration": 300,
+  "generatedAppVersion": 1,
+  "generatedAppVersionName": "1.0.0",
+  "webBundleEnabled": false,
+  "shortcuts": [
+    {
+      "name": "Study Planner",
+      "short_name": "Study",
+      "url": "/study",
+      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Budget & NSFAS",
+      "short_name": "Budget",
+      "url": "/budget",
+      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "Nova AI",
+      "short_name": "Nova",
+      "url": "/nova",
+      "icons": [{ "src": "/icon-192.png", "sizes": "96x96", "type": "image/png" }]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+name: Build TWA APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (semver, e.g. 1.0.1)'
+        required: true
+        default: '1.0.0'
+      version_code:
+        description: 'Version code (integer — increment per Play Store upload)'
+        required: true
+        default: '1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Configure Bubblewrap SDK paths
+        run: |
+          mkdir -p ~/.bubblewrap
+          cat > ~/.bubblewrap/config.json <<'EOF'
+          {
+            "jdkPath": "$JAVA_HOME",
+            "androidSdkPath": "$ANDROID_HOME"
+          }
+          EOF
+          sed -i "s|\$JAVA_HOME|$JAVA_HOME|g;s|\$ANDROID_HOME|$ANDROID_HOME|g" ~/.bubblewrap/config.json
+
+      - name: Decode keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android.keystore
+
+      - name: Bump version in twa-manifest.json
+        run: |
+          node -e "
+            const fs = require('fs');
+            const m = JSON.parse(fs.readFileSync('twa-manifest.json','utf8'));
+            m.generatedAppVersion     = parseInt('${{ inputs.version_code }}', 10);
+            m.generatedAppVersionName = '${{ inputs.version_name }}';
+            fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
+          "
+
+      - name: Build TWA
+        run: bubblewrap build --skipPwaValidation
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Align and upload APK
+        run: |
+          TOOLS=$(ls -d "${ANDROID_HOME}/build-tools/"* | sort -V | tail -1)
+          UNSIGNED=$(find . -name "*-release-unsigned.apk" | head -1)
+          jarsigner \
+            -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore android.keystore \
+            -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+            -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" \
+            "$UNSIGNED" varsityos
+          "$TOOLS/zipalign" -v 4 "$UNSIGNED" varsityos-release.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: varsityos-${{ inputs.version_name }}-vc${{ inputs.version_code }}
+          path: varsityos-release.apk
+          retention-days: 30
