@@ -13,6 +13,7 @@ import {
 } from '@/types'
 import { fmt, getDaysUntil, calcTotalBudget, cn } from '@/lib/utils'
 import { NAV_MODULES } from '@/lib/navModules'
+import { useCachedFetch } from '@/hooks/useCachedFetch'
 import { ShareButton } from '@/components/ui/ShareButton'
 import DayModeBanner, { getDayMode, type DayMode } from '@/components/dashboard/DayModeBanner'
 import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
@@ -135,42 +136,40 @@ function toISODate(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
+function getTodaySlots(timetable: TimetableEntry[]) {
+  const now   = new Date()
+  const jsDay = now.getDay()
+  const dbDay = jsDay === 0 ? 7 : jsDay
+  return {
+    slots: timetable
+      .filter(s => (s.day_of_week as number) === dbDay)
+      .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || '')),
+    currentTime: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+  }
+}
+
 
 /* ── StudyTipsCard ──────────────────────────────────────── */
 interface StudyTip { text: string; source: string }
 
 function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile }) {
-  const [tips, setTips] = useState<StudyTip[] | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (!exam) return
-    const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `study_tips_${exam.id}_${today}`
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { setTips(JSON.parse(cached)); return } catch { /* ignore */ }
-    }
-    setLoading(true)
-    const subject = (exam.module as Module | undefined)?.module_name ?? 'General'
-    const daysUntil = Math.max(0, getDaysUntil(exam.exam_date))
-    fetch('/api/dashboard/study-tips', {
+  const today    = new Date().toISOString().split('T')[0]
+  const cacheKey = exam ? `study_tips_${exam.id}_${today}` : null
+  const { data: tips, loading } = useCachedFetch<StudyTip[]>(cacheKey, async () => {
+    const subject    = (exam?.module as Module | undefined)?.module_name ?? 'General'
+    const daysUntil  = Math.max(0, getDaysUntil(exam!.exam_date))
+    const r = await fetch('/api/dashboard/study-tips', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        examName: exam.exam_name ?? (exam as unknown as { name?: string }).name ?? 'Upcoming exam',
-        examSubject: subject,
-        daysUntil,
+        examName: exam?.exam_name ?? (exam as unknown as { name?: string })?.name ?? 'Upcoming exam',
+        examSubject: subject, daysUntil,
         degreeProgram: (profile as unknown as { university?: string }).university ?? 'University',
       }),
     })
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        if (d?.tips) { setTips(d.tips); localStorage.setItem(cacheKey, JSON.stringify(d.tips)) }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [exam, profile])
+    const d = r.ok ? await r.json() : null
+    return d?.tips ?? null
+  })
 
   if (!exam) return null
 
@@ -212,38 +211,24 @@ interface CoachInsight { tag: string; text: string }
 function CoachSummaryCard({ userId, totalBudget, amountSpent, expenses }: {
   userId: string; totalBudget: number; amountSpent: number; expenses: Expense[]
 }) {
-  const [insights, setInsights] = useState<CoachInsight[] | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (totalBudget <= 0) return
-    const now = new Date()
-    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    const week = Math.ceil(now.getDate() / 7)
-    const cacheKey = `coach_summary_${userId}_${month}_w${week}`
-    const cached = localStorage.getItem(cacheKey)
-    if (cached) {
-      try { setInsights(JSON.parse(cached)); return } catch { /* ignore */ }
-    }
-    setLoading(true)
+  const now      = new Date()
+  const month    = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const week     = Math.ceil(now.getDate() / 7)
+  const cacheKey = totalBudget > 0 ? `coach_summary_${userId}_${month}_w${week}` : null
+  const { data: insights, loading } = useCachedFetch<CoachInsight[]>(cacheKey, async () => {
     const catMap: Record<string, number> = {}
     expenses.forEach(e => { catMap[e.category] = (catMap[e.category] ?? 0) + e.amount })
-    const topCategories = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c]) => c).join(', ') || 'General'
-    const percentUsed = Math.round((amountSpent / totalBudget) * 100)
-    const daysRemaining = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
-
-    fetch('/api/dashboard/coach-summary', {
+    const topCategories  = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c]) => c).join(', ') || 'General'
+    const percentUsed    = Math.round((amountSpent / totalBudget) * 100)
+    const daysRemaining  = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
+    const r = await fetch('/api/dashboard/coach-summary', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ totalBudget, amountSpent, percentUsed, topCategories, daysRemaining, savingsGoals: 'None' }),
     })
-      .then(r => r.ok ? r.json() : null)
-      .then(d => {
-        if (d?.insights) { setInsights(d.insights); localStorage.setItem(cacheKey, JSON.stringify(d.insights)) }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [userId, totalBudget, amountSpent, expenses])
+    const d = r.ok ? await r.json() : null
+    return d?.insights ?? null
+  })
 
   if (totalBudget <= 0) return null
 
@@ -575,12 +560,8 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streak
 
 /* ── TodaysClasses ─────────────────────────────────────── */
 function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
-  const now = new Date()
-  const jsDay = now.getDay()
-  const dbDay = jsDay === 0 ? 7 : jsDay
-  const todaySlots = timetable.filter(s => (s.day_of_week as number) === dbDay).sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+  const { slots: todaySlots, currentTime } = getTodaySlots(timetable)
   if (!todaySlots.length) return null
-  const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`
   const displaySlots = todaySlots.slice(0, 3)
 
   return (
@@ -1044,12 +1025,7 @@ function UpgradeBar() {
 
 /* ── MobileTodayClasses ─────────────────────────────────── */
 function MobileTodayClasses({ timetable }: { timetable: TimetableEntry[] }) {
-  const now = new Date()
-  const jsDay = now.getDay()
-  const dbDay = jsDay === 0 ? 7 : jsDay
-  const todaySlots = timetable
-    .filter(s => (s.day_of_week as number) === dbDay)
-    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+  const { slots: todaySlots } = getTodaySlots(timetable)
 
   return (
     <div className="block md:hidden" style={{ background: '#0d1520', border: '1px solid rgba(26,158,117,0.2)', borderRadius: 14, padding: '12px 14px' }}>
@@ -1082,14 +1058,13 @@ function MobileTodayClasses({ timetable }: { timetable: TimetableEntry[] }) {
 }
 
 /* ── MobileTasksToday ───────────────────────────────────── */
-const TASK_CAT_STYLE: Record<string, { bg: string; color: string }> = {
-  Study:  { bg: 'rgba(26,95,106,0.2)',    color: '#1a9e75' },
-  Budget: { bg: 'rgba(201,168,76,0.15)',  color: '#c9a84c' },
-  Meals:  { bg: 'rgba(232,131,74,0.12)',  color: '#e8834a' },
-  Work:   { bg: 'rgba(122,153,184,0.12)', color: '#7a99b8' },
-}
-
 function MobileTasksToday({ tasks, onComplete }: { tasks: Task[]; onComplete: (id: string) => void }) {
+  const TASK_CAT_STYLE: Record<string, { bg: string; color: string }> = {
+    Study:  { bg: 'rgba(26,95,106,0.2)',    color: '#1a9e75' },
+    Budget: { bg: 'rgba(201,168,76,0.15)',  color: '#c9a84c' },
+    Meals:  { bg: 'rgba(232,131,74,0.12)',  color: '#e8834a' },
+    Work:   { bg: 'rgba(122,153,184,0.12)', color: '#7a99b8' },
+  }
   const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
   const todayTasks = tasks
     .filter(t => {
@@ -1197,19 +1172,18 @@ function PrescriptionReminderCard() {
 }
 
 /* ── ModulePillList (desktop only) ──────────────────────── */
-const PILL_ORDER = ['Study', 'Budget', 'Meals', 'Work', 'Nova', 'Groups']
-
 function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists, shiftsThisWeek, activeGroups }: {
   tasks: Task[]; totalBudget: number; remaining: number
   profile: Profile; mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
 }) {
-  const todayStr = toISODate()
+  const PILL_ORDER   = ['Study', 'Budget', 'Meals', 'Work', 'Nova', 'Groups']
+  const todayStr     = toISODate()
   const _wa = new Date(); _wa.setDate(_wa.getDate() + 7)
   const weekAheadStr = toISODate(_wa)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
-  const isUnlimited = profile.subscription_tier === 'nova_unlimited'
-  const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
+  const isUnlimited  = profile.subscription_tier === 'nova_unlimited'
+  const novaLeft     = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
 
   const subtitles: Record<string, string> = {
     Study:  overdueTasks > 0 ? `${overdueTasks} overdue` : tasksDueWeek > 0 ? `${tasksDueWeek} due this week` : 'All clear ✓',
