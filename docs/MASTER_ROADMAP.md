@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-14 (Phase 8 ✅ — Phase 9: 9A + 9B + 9C ✅ — 9D active 🔨)
+> Last updated: 2026-06-14 (Phase 8 ✅ — Phase 9: 9A–9D ✅ — 9E active 🔨)
 
 ---
 
@@ -789,8 +789,8 @@ All 9 life-domain modules shipped: NSFAS Tracker OS, Weather, Safety OS, Habit B
 1. ✅ ICS Timetable Import — parse university .ics calendar files, auto-populate timetable + exam tables; SSRF protection, 2MB cap, batch inserts, SAST timezone; migration 000019
 2. ✅ Study Pods — AI-matched peer study partners; migration 000019 (study_pod_profiles + study_pod_connections); Claude Haiku blurbs; weekly cache; opt-in form → matches → connections UI
 3. ✅ Nova Voice Mode — useSpeechRecognition (en-ZA, auto-submit), useSpeechSynthesis (markdown-stripped, voice-selected), ElevenLabs TTS stream for premium, browser TTS fallback, per-message 🔊 button, auto-read toggle persisted in localStorage
-4. 🔨 SRC Analytics Dashboard — institution-level aggregate insights for institutional admins
-5. 🎯 Institution Broadcast — admin pushes announcements/alerts to all linked students via push notification
+4. ✅ SRC Analytics Dashboard — /api/admin/analytics (admin client, Promise.allSettled); /admin/institution Overview|Analytics tabs; CSS bar charts: year distribution, task completion, top modules, Nova engagement, active students, Study Pods adoption
+5. 🔨 Institution Broadcast — admin pushes announcements/alerts to all linked students via push notification
 
 ### 📋 Future (Phase 10+)
 1. Parent/Guardian view — optional read-only dashboard with magic-link access
