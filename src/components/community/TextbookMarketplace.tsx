@@ -47,7 +47,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
 
   async function load() {
     setLoading(true)
-    let q = supabase.from('textbook_listings').select('*').eq('is_sold', false)
+    let q = supabase.from('textbook_listings').select('*').eq('is_sold', false).is('deleted_at', null)
       .order('created_at', { ascending: false }).limit(60)
     if (university) q = q.eq('university', university)
     const { data } = await q
@@ -221,6 +221,10 @@ function ListingCard({ listing: l, userId, onRefresh, isOwner }: {
     await supabase.from('textbook_listings').update({ is_sold: true }).eq('id', l.id)
     onRefresh()
   }
+  const deleteListing = async () => {
+    await supabase.from('textbook_listings').update({ deleted_at: new Date().toISOString() }).eq('id', l.id)
+    onRefresh()
+  }
   const express = async () => {
     await supabase.from('textbook_interests').upsert({ listing_id: l.id, buyer_id: userId, message: 'Interested!' })
     setContacted(true)
@@ -248,9 +252,14 @@ function ListingCard({ listing: l, userId, onRefresh, isOwner }: {
           {l.sellerName || 'Student'}{l.university ? ` · ${l.university}` : ''}
         </div>
         {isOwner ? (
-          <button onClick={markSold} style={{ padding: '5px 10px', background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
-            Mark sold
-          </button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button onClick={markSold} style={{ padding: '5px 10px', background: 'rgba(52,211,153,0.08)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+              Mark sold
+            </button>
+            <button onClick={deleteListing} style={{ padding: '5px 8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, color: '#f87171', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+              Delete
+            </button>
+          </div>
         ) : l.seller_id !== userId ? (
           <button onClick={express} disabled={contacted} style={{ padding: '5px 12px', background: contacted ? 'rgba(52,211,153,0.08)' : 'rgba(0,229,176,0.1)', border: `1px solid ${contacted ? 'rgba(52,211,153,0.2)' : 'rgba(0,229,176,0.25)'}`, borderRadius: 6, color: 'var(--teal)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: contacted ? 'default' : 'pointer' }}>
             {contacted ? '✓ Interest sent' : 'Express interest →'}

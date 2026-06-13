@@ -11,7 +11,7 @@ import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { AmbientImage } from '@/components/ui/AmbientImage'
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 const schema = z.object({
   name:            z.string().min(2, 'Name must be at least 2 characters'),
@@ -25,29 +25,91 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
+// SA university email domains → friendly name
+const SA_UNI_DOMAINS: Record<string, string> = {
+  'wits.ac.za': 'Wits University',
+  'uct.ac.za': 'UCT',
+  'sun.ac.za': 'Stellenbosch University',
+  'up.ac.za': 'University of Pretoria',
+  'ukzn.ac.za': 'UKZN',
+  'uj.ac.za': 'UJ',
+  'nwu.ac.za': 'NWU',
+  'ufs.ac.za': 'UFS',
+  'ru.ac.za': 'Rhodes University',
+  'uwc.ac.za': 'UWC',
+  'ufh.ac.za': 'UFH',
+  'unizulu.ac.za': 'UniZulu',
+  'univen.ac.za': 'UniVen',
+  'ul.ac.za': 'UL',
+  'cput.ac.za': 'CPUT',
+  'dut.ac.za': 'DUT',
+  'tut.ac.za': 'TUT',
+  'cut.ac.za': 'CUT',
+  'vut.ac.za': 'VUT',
+  'mut.ac.za': 'MUT',
+  'wsu.ac.za': 'WSU',
+  'smu.ac.za': 'SMU',
+}
+
+function getPasswordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: '', color: '' }
+  let score = 0
+  if (pw.length >= 8)  score++
+  if (/[A-Z]/.test(pw)) score++
+  if (/[0-9]/.test(pw)) score++
+  if (/[^A-Za-z0-9]/.test(pw)) score++
+  const map = [
+    { label: '', color: '' },
+    { label: 'Weak', color: '#ef4444' },
+    { label: 'Fair', color: '#f97316' },
+    { label: 'Good', color: '#eab308' },
+    { label: 'Strong', color: '#22c55e' },
+  ]
+  return { score, ...map[score] }
+}
+
+function getUniHint(email: string): string | null {
+  if (!email.includes('@')) return null
+  const domain = email.split('@')[1]?.toLowerCase()
+  if (!domain) return null
+  if (SA_UNI_DOMAINS[domain]) return `${SA_UNI_DOMAINS[domain]} detected`
+  if (domain.endsWith('.ac.za')) return 'University email detected'
+  return null
+}
+
 export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const { loading, signUp, signInWithGoogle } = useAuth()
   const searchParams = useSearchParams()
 
-  // Capture referral code from URL and persist in localStorage
-  // Applied after login via the dashboard's useEffect
   useEffect(() => {
     const ref = searchParams.get('ref')
     if (ref) localStorage.setItem('pending_ref', ref.toLowerCase().trim())
   }, [searchParams])
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
+
+  const passwordValue = watch('password') ?? ''
+  const emailValue    = watch('email') ?? ''
+  const strength      = getPasswordStrength(passwordValue)
+  const uniHint       = getUniHint(emailValue)
 
   const onSubmit = async (data: FormData) => {
     setAuthError(null)
     const { error } = await signUp(data.email, data.password, data.name, true)
     if (!error) setSubmitted(true)
     else setAuthError(error)
+  }
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true)
+    await signInWithGoogle()
+    setGoogleLoading(false)
   }
 
   if (submitted) {
@@ -85,8 +147,8 @@ export default function SignupForm() {
           <Button
             variant="outline"
             fullWidth
-            onClick={signInWithGoogle}
-            loading={loading}
+            onClick={handleGoogle}
+            loading={googleLoading}
             className="mb-5"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -114,35 +176,69 @@ export default function SignupForm() {
               error={errors.name?.message}
               {...register('name')}
             />
-            <Input
-              label="Email address"
-              type="email"
-              placeholder="you@university.ac.za"
-              autoComplete="email"
-              icon={<Mail size={15} />}
-              error={errors.email?.message}
-              {...register('email')}
-            />
-            <Input
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="At least 8 characters"
-              autoComplete="new-password"
-              icon={<Lock size={15} />}
-              error={errors.password?.message}
-              hint="Use a mix of letters, numbers and symbols"
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-white/30 hover:text-white/60 transition-colors"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              }
-              {...register('password')}
-            />
+
+            <div>
+              <Input
+                label="Email address"
+                type="email"
+                placeholder="you@university.ac.za"
+                autoComplete="email"
+                icon={<Mail size={15} />}
+                error={errors.email?.message}
+                {...register('email')}
+              />
+              {uniHint && !errors.email && (
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <CheckCircle2 size={11} className="text-teal-400 shrink-0" />
+                  <span className="font-mono text-[0.6rem] text-teal-400">{uniHint}</span>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Input
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+                icon={<Lock size={15} />}
+                error={errors.password?.message}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-white/30 hover:text-white/60 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                }
+                {...register('password')}
+              />
+              {/* Password strength bar */}
+              {passwordValue.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4].map(i => (
+                      <div
+                        key={i}
+                        className="h-1 flex-1 rounded-full transition-all duration-300"
+                        style={{
+                          background: i <= strength.score ? strength.color : 'rgba(255,255,255,0.08)',
+                        }}
+                      />
+                    ))}
+                  </div>
+                  {strength.label && (
+                    <p className="font-mono text-[0.58rem]" style={{ color: strength.color }}>
+                      {strength.label}
+                      {strength.score < 3 && ' — add uppercase, numbers or symbols'}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <Input
               label="Confirm password"
               type={showPassword ? 'text' : 'password'}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
@@ -8,10 +8,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
+import { createClient } from '@/lib/supabase/client'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { AmbientImage } from '@/components/ui/AmbientImage'
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, AlertCircle, RefreshCw } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const schema = z.object({
   email:    z.string().email('Enter a valid email'),
@@ -19,21 +21,58 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
+const RESEND_COOLDOWN = 60
+
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
+  const [resendLoading, setResendLoading] = useState(false)
+  const lastEmailRef = useRef<string>('')
   const { loading, signIn, signInWithGoogle } = useAuth()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+  const supabase = createClient()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const t = setTimeout(() => setResendCooldown(c => c - 1), 1000)
+    return () => clearTimeout(t)
+  }, [resendCooldown])
+
   const onSubmit = async (data: FormData) => {
     setAuthError(null)
+    setEmailNotConfirmed(false)
+    lastEmailRef.current = data.email
     const { error } = await signIn(data.email, data.password, redirectTo)
-    if (error) setAuthError('Incorrect email or password. Please try again.')
+    if (error) {
+      if (error.toLowerCase().includes('email not confirmed')) {
+        setEmailNotConfirmed(true)
+      } else {
+        setAuthError('Incorrect email or password. Please try again.')
+      }
+    }
+  }
+
+  const resendVerification = async () => {
+    const email = lastEmailRef.current || getValues('email')
+    if (!email || resendCooldown > 0) return
+    setResendLoading(true)
+    try {
+      const { error } = await supabase.auth.resend({ type: 'signup', email })
+      if (error) throw error
+      toast.success('Verification email sent!')
+      setResendCooldown(RESEND_COOLDOWN)
+    } catch {
+      toast.error('Could not send email. Please try again.')
+    } finally {
+      setResendLoading(false)
+    }
   }
 
   return (
@@ -120,12 +159,30 @@ export default function LoginForm() {
               </Link>
             </div>
 
-            {authError && (
+            {emailNotConfirmed ? (
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-3 space-y-2">
+                <div className="flex items-start gap-2">
+                  <AlertCircle size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                  <p className="font-mono text-[0.65rem] text-amber-300 leading-relaxed">
+                    Your email hasn&apos;t been confirmed yet. Check your inbox (and spam folder) for the verification link.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={resendVerification}
+                  disabled={resendCooldown > 0 || resendLoading}
+                  className="flex items-center gap-1.5 font-mono text-[0.65rem] text-teal-400 hover:text-teal-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <RefreshCw size={11} className={resendLoading ? 'animate-spin' : ''} />
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend verification email'}
+                </button>
+              </div>
+            ) : authError ? (
               <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5">
                 <AlertCircle size={14} className="text-red-400 shrink-0" />
                 <p className="font-mono text-[0.65rem] text-red-400">{authError}</p>
               </div>
-            )}
+            ) : null}
 
             <Button type="submit" fullWidth loading={loading} className="mt-2">
               Sign in

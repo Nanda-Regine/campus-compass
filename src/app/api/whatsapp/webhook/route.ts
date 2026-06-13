@@ -1,10 +1,14 @@
 /**
- * WhatsApp Bot Webhook — powered by Twilio WhatsApp Sandbox
+ * WhatsApp Bot Webhook — Meta WhatsApp Business API
  *
  * Setup:
- * 1. Create a Twilio account and enable the WhatsApp Sandbox
- * 2. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_NUMBER in .env.local
- * 3. Point your Twilio sandbox webhook URL to: https://your-domain.co.za/api/whatsapp/webhook
+ * 1. Create a Meta App at developers.facebook.com, add WhatsApp product
+ * 2. Set META_WHATSAPP_APP_SECRET, META_WHATSAPP_ACCESS_TOKEN,
+ *    META_WHATSAPP_PHONE_NUMBER_ID, META_WHATSAPP_VERIFY_TOKEN in .env.local
+ * 3. In Meta dashboard → WhatsApp → Webhooks, set callback URL to:
+ *    https://your-domain.co.za/api/whatsapp/webhook
+ *    and paste your META_WHATSAPP_VERIFY_TOKEN as the Verify Token
+ * 4. Subscribe to the "messages" webhook field
  *
  * Commands:
  *   /nova <question>  — Ask Nova AI anything
@@ -17,12 +21,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
+import crypto from 'crypto'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-// Lazy helpers — initialized inside handlers so module import doesn't call
-// createClient/Anthropic at build time when env vars are unavailable.
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,92 +38,166 @@ function getAnthropic() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 }
 
-// ─── Twilio verification ───────────────────────────────────────────────────────
+// ─── Meta HMAC-SHA256 signature verification ──────────────────────────────────
+// Spec: https://developers.facebook.com/docs/graph-api/webhooks/getting-started
+//
+// Meta signs POST bodies with HMAC-SHA256 using the App Secret.
+// Header: X-Hub-Signature-256: sha256=<hex_digest>
 
-function verifyTwilioSignature(req: NextRequest, rawBody: string): boolean {
-  // In production, validate the X-Twilio-Signature header using the Twilio helper.
-  // For MVP/sandbox, skip strict validation (requests come from Twilio's IP range).
-  const twilioSig = req.headers.get('x-twilio-signature')
-  if (!twilioSig && process.env.NODE_ENV === 'production') return false
-  return true
+function verifyMetaSignature(rawBody: string, sigHeader: string | null): boolean {
+  const appSecret = process.env.META_WHATSAPP_APP_SECRET
+  if (!appSecret) {
+    return process.env.NODE_ENV !== 'production'
+  }
+
+  if (!sigHeader?.startsWith('sha256=')) return false
+
+  const received = sigHeader.slice('sha256='.length)
+  const expected = crypto
+    .createHmac('sha256', appSecret)
+    .update(rawBody, 'utf8')
+    .digest('hex')
+
+  try {
+    const expectedBuf = Buffer.from(expected, 'hex')
+    const receivedBuf = Buffer.from(received, 'hex')
+    if (expectedBuf.length !== receivedBuf.length) return false
+    return crypto.timingSafeEqual(expectedBuf, receivedBuf)
+  } catch {
+    return false
+  }
 }
 
-// ─── TwiML response helper ─────────────────────────────────────────────────────
+// ─── Send a WhatsApp message via Meta Graph API ───────────────────────────────
 
-function twimlReply(message: string): NextResponse {
-  const body = `<?xml version="1.0" encoding="UTF-8"?><Response><Message>${escapeXml(message)}</Message></Response>`
-  return new NextResponse(body, {
-    status: 200,
-    headers: { 'Content-Type': 'text/xml' },
+async function sendMessage(to: string, text: string): Promise<void> {
+  const phoneNumberId = process.env.META_WHATSAPP_PHONE_NUMBER_ID
+  const accessToken   = process.env.META_WHATSAPP_ACCESS_TOKEN
+  if (!phoneNumberId || !accessToken) {
+    console.error('[whatsapp] META_WHATSAPP_PHONE_NUMBER_ID or META_WHATSAPP_ACCESS_TOKEN not set')
+    return
+  }
+
+  await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to,
+      type: 'text',
+      text: { body: text.slice(0, 4096) },
+    }),
   })
 }
 
-function escapeXml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
+// ─── GET — Meta webhook verification challenge ────────────────────────────────
 
-// ─── GET — Twilio sandbox verification (not required but harmless) ─────────────
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const mode      = searchParams.get('hub.mode')
+  const token     = searchParams.get('hub.verify_token')
+  const challenge = searchParams.get('hub.challenge')
 
-export async function GET() {
-  return new NextResponse('VarsityOS WhatsApp Bot is running', { status: 200 })
+  const verifyToken = process.env.META_WHATSAPP_VERIFY_TOKEN
+  if (mode === 'subscribe' && token === verifyToken && challenge) {
+    return new NextResponse(challenge, { status: 200 })
+  }
+
+  return new NextResponse('Forbidden', { status: 403 })
 }
 
 // ─── POST — incoming WhatsApp message ─────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   const supabaseAdmin = getSupabase()
-  const anthropic = getAnthropic()
+  const anthropic     = getAnthropic()
 
-  const rawBody = await req.text()
+  const rawBody   = await req.text()
+  const sigHeader = req.headers.get('x-hub-signature-256')
 
-  if (!verifyTwilioSignature(req, rawBody)) {
+  if (!verifyMetaSignature(rawBody, sigHeader)) {
     return new NextResponse('Forbidden', { status: 403 })
   }
 
-  const params = new URLSearchParams(rawBody)
-  const from = params.get('From') ?? ''          // e.g. whatsapp:+27821234567
-  const body = (params.get('Body') ?? '').trim()
+  let payload: Record<string, unknown>
+  try {
+    payload = JSON.parse(rawBody) as Record<string, unknown>
+  } catch {
+    return new NextResponse('Bad Request', { status: 400 })
+  }
 
-  if (!from || !body) return twimlReply('👋 Hi! Send /help to see what I can do.')
+  // Meta sends "statuses" updates (delivered/read) alongside messages — ignore them
+  const entry    = (payload.entry as Array<Record<string, unknown>> | undefined)?.[0]
+  const changes  = (entry?.changes as Array<Record<string, unknown>> | undefined)?.[0]
+  const value    = changes?.value as Record<string, unknown> | undefined
+  const messages = value?.messages as Array<Record<string, unknown>> | undefined
 
-  // Strip the "whatsapp:" prefix to get the E.164 number
-  const phone = from.replace(/^whatsapp:/, '')
+  if (!messages?.length) {
+    return NextResponse.json({ status: 'ok' })
+  }
+
+  const msg  = messages[0]
+  const from = String(msg.from ?? '')
+  const type = String(msg.type ?? '')
+
+  if (type !== 'text') return NextResponse.json({ status: 'ok' })
+
+  const body = String((msg.text as Record<string, unknown> | undefined)?.body ?? '').trim()
+  if (!from || !body) return NextResponse.json({ status: 'ok' })
+
+  const phone = from.startsWith('+') ? from : `+${from}`
+
+  // ── Per-phone rate limit: 20 messages / minute ───────────────────────────
+  const rl = await checkRateLimitAsync(phone, 'whatsapp-bot', 20, 60_000)
+  if (!rl.allowed) {
+    await sendMessage(from, 'Too many messages. Please wait a minute before sending again. 🙏')
+    return NextResponse.json({ status: 'ok' })
+  }
 
   // Look up user by phone number
   const { data: profile } = await supabaseAdmin
     .from('profiles')
     .select('id, name, university')
-    .or(`phone.eq.${phone},phone.eq.${phone.replace('+', '')}`)
+    .or(`phone.eq.${phone},phone.eq.${from}`)
     .maybeSingle()
 
   if (!profile) {
-    return twimlReply(
+    await sendMessage(from,
       `Hi! I couldn't find a VarsityOS account linked to this number.\n\n` +
       `Register at varsityos.co.za and add your WhatsApp number in your profile to get started. 🎓`
     )
+    return NextResponse.json({ status: 'ok' })
   }
 
-  const userId = profile.id
+  const userId    = profile.id
   const firstName = (profile.name ?? 'Student').split(' ')[0]
+  const cmd       = body.toLowerCase()
 
-  const cmd = body.toLowerCase()
+  const reply = async (text: string) => sendMessage(from, text)
 
   if (cmd === '/help' || cmd === 'help' || cmd === 'hi' || cmd === 'hello') {
-    return twimlReply(
+    await reply(
       `Hey ${firstName}! 👋 I'm Nova, your VarsityOS assistant.\n\n` +
       `Commands:\n` +
-      `📚 */nova <question>* — Ask me anything\n` +
-      `💰 */budget* — This month's spending summary\n` +
-      `📋 */tasks* — Today's study sessions\n` +
-      `📅 */exam* — Upcoming exams\n\n` +
+      `📚 /nova <question> — Ask me anything\n` +
+      `💰 /budget — This month's spending summary\n` +
+      `📋 /tasks — Today's study sessions\n` +
+      `📅 /exam — Upcoming exams\n\n` +
       `Or just type /nova followed by any question!`
     )
+    return NextResponse.json({ status: 'ok' })
   }
 
   // ── /nova ─────────────────────────────────────────────────────────────────
   if (cmd.startsWith('/nova ') || cmd.startsWith('/nova\n')) {
-    const question = body.slice(6).trim()
-    if (!question) return twimlReply('Ask me anything after /nova — e.g. /nova How do I calculate compound interest?')
+    const question = body.slice(6).trim().slice(0, 500)
+    if (!question) {
+      await reply('Ask me anything after /nova — e.g. /nova How do I calculate compound interest?')
+      return NextResponse.json({ status: 'ok' })
+    }
 
     try {
       const response = await anthropic.messages.create({
@@ -132,15 +210,16 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       })
 
       const text = (response.content[0] as { text: string }).text ?? 'I could not generate a response.'
-      return twimlReply(`Nova: ${text.slice(0, 1400)}`)
+      await reply(`Nova: ${text.slice(0, 1400)}`)
     } catch {
-      return twimlReply('Sorry, Nova is unavailable right now. Try again in a moment! 🙏')
+      await reply('Sorry, Nova is unavailable right now. Try again in a moment! 🙏')
     }
+    return NextResponse.json({ status: 'ok' })
   }
 
   // ── /budget ───────────────────────────────────────────────────────────────
   if (cmd === '/budget') {
-    const now = new Date()
+    const now   = new Date()
     const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
     const end   = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
 
@@ -149,17 +228,20 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       supabaseAdmin.from('expenses').select('amount, category').eq('user_id', userId).gte('expense_date', start).lte('expense_date', end),
     ])
 
-    if (!budget) return twimlReply('No budget set yet. Visit varsityos.co.za to set up your budget! 💰')
+    if (!budget) {
+      await reply('No budget set yet. Visit varsityos.co.za to set up your budget! 💰')
+      return NextResponse.json({ status: 'ok' })
+    }
 
     const totalBudget = (budget.monthly_budget ?? 0) +
       (budget.nsfas_enabled ? ((budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)) : 0)
     const totalSpent = (expenses ?? []).reduce((s: number, e: { amount: number }) => s + e.amount, 0)
-    const remaining = totalBudget - totalSpent
-    const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
-    const dailyLeft = daysLeft > 0 ? (remaining / daysLeft).toFixed(0) : '0'
-    const pct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
+    const remaining  = totalBudget - totalSpent
+    const daysLeft   = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
+    const dailyLeft  = daysLeft > 0 ? (remaining / daysLeft).toFixed(0) : '0'
+    const pct        = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
-    return twimlReply(
+    await reply(
       `💰 ${firstName}'s Budget — ${now.toLocaleString('default', { month: 'long' })}\n\n` +
       `Budget: R${totalBudget.toFixed(0)}\n` +
       `Spent:  R${totalSpent.toFixed(0)} (${pct}%)\n` +
@@ -167,6 +249,7 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       `${daysLeft} days left → R${dailyLeft}/day budget remaining.\n` +
       `${pct > 90 ? '⚠️ Almost out of budget!' : pct > 70 ? '⚡ Spending faster than usual.' : '✅ On track!'}`
     )
+    return NextResponse.json({ status: 'ok' })
   }
 
   // ── /tasks ────────────────────────────────────────────────────────────────
@@ -182,7 +265,8 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       .order('started_at', { ascending: true })
 
     if (!sessions?.length) {
-      return twimlReply(`📋 No study sessions logged today, ${firstName}.\n\nGet started at varsityos.co.za/study! 📚`)
+      await reply(`📋 No study sessions logged today, ${firstName}.\n\nGet started at varsityos.co.za/study! 📚`)
+      return NextResponse.json({ status: 'ok' })
     }
 
     const totalMins = sessions.reduce((s: number, x: { duration_minutes: number }) => s + (x.duration_minutes ?? 0), 0)
@@ -190,9 +274,8 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       `• ${s.module_name} — ${s.duration_minutes ?? 0} min`
     ).join('\n')
 
-    return twimlReply(
-      `📋 Today's study sessions:\n\n${lines}\n\nTotal: ${totalMins} minutes. Keep going! 🔥`
-    )
+    await reply(`📋 Today's study sessions:\n\n${lines}\n\nTotal: ${totalMins} minutes. Keep going! 🔥`)
+    return NextResponse.json({ status: 'ok' })
   }
 
   // ── /exam ─────────────────────────────────────────────────────────────────
@@ -208,7 +291,8 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       .limit(5)
 
     if (!exams?.length) {
-      return twimlReply(`📅 No upcoming exams found, ${firstName}.\n\nAdd exams at varsityos.co.za/study! ✏️`)
+      await reply(`📅 No upcoming exams found, ${firstName}.\n\nAdd exams at varsityos.co.za/study! ✏️`)
+      return NextResponse.json({ status: 'ok' })
     }
 
     const today = new Date()
@@ -218,16 +302,16 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
       return `📅 ${e.exam_name} — ${e.exam_date} (${when})${e.venue ? ` @ ${e.venue}` : ''}`
     }).join('\n')
 
-    return twimlReply(`Upcoming exams, ${firstName}:\n\n${lines}\n\nGood luck studying! 💪`)
+    await reply(`Upcoming exams, ${firstName}:\n\n${lines}\n\nGood luck studying! 💪`)
+    return NextResponse.json({ status: 'ok' })
   }
 
   // ── Fallback ──────────────────────────────────────────────────────────────
   if (body.length > 3) {
-    // Treat unrecognised messages as Nova questions
-    return twimlReply(
-      `Tip: Type */nova ${body.slice(0, 50)}...* to ask Nova.\n\nOr send */help* to see all commands. 🎓`
-    )
+    await reply(`Tip: Type /nova ${body.slice(0, 50)}... to ask Nova.\n\nOr send /help to see all commands. 🎓`)
+    return NextResponse.json({ status: 'ok' })
   }
 
-  return twimlReply(`Send */help* to see what I can do, ${firstName}! 👋`)
+  await reply(`Send /help to see what I can do, ${firstName}! 👋`)
+  return NextResponse.json({ status: 'ok' })
 }

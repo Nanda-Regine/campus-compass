@@ -75,6 +75,7 @@ const NAV_SECTIONS = [
       { href: '/social',    icon: '💬', label: 'Social & Study Twins' },
       { href: '/safety',    icon: '🛡️', label: 'Safety OS' },
       { href: '/weather',   icon: '🌤️', label: 'Weather & Campus' },
+      { href: '/movement',  icon: '🚌', label: 'Movement OS' },
       { href: '/civic',     icon: '🗳️', label: 'Civic Education' },
     ],
   },

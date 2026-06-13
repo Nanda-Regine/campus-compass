@@ -99,6 +99,7 @@ export default function SetupFlow() {
   const [step, setStep] = useState(0)
   const [saving, setSaving] = useState(false)
   const [detectedUniversity, setDetectedUniversity] = useState<string | null>(null)
+  const userIdRef = useRef<string>('')
 
   // Searchable institution combobox
   const [uniQuery, setUniQuery] = useState('')
@@ -109,15 +110,41 @@ export default function SetupFlow() {
   const [tvetLevel, setTvetLevel] = useState('')
   const [tvetProgram, setTvetProgram] = useState('')
 
-  // Auto-detect university from email domain on mount
+  // Auto-detect university from email domain on mount + load saved progress
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user?.email) return
+      if (!user) return
+      userIdRef.current = user.id
+
+      // Restore saved progress
+      try {
+        const saved = localStorage.getItem(`setup_progress_${user.id}`)
+        if (saved) {
+          const p = JSON.parse(saved)
+          if (p.step  !== undefined) setStep(p.step)
+          if (p.name)        setName(p.name)
+          if (p.emoji)       setEmoji(p.emoji)
+          if (p.university)  setUniversity(p.university)
+          if (p.year)        setYear(p.year)
+          if (p.faculty)     setFaculty(p.faculty)
+          if (p.funding)     setFunding(p.funding)
+          if (p.nsfasLiving) setNsfasLiving(p.nsfasLiving)
+          if (p.nsfasAccom)  setNsfasAccom(p.nsfasAccom)
+          if (p.nsfasBooks)  setNsfasBooks(p.nsfasBooks)
+          if (p.monthlyBudget) setMonthlyBudget(p.monthlyBudget)
+          if (p.foodBudget)  setFoodBudget(p.foodBudget)
+          if (p.modules?.length) setModules(p.modules)
+          if (p.living)      setLiving(p.living)
+          if (p.diet)        setDiet(p.diet)
+        }
+      } catch { /* ignore corrupt data */ }
+
+      if (!user.email) return
       const domain = user.email.split('@')[1]?.toLowerCase()
       const detected = domain ? UNIVERSITY_DOMAINS[domain] : null
       if (detected) {
         setDetectedUniversity(detected)
-        setUniversity(detected)
+        setUniversity(prev => prev || detected)
       }
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,6 +166,21 @@ export default function SetupFlow() {
   const [moduleInput,  setModuleInput]  = useState('')
   const [living,       setLiving]       = useState('')
   const [diet,         setDiet]         = useState('No restrictions')
+
+  // Save progress to localStorage on every change
+  useEffect(() => {
+    const uid = userIdRef.current
+    if (!uid) return
+    try {
+      localStorage.setItem(`setup_progress_${uid}`, JSON.stringify({
+        step, name, emoji, university, year, faculty, funding,
+        nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
+        modules, living, diet,
+      }))
+    } catch { /* storage full or private mode */ }
+  }, [step, name, emoji, university, year, faculty, funding,
+      nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
+      modules, living, diet])
 
   // Close combobox on outside click
   useEffect(() => {
@@ -260,6 +302,7 @@ export default function SetupFlow() {
       // Award XP for completing onboarding
       dispatchXP('task_complete', 'Completed VarsityOS onboarding')
 
+      try { localStorage.removeItem(`setup_progress_${user.id}`) } catch { /* ok */ }
       toast.success('All set! Welcome to VarsityOS 🎉')
       router.push('/dashboard')
       router.refresh()
@@ -686,14 +729,25 @@ export default function SetupFlow() {
             </Button>
           ) : <div />}
 
-          <Button
-            variant={step === totalSteps - 1 ? 'coral' : 'teal'}
-            size="md"
-            onClick={handleNext}
-            loading={saving}
-          >
-            {step === totalSteps - 1 ? '🚀 Launch VarsityOS' : 'Continue →'}
-          </Button>
+          <div className="flex items-center gap-4">
+            {step >= 3 && step < totalSteps - 1 && (
+              <button
+                type="button"
+                onClick={goNext}
+                className="font-mono text-[0.65rem] text-white/30 hover:text-white/50 transition-colors"
+              >
+                Skip →
+              </button>
+            )}
+            <Button
+              variant={step === totalSteps - 1 ? 'coral' : 'teal'}
+              size="md"
+              onClick={handleNext}
+              loading={saving}
+            >
+              {step === totalSteps - 1 ? '🚀 Launch VarsityOS' : 'Continue →'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

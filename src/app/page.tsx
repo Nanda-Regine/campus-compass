@@ -4,9 +4,9 @@ import Image from 'next/image'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata: Metadata = {
-  title: 'VarsityOS — Free Student Super-App for South African University & TVET Students',
+  title: 'VarsityOS — Student Operating System for South African University & TVET Students',
   description:
-    'VarsityOS is the free super-app built for South African university and TVET college students. Track NSFAS allowances, manage your student budget, find bursaries, share notes, book peer tutors, plan affordable meals, and get AI mental health support from Nova. Works at all 26 public universities, all 50 TVET colleges, and private HEIs across South Africa.',
+    'VarsityOS is the free Student Operating System built for South African university and TVET college students. 9 life domains: study, budget & NSFAS, fitness, safety OS, stokvel, meals, work, community, and Nova AI. Track allowances, stay safe on campus, manage your money, and thrive. Works at all 26 public universities, all 50 TVET colleges, and private HEIs. Offline ready.',
   alternates: { canonical: 'https://varsityos.co.za' },
   keywords: [
     'VarsityOS', 'NSFAS tracker', 'NSFAS app South Africa', 'student budget app South Africa',
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
     'free student app South Africa', 'TVET app South Africa',
   ],
   openGraph: {
-    title: 'VarsityOS — Free Student Super-App for South African University & TVET Students',
+    title: 'VarsityOS — Student Operating System for South African University & TVET Students',
     description:
-      'Free app for SA students: NSFAS tracker, student budget, bursary finder, notes marketplace, peer tutoring, study planner, and Nova AI mental health companion. Works at all SA universities and TVET colleges.',
+      'Free Student OS for SA students: 9 life domains covering study, budget & NSFAS, safety OS, fitness, stokvel, meals, work, community & more. Nova AI companion built for SA varsity life. Works at all SA universities and TVET colleges. Offline ready.',
     url: 'https://varsityos.co.za',
   },
 }
@@ -37,7 +37,7 @@ const jsonLd = {
       alternateName: ['Varsity OS', 'VarsityOS Student App'],
       url: 'https://varsityos.co.za',
       description:
-        'The free super-app for South African university students. Track NSFAS allowances, manage your budget, plan meals, organise studies, and get AI mental health support.',
+        'The free Student Operating System for South African university and TVET students. 9 life domains: Mind, Body, Money, Safety, Movement, Growth, Community, Work, and Future. Nova AI companion built for SA student reality.',
       applicationCategory: 'EducationApplication',
       operatingSystem: 'Web, iOS, Android (PWA)',
       offers: [
@@ -58,6 +58,18 @@ const jsonLd = {
         'Exam readiness panel', 'Flashcards with spaced repetition (SM-2)',
         'Daily study streaks and gamification', 'Offline PWA — works without internet',
         'Data saver mode for prepaid users',
+        'Safety OS — SOS alerts, Walk Me Home timer, incident reporting',
+        'Legal Rights guide for SA students',
+        'Fitness tracker with workout logging',
+        'Sleep tracker and wellness diary',
+        'Stokvel OS — rotating savings circle manager',
+        'Tax Return Helper — IRP5s and SARS eFiling guide',
+        'Sunday Planning — weekly life OS ritual',
+        'Attendance tracker and catch-up planner',
+        'Campus social feed', 'Alumni mentor network',
+        'Customisable Pomodoro timer with offline sync',
+        'Entrepreneurship OS — side hustle tracker',
+        'Credit score tracker', 'Career OS and SA jobs board',
       ],
       audience: { '@type': 'EducationalAudience', educationalRole: 'student', geographicArea: { '@type': 'Country', name: 'South Africa' } },
       creator: { '@type': 'Organization', name: 'Mirembe Muse (Pty) Ltd', url: 'https://creativelynanda.co.za', foundingLocation: 'East London, Eastern Cape, South Africa' },
@@ -115,18 +127,32 @@ const jsonLd = {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const FEATURES = [
-  { icon: '💰', title: 'Budget & NSFAS',       desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.', accent: '#3b82f6' },
-  { icon: '🏦', title: 'Flexible Wallet',       desc: 'Manage spending buckets beyond NSFAS — part-time income, bursaries, family support.', accent: '#0d9488' },
-  { icon: '🎯', title: 'Savings Goals',         desc: 'Set goals like a laptop or textbooks, track progress, and celebrate milestones with confetti.', accent: '#06b6d4' },
-  { icon: '📚', title: 'Study Planner',         desc: 'Timetable, exam countdowns, flashcards with SM-2, and AI study plans around your schedule.', accent: '#8b5cf6' },
-  { icon: '🍲', title: 'Meal Prep',             desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.', accent: '#e07858' },
-  { icon: '🌟', title: 'Nova AI',               desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support.', accent: '#0d9488' },
-  { icon: '💼', title: 'Work & Shifts',         desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.', accent: '#d4a847' },
-  { icon: '👥', title: 'Group Assignments',     desc: 'Create group spaces, share tasks and deadlines — no WhatsApp chaos.', accent: '#3b82f6' },
-  { icon: '📖', title: 'Notes Marketplace',     desc: 'Share and download lecture notes, exam papers, and study guides from students at your institution.', isNew: true, accent: '#4ecf9e' },
-  { icon: '🎓', title: 'Peer Tutoring',         desc: 'Book verified peer tutors at your university. Earn money by tutoring what you know.', isNew: true, accent: '#c9a84c' },
-  { icon: '🔗', title: 'Study Twins',           desc: 'Get matched with students in your degree and year. Connect on WhatsApp or chat via Nova.', isNew: true, accent: '#9b6fd4' },
-  { icon: '🏆', title: 'Bursary Finder',        desc: 'Browse 100+ SA bursaries with amounts, deadlines, and direct application links. Never miss funding.', isNew: true, accent: '#f59e0b' },
+  // Mind
+  { icon: '📚', title: 'Study Planner',         desc: 'Timetable, exam countdowns, attendance tracker, and AI study plans tailored to your schedule.', accent: '#8b5cf6', domain: 'Mind' },
+  { icon: '🃏', title: 'Flashcards & Pomodoro', desc: 'SM-2 spaced repetition flashcards + fully customisable Pomodoro timer. Works offline.', accent: '#8b5cf6', domain: 'Mind' },
+  { icon: '🌟', title: 'Nova AI',               desc: 'Your AI companion for mental health, study strategy, NSFAS guidance, and crisis support.', accent: '#0d9488', domain: 'Mind' },
+  // Money
+  { icon: '💰', title: 'Budget & NSFAS',        desc: 'Track every rand. Log NSFAS allowances, monitor spending by category, and get AI budget coaching.', accent: '#d4a847', domain: 'Money' },
+  { icon: '🪙', title: 'Stokvel OS',            desc: 'Manage a rotating savings circle — members, contributions, payouts, and dispute resolution.', isNew: true, accent: '#d4a847', domain: 'Money' },
+  { icon: '🧾', title: 'Tax Return Helper',     desc: 'Track IRP5s, calculate your SARS refund, and navigate eFiling with an SA-specific guide.', isNew: true, accent: '#d4a847', domain: 'Money' },
+  { icon: '🏆', title: 'Bursary Finder',        desc: 'Browse 100+ SA bursaries with amounts, deadlines, and direct application links. Never miss funding.', accent: '#f59e0b', domain: 'Money' },
+  // Body
+  { icon: '💪', title: 'Fitness Tracker',       desc: 'Log workouts — runs, gym, yoga, sport — with duration, calories, and weekly streaks.', isNew: true, accent: '#FF6B9E', domain: 'Body' },
+  { icon: '😴', title: 'Sleep & Wellness',      desc: 'Track sleep quality, log mood check-ins, and monitor your wellbeing score over time.', accent: '#FF6B9E', domain: 'Body' },
+  { icon: '🍲', title: 'Meal Prep',             desc: 'Budget SA recipes under R50, weekly meal plans, and an AI recipe generator using what you have.', accent: '#e07858', domain: 'Body' },
+  // Safety
+  { icon: '🚨', title: 'Safety OS',             desc: 'SOS alerts, Walk Me Home timer, incident reporting, and self-defence library — built for SA campuses.', isNew: true, accent: '#10b981', domain: 'Safety' },
+  { icon: '⚖️', title: 'Legal Rights',          desc: 'Know your rights as an SA student — NSFAS appeals, tenant rights in digs, labour law for part-timers.', isNew: true, accent: '#10b981', domain: 'Safety' },
+  // Community
+  { icon: '📖', title: 'Notes Marketplace',     desc: 'Share and download lecture notes, exam papers, and study guides from students at your institution.', accent: '#4ecf9e', domain: 'Community' },
+  { icon: '🎓', title: 'Peer Tutoring',         desc: 'Book verified peer tutors at your university. Earn money by tutoring what you know.', accent: '#c9a84c', domain: 'Community' },
+  { icon: '🤝', title: 'Alumni Mentors',        desc: 'Connect with alumni mentors in your field. Get career guidance from people who have walked your path.', isNew: true, accent: '#9b6fd4', domain: 'Community' },
+  // Movement
+  { icon: '🚌', title: 'Movement OS',            desc: 'Save commute routes, post lift-club offers, compare SA transport fares, and beat load-shedding traffic.', isNew: true, accent: '#38bdf8', domain: 'Movement' },
+  // Work & Future
+  { icon: '💼', title: 'Work & Shifts',         desc: 'Track part-time jobs, log shifts and earnings, and get conflict alerts with your lectures.', accent: '#7090d0', domain: 'Work' },
+  { icon: '🏦', title: 'Flexible Wallet',        desc: 'Manage spending buckets beyond NSFAS — part-time income, bursaries, family support.', accent: '#0d9488', domain: 'Money' },
+  { icon: '📋', title: 'Sunday Planning',        desc: 'Weekly life OS ritual — set priorities, review wins and blockers, and plan the week ahead.', isNew: true, accent: '#A855F7', domain: 'Growth' },
 ]
 
 const PAIN_POINTS = [
@@ -203,6 +229,8 @@ const TESTIMONIALS = [
   { quote: "I'm from a kasi in Limpopo and my digs has terrible wifi. VarsityOS works offline. That alone makes it lekker.", name: 'Tshepiso K.', role: '2nd year Education, UL', accent: '#d4a847' },
   { quote: "Eish, I didn't know I could track my bursary money separately from NSFAS. The Flexible Wallet is exactly what I needed.", name: 'Nomvula B.', role: '3rd year Commerce, UJ', accent: '#8b5cf6' },
   { quote: "Load shedding messes with my study schedule constantly. Nova helped me build a study plan that actually works around it.", name: 'Rorisang M.', role: '1st year BCom, CUT', accent: '#06b6d4' },
+  { quote: "The Walk Me Home timer saved me twice already walking from the library at night. I set it before I leave and my sister gets a text if I don't check in. No other student app has this.", name: 'Zintle M.', role: '2nd year Nursing, WSU', accent: '#10b981' },
+  { quote: "Our stokvel has been a mess on WhatsApp for years. VarsityOS tracks every member, contribution, and payout. No more arguments.", name: 'Kagiso D.', role: '3rd year BCom Accounting, UJ', accent: '#d4a847' },
 ]
 
 const UNIVERSITIES = [
@@ -282,7 +310,7 @@ export default function LandingPage() {
               style={{ background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.30)', color: '#c084fc' }}
             >
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#A855F7' }} aria-hidden="true" />
-              Built for 11 million SA students
+              Student Operating System · 9 life domains
             </div>
 
             <h1 id="hero-heading" className="font-display font-black text-white leading-[1.05] mb-5" style={{ fontSize: 'clamp(2.4rem, 7vw, 4.5rem)' }}>
@@ -293,7 +321,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Budget, NSFAS tracking, bursary finder, notes marketplace, peer tutoring, study planner, and Nova — your AI companion who actually understands SA student life. Works at all SA universities and TVET colleges. Offline ready. No app store needed.
+              Mind, body, money, safety, fitness, community, and career — all 9 life domains, one app, built for SA. Budget & NSFAS tracking, Safety OS with SOS alerts, Stokvel savings circles, Fitness tracker, Nova AI, and 30+ more tools. Works at every SA university and TVET college. Offline ready. No app store needed.
             </p>
 
             <div className="flex items-center justify-center gap-3 flex-wrap mb-5">
@@ -325,7 +353,7 @@ export default function LandingPage() {
           >
             {[
               { value: 'R0', label: 'forever', sub: 'no credit card', color: '#3b82f6' },
-              { value: '15+', label: 'tools, one app', sub: 'notes to tutors', color: '#0d9488' },
+              { value: '30+', label: 'tools, one OS', sub: '9 life domains', color: '#0d9488' },
               { value: '100+', label: 'institutions', sub: 'unis · TVETs · private', color: '#06b6d4' },
               { value: '📶', label: 'Works offline', sub: 'load shedding ready', color: '#e07858' },
             ].map((stat, i) => (
@@ -495,9 +523,11 @@ export default function LandingPage() {
         {/* ── 6. FEATURES ────────────────────────────────────────────────────── */}
         <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="features-heading">
           <div className="text-center mb-10">
+            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#A855F7' }}>30+ tools across 9 life domains</p>
             <h2 id="features-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
-              Everything you need.<br />Nothing you don&apos;t.
+              Not a super-app.<br />A Student Operating System.
             </h2>
+            <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>Mind · Body · Money · Safety · Movement · Growth · Community · Work · Future</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURES.map((f) => (
@@ -510,11 +540,15 @@ export default function LandingPage() {
                   boxShadow: `0 4px 20px ${f.accent}10`,
                 }}
               >
-                {/* Subtle top accent bar */}
                 <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${f.accent}80, transparent)` }} />
-                {f.isNew && (
-                  <span className="absolute top-3 right-3 font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
-                )}
+                <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                  {f.isNew && (
+                    <span className="font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
+                  )}
+                  {f.domain && (
+                    <span className="font-mono text-[0.48rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
+                  )}
+                </div>
                 <div className="text-2xl mb-3" aria-hidden="true">{f.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-1.5">{f.title}</h3>
                 <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{f.desc}</p>
@@ -598,6 +632,85 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Safety OS spotlight ────────────────────────────────────────────── */}
+        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="safety-heading">
+          <div
+            className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
+            style={{ background: 'linear-gradient(135deg, #030d0a, #041208)', border: '1px solid rgba(16,185,129,0.25)', transform: 'translateZ(0)' }}
+          >
+            <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(16,185,129,0.14), transparent 60%)' }} />
+            <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(56,189,248,0.08), transparent 60%)' }} />
+            <div className="relative grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <div
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1 font-mono text-xs mb-5"
+                  style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.35)', color: '#6ee7b7' }}
+                >
+                  🛡️ Safety OS — new
+                </div>
+                <h2 id="safety-heading" className="font-display font-black text-3xl sm:text-4xl text-white mb-4">
+                  Campus safety,<br />finally built in.
+                </h2>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  SA campuses can be dangerous. VarsityOS is the only student app with a built-in Safety OS — SOS alerts, a Walk Me Home timer that texts your emergency contact if you don&apos;t check in, incident reporting, a self-defence library, and a plain-language Legal Rights guide for students.
+                </p>
+                <div className="space-y-3">
+                  {[
+                    { icon: '🚨', label: 'SOS alerts',             desc: 'One tap sends your location to emergency contacts and campus security', accent: '#10b981' },
+                    { icon: '🚶', label: 'Walk Me Home timer',      desc: 'Auto-texts your contact if you don\'t check in — works offline', accent: '#10b981' },
+                    { icon: '📋', label: 'Incident reporting',      desc: 'Log incidents on or near campus. Evidence is timestamped and stored', accent: '#38bdf8' },
+                    { icon: '⚖️', label: 'Legal Rights guide',      desc: 'NSFAS appeals, tenant rights in digs, labour rights for part-timers', accent: '#38bdf8' },
+                  ].map(item => (
+                    <div
+                      key={item.label}
+                      className="flex items-start gap-3 rounded-xl p-3"
+                      style={{ background: `${item.accent}0d`, border: `1px solid ${item.accent}25` }}
+                    >
+                      <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
+                      <div>
+                        <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
+                        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Safety visual */}
+              <div className="rounded-2xl p-5" style={{ background: 'rgba(3,13,10,0.8)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #10b981, #38bdf8)', boxShadow: '0 0 16px rgba(16,185,129,0.4)' }}>🛡️</div>
+                  <div>
+                    <p className="font-display font-bold text-white text-sm">Safety OS</p>
+                    <p className="font-mono text-[0.55rem]" style={{ color: '#6ee7b7' }}>Active · All SA campuses</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="rounded-xl p-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)' }}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: '#6ee7b7' }}>Walk Me Home</span>
+                      <span className="font-mono text-[0.5rem] px-2 py-0.5 rounded-full" style={{ background: 'rgba(16,185,129,0.2)', color: '#6ee7b7' }}>Active</span>
+                    </div>
+                    <p className="font-display text-xs text-white/80">Timer: <span style={{ color: '#6ee7b7', fontWeight: 700 }}>12:00</span> remaining</p>
+                    <p className="font-mono text-[0.55rem] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Check-in required by 22:15 · Lethabo will be notified</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}>
+                      <p className="text-xl mb-1">🚨</p>
+                      <p className="font-display font-bold text-white text-xs">SOS</p>
+                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Hold 3s to activate</p>
+                    </div>
+                    <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.25)' }}>
+                      <p className="text-xl mb-1">⚖️</p>
+                      <p className="font-display font-bold text-white text-xs">Legal Rights</p>
+                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Know your rights</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -770,6 +883,9 @@ export default function LandingPage() {
               { q: 'How does Peer Tutoring work on VarsityOS?', a: "Students who excel in a subject can register as tutors, set their rate per hour, and list their availability. Other students can search for tutors at their university by subject, view ratings, and book a session. You can pay in cash, EFT, or online via PayFast. Tutors get notified, confirm the booking, and review each other after the session." },
               { q: 'What is the Bursary Finder?', a: "VarsityOS includes a searchable database of 100+ South African bursaries — from Funza Lushaka and ISFAP to Eskom, Sasol, Anglo American, and provincial bursaries. Each listing shows the amount, eligibility criteria, application deadlines, and a direct link to apply. Nova can also help you identify which bursaries match your degree and province." },
               { q: 'What are Study Twins?', a: "Study Twins matches you with another student at your university studying the same degree and year of study. Opt in, share your WhatsApp number, and get connected with your academic match. It's designed to reduce isolation for first-gen students and help you build a study support network." },
+              { q: 'What is Safety OS and how does it protect me on campus?', a: "Safety OS is VarsityOS's built-in campus safety module. It includes a one-tap SOS alert that sends your location to emergency contacts and campus security, a Walk Me Home timer that automatically texts a contact if you don't check in by a set time, an incident reporting tool for logging safety incidents with timestamps, a self-defence resource library, and a Legal Rights guide covering NSFAS appeals, tenant rights in student digs, and labour rights for part-timers." },
+              { q: 'What is Stokvel OS?', a: "Stokvel OS lets you manage a rotating savings circle (stokvel) entirely within VarsityOS. You can add members, log monthly contributions, track who has paid, assign payout months, generate contribution schedules, and manage disputes. It's designed for the SA stokvel tradition — a community savings circle where each member receives a lump-sum payout in their assigned month." },
+              { q: 'Can I track my workouts and fitness on VarsityOS?', a: "Yes. The Fitness Tracker lets you log workouts — runs, walks, gym sessions, yoga, swimming, cycling, and more — with duration, calories, and notes. Your data is stored in Supabase and syncs across devices. You can view your workout history, weekly streaks, and progress over time. The Body domain also includes sleep tracking and a wellness diary." },
             ].map((faq, i) => (
               <details
                 key={i}
@@ -802,7 +918,7 @@ export default function LandingPage() {
                 Ready to actually get on top of it?
               </h2>
               <p className="text-sm max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Your NSFAS, your budget, your studies, your mental health — one lekker app built for the reality of SA varsity life. Free to start. No app store. Works offline.
+                Your NSFAS, your budget, your safety, your body, your community — all 9 domains of student life, one lekker OS built for SA reality. Free to start. No app store. Works offline.
               </p>
               <Link
                 href="/auth/signup"
