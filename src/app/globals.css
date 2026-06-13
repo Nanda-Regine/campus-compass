@@ -309,13 +309,13 @@ html.light {
   --dark-surface:  rgba(0, 0, 0, 0.04);
   --dark-surface2: rgba(0, 0, 0, 0.06);
 
-  /* ── Borders — Warm gold-tinted ── */
-  --border-subtle:   rgba(139, 100, 20, 0.09);
-  --border-default:  rgba(139, 100, 20, 0.15);
-  --border-emphasis: rgba(139, 100, 20, 0.25);
-  --border-accent:   rgba(11, 174, 136, 0.35);
-  --dark-border:     rgba(139, 100, 20, 0.09);
-  --dark-border2:    rgba(139, 100, 20, 0.16);
+  /* ── Borders — Warm gold-tinted, boosted for visibility ── */
+  --border-subtle:   rgba(139, 100, 20, 0.18);
+  --border-default:  rgba(139, 100, 20, 0.32);
+  --border-emphasis: rgba(139, 100, 20, 0.48);
+  --border-accent:   rgba(11, 174, 136, 0.45);
+  --dark-border:     rgba(139, 100, 20, 0.18);
+  --dark-border2:    rgba(139, 100, 20, 0.32);
 
   /* ── Text — Warm earth tones ── */
   --text-primary:   #1A1208;
@@ -645,6 +645,30 @@ html.light {
 [data-theme="outdoor"] [data-hot-toast] {
   background: #1a1a1a !important;
   color: #ffffff !important;
+}
+
+/* ── Light Mode: Form Input Visibility ──────────────────────── */
+/* Inputs in light/sunrise mode need a stronger visible border since the
+   warm-gold token was previously too low-contrast on the cream background. */
+
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background: #ffffff !important;
+  color: var(--text-primary) !important;
+  border-color: rgba(139, 100, 20, 0.35) !important;
+}
+[data-theme="light"] input:focus,
+[data-theme="light"] textarea:focus,
+[data-theme="light"] select:focus {
+  border-color: var(--teal) !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(11, 174, 136, 0.15) !important;
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */

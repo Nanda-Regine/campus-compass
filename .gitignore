@@ -47,3 +47,11 @@ PROFILE_README_VARSITYOS.md
 # Firebase service-account keys — should never be committed
 *-firebase-adminsdk-*.json
 firebase-adminsdk*.json
+
+# next-pwa generated service-worker artefacts (built at deploy time, not committed)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/fallback-*.js
+public/fallback-*.js.map

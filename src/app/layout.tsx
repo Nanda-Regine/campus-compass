@@ -384,6 +384,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="32x32" />
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="48x48" />
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="192x192" />
+
+        {/* ── PWA / iOS standalone install ── */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="VarsityOS" />
+        <link rel="apple-touch-icon" href="/favicon.jpg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.jpg" />
+        <link rel="apple-touch-startup-image" href="/icon-512.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="application-name" content="VarsityOS" />
+
         <meta name="geo.region" content="ZA" />
         <meta name="geo.placename" content="South Africa" />
         <meta name="ICBM" content="-29.0, 26.0" />
