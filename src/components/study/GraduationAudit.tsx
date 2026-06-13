@@ -6,12 +6,15 @@
 // Domain colour: --sky (Movement/Progress OS)
 // ============================================================
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAppStore } from '@/store'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
 
 // ─── Types ────────────────────────────────────────────────────
 
 interface ModuleRecord {
+  id?:      string
   code:     string
   name:     string
   credits:  number
@@ -212,22 +215,136 @@ const DEMO_MODULES: ModuleRecord[] = [
 // ─── Main component ───────────────────────────────────────────
 
 export default function GraduationAudit() {
-  const modules = useAppStore(s => s.modules)
+  const storeModules = useAppStore(s => s.modules)
+  const supabase     = createClient()
 
-  const [config, setConfig] = useState<AuditConfig>({
-    ...DEFAULT_CONFIG,
-    // If we have real modules, use them
-    modules: modules.length > 0
-      ? modules.map(m => ({
-          code: m.code ?? m.module_code ?? 'MOD',
-          name: m.name ?? m.module_name,
-          credits: m.credits ?? 16,
-          year: 2,
-          grade: null,
-          status: 'in_progress',
-        } as ModuleRecord))
-      : DEMO_MODULES,
-  })
+  const [config, setConfig] = useState<AuditConfig>(DEFAULT_CONFIG)
+  const [loading,    setLoading]    = useState(true)
+  const [hasRealData, setHasRealData] = useState(false)
+  const [showModules,  setShowModules]  = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showAddForm,  setShowAddForm]  = useState(false)
+  const [addForm, setAddForm] = useState({ code: '', name: '', credits: 16, year: 1, grade: '', status: 'in_progress' as ModuleRecord['status'] })
+  const [saving, setSaving] = useState(false)
+  const cfgTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const load = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setLoading(false); return }
+
+    const [modsRes, cfgRes] = await Promise.all([
+      supabase.from('graduation_modules')
+        .select('id, module_code, module_name, credits, year_taken, grade, status')
+        .eq('user_id', user.id)
+        .order('year_taken').order('module_code'),
+      supabase.from('degree_config').select('*').eq('user_id', user.id).single(),
+    ])
+
+    const dbMods = (modsRes.data ?? []) as {
+      id: string; module_code: string; module_name: string;
+      credits: number; year_taken: number; grade: number | null; status: string
+    }[]
+
+    const mapped: ModuleRecord[] = dbMods.map(r => ({
+      id:      r.id,
+      code:    r.module_code,
+      name:    r.module_name,
+      credits: r.credits,
+      year:    r.year_taken,
+      grade:   r.grade,
+      status:  r.status as ModuleRecord['status'],
+    }))
+
+    const cfg = cfgRes.data as { degree_name?: string; total_credits: number; max_years: number; exclusion_mark: number; current_year: number } | null
+
+    setHasRealData(dbMods.length > 0)
+    setConfig(prev => ({
+      ...prev,
+      modules:       mapped.length > 0 ? mapped : prev.modules,
+      degreeCredits: cfg?.total_credits ?? prev.degreeCredits,
+      yearDuration:  cfg?.max_years     ?? prev.yearDuration,
+      exclusionMark: cfg?.exclusion_mark ?? prev.exclusionMark,
+      currentYear:   cfg?.current_year   ?? prev.currentYear,
+    }))
+    setLoading(false)
+  }, [supabase])
+
+  useEffect(() => { load() }, [load])
+
+  const persistConfig = useCallback((next: AuditConfig) => {
+    if (cfgTimer.current) clearTimeout(cfgTimer.current)
+    cfgTimer.current = setTimeout(async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      await supabase.from('degree_config').upsert({
+        user_id:        user.id,
+        total_credits:  next.degreeCredits,
+        max_years:      next.yearDuration,
+        exclusion_mark: next.exclusionMark,
+        current_year:   next.currentYear,
+      })
+    }, 1500)
+  }, [supabase])
+
+  const updateConfig = (key: keyof AuditConfig, val: number) => {
+    setConfig(c => {
+      const next = { ...c, [key]: val }
+      persistConfig(next)
+      return next
+    })
+  }
+
+  const seedFromStore = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user || !storeModules.length) return
+    setSaving(true)
+    const rows = storeModules.map(m => ({
+      user_id:     user.id,
+      module_code: m.module_code ?? m.code ?? 'MOD',
+      module_name: m.module_name ?? m.name,
+      credits:     m.credits ?? 16,
+      year_taken:  config.currentYear,
+      status:      'in_progress',
+    }))
+    const { error } = await supabase.from('graduation_modules').upsert(rows, { onConflict: 'user_id,module_code,year_taken,semester', ignoreDuplicates: true })
+    if (error) { toast.error('Seed failed: ' + error.message) }
+    else { toast.success('Seeded from current modules'); await load() }
+    setSaving(false)
+  }
+
+  const addModule = async () => {
+    if (!addForm.code || !addForm.name) { toast.error('Code and name required'); return }
+    setSaving(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setSaving(false); return }
+    const grade = addForm.grade ? parseFloat(addForm.grade) : null
+    const status: ModuleRecord['status'] = grade !== null
+      ? grade >= config.minPassMark ? 'passed' : 'failed'
+      : addForm.status
+    const { error } = await supabase.from('graduation_modules').upsert({
+      user_id:     user.id,
+      module_code: addForm.code.toUpperCase(),
+      module_name: addForm.name,
+      credits:     addForm.credits,
+      year_taken:  addForm.year,
+      grade,
+      status,
+    }, { onConflict: 'user_id,module_code,year_taken,semester' })
+    if (error) { toast.error(error.message) }
+    else {
+      toast.success('Module added')
+      setShowAddForm(false)
+      setAddForm({ code: '', name: '', credits: 16, year: 1, grade: '', status: 'in_progress' })
+      await load()
+    }
+    setSaving(false)
+  }
+
+  const deleteModule = async (id: string) => {
+    const { error } = await supabase.from('graduation_modules').delete().eq('id', id)
+    if (error) { toast.error(error.message) }
+    else { await load() }
+  }
 
   const stats    = calcGPA(config.modules)
   const excl     = calcExclusionRisk(config.modules, config)
@@ -241,15 +358,17 @@ export default function GraduationAudit() {
     critical: 'var(--danger)',
   }
 
-  // Will I graduate on time?
   const creditsPerYear     = totalCreditsRequired / config.yearDuration
   const creditsRemaining   = totalCreditsRequired - stats.creditsEarned
   const yearsLeft          = config.yearDuration - config.currentYear
   const onTrack            = creditsRemaining <= creditsPerYear * (yearsLeft + 1)
   const graduationYearEst  = new Date().getFullYear() + Math.max(0, yearsLeft)
 
-  const [showModules, setShowModules] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
+      <div style={{ width: 24, height: 24, border: '2px solid var(--border-subtle)', borderTopColor: '#38BDF8', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+    </div>
+  )
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -359,12 +478,75 @@ export default function GraduationAudit() {
 
       {showModules && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {/* Seed button */}
+          {!hasRealData && storeModules.length > 0 && (
+            <button onClick={seedFromStore} disabled={saving}
+              style={{
+                padding: '9px 14px', borderRadius: 10, border: '1px dashed rgba(56,189,248,0.4)',
+                background: 'rgba(56,189,248,0.05)', color: '#38BDF8', fontSize: '0.75rem',
+                fontWeight: 600, cursor: 'pointer', opacity: saving ? 0.6 : 1,
+              }}>
+              {saving ? 'Seeding…' : '↑ Seed from current modules'}
+            </button>
+          )}
+
+          {/* Add module form */}
+          <button onClick={() => setShowAddForm(v => !v)}
+            style={{
+              padding: '8px 14px', borderRadius: 10, border: '1px solid var(--border-subtle)',
+              background: showAddForm ? 'var(--bg-surface)' : 'transparent',
+              color: showAddForm ? 'var(--text-muted)' : 'var(--sky, #38BDF8)',
+              fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer',
+            }}>
+            {showAddForm ? '✕ Cancel' : '+ Add module record'}
+          </button>
+
+          {showAddForm && (
+            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '12px 12px 10px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 6 }}>
+                <input placeholder="Code" value={addForm.code} onChange={e => setAddForm(f => ({ ...f, code: e.target.value }))}
+                  style={{ padding: '7px 10px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.78rem' }} />
+                <input placeholder="Module name" value={addForm.name} onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))}
+                  style={{ padding: '7px 10px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.78rem' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                <div><div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: 3 }}>Credits</div>
+                  <input type="number" min={4} max={64} value={addForm.credits} onChange={e => setAddForm(f => ({ ...f, credits: parseInt(e.target.value) || 16 }))}
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.75rem' }} /></div>
+                <div><div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: 3 }}>Year taken</div>
+                  <input type="number" min={1} max={8} value={addForm.year} onChange={e => setAddForm(f => ({ ...f, year: parseInt(e.target.value) || 1 }))}
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.75rem' }} /></div>
+                <div><div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: 3 }}>Grade %</div>
+                  <input type="number" min={0} max={100} placeholder="—" value={addForm.grade} onChange={e => setAddForm(f => ({ ...f, grade: e.target.value }))}
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.75rem' }} /></div>
+              </div>
+              <select value={addForm.status} onChange={e => setAddForm(f => ({ ...f, status: e.target.value as ModuleRecord['status'] }))}
+                style={{ padding: '7px 10px', borderRadius: 8, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)', fontSize: '0.78rem' }}>
+                <option value="in_progress">In progress</option>
+                <option value="passed">Passed</option>
+                <option value="failed">Failed</option>
+                <option value="registered">Registered</option>
+              </select>
+              <button onClick={addModule} disabled={saving}
+                style={{ padding: '8px 14px', borderRadius: 8, background: 'linear-gradient(135deg, #38BDF8, #0ea5e9)', border: 'none', color: '#000', fontWeight: 700, fontSize: '0.78rem', cursor: saving ? 'wait' : 'pointer', opacity: saving ? 0.6 : 1 }}>
+                {saving ? 'Saving…' : 'Save module'}
+              </button>
+            </div>
+          )}
+
           {config.modules.map((m, i) => (
-            <ModuleRow key={i} module={m} minPass={config.minPassMark} />
+            <div key={m.id ?? i} style={{ position: 'relative' }}>
+              <ModuleRow module={m} minPass={config.minPassMark} />
+              {m.id && (
+                <button onClick={() => deleteModule(m.id!)}
+                  style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.7rem', opacity: 0.5, padding: '2px 6px' }}
+                  title="Remove">✕</button>
+              )}
+            </div>
           ))}
           {config.modules.length === 0 && (
             <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-              Add modules via the Study tab → Modules to populate this list.
+              No module records yet. Add records above or seed from current modules.
             </div>
           )}
         </div>
@@ -404,7 +586,7 @@ export default function GraduationAudit() {
                   type="range"
                   min={f.min} max={f.max} step={f.step}
                   value={config[f.key as keyof AuditConfig] as number}
-                  onChange={e => setConfig(c => ({ ...c, [f.key]: parseInt(e.target.value) }))}
+                  onChange={e => updateConfig(f.key as keyof AuditConfig, parseInt(e.target.value))}
                   style={{ width: 90, accentColor: 'var(--sky, #38BDF8)' }}
                 />
                 <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--sky, #38BDF8)', minWidth: 32 }}>
@@ -416,13 +598,13 @@ export default function GraduationAudit() {
         </div>
       )}
 
-      {modules.length === 0 && (
+      {!hasRealData && (
         <div style={{
           padding: '10px 14px',
           background: 'var(--gold-dim)', border: '1px solid var(--gold-border)',
           borderRadius: 10, fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.5,
         }}>
-          💡 Using demo data. Add your real modules in Study → Modules for an accurate audit.
+          💡 Using {config.modules === DEMO_MODULES ? 'demo' : 'current semester'} data. Expand &ldquo;Module record&rdquo; above to add your full academic history for an accurate audit.
         </div>
       )}
     </div>
