@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Search, BookMarked, Upload, ExternalLink, Bookmark, BookmarkCheck, Trash2, Plus } from 'lucide-react'
+import { Search, BookMarked, ExternalLink, Bookmark, BookmarkCheck, Trash2, Plus, TrendingUp, Clock, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { type CommunityNote, FILE_TYPE_LABELS, FILE_TYPE_COLORS } from '@/lib/notes-data'
 import NoteUploadModal from './NoteUploadModal'
@@ -18,6 +18,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
   const [notes, setNotes] = useState<CommunityNote[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [sort, setSort] = useState<'newest' | 'most_saved' | 'most_viewed'>('newest')
   const [showUpload, setShowUpload] = useState(false)
 
   const fetchNotes = useCallback(async () => {
@@ -26,6 +27,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
     if (search.trim()) params.set('module', search.trim())
     if (tab !== 'mine' && userInstitution) params.set('institution', userInstitution)
     if (tab === 'mine') params.set('mine', '1')
+    if (tab === 'browse') params.set('sort', sort)
 
     const res = await fetch(`/api/notes?${params}`)
     if (res.ok) {
@@ -35,7 +37,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
       setNotes(list)
     }
     setLoading(false)
-  }, [tab, search, userInstitution])
+  }, [tab, search, sort, userInstitution])
 
   useEffect(() => {
     fetchNotes()
@@ -51,6 +53,15 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
     const { saved } = await res.json()
     setNotes(prev => prev.map(n => n.id === note.id ? { ...n, is_saved: saved, save_count: n.save_count + (saved ? 1 : -1) } : n))
     toast.success(saved ? 'Saved to your collection' : 'Removed from saved')
+  }
+
+  async function trackView(note_id: string) {
+    await fetch('/api/notes/view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note_id }),
+    }).catch(() => {})
+    setNotes(prev => prev.map(n => n.id === note_id ? { ...n, view_count: (n.view_count ?? 0) + 1 } : n))
   }
 
   async function deleteNote(id: string) {
@@ -75,27 +86,32 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
   return (
     <div style={{ paddingBottom: 80 }}>
       {/* Header */}
-      <div style={{ padding: '20px 20px 0' }}>
+      <div style={{ padding: '20px 20px 0', background: 'linear-gradient(180deg, rgba(78,207,158,0.05) 0%, transparent 100%)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
-              Notes Marketplace
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(78,207,158,0.12)', border: '1px solid rgba(78,207,158,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BookMarked size={16} color="#4ecf9e" />
             </div>
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
-              {userInstitution ?? 'All institutions'} · free to access
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                Notes Marketplace
+              </div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+                {userInstitution ?? 'All institutions'} · free to access
+              </div>
             </div>
           </div>
           <button
             onClick={() => setShowUpload(true)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px',
-              background: '#4ecf9e', borderRadius: 20, border: 'none',
-              color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: '0.75rem', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 6, padding: '9px 16px',
+              background: 'rgba(78,207,158,0.15)', borderRadius: 20, border: '1px solid rgba(78,207,158,0.3)',
+              color: '#4ecf9e', fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s',
             }}
           >
             <Plus size={14} />
-            Share
+            Share notes
           </button>
         </div>
 
@@ -116,7 +132,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
           {TABS.map(t => (
             <button
               key={t.id}
@@ -134,6 +150,34 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
             </button>
           ))}
         </div>
+
+        {/* Sort — browse tab only */}
+        {tab === 'browse' && (
+          <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+            {([
+              { key: 'newest',      label: 'Newest',     Icon: Clock },
+              { key: 'most_saved',  label: 'Most Saved', Icon: Star },
+              { key: 'most_viewed', label: 'Most Viewed',Icon: TrendingUp },
+            ] as const).map(({ key, label, Icon }) => (
+              <button
+                key={key}
+                onClick={() => setSort(key)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '5px 11px', borderRadius: 20, border: '0.5px solid',
+                  borderColor: sort === key ? '#c9a84c' : 'rgba(255,255,255,0.08)',
+                  background: sort === key ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.03)',
+                  color: sort === key ? '#c9a84c' : 'rgba(255,255,255,0.35)',
+                  fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem',
+                  fontWeight: sort === key ? 600 : 400, cursor: 'pointer',
+                }}
+              >
+                <Icon size={10} />
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Notes list */}
@@ -148,7 +192,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
             {tab === 'mine' ? "You haven't shared any notes yet" : tab === 'saved' ? "No saved notes yet" : "No notes found — be the first to share!"}
           </div>
         ) : (
-          notes.map(note => <NoteCard key={note.id} note={note} isOwner={note.user_id === userId} onToggleSave={toggleSave} onDelete={deleteNote} />)
+          notes.map(note => <NoteCard key={note.id} note={note} isOwner={note.user_id === userId} onToggleSave={toggleSave} onDelete={deleteNote} onView={trackView} />)
         )}
       </div>
 
@@ -166,27 +210,31 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
 }
 
 function NoteCard({
-  note, isOwner, onToggleSave, onDelete,
+  note, isOwner, onToggleSave, onDelete, onView,
 }: {
   note: CommunityNote
   isOwner: boolean
   onToggleSave: (n: CommunityNote) => void
   onDelete: (id: string) => void
+  onView: (id: string) => void
 }) {
   const typeColor = FILE_TYPE_COLORS[note.file_type] ?? '#4ecf9e'
   const typeLabel = FILE_TYPE_LABELS[note.file_type] ?? 'Link'
 
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.03)',
-      border: `0.5px solid ${typeColor}20`,
-      borderRadius: 14, padding: 14,
+      background: 'var(--bg-surface)',
+      border: `1px solid ${typeColor}22`,
+      borderRadius: 16, padding: '14px 14px 12px',
       display: 'flex', flexDirection: 'column', gap: 8,
+      position: 'relative', overflow: 'hidden',
     }}>
+      {/* Top accent line */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${typeColor}80, transparent)`, borderRadius: '16px 16px 0 0' }} />
       {/* Top row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
         {/* Accent bar */}
-        <div style={{ width: 3, minHeight: 40, borderRadius: 2, background: typeColor, flexShrink: 0, alignSelf: 'stretch' }} />
+        <div style={{ width: 3, minHeight: 40, borderRadius: 2, background: `linear-gradient(180deg, ${typeColor}, ${typeColor}40)`, flexShrink: 0, alignSelf: 'stretch' }} />
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 3 }}>
@@ -235,9 +283,14 @@ function NoteCard({
             {note.uploader_name ?? 'Student'}
             {note.year_of_study && ` · Year ${note.year_of_study}`}
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)' }}>
-            · {note.save_count} saves
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)' }}>
+            · {note.save_count ?? 0} saves
           </span>
+          {(note.view_count ?? 0) > 0 && (
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)' }}>
+              · {note.view_count} views
+            </span>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: 6 }}>
@@ -259,6 +312,7 @@ function NoteCard({
             href={note.link_url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => onView(note.id)}
             style={{ background: `${typeColor}15`, border: `0.5px solid ${typeColor}30`, borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', color: typeColor, textDecoration: 'none' }}
           >
             <ExternalLink size={13} />

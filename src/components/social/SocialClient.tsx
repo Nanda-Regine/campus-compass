@@ -16,58 +16,85 @@ interface Props {
   initialWhatsapp: string | null
 }
 
+const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; accent: string; desc: string }[] = [
+  { id: 'feed',  label: 'Campus Feed', icon: <Rss size={15} />,   accent: '#4ecf9e', desc: 'Your institution' },
+  { id: 'twins', label: 'Study Twins', icon: <Users size={15} />, accent: '#9B6FFF', desc: 'Find a study partner' },
+]
+
 export default function SocialClient({ userId, userInstitution, initialOptIn, initialWhatsapp }: Props) {
   const [tab, setTab] = useState<Tab>('feed')
-
-  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'feed',  label: 'Campus Feed', icon: <Rss size={15} /> },
-    { id: 'twins', label: 'Study Twins', icon: <Users size={15} /> },
-  ]
+  const active = TAB_CONFIG.find(t => t.id === tab)!
 
   return (
-    <div style={{ padding: '0 16px' }}>
-      {/* Tab bar */}
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96 }}>
+
+      {/* Page header */}
       <div style={{
-        display: 'flex', gap: 4,
-        background: 'rgba(255,255,255,0.04)',
-        border: '0.5px solid rgba(255,255,255,0.08)',
-        borderRadius: 14, padding: 4,
-        margin: '14px 0 20px 0',
+        padding: '16px 16px 0',
+        background: `linear-gradient(180deg, ${active.accent}08 0%, transparent 100%)`,
+        borderBottom: '0.5px solid var(--border-subtle)',
+        marginBottom: 0,
+        transition: 'background 0.3s ease',
       }}>
-        {tabs.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{
-              flex: 1, padding: '9px 8px',
-              borderRadius: 10, border: 'none',
-              background: tab === t.id ? 'rgba(255,255,255,0.09)' : 'transparent',
-              color: tab === t.id ? '#fff' : 'rgba(255,255,255,0.35)',
-              fontFamily: 'DM Sans, sans-serif',
-              fontWeight: tab === t.id ? 700 : 400,
-              fontSize: '0.8rem',
-              cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              transition: 'all 0.15s ease',
-            }}
-          >
-            {t.icon}
-            {t.label}
-          </button>
-        ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 10, background: `${active.accent}18`, border: `1px solid ${active.accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: active.accent }}>
+            {active.icon}
+          </div>
+          <div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              Social
+            </div>
+            {userInstitution && (
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
+                {userInstitution}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tab bar */}
+        <div style={{ display: 'flex', gap: 0 }}>
+          {TAB_CONFIG.map(t => {
+            const isActive = tab === t.id
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                style={{
+                  flex: 1, padding: '10px 8px 10px',
+                  border: 'none',
+                  background: isActive ? `${t.accent}0c` : 'transparent',
+                  color: isActive ? t.accent : 'rgba(255,255,255,0.35)',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: isActive ? 700 : 400,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  transition: 'all 0.2s ease',
+                  borderBottom: isActive ? `2px solid ${t.accent}` : '2px solid transparent',
+                }}
+              >
+                {t.icon}
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
-      {tab === 'feed' && (
-        <CampusFeed institution={userInstitution} />
-      )}
-      {tab === 'twins' && (
-        <StudyTwins
-          userId={userId}
-          userInstitution={userInstitution}
-          initialOptIn={initialOptIn}
-          initialWhatsapp={initialWhatsapp}
-        />
-      )}
+      <div style={{ padding: '16px 16px 0' }}>
+        {tab === 'feed' && (
+          <CampusFeed institution={userInstitution} />
+        )}
+        {tab === 'twins' && (
+          <StudyTwins
+            userId={userId}
+            userInstitution={userInstitution}
+            initialOptIn={initialOptIn}
+            initialWhatsapp={initialWhatsapp}
+          />
+        )}
+      </div>
     </div>
   )
 }

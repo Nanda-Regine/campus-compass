@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import type { Task, Exam, TimetableEntry, Module } from '@/types'
 
@@ -171,8 +172,18 @@ function getContextLine(
   }
 }
 
+const MODE_LABEL_KEY: Record<DayMode, string> = {
+  wake:        'wake',
+  commute:     'commute',
+  class:       'class',
+  study:       'study',
+  'wind-down': 'windDown',
+  sleep:       'sleep',
+}
+
 /* ── Component ──────────────────────────────────────────── */
 export default function DayModeBanner({ timetable, tasks, exams, hour, firstName }: DayModeBannerProps) {
+  const t   = useTranslations('dayMode')
   const now = useMemo(() => new Date(), [])
   const mode = getDayMode(hour)
   const meta = MODE_META[mode]
@@ -213,7 +224,7 @@ export default function DayModeBanner({ timetable, tasks, exams, hour, firstName
           letterSpacing: '0.1em', textTransform: 'uppercase',
           color: meta.accent, opacity: 0.75,
         }}>
-          {meta.label}
+          {t(MODE_LABEL_KEY[mode] as Parameters<typeof t>[0])}
         </span>
       </div>
 

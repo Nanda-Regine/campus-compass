@@ -14,6 +14,8 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import ReceiptScanner from '@/components/budget/ReceiptScanner'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
+import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
 
 interface BudgetClientProps {
   initialData: {
@@ -26,7 +28,7 @@ interface BudgetClientProps {
   }
 }
 
-type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal'
+type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit'
 
 const TABS = [
   { id: 'overview' as TabId, label: 'Overview', icon: '📊' },
@@ -35,6 +37,7 @@ const TABS = [
   { id: 'nsfas' as TabId, label: 'NSFAS', icon: '🏛️' },
   { id: 'ai_coach' as TabId, label: 'AI Coach', icon: '🤖' },
   { id: 'appeal' as TabId, label: 'Appeal', icon: '📝' },
+  { id: 'credit' as TabId, label: 'Credit', icon: '📈' },
 ]
 
 interface IncomeEntry {
@@ -67,13 +70,6 @@ interface AIInsight {
   savingOpportunity: string
 }
 
-const NSFAS_DATES = [
-  { event: 'NSFAS Applications Open', date: '1 February', type: 'info' },
-  { event: 'Applications Close', date: '31 March', type: 'warning' },
-  { event: 'Appeals Window', date: 'April – May', type: 'info' },
-  { event: 'Funding Confirmation', date: 'June – July', type: 'success' },
-  { event: 'Allowance Disbursement', date: 'Monthly from Feb', type: 'success' },
-]
 
 export default function BudgetClient({ initialData }: BudgetClientProps) {
   const supabase = createClient()
@@ -806,102 +802,9 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
           </>
         )}
 
-        {/* ─── NSFAS Tab ─── */}
+        {/* ─── NSFAS Tracker OS ─── */}
         {activeTab === 'nsfas' && (
-          <>
-            {budget?.nsfas_enabled ? (
-              <>
-                <div className="bg-gradient-to-br from-teal-900/30 to-teal-950/20 border border-teal-600/20 rounded-2xl p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xl">🏛️</span>
-                    <div className="font-display font-bold text-white">NSFAS Allowances</div>
-                  </div>
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Monthly Living', amount: budget.nsfas_living, icon: '🏠' },
-                      { label: 'Accommodation', amount: budget.nsfas_accom, icon: '🏢' },
-                      { label: 'Books & Stationery', amount: budget.nsfas_books, icon: '📚' },
-                    ].map(item => (
-                      <div key={item.label} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span>{item.icon}</span>
-                          <span className="font-body text-sm text-white/80">{item.label}</span>
-                        </div>
-                        <span className="font-display font-bold text-teal-400">{fmt.currency(item.amount)}</span>
-                      </div>
-                    ))}
-                    <div className="border-t border-teal-600/20 pt-3 flex items-center justify-between">
-                      <span className="font-display font-bold text-white">Total NSFAS</span>
-                      <span className="font-display font-black text-teal-400 text-lg">
-                        {fmt.currency(budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <a
-                  href="https://my.nsfas.org.za"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between bg-[var(--bg-surface)] border border-white/10 hover:border-teal-600/30 rounded-2xl p-4 transition-all"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-teal-600/15 rounded-xl flex items-center justify-center text-lg">🔗</div>
-                    <div>
-                      <div className="font-display font-bold text-white text-sm">myNSFAS Portal</div>
-                      <div className="font-mono text-[0.58rem] text-white/30">Check your status & allowances</div>
-                    </div>
-                  </div>
-                  <span className="text-white/30 text-sm">→</span>
-                </a>
-              </>
-            ) : (
-              <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5 text-center">
-                <div className="text-3xl mb-3">🏛️</div>
-                <div className="font-display font-bold text-white text-sm mb-2">Not on NSFAS</div>
-                <div className="font-mono text-[0.6rem] text-white/30 mb-4">
-                  Your funding type is set to {initialData.profile?.funding_type || 'other'}.
-                  Update your profile if this is incorrect.
-                </div>
-                <Link href="/setup" className="font-mono text-[0.6rem] text-teal-500 underline">
-                  Update funding type →
-                </Link>
-              </div>
-            )}
-
-            {/* Important dates */}
-            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
-              <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-4">
-                Important NSFAS Dates
-              </div>
-              <div className="space-y-3">
-                {NSFAS_DATES.map(item => (
-                  <div key={item.event} className="flex items-start gap-3">
-                    <div className={cn(
-                      'w-2 h-2 rounded-full mt-1.5 flex-shrink-0',
-                      item.type === 'success' ? 'bg-teal-500' : item.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
-                    )} />
-                    <div>
-                      <div className="font-body text-sm text-white">{item.event}</div>
-                      <div className="font-mono text-[0.58rem] text-white/40">{item.date}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Appeal CTA */}
-            <button
-              onClick={() => setActiveTab('appeal')}
-              className="w-full flex items-center gap-4 bg-amber-500/5 border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-4 transition-all text-left"
-            >
-              <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-xl">📝</div>
-              <div>
-                <div className="font-display font-bold text-amber-400 text-sm">Need to appeal? AI can help</div>
-                <div className="font-mono text-[0.6rem] text-white/30">Generate a professional NSFAS appeal letter →</div>
-              </div>
-            </button>
-          </>
+          <NsfasTrackerOS budget={budget} userId={initialData.userId} />
         )}
 
         {/* ─── AI Coach Tab ─── */}
@@ -1079,6 +982,11 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               </div>
             )}
           </>
+        )}
+
+        {/* ─── Credit Score Education Tab ─── */}
+        {activeTab === 'credit' && (
+          <CreditScoreEducation />
         )}
       </div>
     </div>

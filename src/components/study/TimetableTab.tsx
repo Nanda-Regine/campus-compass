@@ -1,16 +1,73 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAppStore } from '@/store'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Select from '@/components/ui/Select'
 import Input from '@/components/ui/Input'
-import { MODULE_COLOURS, WEEKDAYS, TIMETABLE_HOURS, type Module, type TimetableEntry, DAYS_OF_WEEK, type DayOfWeek } from '@/types'
-import { cn, fmt } from '@/lib/utils'
+import { MODULE_COLOURS, WEEKDAYS, type Module, type TimetableEntry, DAYS_OF_WEEK, type DayOfWeek } from '@/types'
+import { fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+
+// ─── Grid geometry ────────────────────────────────────────────────────────────
+const GRID_START  = 7   // 07:00 first visible hour
+const GRID_END    = 22  // 22:00 last visible hour
+const ROW_H       = 56  // px per hour
+const TOTAL_H     = (GRID_END - GRID_START) * ROW_H
+const HOURS_RANGE = Array.from({ length: GRID_END - GRID_START }, (_, i) => GRID_START + i)
+
+function toMins(t: string): number {
+  const [h, m = 0] = t.split(':').map(Number)
+  return h * 60 + m
+}
+function entryTop(start: string): number {
+  return Math.max(0, (toMins(start) - GRID_START * 60) / 60 * ROW_H)
+}
+function entryHeight(start: string, end?: string | null): number {
+  if (!end) return ROW_H - 4
+  return Math.max(24, (toMins(end) - toMins(start)) / 60 * ROW_H) - 3
+}
+
+interface StudySlot { top: number; height: number }
+function detectStudyWindows(entries: TimetableEntry[]): StudySlot[] {
+  const sorted = [...entries].sort(
+    (a, b) => toMins(a.start_time ?? '00:00') - toMins(b.start_time ?? '00:00')
+  )
+  const slots: StudySlot[] = []
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const cur  = sorted[i]
+    const next = sorted[i + 1]
+    const endMins = cur.end_time
+      ? toMins(cur.end_time)
+      : toMins(cur.start_time ?? '08:00') + 60
+    const nextStart = toMins(next.start_time ?? '00:00')
+    if (nextStart - endMins >= 45) {
+      slots.push({
+        top:    (endMins - GRID_START * 60) / 60 * ROW_H,
+        height: (nextStart - endMins) / 60 * ROW_H,
+      })
+    }
+  }
+  return slots
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+const DAY_TO_INT: Record<DayOfWeek, number> = {
+  Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4,
+  Friday: 5, Saturday: 6, Sunday: 7,
+}
+
+const TIME_OPTIONS = HOURS_RANGE.map(h => {
+  const v = `${String(h).padStart(2, '0')}:00`
+  return { value: v, label: fmt.time(v) }
+})
+const END_OPTIONS = HOURS_RANGE.slice(1).map(h => {
+  const v = `${String(h).padStart(2, '0')}:00`
+  return { value: v, label: fmt.time(v) }
+})
 
 interface Props {
   timetable: TimetableEntry[]
@@ -19,20 +76,27 @@ interface Props {
   supabase:  SupabaseClient
 }
 
-const DAY_TO_INT: Record<DayOfWeek, number> = {
-  Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4,
-  Friday: 5, Saturday: 6, Sunday: 7,
-}
-
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function TimetableTab({ timetable, modules, userId, supabase }: Props) {
   const { addTimetableEntry, removeTimetableEntry } = useAppStore()
-  const [modalOpen, setModalOpen]   = useState(false)
-  const [saving,    setSaving]      = useState(false)
-  const [prefill,   setPrefill]     = useState<{ day: string; time: string } | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [saving,    setSaving]    = useState(false)
+  const [nowMins,   setNowMins]   = useState(() => {
+    const n = new Date(); return n.getHours() * 60 + n.getMinutes()
+  })
+  const [prefill, setPrefill] = useState<{ day: string; time: string } | null>(null)
 
   const { register, handleSubmit, reset, setValue } = useForm({
     defaultValues: { module_id: '', day_of_week: 'Monday', start_time: '08:00', end_time: '', venue: '' },
   })
+
+  // Tick current-time line every minute
+  useEffect(() => {
+    const id = setInterval(() => {
+      const n = new Date(); setNowMins(n.getHours() * 60 + n.getMinutes())
+    }, 60_000)
+    return () => clearInterval(id)
+  }, [])
 
   const openModal = (day?: string, time?: string) => {
     if (day && time) {
@@ -59,7 +123,6 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
         })
         .select('*, module:modules(id,module_name,color)')
         .single()
-
       if (error) throw error
       addTimetableEntry(entry)
       toast.success('Class added!')
@@ -79,112 +142,283 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
     await supabase.from('timetable_slots').delete().eq('id', id)
   }
 
+  // Helpers
+  const today    = new Date()
+  const todayName = DAYS_OF_WEEK[today.getDay() === 0 ? 6 : today.getDay() - 1] as string
+  const nowTop   = (nowMins - GRID_START * 60) / 60 * ROW_H
+
+  const dayEntries = (day: string) =>
+    timetable.filter(e =>
+      (e as unknown as { day_of_week_text?: string }).day_of_week_text === day ||
+      e.day_of_week === day
+    )
+
+  const getDayDate = (day: string) => {
+    const idx  = WEEKDAYS.indexOf(day as DayOfWeek)
+    const tIdx = today.getDay() === 0 ? 6 : today.getDay() - 1
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate() + (idx - tIdx)).getDate()
+  }
+
+  // Cognitive load heatmap (0–1): more classes → higher load
+  const cogLoad  = (day: string) => Math.min(1, dayEntries(day).length / 5)
+  const loadColor = (s: number) =>
+    s > 0.7 ? '#ff6b6b' : s > 0.4 ? '#f59e0b' : s > 0 ? '#4ecf9e' : 'transparent'
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+      {/* Toolbar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
+          letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.22)', fontWeight: 600,
+        }}>
+          Week · {today.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}
+        </div>
         <Button size="sm" onClick={() => openModal()}>+ Add class</Button>
       </div>
 
-      <div className="overflow-x-auto -mx-4 px-4">
-        <div
-          className="grid gap-0.5"
-          style={{ gridTemplateColumns: '44px repeat(5, minmax(70px, 1fr))', minWidth: '440px' }}
-        >
-          {/* Header */}
-          <div />
-          {WEEKDAYS.map(day => {
-            const isToday = DAYS_OF_WEEK[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1] === day
-            return (
-              <div
-                key={day}
-                className={cn(
-                  'font-mono text-[0.56rem] uppercase tracking-widest text-center pb-2',
-                  isToday ? 'text-teal-400 font-bold' : 'text-white/30'
-                )}
-              >
-                {day.slice(0,3)}
-                {isToday && <span className="block w-1 h-1 bg-teal-400 rounded-full mx-auto mt-0.5" />}
-              </div>
-            )
-          })}
-
-          {/* Time rows */}
-          {TIMETABLE_HOURS.map(hour => (
-            <>
-              <div key={`t-${hour}`} className="font-mono text-[0.52rem] text-white/25 text-right pr-2 pt-1.5">
-                {fmt.time(hour)}
-              </div>
-              {WEEKDAYS.map(day => {
-                const matchDay = (e: TimetableEntry) =>
-                  (e as unknown as { day_of_week_text?: string }).day_of_week_text === day ||
-                  e.day_of_week === day
-                const entry = timetable.find(e => matchDay(e) && e.start_time === hour + ':00')
-                           ?? timetable.find(e => matchDay(e) && e.start_time === hour)
-                const mod = entry?.module || modules.find(m => m.id === entry?.module_id)
-                const col = mod?.color ? MODULE_COLOURS[mod.color] : null
-
-                if (entry && col) {
-                  return (
-                    <div
-                      key={`${day}-${hour}`}
-                      className="rounded-lg p-1.5 min-h-[44px] relative group"
-                      style={{ background: col.bg, border: `1px solid ${col.dot}30` }}
-                    >
-                      <div className="font-mono text-[0.52rem] leading-snug" style={{ color: col.text }}>
-                        {mod?.module_name?.split(' ').slice(0,3).join(' ') ?? 'Class'}
-                      </div>
-                      {entry.venue && (
-                        <div className="font-mono text-[0.48rem] opacity-60 mt-0.5" style={{ color: col.text }}>
-                          {entry.venue}
-                        </div>
-                      )}
-                      <button
-                        onClick={() => deleteEntry(entry.id)}
-                        className="absolute top-0.5 right-0.5 w-4 h-4 items-center justify-center text-[0.5rem] hidden group-hover:flex rounded"
-                        style={{ background: 'rgba(0,0,0,0.4)', color: col.text }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )
-                }
-
-                return (
-                  <button
-                    key={`${day}-${hour}`}
-                    onClick={() => openModal(day, hour + ':00')}
-                    className="rounded-lg min-h-[44px] border border-dashed border-white/8 hover:border-teal-600/40 hover:bg-teal-600/5 transition-all"
-                  />
-                )
-              })}
-            </>
-          ))}
-        </div>
-      </div>
-
+      {/* Empty states */}
       {timetable.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-3xl mb-2">🗓️</div>
-          <p className="font-display font-bold text-white text-sm">Your timetable is empty</p>
-          <p className="font-mono text-[0.6rem] text-white/30 mt-1">
-            Tap a time slot or use &apos;+ Add class&apos; to build your weekly schedule.
+        <div style={{ textAlign: 'center', padding: '24px 0 8px' }}>
+          <div style={{ fontSize: 28, marginBottom: 6 }}>🗓️</div>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>
+            Your timetable is empty
+          </p>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+            Tap any time slot to add a class.
           </p>
         </div>
       )}
-
-      {modules.length === 0 && (
-        <p className="text-center font-mono text-[0.6rem] text-white/30 pt-2">
-          Add modules first to assign them to timetable slots.
+      {modules.length === 0 && timetable.length === 0 && (
+        <p style={{ textAlign: 'center', fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>
+          Add modules first to assign colours.
         </p>
       )}
 
+      {/* ── Calendar grid ─────────────────────────────────────────────────── */}
+      <div style={{ overflowX: 'auto', marginLeft: -4, marginRight: -4 }}>
+        <div style={{ display: 'flex', minWidth: 480, paddingLeft: 4, paddingRight: 4 }}>
+
+          {/* Time-label column */}
+          <div style={{ width: 32, flexShrink: 0, marginTop: 48 }}>
+            <div style={{ position: 'relative', height: TOTAL_H }}>
+              {HOURS_RANGE.map(h => (
+                <div key={h} style={{
+                  position: 'absolute', top: (h - GRID_START) * ROW_H - 7,
+                  right: 4, fontSize: 8,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  color: 'rgba(255,255,255,0.18)',
+                  userSelect: 'none',
+                }}>
+                  {h === 12 ? '12p' : h > 12 ? `${h - 12}p` : `${h}a`}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Day columns */}
+          {WEEKDAYS.map(day => {
+            const isToday  = (day as string) === todayName
+            const entries  = dayEntries(day)
+            const windows  = detectStudyWindows(entries)
+            const load     = cogLoad(day)
+            const dateNum  = getDayDate(day)
+
+            return (
+              <div key={day} style={{ flex: 1, minWidth: 66 }}>
+
+                {/* Day header */}
+                <div style={{ paddingBottom: 8, textAlign: 'center' }}>
+                  <div style={{
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5,
+                    fontWeight: isToday ? 700 : 400,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    color: isToday ? '#4ecf9e' : 'rgba(255,255,255,0.28)',
+                    marginBottom: 3,
+                  }}>
+                    {(day as string).slice(0, 3)}
+                  </div>
+                  {/* Date circle */}
+                  <div style={{
+                    width: 24, height: 24, borderRadius: '50%', margin: '0 auto',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: isToday ? 'rgba(78,207,158,0.15)' : 'transparent',
+                    border: isToday
+                      ? '1.5px solid rgba(78,207,158,0.45)'
+                      : '1px solid transparent',
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 9.5, fontWeight: 700,
+                    color: isToday ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+                    boxShadow: isToday ? '0 0 12px rgba(78,207,158,0.2)' : 'none',
+                  }}>
+                    {dateNum}
+                  </div>
+                  {/* Cognitive-load bar */}
+                  <div style={{
+                    height: 2, borderRadius: 1, overflow: 'hidden',
+                    background: 'rgba(255,255,255,0.05)', margin: '4px 6px 0',
+                  }}>
+                    <div style={{
+                      height: '100%', width: `${load * 100}%`,
+                      background: loadColor(load), borderRadius: 1,
+                      transition: 'width 0.5s',
+                    }} />
+                  </div>
+                </div>
+
+                {/* Column body */}
+                <div style={{
+                  position: 'relative', height: TOTAL_H, cursor: 'pointer',
+                  background: isToday ? 'rgba(78,207,158,0.022)' : 'transparent',
+                  borderLeft: `1px solid ${isToday
+                    ? 'rgba(78,207,158,0.12)'
+                    : 'rgba(255,255,255,0.04)'}`,
+                  marginLeft: 2, marginRight: 2,
+                }}>
+
+                  {/* Hour gridlines */}
+                  {HOURS_RANGE.map(h => (
+                    <div key={h} style={{
+                      position: 'absolute', top: (h - GRID_START) * ROW_H,
+                      left: 0, right: 0, height: 1, pointerEvents: 'none',
+                      background: h % 2 === 0
+                        ? 'rgba(255,255,255,0.055)'
+                        : 'rgba(255,255,255,0.025)',
+                    }} />
+                  ))}
+
+                  {/* Study-window suggestions */}
+                  {windows.map((w, i) => (
+                    <div key={i} style={{
+                      position: 'absolute', top: w.top + 2, left: 3, right: 3,
+                      height: Math.max(20, w.height - 4),
+                      background: 'rgba(78,207,158,0.04)',
+                      border: '1px dashed rgba(78,207,158,0.16)',
+                      borderRadius: 6, pointerEvents: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        fontFamily: 'JetBrains Mono, monospace', fontSize: 7,
+                        color: 'rgba(78,207,158,0.38)',
+                        letterSpacing: '0.06em', textTransform: 'uppercase',
+                      }}>
+                        ✦ study
+                      </span>
+                    </div>
+                  ))}
+
+                  {/* Class entries — proportionally positioned */}
+                  {entries.map(entry => {
+                    const mod = entry.module || modules.find(m => m.id === entry.module_id)
+                    const col = (mod?.color ? MODULE_COLOURS[mod.color] : null)
+                      ?? { bg: 'rgba(78,207,158,0.12)', text: '#4ecf9e', dot: '#4ecf9e' }
+                    const top    = entryTop(entry.start_time ?? '08:00')
+                    const height = entryHeight(entry.start_time ?? '08:00', entry.end_time)
+                    const isNow  = isToday && entry.start_time && entry.end_time
+                      ? nowMins >= toMins(entry.start_time) && nowMins < toMins(entry.end_time)
+                      : false
+
+                    return (
+                      <div
+                        key={entry.id}
+                        className="group"
+                        style={{
+                          position: 'absolute', top, left: 3, right: 3, height,
+                          background: col.bg,
+                          border: `1px solid ${col.dot}35`,
+                          borderLeft: `2.5px solid ${col.dot}`,
+                          borderRadius: '0 5px 5px 0',
+                          padding: '3px 5px',
+                          overflow: 'hidden',
+                          zIndex: 1,
+                          boxShadow: isNow ? `0 0 12px ${col.dot}35` : 'none',
+                          transition: 'box-shadow 0.3s',
+                        }}
+                      >
+                        {/* "In-progress" accent top line */}
+                        {isNow && (
+                          <div style={{
+                            position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+                            background: `linear-gradient(90deg, ${col.dot} 0%, transparent 100%)`,
+                          }} />
+                        )}
+                        <div style={{
+                          fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5, fontWeight: 700,
+                          color: col.text, lineHeight: 1.25,
+                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        }}>
+                          {mod?.module_name?.split(' ').slice(0, 3).join(' ') ?? 'Class'}
+                        </div>
+                        {entry.venue && height > 40 && (
+                          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5, color: col.text, opacity: 0.55, marginTop: 1 }}>
+                            {entry.venue}
+                          </div>
+                        )}
+                        {entry.start_time && height > 54 && (
+                          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5, color: col.text, opacity: 0.42, marginTop: 1 }}>
+                            {entry.start_time.slice(0, 5)}{entry.end_time ? `–${entry.end_time.slice(0, 5)}` : ''}
+                          </div>
+                        )}
+                        <button
+                          onClick={e => { e.stopPropagation(); deleteEntry(entry.id) }}
+                          className="hidden group-hover:flex items-center justify-center"
+                          style={{
+                            position: 'absolute', top: 2, right: 2,
+                            width: 14, height: 14, borderRadius: 3,
+                            background: 'rgba(0,0,0,0.45)', border: 'none',
+                            cursor: 'pointer', fontSize: 7.5, color: col.text,
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )
+                  })}
+
+                  {/* Live current-time line (today only) */}
+                  {isToday && nowMins >= GRID_START * 60 && nowMins < GRID_END * 60 && (
+                    <div style={{
+                      position: 'absolute', top: nowTop, left: -1, right: 0,
+                      height: 1.5, background: '#4ecf9e', zIndex: 10,
+                      pointerEvents: 'none',
+                      boxShadow: '0 0 7px rgba(78,207,158,0.7)',
+                    }}>
+                      <div style={{
+                        position: 'absolute', left: -4, top: -3,
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: '#4ecf9e',
+                        boxShadow: '0 0 10px rgba(78,207,158,0.9)',
+                      }} />
+                    </div>
+                  )}
+
+                  {/* Clickable overlay — tap to add class at that time */}
+                  <div
+                    style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+                    onClick={e => {
+                      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+                      const h = Math.min(GRID_END - 1, GRID_START + Math.floor((e.clientY - rect.top) / ROW_H))
+                      openModal(day as string, `${String(h).padStart(2, '0')}:00`)
+                    }}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ── Add class modal ──────────────────────────────────────────────── */}
       <Modal
         open={modalOpen}
         onClose={() => { setModalOpen(false); reset(); setPrefill(null) }}
         title="Add Class"
         footer={
           <>
-            <Button variant="ghost" onClick={() => { setModalOpen(false); reset(); setPrefill(null) }}>Cancel</Button>
+            <Button variant="ghost" onClick={() => { setModalOpen(false); reset(); setPrefill(null) }}>
+              Cancel
+            </Button>
             <Button form="class-form" type="submit" loading={saving}>Add Class</Button>
           </>
         }
@@ -199,20 +433,16 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
           <div className="grid grid-cols-2 gap-3">
             <Select
               label="Day"
-              options={WEEKDAYS.map(d => ({ value: d, label: d }))}
+              options={WEEKDAYS.map(d => ({ value: d as string, label: d as string }))}
               {...register('day_of_week')}
             />
-            <Select
-              label="Start time"
-              options={TIMETABLE_HOURS.map(h => ({ value: h + ':00', label: fmt.time(h + ':00') }))}
-              {...register('start_time')}
-            />
+            <Select label="Start time" options={TIME_OPTIONS} {...register('start_time')} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Select
               label="End time (optional)"
               placeholder="No end time"
-              options={TIMETABLE_HOURS.map(h => ({ value: h + ':00', label: fmt.time(h + ':00') }))}
+              options={END_OPTIONS}
               {...register('end_time')}
             />
             <Input label="Venue (optional)" placeholder="e.g. LS1A" {...register('venue')} />

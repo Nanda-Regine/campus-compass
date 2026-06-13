@@ -177,7 +177,7 @@ function GradeCalcCard({
 
   return (
     <div style={{
-      background: '#0d0e14',
+      background: 'var(--bg-surface)',
       border: `1px solid ${mg.colour}30`,
       borderRadius: 16,
       overflow: 'hidden',
@@ -256,7 +256,7 @@ function GradeCalcCard({
             <div style={{
               display: 'grid', gridTemplateColumns: '1fr 80px 70px 28px',
               gap: 6, paddingBottom: 4,
-              borderBottom: '0.5px solid rgba(255,255,255,0.06)',
+              borderBottom: '0.5px solid rgba(255,255,255,0.08)',
             }}>
               {['Assessment', 'Mark (%)', 'Weight (%)', ''].map(h => (
                 <span key={h} style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)' }}>
@@ -436,7 +436,7 @@ function GpaCalculator({
   const progressToDistinction = gpa != null ? Math.min(100, (gpa / cumLaudeTarget) * 100) : 0
 
   return (
-    <div style={{ background: '#0d0e14', border: '1px solid #1e1f2e', borderRadius: 16, padding: '14px 14px', marginBottom: 12 }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '14px 14px', marginBottom: 12 }}>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <TrendingUp size={16} color="#7090d0" />
@@ -635,27 +635,48 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
   return (
     <div>
       {/* Sub-nav */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 16, background: 'rgba(255,255,255,0.03)', padding: 4, borderRadius: 14, border: '0.5px solid rgba(255,255,255,0.07)' }}>
         {[
-          { id: 'calc', label: 'What do I need to pass?', icon: '🧮' },
-          { id: 'gpa',  label: 'GPA Calculator',          icon: '📊' },
+          { id: 'calc', label: 'Pass Calculator', icon: '🧮' },
+          { id: 'gpa',  label: 'GPA Calculator',  icon: '📊' },
         ].map(({ id, label, icon }) => (
           <button
             key={id}
             onClick={() => setView(id as 'calc' | 'gpa')}
             style={{
-              flex: 1, padding: '9px 10px',
-              borderRadius: 10, fontSize: 12,
+              flex: 1, padding: '9px 12px',
+              borderRadius: 11, fontSize: 12,
               fontFamily: 'Sora, sans-serif', fontWeight: view === id ? 700 : 400,
-              background: view === id ? 'rgba(78,207,158,0.1)' : 'rgba(255,255,255,0.04)',
-              border: `0.5px solid ${view === id ? '#4ecf9e40' : 'rgba(255,255,255,0.08)'}`,
-              color: view === id ? '#4ecf9e' : 'rgba(255,255,255,0.45)',
-              cursor: 'pointer', transition: 'all 0.15s',
+              background: view === id ? 'rgba(78,207,158,0.12)' : 'transparent',
+              border: `0.5px solid ${view === id ? 'rgba(78,207,158,0.3)' : 'transparent'}`,
+              color: view === id ? '#4ecf9e' : 'rgba(255,255,255,0.4)',
+              cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: view === id ? '0 2px 12px rgba(78,207,158,0.1)' : 'none',
             }}
           >
             <span style={{ marginRight: 5 }}>{icon}</span>
             {label}
           </button>
+        ))}
+      </div>
+
+      {/* SA grade reference strip */}
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 14 }}>
+        {[
+          { letter: 'D', label: 'Distinction', pct: '75+', color: '#4ecf9e' },
+          { letter: 'M', label: 'Merit',        pct: '70+', color: '#a3e4cc' },
+          { letter: 'C+', label: 'Credit',      pct: '60+', color: '#c9a84c' },
+          { letter: 'C', label: 'Pass',          pct: '50+', color: '#7090d0' },
+          { letter: 'F', label: 'Fail',          pct: '<50', color: '#ff6b6b' },
+        ].map(g => (
+          <div key={g.letter} style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            padding: '3px 8px', borderRadius: 8,
+            background: `${g.color}10`, border: `0.5px solid ${g.color}30`,
+          }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: g.color }}>{g.letter}</span>
+            <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif' }}>{g.pct}%</span>
+          </div>
         ))}
       </div>
 

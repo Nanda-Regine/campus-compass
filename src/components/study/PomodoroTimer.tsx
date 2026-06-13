@@ -225,7 +225,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
       {/* ── Timer card ────────────────────────────────────────────────────── */}
       <div
         className="rounded-2xl p-6 relative overflow-hidden"
-        style={{ background: '#120e0a', border: `1px solid ${c.border}` }}
+        style={{ background: 'var(--bg-surface)', border: `1px solid ${c.border}` }}
       >
         <div
           className="absolute top-0 right-0 w-48 h-48 pointer-events-none"
@@ -260,16 +260,28 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
         {/* Ring timer */}
         <div className="flex flex-col items-center relative">
           <svg width="200" height="200" className="-rotate-90" aria-hidden="true">
+            <defs>
+              <filter id="timer-glow">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+            </defs>
             {/* Track */}
-            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
-            {/* Progress */}
+            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+            {/* Background ring glow */}
+            <circle cx="100" cy="100" r="80" fill="none" stroke={c.ring} strokeWidth="12" strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              style={{ transition: running ? 'stroke-dashoffset 1s linear' : 'none', opacity: 0.15, filter: 'blur(4px)' }}
+            />
+            {/* Main progress arc */}
             <circle
               cx="100" cy="100" r="80" fill="none"
-              stroke={c.ring} strokeWidth="6"
+              stroke={c.ring} strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              style={{ transition: running ? 'stroke-dashoffset 1s linear' : 'none' }}
+              style={{ transition: running ? 'stroke-dashoffset 1s linear' : 'none', filter: 'url(#timer-glow)' }}
             />
           </svg>
 
@@ -277,15 +289,18 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span
               className="font-display font-black tabular-nums"
-              style={{ fontSize: '3rem', lineHeight: 1, color: c.text }}
+              style={{ fontSize: '3.2rem', lineHeight: 1, color: c.text, letterSpacing: '-0.03em', textShadow: `0 0 30px ${c.ring}50` }}
               aria-live="polite"
               aria-label={`${PHASE_LABELS[phase]}: ${formatTime(secondsLeft)} remaining`}
             >
               {formatTime(secondsLeft)}
             </span>
-            <span className="font-mono text-[0.58rem] mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span className="font-mono text-[0.58rem] mt-1.5 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
               {PHASE_LABELS[phase]}
             </span>
+            {running && (
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.ring, marginTop: 6, animation: 'novaPulse 1.5s ease-in-out infinite' }} />
+            )}
           </div>
         </div>
 
@@ -335,7 +350,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
       {/* ── Context selector ──────────────────────────────────────────────── */}
       <div
         className="rounded-2xl p-4 space-y-3"
-        style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)' }}
       >
         <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
           Studying for (optional)
@@ -346,7 +361,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
             value={selectedModuleId}
             onChange={e => { setSelectedModuleId(e.target.value); setSelectedTaskId('') }}
             className="rounded-xl px-3 py-2 font-display text-xs text-white outline-none"
-            style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }}
+            style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }}
             aria-label="Select module"
           >
             <option value="">All modules</option>
@@ -359,7 +374,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
             value={selectedTaskId}
             onChange={e => setSelectedTaskId(e.target.value)}
             className="rounded-xl px-3 py-2 font-display text-xs text-white outline-none"
-            style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }}
+            style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }}
             aria-label="Select task"
           >
             <option value="">No specific task</option>
@@ -386,10 +401,11 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
       {/* ── Today stats ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3">
         <div
-          className="rounded-2xl p-4 text-center"
-          style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="rounded-2xl p-4 text-center relative overflow-hidden"
+          style={{ background: 'var(--bg-surface)', border: '1px solid rgba(13,148,136,0.18)' }}
         >
-          <p className="font-display font-black text-2xl text-white">
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #0d9488, transparent)' }} />
+          <p className="font-display font-black text-2xl" style={{ color: '#4db6ac' }}>
             {todayMinutes >= 60
               ? `${Math.floor(todayMinutes / 60)}h ${todayMinutes % 60}m`
               : `${todayMinutes}m`}
@@ -397,10 +413,11 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
           <p className="font-mono text-[0.55rem] text-white/30 mt-0.5">studied today</p>
         </div>
         <div
-          className="rounded-2xl p-4 text-center"
-          style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="rounded-2xl p-4 text-center relative overflow-hidden"
+          style={{ background: 'var(--bg-surface)', border: '1px solid rgba(217,120,84,0.18)' }}
         >
-          <p className="font-display font-black text-2xl text-white">{completedSessions}</p>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
+          <p className="font-display font-black text-2xl" style={{ color: '#e8956e' }}>{completedSessions}</p>
           <p className="font-mono text-[0.55rem] text-white/30 mt-0.5">sessions this run</p>
         </div>
       </div>
@@ -442,7 +459,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
   )
 
   return (
-    <div className="rounded-2xl p-5 space-y-4" style={{ background: '#120e0a', border: '1px solid rgba(255,255,255,0.1)' }}>
+    <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)' }}>
       <div className="flex items-center justify-between mb-1">
         <p className="font-display font-bold text-white text-sm">Timer settings</p>
         <button onClick={onClose} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>

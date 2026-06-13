@@ -30,15 +30,18 @@ export async function GET(req: NextRequest) {
   const module_code = searchParams.get('module')
   const institution = searchParams.get('institution')
   const mine = searchParams.get('mine') === '1'
+  const sort = searchParams.get('sort') // 'newest' | 'most_saved' | 'most_viewed'
+
+  const orderCol = sort === 'most_saved' ? 'save_count' : sort === 'most_viewed' ? 'view_count' : 'created_at'
 
   let query = supabase
     .from('community_notes')
     .select(`
       id, user_id, title, module_code, description, institution, faculty,
-      year_of_study, link_url, file_type, tags, save_count, created_at,
+      year_of_study, link_url, file_type, tags, save_count, view_count, created_at,
       profiles!inner(name, emoji)
     `)
-    .order('created_at', { ascending: false })
+    .order(orderCol, { ascending: false })
     .limit(50)
 
   if (mine) query = query.eq('user_id', user.id)

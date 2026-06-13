@@ -101,6 +101,17 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ posts: result })
 }
 
+const BLOCKLIST = [
+  'kaffir', 'nigger', 'nigga', 'chink', 'spic', 'wetback', 'faggot', 'retard',
+  'kill yourself', 'kys', 'go die', 'rape', 'molest', 'bomb threat', 'school shooting',
+  'whatsapp 27', 'click here to earn', 'send me r', 'send me money',
+]
+
+function containsBlocked(text: string): boolean {
+  const lower = text.toLowerCase()
+  return BLOCKLIST.some(term => lower.includes(term))
+}
+
 // POST /api/feed — create a post
 export async function POST(req: NextRequest) {
   const supabase = makeSupabase()
@@ -110,6 +121,9 @@ export async function POST(req: NextRequest) {
   const { content, category } = await req.json()
   if (!content?.trim()) return NextResponse.json({ error: 'Content required' }, { status: 400 })
   if (content.trim().length > 500) return NextResponse.json({ error: 'Too long' }, { status: 400 })
+  if (containsBlocked(content)) {
+    return NextResponse.json({ error: 'Post contains content that violates community guidelines.' }, { status: 422 })
+  }
 
   const validCategories = ['general', 'opportunity', 'academic', 'campus', 'sell_swap']
   const cat = validCategories.includes(category) ? category : 'general'

@@ -13,6 +13,8 @@ import PomodoroTimer from '@/components/study/PomodoroTimer'
 import GradesTab from '@/components/study/GradesTab'
 import FlashcardsTab from '@/components/study/FlashcardsTab'
 import WellnessTab from '@/components/study/WellnessTab'
+import HabitBuilder from '@/components/habits/HabitBuilder'
+import GraduationAudit from '@/components/study/GraduationAudit'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface StudyClientProps {
@@ -52,7 +54,9 @@ const TAB_CONFIG = [
   { id: 'flashcards', label: 'Cards',    icon: '◫',  accent: '#c084fc', glow: 'rgba(192,132,252,0.2)' },
   { id: 'wellness',   label: 'Wellness', icon: '♥',  accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
   { id: 'modules',    label: 'Modules',  icon: '▦',  accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
-  { id: 'pomodoro',   label: 'Focus',    icon: '⏱',  accent: '#e8834a', glow: 'rgba(232,131,74,0.2)' },
+  { id: 'pomodoro',    label: 'Focus',     icon: '⏱',  accent: '#e8834a', glow: 'rgba(232,131,74,0.2)' },
+  { id: 'habits',      label: 'Habits',    icon: '🌱', accent: '#6366F1', glow: 'rgba(99,102,241,0.2)' },
+  { id: 'graduation',  label: 'Grad Audit',icon: '🎓', accent: '#38BDF8', glow: 'rgba(56,189,248,0.2)' },
 ] as const
 
 type TabId = typeof TAB_CONFIG[number]['id']
@@ -249,6 +253,8 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'wellness'   && <WellnessTab />}
         {activeTab === 'modules'    && <ModulesTab   modules={modules} tasks={tasks} exams={exams} userId={userId} supabase={supabase} />}
         {activeTab === 'pomodoro'   && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
+        {activeTab === 'habits'     && <HabitBuilder />}
+        {activeTab === 'graduation' && <GraduationAudit />}
       </div>
 
       {/* ── Quick-add FAB ── */}

@@ -10,13 +10,14 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import { type Exam, type Module, type Task, MODULE_COLOURS } from '@/types'
-import { cn, fmt, getDaysUntil } from '@/lib/utils'
+import { fmt, getDaysUntil } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 import ExamPushBanner from '@/components/study/ExamPushBanner'
 import ExamReadinessPanel from '@/components/study/ExamReadinessPanel'
 
+// ─── Form schema ─────────────────────────────────────────────────────────────
 const schema = z.object({
   name:       z.string().min(2, 'Name is required'),
   exam_date:  z.string().min(1, 'Date is required'),
@@ -27,6 +28,145 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
+// ─── Ring geometry ────────────────────────────────────────────────────────────
+const MAX_DAYS = 30       // normalize countdowns against 30 days
+const RING_R   = 17       // SVG circle radius
+const RING_C   = 2 * Math.PI * RING_R  // circumference ≈ 106.8
+
+// ─── Urgency helpers ──────────────────────────────────────────────────────────
+function urgency(days: number, isPast: boolean): { color: string; label: string } {
+  if (isPast)     return { color: 'rgba(255,255,255,0.22)', label: 'DONE' }
+  if (days === 0) return { color: '#ff6b6b', label: 'TODAY!' }
+  if (days <= 3)  return { color: '#ff6b6b', label: 'CRITICAL' }
+  if (days <= 7)  return { color: '#f59e0b', label: 'HIGH' }
+  if (days <= 14) return { color: '#a78bfa', label: 'PREPARE' }
+  return { color: '#4ecf9e', label: 'ON TRACK' }
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function RingCountdown({ days, isPast, color }: { days: number; isPast: boolean; color: string }) {
+  const pct    = isPast ? 1 : Math.min(1, 1 - Math.max(0, days) / MAX_DAYS)
+  const offset = RING_C * (1 - pct)
+
+  return (
+    <div style={{ position: 'relative', width: 44, height: 44, flexShrink: 0 }}>
+      <svg width={44} height={44} viewBox="0 0 44 44" style={{ transform: 'rotate(-90deg)' }}>
+        {/* Track */}
+        <circle cx={22} cy={22} r={RING_R} fill="none" stroke={`${color}18`} strokeWidth={3.5} />
+        {/* Progress arc */}
+        <circle
+          cx={22} cy={22} r={RING_R} fill="none"
+          stroke={color} strokeWidth={3.5}
+          strokeLinecap="round"
+          strokeDasharray={RING_C}
+          strokeDashoffset={offset}
+          style={{ filter: `drop-shadow(0 0 4px ${color}55)`, transition: 'stroke-dashoffset 0.5s ease' }}
+        />
+      </svg>
+      {/* Centre label */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+      }}>
+        <span style={{
+          fontFamily: 'JetBrains Mono, monospace', fontWeight: 800,
+          fontSize: isPast ? 11 : days <= 9 ? 12 : 9,
+          color, lineHeight: 1,
+        }}>
+          {isPast ? '✓' : days === 0 ? '!' : days > 99 ? '99+' : days}
+        </span>
+        {!isPast && days !== 0 && (
+          <span style={{
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5,
+            color: `${color}70`, lineHeight: 1, marginTop: 1,
+          }}>
+            days
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ExamTimeline({ exams }: { exams: Exam[] }) {
+  const sorted = [...exams]
+    .filter(e => getDaysUntil(e.exam_date) >= 0)
+    .sort((a, b) => new Date(a.exam_date).getTime() - new Date(b.exam_date).getTime())
+  if (sorted.length === 0) return null
+  const maxDays = Math.max(1, ...sorted.map(e => getDaysUntil(e.exam_date)))
+
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.025)', borderRadius: 12,
+      border: '1px solid rgba(255,255,255,0.06)', padding: '12px 14px',
+    }}>
+      <div style={{
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5,
+        color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase',
+        letterSpacing: '0.12em', marginBottom: 14,
+      }}>
+        Exam Timeline · {sorted.length} upcoming
+      </div>
+
+      <div style={{ position: 'relative', height: 58 }}>
+        {/* Axis line */}
+        <div style={{
+          position: 'absolute', top: 5, left: 0, right: 0, height: 1,
+          background: 'rgba(255,255,255,0.06)',
+        }} />
+        {/* NOW marker */}
+        <div style={{ position: 'absolute', top: 0, left: 0 }}>
+          <div style={{ width: 1.5, height: 12, background: 'rgba(78,207,158,0.65)' }} />
+          <div style={{
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5,
+            color: 'rgba(78,207,158,0.65)', marginTop: 1, whiteSpace: 'nowrap',
+          }}>
+            NOW
+          </div>
+        </div>
+
+        {sorted.map(exam => {
+          const days   = getDaysUntil(exam.exam_date)
+          const pct    = Math.min(96, (days / maxDays) * 100)
+          const { color } = urgency(days, false)
+          const modCol = exam.module?.color ? MODULE_COLOURS[exam.module.color] : null
+          const dotCol = modCol?.dot ?? color
+
+          return (
+            <div key={exam.id} style={{
+              position: 'absolute', top: 0,
+              left: `${pct}%`, transform: 'translateX(-50%)',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                width: 9, height: 9, borderRadius: '50%', margin: '0 auto',
+                background: dotCol, border: `1.5px solid ${dotCol}`,
+                boxShadow: `0 0 8px ${dotCol}55`,
+              }} />
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 7,
+                color: dotCol, marginTop: 13,
+                whiteSpace: 'nowrap', maxWidth: 58,
+                overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
+                {exam.exam_name.split(' ')[0]}
+              </div>
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 6,
+                color: `${dotCol}70`, marginTop: 1,
+              }}>
+                {days === 0 ? 'TODAY' : `${days}d`}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
 interface Props {
   exams:    Exam[]
   modules:  Module[]
@@ -35,19 +175,26 @@ interface Props {
   supabase: SupabaseClient
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Props) {
   const { addExam, removeExam } = useAppStore()
-  const [view,       setView]       = useState<'list' | 'readiness'>('list')
-  const [modalOpen,  setModalOpen]  = useState(false)
-  const [saving,     setSaving]     = useState(false)
-  const [assistModal, setAssistModal] = useState<{ open: boolean; exam: Exam | null; type: 'exam_prep' | 'conflict_check' }>({ open: false, exam: null, type: 'exam_prep' })
+  const [view,        setView]        = useState<'list' | 'readiness'>('list')
+  const [modalOpen,   setModalOpen]   = useState(false)
+  const [saving,      setSaving]      = useState(false)
+  const [assistModal, setAssistModal] = useState<{
+    open: boolean; exam: Exam | null; type: 'exam_prep' | 'conflict_check'
+  }>({ open: false, exam: null, type: 'exam_prep' })
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
-  const upcoming = exams.filter(e => new Date(e.exam_date) >= new Date())
-  const past     = exams.filter(e => new Date(e.exam_date) < new Date())
+  const upcoming = exams
+    .filter(e => getDaysUntil(e.exam_date) >= 0)
+    .sort((a, b) => new Date(a.exam_date).getTime() - new Date(b.exam_date).getTime())
+  const past = exams
+    .filter(e => getDaysUntil(e.exam_date) < 0)
+    .sort((a, b) => new Date(b.exam_date).getTime() - new Date(a.exam_date).getTime())
 
   const onSubmit = async (data: FormData) => {
     setSaving(true)
@@ -65,7 +212,6 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
         })
         .select('*, module:modules(id,module_name,color)')
         .single()
-
       if (error) throw error
       addExam(exam)
       toast.success('Exam added!')
@@ -84,70 +230,118 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
     await supabase.from('exams').delete().eq('id', id)
   }
 
+  // ── Exam card ────────────────────────────────────────────────────────────
   const ExamCard = ({ exam }: { exam: Exam }) => {
-    const days = getDaysUntil(exam.exam_date)
-    const isPast = days < 0
+    const days     = getDaysUntil(exam.exam_date)
+    const isPast   = days < 0
+    const { color, label } = urgency(days, isPast)
     const modColour = exam.module?.color ? MODULE_COLOURS[exam.module.color] : null
 
-    const urgencyStyle =
-      isPast          ? { bg: 'bg-white/3',             border: 'border-white/7',         count: 'text-white/30' }
-      : days === 0    ? { bg: 'bg-orange-500/8',        border: 'border-orange-500/20',   count: 'text-orange-300' }
-      : days <= 3     ? { bg: 'bg-red-500/8',           border: 'border-red-500/20',      count: 'text-red-300' }
-      : days <= 7     ? { bg: 'bg-amber-500/8',         border: 'border-amber-500/20',    count: 'text-amber-300' }
-      :                 { bg: 'bg-purple-500/8',        border: 'border-purple-500/20',   count: 'text-purple-300' }
-
     return (
-      <div className={cn('group relative rounded-2xl p-4 border transition-all', urgencyStyle.bg, urgencyStyle.border)}>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="font-display font-bold text-sm text-white truncate">{exam.exam_name}</div>
-            {exam.module && (
-              <div className="font-mono text-[0.58rem] mt-0.5" style={{ color: modColour?.text ?? '#c084fc' }}>
-                {exam.module.module_name}
+      <div
+        className="group"
+        style={{
+          borderRadius: 14, overflow: 'hidden',
+          background: `${color}08`,
+          border: `1px solid ${color}25`,
+          transition: 'border-color 0.2s',
+        }}
+      >
+        {/* Top accent bar in module colour */}
+        <div style={{
+          height: 2,
+          background: `linear-gradient(90deg, ${modColour?.dot ?? color} 0%, transparent 70%)`,
+          opacity: isPast ? 0.3 : 1,
+        }} />
+
+        <div style={{ padding: '12px 14px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+          {/* Countdown ring */}
+          <RingCountdown days={days} isPast={isPast} color={color} />
+
+          {/* Content */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{
+                  fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13,
+                  color: isPast ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.92)',
+                  lineHeight: 1.3, overflow: 'hidden',
+                  textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {exam.exam_name}
+                </div>
+                {exam.module && (
+                  <div style={{
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
+                    color: modColour?.text ?? '#c084fc', marginTop: 1,
+                  }}>
+                    {exam.module.module_name}
+                  </div>
+                )}
               </div>
-            )}
-            <div className="font-mono text-[0.6rem] text-white/40 mt-1.5">
+              {/* Status badge */}
+              <div style={{
+                padding: '2px 8px', borderRadius: 99, flexShrink: 0,
+                background: `${color}14`, border: `1px solid ${color}32`,
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5, fontWeight: 700,
+                color, letterSpacing: '0.08em', textTransform: 'uppercase',
+              }}>
+                {label}
+              </div>
+            </div>
+
+            <div style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
+              color: 'rgba(255,255,255,0.35)', marginBottom: 8,
+            }}>
               {fmt.dateFull(exam.exam_date)}
               {exam.start_time && ` · ${fmt.time(exam.start_time)}`}
               {exam.venue && ` · ${exam.venue}`}
             </div>
-          </div>
 
-          <div className="flex flex-col items-end gap-1 flex-shrink-0">
-            <div className={cn('font-display font-black text-2xl leading-none', urgencyStyle.count)}>
-              {isPast ? '✓' : days === 0 ? '!' : days}
-            </div>
-            <div className="font-mono text-[0.52rem] text-white/30 uppercase">
-              {isPast ? 'done' : days === 0 ? 'today' : 'days'}
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              {!isPast && (
+                <button
+                  onClick={e => { e.stopPropagation(); setAssistModal({ open: true, exam, type: 'exam_prep' }) }}
+                  style={{
+                    padding: '4px 10px', borderRadius: 8,
+                    background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.25)',
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#a78bfa',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
+                  }}
+                >
+                  📚 Nova prep
+                </button>
+              )}
+              <button
+                onClick={() => deleteExam(exam.id)}
+                className="opacity-0 group-hover:opacity-100 transition-all"
+                style={{
+                  padding: '4px 8px', borderRadius: 8,
+                  background: 'transparent', border: '1px solid rgba(255,255,255,0.07)',
+                  fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
+                  color: 'rgba(255,255,255,0.28)', cursor: 'pointer',
+                }}
+              >
+                ✕
+              </button>
             </div>
           </div>
         </div>
-
-        <button
-          onClick={e => { e.stopPropagation(); setAssistModal({ open: true, exam, type: 'exam_prep' }) }}
-          className="absolute top-3 right-12 opacity-0 group-hover:opacity-100 text-purple-400/60 hover:text-purple-400 transition-all text-xs"
-          title="Exam Prep Guide"
-        >
-          📚
-        </button>
-        <button
-          onClick={() => deleteExam(exam.id)}
-          className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs"
-        >
-          ✕
-        </button>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      {/* Sub-view toggle + action row */}
-      <div className="flex items-center justify-between gap-2">
-        {/* View toggle */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+      {/* View toggle + actions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <div style={{
           display: 'flex', borderRadius: 10, overflow: 'hidden',
-          border: '0.5px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)',
+          border: '0.5px solid rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.03)',
         }}>
           {(['list', 'readiness'] as const).map(v => (
             <button
@@ -155,7 +349,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
               onClick={() => setView(v)}
               style={{
                 padding: '6px 12px',
-                fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
                 fontWeight: view === v ? 700 : 400,
                 color: view === v ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
                 background: view === v ? 'rgba(78,207,158,0.1)' : 'transparent',
@@ -169,10 +363,15 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
         </div>
 
         {view === 'list' && (
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               onClick={() => setAssistModal({ open: true, exam: null, type: 'conflict_check' })}
-              className="font-mono text-[0.62rem] bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 text-amber-400 px-3 py-1.5 rounded-xl transition-all"
+              style={{
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
+                background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.22)',
+                color: '#f59e0b', padding: '6px 12px', borderRadius: 10,
+                cursor: 'pointer', letterSpacing: '0.04em',
+              }}
             >
               ⚡ Conflict
             </button>
@@ -181,97 +380,128 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
         )}
       </div>
 
-      {/* Readiness view */}
-      {view === 'readiness' && (
-        <ExamReadinessPanel exams={exams} tasks={tasks} />
-      )}
+      {/* Readiness panel */}
+      {view === 'readiness' && <ExamReadinessPanel exams={exams} tasks={tasks} />}
 
       {/* List view */}
-      {view === 'list' && <>
-      <ExamPushBanner />
-
-      {upcoming.length === 0 && past.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="text-3xl mb-2">📝</div>
-          <p className="font-display font-bold text-white text-sm">No exams added yet</p>
-          <p className="font-mono text-[0.6rem] text-white/30 mt-1 max-w-xs mx-auto">
-            Add your upcoming exams to track countdowns and get AI prep guides.
-          </p>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="mt-4 font-mono text-[0.65rem] text-teal-400 border border-teal-600/25 bg-teal-600/10 hover:bg-teal-600/20 px-4 py-2 rounded-xl transition-all"
-          >
-            + Add your first exam →
-          </button>
-        </div>
-      ) : (
+      {view === 'list' && (
         <>
-          {upcoming.length > 0 ? (
-            <div>
-              <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">
-                Upcoming ({upcoming.length})
-              </div>
-              <div className="space-y-2">
-                {upcoming.map(e => <ExamCard key={e.id} exam={e} />)}
-              </div>
+          <ExamPushBanner />
+
+          {exams.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '32px 0' }}>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>📝</div>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>
+                No exams added yet
+              </p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+                Add upcoming exams to track countdowns and get AI prep guides.
+              </p>
+              <button
+                onClick={() => setModalOpen(true)}
+                style={{
+                  marginTop: 16, fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
+                  color: '#4ecf9e', border: '1px solid rgba(78,207,158,0.25)',
+                  background: 'rgba(78,207,158,0.1)', padding: '8px 16px',
+                  borderRadius: 10, cursor: 'pointer',
+                }}
+              >
+                + Add your first exam →
+              </button>
             </div>
           ) : (
-            <p className="font-mono text-[0.6rem] text-white/30 text-center py-3">
-              No upcoming exams — you&apos;re done! 🎉
-            </p>
+            <>
+              {upcoming.length > 0 && (
+                <>
+                  {/* Horizontal exam timeline */}
+                  <ExamTimeline exams={upcoming} />
+
+                  <div>
+                    <div style={{
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
+                      color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase',
+                      letterSpacing: '0.1em', marginBottom: 8,
+                    }}>
+                      Upcoming · {upcoming.length}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {upcoming.map(e => <ExamCard key={e.id} exam={e} />)}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {upcoming.length === 0 && (
+                <p style={{
+                  textAlign: 'center', fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: 10, color: 'rgba(255,255,255,0.3)', padding: '12px 0',
+                }}>
+                  No upcoming exams — you&apos;re done! 🎉
+                </p>
+              )}
+
+              {past.length > 0 && (
+                <div style={{ opacity: 0.55 }}>
+                  <div style={{
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
+                    color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase',
+                    letterSpacing: '0.1em', marginBottom: 8, marginTop: 8,
+                  }}>
+                    Past · {past.length}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {past.slice(0, 5).map(e => <ExamCard key={e.id} exam={e} />)}
+                  </div>
+                </div>
+              )}
+            </>
           )}
-          {past.length > 0 && (
-            <div>
-              <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2 mt-4">
-                Past ({past.length})
+
+          <StudyAssistModal
+            open={assistModal.open}
+            onClose={() => setAssistModal({ open: false, exam: null, type: 'exam_prep' })}
+            type={assistModal.type}
+            examName={assistModal.exam?.exam_name}
+            moduleName={assistModal.exam?.module?.name}
+            dueDate={assistModal.exam?.exam_date ?? undefined}
+          />
+
+          <Modal
+            open={modalOpen}
+            onClose={() => { setModalOpen(false); reset() }}
+            title="Add Exam"
+            footer={
+              <>
+                <Button variant="ghost" onClick={() => { setModalOpen(false); reset() }}>Cancel</Button>
+                <Button form="exam-form" type="submit" loading={saving}>Add Exam</Button>
+              </>
+            }
+          >
+            <form id="exam-form" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+              <Input
+                label="Exam name"
+                placeholder="e.g. Anatomy Finals"
+                error={errors.name?.message}
+                {...register('name')}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input label="Date" type="date" error={errors.exam_date?.message} {...register('exam_date')} />
+                <Input label="Start time (optional)" type="time" {...register('start_time')} />
               </div>
-              <div className="space-y-2 opacity-60">
-                {past.slice(0, 5).map(e => <ExamCard key={e.id} exam={e} />)}
+              <div className="grid grid-cols-2 gap-3">
+                <Select
+                  label="Module (optional)"
+                  placeholder="No module"
+                  options={modules.map(m => ({ value: m.id, label: m.module_name }))}
+                  {...register('module_id')}
+                />
+                <Input label="Venue (optional)" placeholder="e.g. Main Hall" {...register('venue')} />
               </div>
-            </div>
-          )}
+              <Input label="Notes (optional)" placeholder="Chapters covered, etc." {...register('notes')} />
+            </form>
+          </Modal>
         </>
       )}
-
-      <StudyAssistModal
-        open={assistModal.open}
-        onClose={() => setAssistModal({ open: false, exam: null, type: 'exam_prep' })}
-        type={assistModal.type}
-        examName={assistModal.exam?.exam_name}
-        moduleName={assistModal.exam?.module?.name}
-        dueDate={assistModal.exam?.exam_date ?? undefined}
-      />
-
-      <Modal
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); reset() }}
-        title="Add Exam"
-        footer={
-          <>
-            <Button variant="ghost" onClick={() => { setModalOpen(false); reset() }}>Cancel</Button>
-            <Button form="exam-form" type="submit" loading={saving}>Add Exam</Button>
-          </>
-        }
-      >
-        <form id="exam-form" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-          <Input label="Exam name" placeholder="e.g. Anatomy Finals" error={errors.name?.message} {...register('name')} />
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Date" type="date" error={errors.exam_date?.message} {...register('exam_date')} />
-            <Input label="Start time (optional)" type="time" {...register('start_time')} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select
-              label="Module (optional)"
-              placeholder="No module"
-              options={modules.map(m => ({ value: m.id, label: m.module_name }))}
-              {...register('module_id')}
-            />
-            <Input label="Venue (optional)" placeholder="e.g. Main Hall" {...register('venue')} />
-          </div>
-          <Input label="Notes (optional)" placeholder="Chapters covered, etc." {...register('notes')} />
-        </form>
-      </Modal>
-      </>}
     </div>
   )
 }

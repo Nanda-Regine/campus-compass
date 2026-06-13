@@ -495,41 +495,75 @@ function StudyScreen({
         <div style={{ height: '100%', width: `${progress * 100}%`, background: deck.color, borderRadius: 2, transition: 'width 0.3s ease' }} />
       </div>
 
-      {/* Card */}
+      {/* 3D flip card */}
       <div
         onClick={phase === 'front' ? flip : undefined}
-        style={{
-          borderRadius: 20, padding: '32px 24px', minHeight: 200,
-          background: 'rgba(255,255,255,0.04)', border: `0.5px solid ${deck.color}40`,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          textAlign: 'center', cursor: phase === 'front' ? 'pointer' : 'default',
-          transition: 'all 0.2s ease', gap: 16,
-          boxShadow: `0 0 40px ${deck.color}10`,
-        }}
+        style={{ perspective: 1000, cursor: phase === 'front' ? 'pointer' : 'default', minHeight: 200 }}
       >
-        {/* Side label */}
         <div style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
-          color: phase === 'front' ? 'var(--text-tertiary)' : deck.color,
-          textTransform: 'uppercase', letterSpacing: '0.08em',
+          position: 'relative', transformStyle: 'preserve-3d',
+          transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+          transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          minHeight: 200,
         }}>
-          {phase === 'front' ? 'Question' : 'Answer'}
-        </div>
-
-        {/* Content */}
-        <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 700,
-          fontSize: phase === 'front' ? '1.05rem' : '0.95rem',
-          color: 'var(--text-primary)', lineHeight: 1.4, maxWidth: 320,
-        }}>
-          {phase === 'front' ? card.front : card.back}
-        </div>
-
-        {phase === 'front' && (
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', marginTop: 4 }}>
-            Tap to reveal
+          {/* Front face */}
+          <div style={{
+            borderRadius: 20, padding: '36px 24px', minHeight: 200,
+            background: `linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02))`,
+            border: `1px solid ${deck.color}30`,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            textAlign: 'center', gap: 16, backfaceVisibility: 'hidden',
+            boxShadow: `0 0 40px ${deck.color}0d, inset 0 1px 0 rgba(255,255,255,0.06)`,
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+              color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em',
+              background: 'rgba(255,255,255,0.04)', padding: '3px 10px', borderRadius: 99,
+              border: '0.5px solid rgba(255,255,255,0.08)',
+            }}>
+              Question
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: '1.1rem', color: 'var(--text-primary)', lineHeight: 1.4, maxWidth: 320,
+            }}>
+              {card.front}
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+              color: deck.color, opacity: 0.6, marginTop: 4,
+            }}>
+              Tap to reveal answer
+            </div>
           </div>
-        )}
+
+          {/* Back face */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            borderRadius: 20, padding: '36px 24px', minHeight: 200,
+            background: `linear-gradient(135deg, ${deck.color}10, ${deck.color}05)`,
+            border: `1px solid ${deck.color}50`,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            textAlign: 'center', gap: 16,
+            backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
+            boxShadow: `0 0 40px ${deck.color}15, inset 0 1px 0 ${deck.color}20`,
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+              color: deck.color, textTransform: 'uppercase', letterSpacing: '0.1em',
+              background: `${deck.color}15`, padding: '3px 10px', borderRadius: 99,
+              border: `0.5px solid ${deck.color}30`,
+            }}>
+              Answer
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: 1.5, maxWidth: 320,
+            }}>
+              {card.back}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Rating buttons (only when back is shown) */}

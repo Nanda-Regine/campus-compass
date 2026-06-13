@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
     .select(`
       id, user_id, bio, subjects, institution, faculty, year_of_study,
       rate_per_hour, availability, is_available, session_count, average_rating,
+      is_verified, is_verified_pending,
       profiles!inner(name, emoji)
     `)
     .eq('is_available', true)
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
   // Check if current user is already a tutor
   const { data: myProfile } = await supabase
     .from('tutor_profiles')
-    .select('id, subjects, rate_per_hour, bio, availability, is_available')
+    .select('id, subjects, rate_per_hour, bio, availability, is_available, is_verified, is_verified_pending')
     .eq('user_id', user.id)
     .maybeSingle()
 

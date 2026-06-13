@@ -13,6 +13,7 @@ export interface CommunityNote {
   file_type: NoteFileType
   tags: string[]
   save_count: number
+  view_count: number
   created_at: string
   uploader_name?: string
   uploader_emoji?: string

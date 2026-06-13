@@ -15,10 +15,37 @@
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
-.nova-pulse-ring { animation: novaPulse 2.4s ease-in-out infinite; }
-.dot-urgent      { animation: dotGlow 1.8s ease-in-out infinite; }
-.bar-fill-anim   { animation: barFill 1s ease-out both; }
-.dash-card-in    { animation: dashFadeUp 0.35s ease-out both; }
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-26px) scale(1.06); }
+}
+@keyframes statusLive {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(0.75); }
+}
+@keyframes prioritySlide {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes heroLineGlow {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+@keyframes cardGlowPulse {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: 0 0 18px var(--card-glow, rgba(78,207,158,0.18)); }
+}
+
+.nova-pulse-ring  { animation: novaPulse 2.4s ease-in-out infinite; }
+.dot-urgent       { animation: dotGlow 1.8s ease-in-out infinite; }
+.bar-fill-anim    { animation: barFill 1s ease-out both; }
+.dash-card-in     { animation: dashFadeUp 0.35s ease-out both; }
+.orb-float        { animation: orbFloat 10s ease-in-out infinite; }
+.orb-float-r      { animation: orbFloat 14s ease-in-out infinite reverse; }
+.status-live      { animation: statusLive 2s ease-in-out infinite; }
+.priority-slide   { animation: prioritySlide 0.4s ease-out both; }
+.hero-line-glow   { animation: heroLineGlow 3s ease-in-out infinite; }
+
 .skeleton-row {
   background: linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);
   background-size: 200% 100%;

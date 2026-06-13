@@ -146,7 +146,7 @@ export default function LoadSheddingWidget() {
   const nextEvent = todayEvents.find(e => new Date(e.start) > new Date())
 
   return (
-    <div style={{ background: '#0d0e14', border: `1px solid ${colour}30`, borderRadius: 14, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--bg-surface)', border: `1px solid ${colour}30`, borderRadius: 14, overflow: 'hidden' }}>
       {/* Stage bar */}
       <div style={{ height: 3, background: stage === 0 ? `${colour}40` : colour, transition: 'background 0.3s' }} />
 

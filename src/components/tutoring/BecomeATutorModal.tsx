@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { X, Plus, Minus } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { X, Plus, Minus, ShieldCheck, Clock4, Upload } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface TutorProfile {
@@ -10,6 +10,8 @@ interface TutorProfile {
   bio: string | null
   availability: string | null
   is_available: boolean
+  is_verified: boolean
+  is_verified_pending: boolean
 }
 
 interface Props {
@@ -25,6 +27,26 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
   const [availability, setAvailability] = useState(existing?.availability ?? '')
   const [isAvailable, setIsAvailable] = useState(existing?.is_available ?? true)
   const [saving, setSaving] = useState(false)
+  const [cardFile, setCardFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  async function uploadCard() {
+    if (!cardFile) return
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('card', cardFile)
+      const res = await fetch('/api/tutors/verify', { method: 'POST', body: form })
+      if (!res.ok) throw new Error((await res.json()).error ?? 'Upload failed')
+      toast.success('Student card submitted — verification pending!')
+      setCardFile(null)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   function addSubject() { setSubjects(s => [...s, '']) }
   function removeSubject(i: number) { setSubjects(s => s.filter((_, idx) => idx !== i)) }
@@ -126,6 +148,64 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
             <button type="button" onClick={() => setIsAvailable(v => !v)} style={{ padding: '5px 12px', borderRadius: 20, border: '0.5px solid', borderColor: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.15)', background: isAvailable ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)', color: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
               {isAvailable ? 'Available' : 'Unavailable'}
             </button>
+          </div>
+
+          {/* Verification */}
+          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              {existing?.is_verified ? (
+                <ShieldCheck size={14} style={{ color: '#4ecf9e' }} />
+              ) : (
+                <ShieldCheck size={14} style={{ color: 'rgba(255,255,255,0.3)' }} />
+              )}
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                Student Verification
+              </span>
+              {existing?.is_verified && (
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999 }}>
+                  ✓ Verified
+                </span>
+              )}
+              {!existing?.is_verified && existing?.is_verified_pending && (
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Clock4 size={9} /> Pending review
+                </span>
+              )}
+            </div>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', margin: '0 0 10px', lineHeight: 1.4 }}>
+              Upload your student card to get a verified badge. Increases trust and bookings.
+            </p>
+            {!existing?.is_verified && !existing?.is_verified_pending && (
+              <>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*,.pdf"
+                  style={{ display: 'none' }}
+                  onChange={e => setCardFile(e.target.files?.[0] ?? null)}
+                />
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    style={{ flex: 1, padding: '9px 12px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                  >
+                    {cardFile ? cardFile.name : 'Choose student card (JPG/PDF)'}
+                  </button>
+                  {cardFile && (
+                    <button
+                      type="button"
+                      onClick={uploadCard}
+                      disabled={uploading}
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '9px 14px', borderRadius: 10, border: 'none', background: uploading ? 'rgba(78,207,158,0.3)' : '#4ecf9e', color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.75rem', cursor: uploading ? 'not-allowed' : 'pointer', flexShrink: 0 }}
+                    >
+                      <Upload size={12} />
+                      {uploading ? 'Uploading...' : 'Submit'}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           <button type="submit" disabled={saving} style={{ padding: '13px', borderRadius: 12, border: 'none', background: saving ? 'rgba(78,207,158,0.3)' : '#4ecf9e', color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.88rem', cursor: saving ? 'not-allowed' : 'pointer' }}>

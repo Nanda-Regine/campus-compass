@@ -7,6 +7,8 @@ import { PostHogProvider } from 'posthog-js/react'
 import { ThemeProvider } from 'next-themes'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
+import { initOrchestration } from '@/store/studentState'
+import { initRulesEngine } from '@/lib/rules'
 import type { Profile, Budget, Subscription } from '@/types'
 import { IntlProvider } from '@/lib/i18n/IntlProvider'
 
@@ -122,6 +124,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Boot orchestration layer — runs once after auth hydrates
+  useEffect(() => {
+    const unsubOrch  = initOrchestration()
+    const unsubRules = initRulesEngine()
+    return () => { unsubOrch(); unsubRules() }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

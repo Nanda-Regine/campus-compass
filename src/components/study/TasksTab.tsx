@@ -202,11 +202,31 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
 
   const openAdd = () => { setModalOpen(true); setFormCategory('academic'); reset({ category: 'academic', task_type: 'Assignment', priority: 'medium' }) }
 
-  const todayCount = pendingTasks.filter(t => isToday(t.due_date) || isOverdue(t.due_date)).length
-  const weekCount  = pendingTasks.filter(t => isThisWeek(t.due_date) || isOverdue(t.due_date)).length
+  const todayCount   = pendingTasks.filter(t => isToday(t.due_date) || isOverdue(t.due_date)).length
+  const weekCount    = pendingTasks.filter(t => isThisWeek(t.due_date) || isOverdue(t.due_date)).length
+  const overdueCount = pendingTasks.filter(t => isOverdue(t.due_date)).length
+  const doneToday    = doneTasks.filter(t => t.completed_at?.startsWith(new Date().toISOString().split('T')[0])).length
 
   return (
     <div className="space-y-4">
+      {/* ── Urgency strip ── */}
+      {view !== 'done' && (overdueCount > 0 || doneToday > 0) && (
+        <div className="flex gap-2 flex-wrap">
+          {overdueCount > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/8 border border-red-500/20">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="font-mono text-[0.58rem] text-red-400 font-bold">{overdueCount} overdue</span>
+            </div>
+          )}
+          {doneToday > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600/8 border border-teal-600/20">
+              <span className="text-teal-400 text-xs">✓</span>
+              <span className="font-mono text-[0.58rem] text-teal-400">{doneToday} done today</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── View tabs ── */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex bg-white/5 rounded-xl p-1 gap-1">
@@ -309,6 +329,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                   'relative flex items-start gap-3 bg-[var(--bg-surface)] border rounded-xl px-4 py-3 transition-all group overflow-hidden',
                   task.status === 'done' ? 'opacity-50 border-white/5' : 'border-white/8 hover:border-white/15'
                 )}
+                style={task.status !== 'done' ? { borderLeftColor: urgencyDot, borderLeftWidth: 3 } : undefined}
                 onTouchStart={task.status !== 'done' ? (e) => handleSwipeStart(task.id, e.touches[0].clientX) : undefined}
                 onTouchMove={task.status !== 'done' ? (e) => handleSwipeMove(e.touches[0].clientX) : undefined}
                 onTouchEnd={task.status !== 'done' ? () => handleSwipeEnd(toggleDone, task) : undefined}
@@ -374,7 +395,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                   {task.status !== 'done' && (
                     <button
                       onClick={e => { e.stopPropagation(); setAssistModal({ open: true, task }) }}
-                      className="opacity-0 group-hover:opacity-100 text-teal-400/60 hover:text-teal-400 transition-all text-xs px-1"
+                      className="opacity-50 hover:opacity-100 text-teal-400 transition-all text-xs px-1 rounded-lg hover:bg-teal-400/10"
                       title="AI Study Plan"
                       aria-label="Generate AI study plan"
                     >

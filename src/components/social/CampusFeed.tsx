@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Send, Heart, MessageCircle, Trash2, ChevronDown, ChevronUp, Globe, Building2 } from 'lucide-react'
+import { Send, Heart, MessageCircle, Trash2, ChevronDown, ChevronUp, Globe, Building2, MoreHorizontal, Flag } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -54,6 +54,14 @@ const CAT_META: Record<Category, { label: string; icon: string; color: string }>
 
 // ─── PostCard ─────────────────────────────────────────────────────────────────
 
+const REPORT_REASONS: { value: string; label: string }[] = [
+  { value: 'spam',           label: 'Spam / scam' },
+  { value: 'harassment',     label: 'Harassment' },
+  { value: 'hate_speech',    label: 'Hate speech' },
+  { value: 'misinformation', label: 'Misinformation' },
+  { value: 'other',          label: 'Other' },
+]
+
 function PostCard({
   post,
   onDelete,
@@ -69,7 +77,37 @@ function PostCard({
   const [newComment, setNewComment]     = useState('')
   const [posting, setPosting]           = useState(false)
   const [localCount, setLocalCount]     = useState(post.comment_count)
+  const [showMenu, setShowMenu]         = useState(false)
+  const [reporting, setReporting]       = useState(false)
+  const menuRef                         = useRef<HTMLDivElement>(null)
   const meta = CAT_META[post.category]
+
+  useEffect(() => {
+    if (!showMenu) return
+    function close(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setShowMenu(false)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [showMenu])
+
+  async function handleReport(reason: string) {
+    setShowMenu(false)
+    setReporting(true)
+    try {
+      const res = await fetch('/api/feed/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ post_id: post.id, reason }),
+      })
+      if (res.ok) toast.success('Report submitted — thank you')
+      else toast.error('Could not submit report')
+    } catch {
+      toast.error('Could not submit report')
+    } finally {
+      setReporting(false)
+    }
+  }
 
   async function loadComments() {
     if (commentsLoaded) return
@@ -145,13 +183,54 @@ function PostCard({
             }}>
               {meta.icon} {meta.label}
             </span>
-            {post.is_own && (
+            {post.is_own ? (
               <button
                 onClick={() => onDelete(post.id)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 4, display: 'flex', alignItems: 'center' }}
               >
                 <Trash2 size={13} />
               </button>
+            ) : (
+              <div ref={menuRef} style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setShowMenu(v => !v)}
+                  disabled={reporting}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 4, display: 'flex', alignItems: 'center' }}
+                >
+                  <MoreHorizontal size={13} />
+                </button>
+                {showMenu && (
+                  <div style={{
+                    position: 'absolute', top: '100%', right: 0, zIndex: 40,
+                    background: '#1a1a2e', border: '0.5px solid rgba(255,255,255,0.12)',
+                    borderRadius: 10, padding: '4px 0', minWidth: 148,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                  }}>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', padding: '6px 12px 4px', margin: 0 }}>
+                      REPORT POST
+                    </p>
+                    {REPORT_REASONS.map(r => (
+                      <button
+                        key={r.value}
+                        onClick={() => handleReport(r.value)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 7,
+                          width: '100%', background: 'none', border: 'none',
+                          cursor: 'pointer', padding: '7px 12px',
+                          color: 'rgba(255,255,255,0.65)',
+                          fontFamily: 'DM Sans, sans-serif', fontSize: '0.77rem',
+                          textAlign: 'left',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                      >
+                        <Flag size={11} style={{ color: '#f87171', flexShrink: 0 }} />
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

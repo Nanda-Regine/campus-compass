@@ -138,7 +138,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
   return (
     <div
       className="rounded-2xl overflow-hidden"
-      style={{ background: '#120e0a', border: '1px solid rgba(212,168,71,0.18)' }}
+      style={{ background: 'var(--bg-surface)', border: '1px solid rgba(212,168,71,0.18)' }}
     >
       {/* Header */}
       <div
@@ -244,17 +244,17 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
             <div className="space-y-2">
               <div>
                 <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Merchant</label>
-                <input value={merchant} onChange={e => setMerchant(e.target.value)} maxLength={100} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }} />
+                <input value={merchant} onChange={e => setMerchant(e.target.value)} maxLength={100} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Amount (R)</label>
-                  <input type="number" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }} />
+                  <input type="number" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
                 <div>
                   <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Date</label>
-                  <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }} />
+                  <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
               </div>
 
@@ -277,7 +277,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
 
               <div>
                 <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Description</label>
-                <input value={description} onChange={e => setDescription(e.target.value)} maxLength={200} placeholder="What did you buy?" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: '#161009', border: '1px solid rgba(255,255,255,0.09)' }} />
+                <input value={description} onChange={e => setDescription(e.target.value)} maxLength={200} placeholder="What did you buy?" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
             </div>
 

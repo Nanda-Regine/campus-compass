@@ -12,6 +12,8 @@ interface TutorProfile {
   bio: string | null
   availability: string | null
   is_available: boolean
+  is_verified: boolean
+  is_verified_pending: boolean
 }
 
 interface Tutor {
@@ -28,6 +30,8 @@ interface Tutor {
   is_available: boolean
   session_count: number
   average_rating: number | null
+  is_verified: boolean
+  is_verified_pending: boolean
 }
 
 interface Session {
@@ -201,7 +205,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
       {/* Review modal */}
       {reviewingSession && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'flex-end', backdropFilter: 'blur(6px)' }}>
-          <div style={{ width: '100%', background: '#0d1117', border: '0.5px solid rgba(255,255,255,0.1)', borderRadius: '20px 20px 0 0', padding: '20px 20px 40px' }}>
+          <div style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px 20px 0 0', padding: '20px 20px 40px' }}>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', marginBottom: 16 }}>
               Rate {reviewingSession.tutor_name}
             </div>
@@ -234,14 +238,20 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
 
 function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; onBook: () => void }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 10 }}>
+    <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(78,207,158,0.12)', borderRadius: 16, padding: 14, marginBottom: 10, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #4ecf9e50, transparent)', borderRadius: '16px 16px 0 0' }} />
       <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+        <div style={{ width: 46, height: 46, borderRadius: 14, background: 'rgba(78,207,158,0.1)', border: '1px solid rgba(78,207,158,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
           {tutor.emoji}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{tutor.name}</span>
+            {tutor.is_verified && (
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
+                <CheckCircle size={9} /> Verified
+              </span>
+            )}
             {tutor.average_rating && (
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.25)', padding: '2px 7px', borderRadius: 9999 }}>
                 ⭐ {tutor.average_rating} ({tutor.session_count})
@@ -278,8 +288,8 @@ function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; o
       )}
 
       {!isSelf && (
-        <button onClick={onBook} style={{ width: '100%', padding: '10px', borderRadius: 10, border: 'none', background: '#4ecf9e', color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}>
-          Book Session
+        <button onClick={onBook} style={{ width: '100%', padding: '11px', borderRadius: 12, border: 'none', background: 'linear-gradient(135deg, #4ecf9e, #0d9488)', color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', boxShadow: '0 2px 12px rgba(78,207,158,0.25)', transition: 'all 0.2s' }}>
+          Book a session →
         </button>
       )}
     </div>
@@ -303,7 +313,8 @@ function SessionCard({ session, role, userId, onConfirm, onComplete, onCancel, o
     : `${session.student_emoji} ${session.student_name}`
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: `0.5px solid ${color}20`, borderRadius: 14, padding: 14, marginBottom: 10 }}>
+    <div style={{ background: 'var(--bg-surface)', border: `1px solid ${color}22`, borderRadius: 16, padding: 14, marginBottom: 10, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}60, transparent)`, borderRadius: '16px 16px 0 0' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)' }}>{session.subject}</div>
