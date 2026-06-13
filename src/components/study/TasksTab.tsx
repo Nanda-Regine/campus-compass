@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { signals } from '@/store/signals'
-import { queueWrite } from '@/lib/offline/pendingWrites'
+import { queueWrite, flushPendingWrites } from '@/lib/offline/pendingWrites'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -14,7 +14,7 @@ import { dispatchXP } from '@/lib/xp-engine'
 import Select from '@/components/ui/Select'
 import {
   type Task, type Module, type TaskPriority,
-  MODULE_COLOURS,
+  MODULE_COLOURS, type TaskType,
 } from '@/types'
 import { cn, getTaskUrgency, fmt } from '@/lib/utils'
 import {
@@ -105,6 +105,13 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
     setSwipeDx(0)
   }, [swipeDx])
 
+  // Sync queued offline writes when the connection returns
+  useEffect(() => {
+    const sync = () => { flushPendingWrites(supabase).catch(() => {}) }
+    window.addEventListener('online', sync)
+    return () => window.removeEventListener('online', sync)
+  }, [supabase])
+
   useEffect(() => {
     if (triggerAdd) openAdd()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,6 +148,44 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
   const onSubmit = async (data: FormData) => {
     setSaving(true)
     try {
+      if (!navigator.onLine) {
+        const tempId = crypto.randomUUID()
+        const now = new Date().toISOString()
+        const optimisticTask: Task = {
+          id: tempId,
+          user_id: userId,
+          module_id: data.module_id || null,
+          group_id: null,
+          title: data.title,
+          description: data.notes || null,
+          task_type: data.task_type as TaskType,
+          due_date: data.due_date || null,
+          priority: data.priority as TaskPriority,
+          status: 'todo',
+          is_group_task: false,
+          estimated_hours: null,
+          recurrence_rule: null,
+          completed_at: null,
+          created_at: now,
+          updated_at: now,
+        }
+        addTask(optimisticTask)
+        await queueWrite('tasks', 'insert', {
+          id: tempId,
+          user_id: userId,
+          title: data.title,
+          task_type: data.task_type,
+          due_date: data.due_date || null,
+          priority: data.priority,
+          module_id: data.module_id || null,
+          description: data.notes || null,
+        }).catch(() => {})
+        toast.success('Saved offline — will sync when connected')
+        setModalOpen(false)
+        reset()
+        return
+      }
+
       const { data: task, error } = await supabase
         .from('tasks')
         .insert({
@@ -218,6 +263,10 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
 
   const deleteTask = async (id: string) => {
     removeTask(id)
+    if (!navigator.onLine) {
+      await queueWrite('tasks', 'delete', { id }).catch(() => {})
+      return
+    }
     await supabase.from('tasks').delete().eq('id', id)
   }
 

@@ -287,10 +287,18 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   }
 }
 
+interface CorrelationInsight {
+  key: string
+  text: string
+  detail: string
+  strength: 'strong' | 'moderate' | 'weak'
+}
+
 // ─── Dynamic student context (injected fresh every call, NOT cached) ──
 function buildDynamicContext(
   ctx: Awaited<ReturnType<typeof buildStudentContext>>,
   usageGuidance: string,
+  correlationInsights?: CorrelationInsight[] | null,
 ): string {
   const { profile, budget, academic, wellness, gamification, grades, savedBursaryNames, proactiveSignals, stressSignals } = ctx
   const p = profile as Record<string, unknown>
@@ -336,6 +344,10 @@ function buildDynamicContext(
     ? `\n**Proactive awareness for this conversation:**\n${proactiveSignals.map(s => `- ${s}`).join('\n')}`
     : ''
 
+  const patternsBlock = correlationInsights && correlationInsights.length > 0
+    ? `\n**${p?.full_name ? (p.full_name as string).split(' ')[0] : 'This student'}'s 30-day behaviour patterns (real data):**\n${correlationInsights.map(i => `- [${i.strength}] ${i.text} — ${i.detail}`).join('\n')}\nWhen relevant, reference these actual patterns naturally (e.g. "I can see from your data that…"). Don't reveal the data source name.`
+    : ''
+
   return `---
 
 ## THIS STUDENT'S LIVE CONTEXT (fresh data — use this to personalise)
@@ -370,7 +382,7 @@ ${proactiveBlock}
 - Use ${name}'s actual data above — don't ask what they've already told VarsityOS.
 - ${stressSignals.length > 0 ? 'Stress signals detected — lead with warmth and support before advice.' : 'No major stress signals — respond helpfully and practically.'}
 - Be concise by default. Go deeper only when ${name} needs it.
-- You are NOT a licensed therapist. For serious issues, encourage professional help.${usageGuidance}`
+- You are NOT a licensed therapist. For serious issues, encourage professional help.${usageGuidance}${patternsBlock}`
 }
 
 export async function POST(request: NextRequest) {
@@ -404,6 +416,9 @@ export async function POST(request: NextRequest) {
           .filter(m => m.content.length > 0)
       : []
     const mood: string | undefined = body?.mood
+    const correlationInsights: CorrelationInsight[] | null = Array.isArray(body?.correlationInsights)
+      ? (body.correlationInsights as CorrelationInsight[]).slice(0, 5)
+      : null
     // conversationId: client passes the active conversation UUID so we append to the
     // right row. If absent (new chat), we INSERT a fresh row and return the new ID.
     const conversationId: string | undefined =
@@ -519,7 +534,7 @@ export async function POST(request: NextRequest) {
       },
       {
         type: 'text',
-        text: buildDynamicContext(ctx, usageGuidance),
+        text: buildDynamicContext(ctx, usageGuidance, correlationInsights),
         // @ts-expect-error — cache_control supported at runtime, not in all SDK types
         cache_control: { type: 'ephemeral' },
       },

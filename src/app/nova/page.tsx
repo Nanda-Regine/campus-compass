@@ -423,6 +423,15 @@ export default function NovaPage() {
         content: m.content,
       }))
 
+      // Read cached correlations so Nova can reference the student's real 30-day patterns
+      let correlationInsights = null
+      try {
+        const now = new Date()
+        const weekNum = Math.ceil((now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1) + 6) / 7)
+        const cached = localStorage.getItem(`varsityos-correlations-${now.getFullYear()}-w${weekNum}`)
+        if (cached) correlationInsights = JSON.parse(cached).insights ?? null
+      } catch { /* ignore */ }
+
       const res = await fetch('/api/nova', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -431,6 +440,7 @@ export default function NovaPage() {
           history,
           mood: selectedMood,
           conversationId,
+          correlationInsights,
         }),
       })
 
