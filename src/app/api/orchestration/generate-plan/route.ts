@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -26,6 +27,40 @@ interface PlanContext {
   todayTasks?:       { title: string; priority: string; module?: string }[]
   runwayDays?:       number
   dayMode?:          string
+}
+
+// Sanitize every field of the context object before it reaches the prompt.
+// Prevents prompt injection via crafted context payloads.
+function sanitizeContext(raw: Record<string, unknown>): PlanContext {
+  const clampNum = (v: unknown, min = 0, max = 100) =>
+    Math.max(min, Math.min(max, isFinite(Number(v)) ? Number(v) : 0))
+  const safeStr = (v: unknown, maxLen: number) =>
+    String(v ?? '').replace(/[\r\n]+/g, ' ').slice(0, maxLen)
+
+  return {
+    riskLevel:        safeStr(raw.riskLevel, 20),
+    catchUpDebtHrs:   clampNum(raw.catchUpDebtHrs, 0, 500),
+    completionRate:   clampNum(raw.completionRate),
+    examPressure:     clampNum(raw.examPressure),
+    burnoutScore:     clampNum(raw.burnoutScore),
+    procrastIndex:    clampNum(raw.procrastIndex),
+    overdueTaskCount: clampNum(raw.overdueTaskCount, 0, 200),
+    atRiskModules:    Array.isArray(raw.atRiskModules)
+      ? raw.atRiskModules.slice(0, 8).map((s: unknown) => safeStr(s, 40))
+      : [],
+    todayTasks: Array.isArray(raw.todayTasks)
+      ? raw.todayTasks.slice(0, 10).map((t: unknown) => {
+          const task = (typeof t === 'object' && t !== null ? t : {}) as Record<string, unknown>
+          return {
+            title:    safeStr(task.title, 80),
+            priority: safeStr(task.priority, 20),
+            module:   task.module ? safeStr(task.module, 40) : undefined,
+          }
+        })
+      : [],
+    runwayDays: clampNum(raw.runwayDays, 0, 365),
+    dayMode:    safeStr(raw.dayMode, 20),
+  }
 }
 
 function buildDayPlanPrompt(ctx: PlanContext): string {
@@ -87,14 +122,24 @@ Max 350 words.`
 }
 
 export async function POST(req: NextRequest) {
-  // Auth check
-  const supabase = createServerSupabaseClient()
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-  const body = await req.json().catch(() => ({}))
-  const mode: 'day' | 'catchup' = body.mode ?? 'day'
-  const context: PlanContext = body.context ?? {}
+  // ── Rate limit: 3 requests / hour (Sonnet-class model) ───────────────────
+  const rl = await checkRateLimitAsync(user.id, 'orchestration-plan', 3, 3_600_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'rate_limited', message: 'Plan generation is limited to 3 times per hour. Try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetIn / 1000)) } }
+    )
+  }
+
+  // ── Parse + sanitize ──────────────────────────────────────────────────────
+  const body = await req.json().catch(() => ({})) as Record<string, unknown>
+  const mode: 'day' | 'catchup' = body.mode === 'catchup' ? 'catchup' : 'day'
+  const context = sanitizeContext((body.context ?? {}) as Record<string, unknown>)
 
   const prompt = mode === 'catchup'
     ? buildCatchUpPrompt(context)

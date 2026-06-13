@@ -1,7 +1,10 @@
 'use client'
 // ─── Tax Return Helper ────────────────────────────────────────
 // SARS eFiling guide, IRP5 tracker, basic refund calculator
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
+import { useAppStore } from '@/store'
 
 type Tab='calc'|'irp5'|'guide'|'deadlines'|'learn'
 const TABS:{id:Tab;label:string;icon:string}[]=[
@@ -14,14 +17,35 @@ const TABS:{id:Tab;label:string;icon:string}[]=[
 
 interface IRP5{id:number;employer:string;grossIncome:number;taxWithheld:number;year:string}
 
-function loadIRP5s():IRP5[]{if(typeof window==='undefined')return[];try{return JSON.parse(localStorage.getItem('varsityos-irp5s')||'[]')}catch{return[]}}
-function saveIRP5s(items:IRP5[]){localStorage.setItem('varsityos-irp5s',JSON.stringify(items))}
+// DB row shape returned from Supabase
+interface IRP5Row{
+  id: string
+  user_id: string
+  employer: string
+  gross_income: number
+  tax_withheld: number
+  tax_year: number
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+function rowToIRP5(row: IRP5Row): IRP5 {
+  return {
+    id: parseInt(row.id.replace(/-/g, '').slice(0, 8), 16), // stable numeric proxy from UUID
+    employer: row.employer,
+    grossIncome: Number(row.gross_income),
+    taxWithheld: Number(row.tax_withheld),
+    year: String(row.tax_year),
+  }
+}
+
+// Internal representation keeps the UUID for DB operations
+interface IRP5WithUUID extends IRP5 { uuid: string }
 
 export default function TaxReturnHelper() {
   const [tab,setTab]=useState<Tab>('calc')
-  const [irp5s,setIRP5s]=useState<IRP5[]>(loadIRP5s)
-
-  const updateIRP5s=(items:IRP5[])=>{setIRP5s(items);saveIRP5s(items)}
+  const [irp5s,setIRP5s]=useState<IRP5WithUUID[]>([])
 
   return (
     <div style={{display:'flex',flexDirection:'column',gap:14}}>
@@ -41,7 +65,7 @@ export default function TaxReturnHelper() {
       </div>
 
       {tab==='calc'&&<RefundCalc irp5s={irp5s}/>}
-      {tab==='irp5'&&<IRP5Tracker irp5s={irp5s} update={updateIRP5s}/>}
+      {tab==='irp5'&&<IRP5Tracker irp5s={irp5s} setIRP5s={setIRP5s}/>}
       {tab==='guide'&&<FilingGuide/>}
       {tab==='deadlines'&&<Deadlines/>}
       {tab==='learn'&&<TaxLearn/>}
@@ -49,7 +73,7 @@ export default function TaxReturnHelper() {
   )
 }
 
-function RefundCalc({irp5s}:{irp5s:IRP5[]}) {
+function RefundCalc({irp5s}:{irp5s:IRP5WithUUID[]}) {
   const [manual,setManual]=useState({grossIncome:'',taxWithheld:''})
   const useIRP5=irp5s.length>0
   const gross=useIRP5?irp5s.reduce((a,b)=>a+b.grossIncome,0):parseFloat(manual.grossIncome)||0
@@ -116,40 +140,224 @@ function RefundCalc({irp5s}:{irp5s:IRP5[]}) {
   )
 }
 
-function IRP5Tracker({irp5s,update}:{irp5s:IRP5[];update:(i:IRP5[])=>void}) {
-  const [adding,setAdding]=useState(false)
-  const [form,setForm]=useState({employer:'',grossIncome:'',taxWithheld:'',year:new Date().getFullYear().toString()})
-  const add=()=>{if(!form.employer||!form.grossIncome)return;const i:IRP5={id:Date.now(),employer:form.employer,grossIncome:parseFloat(form.grossIncome)||0,taxWithheld:parseFloat(form.taxWithheld)||0,year:form.year};update([...irp5s,i]);setAdding(false);setForm({employer:'',grossIncome:'',taxWithheld:'',year:new Date().getFullYear().toString()})}
-  const years=[...new Set(irp5s.map(i=>i.year))]
+// ── Skeleton row ──────────────────────────────────────────────
+function SkeletonRow() {
+  return (
+    <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'11px 14px',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+      <div style={{display:'flex',flexDirection:'column',gap:6}}>
+        <div style={{width:140,height:12,borderRadius:6,background:'var(--border-subtle)'}}/>
+        <div style={{width:200,height:10,borderRadius:6,background:'var(--border-subtle)',opacity:0.6}}/>
+      </div>
+      <div style={{width:32,height:12,borderRadius:6,background:'var(--border-subtle)',opacity:0.4}}/>
+    </div>
+  )
+}
+
+// ── IRP5 Tracker — Supabase-backed ────────────────────────────
+function IRP5Tracker({
+  irp5s,
+  setIRP5s,
+}: {
+  irp5s: IRP5WithUUID[]
+  setIRP5s: React.Dispatch<React.SetStateAction<IRP5WithUUID[]>>
+}) {
+  const userId = useAppStore(s => s.userId)
+  const supabase = createClient()
+
+  const [loading, setLoading] = useState(true)
+  const [adding, setAdding] = useState(false)
+  const [editingUUID, setEditingUUID] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const emptyForm = {employer:'',grossIncome:'',taxWithheld:'',year:new Date().getFullYear().toString()}
+  const [form, setForm] = useState(emptyForm)
+
+  // ── Load on mount ──────────────────────────────────────────
+  useEffect(() => {
+    if (!userId) { setLoading(false); return }
+    let cancelled = false
+    ;(async () => {
+      const { data, error } = await supabase
+        .from('tax_irp5s')
+        .select('*')
+        .eq('user_id', userId)
+        .is('deleted_at', null)
+        .order('tax_year', { ascending: false })
+      if (cancelled) return
+      if (error) {
+        toast.error('Failed to load IRP5s')
+      } else {
+        const rows = (data as IRP5Row[]).map(row => ({
+          ...rowToIRP5(row),
+          uuid: row.id,
+        }))
+        setIRP5s(rows)
+      }
+      setLoading(false)
+    })()
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
+
+  // ── Create ─────────────────────────────────────────────────
+  const handleAdd = async () => {
+    if (!form.employer || !form.grossIncome) return
+    if (!userId) { toast.error('Not signed in'); return }
+    setSaving(true)
+    const payload = {
+      user_id: userId,
+      employer: form.employer.trim(),
+      gross_income: parseFloat(form.grossIncome) || 0,
+      tax_withheld: parseFloat(form.taxWithheld) || 0,
+      tax_year: parseInt(form.year, 10) || new Date().getFullYear(),
+    }
+    const { data, error } = await supabase
+      .from('tax_irp5s')
+      .insert(payload)
+      .select()
+      .single()
+    setSaving(false)
+    if (error) { toast.error('Could not save IRP5'); return }
+    const row = data as IRP5Row
+    setIRP5s(prev => [{ ...rowToIRP5(row), uuid: row.id }, ...prev].sort((a,b)=>parseInt(b.year)-parseInt(a.year)))
+    setAdding(false)
+    setForm(emptyForm)
+    toast.success('IRP5 added')
+  }
+
+  // ── Begin edit — pre-fill form ─────────────────────────────
+  const startEdit = (item: IRP5WithUUID) => {
+    setEditingUUID(item.uuid)
+    setAdding(true)
+    setForm({
+      employer: item.employer,
+      grossIncome: String(item.grossIncome),
+      taxWithheld: String(item.taxWithheld),
+      year: item.year,
+    })
+  }
+
+  // ── Update ─────────────────────────────────────────────────
+  const handleUpdate = async () => {
+    if (!form.employer || !form.grossIncome || !editingUUID) return
+    setSaving(true)
+    const payload = {
+      employer: form.employer.trim(),
+      gross_income: parseFloat(form.grossIncome) || 0,
+      tax_withheld: parseFloat(form.taxWithheld) || 0,
+      tax_year: parseInt(form.year, 10) || new Date().getFullYear(),
+      updated_at: new Date().toISOString(),
+    }
+    const { data, error } = await supabase
+      .from('tax_irp5s')
+      .update(payload)
+      .eq('id', editingUUID)
+      .select()
+      .single()
+    setSaving(false)
+    if (error) { toast.error('Could not update IRP5'); return }
+    const row = data as IRP5Row
+    setIRP5s(prev =>
+      prev
+        .map(x => x.uuid === editingUUID ? { ...rowToIRP5(row), uuid: row.id } : x)
+        .sort((a,b) => parseInt(b.year) - parseInt(a.year))
+    )
+    setAdding(false)
+    setEditingUUID(null)
+    setForm(emptyForm)
+    toast.success('IRP5 updated')
+  }
+
+  // ── Soft delete ────────────────────────────────────────────
+  const handleDelete = async (uuid: string) => {
+    // Optimistic removal
+    setIRP5s(prev => prev.filter(x => x.uuid !== uuid))
+    const { error } = await supabase
+      .from('tax_irp5s')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', uuid)
+    if (error) {
+      toast.error('Could not remove IRP5')
+      // Re-fetch to restore
+      if (userId) {
+        const { data } = await supabase
+          .from('tax_irp5s')
+          .select('*')
+          .eq('user_id', userId)
+          .is('deleted_at', null)
+          .order('tax_year', { ascending: false })
+        if (data) setIRP5s((data as IRP5Row[]).map(r => ({ ...rowToIRP5(r), uuid: r.id })))
+      }
+    } else {
+      toast.success('IRP5 removed')
+    }
+  }
+
+  const cancelForm = () => {
+    setAdding(false)
+    setEditingUUID(null)
+    setForm(emptyForm)
+  }
+
+  const years = [...new Set(irp5s.map(i => i.year))]
+
   return (
     <div style={{display:'flex',flexDirection:'column',gap:10}}>
       <div style={{fontSize:'0.7rem',color:'var(--text-secondary)',lineHeight:1.6}}>An IRP5 is issued by every employer you worked for. Part-time jobs, vacation work, and learnerships all generate IRP5s.</div>
-      {years.map(y=>(
-        <div key={y}>
-          <div style={{fontSize:'0.62rem',fontFamily:'var(--font-mono)',color:'var(--text-muted)',marginBottom:6}}>TAX YEAR {y}</div>
-          {irp5s.filter(i=>i.year===y).map(i=>(
-            <div key={i.id} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'11px 14px',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
-              <div>
-                <div style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{i.employer}</div>
-                <div style={{fontSize:'0.65rem',color:'var(--text-tertiary)',marginTop:1}}>Gross: R{i.grossIncome.toLocaleString('en-ZA')} · PAYE: R{i.taxWithheld.toLocaleString('en-ZA')}</div>
+
+      {loading ? (
+        <>
+          <SkeletonRow/>
+          <SkeletonRow/>
+        </>
+      ) : (
+        years.map(y=>(
+          <div key={y}>
+            <div style={{fontSize:'0.62rem',fontFamily:'var(--font-mono)',color:'var(--text-muted)',marginBottom:6}}>TAX YEAR {y}</div>
+            {irp5s.filter(i=>i.year===y).map(i=>(
+              <div key={i.uuid} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'11px 14px',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                <div>
+                  <div style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{i.employer}</div>
+                  <div style={{fontSize:'0.65rem',color:'var(--text-tertiary)',marginTop:1}}>Gross: R{i.grossIncome.toLocaleString('en-ZA')} · PAYE: R{i.taxWithheld.toLocaleString('en-ZA')}</div>
+                </div>
+                <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                  <button
+                    onClick={()=>startEdit(i)}
+                    title="Edit"
+                    style={{fontSize:'0.75rem',color:'var(--text-muted)',background:'none',border:'none',cursor:'pointer',padding:'2px 4px'}}
+                  >✏️</button>
+                  <button
+                    onClick={()=>handleDelete(i.uuid)}
+                    title="Remove"
+                    style={{fontSize:'0.65rem',color:'var(--text-muted)',background:'none',border:'none',cursor:'pointer',padding:'2px 4px'}}
+                  >✕</button>
+                </div>
               </div>
-              <button onClick={()=>update(irp5s.filter(x=>x.id!==i.id))} style={{fontSize:'0.65rem',color:'var(--text-muted)',background:'none',border:'none',cursor:'pointer'}}>✕</button>
-            </div>
-          ))}
-        </div>
-      ))}
-      {adding?(
+            ))}
+          </div>
+        ))
+      )}
+
+      {adding ? (
         <div style={{background:'var(--bg-elevated)',border:'1px solid var(--border-default)',borderRadius:12,padding:'14px',display:'flex',flexDirection:'column',gap:10}}>
+          {editingUUID && (
+            <div style={{fontSize:'0.62rem',fontFamily:'var(--font-mono)',color:'var(--gold)',letterSpacing:'0.06em',marginBottom:2}}>EDITING IRP5</div>
+          )}
           <input placeholder="Employer name *" value={form.employer} onChange={e=>setForm(v=>({...v,employer:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem'}}/>
           <input type="number" placeholder="Gross income (R) *" value={form.grossIncome} onChange={e=>setForm(v=>({...v,grossIncome:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem',fontFamily:'var(--font-mono)'}}/>
           <input type="number" placeholder="PAYE tax withheld (R)" value={form.taxWithheld} onChange={e=>setForm(v=>({...v,taxWithheld:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem',fontFamily:'var(--font-mono)'}}/>
           <input type="number" placeholder="Tax year (e.g. 2025)" value={form.year} onChange={e=>setForm(v=>({...v,year:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem',fontFamily:'var(--font-mono)'}}/>
           <div style={{display:'flex',gap:8}}>
-            <button onClick={add} style={{flex:1,padding:'9px 0',background:'rgba(212,175,55,0.1)',border:'1px solid rgba(212,175,55,0.25)',borderRadius:8,color:'var(--gold)',fontSize:'0.73rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>Add IRP5</button>
-            <button onClick={()=>setAdding(false)} style={{padding:'9px 14px',background:'transparent',border:'1px solid var(--border-subtle)',borderRadius:8,color:'var(--text-tertiary)',fontSize:'0.73rem',cursor:'pointer'}}>Cancel</button>
+            <button
+              onClick={editingUUID ? handleUpdate : handleAdd}
+              disabled={saving}
+              style={{flex:1,padding:'9px 0',background:'rgba(212,175,55,0.1)',border:'1px solid rgba(212,175,55,0.25)',borderRadius:8,color:'var(--gold)',fontSize:'0.73rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:saving?'not-allowed':'pointer',opacity:saving?0.6:1}}
+            >
+              {saving ? 'Saving…' : editingUUID ? 'Save Changes' : 'Add IRP5'}
+            </button>
+            <button onClick={cancelForm} style={{padding:'9px 14px',background:'transparent',border:'1px solid var(--border-subtle)',borderRadius:8,color:'var(--text-tertiary)',fontSize:'0.73rem',cursor:'pointer'}}>Cancel</button>
           </div>
         </div>
-      ):(
+      ) : (
         <button onClick={()=>setAdding(true)} style={{padding:'11px 0',background:'rgba(212,175,55,0.06)',border:'1px solid rgba(212,175,55,0.2)',borderRadius:10,color:'var(--gold)',fontSize:'0.78rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>+ Add IRP5</button>
       )}
     </div>

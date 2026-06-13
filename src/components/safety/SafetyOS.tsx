@@ -1047,7 +1047,7 @@ export default function SafetyOS() {
           Campus Safety Intelligence
         </div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>
-          SOS alerts · Walk Me Home timer · Self-defence library · Incident reporting
+          SOS alerts · Walk Me Home · Self-defence · Legal Rights · Incident reporting
         </div>
       </div>
 

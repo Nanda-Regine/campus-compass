@@ -1,182 +1,547 @@
 'use client'
 // ─── Stokvel OS ───────────────────────────────────────────────
 // Group savings circle: members, contributions, payouts, ledger
-import { useState } from 'react'
+// Persisted in Supabase (stokvel_groups / members / contributions / disputes)
+import { useState, useEffect, useCallback } from 'react'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
+import { useAppStore } from '@/store'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
-interface Member{id:number;name:string;phone:string;active:boolean;payoutMonth:number}
-interface Contribution{id:number;memberId:number;memberName:string;amount:number;date:string;paid:boolean;month:string}
-interface Dispute{id:number;description:string;reportedBy:string;date:string;resolved:boolean}
-
-interface StokvelState{
-  name:string;contribution:number;members:Member[];contributions:Contribution[];disputes:Dispute[];createdAt:string
+// ─── DB row types ──────────────────────────────────────────────
+interface GroupRow {
+  id: string
+  user_id: string
+  name: string
+  contribution_amount: number
+  created_at: string
 }
 
-const EMPTY:StokvelState={name:'',contribution:0,members:[],contributions:[],disputes:[],createdAt:''}
+interface MemberRow {
+  id: string
+  group_id: string
+  name: string
+  phone: string | null
+  payout_month: number
+  active: boolean
+}
 
-function loadState():StokvelState{if(typeof window==='undefined')return EMPTY;try{return JSON.parse(localStorage.getItem('varsityos-stokvel')||'null')||EMPTY}catch{return EMPTY}}
-function saveState(s:StokvelState){localStorage.setItem('varsityos-stokvel',JSON.stringify(s))}
+interface ContributionRow {
+  id: string
+  group_id: string
+  member_id: string
+  member_name: string
+  amount: number
+  contribution_date: string
+  paid: boolean
+  month: string
+  notes: string | null
+}
 
-type Tab='overview'|'members'|'ledger'|'payouts'|'disputes'|'learn'
-const TABS:{id:Tab;label:string;icon:string}[]=[
-  {id:'overview', label:'Overview',  icon:'📊'},
-  {id:'members',  label:'Members',   icon:'👥'},
-  {id:'ledger',   label:'Ledger',    icon:'📒'},
-  {id:'payouts',  label:'Payouts',   icon:'💵'},
-  {id:'disputes', label:'Disputes',  icon:'⚠️'},
-  {id:'learn',    label:'Learn',     icon:'🎓'},
+interface DisputeRow {
+  id: string
+  group_id: string
+  description: string
+  reported_by: string | null
+  resolved: boolean
+  created_at?: string
+}
+
+// ─── Tab config ────────────────────────────────────────────────
+type Tab = 'overview' | 'members' | 'ledger' | 'payouts' | 'disputes' | 'learn'
+const TABS: { id: Tab; label: string; icon: string }[] = [
+  { id: 'overview',  label: 'Overview',  icon: '📊' },
+  { id: 'members',   label: 'Members',   icon: '👥' },
+  { id: 'ledger',    label: 'Ledger',    icon: '📒' },
+  { id: 'payouts',   label: 'Payouts',   icon: '💵' },
+  { id: 'disputes',  label: 'Disputes',  icon: '⚠️' },
+  { id: 'learn',     label: 'Learn',     icon: '🎓' },
 ]
 
+// ─── Loading skeleton ─────────────────────────────────────────
+function Skeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {[1, 2, 3].map(i => (
+        <div key={i} style={{
+          height: 60, borderRadius: 12,
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
+          animation: 'pulse 1.5s ease-in-out infinite',
+        }} />
+      ))}
+    </div>
+  )
+}
+
+// ─── Main component ───────────────────────────────────────────
 export default function StokvelOS() {
-  const [state,setState]=useState<StokvelState>(loadState)
-  const [tab,setTab]=useState<Tab>(state.name?'overview':'overview')
-  const [setupMode,setSetupMode]=useState(!state.name)
-  const [setupForm,setSetupForm]=useState({name:'My Stokvel',contribution:'500'})
+  const supabase = createClient()
+  const userId = useAppStore(s => s.userId)
 
-  const update=(s:StokvelState)=>{setState(s);saveState(s)}
+  const [group, setGroup]                   = useState<GroupRow | null>(null)
+  const [members, setMembers]               = useState<MemberRow[]>([])
+  const [contributions, setContributions]   = useState<ContributionRow[]>([])
+  const [disputes, setDisputes]             = useState<DisputeRow[]>([])
+  const [loading, setLoading]               = useState(true)
+  const [tab, setTab]                       = useState<Tab>('overview')
+  const [setupForm, setSetupForm]           = useState({ name: 'My Stokvel', contribution: '500' })
+  const [creatingGroup, setCreatingGroup]   = useState(false)
 
-  if(setupMode) return (
-    <div style={{display:'flex',flexDirection:'column',gap:14}}>
-      <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(52,211,153,0.25)',borderRadius:16,padding:'16px 18px'}}>
-        <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--teal),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--teal)',letterSpacing:'0.09em',marginBottom:4}}>STOKVEL OS</div>
-        <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Set up your savings circle</div>
+  // ─── Load data ───────────────────────────────────────────────
+  const loadData = useCallback(async () => {
+    if (!userId) { setLoading(false); return }
+    setLoading(true)
+    try {
+      // Load group
+      const { data: groups, error: gErr } = await supabase
+        .from('stokvel_groups')
+        .select('*')
+        .eq('user_id', userId)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: true })
+        .limit(1)
+      if (gErr) throw gErr
+
+      const g: GroupRow | null = groups?.[0] ?? null
+      setGroup(g)
+
+      if (!g) { setLoading(false); return }
+
+      const currentMonth = new Date().toISOString().slice(0, 7)
+
+      const [mRes, cRes, dRes] = await Promise.all([
+        supabase
+          .from('stokvel_members')
+          .select('*')
+          .eq('group_id', g.id)
+          .is('deleted_at', null)
+          .order('payout_month', { ascending: true }),
+        supabase
+          .from('stokvel_contributions')
+          .select('*')
+          .eq('group_id', g.id)
+          .eq('month', currentMonth)
+          .is('deleted_at', null)
+          .order('member_name', { ascending: true }),
+        supabase
+          .from('stokvel_disputes')
+          .select('*')
+          .eq('group_id', g.id)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false }),
+      ])
+
+      if (mRes.error) throw mRes.error
+      if (cRes.error) throw cRes.error
+      if (dRes.error) throw dRes.error
+
+      setMembers(mRes.data ?? [])
+      setContributions(cRes.data ?? [])
+      setDisputes(dRes.data ?? [])
+    } catch (err) {
+      console.error('StokvelOS load error', err)
+      toast.error('Failed to load stokvel data')
+    } finally {
+      setLoading(false)
+    }
+  }, [userId, supabase])
+
+  useEffect(() => { loadData() }, [loadData])
+
+  // ─── Create group ────────────────────────────────────────────
+  const handleCreateGroup = async () => {
+    if (!userId || !setupForm.name.trim()) return
+    setCreatingGroup(true)
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_groups')
+        .insert({
+          user_id: userId,
+          name: setupForm.name.trim(),
+          contribution_amount: parseFloat(setupForm.contribution) || 500,
+        })
+        .select()
+        .single()
+      if (error) throw error
+      setGroup(data)
+      setMembers([])
+      setContributions([])
+      setDisputes([])
+      setTab('overview')
+      toast.success('Stokvel created!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not create stokvel')
+    } finally {
+      setCreatingGroup(false)
+    }
+  }
+
+  // ─── Reset stokvel ───────────────────────────────────────────
+  const handleReset = async () => {
+    if (!group) return
+    try {
+      const { error } = await supabase
+        .from('stokvel_groups')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', group.id)
+      if (error) throw error
+      setGroup(null)
+      setMembers([])
+      setContributions([])
+      setDisputes([])
+      setTab('overview')
+      toast.success('Stokvel reset')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not reset stokvel')
+    }
+  }
+
+  // ─── Setup screen ────────────────────────────────────────────
+  if (loading) return <Skeleton />
+
+  if (!group) return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
+        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
+        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Set up your savings circle</div>
       </div>
-      <div style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:14,padding:'16px',display:'flex',flexDirection:'column',gap:12}}>
-        <div><div style={{fontSize:'0.7rem',color:'var(--text-tertiary)',marginBottom:4}}>Stokvel name</div><input value={setupForm.name} onChange={e=>setSetupForm(v=>({...v,name:e.target.value}))} style={{width:'100%',padding:'9px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem'}}/></div>
-        <div><div style={{fontSize:'0.7rem',color:'var(--text-tertiary)',marginBottom:4}}>Monthly contribution per member (R)</div><input type="number" value={setupForm.contribution} onChange={e=>setSetupForm(v=>({...v,contribution:e.target.value}))} style={{width:'100%',padding:'9px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem',fontFamily:'var(--font-mono)'}}/></div>
-        <button onClick={()=>{const s={...EMPTY,name:setupForm.name,contribution:parseFloat(setupForm.contribution)||500,createdAt:new Date().toISOString()};update(s);setSetupMode(false)}} style={{padding:'11px 0',background:'rgba(52,211,153,0.1)',border:'1px solid rgba(52,211,153,0.25)',borderRadius:10,color:'var(--teal)',fontSize:'0.78rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>Create stokvel →</button>
+      <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>Stokvel name</div>
+          <input value={setupForm.name} onChange={e => setSetupForm(v => ({ ...v, name: e.target.value }))} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
+        </div>
+        <div>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>Monthly contribution per member (R)</div>
+          <input type="number" value={setupForm.contribution} onChange={e => setSetupForm(v => ({ ...v, contribution: e.target.value }))} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
+        </div>
+        <button
+          onClick={handleCreateGroup}
+          disabled={creatingGroup}
+          style={{ padding: '11px 0', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 10, color: 'var(--teal)', fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: creatingGroup ? 'not-allowed' : 'pointer', opacity: creatingGroup ? 0.6 : 1 }}
+        >
+          {creatingGroup ? 'Creating…' : 'Create stokvel →'}
+        </button>
       </div>
     </div>
   )
 
-  const totalFund=state.members.length*state.contribution
-  const paidThisMonth=state.contributions.filter(c=>{const m=new Date().toISOString().slice(0,7);return c.month===m&&c.paid}).length
-  const currentPayoutMember=state.members.find(m=>{const month=new Date().getMonth()+1;return m.payoutMonth===month})
+  // ─── Main app ─────────────────────────────────────────────────
+  const totalFund = members.length * group.contribution_amount
+  const paidThisMonth = contributions.filter(c => c.paid).length
+  const currentPayoutMember = members.find(m => m.payout_month === new Date().getMonth() + 1)
 
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:14}}>
-      <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(52,211,153,0.25)',borderRadius:16,padding:'16px 18px'}}>
-        <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--teal),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--teal)',letterSpacing:'0.09em',marginBottom:4}}>STOKVEL OS</div>
-        <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>{state.name}</div>
-        <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>{state.members.length} members · R{state.contribution}/month each · R{totalFund.toLocaleString('en-ZA')} monthly pot</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
+        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
+        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{group.name}</div>
+        <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>{members.length} members · R{group.contribution_amount}/month each · R{totalFund.toLocaleString('en-ZA')} monthly pot</div>
       </div>
 
-      <div style={{display:'flex',gap:0,overflowX:'auto',borderBottom:'1px solid var(--border-subtle)'}}>
-        {TABS.map(t=>(
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{flexShrink:0,padding:'8px 10px',background:'none',border:'none',borderBottom:tab===t.id?'2px solid var(--teal)':'2px solid transparent',color:tab===t.id?'var(--teal)':'var(--text-tertiary)',fontSize:'0.67rem',fontFamily:'var(--font-mono)',fontWeight:tab===t.id?700:400,cursor:'pointer',marginBottom:-1,whiteSpace:'nowrap'}}>
+      <div style={{ display: 'flex', gap: 0, overflowX: 'auto', borderBottom: '1px solid var(--border-subtle)' }}>
+        {TABS.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{ flexShrink: 0, padding: '8px 10px', background: 'none', border: 'none', borderBottom: tab === t.id ? '2px solid var(--teal)' : '2px solid transparent', color: tab === t.id ? 'var(--teal)' : 'var(--text-tertiary)', fontSize: '0.67rem', fontFamily: 'var(--font-mono)', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap' }}>
             {t.icon} {t.label}
           </button>
         ))}
       </div>
 
-      {tab==='overview'&&(
-        <div style={{display:'flex',flexDirection:'column',gap:12}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            {[{l:'Members',v:state.members.length,c:'var(--teal)'},{l:'Monthly pot',v:`R${totalFund.toLocaleString('en-ZA')}`,c:'var(--gold)'},{l:'Paid this month',v:`${paidThisMonth}/${state.members.length}`,c:paidThisMonth===state.members.length?'var(--teal)':'var(--coral)'},{l:'This month\'s payout',v:currentPayoutMember?.name||'TBC',c:'var(--nova)'}].map(s=>(
-              <div key={s.l} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:12,padding:'12px 14px'}}>
-                <div style={{fontSize:'0.62rem',color:'var(--text-muted)',marginBottom:4}}>{s.l}</div>
-                <div style={{fontSize:'0.95rem',fontWeight:700,color:s.c,fontFamily:'var(--font-mono)'}}>{s.v}</div>
+      {tab === 'overview' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {[
+              { l: 'Members',           v: members.length,                                        c: 'var(--teal)' },
+              { l: 'Monthly pot',       v: `R${totalFund.toLocaleString('en-ZA')}`,               c: 'var(--gold)' },
+              { l: 'Paid this month',   v: `${paidThisMonth}/${members.length}`,                  c: paidThisMonth === members.length ? 'var(--teal)' : 'var(--coral)' },
+              { l: "This month's payout", v: currentPayoutMember?.name || 'TBC',                  c: 'var(--nova)' },
+            ].map(s => (
+              <div key={s.l} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '12px 14px' }}>
+                <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginBottom: 4 }}>{s.l}</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 700, color: s.c, fontFamily: 'var(--font-mono)' }}>{s.v}</div>
               </div>
             ))}
           </div>
-          {paidThisMonth<state.members.length&&state.members.length>0&&(
-            <div style={{padding:'10px 14px',background:'rgba(232,112,64,0.08)',border:'1px solid rgba(232,112,64,0.2)',borderRadius:10,fontSize:'0.72rem',color:'var(--coral)'}}>
-              ⚠️ {state.members.length-paidThisMonth} member{state.members.length-paidThisMonth!==1?'s':''} have not yet contributed this month.
+          {paidThisMonth < members.length && members.length > 0 && (
+            <div style={{ padding: '10px 14px', background: 'rgba(232,112,64,0.08)', border: '1px solid rgba(232,112,64,0.2)', borderRadius: 10, fontSize: '0.72rem', color: 'var(--coral)' }}>
+              ⚠️ {members.length - paidThisMonth} member{members.length - paidThisMonth !== 1 ? 's' : ''} have not yet contributed this month.
             </div>
           )}
-          <button onClick={()=>{update({...EMPTY,createdAt:state.createdAt});setSetupMode(true)}} style={{padding:'9px 0',background:'transparent',border:'1px solid var(--border-subtle)',borderRadius:8,color:'var(--text-muted)',fontSize:'0.68rem',fontFamily:'var(--font-mono)',cursor:'pointer'}}>Reset stokvel</button>
+          <button onClick={handleReset} style={{ padding: '9px 0', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-muted)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', cursor: 'pointer' }}>
+            Reset stokvel
+          </button>
         </div>
       )}
 
-      {tab==='members'&&<MembersTab state={state} update={update}/>}
-      {tab==='ledger' &&<LedgerTab state={state} update={update}/>}
-      {tab==='payouts'&&<PayoutsTab state={state} update={update}/>}
-      {tab==='disputes'&&<DisputesTab state={state} update={update}/>}
-      {tab==='learn'  &&<LearnTab/>}
+      {tab === 'members'  && <MembersTab  groupId={group.id} supabase={supabase} members={members}  setMembers={setMembers} contributionAmount={group.contribution_amount} />}
+      {tab === 'ledger'   && <LedgerTab   groupId={group.id} supabase={supabase} members={members}  contributions={contributions} setContributions={setContributions} contributionAmount={group.contribution_amount} />}
+      {tab === 'payouts'  && <PayoutsTab  groupId={group.id} supabase={supabase} members={members}  setMembers={setMembers} contributionAmount={group.contribution_amount} />}
+      {tab === 'disputes' && <DisputesTab groupId={group.id} supabase={supabase} disputes={disputes} setDisputes={setDisputes} />}
+      {tab === 'learn'    && <LearnTab />}
     </div>
   )
 }
 
-function MembersTab({state,update}:{state:StokvelState;update:(s:StokvelState)=>void}) {
-  const [form,setForm]=useState({name:'',phone:''})
-  const [adding,setAdding]=useState(false)
-  const add=()=>{if(!form.name)return;const m:Member={id:Date.now(),name:form.name,phone:form.phone,active:true,payoutMonth:state.members.length+1};update({...state,members:[...state.members,m]});setForm({name:'',phone:''});setAdding(false)}
+// ─── Members Tab ──────────────────────────────────────────────
+function MembersTab({
+  groupId, supabase, members, setMembers, contributionAmount,
+}: {
+  groupId: string
+  supabase: SupabaseClient
+  members: MemberRow[]
+  setMembers: React.Dispatch<React.SetStateAction<MemberRow[]>>
+  contributionAmount: number
+}) {
+  const [form, setForm]     = useState({ name: '', phone: '' })
+  const [adding, setAdding] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [editId, setEditId] = useState<string | null>(null)
+  const [editForm, setEditForm] = useState({ name: '', phone: '', payout_month: 1 })
+
+  const add = async () => {
+    if (!form.name.trim()) return
+    setSaving(true)
+    try {
+      const nextPayout = members.length + 1
+      const { data, error } = await supabase
+        .from('stokvel_members')
+        .insert({ group_id: groupId, name: form.name.trim(), phone: form.phone.trim() || null, payout_month: nextPayout, active: true })
+        .select()
+        .single()
+      if (error) throw error
+      setMembers(prev => [...prev, data])
+      setForm({ name: '', phone: '' })
+      setAdding(false)
+      toast.success('Member added')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not add member')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const startEdit = (m: MemberRow) => {
+    setEditId(m.id)
+    setEditForm({ name: m.name, phone: m.phone ?? '', payout_month: m.payout_month })
+  }
+
+  const saveEdit = async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_members')
+        .update({ name: editForm.name.trim(), phone: editForm.phone.trim() || null, payout_month: editForm.payout_month })
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error
+      setMembers(prev => prev.map(m => m.id === id ? data : m))
+      setEditId(null)
+      toast.success('Member updated')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not update member')
+    }
+  }
+
+  const remove = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('stokvel_members')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+      if (error) throw error
+      setMembers(prev => prev.filter(m => m.id !== id))
+      toast.success('Member removed')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not remove member')
+    }
+  }
+
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:10}}>
-      {state.members.map(m=>(
-        <div key={m.id} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'11px 14px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {members.map(m => editId === m.id ? (
+        <div key={m.id} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input value={editForm.name} onChange={e => setEditForm(v => ({ ...v, name: e.target.value }))} placeholder="Name *" style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
+          <input value={editForm.phone} onChange={e => setEditForm(v => ({ ...v, phone: e.target.value }))} placeholder="Phone" style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
           <div>
-            <div style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{m.name}</div>
-            <div style={{fontSize:'0.65rem',color:'var(--text-tertiary)',marginTop:2}}>{m.phone?m.phone+' · ':''} Payout: month {m.payoutMonth}</div>
+            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>Payout month</div>
+            <input type="number" min={1} value={editForm.payout_month} onChange={e => setEditForm(v => ({ ...v, payout_month: parseInt(e.target.value) || 1 }))} style={{ width: 80, padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
           </div>
-          <button onClick={()=>update({...state,members:state.members.filter(x=>x.id!==m.id)})} style={{fontSize:'0.65rem',color:'var(--text-muted)',background:'none',border:'none',cursor:'pointer'}}>✕</button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => saveEdit(m.id)} style={{ flex: 1, padding: '9px 0', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 8, color: 'var(--teal)', fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Save</button>
+            <button onClick={() => setEditId(null)} style={{ padding: '9px 14px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-tertiary)', fontSize: '0.73rem', cursor: 'pointer' }}>Cancel</button>
+          </div>
+        </div>
+      ) : (
+        <div key={m.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '11px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{m.name}</div>
+            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{m.phone ? m.phone + ' · ' : ''}Payout: month {m.payout_month}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button onClick={() => startEdit(m)} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}>✏️</button>
+            <button onClick={() => remove(m.id)} style={{ fontSize: '0.65rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+          </div>
         </div>
       ))}
-      {adding?(
-        <div style={{background:'var(--bg-elevated)',border:'1px solid var(--border-default)',borderRadius:12,padding:'14px',display:'flex',flexDirection:'column',gap:10}}>
-          <input placeholder="Member name *" value={form.name} onChange={e=>setForm(v=>({...v,name:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem'}}/>
-          <input placeholder="Phone number (optional)" value={form.phone} onChange={e=>setForm(v=>({...v,phone:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem'}}/>
-          <div style={{display:'flex',gap:8}}>
-            <button onClick={add} style={{flex:1,padding:'9px 0',background:'rgba(52,211,153,0.1)',border:'1px solid rgba(52,211,153,0.25)',borderRadius:8,color:'var(--teal)',fontSize:'0.73rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>Add</button>
-            <button onClick={()=>setAdding(false)} style={{padding:'9px 14px',background:'transparent',border:'1px solid var(--border-subtle)',borderRadius:8,color:'var(--text-tertiary)',fontSize:'0.73rem',cursor:'pointer'}}>Cancel</button>
+
+      {adding ? (
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input placeholder="Member name *" value={form.name} onChange={e => setForm(v => ({ ...v, name: e.target.value }))} style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
+          <input placeholder="Phone number (optional)" value={form.phone} onChange={e => setForm(v => ({ ...v, phone: e.target.value }))} style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={add} disabled={saving} style={{ flex: 1, padding: '9px 0', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 8, color: 'var(--teal)', fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1 }}>
+              {saving ? 'Adding…' : 'Add'}
+            </button>
+            <button onClick={() => setAdding(false)} style={{ padding: '9px 14px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-tertiary)', fontSize: '0.73rem', cursor: 'pointer' }}>Cancel</button>
           </div>
         </div>
-      ):(
-        <button onClick={()=>setAdding(true)} style={{padding:'11px 0',background:'rgba(52,211,153,0.06)',border:'1px solid rgba(52,211,153,0.2)',borderRadius:10,color:'var(--teal)',fontSize:'0.78rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>+ Add member</button>
+      ) : (
+        <button onClick={() => setAdding(true)} style={{ padding: '11px 0', background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 10, color: 'var(--teal)', fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>+ Add member</button>
       )}
     </div>
   )
 }
 
-function LedgerTab({state,update}:{state:StokvelState;update:(s:StokvelState)=>void}) {
-  const currentMonth=new Date().toISOString().slice(0,7)
-  const thisMonth=state.contributions.filter(c=>c.month===currentMonth)
-  const togglePaid=(id:number)=>{update({...state,contributions:state.contributions.map(c=>c.id===id?{...c,paid:!c.paid}:c)})}
-  const addThisMonth=()=>{
-    const existing=new Set(thisMonth.map(c=>c.memberId))
-    const newEntries:Contribution[]=state.members.filter(m=>!existing.has(m.id)).map(m=>({id:Date.now()+m.id,memberId:m.id,memberName:m.name,amount:state.contribution,date:currentMonth+'-01',paid:false,month:currentMonth}))
-    update({...state,contributions:[...state.contributions,...newEntries]})
+// ─── Ledger Tab ───────────────────────────────────────────────
+function LedgerTab({
+  groupId, supabase, members, contributions, setContributions, contributionAmount,
+}: {
+  groupId: string
+  supabase: SupabaseClient
+  members: MemberRow[]
+  contributions: ContributionRow[]
+  setContributions: React.Dispatch<React.SetStateAction<ContributionRow[]>>
+  contributionAmount: number
+}) {
+  const [generating, setGenerating] = useState(false)
+  const currentMonth = new Date().toISOString().slice(0, 7)
+
+  const togglePaid = async (row: ContributionRow) => {
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_contributions')
+        .update({ paid: !row.paid })
+        .eq('id', row.id)
+        .select()
+        .single()
+      if (error) throw error
+      setContributions(prev => prev.map(c => c.id === row.id ? data : c))
+      toast.success(data.paid ? 'Marked as paid' : 'Marked as unpaid')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not update contribution')
+    }
   }
+
+  const generateMonth = async () => {
+    if (members.length === 0) { toast.error('Add members first'); return }
+    setGenerating(true)
+    try {
+      const existingMemberIds = new Set(contributions.map(c => c.member_id))
+      const toInsert = members
+        .filter(m => !existingMemberIds.has(m.id))
+        .map(m => ({
+          group_id: groupId,
+          member_id: m.id,
+          member_name: m.name,
+          amount: contributionAmount,
+          contribution_date: currentMonth + '-01',
+          paid: false,
+          month: currentMonth,
+        }))
+      if (toInsert.length === 0) { toast('All members already have entries this month'); return }
+      const { data, error } = await supabase
+        .from('stokvel_contributions')
+        .insert(toInsert)
+        .select()
+      if (error) throw error
+      setContributions(prev => [...prev, ...(data ?? [])])
+      toast.success(`Generated ${toInsert.length} contribution${toInsert.length !== 1 ? 's' : ''}`)
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not generate contributions')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:10}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <div style={{fontSize:'0.72rem',color:'var(--text-secondary)'}}>{new Date().toLocaleDateString('en-ZA',{month:'long',year:'numeric'})}</div>
-        <button onClick={addThisMonth} style={{padding:'6px 12px',background:'var(--gold-dim)',border:'1px solid var(--gold-border)',borderRadius:8,color:'var(--gold)',fontSize:'0.65rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>Generate month</button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{new Date().toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' })}</div>
+        <button onClick={generateMonth} disabled={generating} style={{ padding: '6px 12px', background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', borderRadius: 8, color: 'var(--gold)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: generating ? 'not-allowed' : 'pointer', opacity: generating ? 0.6 : 1 }}>
+          {generating ? 'Generating…' : 'Generate month'}
+        </button>
       </div>
-      {thisMonth.length===0&&<div style={{textAlign:'center',padding:'24px',color:'var(--text-muted)',fontSize:'0.75rem'}}>Click "Generate month" to create this month's contribution entries.</div>}
-      {thisMonth.map(c=>(
-        <button key={c.id} onClick={()=>togglePaid(c.id)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',background:'var(--bg-surface)',border:`1px solid ${c.paid?'rgba(52,211,153,0.25)':'var(--border-subtle)'}`,borderRadius:10,cursor:'pointer',textAlign:'left'}}>
-          <div style={{display:'flex',alignItems:'center',gap:10}}>
-            <div style={{width:22,height:22,borderRadius:'50%',background:c.paid?'rgba(52,211,153,0.15)':'transparent',border:`2px solid ${c.paid?'var(--teal)':'var(--border-default)'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.65rem',color:'var(--teal)',fontWeight:700}}>{c.paid?'✓':''}</div>
-            <span style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{c.memberName}</span>
+      {contributions.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>Click "Generate month" to create this month's contribution entries.</div>
+      )}
+      {contributions.map(c => (
+        <button key={c.id} onClick={() => togglePaid(c)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', background: 'var(--bg-surface)', border: `1px solid ${c.paid ? 'rgba(52,211,153,0.25)' : 'var(--border-subtle)'}`, borderRadius: 10, cursor: 'pointer', textAlign: 'left' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 22, height: 22, borderRadius: '50%', background: c.paid ? 'rgba(52,211,153,0.15)' : 'transparent', border: `2px solid ${c.paid ? 'var(--teal)' : 'var(--border-default)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', color: 'var(--teal)', fontWeight: 700 }}>{c.paid ? '✓' : ''}</div>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{c.member_name}</span>
           </div>
-          <span style={{fontSize:'0.8rem',fontFamily:'var(--font-mono)',fontWeight:700,color:c.paid?'var(--teal)':'var(--text-secondary)'}}>R{c.amount}</span>
+          <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: c.paid ? 'var(--teal)' : 'var(--text-secondary)' }}>R{c.amount}</span>
         </button>
       ))}
     </div>
   )
 }
 
-function PayoutsTab({state,update}:{state:StokvelState;update:(s:StokvelState)=>void}) {
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-  const sorted=[...state.members].sort((a,b)=>a.payoutMonth-b.payoutMonth)
-  const potAmount=state.members.length*state.contribution
+// ─── Payouts Tab ─────────────────────────────────────────────
+function PayoutsTab({
+  groupId, supabase, members, setMembers, contributionAmount,
+}: {
+  groupId: string
+  supabase: SupabaseClient
+  members: MemberRow[]
+  setMembers: React.Dispatch<React.SetStateAction<MemberRow[]>>
+  contributionAmount: number
+}) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const sorted = [...members].sort((a, b) => a.payout_month - b.payout_month)
+  const potAmount = members.length * contributionAmount
+
+  const updatePayoutMonth = async (id: string, newMonth: number) => {
+    const clamped = Math.max(1, newMonth)
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_members')
+        .update({ payout_month: clamped })
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error
+      setMembers(prev => prev.map(m => m.id === id ? data : m))
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not update payout month')
+    }
+  }
+
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:10}}>
-      <div style={{padding:'10px 14px',background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,fontSize:'0.72rem',color:'var(--text-secondary)',lineHeight:1.6}}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ padding: '10px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 10, fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
         Each member receives the full pot (R{potAmount.toLocaleString('en-ZA')}) once per cycle. Drag or reassign months below.
       </div>
-      {sorted.map(m=>(
-        <div key={m.id} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'11px 14px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      {sorted.map(m => (
+        <div key={m.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '11px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{m.name}</div>
-            <div style={{fontSize:'0.65rem',color:'var(--text-tertiary)',marginTop:1}}>Month {m.payoutMonth} — {months[(m.payoutMonth-1)%12]}</div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{m.name}</div>
+            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 1 }}>Month {m.payout_month} — {months[(m.payout_month - 1) % 12]}</div>
           </div>
-          <div style={{display:'flex',gap:6}}>
-            <button onClick={()=>{const updated=state.members.map(x=>x.id===m.id?{...x,payoutMonth:Math.max(1,x.payoutMonth-1)}:x);update({...state,members:updated})}} style={{width:24,height:24,background:'var(--bg-elevated)',border:'1px solid var(--border-subtle)',borderRadius:6,color:'var(--text-secondary)',fontSize:'0.75rem',cursor:'pointer'}}>−</button>
-            <span style={{width:28,textAlign:'center',fontSize:'0.7rem',fontFamily:'var(--font-mono)',color:'var(--gold)',fontWeight:700,lineHeight:'24px'}}>{m.payoutMonth}</span>
-            <button onClick={()=>{const updated=state.members.map(x=>x.id===m.id?{...x,payoutMonth:x.payoutMonth+1}:x);update({...state,members:updated})}} style={{width:24,height:24,background:'var(--bg-elevated)',border:'1px solid var(--border-subtle)',borderRadius:6,color:'var(--text-secondary)',fontSize:'0.75rem',cursor:'pointer'}}>+</button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button onClick={() => updatePayoutMonth(m.id, m.payout_month - 1)} style={{ width: 24, height: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontSize: '0.75rem', cursor: 'pointer' }}>−</button>
+            <span style={{ width: 28, textAlign: 'center', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', fontWeight: 700, lineHeight: '24px' }}>{m.payout_month}</span>
+            <button onClick={() => updatePayoutMonth(m.id, m.payout_month + 1)} style={{ width: 24, height: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontSize: '0.75rem', cursor: 'pointer' }}>+</button>
           </div>
         </div>
       ))}
@@ -184,54 +549,162 @@ function PayoutsTab({state,update}:{state:StokvelState;update:(s:StokvelState)=>
   )
 }
 
-function DisputesTab({state,update}:{state:StokvelState;update:(s:StokvelState)=>void}) {
-  const [form,setForm]=useState({description:'',reportedBy:''})
-  const [adding,setAdding]=useState(false)
-  const add=()=>{if(!form.description)return;const d:Dispute={id:Date.now(),description:form.description,reportedBy:form.reportedBy,date:new Date().toISOString().split('T')[0],resolved:false};update({...state,disputes:[d,...state.disputes]});setAdding(false);setForm({description:'',reportedBy:''})}
+// ─── Disputes Tab ─────────────────────────────────────────────
+function DisputesTab({
+  groupId, supabase, disputes, setDisputes,
+}: {
+  groupId: string
+  supabase: SupabaseClient
+  disputes: DisputeRow[]
+  setDisputes: React.Dispatch<React.SetStateAction<DisputeRow[]>>
+}) {
+  const [form, setForm]         = useState({ description: '', reportedBy: '' })
+  const [adding, setAdding]     = useState(false)
+  const [saving, setSaving]     = useState(false)
+  const [editId, setEditId]     = useState<string | null>(null)
+  const [editDesc, setEditDesc] = useState('')
+
+  const add = async () => {
+    if (!form.description.trim()) return
+    setSaving(true)
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_disputes')
+        .insert({ group_id: groupId, description: form.description.trim(), reported_by: form.reportedBy.trim() || null, resolved: false })
+        .select()
+        .single()
+      if (error) throw error
+      setDisputes(prev => [data, ...prev])
+      setForm({ description: '', reportedBy: '' })
+      setAdding(false)
+      toast.success('Dispute logged')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not log dispute')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const toggleResolved = async (d: DisputeRow) => {
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_disputes')
+        .update({ resolved: !d.resolved })
+        .eq('id', d.id)
+        .select()
+        .single()
+      if (error) throw error
+      setDisputes(prev => prev.map(x => x.id === d.id ? data : x))
+      toast.success(data.resolved ? 'Marked resolved' : 'Reopened dispute')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not update dispute')
+    }
+  }
+
+  const removeDispute = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('stokvel_disputes')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+      if (error) throw error
+      setDisputes(prev => prev.filter(d => d.id !== id))
+      toast.success('Dispute removed')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not remove dispute')
+    }
+  }
+
+  const saveEditDesc = async (id: string) => {
+    if (!editDesc.trim()) return
+    try {
+      const { data, error } = await supabase
+        .from('stokvel_disputes')
+        .update({ description: editDesc.trim() })
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error
+      setDisputes(prev => prev.map(x => x.id === id ? data : x))
+      setEditId(null)
+      toast.success('Dispute updated')
+    } catch (err) {
+      console.error(err)
+      toast.error('Could not update dispute')
+    }
+  }
+
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:10}}>
-      <button onClick={()=>setAdding(v=>!v)} style={{padding:'10px 0',background:'rgba(232,112,64,0.08)',border:'1px solid rgba(232,112,64,0.2)',borderRadius:10,color:'var(--coral)',fontSize:'0.75rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>{adding?'Cancel':'+ Log dispute'}</button>
-      {adding&&(
-        <div style={{background:'var(--bg-elevated)',border:'1px solid var(--border-default)',borderRadius:12,padding:'14px',display:'flex',flexDirection:'column',gap:10}}>
-          <textarea placeholder="Describe the dispute..." value={form.description} onChange={e=>setForm(v=>({...v,description:e.target.value}))} rows={3} style={{width:'100%',padding:'8px 10px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:7,color:'var(--text-primary)',fontSize:'0.78rem',resize:'none'}}/>
-          <input placeholder="Reported by" value={form.reportedBy} onChange={e=>setForm(v=>({...v,reportedBy:e.target.value}))} style={{padding:'8px 12px',background:'var(--bg-base)',border:'1px solid var(--border-default)',borderRadius:8,color:'var(--text-primary)',fontSize:'0.82rem'}}/>
-          <button onClick={add} style={{padding:'9px 0',background:'rgba(232,112,64,0.1)',border:'1px solid rgba(232,112,64,0.25)',borderRadius:8,color:'var(--coral)',fontSize:'0.73rem',fontFamily:'var(--font-mono)',fontWeight:700,cursor:'pointer'}}>Log dispute</button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <button onClick={() => setAdding(v => !v)} style={{ padding: '10px 0', background: 'rgba(232,112,64,0.08)', border: '1px solid rgba(232,112,64,0.2)', borderRadius: 10, color: 'var(--coral)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>
+        {adding ? 'Cancel' : '+ Log dispute'}
+      </button>
+
+      {adding && (
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <textarea placeholder="Describe the dispute..." value={form.description} onChange={e => setForm(v => ({ ...v, description: e.target.value }))} rows={3} style={{ width: '100%', padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.78rem', resize: 'none' }} />
+          <input placeholder="Reported by" value={form.reportedBy} onChange={e => setForm(v => ({ ...v, reportedBy: e.target.value }))} style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
+          <button onClick={add} disabled={saving} style={{ padding: '9px 0', background: 'rgba(232,112,64,0.1)', border: '1px solid rgba(232,112,64,0.25)', borderRadius: 8, color: 'var(--coral)', fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1 }}>
+            {saving ? 'Logging…' : 'Log dispute'}
+          </button>
         </div>
       )}
-      {state.disputes.length===0&&<div style={{textAlign:'center',padding:'20px',color:'var(--text-muted)',fontSize:'0.75rem'}}>No disputes logged — great sign!</div>}
-      {state.disputes.map(d=>(
-        <div key={d.id} style={{background:'var(--bg-surface)',border:`1px solid ${d.resolved?'var(--border-subtle)':'rgba(232,112,64,0.2)'}`,borderRadius:10,padding:'12px 14px'}}>
-          <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
-            <span style={{fontSize:'0.65rem',color:'var(--text-muted)'}}>{d.date}{d.reportedBy?` · ${d.reportedBy}`:''}</span>
-            <button onClick={()=>update({...state,disputes:state.disputes.map(x=>x.id===d.id?{...x,resolved:!x.resolved}:x)})} style={{fontSize:'0.62rem',padding:'2px 8px',background:d.resolved?'rgba(52,211,153,0.1)':'transparent',border:`1px solid ${d.resolved?'rgba(52,211,153,0.25)':'var(--border-subtle)'}`,borderRadius:100,color:d.resolved?'var(--teal)':'var(--text-muted)',cursor:'pointer',fontFamily:'var(--font-mono)',fontWeight:700}}>
-              {d.resolved?'✓ Resolved':'Mark resolved'}
-            </button>
+
+      {disputes.length === 0 && <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>No disputes logged — great sign!</div>}
+
+      {disputes.map(d => (
+        <div key={d.id} style={{ background: 'var(--bg-surface)', border: `1px solid ${d.resolved ? 'var(--border-subtle)' : 'rgba(232,112,64,0.2)'}`, borderRadius: 10, padding: '12px 14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+              {d.created_at ? new Date(d.created_at).toLocaleDateString('en-ZA') : ''}{d.reported_by ? ` · ${d.reported_by}` : ''}
+            </span>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              <button onClick={() => { setEditId(d.id); setEditDesc(d.description) }} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>✏️</button>
+              <button onClick={() => toggleResolved(d)} style={{ fontSize: '0.62rem', padding: '2px 8px', background: d.resolved ? 'rgba(52,211,153,0.1)' : 'transparent', border: `1px solid ${d.resolved ? 'rgba(52,211,153,0.25)' : 'var(--border-subtle)'}`, borderRadius: 100, color: d.resolved ? 'var(--teal)' : 'var(--text-muted)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                {d.resolved ? '✓ Resolved' : 'Mark resolved'}
+              </button>
+              <button onClick={() => removeDispute(d.id)} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+            </div>
           </div>
-          <div style={{fontSize:'0.78rem',color:'var(--text-secondary)',lineHeight:1.5}}>{d.description}</div>
+          {editId === d.id ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} rows={3} style={{ width: '100%', padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.78rem', resize: 'none' }} />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => saveEditDesc(d.id)} style={{ flex: 1, padding: '7px 0', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 7, color: 'var(--teal)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Save</button>
+                <button onClick={() => setEditId(null)} style={{ padding: '7px 12px', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 7, color: 'var(--text-tertiary)', fontSize: '0.7rem', cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{d.description}</div>
+          )}
         </div>
       ))}
     </div>
   )
 }
 
+// ─── Learn Tab ────────────────────────────────────────────────
 function LearnTab() {
-  const [open,setOpen]=useState<number|null>(null)
-  const items=[
-    {q:'What is a stokvel?',a:'A stokvel is a rotating savings club where members contribute a fixed amount monthly and one member receives the full pot each cycle. It is a uniquely African financial innovation, practiced for centuries before modern banking.'},
-    {q:'Stokvel vs savings account: which is better?',a:'A stokvel builds commitment and community. A savings account earns interest. Ideally: use a stokvel for large irregular purchases (groceries, tuition, events), and a savings account for emergency fund. They serve different psychological purposes.'},
-    {q:'How to protect the group from defaults',a:'1. Start small — only invite people you trust. 2. Have a written constitution signed by all. 3. Set a clear consequence for missing a payment (loan, reduced payout, or removal). 4. Use this ledger to keep transparent records. 5. Never combine stokvel money with personal money.'},
-    {q:'Tax implications (SA)',a:'Stokvel contributions are not taxable income because they are your own money rotating back. However, if the stokvel invests and earns interest > R23,800/year (individuals), that interest is taxable. A stokvel with a bank account may need to register for income tax if earnings exceed thresholds.'},
-    {q:'How to grow the stokvel pot',a:'Some stokvels invest the monthly pot in a notice account, money market fund, or JSE unit trust before paying out. This earns interest while the money waits. Example: R10,000 pot in a 5% annual notice account earns R42 in a month — buy grocery vouchers for the payout member.'},
+  const [open, setOpen] = useState<number | null>(null)
+  const items = [
+    { q: 'What is a stokvel?', a: 'A stokvel is a rotating savings club where members contribute a fixed amount monthly and one member receives the full pot each cycle. It is a uniquely African financial innovation, practiced for centuries before modern banking.' },
+    { q: 'Stokvel vs savings account: which is better?', a: 'A stokvel builds commitment and community. A savings account earns interest. Ideally: use a stokvel for large irregular purchases (groceries, tuition, events), and a savings account for emergency fund. They serve different psychological purposes.' },
+    { q: 'How to protect the group from defaults', a: '1. Start small — only invite people you trust. 2. Have a written constitution signed by all. 3. Set a clear consequence for missing a payment (loan, reduced payout, or removal). 4. Use this ledger to keep transparent records. 5. Never combine stokvel money with personal money.' },
+    { q: 'Tax implications (SA)', a: 'Stokvel contributions are not taxable income because they are your own money rotating back. However, if the stokvel invests and earns interest > R23,800/year (individuals), that interest is taxable. A stokvel with a bank account may need to register for income tax if earnings exceed thresholds.' },
+    { q: 'How to grow the stokvel pot', a: 'Some stokvels invest the monthly pot in a notice account, money market fund, or JSE unit trust before paying out. This earns interest while the money waits. Example: R10,000 pot in a 5% annual notice account earns R42 in a month — buy grocery vouchers for the payout member.' },
   ]
   return (
-    <div style={{display:'flex',flexDirection:'column',gap:8}}>
-      {items.map((s,i)=>(
-        <div key={i} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:11,overflow:'hidden'}}>
-          <button onClick={()=>setOpen(open===i?null:i)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',width:'100%',padding:'12px 14px',background:'none',border:'none',cursor:'pointer',textAlign:'left',gap:10}}>
-            <span style={{fontSize:'0.82rem',fontWeight:600,color:'var(--text-primary)'}}>{s.q}</span>
-            <span style={{fontSize:'0.6rem',color:'var(--text-muted)',flexShrink:0,transform:open===i?'rotate(180deg)':'none',transition:'transform 0.2s'}}>▾</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {items.map((s, i) => (
+        <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 11, overflow: 'hidden' }}>
+          <button onClick={() => setOpen(open === i ? null : i)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '12px 14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: 10 }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{s.q}</span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', flexShrink: 0, transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
           </button>
-          {open===i&&<div style={{padding:'0 14px 12px',fontSize:'0.75rem',color:'var(--text-secondary)',lineHeight:1.65}}>{s.a}</div>}
+          {open === i && <div style={{ padding: '0 14px 12px', fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.65 }}>{s.a}</div>}
         </div>
       ))}
     </div>

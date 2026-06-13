@@ -1,16 +1,18 @@
 'use client'
 // ─── Sunday Planning Session ──────────────────────────────────
 // Guided 5-minute weekly ritual. Available anytime, prompted on Sundays.
-// Generates a Monday-first weekly focus plan stored in localStorage.
-import { useState } from 'react'
+// Generates a Monday-first weekly focus plan persisted in Supabase.
+import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
+import { useAppStore } from '@/store'
 
-const STORAGE_KEY = 'varsityos-weekly-plan'
 interface WeeklyPlan {
-  weekStart: string  // Monday's date
+  weekStart: string           // Monday's date (YYYY-MM-DD)
   priorities: string[]
   wins: string[]
   blockers: string[]
-  plan: string[]
+  plan: string[]              // mapped from daily_plan column
   completedPriorities: number[]
   generatedAt: string
 }
@@ -50,46 +52,180 @@ type Stage = 'intro' | 'wins' | 'priorities' | 'blockers' | 'plan'
 export default function SundayPlanning() {
   const today = new Date()
   const isSunday = today.getDay() === 0
+  const userId = useAppStore((s) => s.userId)
+
   const [open, setOpen] = useState(false)
   const [stage, setStage] = useState<Stage>('intro')
   const [wins, setWins] = useState(['', ''])
   const [priorities, setPriorities] = useState(['', '', ''])
   const [blockers, setBlockers] = useState([''])
-  const [plan, setPlan] = useState<WeeklyPlan | null>(() => {
-    if (typeof window === 'undefined') return null
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') } catch { return null }
-  })
+  const [plan, setPlan] = useState<WeeklyPlan | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
-  const generate = () => {
+  // ── Fetch plan on mount ──────────────────────────────────────
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false)
+      return
+    }
+    const supabase = createClient()
+    const weekStart = getMonday()
+
+    supabase
+      .from('weekly_plans')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('week_start', weekStart)
+      .is('deleted_at', null)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('SundayPlanning fetch error:', error)
+        } else if (data) {
+          setPlan({
+            weekStart: data.week_start,
+            priorities: (data.priorities as string[]) ?? [],
+            wins: (data.wins as string[]) ?? [],
+            blockers: (data.blockers as string[]) ?? [],
+            plan: (data.daily_plan as string[]) ?? [],
+            completedPriorities: (data.completed_priorities as number[]) ?? [],
+            generatedAt: data.generated_at,
+          })
+        }
+        setLoading(false)
+      })
+  }, [userId])
+
+  // ── Generate + upsert ────────────────────────────────────────
+  const generate = async () => {
     const w = wins.filter(Boolean)
     const p = priorities.filter(Boolean)
     const b = blockers.filter(Boolean)
     const weekPlan = buildWeeklyPlan(p, w, b)
-    const weekly: WeeklyPlan = { weekStart: getMonday(), priorities: p, wins: w, blockers: b, plan: weekPlan, completedPriorities: [], generatedAt: new Date().toISOString() }
-    setPlan(weekly)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(weekly))
+    const weekStart = getMonday()
+    const generatedAt = new Date().toISOString()
+
+    const optimistic: WeeklyPlan = {
+      weekStart,
+      priorities: p,
+      wins: w,
+      blockers: b,
+      plan: weekPlan,
+      completedPriorities: [],
+      generatedAt,
+    }
+    setPlan(optimistic)
     setStage('plan')
+
+    if (!userId) return
+
+    setSaving(true)
+    const supabase = createClient()
+    const { error } = await supabase.from('weekly_plans').upsert(
+      {
+        user_id: userId,
+        week_start: weekStart,
+        priorities: p,
+        wins: w,
+        blockers: b,
+        daily_plan: weekPlan,
+        completed_priorities: [],
+        generated_at: generatedAt,
+        deleted_at: null,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,week_start' }
+    )
+    setSaving(false)
+
+    if (error) {
+      console.error('SundayPlanning upsert error:', error)
+      toast.error('Could not save your weekly plan. Please try again.')
+    }
   }
 
-  const togglePriority = (i: number) => {
+  // ── Toggle priority ──────────────────────────────────────────
+  const togglePriority = async (i: number) => {
     if (!plan) return
-    const completed = plan.completedPriorities.includes(i) ? plan.completedPriorities.filter(x => x !== i) : [...plan.completedPriorities, i]
+    const completed = plan.completedPriorities.includes(i)
+      ? plan.completedPriorities.filter((x) => x !== i)
+      : [...plan.completedPriorities, i]
+
     const updated = { ...plan, completedPriorities: completed }
     setPlan(updated)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+
+    if (!userId) return
+
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('weekly_plans')
+      .update({
+        completed_priorities: completed,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('week_start', plan.weekStart)
+      .is('deleted_at', null)
+
+    if (error) {
+      console.error('SundayPlanning toggle error:', error)
+      toast.error('Could not save your progress. Please try again.')
+      // revert optimistic update
+      setPlan(plan)
+    }
   }
 
+  // ── Redo plan (soft delete) ───────────────────────────────────
+  const redoPlan = async () => {
+    if (!plan) return
+
+    if (userId) {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('weekly_plans')
+        .update({
+          deleted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+        .eq('week_start', plan.weekStart)
+
+      if (error) {
+        console.error('SundayPlanning soft-delete error:', error)
+        toast.error('Could not reset your plan. Please try again.')
+        return
+      }
+    }
+
+    setPlan(null)
+    setWins(['', ''])
+    setPriorities(['', '', ''])
+    setBlockers([''])
+    setStage('intro')
+  }
+
+  // ── Collapsed button ─────────────────────────────────────────
   if (!open) {
-    const hasPlan = plan && plan.weekStart === getMonday()
-    const completedCount = plan?.completedPriorities.length || 0
-    const totalPriorities = plan?.priorities.length || 0
+    const hasPlan = !loading && plan && plan.weekStart === getMonday()
+    const completedCount = plan?.completedPriorities.length ?? 0
+    const totalPriorities = plan?.priorities.length ?? 0
     return (
-      <button onClick={() => { setOpen(true); if (hasPlan) setStage('plan') }} style={{ display: 'flex', width: '100%', padding: '13px 16px', background: 'var(--bg-surface)', border: `1px solid ${isSunday && !hasPlan ? 'rgba(250,204,21,0.3)' : 'var(--border-subtle)'}`, borderRadius: 14, cursor: 'pointer', gap: 12, alignItems: 'center', textAlign: 'left' }}>
-        <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{hasPlan ? '📋' : '🌅'}</span>
+      <button
+        onClick={() => { setOpen(true); if (hasPlan) setStage('plan') }}
+        style={{ display: 'flex', width: '100%', padding: '13px 16px', background: 'var(--bg-surface)', border: `1px solid ${isSunday && !hasPlan ? 'rgba(250,204,21,0.3)' : 'var(--border-subtle)'}`, borderRadius: 14, cursor: 'pointer', gap: 12, alignItems: 'center', textAlign: 'left' }}
+      >
+        <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{loading ? '⏳' : hasPlan ? '📋' : '🌅'}</span>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: isSunday && !hasPlan ? 'var(--gold)' : 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>{isSunday ? 'SUNDAY PLANNING' : 'WEEKLY PLAN'}{isSunday && !hasPlan ? ' · TIME TO PLAN' : ''}</div>
+          <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: isSunday && !hasPlan ? 'var(--gold)' : 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>
+            {isSunday ? 'SUNDAY PLANNING' : 'WEEKLY PLAN'}{isSunday && !hasPlan && !loading ? ' · TIME TO PLAN' : ''}
+          </div>
           <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-            {hasPlan ? `Week of ${plan.weekStart} · ${completedCount}/${totalPriorities} priorities done` : 'Plan your week in 5 minutes'}
+            {loading
+              ? 'Loading your plan…'
+              : hasPlan
+                ? `Week of ${plan!.weekStart} · ${completedCount}/${totalPriorities} priorities done`
+                : 'Plan your week in 5 minutes'}
           </div>
         </div>
         <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>→</div>
@@ -97,6 +233,7 @@ export default function SundayPlanning() {
     )
   }
 
+  // ── Expanded panel ───────────────────────────────────────────
   return (
     <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: 16, overflow: 'hidden' }}>
       {/* Header */}
@@ -109,7 +246,14 @@ export default function SundayPlanning() {
       </div>
 
       <div style={{ padding: '16px' }}>
-        {stage === 'intro' && (
+        {/* Loading state */}
+        {loading && (
+          <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
+            Loading your plan…
+          </div>
+        )}
+
+        {!loading && stage === 'intro' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
               Weekly planning takes 5 minutes and gives you 3× more clarity about your week. You&apos;ll answer 3 questions in under 5 minutes.
@@ -131,7 +275,7 @@ export default function SundayPlanning() {
           </div>
         )}
 
-        {stage === 'wins' && (
+        {!loading && stage === 'wins' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>🏆 What did you accomplish last week?</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 4 }}>No win is too small. Even showing up counts.</div>
@@ -145,7 +289,7 @@ export default function SundayPlanning() {
           </div>
         )}
 
-        {stage === 'priorities' && (
+        {!loading && stage === 'priorities' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>🎯 What are your 3 priorities this week?</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 4 }}>Be specific. "Study ECO1010" → "Complete Chapter 4 exercises + revision notes".</div>
@@ -159,19 +303,21 @@ export default function SundayPlanning() {
           </div>
         )}
 
-        {stage === 'blockers' && (
+        {!loading && stage === 'blockers' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>🧱 What is blocking your progress?</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: 4 }}>One thing you need to remove or work around this week.</div>
             <input value={blockers[0]} onChange={e => setBlockers([e.target.value])} placeholder="e.g. Haven't started the assignment, feeling overwhelmed" style={{ padding: '10px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.8rem', width: '100%' }} />
             <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
               <button onClick={() => setStage('priorities')} style={{ padding: '9px 0', flex: 1, background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-muted)', fontSize: '0.72rem', cursor: 'pointer' }}>Back</button>
-              <button onClick={generate} style={{ padding: '9px 0', flex: 2, background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)', borderRadius: 8, color: 'var(--gold)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Build my week plan →</button>
+              <button onClick={generate} disabled={saving} style={{ padding: '9px 0', flex: 2, background: 'rgba(250,204,21,0.1)', border: '1px solid rgba(250,204,21,0.25)', borderRadius: 8, color: 'var(--gold)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1 }}>
+                {saving ? 'Saving…' : 'Build my week plan →'}
+              </button>
             </div>
           </div>
         )}
 
-        {stage === 'plan' && plan && (
+        {!loading && stage === 'plan' && plan && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
               <div style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-primary)' }}>Week of {plan.weekStart}</div>
@@ -191,7 +337,10 @@ export default function SundayPlanning() {
                 <div key={i} style={{ padding: '8px 10px', marginBottom: 5, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: 7, fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{s}</div>
               ))}
             </div>
-            <button onClick={() => { setStage('intro'); setWins(['', '']); setPriorities(['', '', '']); setBlockers(['']) }} style={{ padding: '9px 0', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-muted)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', marginTop: 4 }}>
+            <button
+              onClick={redoPlan}
+              style={{ padding: '9px 0', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 8, color: 'var(--text-muted)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', marginTop: 4 }}
+            >
               Redo planning session
             </button>
           </div>

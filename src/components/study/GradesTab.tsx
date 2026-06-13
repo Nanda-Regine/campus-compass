@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, type CSSProperties } from 're
 import { Plus, Trash2, Calculator, TrendingUp, Info } from 'lucide-react'
 import type { Module } from '@/types'
 import { loadGradesData, saveGradesData, type DBModuleGrade, type GpaRow } from '@/lib/db/grades'
+import { signals } from '@/store/signals'
 
 /* ── Types ─────────────────────────────────────────────── */
 interface Assessment {
@@ -616,6 +617,18 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
     clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
       saveGradesData(moduleGrades as DBModuleGrade[], gpaRows).catch(() => {})
+      for (const mg of moduleGrades) {
+        const scores = mg.assessments.filter(a => a.score !== '' && a.weight !== '')
+        const totalW = scores.reduce((s, a) => s + (parseFloat(a.weight) || 0), 0)
+        const earned = scores.reduce((s, a) => s + ((parseFloat(a.score) || 0) / 100) * (parseFloat(a.weight) || 0), 0)
+        if (totalW > 0) {
+          signals.emit({ type: 'grade_updated', payload: {
+            moduleId: mg.moduleId,
+            grade: Math.round(earned / totalW * 100),
+            moduleCode: mg.moduleName,
+          }})
+        }
+      }
     }, 800)
     return () => clearTimeout(saveTimer.current)
   }, [moduleGrades, gpaRows, loaded])

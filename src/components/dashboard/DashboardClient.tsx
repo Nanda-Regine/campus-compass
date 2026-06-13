@@ -510,8 +510,9 @@ function PriorityCommandStrip({ tasks, exams, totalBudget, remaining }: {
 }
 
 /* ── StatCardsRow ─────────────────────────────────────── */
-function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streakTodayDone }: {
+function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streakTodayDone, todayStudyMins, lastSleepHours, weekWorkouts }: {
   remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number; streakTodayDone: boolean
+  todayStudyMins: number; lastSleepHours: number | null; weekWorkouts: number
 }) {
   const todayDate = new Date(); todayDate.setHours(0,0,0,0)
   const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
@@ -520,11 +521,17 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streak
   const nextExam = exams[0]
   const daysToExam = nextExam ? getDaysUntil(nextExam.exam_date) : null
 
+  const studyDisplay = todayStudyMins >= 60 ? `${Math.floor(todayStudyMins/60)}h${todayStudyMins%60>0?`${todayStudyMins%60}m`:''}` : todayStudyMins > 0 ? `${todayStudyMins}m` : '—'
+  const sleepDisplay = lastSleepHours !== null ? `${lastSleepHours}h` : '—'
+  void totalBudget
   const cards = [
     { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left',    accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
     { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—',           label: 'Days to exam',  accent: daysToExam !== null && daysToExam <= 3 ? '#ff6b6b' : '#7090d0' },
     { value: String(tasksDueWeek + overdueTasks),                                                      label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
     { value: String(streakDays), label: streakTodayDone ? 'Streak safe ✓' : 'Study streak',           accent: streakTodayDone ? '#4ecf9e' : streakDays > 0 ? '#f59e0b' : '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },
+    { value: studyDisplay, label: 'Studied today', accent: '#A855F7' },
+    { value: sleepDisplay, label: 'Last sleep',    accent: '#38BDF8' },
+    { value: String(weekWorkouts), label: 'Workouts wk', accent: '#FF6B9E' },
   ]
 
   return (
@@ -839,47 +846,78 @@ const LIFE_DOMAINS = [
   },
 ]
 
-function LifeOSSection() {
+function LifeOSSection({ liveStats }: { liveStats?: { todayStudyMins: number; lastSleepHours: number | null; weekWorkouts: number; budgetRemaining: number; totalBudget: number } }) {
+  const domainStats = (name: string): Array<{ text: string; color: string }> => {
+    if (!liveStats) return []
+    if (name === 'Mind' && liveStats.todayStudyMins > 0) {
+      const m = liveStats.todayStudyMins
+      return [{ text: m >= 60 ? `${Math.floor(m/60)}h studied` : `${m}m studied`, color: '#00CFA0' }]
+    }
+    if (name === 'Body') {
+      const stats: Array<{ text: string; color: string }> = []
+      if (liveStats.lastSleepHours !== null) stats.push({ text: `${liveStats.lastSleepHours}h sleep`, color: '#FF6B9E' })
+      if (liveStats.weekWorkouts > 0) stats.push({ text: `${liveStats.weekWorkouts} workouts`, color: '#FF6B9E' })
+      return stats
+    }
+    if (name === 'Money' && liveStats.totalBudget > 0) {
+      return [{ text: liveStats.budgetRemaining >= 0 ? `R${Math.round(liveStats.budgetRemaining)} left` : 'Over budget', color: liveStats.budgetRemaining >= 0 ? '#D4A84B' : '#ff6b6b' }]
+    }
+    return []
+  }
+
   return (
     <section>
       <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', fontWeight: 600, marginBottom: 12 }}>
         ◈ Your Life OS · 9 Domains
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-        {LIFE_DOMAINS.map(({ name, emoji, color, modules }) => (
-          <div
-            key={name}
-            style={{
-              borderRadius: 14,
-              background: `${color}09`,
-              border: `0.5px solid ${color}30`,
-              padding: '12px 13px',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div style={{ position: 'absolute', top: -10, right: -10, width: 50, height: 50, borderRadius: '50%', background: `radial-gradient(circle,${color}20 0%,transparent 70%)`, pointerEvents: 'none' }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 9 }}>
-              <span style={{ fontSize: 15 }}>{emoji}</span>
-              <span style={{ fontSize: 9, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{name}</span>
+        {LIFE_DOMAINS.map(({ name, emoji, color, modules }) => {
+          const stats = domainStats(name)
+          return (
+            <div
+              key={name}
+              style={{
+                borderRadius: 14,
+                background: `${color}09`,
+                border: `0.5px solid ${color}30`,
+                padding: '12px 13px',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{ position: 'absolute', top: -10, right: -10, width: 50, height: 50, borderRadius: '50%', background: `radial-gradient(circle,${color}20 0%,transparent 70%)`, pointerEvents: 'none' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 9 }}>
+                <span style={{ fontSize: 15 }}>{emoji}</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{name}</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {modules.map(mod => (
+                  <Link key={mod.label} href={mod.href} style={{ textDecoration: 'none' }}>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 3,
+                      fontSize: 10, padding: '3px 8px', borderRadius: 999,
+                      background: `${color}14`, color,
+                      border: `0.5px solid ${color}35`,
+                      cursor: 'pointer',
+                    }}>
+                      {mod.icon} {mod.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              {stats.length > 0 && (
+                <div style={{ marginTop: 7, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {stats.map(s => (
+                    <span key={s.text} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 9, color: s.color, fontWeight: 700, letterSpacing: '0.06em' }}>
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: s.color, flexShrink: 0, display: 'inline-block' }} />
+                      {s.text}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {modules.map(mod => (
-                <Link key={mod.label} href={mod.href} style={{ textDecoration: 'none' }}>
-                  <span style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 3,
-                    fontSize: 10, padding: '3px 8px', borderRadius: 999,
-                    background: `${color}14`, color,
-                    border: `0.5px solid ${color}35`,
-                    cursor: 'pointer',
-                  }}>
-                    {mod.icon} {mod.label}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )
@@ -1177,6 +1215,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [streakDays, setStreakDays] = useState(0)
   const [streakTodayDone, setStreakTodayDone] = useState(false)
   const [currentHour, setCurrentHour] = useState(() => new Date().getHours())
+  const [todayStudyMins, setTodayStudyMins] = useState(0)
+  const [lastSleepHours, setLastSleepHours] = useState<number | null>(null)
+  const [weekWorkouts, setWeekWorkouts] = useState(0)
 
   // 1. Store init
   useEffect(() => {
@@ -1229,6 +1270,26 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         if (mealsRes.status === 'fulfilled') setMealPlanExists((mealsRes.value.count ?? 0) > 0)
         if (shiftsRes.status === 'fulfilled') setShiftsThisWeek(shiftsRes.value.count ?? 0)
         if (groupsRes.status === 'fulfilled') setActiveGroups(groupsRes.value.count ?? 0)
+        const [studyRes, sleepRes, workoutRes] = await Promise.allSettled([
+          supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${todayStr}T00:00:00`),
+          supabase.from('sleep_logs').select('bedtime,wake_time').eq('user_id', user.id).order('sleep_date', { ascending: false }).limit(1),
+          supabase.from('workout_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('date', weekStart.toISOString().split('T')[0]).is('deleted_at', null),
+        ])
+        if (studyRes.status === 'fulfilled') {
+          const rows = studyRes.value.data as Array<{ duration_minutes: number }> | null
+          if (rows) setTodayStudyMins(rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0))
+        }
+        if (sleepRes.status === 'fulfilled') {
+          const row = (sleepRes.value.data as Array<{ bedtime: string; wake_time: string }> | null)?.[0]
+          if (row) {
+            const [bh, bm] = row.bedtime.split(':').map(Number)
+            const [wh, wm] = row.wake_time.split(':').map(Number)
+            let hrs = (wh + wm / 60) - (bh + bm / 60)
+            if (hrs < 0) hrs += 24
+            setLastSleepHours(parseFloat(hrs.toFixed(1)))
+          }
+        }
+        if (workoutRes.status === 'fulfilled') setWeekWorkouts(workoutRes.value.count ?? 0)
       } catch { /* silent */ }
     }
     fetchLiveData()
@@ -1481,7 +1542,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <MobileTodayClasses timetable={initialData.timetable} />
               <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
 
-              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} />
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
 
               <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
               <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
@@ -1492,7 +1553,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </div>
 
               {/* Full Life OS — all 9 student life domains — always visible */}
-              <LifeOSSection />
+              <LifeOSSection liveStats={{ todayStudyMins, lastSleepHours, weekWorkouts, budgetRemaining: remaining, totalBudget }} />
             </div>
 
             {/* Column 2 */}

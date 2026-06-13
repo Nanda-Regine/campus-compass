@@ -12,6 +12,7 @@ import {
 import { fmt, calcTotalBudget, cn, exportToCSV, currentMonthRange } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import { signals } from '@/store/signals'
 import ReceiptScanner from '@/components/budget/ReceiptScanner'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
@@ -266,6 +267,14 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       setAmount('')
       setShowAddForm(false)
       toast.success('Expense logged!')
+      // Emit signals for orchestration layer
+      const newTotalSpent = updated.reduce((s, e) => s + e.amount, 0)
+      const budgetTotal = totalBudget + totalIncome
+      const remaining = Math.max(0, budgetTotal - newTotalSpent)
+      signals.emit({ type: 'expense_logged', payload: { amount: parseFloat(amount), category, remainingBudget: remaining } })
+      if (budgetTotal > 0 && newTotalSpent / budgetTotal >= 0.8) {
+        signals.emit({ type: 'budget_threshold', payload: { percentage: Math.round(newTotalSpent / budgetTotal * 100), remainingRands: remaining } })
+      }
       // Fire-and-forget 80% budget alert check
       fetch('/api/budget/alert', { method: 'POST' }).catch(() => null)
     } catch {

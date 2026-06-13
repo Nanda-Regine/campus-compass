@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { type Module, type Task } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
 import { signals } from '@/store/signals'
+import { queueWrite } from '@/lib/offline/pendingWrites'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +17,8 @@ interface PomodoroSettings {
   shortBreakMinutes: number
   longBreakMinutes: number
   sessionsUntilLongBreak: number
+  autoAdvance: boolean
+  soundEnabled: boolean
 }
 
 interface PomodoroTimerProps {
@@ -31,7 +34,16 @@ const DEFAULT_SETTINGS: PomodoroSettings = {
   shortBreakMinutes: 5,
   longBreakMinutes: 15,
   sessionsUntilLongBreak: 4,
+  autoAdvance: false,
+  soundEnabled: true,
 }
+
+const PRESETS: Array<{ label: string; emoji: string; s: Partial<PomodoroSettings> }> = [
+  { label: 'Micro',    emoji: '⚡', s: { workMinutes: 15, shortBreakMinutes: 3,  longBreakMinutes: 10, sessionsUntilLongBreak: 4 } },
+  { label: 'Classic',  emoji: '🍅', s: { workMinutes: 25, shortBreakMinutes: 5,  longBreakMinutes: 15, sessionsUntilLongBreak: 4 } },
+  { label: 'Power',    emoji: '🔥', s: { workMinutes: 50, shortBreakMinutes: 10, longBreakMinutes: 20, sessionsUntilLongBreak: 3 } },
+  { label: 'Marathon', emoji: '🏃', s: { workMinutes: 90, shortBreakMinutes: 20, longBreakMinutes: 30, sessionsUntilLongBreak: 2 } },
+]
 
 const PHASE_LABELS: Record<Phase, string> = {
   work: 'Focus',
@@ -55,7 +67,7 @@ function formatTime(seconds: number): string {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function PomodoroTimer({ modules, tasks, userId: _userId }: PomodoroTimerProps) {
+export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerProps) {
   const [settings, setSettings] = useState<PomodoroSettings>(DEFAULT_SETTINGS)
   const [phase, setPhase] = useState<Phase>('work')
   const [secondsLeft, setSecondsLeft] = useState(DEFAULT_SETTINGS.workMinutes * 60)
@@ -69,6 +81,9 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
+  // Stable ref so playBeep doesn't need settings in its deps
+  const soundRef = useRef(DEFAULT_SETTINGS.soundEnabled)
+  useEffect(() => { soundRef.current = settings.soundEnabled }, [settings.soundEnabled])
 
   // Load today's stats
   useEffect(() => {
@@ -80,6 +95,7 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
 
   // Play a simple beep using Web Audio API (no external assets)
   const playBeep = useCallback((frequency = 660, duration = 0.3) => {
+    if (!soundRef.current) return
     try {
       if (!audioCtxRef.current) {
         audioCtxRef.current = new AudioContext()
@@ -104,16 +120,28 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
     if (finishedPhase === 'work' && startTime) {
       const durationMinutes = settings.workMinutes
       try {
-        await fetch('/api/study/sessions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        let savedOffline = false
+        if (navigator.onLine) {
+          await fetch('/api/study/sessions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              duration_minutes: durationMinutes,
+              task_id: selectedTaskId || null,
+              module_id: selectedModuleId || null,
+              started_at: startTime.toISOString(),
+            }),
+          })
+        } else {
+          await queueWrite('study_sessions', 'insert', {
+            user_id: userId,
             duration_minutes: durationMinutes,
             task_id: selectedTaskId || null,
             module_id: selectedModuleId || null,
             started_at: startTime.toISOString(),
-          }),
-        })
+          })
+          savedOffline = true
+        }
         setTodayMinutes(prev => prev + durationMinutes)
         setCompletedSessions(prev => prev + 1)
         dispatchXP('pomodoro_session')
@@ -122,9 +150,8 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
           payload: { durationMins: durationMinutes, moduleId: selectedModuleId || undefined },
         })
         playBeep(880, 0.4)
-        // Vibrate on mobile
         if ('vibrate' in navigator) navigator.vibrate([200, 100, 200])
-        toast.success(`Focus session complete — ${durationMinutes} min logged`)
+        toast.success(`Focus session complete — ${durationMinutes} min logged${savedOffline ? ' · syncs when online' : ''}`)
       } catch {/* silent */}
     } else if (finishedPhase !== 'work') {
       playBeep(440, 0.3)
@@ -146,9 +173,9 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
       : nextPhase === 'short_break' ? settings.shortBreakMinutes * 60
       : settings.longBreakMinutes * 60
     )
-    setRunning(false)
-    setSessionStartTime(null)
-  }, [completedSessions, selectedModuleId, selectedTaskId, settings, playBeep])
+    setRunning(settings.autoAdvance)
+    setSessionStartTime(settings.autoAdvance && nextPhase === 'work' ? new Date() : null)
+  }, [completedSessions, selectedModuleId, selectedTaskId, settings, playBeep, userId])
 
   // Timer tick
   useEffect(() => {
@@ -444,42 +471,98 @@ function SettingsPanel({ settings, onApply, onClose }: {
 }) {
   const [s, setS] = useState(settings)
 
-  const field = (label: string, key: keyof PomodoroSettings, min: number, max: number) => (
+  const slider = (label: string, key: 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes' | 'sessionsUntilLongBreak', min: number, max: number) => (
     <div>
-      <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
-        {label}
-      </label>
-      <div className="flex items-center gap-2">
-        <input
-          type="range" min={min} max={max} value={s[key]}
-          onChange={e => setS(prev => ({ ...prev, [key]: Number(e.target.value) }))}
-          className="flex-1 accent-teal-500"
-          aria-label={label}
-        />
-        <span className="font-display font-bold text-white text-sm w-8 text-right">
-          {s[key]}{key !== 'sessionsUntilLongBreak' ? 'm' : ''}
+      <div className="flex items-center justify-between mb-1">
+        <label className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          {label}
+        </label>
+        <span className="font-display font-bold text-white text-sm tabular-nums">
+          {s[key]}{key !== 'sessionsUntilLongBreak' ? 'm' : '×'}
         </span>
       </div>
+      <input
+        type="range" min={min} max={max} value={s[key]}
+        onChange={e => setS(prev => ({ ...prev, [key]: Number(e.target.value) }))}
+        className="w-full accent-teal-500"
+        aria-label={label}
+      />
     </div>
+  )
+
+  const toggle = (label: string, key: 'autoAdvance' | 'soundEnabled', description: string) => (
+    <button
+      onClick={() => setS(prev => ({ ...prev, [key]: !prev[key] }))}
+      className="flex items-center justify-between w-full py-2.5 px-3 rounded-xl transition-all"
+      style={{ background: s[key] ? 'rgba(13,148,136,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${s[key] ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.07)'}` }}
+    >
+      <div className="text-left">
+        <p className="font-display text-xs text-white">{label}</p>
+        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{description}</p>
+      </div>
+      <div
+        className="w-9 h-5 rounded-full flex-shrink-0 relative transition-colors"
+        style={{ background: s[key] ? '#0d9488' : 'rgba(255,255,255,0.12)' }}
+      >
+        <div
+          className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
+          style={{ left: s[key] ? '18px' : '2px' }}
+        />
+      </div>
+    </button>
   )
 
   return (
     <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)' }}>
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between">
         <p className="font-display font-bold text-white text-sm">Timer settings</p>
         <button onClick={onClose} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>
       </div>
-      {field('Focus duration', 'workMinutes', 5, 60)}
-      {field('Short break', 'shortBreakMinutes', 1, 15)}
-      {field('Long break', 'longBreakMinutes', 5, 30)}
-      {field('Sessions until long break', 'sessionsUntilLongBreak', 2, 8)}
+
+      {/* Presets */}
+      <div>
+        <p className="font-mono text-[0.56rem] uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Presets</p>
+        <div className="grid grid-cols-4 gap-1.5">
+          {PRESETS.map(p => {
+            const active = s.workMinutes === p.s.workMinutes && s.sessionsUntilLongBreak === p.s.sessionsUntilLongBreak
+            return (
+              <button
+                key={p.label}
+                onClick={() => setS(prev => ({ ...prev, ...p.s }))}
+                className="rounded-xl py-2.5 flex flex-col items-center gap-1 transition-all"
+                style={{ background: active ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.04)', border: `1px solid ${active ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.07)'}` }}
+              >
+                <span style={{ fontSize: '1rem' }}>{p.emoji}</span>
+                <span className="font-mono text-[0.55rem]" style={{ color: active ? '#4db6ac' : 'rgba(255,255,255,0.4)' }}>{p.label}</span>
+                <span className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>{p.s.workMinutes}m</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Sliders */}
+      <div className="space-y-3">
+        <p className="font-mono text-[0.56rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Custom duration</p>
+        {slider('Focus', 'workMinutes', 1, 90)}
+        {slider('Short break', 'shortBreakMinutes', 1, 30)}
+        {slider('Long break', 'longBreakMinutes', 5, 60)}
+        {slider('Sessions before long break', 'sessionsUntilLongBreak', 1, 10)}
+      </div>
+
+      {/* Toggles */}
+      <div className="space-y-2">
+        {toggle('Auto-advance', 'autoAdvance', 'Start next phase automatically')}
+        {toggle('Sound', 'soundEnabled', 'Play beep when phase ends')}
+      </div>
+
       <div className="flex gap-2 pt-1">
         <button
           onClick={() => setS(DEFAULT_SETTINGS)}
           className="flex-1 font-display text-xs py-2 rounded-xl"
           style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.45)' }}
         >
-          Reset to defaults
+          Reset
         </button>
         <button
           onClick={() => onApply(s)}

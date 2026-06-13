@@ -8,6 +8,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useAppStore } from './index'
+import { signals } from './signals'
 import type { Task, Module, Exam, Expense, Budget, Profile } from '@/types'
 
 // ─── Shared enums ──────────────────────────────────────────────
@@ -418,5 +419,19 @@ export function initOrchestration(): () => void {
   // Hydrate immediately with current state
   runRecompute(useAppStore.getState())
 
-  return _unsubscribe
+  // Trigger recompute when modules emit relevant signals so the rules
+  // engine picks up changes that don't flow through the AppStore.
+  const getState = () => useAppStore.getState()
+  const signalUnsubs = [
+    signals.on('task_completed',      () => runRecompute(getState())),
+    signals.on('study_session_ended', () => runRecompute(getState())),
+    signals.on('sleep_logged',        () => runRecompute(getState())),
+    signals.on('grade_updated',       () => runRecompute(getState())),
+    signals.on('expense_logged',      () => runRecompute(getState())),
+  ]
+
+  return () => {
+    _unsubscribe?.()
+    signalUnsubs.forEach(u => u())
+  }
 }
