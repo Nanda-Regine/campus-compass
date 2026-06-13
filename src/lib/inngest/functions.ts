@@ -409,3 +409,139 @@ export const wellnessNudge = inngest.createFunction(
     return { sent: totalSent, nudged: needsNudge.length, date: today }
   },
 )
+
+// ─── NSFAS Late Payment Alert ─────────────────────────────────────────────────
+// Fires daily at 09:00 SAST.
+// Checks nsfas_disbursements for rows where status='expected' and
+// expected_date < today, and pushes an alert so students can act quickly.
+export const nsfasLateAlert = inngest.createFunction(
+  { id: 'nsfas-late-alert', name: 'NSFAS Late Payment Alert', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 0 9 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+    const today = new Date().toISOString().slice(0, 10)
+
+    const overdueUsers = await step.run('find-overdue-nsfas', async () => {
+      const { data: overdue } = await supabase
+        .from('nsfas_disbursements')
+        .select('user_id, type, expected_date, expected_amount, period_label')
+        .eq('status', 'expected')
+        .lt('expected_date', today)
+
+      if (!overdue?.length) return []
+
+      // Deduplicate: worst (oldest) overdue row per user
+      const worst: Record<string, { type: string; expected_date: string; expected_amount: number; period_label: string; daysLate: number }> = {}
+      for (const d of overdue as { user_id: string; type: string; expected_date: string; expected_amount: number; period_label: string }[]) {
+        const daysLate = Math.floor((Date.now() - new Date(d.expected_date).getTime()) / 86400000)
+        if (!worst[d.user_id] || daysLate > worst[d.user_id].daysLate) {
+          worst[d.user_id] = { type: d.type, expected_date: d.expected_date, expected_amount: d.expected_amount, period_label: d.period_label, daysLate }
+        }
+      }
+      return Object.entries(worst).map(([userId, v]) => ({ userId, ...v }))
+    }) as { userId: string; type: string; expected_amount: number; period_label: string; daysLate: number }[]
+
+    if (!overdueUsers.length) return { sent: 0 }
+
+    const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
+    const subSet = new Set((subs ?? []).map((s: { user_id: string }) => s.user_id))
+
+    const totalSent = await step.run('send-nsfas-alerts', async () => {
+      let count = 0
+      for (const u of overdueUsers.filter(r => subSet.has(r.userId))) {
+        const label = u.type === 'living' ? 'Living allowance' : u.type === 'accommodation' ? 'Accommodation allowance' : u.type === 'books' ? 'Books allowance' : 'NSFAS payment'
+        count += await notifyUser(supabase, u.userId, {
+          title: `🏛️ NSFAS payment overdue (${u.daysLate}d late)`,
+          body: `${label} for ${u.period_label} (R${u.expected_amount.toFixed(0)}) hasn't arrived. Check your myNSFAS portal and bank details.`,
+          url: '/budget?tab=nsfas',
+          tag: `nsfas-late-${u.period_label.replace(/\s/g, '-')}`,
+        })
+      }
+      return count
+    })
+
+    logger.info(`NSFAS late alert: ${totalSent} sent, ${overdueUsers.length} overdue users found`)
+    return { sent: totalSent, overdueUsers: overdueUsers.length }
+  },
+)
+
+// ─── Weekly Study Digest ──────────────────────────────────────────────────────
+// Fires every Sunday at 20:00 SAST.
+// Summarises the past week: tasks completed, exams upcoming, wellness trend,
+// and push-notifies users to do their Sunday planning session.
+export const weeklyDigest = inngest.createFunction(
+  { id: 'weekly-digest', name: 'Sunday Weekly Digest', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 0 20 * * 0' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+    const today    = new Date()
+    const todayStr = today.toISOString().slice(0, 10)
+    const weekAgo  = new Date(today.getTime() - 7 * 86400000).toISOString().slice(0, 10)
+    const in7d     = new Date(today.getTime() + 7 * 86400000).toISOString().slice(0, 10)
+
+    const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
+    if (!subs?.length) return { sent: 0 }
+    const userIds = [...new Set(subs.map((s: { user_id: string }) => s.user_id))]
+
+    const summaries = await step.run('build-weekly-summaries', async () => {
+      const [tasksRes, examsRes, wellnessRes] = await Promise.all([
+        supabase.from('tasks').select('user_id, status').in('user_id', userIds)
+          .eq('status', 'done').gte('updated_at', weekAgo).lte('updated_at', todayStr),
+        supabase.from('exams').select('user_id, exam_name').in('user_id', userIds)
+          .gte('exam_date', todayStr).lte('exam_date', in7d),
+        supabase.from('wellness_checkins').select('user_id, score').in('user_id', userIds)
+          .gte('date', weekAgo).lte('date', todayStr),
+      ])
+
+      const tasksDone: Record<string, number> = {}
+      for (const t of (tasksRes.data ?? []) as { user_id: string }[]) {
+        tasksDone[t.user_id] = (tasksDone[t.user_id] ?? 0) + 1
+      }
+
+      const upcomingExams: Record<string, string[]> = {}
+      for (const e of (examsRes.data ?? []) as { user_id: string; exam_name: string }[]) {
+        if (!upcomingExams[e.user_id]) upcomingExams[e.user_id] = []
+        upcomingExams[e.user_id].push(e.exam_name)
+      }
+
+      const wellnessScores: Record<string, number[]> = {}
+      for (const w of (wellnessRes.data ?? []) as { user_id: string; score: number }[]) {
+        if (!wellnessScores[w.user_id]) wellnessScores[w.user_id] = []
+        wellnessScores[w.user_id].push(w.score)
+      }
+
+      return userIds.map(userId => ({
+        userId,
+        tasksDone: tasksDone[userId] ?? 0,
+        upcomingExams: upcomingExams[userId] ?? [],
+        avgWellness: wellnessScores[userId]?.length
+          ? Math.round(wellnessScores[userId].reduce((a, b) => a + b, 0) / wellnessScores[userId].length)
+          : null,
+      }))
+    }) as { userId: string; tasksDone: number; upcomingExams: string[]; avgWellness: number | null }[]
+
+    const totalSent = await step.run('send-weekly-digest', async () => {
+      let count = 0
+      for (const s of summaries) {
+        const examLine = s.upcomingExams.length
+          ? ` ${s.upcomingExams.length} exam${s.upcomingExams.length > 1 ? 's' : ''} next week.`
+          : ' No exams next week.'
+        const wellnessLine = s.avgWellness !== null
+          ? ` Avg wellness: ${s.avgWellness}/100.`
+          : ''
+        count += await notifyUser(supabase, s.userId, {
+          title: '📋 Sunday Review — plan your week',
+          body: `${s.tasksDone} task${s.tasksDone !== 1 ? 's' : ''} done this week.${examLine}${wellnessLine} Open Sunday Planning to set next week's intentions.`,
+          url: '/dashboard?modal=sunday',
+          tag: `weekly-digest-${todayStr}`,
+        })
+      }
+      return count
+    })
+
+    logger.info(`Weekly digest: ${totalSent} sent`)
+    return { sent: totalSent, users: userIds.length }
+  },
+)

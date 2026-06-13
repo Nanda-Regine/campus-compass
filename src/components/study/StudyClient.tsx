@@ -17,6 +17,7 @@ import HabitBuilder from '@/components/habits/HabitBuilder'
 import GraduationAudit from '@/components/study/GraduationAudit'
 import AttendanceTab from '@/components/study/AttendanceTab'
 import CalendarTab from '@/components/study/CalendarTab'
+import StudyVelocityTab from '@/components/study/StudyVelocityTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface StudyClientProps {
@@ -61,6 +62,7 @@ const TAB_CONFIG = [
   { id: 'habits',      label: 'Habits',    icon: '🌱', accent: '#6366F1', glow: 'rgba(99,102,241,0.2)' },
   { id: 'graduation',  label: 'Grad Audit',icon: '🎓', accent: '#38BDF8', glow: 'rgba(56,189,248,0.2)' },
   { id: 'attendance',  label: 'Attendance', icon: '📋', accent: '#f59e0b', glow: 'rgba(245,158,11,0.2)' },
+  { id: 'velocity',    label: 'Velocity',   icon: '📈', accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
 ] as const
 
 type TabId = typeof TAB_CONFIG[number]['id']
@@ -261,6 +263,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'habits'     && <HabitBuilder />}
         {activeTab === 'graduation' && <GraduationAudit />}
         {activeTab === 'attendance' && <AttendanceTab modules={modules} userId={userId} />}
+        {activeTab === 'velocity'   && <StudyVelocityTab modules={modules} userId={userId} />}
       </div>
 
       {/* ── Quick-add FAB ── */}
