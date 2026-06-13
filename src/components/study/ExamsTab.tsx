@@ -175,12 +175,75 @@ interface Props {
   supabase: SupabaseClient
 }
 
+// ─── Study plan generator ─────────────────────────────────────────────────────
+function buildStudyPlanTasks(
+  exam: Exam,
+  userId: string,
+  daysUntil: number,
+): { user_id: string; title: string; due_date: string; module_id: string | null; status: string; priority: string }[] {
+  const moduleName = exam.module?.module_name ?? exam.exam_name
+  const today      = new Date()
+  const tasks      = []
+  const totalDays  = Math.min(daysUntil, 21)  // cap at 3 weeks
+
+  if (totalDays < 1) return []
+
+  const dueDate = (daysFromNow: number) => {
+    const d = new Date(today)
+    d.setDate(d.getDate() + daysFromNow)
+    return d.toISOString().slice(0, 10)
+  }
+
+  if (totalDays <= 3) {
+    // Crunch mode
+    tasks.push({ title: `${moduleName}: Summarise key concepts & formulas`, due_date: dueDate(0), priority: 'urgent' })
+    if (totalDays >= 2) tasks.push({ title: `${moduleName}: Work through past papers`, due_date: dueDate(1), priority: 'urgent' })
+    tasks.push({ title: `${moduleName}: Final review — weak areas only`, due_date: dueDate(totalDays - 1), priority: 'urgent' })
+  } else {
+    // Spread plan
+    const PHASES = [
+      'Overview & syllabus breakdown',
+      'Core theory & definitions',
+      'Chapter 1–3 deep study',
+      'Chapter 4–6 deep study',
+      'Worked examples & problem sets',
+      'Past papers — timed conditions',
+      'Mark past papers & identify gaps',
+      'Weak area focus',
+      'Summary notes & mind maps',
+    ]
+
+    const phase1End  = Math.max(1, Math.floor(totalDays * 0.15))
+    const deepEnd    = Math.max(phase1End + 1, Math.floor(totalDays * 0.7))
+    const reviewDays = totalDays - deepEnd
+
+    // Opening days
+    for (let d = 0; d < phase1End; d++) {
+      tasks.push({ title: `${moduleName}: ${PHASES[d % 2]}`, due_date: dueDate(d), priority: 'high' })
+    }
+    // Deep study
+    const deepCount = deepEnd - phase1End
+    for (let d = 0; d < deepCount; d++) {
+      const phaseIdx = 2 + (d % 4)
+      tasks.push({ title: `${moduleName}: ${PHASES[phaseIdx]}`, due_date: dueDate(phase1End + d), priority: 'medium' })
+    }
+    // Review phase
+    for (let d = 0; d < reviewDays; d++) {
+      const phaseIdx = 5 + (d % 4)
+      tasks.push({ title: `${moduleName}: ${PHASES[Math.min(phaseIdx, PHASES.length - 1)]}`, due_date: dueDate(deepEnd + d), priority: d === reviewDays - 1 ? 'urgent' : 'high' })
+    }
+  }
+
+  return tasks.map(t => ({ ...t, user_id: userId, module_id: exam.module_id, status: 'todo' }))
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Props) {
-  const { addExam, removeExam } = useAppStore()
+  const { addExam, removeExam, addTask } = useAppStore()
   const [view,        setView]        = useState<'list' | 'readiness'>('list')
   const [modalOpen,   setModalOpen]   = useState(false)
   const [saving,      setSaving]      = useState(false)
+  const [planGenerating, setPlanGenerating] = useState<string | null>(null)
   const [assistModal, setAssistModal] = useState<{
     open: boolean; exam: Exam | null; type: 'exam_prep' | 'conflict_check'
   }>({ open: false, exam: null, type: 'exam_prep' })
@@ -228,6 +291,24 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
   const deleteExam = async (id: string) => {
     removeExam(id)
     await supabase.from('exams').delete().eq('id', id)
+  }
+
+  const generatePlan = async (exam: Exam) => {
+    const days = getDaysUntil(exam.exam_date)
+    if (days < 1) { toast.error('Exam is in the past'); return }
+    setPlanGenerating(exam.id)
+    try {
+      const newTasks = buildStudyPlanTasks(exam, userId, days)
+      if (!newTasks.length) { toast('Not enough days to generate a plan'); return }
+      const { data: inserted, error } = await supabase.from('tasks').insert(newTasks).select('*, module:modules(id,module_name,color)')
+      if (error) throw error
+      ;(inserted ?? []).forEach(t => addTask(t))
+      toast.success(`${newTasks.length} study tasks created for ${exam.exam_name}!`)
+    } catch {
+      toast.error('Could not generate plan')
+    } finally {
+      setPlanGenerating(null)
+    }
   }
 
   // ── Exam card ────────────────────────────────────────────────────────────
@@ -300,19 +381,35 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
               {!isPast && (
-                <button
-                  onClick={e => { e.stopPropagation(); setAssistModal({ open: true, exam, type: 'exam_prep' }) }}
-                  style={{
-                    padding: '4px 10px', borderRadius: 8,
-                    background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.25)',
-                    fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#a78bfa',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-                  }}
-                >
-                  📚 Nova prep
-                </button>
+                <>
+                  <button
+                    onClick={e => { e.stopPropagation(); setAssistModal({ open: true, exam, type: 'exam_prep' }) }}
+                    style={{
+                      padding: '4px 10px', borderRadius: 8,
+                      background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.25)',
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#a78bfa',
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
+                    }}
+                  >
+                    📚 Nova prep
+                  </button>
+                  <button
+                    onClick={e => { e.stopPropagation(); generatePlan(exam) }}
+                    disabled={planGenerating === exam.id}
+                    style={{
+                      padding: '4px 10px', borderRadius: 8,
+                      background: 'rgba(78,207,158,0.1)', border: '1px solid rgba(78,207,158,0.25)',
+                      fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#4ecf9e',
+                      cursor: planGenerating === exam.id ? 'wait' : 'pointer',
+                      display: 'flex', alignItems: 'center', gap: 4,
+                      opacity: planGenerating === exam.id ? 0.6 : 1,
+                    }}
+                  >
+                    {planGenerating === exam.id ? '⏳' : '📅'} Plan
+                  </button>
+                </>
               )}
               <button
                 onClick={() => deleteExam(exam.id)}
