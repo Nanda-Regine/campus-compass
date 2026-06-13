@@ -633,3 +633,98 @@ export const dailyStateSnapshot = inngest.createFunction(
     return { snapshots: snapshotCount, date: today }
   },
 )
+
+// ─── Orchestration Intervention Trigger ──────────────────────────────────────
+// Fires at 00:30 SAST daily (30 min after snapshot completes).
+// Reads 3-day snapshots, detects negative trends, sends targeted push alerts.
+export const orchestrationIntervention = inngest.createFunction(
+  { id: 'orchestration-intervention', name: 'Daily Orchestration Intervention', retries: 1 },
+  { cron: 'TZ=Africa/Johannesburg 30 0 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) return { triggered: 0 }
+    const supabase = createAdminSupabaseClient()
+    const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString().slice(0, 10)
+
+    const atRiskUsers = await step.run('find-at-risk-trends', async () => {
+      const { data: snaps } = await supabase
+        .from('student_state_snapshots')
+        .select('user_id, snapshot_date, burnout_score, academic_risk, procrastination_idx')
+        .gte('snapshot_date', threeDaysAgo)
+        .order('snapshot_date', { ascending: false })
+
+      if (!snaps?.length) return []
+
+      type Snap = { user_id: string; snapshot_date: string; burnout_score: number; academic_risk: string; procrastination_idx: number }
+      const byUser: Record<string, Snap[]> = {}
+      for (const s of snaps as Snap[]) {
+        if (!byUser[s.user_id]) byUser[s.user_id] = []
+        byUser[s.user_id].push(s)
+      }
+
+      const interventions: { userId: string; rule: string; title: string; body: string; url: string; urgency: number }[] = []
+      for (const [userId, days] of Object.entries(byUser)) {
+        if (days.length < 2) continue
+
+        const avgBurnout = days.reduce((a, d) => a + (d.burnout_score ?? 0), 0) / days.length
+        const criticalDays = days.filter(d => d.academic_risk === 'critical').length
+        const highBurnout3 = days.length >= 3 && days.slice(0, 3).every(d => (d.burnout_score ?? 0) >= 70)
+        const overdueTrend = days[0]?.procrastination_idx >= 5
+
+        if (highBurnout3) {
+          interventions.push({ userId, rule: 'burnout-3d', urgency: 4,
+            title: '🔴 Burnout pattern detected', url: '/nova',
+            body: '3 days of high burnout scores. You need a break and support — Nova is here to help.',
+          })
+        } else if (avgBurnout >= 75) {
+          interventions.push({ userId, rule: 'burnout-high', urgency: 3,
+            title: '⚠️ High burnout risk', url: '/nova',
+            body: 'Your wellbeing scores are dropping. Take 20 minutes to recharge — log a check-in with Nova.',
+          })
+        }
+
+        if (criticalDays >= 2) {
+          interventions.push({ userId, rule: 'academic-critical-2d', urgency: 4,
+            title: '📚 Academic risk: 2 days critical', url: '/study?tab=attendance',
+            body: 'Critical academic risk detected two days in a row. Check your attendance and overdue tasks now.',
+          })
+        }
+
+        if (overdueTrend) {
+          interventions.push({ userId, rule: 'overdue-5-tasks', urgency: 3,
+            title: '⏰ 5+ tasks overdue', url: '/study',
+            body: "You have 5 or more overdue tasks piling up. Let's clear the backlog — open the study planner.",
+          })
+        }
+      }
+      return interventions
+    }) as { userId: string; rule: string; title: string; body: string; url: string; urgency: number }[]
+
+    if (!atRiskUsers.length) return { triggered: 0 }
+
+    // Check cooldowns: don't repeat same rule within 48h
+    const { data: recentInterventions } = await supabase
+      .from('intervention_log')
+      .select('user_id, rule_id, shown_at')
+      .in('user_id', atRiskUsers.map(u => u.userId))
+      .gte('shown_at', new Date(Date.now() - 48 * 3600000).toISOString())
+
+    const recentSet = new Set((recentInterventions ?? []).map((r: { user_id: string; rule_id: string }) => `${r.user_id}::${r.rule_id}`))
+
+    const toSend = atRiskUsers.filter(u => !recentSet.has(`${u.userId}::${u.rule}`))
+
+    const triggered = await step.run('send-interventions', async () => {
+      let count = 0
+      for (const u of toSend) {
+        const sent = await notifyUser(supabase, u.userId, { title: u.title, body: u.body, url: u.url, tag: `intervention-${u.rule}` })
+        if (sent > 0) {
+          await supabase.from('intervention_log').insert({ user_id: u.userId, rule_id: u.rule, urgency: u.urgency, variant: 'push', title: u.title })
+          count++
+        }
+      }
+      return count
+    })
+
+    logger.info(`Orchestration: ${triggered} interventions sent from ${atRiskUsers.length} at-risk users`)
+    return { triggered, atRisk: atRiskUsers.length }
+  },
+)
