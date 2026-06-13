@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: June 2026
+> Last updated: 2026-06-13 (Phase 7.1 sprint complete)
 
 ---
 
@@ -838,9 +838,9 @@ StudentState changes         →  Rules engine fires
 ```
 
 Components to build:
-- 🎯 `api/nova/proactive-brief` — Nova-generated daily brief from real StudentState JSON
+- ✅ `api/nova/proactive-brief` — Nova-generated daily brief from real StudentState JSON
 - 🎯 `api/push/state-alert` — push triggered by rules engine when intervention is urgency ≥ 4
-- 🎯 DailyBrief upgrade — loads from `/api/nova/proactive-brief`, caches 24h, shows at first open
+- ✅ DailyBrief upgrade — loads from `/api/nova/proactive-brief`, caches 24h, shows at first open
 
 ### 7C — Cross-Domain Correlation Engine
 
@@ -863,6 +863,65 @@ Target: Nomvula on 2G with 100MB remaining can still use VarsityOS at full funct
 - 🎯 Flashcards: full SM-2 review offline — already mostly there
 - 🎯 Pomodoro: sessions recorded offline, upload batch on reconnect
 - 🎯 Timetable: read-only cached display
+
+---
+
+## Phase 7.1 — Intelligence Surface & Dashboard Cleanup ✅ (2026-06-13)
+
+This sprint focused on two parallel goals: (1) surface the intelligence we've been computing from StudentState directly onto the dashboard in a proactive, ranked way, and (2) eliminate all hardcoded duplication in DashboardClient before the codebase grew any further.
+
+### What shipped
+
+#### Domain Pulse — Live-ranked Life OS on the dashboard
+`src/components/dashboard/DomainPulse.tsx` (new, 280 lines)
+
+Replaced the static `LifeOSSection` 2×9 tile grid with a live-scored Domain Pulse. Every session, all 9 life domains are scored 0–100 against real StudentState data:
+
+| Domain | Signal used | Score drivers |
+|---|---|---|
+| Mind | `overdueTasks`, `nextExamDays`, `streakDays`, `streakTodayDone`, `todayStudyMins` | +55 for 3+ overdue; +45 for exam ≤2d; +28 for exam ≤7d; +22 streak at risk after 17:00 |
+| Money | `remaining`, `totalBudget`, `nsfasDelayed` | +82 over budget; +68 for <R100; +48 for <20% remaining; +32 NSFAS delay |
+| Body | `lastSleepHours`, `sleepDebt`, `weekWorkouts` | +52 for <5h sleep; +22 high sleep debt; +14 no workouts |
+| Safety/Movement/Growth/Community/Work/Future | `activeGroups`, `shiftsThisWeek`, `weekWorkouts` | Baseline 5–16 until live data arrives for each |
+
+**Render:** top 3 urgency domains → large pulse cards (left accent bar, health badge, headline, subline, action link). Remaining 6 → compact 3×2 navigation grid. Order recomputes every render as StudentState changes.
+
+**Removed:** `LIFE_DOMAINS` constant (77 lines), `LifeOSSection` function (76 lines) — replaced entirely by `DomainPulse`.
+
+#### Dashboard duplication — 6 categories eliminated
+
+| Pattern | Before | After |
+|---|---|---|
+| Nav config | `FEATURE_CARDS` + `FEATURE_ICONS` + `MODULE_PILLS` defined inline 3 places | `NAV_MODULES` in `src/lib/navModules.ts` — single source of truth |
+| Fetch + localStorage cache | Copy-pasted in `StudyTipsCard` and `CoachSummaryCard` | `useCachedFetch<T>` hook in `src/hooks/useCachedFetch.ts` |
+| Date helpers | `toISODate` + day-of-week slot logic duplicated in `TodaysClasses` and `MobileTodayClasses` | `toISODate()` + `getTodaySlots()` defined once, used everywhere |
+| Slot derivation | Manual `new Date()` math in both mobile and desktop class components | `getTodaySlots(timetable)` returns `{ slots, currentTime }` |
+| Module-local constants | `TASK_CAT_STYLE` cluttering top of file | Moved inside `MobileTasksToday` where it's the only consumer |
+
+#### Push notification SW — TS2353 fix
+`worker/index.ts`: `renotify` not in `NotificationOptions` type in TypeScript's DOM lib. Fixed with `as NotificationOptions` type assertion instead of explicit type annotation.
+
+#### Vercel build fix — untracked files
+`InsightsCard.tsx`, `api/insights/correlations/route.ts`, and `api/nova/proactive-brief/route.ts` were created locally but never committed — every Vercel deploy since their import was added was silently broken. Committed all three in a single fix commit (`d6ca96e`). Build green.
+
+### Commits this sprint
+```
+5427af9  feat: Domain Pulse — 9 life domains ranked by urgency on dashboard
+d6ca96e  fix: add untracked InsightsCard and API routes missing from repo
+2249e54  refactor: extract shared dashboard patterns (useCachedFetch, getTodaySlots)
+5ef523d  refactor: deduplicate dashboard nav config and date helpers (NAV_MODULES)
+```
+
+### Phase 7 completion status
+| Subsystem | Status |
+|---|---|
+| 7A — Deep Signal Wiring (StudentState completeness) | ✅ All 5 signals live |
+| 7B — Nova Proactive Intelligence | ✅ proactive-brief + push notifications + rules engine done |
+| 7B — Push state-alert endpoint | 🎯 Next |
+| 7C — Cross-Domain Correlation Engine | ✅ InsightsCard + correlations API done |
+| 7C — Nova context injection (pass correlations to system prompt) | 🎯 Next |
+| 7D — Offline-First CRUD | 🎯 Planned |
+| Domain Pulse (new in 7.1) | ✅ Shipped |
 
 ---
 
@@ -914,7 +973,7 @@ Next migration number: **000018**
 | `20260613000015_nsfas_disbursements.sql` | ✅ Run | nsfas_disbursements for Inngest late-payment alert |
 | `20260613000016_graduation_modules.sql` | ✅ Run | graduation_modules, degree_config |
 | `20260613000017_skill_progress.sql` | ✅ Run | skill_progress JSONB map |
-| `20260613000018_*` | 📋 Next | TBD — sleep_debt_logs or study_velocity_daily |
+| `20260613000018_*` | 📋 Next | TBD — Nova context injection tables or push state-alert queue |
 
 ---
 
