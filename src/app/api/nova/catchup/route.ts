@@ -25,29 +25,26 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // ── Nova quota check (same monthly logic as main /api/nova) ───────────────
+    // ── Nova quota check (atomic RPC with row-level lock) ────────────────────
     const { data: profile } = await supabase
       .from('profiles')
-      .select('university, year_of_study, subscription_tier, nova_messages_used, nova_messages_reset_at')
+      .select('university, year_of_study, subscription_tier')
       .eq('id', user.id)
       .single()
 
     const now = new Date()
     const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    const lastResetKey = (profile?.nova_messages_reset_at as string | null)?.slice(0, 7) ?? ''
-    let messageCount = (profile?.nova_messages_used as number) || 0
-
-    if (lastResetKey !== currentMonthKey) {
-      await supabase
-        .from('profiles')
-        .update({ nova_messages_used: 0, nova_messages_reset_at: now.toISOString() })
-        .eq('id', user.id)
-      messageCount = 0
-    }
-
     const tier = ((profile?.subscription_tier ?? 'free') as keyof typeof NOVA_LIMITS)
     const tierLimit = NOVA_LIMITS[tier] ?? NOVA_LIMITS.free
-    if (messageCount >= tierLimit) {
+
+    const { data: quotaResult } = await supabase.rpc('try_use_nova_message', {
+      p_user_id: user.id,
+      p_month_key: currentMonthKey,
+      p_limit: tierLimit,
+    })
+
+    const quota = quotaResult as { allowed: boolean; messages_used: number; reason?: string } | null
+    if (!quota?.allowed) {
       return NextResponse.json(
         {
           error: 'limit_reached',
@@ -95,12 +92,6 @@ Format: Return ONLY the steps as a JSON array of strings, no other text. Example
 
     const text = response.content[0].type === 'text' ? response.content[0].text.trim() : null
     if (!text) return NextResponse.json({ error: 'No response' }, { status: 500 })
-
-    // Increment nova_messages_used only after successful generation
-    await supabase
-      .from('profiles')
-      .update({ nova_messages_used: messageCount + 1 })
-      .eq('id', user.id)
 
     const match = text.match(/\[[\s\S]*\]/)
     const steps = match ? JSON.parse(match[0]) as string[] : null

@@ -1,8 +1,9 @@
 'use client'
 // ─── Goal Architecture ────────────────────────────────────────
 // 10-year vision → 3-year goals → 90-day sprints → daily 3
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { signals } from '@/store/signals'
+import { createClient } from '@/lib/supabase/client'
 
 interface DailyThree { date: string; tasks: [string, string, string]; completed: [boolean, boolean, boolean] }
 interface Sprint { id: number; goal: string; startDate: string; endDate: string; milestones: string[]; milestonesDone?: boolean[]; completed: boolean }
@@ -10,9 +11,10 @@ interface YearGoal { id: number; year: number; goal: string; whyItMatters: strin
 interface GoalState { vision: string; visionWhy: string; yearGoals: YearGoal[]; sprints: Sprint[]; dailyLogs: DailyThree[] }
 
 const EMPTY: GoalState = { vision: '', visionWhy: '', yearGoals: [], sprints: [], dailyLogs: [] }
+const LS_KEY = 'varsityos-goals'
 
-function load(): GoalState { if (typeof window === 'undefined') return EMPTY; try { return JSON.parse(localStorage.getItem('varsityos-goals') || 'null') || EMPTY } catch { return EMPTY } }
-function save(s: GoalState) { localStorage.setItem('varsityos-goals', JSON.stringify(s)) }
+function loadLocal(): GoalState { if (typeof window === 'undefined') return EMPTY; try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null') || EMPTY } catch { return EMPTY } }
+function saveLocal(s: GoalState) { if (typeof window !== 'undefined') localStorage.setItem(LS_KEY, JSON.stringify(s)) }
 
 function calcDailyStreak(logs: DailyThree[]): number {
   const today = new Date().toISOString().split('T')[0]
@@ -38,10 +40,44 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
 ]
 
 export default function GoalArchitecture() {
-  const [state, setState] = useState<GoalState>(load)
+  const [state, setState] = useState<GoalState>(loadLocal)
   const [tab, setTab] = useState<Tab>('vision')
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const supabase = createClient()
 
-  const update = (s: GoalState) => { setState(s); save(s) }
+  // Load from Supabase on mount, merge with localStorage (Supabase wins)
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('user_goals').select('state').eq('user_id', user.id).single()
+        .then(({ data }) => {
+          if (data?.state && Object.keys(data.state).length > 0) {
+            const remote = data.state as GoalState
+            setState(remote)
+            saveLocal(remote)
+          } else {
+            // First time — migrate localStorage data up to Supabase
+            const local = loadLocal()
+            if (local.vision || local.yearGoals.length || local.sprints.length) {
+              supabase.from('user_goals').upsert({ user_id: user.id, state: local, updated_at: new Date().toISOString() }).then(() => {})
+            }
+          }
+        })
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const update = (s: GoalState) => {
+    setState(s)
+    saveLocal(s)
+    // Debounce Supabase write — wait 1s after last change
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) supabase.from('user_goals').upsert({ user_id: user.id, state: s, updated_at: new Date().toISOString() }).then(() => {})
+      })
+    }, 1000)
+  }
 
   const streak = calcDailyStreak(state.dailyLogs)
   const todayLog = state.dailyLogs.find(l => l.date === new Date().toISOString().split('T')[0])

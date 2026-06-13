@@ -246,9 +246,38 @@ Full visual modernisation pass across every component:
 - ✅ **Sidebar** — `var(--bg-base)`, active state indicator dot
 - ✅ **ReceiptScanner** — All inputs use `var(--bg-base)`, container uses `var(--bg-surface)`
 
-### Pending SQL migrations (run in Supabase SQL editor)
-- ⚠️ `supabase/migrations/20260612000002_notes_view_count_and_feed_moderation.sql`
-- ⚠️ `supabase/migrations/20260612000003_campus_life_os.sql`
+### SQL Migrations — All Applied ✅
+- ✅ `20260612000002_notes_view_count_and_feed_moderation.sql`
+- ✅ `20260612000003_campus_life_os.sql`
+- ✅ `20260613000001_nova_conversations.sql` — multi-conversation Nova history
+- ✅ `20260613000002_user_goals.sql` — GoalArchitecture cloud sync
+- ✅ `20260613000003_user_habits_state.sql` — HabitBuilder cloud sync
+- ✅ `20260613000004_push_cooldowns.sql` — push notification deduplication
+- ✅ `20260613000012_atomic_nova_increment.sql` — `try_use_nova_message` RPC
+
+---
+
+## Phase 4.5 — Cloud Sync & Intelligence Hardening ✅
+
+### Nova AI — Multi-conversation history
+- ✅ `nova_conversations` table — one row per conversation, multi per user
+- ✅ `/api/nova/history` — GET list/single conversation, DELETE
+- ✅ `nova/page.tsx` — History drawer with conversation list, load/delete, SOS badge
+- ✅ `/api/nova` — passes & tracks `conversationId`, auto-titles from first message
+- ✅ `/api/nova/catchup` — atomic quota via `try_use_nova_message` RPC (no race conditions)
+- ✅ `try_use_nova_message` RPC — `FOR UPDATE` row lock, handles month reset atomically
+
+### Cloud sync for localStorage modules
+- ✅ `GoalArchitecture.tsx` — Supabase `user_goals` sync (debounced writes, localStorage cache)
+- ✅ `HabitBuilder.tsx` — Supabase `user_habits_state` sync (debounced writes, localStorage cache)
+
+### Push Notifications
+- ✅ `/api/push/daily` — Vercel Cron at 07:00 SAST; exam countdowns, morning nudge, Nova quota warnings
+- ✅ `vercel.json` — cron schedule at `0 5 * * *` (UTC = 07:00 SAST)
+- ✅ `push_cooldowns` table — deduplication per rule per user
+
+### Feed — Realtime hydration
+- ✅ `/api/feed?id=` — single-post lookup endpoint for realtime INSERT handler
 
 ---
 
@@ -315,15 +344,15 @@ interface StudentState {
 | `good_momentum` | 1 | completionRate>80% this week | Celebrate + reinforce |
 
 ### Components to build
-- 🎯 `src/store/signals.ts` — typed signal bus + Supabase persistence
-- 🎯 `src/store/studentState.ts` — Zustand StudentState with computed slices
-- 🎯 `src/lib/rules.ts` — rules engine with cooldowns + intervention queue
-- 🎯 `src/components/orchestration/InterventionBanner.tsx` — sticky dashboard banner
-- 🎯 `src/components/orchestration/InterventionModal.tsx` — priority-5 full-screen
-- 🎯 `src/components/orchestration/DailyBrief.tsx` — "Just do these 3 things today"
-- 🎯 `src/components/orchestration/CatchUpPlanner.tsx` — recovery mode modal
-- 🎯 `src/api/orchestration/generate-plan/route.ts` — Nova-powered day/week planner
-- 🎯 `supabase/migrations/YYYYMMDD_orchestration_signals.sql`
+- ✅ `src/store/signals.ts` — typed signal bus + Supabase persistence
+- ✅ `src/store/studentState.ts` — Zustand StudentState with computed slices
+- ✅ `src/lib/rules.ts` — rules engine with cooldowns + intervention queue (17 rules, urgency 1–5)
+- ✅ `src/components/orchestration/InterventionBanner.tsx` — sticky dashboard banner
+- ✅ `src/components/orchestration/InterventionModal.tsx` — priority-5 full-screen
+- ✅ `src/components/orchestration/DailyBrief.tsx` — "Just do these 3 things today"
+- ✅ `src/components/orchestration/CatchUpPlanner.tsx` — recovery mode modal
+- ✅ `src/app/api/orchestration/generate-plan/route.ts` — Nova-powered day/week planner
+- ✅ `supabase/migrations/*_orchestration_signals.sql` — applied
 
 ### Daily Planning Engine
 Input context:

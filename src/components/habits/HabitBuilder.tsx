@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { signals } from '@/store/signals'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -108,13 +109,13 @@ const PACKS: Pack[] = [
 
 const STORAGE_KEY = 'varsityos-habits'
 
-function loadHabits(): Habit[] {
+function loadHabitsLocal(): Habit[] {
   if (typeof window === 'undefined') return []
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') } catch { return [] }
 }
 
-function saveHabits(habits: Habit[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(habits))
+function saveHabitsLocal(habits: Habit[]) {
+  if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(habits))
 }
 
 const today = () => new Date().toISOString().split('T')[0]
@@ -297,20 +298,45 @@ export default function HabitBuilder() {
   const [habits, setHabits]     = useState<Habit[]>([])
   const [view, setView]         = useState<'today' | 'all' | 'add'>('today')
   const [showStats, setShowStats] = useState(false)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
-    const loaded = loadHabits()
-    // Reset completedToday for any habit not checked in today
-    const refreshed = loaded.map(h => ({
-      ...h,
-      completedToday: h.lastCheckedIn === today(),
-    }))
-    setHabits(refreshed)
+    const refreshHabits = (raw: Habit[]) =>
+      raw.map(h => ({ ...h, completedToday: h.lastCheckedIn === today() }))
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        // No auth — use localStorage only
+        setHabits(refreshHabits(loadHabitsLocal()))
+        return
+      }
+      supabase.from('user_habits_state').select('habits').eq('user_id', user.id).single()
+        .then(({ data }) => {
+          if (data?.habits && Array.isArray(data.habits) && data.habits.length > 0) {
+            setHabits(refreshHabits(data.habits as Habit[]))
+            saveHabitsLocal(data.habits as Habit[])
+          } else {
+            const local = loadHabitsLocal()
+            setHabits(refreshHabits(local))
+            if (local.length > 0) {
+              supabase.from('user_habits_state').upsert({ user_id: user.id, habits: local, updated_at: new Date().toISOString() }).then(() => {})
+            }
+          }
+        })
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const persist = (updated: Habit[]) => {
     setHabits(updated)
-    saveHabits(updated)
+    saveHabitsLocal(updated)
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) supabase.from('user_habits_state').upsert({ user_id: user.id, habits: updated, updated_at: new Date().toISOString() }).then(() => {})
+      })
+    }, 1000)
   }
 
   const [milestone, setMilestone] = useState<{ name: string; streak: number } | null>(null)
