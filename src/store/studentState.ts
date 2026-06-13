@@ -9,6 +9,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { useAppStore } from './index'
 import { signals } from './signals'
+import { refreshSleepDebt, refreshStudyVelocity, refreshStreak, refreshNsfas } from '@/lib/intelligenceSync'
 import type { Task, Module, Exam, Expense, Budget, Profile } from '@/types'
 
 // ─── Shared enums ──────────────────────────────────────────────
@@ -482,15 +483,22 @@ export function initOrchestration(): () => void {
 
   // Trigger recompute when modules emit relevant signals so the rules
   // engine picks up changes that don't flow through the AppStore.
+  // For signals where the relevant AppStore intelligence field needs a
+  // fresh Supabase fetch, we call the refresh function first — the
+  // AppStore subscription then fires runRecompute automatically with
+  // the updated value. For signals where the data is already in the
+  // AppStore (tasks, grades, expenses) we call runRecompute directly.
   const getState = () => useAppStore.getState()
   const signalUnsubs = [
     signals.on('task_completed',      () => runRecompute(getState())),
-    signals.on('study_session_ended', () => runRecompute(getState())),
-    signals.on('sleep_logged',        () => runRecompute(getState())),
     signals.on('grade_updated',       () => runRecompute(getState())),
     signals.on('expense_logged',      () => runRecompute(getState())),
-    // Mood logged → re-read cache so rules engine sees new mood immediately
+    // Mood logged → re-read localStorage cache; AppStore not involved
     signals.on('mood_logged',         () => runRecompute(getState())),
+    // These need a fresh Supabase fetch before recomputing
+    signals.on('sleep_logged',        () => { refreshSleepDebt().catch(() => {}) }),
+    signals.on('study_session_ended', () => { refreshStudyVelocity().catch(() => {}); refreshStreak().catch(() => {}) }),
+    signals.on('nsfas_status_change', () => { refreshNsfas().catch(() => {}) }),
   ]
 
   return () => {
