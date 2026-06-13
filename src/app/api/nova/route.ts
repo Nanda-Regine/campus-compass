@@ -404,6 +404,12 @@ export async function POST(request: NextRequest) {
           .filter(m => m.content.length > 0)
       : []
     const mood: string | undefined = body?.mood
+    // conversationId: client passes the active conversation UUID so we append to the
+    // right row. If absent (new chat), we INSERT a fresh row and return the new ID.
+    const conversationId: string | undefined =
+      typeof body?.conversationId === 'string' && body.conversationId.length > 0
+        ? body.conversationId
+        : undefined
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
@@ -416,10 +422,13 @@ export async function POST(request: NextRequest) {
     // For breathing exercises, crisis, sleep tips, Pomodoro, etc. — respond instantly
     const prebuilt = detectPrebuilt(message)
     if (prebuilt?.skipApi) {
-      // Build context to get current usage count, then increment
       const ctx = await buildStudentContext(user.id, supabase)
-      const newCount = ctx.messageCount + 1
-      await supabase.from('profiles').update({ nova_messages_used: newCount }).eq('id', user.id)
+      // Atomic increment — no read-modify-write race condition
+      const monthKey = new Date().toISOString().slice(0, 7)
+      const { data: prebuiltUsage } = await supabase.rpc('try_use_nova_message', {
+        p_user_id: user.id, p_month_key: monthKey, p_limit: -1,
+      })
+      const newCount = (prebuiltUsage?.messages_used as number | null) ?? ctx.messageCount + 1
 
       return NextResponse.json({
         message: prebuilt.response,
@@ -434,20 +443,27 @@ export async function POST(request: NextRequest) {
     // ─── Build student context ─────────────────────────────────────────────
     const ctx = await buildStudentContext(user.id, supabase)
 
-    // ─── Tier-based message cap enforcement ───────────────────────────────
+    // ─── Atomic cap check + increment ────────────────────────────────────
+    // Single Postgres FOR UPDATE call — eliminates concurrent-request race condition.
+    // Both the limit check and the increment happen in one transaction.
     const tier = ctx.subscriptionTier
-    // For nova_unlimited, use the internal cost-protection cap (not exposed to UI)
     const tierLimit = NOVA_LIMITS[tier]
     const isUnlimited = tier === 'nova_unlimited'
     const effectiveFreeLimit = NOVA_FREE_LIMIT
+    const monthKey = new Date().toISOString().slice(0, 7)
 
-    if (ctx.messageCount >= tierLimit) {
+    const { data: novaUsage } = await supabase.rpc('try_use_nova_message', {
+      p_user_id:   user.id,
+      p_month_key: monthKey,
+      p_limit:     isUnlimited ? -1 : tierLimit,
+    })
+
+    if (!novaUsage?.allowed) {
       const limitMessage = tier === 'nova_unlimited'
         ? "Nova is taking a well-earned rest for the remainder of this month — your messages reset on the 1st. In the meantime, check out Siyavula, Khan Academy, or your campus counselling centre."
         : tier === 'free'
           ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Nova Scholar (R29) for 150 messages/month.`
           : `You've reached your 150-message Scholar limit. Upgrade to Nova Unlimited (R89) for unlimited messages.`
-
       return NextResponse.json({
         error: 'limit_reached',
         message: limitMessage,
@@ -455,6 +471,8 @@ export async function POST(request: NextRequest) {
         tier,
       }, { status: 402 })
     }
+
+    const messagesUsed = novaUsage.messages_used as number
 
     // Topic detection + usage guidance
     const heavyTopic = detectHeavyTopic(history)
@@ -516,18 +534,42 @@ export async function POST(request: NextRequest) {
     const inputTokens = usage?.input_tokens ?? 0
     const outputTokens = usage?.output_tokens ?? 0
 
-    // Increment message counter on profile
-    const messagesUsed = ctx.messageCount + 1
-    await supabase.from('profiles').update({ nova_messages_used: messagesUsed }).eq('id', user.id)
+    // messagesUsed already set by the atomic RPC above — no separate update needed
 
-    // Save conversation to nova_conversations (best-effort, non-blocking)
-    supabase.from('nova_conversations').upsert({
-      user_id: user.id,
-      messages: [...history.slice(-20), { role: 'user', content: message }, { role: 'assistant', content: assistantMessage }],
-      conversation_type: isCrisis ? 'crisis' : 'general',
-      crisis_detected: isCrisis,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' }).then(() => {}, () => {})
+    // ── Persist conversation history (best-effort, non-blocking) ─────────────
+    const updatedMessages = [
+      ...history.slice(-40),
+      { role: 'user', content: message, timestamp: new Date().toISOString() },
+      { role: 'assistant', content: assistantMessage, timestamp: new Date().toISOString() },
+    ]
+    const newMessageCount = updatedMessages.length
+    const autoTitle = message.slice(0, 60) + (message.length > 60 ? '…' : '')
+
+    let resolvedConversationId = conversationId
+    if (conversationId) {
+      // Append to existing conversation
+      supabase.from('nova_conversations').update({
+        messages: updatedMessages,
+        conversation_type: isCrisis ? 'crisis' : 'general',
+        crisis_detected: isCrisis,
+        message_count: newMessageCount,
+        updated_at: new Date().toISOString(),
+      }).eq('id', conversationId).eq('user_id', user.id).then(() => {}, () => {})
+    } else {
+      // Start a new conversation row, capture its ID to return to client
+      supabase.from('nova_conversations').insert({
+        user_id: user.id,
+        messages: updatedMessages,
+        title: autoTitle,
+        conversation_type: isCrisis ? 'crisis' : 'general',
+        crisis_detected: isCrisis,
+        message_count: newMessageCount,
+        started_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).select('id').single().then((res) => {
+        resolvedConversationId = (res.data as { id: string } | null)?.id
+      }, () => {})
+    }
 
     // Log cache token usage for cost monitoring (best-effort)
     if (cacheCreationTokens > 0 || cacheReadTokens > 0 || inputTokens > 0) {
@@ -552,6 +594,7 @@ export async function POST(request: NextRequest) {
       tier,
       nearSoftCap: false,
       pastSoftCap: false,
+      conversationId: resolvedConversationId ?? null,
     })
   } catch (error) {
     console.error('Nova API error:', error)

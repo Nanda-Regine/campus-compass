@@ -12,12 +12,43 @@ function makeSupabase() {
 }
 
 // GET /api/feed?scope=campus|all&category=&cursor=
+// GET /api/feed?id={postId}  — single post (used by realtime to hydrate new INSERT)
 export async function GET(req: NextRequest) {
   const supabase = makeSupabase()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
+
+  // ── Single-post fetch (for realtime hydration) ────────────────────────────
+  const singleId = searchParams.get('id')
+  if (singleId) {
+    const { data: p } = await supabase
+      .from('campus_posts')
+      .select('id, content, category, institution, created_at, user_id, author:profiles!campus_posts_user_id_fkey(name, emoji)')
+      .eq('id', singleId)
+      .single()
+    if (!p) return NextResponse.json({ post: null })
+    const row = p as Record<string, unknown>
+    const [{ data: reactions }, { data: myReaction }, { data: comments }] = await Promise.all([
+      supabase.from('post_reactions').select('post_id').eq('post_id', singleId),
+      supabase.from('post_reactions').select('post_id').eq('post_id', singleId).eq('user_id', user.id),
+      supabase.from('post_comments').select('post_id').eq('post_id', singleId),
+    ])
+    const author = row.author as { name: string; emoji: string } | null
+    return NextResponse.json({
+      post: {
+        id: row.id, content: row.content, category: row.category,
+        institution: row.institution, created_at: row.created_at, user_id: row.user_id,
+        author_name: author?.name ?? 'Student', author_emoji: author?.emoji ?? '🎓',
+        is_own: row.user_id === user.id,
+        reaction_count: reactions?.length ?? 0,
+        reacted: (myReaction?.length ?? 0) > 0,
+        comment_count: comments?.length ?? 0,
+      }
+    })
+  }
+
   const scope    = searchParams.get('scope') ?? 'campus'
   const category = searchParams.get('category') ?? ''
   const cursor   = searchParams.get('cursor') ?? ''

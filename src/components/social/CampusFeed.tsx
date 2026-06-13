@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, Heart, MessageCircle, Trash2, ChevronDown, ChevronUp, Globe, Building2, MoreHorizontal, Flag } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatDistanceToNow } from 'date-fns'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -495,6 +496,45 @@ export default function CampusFeed({ institution }: Props) {
   }, [scope, category])
 
   useEffect(() => { fetchPosts(true) }, [fetchPosts])
+
+  // ─── Real-time: prepend new posts from other members live ─────────────────
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase
+      .channel('campus_posts_feed')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'campus_posts' },
+        (payload) => {
+          const newRow = payload.new as Record<string, unknown>
+          // Scope filter: skip campus posts from other institutions
+          if (scope === 'campus' && institution && newRow.institution !== institution) return
+          // Re-fetch the full post (with author join + reaction counts)
+          fetch(`/api/feed?id=${newRow.id}`)
+            .then(r => r.ok ? r.json() : null)
+            .then((data: { post?: Post } | null) => {
+              if (data?.post) {
+                setPosts(prev => {
+                  // Don't duplicate if we already have it (e.g. from our own post)
+                  if (prev.some(p => p.id === data.post!.id)) return prev
+                  return [data.post!, ...prev]
+                })
+              }
+            })
+            .catch(() => {/* non-fatal */})
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'campus_posts' },
+        (payload) => {
+          setPosts(prev => prev.filter(p => p.id !== (payload.old as { id: string }).id))
+        }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [scope, institution])
 
   function handleDelete(id: string) {
     fetch(`/api/feed?id=${id}`, { method: 'DELETE' })

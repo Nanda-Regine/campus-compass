@@ -279,10 +279,17 @@ export default function NovaPage() {
   const [messageLimit, setMessageLimit] = useState(20)
   const [isPremium, setIsPremium] = useState(false)
   const [userTier, setUserTier] = useState<'free' | 'scholar' | 'nova_unlimited'>('free')
+  const [conversationId, setConversationId] = useState<string | null>(null)
   const [showMoods, setShowMoods] = useState(false)
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showCapabilities, setShowCapabilities] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [historyList, setHistoryList] = useState<Array<{
+    id: string; title: string | null; conversation_type: string;
+    crisis_detected: boolean; updated_at: string; message_count: number;
+  }>>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
   const [dailyBriefData, setDailyBriefData] = useState<{
     name: string | null
     nextExamName: string | null
@@ -348,6 +355,50 @@ export default function NovaPage() {
     }
   }, [searchParams])
 
+  const openHistory = async () => {
+    setShowHistory(true)
+    setHistoryLoading(true)
+    try {
+      const res = await fetch('/api/nova/history')
+      if (res.ok) {
+        const data = await res.json()
+        setHistoryList(data.conversations ?? [])
+      }
+    } catch { /* silent */ } finally {
+      setHistoryLoading(false)
+    }
+  }
+
+  const loadConversation = async (id: string) => {
+    try {
+      const res = await fetch(`/api/nova/history?id=${id}`)
+      if (!res.ok) return
+      const data = await res.json()
+      setMessages(data.messages.map((m: { id: string; role: 'user' | 'assistant'; content: string; timestamp: string }) => ({
+        ...m,
+        timestamp: new Date(m.timestamp),
+      })))
+      setConversationId(id)
+      setShowWelcome(false)
+      setShowHistory(false)
+    } catch { /* silent */ }
+  }
+
+  const startNewChat = () => {
+    setMessages([])
+    setConversationId(null)
+    setShowWelcome(true)
+    setShowHistory(false)
+    setShowCrisisPanel(false)
+  }
+
+  const deleteConversation = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    await fetch(`/api/nova/history?id=${id}`, { method: 'DELETE' })
+    setHistoryList(prev => prev.filter(c => c.id !== id))
+    if (conversationId === id) startNewChat()
+  }
+
   const sendMessage = async (messageText?: string) => {
     const text = (messageText || input).trim()
     if (!text || loading) return
@@ -379,6 +430,7 @@ export default function NovaPage() {
           message: text,
           history,
           mood: selectedMood,
+          conversationId,
         }),
       })
 
@@ -410,6 +462,7 @@ export default function NovaPage() {
 
       setMessages(prev => [...prev, assistantMessage])
       setMessageCount(data.messagesUsed || messageCount + 1)
+      if (data.conversationId && !conversationId) setConversationId(data.conversationId)
 
       trackEvent('nova_message_sent', {
         tier: userTier,
@@ -445,10 +498,119 @@ export default function NovaPage() {
       {/* Nova deep-space ambient — grainy nebula behind the chat */}
       <AmbientImage zone="nova" opacity={0.38} blurPx={5} saturation={1.6}
         overlayColor="linear-gradient(180deg,rgba(5,4,12,0.12) 0%,rgba(10,9,23,0.04) 100%)" />
+      {/* History drawer */}
+      {showHistory && (
+        <div
+          className="fixed inset-0 z-50 flex"
+          onClick={() => setShowHistory(false)}
+        >
+          <div
+            className="w-80 max-w-[90vw] h-full bg-[var(--bg-base)] border-r border-white/10 flex flex-col shadow-2xl animate-fade-in"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+              <div>
+                <div className="font-display font-bold text-white text-sm">Chat History</div>
+                <div className="font-mono text-[0.55rem] text-white/30 mt-0.5">{historyList.length} conversations</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={startNewChat}
+                  className="font-mono text-[0.6rem] px-3 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/30 text-teal-400 hover:bg-teal-600/30 transition-all"
+                >
+                  + New chat
+                </button>
+                <button
+                  onClick={() => setShowHistory(false)}
+                  className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white/70 transition-all text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* List */}
+            <div className="flex-1 overflow-y-auto py-2">
+              {historyLoading ? (
+                <div className="flex justify-center py-8">
+                  <div className="flex gap-1.5">
+                    {[0, 1, 2].map(i => (
+                      <div key={i} className="w-1.5 h-1.5 bg-teal-600 rounded-full typing-dot" style={{ animationDelay: `${i * 0.2}s` }} />
+                    ))}
+                  </div>
+                </div>
+              ) : historyList.length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <div className="text-2xl mb-2">🌟</div>
+                  <p className="font-mono text-[0.6rem] text-white/30">No conversations yet</p>
+                  <p className="font-mono text-[0.55rem] text-white/20 mt-1">Start chatting with Nova</p>
+                </div>
+              ) : (
+                historyList.map(convo => {
+                  const date = new Date(convo.updated_at)
+                  const isToday = date.toDateString() === new Date().toDateString()
+                  const dateStr = isToday
+                    ? date.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })
+                    : date.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })
+                  const isActive = convo.id === conversationId
+
+                  return (
+                    <button
+                      key={convo.id}
+                      onClick={() => loadConversation(convo.id)}
+                      className={cn(
+                        'w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition-all group relative',
+                        isActive && 'bg-teal-600/10 border-l-2 border-l-teal-500'
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            {convo.crisis_detected && (
+                              <span className="text-[0.5rem] bg-red-500/20 text-red-400 border border-red-500/20 px-1 rounded">SOS</span>
+                            )}
+                            <span className="font-display font-semibold text-[0.72rem] text-white truncate">
+                              {convo.title || 'Conversation'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-[0.52rem] text-white/25">{convo.message_count} msgs</span>
+                            <span className="font-mono text-[0.52rem] text-white/20">·</span>
+                            <span className="font-mono text-[0.52rem] text-white/25">{dateStr}</span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => deleteConversation(convo.id, e)}
+                          className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all text-xs flex-shrink-0"
+                          title="Delete"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </button>
+                  )
+                })
+              )}
+            </div>
+          </div>
+          {/* Backdrop */}
+          <div className="flex-1 bg-black/40 backdrop-blur-sm" />
+        </div>
+      )}
+
       <TopBar
         title="Nova"
         action={
           <div className="flex items-center gap-2">
+            {/* History button */}
+            <button
+              onClick={openHistory}
+              className="font-mono text-[0.58rem] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-white/40 hover:text-white/70 hover:bg-white/10 transition-all"
+              title="Chat history"
+            >
+              ☰ History
+            </button>
             {/* Capabilities menu button */}
             <button
               onClick={() => setShowCapabilities(!showCapabilities)}
