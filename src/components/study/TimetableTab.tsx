@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useAppStore } from '@/store'
 import Modal from '@/components/ui/Modal'
@@ -11,6 +12,7 @@ import { MODULE_COLOURS, WEEKDAYS, type Module, type TimetableEntry, DAYS_OF_WEE
 import { fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import ICSImportButton from './ICSImportButton'
 
 // ─── Grid geometry ────────────────────────────────────────────────────────────
 const GRID_START  = 7   // 07:00 first visible hour
@@ -78,6 +80,7 @@ interface Props {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function TimetableTab({ timetable, modules, userId, supabase }: Props) {
+  const router = useRouter()
   const { addTimetableEntry, removeTimetableEntry } = useAppStore()
   const [modalOpen, setModalOpen] = useState(false)
   const [saving,    setSaving]    = useState(false)
@@ -176,7 +179,10 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
         }}>
           Week · {today.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}
         </div>
-        <Button size="sm" onClick={() => openModal()}>+ Add class</Button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <ICSImportButton onImported={() => { toast.success('Timetable imported!'); router.refresh() }} />
+          <Button size="sm" onClick={() => openModal()}>+ Add class</Button>
+        </div>
       </div>
 
       {/* Empty states */}
