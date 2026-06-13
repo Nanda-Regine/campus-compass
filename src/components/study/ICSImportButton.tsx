@@ -6,7 +6,7 @@ interface PreviewData {
   slotCount: number
   examCount: number
   skipped: number
-  sampleSlots: { day_of_week_text: string; start_time: string; end_time: string; venue: string | null; summary: string }[]
+  sampleSlots: { day_of_week_text: string; start_time: string; end_time: string; venue: string | null; slot_type: string }[]
   sampleExams: { exam_name: string; exam_date: string; exam_type: string }[]
 }
 
@@ -218,7 +218,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
                     <SampleList
                       label="Slots (sample)"
                       items={preview.sampleSlots.map(s =>
-                        `${s.day_of_week_text} ${s.start_time}–${s.end_time}${s.venue ? ` · ${s.venue}` : ''} — ${s.summary}`
+                        `${s.day_of_week_text} ${s.start_time}–${s.end_time}${s.venue ? ` · ${s.venue}` : ''} (${s.slot_type})`
                       )}
                     />
                   )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 function cleanForSpeech(text: string): string {
   return text
@@ -29,7 +29,6 @@ function pickVoice(): SpeechSynthesisVoice | null {
 export function useSpeechSynthesis() {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [isSupported, setIsSupported] = useState(false)
-  const utterRef = useRef<SpeechSynthesisUtterance | null>(null)
 
   useEffect(() => {
     setIsSupported('speechSynthesis' in window)
@@ -59,7 +58,6 @@ export function useSpeechSynthesis() {
     utt.onend   = () => { setIsSpeaking(false); onEnd?.() }
     utt.onerror = () => { setIsSpeaking(false); onEnd?.() }
 
-    utterRef.current = utt
     window.speechSynthesis.speak(utt)
   }, [])
 

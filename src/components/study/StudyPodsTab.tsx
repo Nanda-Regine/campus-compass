@@ -23,6 +23,8 @@ interface Match {
   blurb: string
 }
 
+interface ProfileSnippet { full_name: string | null; avatar_url: string | null }
+
 interface Connection {
   id: string
   requester_id: string
@@ -31,6 +33,8 @@ interface Connection {
   shared_modules: string[]
   ai_blurb: string | null
   created_at: string
+  requester: ProfileSnippet | null
+  recipient: ProfileSnippet | null
 }
 
 const CACHE_KEY = () => {
@@ -138,7 +142,8 @@ function ConnectionCard({ conn, myUserId, onAction, acting }: {
   acting: boolean
 }) {
   const isRequester = conn.requester_id === myUserId
-  const otherId = isRequester ? conn.recipient_id : conn.requester_id
+  const other = isRequester ? conn.recipient : conn.requester
+  const otherName = other?.full_name ?? 'Student'
   const statusColour = conn.status === 'accepted' ? '#4ecf9e' : conn.status === 'declined' ? '#ef4444' : '#f59e0b'
 
   return (
@@ -147,9 +152,21 @@ function ConnectionCard({ conn, myUserId, onAction, acting }: {
       background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-          {otherId.slice(0, 8)}…
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+            background: 'linear-gradient(135deg, rgba(56,189,248,0.25), rgba(129,140,248,0.25))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 12, fontWeight: 700, color: '#38BDF8',
+          }}>
+            {other?.avatar_url
+              ? <img src={other.avatar_url} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+              : otherName[0]?.toUpperCase()}
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+            {otherName}
+          </span>
+        </div>
         <span style={{
           fontSize: 10, padding: '2px 8px', borderRadius: 10,
           background: `${statusColour}15`, color: statusColour,

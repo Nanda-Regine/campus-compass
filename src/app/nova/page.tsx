@@ -308,6 +308,7 @@ export default function NovaPage() {
   const [voiceMode, setVoiceMode]       = useState(false)
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const newResponseRef = useRef(false)   // true only for live Nova replies, not history loads
   const sr    = useSpeechRecognition()
   const synth = useSpeechSynthesis()
 
@@ -416,9 +417,11 @@ export default function NovaPage() {
     if (!synth.isSpeaking && !audioRef.current) setSpeakingMsgId(null)
   }, [synth.isSpeaking])
 
-  // Auto-speak last Nova response when voice mode is active
+  // Auto-speak: only for live Nova replies, NOT for history/conversation loads
   useEffect(() => {
     if (!voiceMode || loading) return
+    if (!newResponseRef.current) return
+    newResponseRef.current = false
     const last = messages[messages.length - 1]
     if (!last || last.role !== 'assistant') return
     speakMsg(last.content, last.id)
@@ -468,7 +471,7 @@ export default function NovaPage() {
 
     // Browser TTS (free tier + fallback)
     synth.speak(rawText, () => setSpeakingMsgId(null))
-  }, [speakingMsgId, isPremium, userTier, synth])
+  }, [speakingMsgId, isPremium, userTier, synth.speak, synth.stop])
 
   const handleMicClick = useCallback(() => {
     if (sr.isListening) { sr.stop(); return }
@@ -563,6 +566,7 @@ export default function NovaPage() {
         resources: data.resources || [],
       }
 
+      newResponseRef.current = true   // allow auto-speak for this response
       setMessages(prev => [...prev, assistantMessage])
       setMessageCount(data.messagesUsed || messageCount + 1)
       if (data.conversationId && !conversationId) setConversationId(data.conversationId)

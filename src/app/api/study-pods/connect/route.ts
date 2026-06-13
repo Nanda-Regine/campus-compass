@@ -13,7 +13,11 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('study_pod_connections')
-      .select('id, requester_id, recipient_id, status, shared_modules, ai_blurb, created_at')
+      .select(`
+        id, requester_id, recipient_id, status, shared_modules, ai_blurb, created_at,
+        requester:profiles!study_pod_connections_requester_id_fkey(full_name, avatar_url),
+        recipient:profiles!study_pod_connections_recipient_id_fkey(full_name, avatar_url)
+      `)
       .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .order('created_at', { ascending: false })
 
