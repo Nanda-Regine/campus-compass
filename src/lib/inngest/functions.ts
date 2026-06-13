@@ -545,3 +545,91 @@ export const weeklyDigest = inngest.createFunction(
     return { sent: totalSent, users: userIds.length }
   },
 )
+
+// ─── Daily Student State Snapshot ────────────────────────────────────────────
+// Fires at midnight SAST.
+// Captures each active user's academic+financial+wellness state so the
+// orchestration layer can detect multi-day trends (e.g. 3 days declining
+// wellness + overspending + missed attendance → critical intervention).
+export const dailyStateSnapshot = inngest.createFunction(
+  { id: 'daily-state-snapshot', name: 'Daily Student State Snapshot', retries: 1 },
+  { cron: 'TZ=Africa/Johannesburg 0 0 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    const supabase  = createAdminSupabaseClient()
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+    const today     = new Date().toISOString().slice(0, 10)
+
+    // Identify active users: logged wellness or study session yesterday
+    const activeUsers = await step.run('find-active-users', async () => {
+      const [wellnessRes, sessionsRes] = await Promise.all([
+        supabase.from('wellness_checkins').select('user_id').gte('date', yesterday),
+        supabase.from('study_sessions').select('user_id').gte('started_at', yesterday + 'T00:00:00Z'),
+      ])
+      const ids = new Set<string>([
+        ...((wellnessRes.data ?? []) as { user_id: string }[]).map(r => r.user_id),
+        ...((sessionsRes.data ?? []) as { user_id: string }[]).map(r => r.user_id),
+      ])
+      return [...ids]
+    }) as string[]
+
+    if (!activeUsers.length) return { snapshots: 0 }
+
+    const snapshotCount = await step.run('write-snapshots', async () => {
+      const today7DaysAgo = new Date(Date.now() - 7 * 86400000).toISOString()
+      const [wellnessRes, sessionsRes, tasksRes, attendRes, expensesRes] = await Promise.all([
+        supabase.from('wellness_checkins').select('user_id, score, date').in('user_id', activeUsers).eq('date', yesterday),
+        supabase.from('study_sessions').select('user_id, duration_minutes').in('user_id', activeUsers).gte('started_at', today7DaysAgo),
+        supabase.from('tasks').select('user_id, status, due_date').in('user_id', activeUsers).neq('status', 'done').lt('due_date', today),
+        supabase.from('attendance_records').select('user_id, status').in('user_id', activeUsers).gte('date', today7DaysAgo).eq('status', 'absent'),
+        supabase.from('expenses').select('user_id, amount').in('user_id', activeUsers).gte('created_at', today7DaysAgo),
+      ])
+
+      const wellnessMap: Record<string, number> = {}
+      for (const w of (wellnessRes.data ?? []) as { user_id: string; score: number }[]) {
+        wellnessMap[w.user_id] = w.score
+      }
+      const studyHoursMap: Record<string, number> = {}
+      for (const s of (sessionsRes.data ?? []) as { user_id: string; duration_minutes: number }[]) {
+        studyHoursMap[s.user_id] = (studyHoursMap[s.user_id] ?? 0) + (s.duration_minutes ?? 0) / 60
+      }
+      const overdueMap: Record<string, number> = {}
+      for (const t of (tasksRes.data ?? []) as { user_id: string }[]) {
+        overdueMap[t.user_id] = (overdueMap[t.user_id] ?? 0) + 1
+      }
+      const absentMap: Record<string, number> = {}
+      for (const a of (attendRes.data ?? []) as { user_id: string }[]) {
+        absentMap[a.user_id] = (absentMap[a.user_id] ?? 0) + 1
+      }
+      const spendMap: Record<string, number> = {}
+      for (const e of (expensesRes.data ?? []) as { user_id: string; amount: number }[]) {
+        spendMap[e.user_id] = (spendMap[e.user_id] ?? 0) + (e.amount ?? 0)
+      }
+
+      const rows = activeUsers.map(userId => {
+        const wellnessScore   = wellnessMap[userId] ?? 50
+        const studyHours      = Math.round((studyHoursMap[userId] ?? 0) * 10) / 10
+        const overdueTasks    = overdueMap[userId] ?? 0
+        const absences7d      = absentMap[userId] ?? 0
+        const spend7d         = Math.round(spendMap[userId] ?? 0)
+        const burnoutScore    = Math.max(0, Math.min(100, 100 - wellnessScore))
+        const academicRisk    = absences7d >= 3 || overdueTasks >= 5 ? 'critical' : absences7d >= 2 || overdueTasks >= 3 ? 'warning' : overdueTasks >= 1 ? 'watch' : 'safe'
+        return {
+          user_id:           userId,
+          snapshot_date:     today,
+          burnout_score:     burnoutScore,
+          procrastination_idx: overdueTasks,
+          academic_risk:     academicRisk,
+          completion_rate:   overdueTasks === 0 ? 100 : Math.max(0, 100 - overdueTasks * 10),
+          raw: { studyHours7d: studyHours, absences7d, spend7d, wellnessScore },
+        }
+      })
+
+      const { error } = await supabase.from('student_state_snapshots').upsert(rows, { onConflict: 'user_id,snapshot_date', ignoreDuplicates: false })
+      if (error) logger.warn('Snapshot upsert error: ' + error.message)
+      return rows.length
+    })
+
+    logger.info(`State snapshot: ${snapshotCount} users snapshotted for ${today}`)
+    return { snapshots: snapshotCount, date: today }
+  },
+)
