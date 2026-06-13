@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-14 (Phase 8 ✅ — Phase 9: 9A–9D ✅ — 9E active 🔨)
+> Last updated: 2026-06-14 (Phases 1–9 ✅ complete — Phase 10 active 🔨)
 
 ---
 
@@ -785,19 +785,19 @@ All 9 life-domain modules shipped: NSFAS Tracker OS, Weather, Safety OS, Habit B
 3. ✅ Graduation Optimizer — Claude Haiku `tool_use`, weekly localStorage cache, GraduationOptimizer component in GraduationAudit
 4. ✅ Institutional onboarding — Migration 000018, `/institutions` landing, `/admin/institution` portal, invite system, `/join/institution/[token]`
 
-### 🔨 Now (Phase 9 — Community Scale & Institutional Intelligence)
+### ✅ Complete (Phase 9 — Community Scale & Institutional Intelligence)
 1. ✅ ICS Timetable Import — parse university .ics calendar files, auto-populate timetable + exam tables; SSRF protection, 2MB cap, batch inserts, SAST timezone; migration 000019
 2. ✅ Study Pods — AI-matched peer study partners; migration 000019 (study_pod_profiles + study_pod_connections); Claude Haiku blurbs; weekly cache; opt-in form → matches → connections UI
 3. ✅ Nova Voice Mode — useSpeechRecognition (en-ZA, auto-submit), useSpeechSynthesis (markdown-stripped, voice-selected), ElevenLabs TTS stream for premium, browser TTS fallback, per-message 🔊 button, auto-read toggle persisted in localStorage
 4. ✅ SRC Analytics Dashboard — /api/admin/analytics (admin client, Promise.allSettled); /admin/institution Overview|Analytics tabs; CSS bar charts: year distribution, task completion, top modules, Nova engagement, active students, Study Pods adoption
-5. 🔨 Institution Broadcast — admin pushes announcements/alerts to all linked students via push notification
+5. ✅ Institution Broadcast — migration 000020 (institution_broadcasts + RLS); POST /api/admin/broadcast (rate-limit 3/24h, batch notifyUser in waves of 50); GET history; admin page compose form + priority selector + recent history list
 
-### 📋 Future (Phase 10+)
-1. Parent/Guardian view — optional read-only dashboard with magic-link access
-2. VarsityOS for TVET colleges — NCV/NC(V) qualifications, TVET NSFAS rules
-3. LMS integrations — Blackboard, Moodle, Canvas webhooks for grade sync
-4. Nova multi-modal — image input (scan exam paper, textbook page)
-5. Cohort comparison — anonymous benchmarking vs same-degree peers
+### 🔨 Now (Phase 10 — Growth & Reach)
+1. 🎯 Parent/Guardian view — optional read-only dashboard with magic-link access
+2. 🎯 Nova multi-modal — image input (scan exam paper, past paper, textbook page → instant analysis)
+3. 🎯 Cohort comparison — anonymous benchmarking vs same-degree peers (task completion %, GPA bracket, study velocity)
+4. 📋 VarsityOS for TVET colleges — NCV/NC(V) qualifications, TVET NSFAS rules, N-level certificate tracking
+5. 📋 LMS integrations — Blackboard, Moodle, Canvas webhooks for grade sync + assignment import
 
 ---
 
@@ -957,7 +957,7 @@ d6ca96e  fix: add untracked InsightsCard and API routes missing from repo
 ## Supabase Migration Log
 
 All migrations must be run manually in the VarsityOS Supabase SQL editor (NOT via MCP).
-Next migration number: **000019**
+Next migration number: **000021**
 
 | File | Status | Description |
 |---|---|---|
@@ -985,6 +985,8 @@ Next migration number: **000019**
 | `20260613000016_graduation_modules.sql` | ✅ Run | graduation_modules, degree_config |
 | `20260613000017_skill_progress.sql` | ✅ Run | skill_progress JSONB map |
 | `20260613000018_institutions.sql` | ✅ Run | institutions, institution_admins, institution_invites; profiles.institution_id |
+| `20260614000019_study_pods.sql` | ✅ Run | study_pod_profiles, study_pod_connections; RLS policies |
+| `20260614000020_institution_broadcasts.sql` | ✅ Run | institution_broadcasts; admin SELECT + INSERT RLS |
 
 ---
 
