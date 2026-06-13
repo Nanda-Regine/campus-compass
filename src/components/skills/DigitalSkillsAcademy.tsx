@@ -2,17 +2,18 @@
 // ─── Digital Skills Academy ───────────────────────────────────
 // Tracks: Google Workspace · Academic Research · AI Tools · Excel · Professional Skills · Digital Security · Python
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Lesson { id: string; title: string; duration: string; type: 'read' | 'practice' | 'quiz'; completed: boolean; content: string }
 interface Track  { id: string; title: string; emoji: string; color: string; description: string; xp: number; lessons: Lesson[] }
 
 const STORAGE_KEY = 'varsityos-skills'
-function loadProgress(): Record<string, boolean> {
+function loadLocal(): Record<string, boolean> {
   if (typeof window === 'undefined') return {}
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') } catch { return {} }
 }
-function saveProgress(p: Record<string, boolean>) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)) }
+function saveLocal(p: Record<string, boolean>) { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)) }
 
 // Simple markdown renderer: **bold**, `code`, ```block```
 function renderMd(text: string) {
@@ -1750,16 +1751,44 @@ When they offer: "Thank you — can I have 24 hours to review?" Always counter-o
 ]
 
 export default function DigitalSkillsAcademy() {
-  const [progress,    setProgress]    = useState<Record<string, boolean>>(loadProgress)
+  const supabase = createClient()
+  const [progress,    setProgress]    = useState<Record<string, boolean>>(loadLocal)
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
   const [activeLesson,setActiveLesson]= useState<string | null>(null)
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Load from Supabase on mount; migrate localStorage up if no cloud data
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('skill_progress').select('progress').eq('user_id', user.id).single()
+        .then(({ data }) => {
+          if (data?.progress && Object.keys(data.progress as object).length > 0) {
+            const remote = data.progress as Record<string, boolean>
+            setProgress(remote); saveLocal(remote)
+          } else {
+            const local = loadLocal()
+            if (Object.keys(local).length > 0) {
+              supabase.from('skill_progress').upsert({ user_id: user.id, progress: local, updated_at: new Date().toISOString() }).then(() => {})
+            }
+          }
+        })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const track  = TRACKS.find(t => t.id === activeTrack)
   const lesson = track?.lessons.find(l => l.id === activeLesson)
 
   const toggleComplete = (lessonId: string) => {
     const p = { ...progress, [lessonId]: !progress[lessonId] }
-    setProgress(p); saveProgress(p)
+    setProgress(p); saveLocal(p)
+    if (saveTimer.current) clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) supabase.from('skill_progress').upsert({ user_id: user.id, progress: p, updated_at: new Date().toISOString() }).then(() => {})
+      })
+    }, 1000)
   }
 
   const trackXP    = (t: Track) => t.lessons.filter(l => progress[l.id]).length * Math.floor(t.xp / t.lessons.length)
