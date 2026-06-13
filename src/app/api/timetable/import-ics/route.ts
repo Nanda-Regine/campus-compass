@@ -3,7 +3,12 @@ export const dynamic = 'force-dynamic'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import ical from 'node-ical'
+import ical, { type VEvent, type ParameterValue } from 'node-ical'
+
+function str(val: ParameterValue | undefined): string {
+  if (!val) return ''
+  return typeof val === 'string' ? val : (val.val ?? '')
+}
 
 // ICS day abbreviation → our DB day_of_week (Mon=1 … Sun=7)
 const ICS_DAY: Record<string, number> = {
@@ -80,13 +85,14 @@ function parseICS(icsText: string): ParseResult {
   let skipped = 0
 
   for (const key of Object.keys(events)) {
-    const ev = events[key]
-    if (ev.type !== 'VEVENT') continue
+    const raw = events[key]
+    if (!raw || raw.type !== 'VEVENT') continue
+    const ev = raw as VEvent
 
-    const summary = (ev.summary as string | undefined) ?? ''
-    const location = (ev.location as string | undefined) ?? null
-    const start = ev.start as Date | undefined
-    const end   = ev.end   as Date | undefined
+    const summary  = str(ev.summary).trim()
+    const location = str(ev.location) || null
+    const start    = ev.start
+    const end      = ev.end
 
     if (!start) { skipped++; continue }
 
@@ -95,21 +101,22 @@ function parseICS(icsText: string): ParseResult {
     if (isExam) {
       const durationMs = end ? end.getTime() - start.getTime() : null
       exams.push({
-        exam_name:        summary.trim() || 'Exam',
+        exam_name:        summary || 'Exam',
         exam_date:        start.toISOString(),
         start_time:       hhmm(start),
         venue:            location,
         duration_minutes: durationMs ? Math.round(durationMs / 60000) : null,
         exam_type:        detectExamType(summary),
-        notes:            (ev.description as string | undefined) ?? null,
+        notes:            str(ev.description) || null,
       })
       continue
     }
 
-    // Recurring via RRULE — extract BYDAY days and create one slot per day
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rrule = (ev as any).rrule as { options?: { byday?: string[] } } | undefined
-    const bydays: string[] = rrule?.options?.byday ?? []
+    // Recurring via RRULE — extract BYDAY (node-ical exposes as byweekday)
+    const byweekday = ev.rrule?.options?.byweekday
+    const bydays: string[] = Array.isArray(byweekday)
+      ? (byweekday as Array<string | number>).map(String)
+      : []
 
     if (bydays.length > 0) {
       for (const byday of bydays) {
