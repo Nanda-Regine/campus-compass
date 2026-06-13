@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { dispatchXP } from '@/lib/xp-engine'
+import { signals } from '@/store/signals'
 import {
   loadWellnessCheckins,
   saveWellnessCheckin,
@@ -438,6 +439,13 @@ export default function WellnessTab() {
     setTodayCheckin(entry)
     setSaved(true)
     dispatchXP('wellness_checkin')
+
+    // Emit burnout signal so rules engine and dashboard react
+    const prev = checkins[checkins.length - 2]
+    const trend = prev
+      ? score < prev.score ? 'worsening' : score > prev.score ? 'improving' : 'stable'
+      : 'stable'
+    signals.emit({ type: 'burnout_computed', payload: { score, trend } })
   }
 
   const handleEdit = () => {

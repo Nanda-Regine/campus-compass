@@ -24,6 +24,10 @@ export type Signal =
   | { type: 'mood_logged';          payload: { score: MoodScore; date: string } }
   | { type: 'sleep_logged';         payload: { hoursSlept: number; quality: number } }
   | { type: 'burnout_computed';     payload: { score: number; trend: 'improving' | 'stable' | 'worsening' } }
+  // Habits & Growth
+  | { type: 'habit_completed';       payload: { habitId: string; habitName: string; streakDays: number; pack: string } }
+  | { type: 'gratitude_logged';      payload: { date: string; entries: [string, string, string] } }
+  | { type: 'daily_three_complete';  payload: { date: string; streak: number } }
   // Behaviour
   | { type: 'app_opened';           payload: { dayMode: string; hour: number } }
   | { type: 'session_abandoned';    payload: { page: string; timeSpentMs: number } }

@@ -15,6 +15,7 @@ import { type Module, type ModuleColour, MODULE_COLOURS, type Task, type Exam } 
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { signals } from '@/store/signals'
 
 const COLOUR_OPTIONS: ModuleColour[] = ['teal', 'coral', 'purple', 'amber', 'blue', 'green']
 
@@ -95,6 +96,11 @@ function ModuleTools({
     all[moduleId] = sorted
     saveAtt(all)
     setRecords(sorted)
+    signals.emit({
+      type: 'attendance_marked',
+      payload: { moduleId, attended, moduleCode: moduleName },
+    })
+
     if (attended) {
       setSyncing(true)
       supabase.from('attendance_records')

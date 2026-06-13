@@ -7,7 +7,8 @@
 // Domain colour: --indigo (Growth OS)
 // ============================================================
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { signals } from '@/store/signals'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -312,11 +313,31 @@ export default function HabitBuilder() {
     saveHabits(updated)
   }
 
+  const [milestone, setMilestone] = useState<{ name: string; streak: number } | null>(null)
+  const milestoneRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const MILESTONES = [7, 14, 21, 30, 60, 100]
+
   const toggleHabit = (id: string) => {
     const updated = habits.map(h => {
       if (h.id !== id) return h
       const checking = h.lastCheckedIn !== today()
       const newStreak = calcStreak(h, checking)
+
+      if (checking) {
+        // Emit signal
+        signals.emit({
+          type: 'habit_completed',
+          payload: { habitId: h.id, habitName: h.name, streakDays: newStreak, pack: h.pack },
+        })
+        // Milestone celebration
+        if (MILESTONES.includes(newStreak)) {
+          if (milestoneRef.current) clearTimeout(milestoneRef.current)
+          setMilestone({ name: h.name, streak: newStreak })
+          milestoneRef.current = setTimeout(() => setMilestone(null), 4000)
+        }
+      }
+
       return {
         ...h,
         completedToday: checking,
@@ -373,8 +394,53 @@ export default function HabitBuilder() {
 
   const packFor = (h: Habit) => PACKS.find(p => p.id === h.pack) ?? null
 
+  const hour = new Date().getHours()
+  const streakAtRisk = hour >= 18
+    ? todayHabits.filter(h => !h.completedToday && h.streakDays > 2)
+    : []
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+      {/* Milestone celebration */}
+      {milestone && (
+        <div style={{
+          padding: '14px 16px', borderRadius: 14, textAlign: 'center',
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(78,207,158,0.1))',
+          border: '1px solid rgba(99,102,241,0.35)',
+          animation: 'fadeInUp 0.3s ease',
+        }}>
+          <div style={{ fontSize: '1.6rem', marginBottom: 4 }}>
+            {milestone.streak >= 100 ? '🏆' : milestone.streak >= 30 ? '🥇' : milestone.streak >= 21 ? '⭐' : '🔥'}
+          </div>
+          <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
+            {milestone.streak}-day streak!
+          </div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+            {milestone.name} — keep going, you&apos;re building a real identity.
+          </div>
+        </div>
+      )}
+
+      {/* Streak-at-risk warning */}
+      {streakAtRisk.length > 0 && (
+        <div style={{
+          padding: '10px 14px', borderRadius: 12,
+          background: 'rgba(245,158,11,0.07)',
+          border: '1px solid rgba(245,158,11,0.3)',
+          display: 'flex', flexDirection: 'column', gap: 5,
+        }}>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>
+            🔥 STREAK AT RISK — COMPLETE BEFORE MIDNIGHT
+          </div>
+          {streakAtRisk.map(h => (
+            <div key={h.id} style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
+              {h.emoji} {h.name} — {h.streakDays} day streak
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Header */}
       <div style={{
         position: 'relative', overflow: 'hidden',
