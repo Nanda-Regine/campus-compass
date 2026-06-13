@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import { initOrchestration } from '@/store/studentState'
 import { initRulesEngine } from '@/lib/rules'
+import { useOfflineSync } from '@/hooks/useOfflineSync'
 import type { Profile, Budget, Subscription } from '@/types'
 import { IntlProvider } from '@/lib/i18n/IntlProvider'
 
@@ -32,6 +33,11 @@ function PostHogPageView() {
     }
   }, [pathname])
 
+  return null
+}
+
+function OfflineSyncRunner() {
+  useOfflineSync()
   return null
 }
 
@@ -137,6 +143,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="varsityos-theme">
       <PostHogProvider client={posthog}>
         <PostHogPageView />
+        <OfflineSyncRunner />
         <IntlProvider>
           {children}
         </IntlProvider>

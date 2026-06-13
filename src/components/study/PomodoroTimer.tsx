@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { type Module, type Task } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
+import { signals } from '@/store/signals'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -116,6 +117,10 @@ export default function PomodoroTimer({ modules, tasks, userId: _userId }: Pomod
         setTodayMinutes(prev => prev + durationMinutes)
         setCompletedSessions(prev => prev + 1)
         dispatchXP('pomodoro_session')
+        signals.emit({
+          type: 'study_session_ended',
+          payload: { durationMins: durationMinutes, moduleId: selectedModuleId || undefined },
+        })
         playBeep(880, 0.4)
         // Vibrate on mobile
         if ('vibrate' in navigator) navigator.vibrate([200, 100, 200])

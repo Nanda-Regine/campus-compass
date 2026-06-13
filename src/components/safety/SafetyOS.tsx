@@ -9,7 +9,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAppStore } from '@/store'
 
-type Tab = 'sos' | 'walk' | 'defence' | 'contacts' | 'report'
+type Tab = 'sos' | 'walk' | 'defence' | 'contacts' | 'report' | 'rights'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'sos',      label: 'SOS',         icon: '🆘' },
@@ -17,6 +17,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'defence',  label: 'Self-Defence', icon: '🥋' },
   { id: 'contacts', label: 'Contacts',     icon: '📞' },
   { id: 'report',   label: 'Report',       icon: '🚨' },
+  { id: 'rights',   label: 'Legal Rights', icon: '⚖️' },
 ]
 
 // ─── Emergency numbers (SA-specific) ─────────────────────────
@@ -750,6 +751,278 @@ function ReportTab() {
   )
 }
 
+// ─── Legal Rights Tab ─────────────────────────────────────────
+
+const RIGHTS_SECTIONS = [
+  {
+    id: 'police',
+    icon: '👮',
+    title: 'Rights when stopped by SAPS',
+    color: 'var(--sky, #38BDF8)',
+    items: [
+      {
+        q: 'Do I have to answer questions?',
+        a: 'No. Section 35(1)(a) of the Constitution gives you the right to remain silent. You must give your name and address, but nothing else. Say clearly: "I am exercising my right to remain silent."',
+      },
+      {
+        q: 'Can police search me on the street?',
+        a: 'Only with reasonable suspicion that you have something illegal, or if you are being arrested. You cannot be strip-searched in public. Ask: "Do you have a warrant or grounds to search?" — this is not obstruction.',
+      },
+      {
+        q: 'What if I am arrested?',
+        a: 'You must be told the reason for your arrest. You have the right to a lawyer before questioning — say "I want a lawyer." You cannot be held more than 48 hours before being brought to court (s35(1)(d)). Do NOT resist arrest — challenge it in court.',
+      },
+      {
+        q: 'What is an unlawful arrest?',
+        a: 'An arrest without a warrant and without one of the grounds in the Criminal Procedure Act (CPA) is unlawful. Grounds include: witness to a crime, reasonable suspicion, police officer\'s view. Comply first, then contact Legal Aid.',
+      },
+    ],
+  },
+  {
+    id: 'tenant',
+    icon: '🏠',
+    title: 'Tenant rights — res & private digs',
+    color: 'var(--teal)',
+    items: [
+      {
+        q: 'Can my landlord/res enter my room without notice?',
+        a: 'No. They must give at least 24 hours\' written notice unless there is an emergency (fire, flood). Entering without notice is an invasion of privacy under the Rental Housing Act.',
+      },
+      {
+        q: 'My room is not habitable — what are my rights?',
+        a: 'Section 4 of the Rental Housing Act says accommodation must be fit for human habitation. Report issues in writing (email or WhatsApp — keep the record). If unresolved in 30 days, open a complaint with your Rental Housing Tribunal (free, no lawyer needed).',
+      },
+      {
+        q: 'Can my deposit be withheld?',
+        a: 'A security deposit cannot exceed 2 months\' rent. It must be held in an interest-bearing account. You are entitled to it back within 14 days of moving out (if no damage), or 21 days with a detailed deduction list. Get a joint inspection on move-out day.',
+      },
+      {
+        q: 'How much notice must I get to vacate?',
+        a: 'Month-to-month: 1 calendar month\'s written notice. Fixed-term lease: must follow the termination clause. Eviction requires a court order — you cannot be evicted without one, even if you owe rent.',
+      },
+    ],
+  },
+  {
+    id: 'harassment',
+    icon: '🛡️',
+    title: 'Harassment, assault & how to report',
+    color: 'var(--emerald, #34D399)',
+    items: [
+      {
+        q: 'What counts as sexual harassment under SA law?',
+        a: 'Unwanted sexual conduct that impairs dignity — including verbal, non-verbal, or physical acts. This covers unwanted touching, sexual comments, sexting without consent, "upskirt" photos, and persistent unwanted attention (Employment Equity Act & Protection from Harassment Act).',
+      },
+      {
+        q: 'What is assault?',
+        a: 'Any unlawful and intentional application of force OR threat of force that causes the victim to believe harm is imminent. Verbal threats CAN be assault if they cause reasonable fear. You do not need physical injury.',
+      },
+      {
+        q: 'How do I lay a criminal charge?',
+        a: 'Go to any SAPS station (you can use any station, not just the nearest). Ask for the duty officer. A charge cannot legally be refused. You will get a CAS number — keep it. You can also report online at saps.gov.za for certain crimes.',
+      },
+      {
+        q: 'What about a protection order?',
+        a: 'Under the Protection from Harassment Act, you can apply at the Magistrates\' Court for a protection order — no lawyer needed. The court can issue an interim (temporary) order the same day. Breach of the order is a criminal offence.',
+      },
+    ],
+  },
+  {
+    id: 'labour',
+    icon: '💼',
+    title: 'Labour law — part-time & casual work',
+    color: 'var(--gold)',
+    items: [
+      {
+        q: 'What is the minimum wage?',
+        a: 'National Minimum Wage (NMW) as of 1 March 2024: R27.58/hour for most workers. Farm workers: R28.79/hour. Domestic workers: R28.79/hour. Your employer cannot pay below this, regardless of contract.',
+      },
+      {
+        q: 'How many hours can I be made to work?',
+        a: 'Basic Conditions of Employment Act (BCEA): max 45 hours/week and 9 hours/day (8h if working 5 days). Overtime must be agreed in writing and paid at 1.5× your normal rate. You can refuse unreasonable overtime.',
+      },
+      {
+        q: 'Am I entitled to breaks?',
+        a: 'Yes. A 15-minute break after 5 continuous hours; a 30-minute break (or two 15-minute breaks) if working 6+ hours. Your employer cannot make you work through your break without paying for it.',
+      },
+      {
+        q: 'Do I qualify for UIF?',
+        a: 'If you work more than 24 hours per month for the same employer, both you and your employer must contribute to UIF (1% each). You qualify for UIF claims if you lose income. If your employer is not registering you, report them to the Department of Employment & Labour.',
+      },
+      {
+        q: 'What must my payslip show?',
+        a: 'Every employee has the right to a written payslip showing: employer name, employee name & ID number, pay period, gross pay, all deductions itemised, and net pay. No payslip is a BCEA violation.',
+      },
+    ],
+  },
+  {
+    id: 'consumer',
+    icon: '🛒',
+    title: 'Consumer rights (CPA)',
+    color: 'var(--nova)',
+    items: [
+      {
+        q: 'Bought something defective — what can I do?',
+        a: 'The Consumer Protection Act (CPA) gives you 6 months from purchase to return defective goods for a repair, replacement, or refund — at your choice. The store cannot force you to accept a voucher if you want your money back.',
+      },
+      {
+        q: 'Signed up for something by phone or WhatsApp?',
+        a: 'Direct marketing agreements (sales made away from a store) give you a 5-business-day cooling-off period to cancel with no penalty (CPA s16). This applies to gym contracts, data bundles sold by agents, and insurance signed over the phone.',
+      },
+      {
+        q: 'Where do I report consumer issues?',
+        a: 'National Consumer Commission: 0860 266 786 or ncc.org.za. For mobile/data complaints: ICASA (0860 000 881). For banking: Banking Ombudsman (0860 800 900). All are free.',
+      },
+    ],
+  },
+  {
+    id: 'legal_aid',
+    icon: '⚖️',
+    title: 'Getting free legal help',
+    color: 'var(--indigo, #6366F1)',
+    items: [
+      {
+        q: 'Can I get a free lawyer?',
+        a: 'Yes. Legal Aid South Africa provides free criminal and civil legal assistance to qualifying persons. Call 0800 110 110 (toll-free) or visit legalaid.org.za. You qualify if you cannot afford a private lawyer.',
+      },
+      {
+        q: 'University law clinics',
+        a: 'Most universities with a Law Faculty run a free law clinic for students and community members. Services include tenancy disputes, maintenance, consumer complaints, and criminal advice. Ask your faculty admin or student affairs office.',
+      },
+      {
+        q: 'SAPS 10111 vs 112',
+        a: '10111 is the SAPS emergency number (landline & mobile). 112 is the universal emergency number accessible even on a locked phone or without airtime. For GBV: 0800 428 428 (24h). For rape crisis: 0800 150 150.',
+      },
+    ],
+  },
+]
+
+function RightsTab() {
+  const [openSection, setOpenSection] = useState<string | null>('police')
+  const [openItem, setOpenItem] = useState<string | null>(null)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Disclaimer */}
+      <div style={{
+        background: 'var(--gold-dim)', border: '1px solid var(--gold-border)',
+        borderRadius: 10, padding: '10px 14px',
+        fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.55,
+      }}>
+        ℹ️ This is a practical guide, not formal legal advice. In a crisis, call Legal Aid SA on <strong style={{ color: 'var(--gold)' }}>0800 110 110</strong> (free, 24h).
+      </div>
+
+      {RIGHTS_SECTIONS.map(section => {
+        const isOpen = openSection === section.id
+        return (
+          <div key={section.id} style={{
+            background: 'var(--bg-surface)',
+            border: `1px solid ${isOpen ? `${section.color}40` : 'var(--border-subtle)'}`,
+            borderLeft: `3px solid ${section.color}`,
+            borderRadius: 14, overflow: 'hidden',
+          }}>
+            {/* Section header */}
+            <button
+              onClick={() => setOpenSection(isOpen ? null : section.id)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '13px 14px',
+                background: isOpen ? `${section.color}08` : 'none',
+                border: 'none', cursor: 'pointer', textAlign: 'left',
+              }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: '1.1rem' }}>{section.icon}</span>
+                <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {section.title}
+                </span>
+              </div>
+              <span style={{
+                color: 'var(--text-muted)', fontSize: '0.7rem',
+                transform: isOpen ? 'rotate(180deg)' : 'none',
+                transition: 'transform 0.2s',
+              }}>▾</span>
+            </button>
+
+            {/* Q&A items */}
+            {isOpen && (
+              <div style={{ borderTop: `1px solid ${section.color}20`, padding: '8px 0' }}>
+                {section.items.map((item, i) => {
+                  const key = `${section.id}-${i}`
+                  const itemOpen = openItem === key
+                  return (
+                    <div key={key} style={{ borderBottom: i < section.items.length - 1 ? '1px solid var(--border-subtle)' : 'none' }}>
+                      <button
+                        onClick={() => setOpenItem(itemOpen ? null : key)}
+                        style={{
+                          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+                          width: '100%', padding: '11px 14px',
+                          background: itemOpen ? `${section.color}06` : 'none',
+                          border: 'none', cursor: 'pointer', textAlign: 'left', gap: 10,
+                        }}>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                          <span style={{ color: section.color, fontWeight: 700, fontSize: '0.75rem', flexShrink: 0, marginTop: 1 }}>Q</span>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.45 }}>{item.q}</span>
+                        </div>
+                        <span style={{
+                          color: 'var(--text-muted)', fontSize: '0.65rem', flexShrink: 0,
+                          transform: itemOpen ? 'rotate(180deg)' : 'none',
+                          transition: 'transform 0.15s',
+                        }}>▾</span>
+                      </button>
+                      {itemOpen && (
+                        <div style={{
+                          padding: '0 14px 12px 36px',
+                          fontSize: '0.77rem', color: 'var(--text-secondary)', lineHeight: 1.65,
+                          borderLeft: `2px solid ${section.color}30`, marginLeft: 14,
+                        }}>
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )
+      })}
+
+      {/* Emergency legal contacts */}
+      <div style={{
+        background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
+        borderRadius: 14, padding: '14px 16px',
+      }}>
+        <div style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 10 }}>
+          QUICK LEGAL CONTACTS
+        </div>
+        {[
+          { name: 'Legal Aid SA',          number: '0800 110 110', note: 'Free lawyers',          color: 'var(--indigo, #6366F1)' },
+          { name: 'SAPS Emergency',         number: '10111',        note: 'Police',                color: 'var(--sky, #38BDF8)' },
+          { name: 'GBV Command Centre',     number: '0800 428 428', note: '24h, toll-free',        color: '#9C6CF5' },
+          { name: 'National Consumer Comm.', number: '0860 266 786', note: 'Consumer complaints',  color: 'var(--teal)' },
+          { name: 'Dept. of Labour',        number: '0800 601 011', note: 'Labour disputes',       color: 'var(--gold)' },
+        ].map(c => (
+          <a
+            key={c.number + c.name}
+            href={`tel:${c.number.replace(/\s/g, '')}`}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '10px 0', borderBottom: '1px solid var(--border-subtle)',
+              textDecoration: 'none',
+            }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</div>
+              <div style={{ fontSize: '0.66rem', color: 'var(--text-tertiary)', marginTop: 1 }}>{c.note}</div>
+            </div>
+            <span style={{ fontSize: '0.76rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: c.color }}>
+              {c.number}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────
 
 export default function SafetyOS() {
@@ -804,6 +1077,7 @@ export default function SafetyOS() {
         {activeTab === 'defence'  && <DefenceTab />}
         {activeTab === 'contacts' && <ContactsTab />}
         {activeTab === 'report'   && <ReportTab />}
+        {activeTab === 'rights'   && <RightsTab />}
       </div>
 
       <style>{`

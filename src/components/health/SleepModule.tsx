@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
+import { signals } from '@/store/signals'
 import { cn } from '@/lib/utils'
 
 interface SleepLog {
@@ -128,7 +129,11 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
     }
 
     if (error) toast.error('Failed to save sleep log')
-    else toast.success('Sleep logged ✓')
+    else {
+      toast.success('Sleep logged ✓')
+      const hrs = sleepHours(bedtime, wakeTime)
+      signals.emit({ type: 'sleep_logged', payload: { hoursSlept: hrs, quality: quality ?? 3 } })
+    }
     setSaving(false)
   }, [supabase, userId, today, bedtime, wakeTime, quality, notes, editId])
 

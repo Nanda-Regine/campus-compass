@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { signals } from '@/store/signals'
+import { queueWrite } from '@/lib/offline/pendingWrites'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -171,18 +173,37 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
     const newStatus = completing ? 'done' : 'todo'
     updateTask(task.id, { status: newStatus, completed_at: completing ? new Date().toISOString() : null })
 
-    const { error } = await supabase
-      .from('tasks')
-      .update({ status: newStatus, completed_at: completing ? new Date().toISOString() : null })
-      .eq('id', task.id)
+    if (!navigator.onLine) {
+      // Queue the write for later — Zustand state already updated above
+      await queueWrite('tasks', 'update', {
+        id: task.id,
+        status: newStatus,
+        completed_at: completing ? new Date().toISOString() : null,
+      }).catch(() => {})
+    } else {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ status: newStatus, completed_at: completing ? new Date().toISOString() : null })
+        .eq('id', task.id)
 
-    if (error) {
-      updateTask(task.id, { status: task.status, completed_at: task.completed_at })
-      toast.error('Failed to update task')
-      return
+      if (error) {
+        updateTask(task.id, { status: task.status, completed_at: task.completed_at })
+        toast.error('Failed to update task')
+        return
+      }
     }
 
     if (completing) {
+      signals.emit({
+        type: 'task_completed',
+        payload: {
+          taskId: task.id,
+          moduleId: task.module_id ?? undefined,
+          hoursBeforeDeadline: task.due_date
+            ? Math.max(0, Math.round((new Date(task.due_date).getTime() - Date.now()) / 3_600_000))
+            : 0,
+        },
+      })
       const pendingAfter = tasks.filter(t => t.status !== 'done' && t.id !== task.id).length
       import('@/lib/confetti').then(({ triggerConfetti }) => {
         triggerConfetti(pendingAfter === 0 ? 'all_done' : 'task')
