@@ -41,21 +41,33 @@ interface AppState {
   novaInsights:     NovaInsight[]
   novaMessageCount: number
 
+  // ─── Intelligence signals (feed into StudentState) ──────────
+  sleepDebt:       number   // hours deficit last 7 days (sum of max(0, 7h − actual))
+  studyVelocity7d: number   // avg study hours/day, last 7 days
+  nsfasDelayed:    boolean  // true when nsfas_disbursements has overdue expected payments
+  streakDays:      number   // current study streak length in days
+  streakTodayDone: boolean  // true when student has studied today (streak safe)
+
   // ─── Setters ───────────────────────────────────────────────
-  setIsOnline:         (online: boolean) => void
-  setUserId:           (id: string) => void
-  setProfile:          (profile: Profile) => void
-  setBudget:           (budget: Budget | null) => void
-  setSubscription:     (sub: Subscription) => void
-  setTasks:            (tasks: Task[]) => void
-  setExams:            (exams: Exam[]) => void
-  setModules:          (modules: Module[]) => void
-  setTimetable:        (timetable: TimetableEntry[]) => void
-  setExpenses:         (expenses: Expense[]) => void
-  setGroceryItems:     (items: GroceryItem[]) => void
-  setMealPlans:        (plans: MealPlan[]) => void
-  setNovaInsights:     (insights: NovaInsight[]) => void
-  setNovaMessageCount: (count: number) => void
+  setIsOnline:          (online: boolean) => void
+  setUserId:            (id: string) => void
+  setProfile:           (profile: Profile) => void
+  setBudget:            (budget: Budget | null) => void
+  setSubscription:      (sub: Subscription) => void
+  setTasks:             (tasks: Task[]) => void
+  setExams:             (exams: Exam[]) => void
+  setModules:           (modules: Module[]) => void
+  setTimetable:         (timetable: TimetableEntry[]) => void
+  setExpenses:          (expenses: Expense[]) => void
+  setGroceryItems:      (items: GroceryItem[]) => void
+  setMealPlans:         (plans: MealPlan[]) => void
+  setNovaInsights:      (insights: NovaInsight[]) => void
+  setNovaMessageCount:  (count: number) => void
+  setSleepDebt:         (debt: number) => void
+  setStudyVelocity7d:   (v: number) => void
+  setNsfasDelayed:      (delayed: boolean) => void
+  setStreakDays:        (days: number) => void
+  setStreakTodayDone:   (done: boolean) => void
 
   // ─── Task mutations ────────────────────────────────────────
   addTask:    (task: Task) => void
@@ -105,6 +117,11 @@ const initialState = {
   mealPlans:        [],
   novaInsights:     [],
   novaMessageCount: 0,
+  sleepDebt:        0,
+  studyVelocity7d:  0,
+  nsfasDelayed:     false,
+  streakDays:       0,
+  streakTodayDone:  false,
 }
 
 export const useAppStore = create<AppState>()(
@@ -127,6 +144,11 @@ export const useAppStore = create<AppState>()(
   setMealPlans:        (mealPlans)        => set({ mealPlans }),
   setNovaInsights:     (novaInsights)     => set({ novaInsights }),
   setNovaMessageCount: (novaMessageCount) => set({ novaMessageCount }),
+  setSleepDebt:        (sleepDebt)        => set({ sleepDebt }),
+  setStudyVelocity7d:  (studyVelocity7d)  => set({ studyVelocity7d }),
+  setNsfasDelayed:     (nsfasDelayed)     => set({ nsfasDelayed }),
+  setStreakDays:       (streakDays)       => set({ streakDays }),
+  setStreakTodayDone:  (streakTodayDone)  => set({ streakTodayDone }),
 
   // Task mutations
   addTask: (task) =>

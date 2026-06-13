@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
+import { signals } from '@/store/signals'
 import PullToRefresh from '@/components/ui/PullToRefresh'
 import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
@@ -27,6 +28,7 @@ import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
+import InsightsCard from '@/components/dashboard/InsightsCard'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -427,14 +429,11 @@ function OSCommandHero({ timetable, tasks, exams, hour, firstName, profile, subs
 function PriorityCommandStrip({ tasks, exams, totalBudget, remaining }: {
   tasks: Task[]; exams: Exam[]; totalBudget: number; remaining: number
 }) {
-  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
+  const _now = new Date()
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
 
-  const overdueList = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate)
-  const dueTodayList = tasks.filter(t => {
-    if (t.status === 'done' || !t.due_date) return false
-    const d = new Date(t.due_date); d.setHours(0, 0, 0, 0)
-    return d.getTime() === todayDate.getTime()
-  })
+  const overdueList = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr)
+  const dueTodayList = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date === todayStr)
   const nextExam    = exams[0]
   const daysToExam  = nextExam ? getDaysUntil(nextExam.exam_date) : null
   const budgetPct   = totalBudget > 0 ? Math.round((remaining / totalBudget) * 100) : 100
@@ -518,10 +517,12 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streak
   remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number; streakTodayDone: boolean
   todayStudyMins: number; lastSleepHours: number | null; weekWorkouts: number
 }) {
-  const todayDate = new Date(); todayDate.setHours(0,0,0,0)
-  const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
-  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
-  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
+  const _now = new Date()
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
+  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
+  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const nextExam = exams[0]
   const daysToExam = nextExam ? getDaysUntil(nextExam.exam_date) : null
 
@@ -681,10 +682,12 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
   void cn(modules.length, subscription)
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
   const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
-  const todayDate = new Date(); todayDate.setHours(0,0,0,0)
-  const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
-  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
-  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
+  const _now = new Date()
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
+  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
+  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const budgetPct   = totalBudget > 0 ? Math.min(100, (remaining / totalBudget) * 100) : 100
   const budgetColor = budgetPct < 10 ? '#ff6b6b' : budgetPct < 30 ? '#c9a84c' : '#4ecf9e'
   const novaPct     = isUnlimited ? 100 : Math.min(100, (novaLeft / (profile.nova_messages_limit ?? 10)) * 100)
@@ -1212,10 +1215,12 @@ function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists
   tasks: Task[]; totalBudget: number; remaining: number
   profile: Profile; mealPlanExists: boolean; shiftsThisWeek: number; activeGroups: number
 }) {
-  const todayDate = new Date(); todayDate.setHours(0, 0, 0, 0)
-  const weekAhead = new Date(); weekAhead.setDate(weekAhead.getDate() + 7)
-  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) < todayDate).length
-  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && new Date(t.due_date) >= todayDate && new Date(t.due_date) <= weekAhead).length
+  const _now = new Date()
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
+  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
+  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
+  const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const isUnlimited = profile.subscription_tier === 'nova_unlimited'
   const novaLeft = Math.max(0, (profile.nova_messages_limit ?? 10) - (profile.nova_messages_used ?? 0))
 
@@ -1296,9 +1301,19 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       .catch(() => {})
   }, [])
 
-  // 3. Load proactive nova insights
+  // 3. Load proactive nova insights — session-cached to prevent layout shift on re-navigation
   useEffect(() => {
-    fetch('/api/insights').then(r => r.ok ? r.json() : null).then(d => { if (d) setNovaInsights(d.insights ?? []) }).catch(() => {})
+    const key = `nova-insights-${new Date().toISOString().split('T')[0]}`
+    try {
+      const cached = sessionStorage.getItem(key)
+      if (cached) { setNovaInsights(JSON.parse(cached)); return }
+    } catch { /* ignore */ }
+    fetch('/api/insights').then(r => r.ok ? r.json() : null).then(d => {
+      if (d) {
+        setNovaInsights(d.insights ?? [])
+        try { sessionStorage.setItem(key, JSON.stringify(d.insights ?? [])) } catch { /* quota */ }
+      }
+    }).catch(() => {})
   }, [])
 
   // 4. Parallel client-side fetch: meals, shifts, groups
@@ -1315,26 +1330,35 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
         const todayStr = now.toISOString().split('T')[0]
         const sevenDays = new Date(now); sevenDays.setDate(now.getDate() + 7)
-        const [mealsRes, shiftsRes, groupsRes] = await Promise.allSettled([
+        const [mealsRes, shiftsRes, groupsRes, nsfasRes] = await Promise.allSettled([
           supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStart.toISOString().split('T')[0]).lte('week_start', weekEnd.toISOString().split('T')[0]),
           supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDays.toISOString().split('T')[0]),
           supabase.from('group_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+          // NSFAS delayed: any expected disbursement whose expected_date has passed
+          supabase.from('nsfas_disbursements').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'expected').lt('expected_date', todayStr),
         ])
         if (mealsRes.status === 'fulfilled') setMealPlanExists((mealsRes.value.count ?? 0) > 0)
         if (shiftsRes.status === 'fulfilled') setShiftsThisWeek(shiftsRes.value.count ?? 0)
         if (groupsRes.status === 'fulfilled') setActiveGroups(groupsRes.value.count ?? 0)
-        const [studyRes, sleepRes, workoutRes] = await Promise.allSettled([
+        // Always write nsfasDelayed so a resolved payment clears the flag
+        if (nsfasRes.status === 'fulfilled') store.setNsfasDelayed((nsfasRes.value.count ?? 0) > 0)
+        const week7Ago = new Date(now.getTime() - 7 * 86_400_000).toISOString().split('T')[0]
+        const [studyRes, sleepRes, workoutRes, study7Res, sleep7Res] = await Promise.allSettled([
           supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${todayStr}T00:00:00`),
           supabase.from('sleep_logs').select('bedtime,wake_time').eq('user_id', user.id).order('sleep_date', { ascending: false }).limit(1),
           supabase.from('workout_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('date', weekStart.toISOString().split('T')[0]).is('deleted_at', null),
+          // 7-day study sessions for velocity
+          supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${week7Ago}T00:00:00`),
+          // 7-day sleep logs for debt
+          supabase.from('sleep_logs').select('bedtime,wake_time,sleep_date').eq('user_id', user.id).gte('sleep_date', week7Ago).order('sleep_date', { ascending: false }),
         ])
         if (studyRes.status === 'fulfilled') {
           const rows = studyRes.value.data as Array<{ duration_minutes: number }> | null
           if (rows) setTodayStudyMins(rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0))
         }
         if (sleepRes.status === 'fulfilled') {
-          const row = (sleepRes.value.data as Array<{ bedtime: string; wake_time: string }> | null)?.[0]
-          if (row) {
+          const row = (sleepRes.value.data as Array<{ bedtime: string | null; wake_time: string | null }> | null)?.[0]
+          if (row?.bedtime && row?.wake_time) {
             const [bh, bm] = row.bedtime.split(':').map(Number)
             const [wh, wm] = row.wake_time.split(':').map(Number)
             let hrs = (wh + wm / 60) - (bh + bm / 60)
@@ -1343,6 +1367,32 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           }
         }
         if (workoutRes.status === 'fulfilled') setWeekWorkouts(workoutRes.value.count ?? 0)
+
+        // Study velocity: avg hours/day over last 7 days
+        if (study7Res.status === 'fulfilled') {
+          const rows = study7Res.value.data as Array<{ duration_minutes: number }> | null
+          if (rows && rows.length > 0) {
+            const totalMins = rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0)
+            store.setStudyVelocity7d(parseFloat((totalMins / (7 * 60)).toFixed(2)))
+          }
+        }
+
+        // Sleep debt: sum of max(0, 7h - actual) over logged days
+        if (sleep7Res.status === 'fulfilled') {
+          const rows = sleep7Res.value.data as Array<{ bedtime: string | null; wake_time: string | null }> | null
+          if (rows && rows.length > 0) {
+            let debt = 0
+            for (const row of rows) {
+              if (!row.bedtime || !row.wake_time) continue
+              const [bh, bm] = row.bedtime.split(':').map(Number)
+              const [wh, wm] = row.wake_time.split(':').map(Number)
+              let hrs = (wh + wm / 60) - (bh + bm / 60)
+              if (hrs < 0) hrs += 24
+              debt += Math.max(0, 7 - hrs)
+            }
+            store.setSleepDebt(parseFloat(debt.toFixed(1)))
+          }
+        }
       } catch { /* silent */ }
     }
     fetchLiveData()
@@ -1370,6 +1420,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         const d = JSON.parse(cached)
         setStreakDays(d.streak ?? 0)
         setStreakTodayDone(d.todayDone ?? false)
+        store.setStreakDays(d.streak ?? 0)
+        store.setStreakTodayDone(d.todayDone ?? false)
         return
       } catch { /* ignore */ }
     }
@@ -1379,11 +1431,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         if (d && !d.error) {
           setStreakDays(d.streak ?? 0)
           setStreakTodayDone(d.todayDone ?? false)
+          store.setStreakDays(d.streak ?? 0)
+          store.setStreakTodayDone(d.todayDone ?? false)
           sessionStorage.setItem(`streak_${today}`, JSON.stringify(d))
         }
       })
       .catch(() => {})
-  }, [])
+  }, [store])
 
   // 7. Exam push check (once per session)
   useEffect(() => {
@@ -1425,6 +1479,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         if (!d.error) {
           setStreakDays(d.streak ?? 0)
           setStreakTodayDone(d.todayDone ?? false)
+          store.setStreakDays(d.streak ?? 0)
+          store.setStreakTodayDone(d.todayDone ?? false)
           sessionStorage.setItem(`streak_${new Date().toISOString().split('T')[0]}`, JSON.stringify(d))
         }
       }
@@ -1443,7 +1499,12 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   const handleCompleteTask = useCallback(async (taskId: string) => {
     const currentTasks = store.tasks.length ? store.tasks : initialData.tasks
+    const task = currentTasks.find(t => t.id === taskId)
     store.setTasks(currentTasks.map(t => t.id === taskId ? { ...t, status: 'done' } : t))
+    if (task) {
+      const deadline = task.due_date ? new Date(task.due_date + 'T23:59:59').getTime() : Date.now()
+      signals.emit({ type: 'task_completed', payload: { taskId, moduleId: task.module_id ?? undefined, hoursBeforeDeadline: Math.max(0, Math.round((deadline - Date.now()) / 3_600_000)) } })
+    }
     try {
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
@@ -1590,6 +1651,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* Orchestration — daily brief */}
               <DailyBrief />
 
+              {/* Cross-domain correlation insights — 30-day pattern analysis */}
+              <InsightsCard />
+
               {/* Task calendar: day / week toggle */}
               <TaskCalendarStrip tasks={allTasks} />
 
@@ -1601,13 +1665,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
               <LevelCard />
               <DailyChallenges />
-              <MobileTodayClasses timetable={initialData.timetable} />
-              <MobileTasksToday tasks={allTasks} onComplete={handleCompleteTask} />
 
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
-
-              <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
-              <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
 
               {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
               <PrescriptionReminderCard />

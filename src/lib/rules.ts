@@ -141,6 +141,21 @@ const RULES: Rule[] = [
     }),
   },
 
+  {
+    id:           'mood_very_low',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 12 * 60,
+    test: ({ wellness }) =>
+      wellness.moodAvg > 0 && wellness.moodAvg < 1.8,
+    build: () => ({
+      title:       'You are not okay — and that is valid',
+      message:     "Your mood scores show you're really struggling. VarsityOS cares. Reach out to SADAG (0800 456 789) or chat to Nova right now.",
+      actionLabel: 'Talk to Nova',
+      actionRoute: '/nova?prompt=i-am-struggling',
+    }),
+  },
+
   // ── URGENCY 3 — MEDIUM: inline dashboard banner ──────────
 
   {
@@ -218,6 +233,52 @@ const RULES: Rule[] = [
     }),
   },
 
+  {
+    id:           'sleep_debt_critical',
+    urgency:      3,
+    variant:      'banner',
+    cooldownMins: 24 * 60,
+    test: ({ wellness }) => wellness.sleepDebt >= 10,
+    build: ({ wellness }) => ({
+      title:       `${wellness.sleepDebt.toFixed(0)}h sleep debt this week`,
+      message:     'You are carrying serious sleep debt. Cognitive performance drops 40% after 10h deficit. Build in one proper sleep before exams.',
+      actionLabel: 'Sleep science guide',
+      actionRoute: '/sleep',
+    }),
+  },
+
+  {
+    id:           'mood_sustained_low',
+    urgency:      3,
+    variant:      'banner',
+    cooldownMins: 24 * 60,
+    test: ({ wellness }) =>
+      wellness.moodTrend === 'declining' && wellness.moodAvg > 0 && wellness.moodAvg < 2.5,
+    build: ({ wellness }) => ({
+      title:       'Your mood has been low for several days',
+      message:     `Average mood: ${wellness.moodAvg.toFixed(1)}/5 and declining. Talk to Nova, rest, or reach out to someone you trust.`,
+      actionLabel: 'Open Wellness',
+      actionRoute: '/health',
+    }),
+  },
+
+  {
+    id:           'streak_at_risk',
+    urgency:      3,
+    variant:      'banner',
+    cooldownMins: 4 * 60,
+    test: ({ schedule }) => {
+      const hour = new Date().getHours()
+      return hour >= 18 && schedule.streakDays > 0 && !schedule.streakTodayDone
+    },
+    build: ({ schedule }) => ({
+      title:       `${schedule.streakDays}-day streak at risk`,
+      message:     `You haven't studied today and it's after 6pm. Log a quick session now to keep your streak alive.`,
+      actionLabel: 'Start a study session',
+      actionRoute: '/study?tab=timer',
+    }),
+  },
+
   // ── URGENCY 2 — LOW: subtle nudge ────────────────────────
 
   {
@@ -251,6 +312,52 @@ const RULES: Rule[] = [
       message:     `Budget health: ${financial.healthScore}/100. You're ${100 - financial.healthScore}pts ahead of your expected spend pace.`,
       actionLabel: 'Review spending',
       actionRoute: '/budget',
+    }),
+  },
+
+  {
+    id:           'sleep_debt_watch',
+    urgency:      2,
+    variant:      'nudge',
+    cooldownMins: 12 * 60,
+    test: ({ wellness }) => wellness.sleepDebt >= 5 && wellness.sleepDebt < 10,
+    build: ({ wellness }) => ({
+      title:       `${wellness.sleepDebt.toFixed(0)}h sleep deficit — keep an eye on it`,
+      message:     'You are a bit behind on sleep. Try to be in bed 30 minutes earlier tonight.',
+      actionLabel: 'Sleep tracker',
+      actionRoute: '/sleep',
+    }),
+  },
+
+  {
+    id:           'low_study_velocity',
+    urgency:      2,
+    variant:      'nudge',
+    cooldownMins: 12 * 60,
+    test: ({ academic }) =>
+      academic.studyVelocity < 0.5 && academic.examPressure >= 35,
+    build: ({ academic }) => ({
+      title:       'Low study pace — exam pressure is building',
+      message:     `You are averaging less than 30 min/day of focused study. With exam pressure at ${academic.examPressure}/100, consistency now prevents a crunch later.`,
+      actionLabel: 'Start a study session',
+      actionRoute: '/study?tab=timer',
+    }),
+  },
+
+  {
+    id:           'no_study_today',
+    urgency:      2,
+    variant:      'nudge',
+    cooldownMins: 7 * 60,
+    test: ({ academic, schedule }) => {
+      const hour = new Date().getHours()
+      return hour >= 10 && academic.studyVelocity < 0.2 && !schedule.streakTodayDone
+    },
+    build: () => ({
+      title:       'No study logged today',
+      message:     'Even 25 minutes of focused work compounds over time. Open a study session now — you can do this.',
+      actionLabel: 'Start studying',
+      actionRoute: '/study?tab=timer',
     }),
   },
 

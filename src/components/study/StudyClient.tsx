@@ -41,12 +41,12 @@ function getDayMode(hour: number): string {
 }
 
 const MODE_HEADER: Record<string, { gradient: string; label: string }> = {
-  wake:      { gradient: 'linear-gradient(160deg,#0f1225 0%,#1a1a35 100%)', label: 'Morning grind' },
-  commute:   { gradient: 'linear-gradient(160deg,#0e1a28 0%,#0f2038 100%)', label: 'On the move' },
-  class:     { gradient: 'linear-gradient(160deg,#0d1820 0%,#0f1c2e 100%)', label: 'Class in session' },
-  study:     { gradient: 'linear-gradient(160deg,#0a1228 0%,#0d1535 100%)', label: 'Deep work' },
-  wind_down: { gradient: 'linear-gradient(160deg,#160e28 0%,#1a1232 100%)', label: 'Winding down' },
-  sleep:     { gradient: 'linear-gradient(160deg,#090a14 0%,#0c0d1c 100%)', label: 'Late night' },
+  wake:      { gradient: 'linear-gradient(160deg,#0e1a14 0%,#142210 100%)', label: 'Morning grind' },
+  commute:   { gradient: 'linear-gradient(160deg,#0a1820 0%,#0d2030 100%)', label: 'On the move' },
+  class:     { gradient: 'linear-gradient(160deg,#0a1c16 0%,#0d2218 100%)', label: 'Class in session' },
+  study:     { gradient: 'linear-gradient(160deg,#0f0a1e 0%,#150e28 100%)', label: 'Deep work' },
+  wind_down: { gradient: 'linear-gradient(160deg,#1a0e14 0%,#200c18 100%)', label: 'Winding down' },
+  sleep:     { gradient: 'linear-gradient(160deg,#06080e 0%,#08090e 100%)', label: 'Late night' },
 }
 
 const TAB_CONFIG = [
@@ -132,7 +132,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
 
   return (
     <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="study" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
+      <AmbientImage zone="schedule" opacity={0.28} blurPx={8} saturation={1.8} overlayColor="rgba(5,4,12,0.45)" />
       <PullToRefresh onRefresh={handleRefresh} />
 
       {/* ── Page header ── */}

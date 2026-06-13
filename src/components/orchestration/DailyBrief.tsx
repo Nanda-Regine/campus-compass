@@ -7,12 +7,19 @@
 // The 24/7 guardian view of the student's life.
 // ============================================================
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import { useStudentState } from '@/store/studentState'
 import { signals } from '@/store/signals'
 import type { Task, TimetableEntry, Module } from '@/types'
+
+interface ProactiveBrief {
+  headline: string
+  bullets: string[]
+  focus: string
+  focusRoute: string
+}
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -169,15 +176,79 @@ function TaskRow({ task, onComplete }: { task: Task; onComplete: () => void }) {
 export default function DailyBrief() {
   const { profile, timetable, tasks, updateTask } = useAppStore()
   const { schedule, wellness, financial, academic } = useStudentState()
-  const [hour, setHour]       = useState(new Date().getHours())
-  const [rxList, setRxList]   = useState<Prescription[]>([])
-  const [expanded, setExpanded] = useState(false)
+  const [hour, setHour]           = useState(new Date().getHours())
+  const [rxList, setRxList]       = useState<Prescription[]>([])
+  const [expanded, setExpanded]   = useState(false)
+  const [brief, setBrief]         = useState<ProactiveBrief | null>(null)
+  const [briefLoading, setBriefLoading] = useState(false)
+  const fetchedRef                = useRef(false)
 
   useEffect(() => {
     setRxList(loadPrescriptions().filter(isDueToday))
     const tick = setInterval(() => setHour(new Date().getHours()), 60_000)
     return () => clearInterval(tick)
   }, [])
+
+  // Load Nova Proactive Brief once per day (cached in localStorage)
+  useEffect(() => {
+    if (fetchedRef.current) return
+
+    const today   = todayStr()
+    const cacheKey = `varsityos-proactive-brief-${today}`
+    try {
+      const cached = localStorage.getItem(cacheKey)
+      if (cached) { setBrief(JSON.parse(cached)); fetchedRef.current = true; return }
+    } catch { /* ignore */ }
+
+    // Wait for meaningful StudentState data — default Zustand values block a premature fetch
+    if (academic.completionRate === 100 && wellness.burnoutScore === 0 && financial.runwayDays === 30) return
+
+    fetchedRef.current = true
+    setBriefLoading(true)
+    const firstName = profile?.name?.split(' ')[0] ?? profile?.full_name?.split(' ')[0] ?? 'Student'
+
+    fetch('/api/nova/proactive-brief', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        academic: {
+          riskLevel:       academic.riskLevel,
+          completionRate:  academic.completionRate,
+          catchUpDebtHrs:  academic.catchUpDebtHrs,
+          examPressure:    academic.examPressure,
+          studyVelocity:   academic.studyVelocity,
+        },
+        financial: {
+          runwayDays:   financial.runwayDays,
+          healthScore:  financial.healthScore,
+          nsfasStatus:  financial.nsfasStatus,
+          emergencyMode: financial.emergencyMode,
+        },
+        wellness: {
+          burnoutScore:    wellness.burnoutScore,
+          moodTrend:       wellness.moodTrend,
+          moodAvg:         wellness.moodAvg,
+          sleepDebt:       wellness.sleepDebt,
+          recoveryNeeded:  wellness.recoveryNeeded,
+        },
+        schedule: {
+          todayTaskCount: schedule.todayPlan.length,
+          procrastIndex:  schedule.procrastIndex,
+          planCoverage:   schedule.planCoverage,
+        },
+        profile: { firstName },
+      }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then((data: ProactiveBrief | null) => {
+        if (data) {
+          setBrief(data)
+          try { localStorage.setItem(cacheKey, JSON.stringify(data)) } catch { /* quota */ }
+        }
+      })
+      .catch(() => {})
+      .finally(() => setBriefLoading(false))
+  }, [academic, financial, wellness, schedule, profile])
 
   const today    = todayStr()
   const jsDay    = new Date().getDay()
@@ -192,9 +263,12 @@ export default function DailyBrief() {
     .filter(t => t.status !== 'done' && t.due_date === today && (t.priority === 'urgent' || t.priority === 'high'))
     .sort((a, b) => (a.priority === 'urgent' ? -1 : 1) - (b.priority === 'urgent' ? -1 : 1))
 
+  const nextDay = new Date(); nextDay.setDate(nextDay.getDate() + 1)
+  const tomorrowStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth()+1).padStart(2,'0')}-${String(nextDay.getDate()).padStart(2,'0')}`
+  const day2 = new Date(); day2.setDate(day2.getDate() + 2)
+  const in2daysStr = `${day2.getFullYear()}-${String(day2.getMonth()+1).padStart(2,'0')}-${String(day2.getDate()).padStart(2,'0')}`
   const upcoming48h = tasks.filter(t =>
-    t.status !== 'done' && t.due_date && t.due_date !== today &&
-    hoursUntil(t.due_date) <= 48 && hoursUntil(t.due_date) > 0
+    t.status !== 'done' && t.due_date && t.due_date > today && t.due_date <= in2daysStr
   ).slice(0, 1)
 
   const topTasks  = schedule.todayPlan.slice(0, expanded ? 8 : 3)
@@ -304,7 +378,9 @@ export default function DailyBrief() {
             <div style={{ flex: 1, minWidth: 0, fontSize: '0.73rem', fontWeight: 500, color: 'var(--gold)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {t.title}
             </div>
-            <span style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>due tomorrow</span>
+            <span style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>
+              {t.due_date === tomorrowStr ? 'due tomorrow' : `due ${t.due_date}`}
+            </span>
           </div>
         ))}
 
@@ -341,6 +417,57 @@ export default function DailyBrief() {
           )}
         </div>
       </div>
+
+      {/* Nova Proactive Brief */}
+      {(brief || briefLoading) && (
+        <div style={{
+          margin: '12px 0 0', padding: '12px 14px',
+          background: 'rgba(155,111,255,0.05)',
+          border: '1px solid rgba(155,111,255,0.15)',
+          borderRadius: 12, position: 'relative', overflow: 'hidden',
+        }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9b6fff,transparent)' }} />
+          <div style={{ fontSize: '0.56rem', fontFamily: 'var(--font-mono)', color: '#9b6fff', letterSpacing: '0.09em', marginBottom: 6 }}>
+            ✦ NOVA&apos;S TAKE TODAY
+          </div>
+          {briefLoading && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {[80, 65, 75].map((w, i) => (
+                <div key={i} className="skeleton-row" style={{ height: 11, width: `${w}%`, borderRadius: 4 }} />
+              ))}
+            </div>
+          )}
+          {brief && !briefLoading && (
+            <>
+              <div style={{ fontSize: '0.79rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.4 }}>
+                {brief.headline}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 10 }}>
+                {brief.bullets.map((b, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 7, alignItems: 'flex-start' }}>
+                    <span style={{ color: '#9b6fff', fontSize: '0.62rem', fontFamily: 'var(--font-mono)', flexShrink: 0, marginTop: 2 }}>{i + 1}.</span>
+                    <span style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{b}</span>
+                  </div>
+                ))}
+              </div>
+              <Link href={brief.focusRoute} style={{ textDecoration: 'none' }}>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '5px 12px',
+                  background: 'rgba(155,111,255,0.12)',
+                  border: '1px solid rgba(155,111,255,0.3)',
+                  borderRadius: 100, cursor: 'pointer',
+                }}>
+                  <span style={{ fontSize: '0.65rem', fontWeight: 600, color: '#9b6fff', fontFamily: 'var(--font-mono)' }}>
+                    FOCUS: {brief.focus}
+                  </span>
+                  <span style={{ fontSize: '0.65rem', color: '#9b6fff' }}>→</span>
+                </div>
+              </Link>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Domain pulse strip */}
       <div style={{ marginTop: 14, borderTop: '1px solid var(--border-subtle)', display: 'flex', flexWrap: 'wrap' }}>
@@ -415,6 +542,26 @@ export default function DailyBrief() {
               </div>
             </div>
             <span style={{ fontSize: '0.7rem', color: 'var(--coral)' }}>→</span>
+          </Link>
+        )}
+
+        {wellness.sleepDebt >= 5 && (
+          <Link href="/sleep" style={{
+            flex: '1 0 100%', padding: '10px 14px',
+            borderTop: '1px solid var(--border-subtle)',
+            textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10,
+            background: 'rgba(56,189,248,0.04)',
+          }}>
+            <span style={{ fontSize: '1rem' }}>🌙</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '0.73rem', fontWeight: 600, color: 'var(--sky)' }}>
+                {wellness.sleepDebt.toFixed(0)}h sleep debt this week
+              </div>
+              <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
+                Sleep deprivation hurts exam performance — log tonight&apos;s sleep
+              </div>
+            </div>
+            <span style={{ fontSize: '0.7rem', color: 'var(--sky)' }}>→</span>
           </Link>
         )}
       </div>
