@@ -9,6 +9,8 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
 
 interface Resource {
   title: string
@@ -302,6 +304,13 @@ export default function NovaPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+  // ── Voice I/O ──────────────────────────────────────────────────────────────
+  const [voiceMode, setVoiceMode]       = useState(false)
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const sr    = useSpeechRecognition()
+  const synth = useSpeechSynthesis()
+
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
@@ -391,6 +400,90 @@ export default function NovaPage() {
     setShowHistory(false)
     setShowCrisisPanel(false)
   }
+
+  // Load voice mode preference
+  useEffect(() => {
+    try { setVoiceMode(localStorage.getItem('nova-voice-mode') === 'true') } catch { /* ignore */ }
+  }, [])
+
+  // Mirror live transcript into the textarea while listening
+  useEffect(() => {
+    if (sr.isListening) setInput(sr.transcript)
+  }, [sr.transcript, sr.isListening])
+
+  // Clear speakingMsgId when browser TTS finishes (ElevenLabs clears via onended)
+  useEffect(() => {
+    if (!synth.isSpeaking && !audioRef.current) setSpeakingMsgId(null)
+  }, [synth.isSpeaking])
+
+  // Auto-speak last Nova response when voice mode is active
+  useEffect(() => {
+    if (!voiceMode || loading) return
+    const last = messages[messages.length - 1]
+    if (!last || last.role !== 'assistant') return
+    speakMsg(last.content, last.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages])
+
+  const speakMsg = useCallback(async (rawText: string, msgId: string) => {
+    // Toggle off if already speaking this message
+    if (speakingMsgId === msgId) {
+      audioRef.current?.pause()
+      audioRef.current = null
+      synth.stop()
+      setSpeakingMsgId(null)
+      return
+    }
+
+    // Stop whatever was playing
+    audioRef.current?.pause()
+    audioRef.current = null
+    synth.stop()
+    setSpeakingMsgId(msgId)
+
+    // Try ElevenLabs for premium users
+    if (isPremium || userTier === 'nova_unlimited') {
+      try {
+        const res = await fetch('/api/nova/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: rawText }),
+        })
+        if (res.ok) {
+          const blob = await res.blob()
+          const url  = URL.createObjectURL(blob)
+          const audio = new Audio(url)
+          audioRef.current = audio
+          audio.onended = () => { audioRef.current = null; setSpeakingMsgId(null); URL.revokeObjectURL(url) }
+          audio.onerror = () => {
+            audioRef.current = null
+            URL.revokeObjectURL(url)
+            synth.speak(rawText, () => setSpeakingMsgId(null))
+          }
+          await audio.play()
+          return
+        }
+      } catch { /* fall through to browser TTS */ }
+    }
+
+    // Browser TTS (free tier + fallback)
+    synth.speak(rawText, () => setSpeakingMsgId(null))
+  }, [speakingMsgId, isPremium, userTier, synth])
+
+  const handleMicClick = useCallback(() => {
+    if (sr.isListening) { sr.stop(); return }
+    sr.start((text) => sendMessage(text))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sr])
+
+  const toggleVoiceMode = useCallback(() => {
+    setVoiceMode(prev => {
+      const next = !prev
+      try { localStorage.setItem('nova-voice-mode', String(next)) } catch { /* ignore */ }
+      if (!next) { audioRef.current?.pause(); audioRef.current = null; synth.stop(); setSpeakingMsgId(null) }
+      return next
+    })
+  }, [synth])
 
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -764,10 +857,29 @@ export default function NovaPage() {
                       {msg.content.replace(/^\[Mood: .+?\] /, '')}
                     </p>
                     <div className={cn(
-                      'font-mono text-[0.52rem] mt-1.5',
-                      msg.role === 'user' ? 'text-teal-400/50 text-right' : 'text-white/25'
+                      'flex items-center mt-1.5',
+                      msg.role === 'user' ? 'justify-end' : 'justify-between'
                     )}>
-                      {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
+                      <div className={cn(
+                        'font-mono text-[0.52rem]',
+                        msg.role === 'user' ? 'text-teal-400/50' : 'text-white/25'
+                      )}>
+                        {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                      {msg.role === 'assistant' && synth.isSupported && (
+                        <button
+                          onClick={() => speakMsg(msg.content, msg.id)}
+                          title={speakingMsgId === msg.id ? 'Stop' : 'Read aloud'}
+                          className={cn(
+                            'ml-2 flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[0.6rem] transition-all',
+                            speakingMsgId === msg.id
+                              ? 'bg-teal-600/30 text-teal-400 border border-teal-500/40'
+                              : 'bg-white/4 text-white/25 hover:bg-white/10 hover:text-white/50 border border-transparent'
+                          )}
+                        >
+                          {speakingMsgId === msg.id ? '◼' : '🔊'}
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -911,6 +1023,22 @@ export default function NovaPage() {
               {selectedMood ? MOODS.find(m => m.label === selectedMood)?.emoji : '😊'}
             </button>
 
+            {/* Mic button — only when Web Speech API is available */}
+            {sr.isSupported && (
+              <button
+                onClick={handleMicClick}
+                className={cn(
+                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all border',
+                  sr.isListening
+                    ? 'bg-red-500/20 border-red-500/50 animate-pulse'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                )}
+                aria-label={sr.isListening ? 'Stop listening' : 'Speak to Nova'}
+              >
+                {sr.isListening ? '🔴' : '🎙'}
+              </button>
+            )}
+
             {/* Text input */}
             <div className="flex-1 relative">
               <textarea
@@ -918,24 +1046,46 @@ export default function NovaPage() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Talk to Nova…"
+                placeholder={sr.isListening ? 'Listening…' : 'Talk to Nova…'}
                 rows={1}
                 maxLength={2000}
-                className="w-full bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
+                className={cn(
+                  'w-full bg-[var(--bg-surface)] border rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body',
+                  sr.isListening
+                    ? 'border-red-500/40 ring-2 ring-red-500/15'
+                    : 'border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20'
+                )}
                 style={{ minHeight: '44px', maxHeight: '120px' }}
                 onInput={e => {
                   const target = e.target as HTMLTextAreaElement
                   target.style.height = 'auto'
                   target.style.height = Math.min(target.scrollHeight, 120) + 'px'
                 }}
-                disabled={loading}
+                disabled={loading || sr.isListening}
               />
             </div>
+
+            {/* Auto-read toggle — only when TTS is available */}
+            {synth.isSupported && (
+              <button
+                onClick={toggleVoiceMode}
+                title={voiceMode ? 'Auto-read on — click to turn off' : 'Auto-read off — click to enable'}
+                className={cn(
+                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all border',
+                  voiceMode
+                    ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10 text-white/40'
+                )}
+                aria-label="Toggle auto-read"
+              >
+                🔊
+              </button>
+            )}
 
             {/* Send button */}
             <button
               onClick={() => sendMessage()}
-              disabled={!input.trim() || loading}
+              disabled={!input.trim() || loading || sr.isListening}
               className="flex-shrink-0 w-10 h-10 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all"
               aria-label="Send message"
             >
