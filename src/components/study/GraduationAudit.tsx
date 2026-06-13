@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAppStore } from '@/store'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
+import GraduationOptimizer from '@/components/study/GraduationOptimizer'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -454,6 +455,9 @@ export default function GraduationAudit() {
           <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{totalCreditsRequired} credits</span>
         </div>
       </div>
+
+      {/* AI Graduation Optimizer */}
+      <GraduationOptimizer hasModules={config.modules.length >= 2} />
 
       {/* Timeline */}
       <GraduationTimeline config={config} />
