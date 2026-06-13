@@ -15,6 +15,7 @@ import FlashcardsTab from '@/components/study/FlashcardsTab'
 import WellnessTab from '@/components/study/WellnessTab'
 import HabitBuilder from '@/components/habits/HabitBuilder'
 import GraduationAudit from '@/components/study/GraduationAudit'
+import AttendanceTab from '@/components/study/AttendanceTab'
 import CalendarTab from '@/components/study/CalendarTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
@@ -59,6 +60,7 @@ const TAB_CONFIG = [
   { id: 'pomodoro',    label: 'Focus',     icon: '⏱',  accent: '#e8834a', glow: 'rgba(232,131,74,0.2)' },
   { id: 'habits',      label: 'Habits',    icon: '🌱', accent: '#6366F1', glow: 'rgba(99,102,241,0.2)' },
   { id: 'graduation',  label: 'Grad Audit',icon: '🎓', accent: '#38BDF8', glow: 'rgba(56,189,248,0.2)' },
+  { id: 'attendance',  label: 'Attendance', icon: '📋', accent: '#f59e0b', glow: 'rgba(245,158,11,0.2)' },
 ] as const
 
 type TabId = typeof TAB_CONFIG[number]['id']
@@ -258,6 +260,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'pomodoro'   && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
         {activeTab === 'habits'     && <HabitBuilder />}
         {activeTab === 'graduation' && <GraduationAudit />}
+        {activeTab === 'attendance' && <AttendanceTab modules={modules} userId={userId} />}
       </div>
 
       {/* ── Quick-add FAB ── */}

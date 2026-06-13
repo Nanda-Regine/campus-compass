@@ -423,12 +423,26 @@ export async function POST(request: NextRequest) {
     const prebuilt = detectPrebuilt(message)
     if (prebuilt?.skipApi) {
       const ctx = await buildStudentContext(user.id, supabase)
-      // Atomic increment — no read-modify-write race condition
       const monthKey = new Date().toISOString().slice(0, 7)
       const { data: prebuiltUsage } = await supabase.rpc('try_use_nova_message', {
         p_user_id: user.id, p_month_key: monthKey, p_limit: -1,
       })
       const newCount = (prebuiltUsage?.messages_used as number | null) ?? ctx.messageCount + 1
+
+      // Persist to nova_conversations so it shows in history
+      const updatedMessages = [
+        ...history.slice(-40),
+        { role: 'user', content: message, timestamp: new Date().toISOString() },
+        { role: 'assistant', content: prebuilt.response, timestamp: new Date().toISOString() },
+      ]
+      const autoTitle = message.slice(0, 60) + (message.length > 60 ? '…' : '')
+      let resolvedConversationId = conversationId
+      if (conversationId) {
+        await supabase.from('nova_conversations').update({ messages: updatedMessages, message_count: updatedMessages.length, updated_at: new Date().toISOString() }).eq('id', conversationId).eq('user_id', user.id)
+      } else {
+        const { data: newConv } = await supabase.from('nova_conversations').insert({ user_id: user.id, messages: updatedMessages, title: autoTitle, conversation_type: isCrisis ? 'crisis' : 'general', crisis_detected: isCrisis, message_count: updatedMessages.length, started_at: new Date().toISOString(), updated_at: new Date().toISOString() }).select('id').single()
+        resolvedConversationId = (newConv as { id: string } | null)?.id
+      }
 
       return NextResponse.json({
         message: prebuilt.response,
@@ -437,6 +451,7 @@ export async function POST(request: NextRequest) {
         prebuilt: true,
         messagesUsed: newCount,
         tier: ctx.subscriptionTier,
+        conversationId: resolvedConversationId ?? null,
       })
     }
 
@@ -547,7 +562,7 @@ export async function POST(request: NextRequest) {
 
     let resolvedConversationId = conversationId
     if (conversationId) {
-      // Append to existing conversation
+      // Append to existing conversation (best-effort, non-blocking)
       supabase.from('nova_conversations').update({
         messages: updatedMessages,
         conversation_type: isCrisis ? 'crisis' : 'general',
@@ -556,8 +571,8 @@ export async function POST(request: NextRequest) {
         updated_at: new Date().toISOString(),
       }).eq('id', conversationId).eq('user_id', user.id).then(() => {}, () => {})
     } else {
-      // Start a new conversation row, capture its ID to return to client
-      supabase.from('nova_conversations').insert({
+      // Insert a new conversation row and await so we get the ID to return to client
+      const { data: newConv } = await supabase.from('nova_conversations').insert({
         user_id: user.id,
         messages: updatedMessages,
         title: autoTitle,
@@ -566,9 +581,8 @@ export async function POST(request: NextRequest) {
         message_count: newMessageCount,
         started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      }).select('id').single().then((res) => {
-        resolvedConversationId = (res.data as { id: string } | null)?.id
-      }, () => {})
+      }).select('id').single()
+      resolvedConversationId = (newConv as { id: string } | null)?.id
     }
 
     // Log cache token usage for cost monitoring (best-effort)

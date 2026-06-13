@@ -3,6 +3,81 @@ import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { notifyUser } from '@/lib/push-notify'
 import { canSendPush } from '@/lib/webpush'
 
+// ─── Attendance Risk Alert ────────────────────────────────────────────────────
+// Fires daily at 18:00 SAST.
+// Checks all users' attendance records and alerts those below 80% in any module.
+export const attendanceAlert = inngest.createFunction(
+  { id: 'attendance-alert', name: 'Daily Attendance Risk Alert', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 0 18 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+
+    const atRisk = await step.run('find-attendance-risk', async () => {
+      // Aggregate per user+module: count present/late/online vs total
+      const { data: recs } = await supabase
+        .from('attendance_records')
+        .select('user_id, module_id, status, modules!inner(module_name)')
+        .neq('status', 'cancelled')
+
+      if (!recs?.length) return []
+
+      // Group by user → module
+      type Rec = { user_id: string; module_id: string; status: string; modules: unknown }
+      const byUserModule: Record<string, { attended: number; total: number; name: string }> = {}
+      for (const r of recs as unknown as Rec[]) {
+        const moduleName = (Array.isArray(r.modules) ? (r.modules[0] as { module_name: string })?.module_name : (r.modules as { module_name: string })?.module_name) ?? 'Unknown'
+        const key = `${r.user_id}::${r.module_id}`
+        if (!byUserModule[key]) byUserModule[key] = { attended: 0, total: 0, name: moduleName }
+        byUserModule[key].total++
+        if (r.status !== 'absent') byUserModule[key].attended++
+      }
+
+      const results: { userId: string; moduleName: string; pct: number }[] = []
+      for (const [key, stat] of Object.entries(byUserModule)) {
+        if (stat.total < 3) continue // not enough data yet
+        const pct = Math.round((stat.attended / stat.total) * 100)
+        if (pct < 80) {
+          const userId = key.split('::')[0]
+          results.push({ userId, moduleName: stat.name, pct })
+        }
+      }
+
+      // Deduplicate: one notification per user (worst module)
+      const worst: Record<string, { moduleName: string; pct: number }> = {}
+      for (const r of results) {
+        if (!worst[r.userId] || r.pct < worst[r.userId].pct) {
+          worst[r.userId] = { moduleName: r.moduleName, pct: r.pct }
+        }
+      }
+      return Object.entries(worst).map(([userId, v]) => ({ userId, ...v }))
+    }) as { userId: string; moduleName: string; pct: number }[]
+
+    if (!atRisk.length) return { sent: 0 }
+
+    // Only send to users who have push subscriptions
+    const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
+    const subSet = new Set((subs ?? []).map((s: { user_id: string }) => s.user_id))
+    const toNotify = atRisk.filter(r => subSet.has(r.userId))
+
+    const totalSent = await step.run('send-attendance-alerts', async () => {
+      let count = 0
+      for (const r of toNotify) {
+        count += await notifyUser(supabase, r.userId, {
+          title: r.pct < 70 ? '🚨 Attendance critical' : '⚠️ Attendance warning',
+          body:  `${r.moduleName}: ${r.pct}% attendance. 80% required for exam entry. Mark a catch-up session today.`,
+          url:   '/study?tab=attendance',
+          tag:   `attendance-risk-${new Date().toISOString().slice(0, 7)}`,
+        })
+      }
+      return count
+    })
+
+    logger.info(`Attendance alert: ${totalSent} sent to ${toNotify.length} at-risk users`)
+    return { sent: totalSent, atRisk: atRisk.length }
+  },
+)
+
 interface FnCtx {
   step: { run<T>(id: string, fn: () => Promise<T>): Promise<T> }
   logger: { warn(msg: string): void; info(msg: string): void }
