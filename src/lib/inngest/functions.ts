@@ -634,6 +634,181 @@ export const dailyStateSnapshot = inngest.createFunction(
   },
 )
 
+// ─── Critical Rules Push Alert (4× per day) ──────────────────────────────────
+// Fires at 09:00, 13:00, 17:00, 21:00 SAST.
+// Server-side evaluation of urgency 4–5 rules for all subscribed users.
+// Covers the case where the student isn't in the app — the client-side rules
+// engine can't fire for users who haven't opened VarsityOS in hours.
+// Uses intervention_log (48h cooldown via orchestrationIntervention pattern)
+// narrowed to urgency-specific windows: 6h for urgency 5, 8h for urgency 4.
+export const criticalRulesCheck = inngest.createFunction(
+  { id: 'critical-rules-check', name: 'Critical Rules Push Alert (4×/day)', retries: 1 },
+  { cron: 'TZ=Africa/Johannesburg 0 9,13,17,21 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) return { triggered: 0 }
+    const supabase = createAdminSupabaseClient()
+    const now       = new Date()
+    const todayStr  = now.toISOString().slice(0, 10)
+    const in3dStr   = new Date(now.getTime() +  3 * 86_400_000).toISOString().slice(0, 10)
+    const in14dStr  = new Date(now.getTime() + 14 * 86_400_000).toISOString().slice(0, 10)
+    const monthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const dayOfMonth = now.getDate()
+    const jsDay = now.getDay()
+    const weekStart = new Date(now); weekStart.setDate(now.getDate() - (jsDay === 0 ? 6 : jsDay - 1))
+    const weekStartStr = weekStart.toISOString().slice(0, 10)
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
+    const weekEndStr = weekEnd.toISOString().slice(0, 10)
+
+    type Alert = { userId: string; rule: string; urgency: number; title: string; body: string; url: string }
+
+    const alerts = await step.run('evaluate-critical-rules', async () => {
+      const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
+      if (!subs?.length) return []
+      const userIds = [...new Set((subs as { user_id: string }[]).map(s => s.user_id))]
+      const results: Alert[] = []
+
+      // ── financial_runway_critical (urgency 5) ─────────────────
+      const [budgetsRes, expensesRes] = await Promise.all([
+        supabase.from('budgets').select('user_id, monthly_budget').in('user_id', userIds).gt('monthly_budget', 0),
+        supabase.from('expenses').select('user_id, amount, month_year, expense_date').in('user_id', userIds),
+      ])
+      const budgetMap: Record<string, number> = {}
+      for (const b of (budgetsRes.data ?? []) as { user_id: string; monthly_budget: number }[]) {
+        budgetMap[b.user_id] = b.monthly_budget
+      }
+      const spentMap: Record<string, number> = {}
+      for (const e of (expensesRes.data ?? []) as { user_id: string; amount: number; month_year?: string; expense_date?: string }[]) {
+        const inMonth = (e.month_year && e.month_year === monthYear) || (e.expense_date && e.expense_date.startsWith(monthYear))
+        if (!inMonth) continue
+        spentMap[e.user_id] = (spentMap[e.user_id] ?? 0) + (e.amount ?? 0)
+      }
+      for (const userId of Object.keys(budgetMap)) {
+        const budget     = budgetMap[userId]
+        const spent      = spentMap[userId] ?? 0
+        const remaining  = Math.max(0, budget - spent)
+        const dailyBurn  = dayOfMonth > 0 ? spent / dayOfMonth : 0
+        const runwayDays = dailyBurn > 0 ? Math.floor(remaining / dailyBurn) : 999
+        if (runwayDays < 5 || remaining < 100) {
+          results.push({
+            userId, rule: 'financial_runway_critical', urgency: 5,
+            title: '🚨 Money runs out in less than 5 days',
+            body:  `R${Math.round(remaining)} left at your current pace. Switch to emergency mode before it's too late.`,
+            url:   '/budget?mode=emergency',
+          })
+        }
+      }
+
+      // ── academic_exclusion_risk (urgency 5) ───────────────────
+      const { data: nearExams } = await supabase.from('exams')
+        .select('user_id, exam_name').in('user_id', userIds)
+        .gte('exam_date', todayStr).lte('exam_date', in3dStr)
+      const nearExamMap: Record<string, string> = {}
+      for (const e of (nearExams ?? []) as { user_id: string; exam_name: string }[]) {
+        if (!nearExamMap[e.user_id]) nearExamMap[e.user_id] = e.exam_name
+      }
+      const nearExamUsers = Object.keys(nearExamMap)
+      if (nearExamUsers.length > 0) {
+        const { data: overdueRows } = await supabase.from('tasks')
+          .select('user_id').in('user_id', nearExamUsers)
+          .lt('due_date', todayStr).neq('status', 'done')
+        const overdueCount: Record<string, number> = {}
+        for (const t of (overdueRows ?? []) as { user_id: string }[]) {
+          overdueCount[t.user_id] = (overdueCount[t.user_id] ?? 0) + 1
+        }
+        for (const userId of nearExamUsers) {
+          if ((overdueCount[userId] ?? 0) >= 3) {
+            results.push({
+              userId, rule: 'academic_exclusion_risk', urgency: 5,
+              title: '📚 Exam in ≤3 days — overdue tasks piling up',
+              body:  `${nearExamMap[userId]} is very soon and you have ${overdueCount[userId]}+ overdue tasks. Open the catch-up planner now.`,
+              url:   '/study?tab=exams&catchup=true',
+            })
+          }
+        }
+      }
+
+      // ── exam_crunch_unprepared (urgency 4) ────────────────────
+      const { data: crunchExams } = await supabase.from('exams')
+        .select('user_id, exam_name').in('user_id', userIds)
+        .gte('exam_date', todayStr).lte('exam_date', in14dStr)
+      const crunchMap: Record<string, string> = {}
+      for (const e of (crunchExams ?? []) as { user_id: string; exam_name: string }[]) {
+        if (!crunchMap[e.user_id]) crunchMap[e.user_id] = e.exam_name
+      }
+      const crunchUsers = Object.keys(crunchMap)
+      if (crunchUsers.length > 0) {
+        const { data: weekTasks } = await supabase.from('tasks')
+          .select('user_id, status').in('user_id', crunchUsers)
+          .gte('due_date', weekStartStr).lte('due_date', weekEndStr)
+        const weekMap: Record<string, { total: number; done: number }> = {}
+        for (const t of (weekTasks ?? []) as { user_id: string; status: string }[]) {
+          if (!weekMap[t.user_id]) weekMap[t.user_id] = { total: 0, done: 0 }
+          weekMap[t.user_id].total++
+          if (t.status === 'done') weekMap[t.user_id].done++
+        }
+        for (const userId of crunchUsers) {
+          if (results.some(r => r.userId === userId && r.urgency >= 5)) continue
+          const stats = weekMap[userId]
+          if (!stats || stats.total === 0) continue
+          const completionRate = Math.round((stats.done / stats.total) * 100)
+          if (completionRate < 50) {
+            results.push({
+              userId, rule: 'exam_crunch_unprepared', urgency: 4,
+              title: `📖 Exam coming — ${completionRate}% of tasks done`,
+              body:  `${crunchMap[userId]} within 2 weeks and task completion is low. Rebuild your study schedule now.`,
+              url:   '/study?tab=exams',
+            })
+          }
+        }
+      }
+
+      return results
+    }) as Alert[]
+
+    if (!alerts.length) return { triggered: 0 }
+
+    // Cooldown: 6h for urgency 5, 8h for urgency 4
+    const maxCooldownH = 8
+    const { data: recentLog } = await supabase
+      .from('intervention_log')
+      .select('user_id, rule_id, urgency, shown_at')
+      .in('user_id', alerts.map(a => a.userId))
+      .gte('shown_at', new Date(Date.now() - maxCooldownH * 3_600_000).toISOString())
+
+    const onCooldown = new Set<string>()
+    for (const r of (recentLog ?? []) as { user_id: string; rule_id: string; urgency: number; shown_at: string }[]) {
+      const cooldownMs = (r.urgency >= 5 ? 6 : 8) * 3_600_000
+      if (Date.now() - new Date(r.shown_at).getTime() < cooldownMs) {
+        onCooldown.add(`${r.user_id}::${r.rule_id}`)
+      }
+    }
+
+    const toSend = alerts.filter(a => !onCooldown.has(`${a.userId}::${a.rule}`))
+    if (!toSend.length) return { triggered: 0 }
+
+    const triggered = await step.run('send-critical-alerts', async () => {
+      let count = 0
+      for (const a of toSend) {
+        const sent = await notifyUser(supabase, a.userId, {
+          title: a.title, body: a.body, url: a.url,
+          tag: `${a.rule}-${todayStr}`,
+        })
+        if (sent > 0) {
+          await supabase.from('intervention_log').insert({
+            user_id: a.userId, rule_id: a.rule, urgency: a.urgency,
+            variant: 'push', title: a.title,
+          })
+          count++
+        }
+      }
+      return count
+    })
+
+    logger.info(`Critical rules check: ${triggered} alerts sent from ${alerts.length} potential`)
+    return { triggered, assessed: alerts.length }
+  },
+)
+
 // ─── Orchestration Intervention Trigger ──────────────────────────────────────
 // Fires at 00:30 SAST daily (30 min after snapshot completes).
 // Reads 3-day snapshots, detects negative trends, sends targeted push alerts.

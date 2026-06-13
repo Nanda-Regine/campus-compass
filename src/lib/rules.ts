@@ -435,6 +435,21 @@ export function runRules(): void {
     const intervention = buildIntervention(rule, snapshot)
     store.queueIntervention(intervention)
     markCooldown(rule.id, rule.cooldownMins)
+
+    // Push to all the student's devices when a high-urgency rule fires.
+    // The intervention cooldown above already ensures this fires at most
+    // once per cooldown window per rule — no extra rate-limiting needed.
+    if (rule.urgency >= 4) {
+      fetch('/api/push/notify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          title: intervention.title,
+          body:  intervention.message,
+          url:   intervention.actionRoute,
+        }),
+      }).catch(() => {})
+    }
   }
 }
 
