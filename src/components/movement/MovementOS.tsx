@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car, Search } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // Mapbox map loaded client-side only (accesses window/document)
 const MapboxRoutesMap = dynamic(
@@ -235,7 +236,13 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
   const chip      = (active: boolean) => `px-3 py-1.5 rounded-full text-xs font-mono border transition-all ${active ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/4 border-white/8 text-white/50 hover:text-white hover:bg-white/8'}`
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <>
+      {/* Full-page ambient art — fixed so it persists as user scrolls */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <AmbientImage zone="movement" opacity={0.28} blurPx={20} saturation={1.1}
+          overlayColor="rgba(5,4,12,0.0)" />
+      </div>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 1 }}>
       {/* Header */}
       <div className="px-5 pt-12 pb-6" style={{ background: 'linear-gradient(135deg, #0f4c75 0%, #0d3a5e 100%)' }}>
         <div className="flex items-center gap-3 mb-1">
@@ -663,5 +670,6 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
 
       </div>
     </div>
+    </>
   )
 }

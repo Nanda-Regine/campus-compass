@@ -5,24 +5,24 @@ import Image from 'next/image'
 // ─── IMAGE ZONES ──────────────────────────────────────────────────────────────
 // All images live at /public/images/ambient/ — import via AMBIENT_IMAGES map.
 //
-//  dashboard.jpg       — Fluid blue/teal/orange aurora swirls     → Dashboard hero
-//  nova.jpg            — Grainy nebula, purple/blue/red            → Nova AI background
-//  study.jpg           — Dark rock layers, glowing teal rivers     → Study / Flashcards
-//  budget.jpg          — Orange/yellow fire diagonal on navy       → Budget / Finance
-//  meals.jpg           — Terracotta earth tone layered waves       → Meal Planner
-//  career.jpg          — Deep navy velvet texture                  → Career / CV
-//  wellness.jpg        — White sand dunes, organic ripple          → Wellness / Mental Health
-//  onboarding.jpg      — Dark AMOLED + sculpted paint swirl        → Onboarding hero
-//  habits.jpg          — Layered colorful torn fabric/paper        → Habits / Growth
-//  community.jpg       — Bold multi-colour abstract                → Campus Feed / Community
-//  safety.jpg          — Soft peach/rose flowing silk              → Safety / Female module
-//  entrepreneurship.jpg— Cyan/orange energetic brushstrokes        → Entrepreneurship OS
-//  body.jpg            — Red/blue sunset oil painting              → Body / Fitness
-//  nsfas.jpg           — Holographic iridescent blue/purple        → NSFAS Tracker
-//  movement.jpg        — Teal-to-pink leather gradient             → Commute / Maps
-//  schedule.jpg        — Calm blue linen gradient                  → Timetable / Schedule
-//  alerts.jpg          — Dark BG, orange/red paint explosion       → Academic Risk / Alerts
-//  texture-light.jpg   — Pure white flowing fabric                 → Light mode overlays
+//  dashboard.jpg       — Dark blue oil storm sky + orange glow     → Dashboard hero
+//  nova.jpg            — Rainbow cosmic noise on dark purple/blue  → Nova AI background
+//  study.jpg           — Deep navy velvet texture                  → Study / Flashcards
+//  budget.jpg          — Dark charcoal with orange-red glow stripe → Budget / Finance
+//  meals.jpg           — Terracotta/nude/grey sand-wave layers     → Meal Planner
+//  career.jpg          — Navy to sky-blue fine grain gradient      → Career / CV
+//  wellness.jpg        — Airy white/orange/pink textured paint     → Wellness / Mental Health
+//  onboarding.jpg      — Rich impasto burst of all colours         → Onboarding hero
+//  habits.jpg          — Layered torn colourful paper/fabric       → Habits / Growth
+//  community.jpg       — Bold dark oil: red/orange/yellow/blue     → Campus Feed / Community
+//  safety.jpg          — Blue/white/cream ocean-wave texture       → Safety / Female module
+//  entrepreneurship.jpg— Teal/orange fluid acrylic pour            → Entrepreneurship OS
+//  body.jpg            — Bright orange/cyan bold paint strokes     → Body / Fitness
+//  nsfas.jpg           — Iridescent blue/purple surface sheen      → NSFAS Tracker
+//  movement.jpg        — Smooth cyan-to-orange gradient            → Commute / Maps
+//  schedule.jpg        — Teal-to-pink leather gradient             → Timetable / Schedule
+//  alerts.jpg          — AMOLED dark + red/orange fire rings       → Academic Risk / Alerts
+//  texture-light.jpg   — Cyan/orange/brown brushed diagonal        → Light mode overlays
 // ──────────────────────────────────────────────────────────────────────────────
 
 export type AmbientZone =
