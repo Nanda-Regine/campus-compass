@@ -26,6 +26,29 @@ interface Message {
   timestamp: Date
   isCrisis?: boolean
   resources?: Resource[]
+  imagePreviewUrl?: string  // object URL — shown as thumbnail in chat bubble, revoked after unmount
+}
+
+// Compress + resize an image to ≤1024px JPEG before sending to avoid large payloads on 2G
+async function compressImage(file: File): Promise<{ data: string; mimeType: 'image/jpeg'; previewUrl: string }> {
+  return new Promise((resolve, reject) => {
+    const previewUrl = URL.createObjectURL(file)
+    const img = new Image()
+    img.onerror = reject
+    img.onload = () => {
+      const MAX_PX = 1024
+      const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height))
+      const w = Math.round(img.width * scale)
+      const h = Math.round(img.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.75)
+      resolve({ data: dataUrl.split(',')[1], mimeType: 'image/jpeg', previewUrl })
+    }
+    img.src = previewUrl
+  })
 }
 
 const MOODS = [
@@ -302,7 +325,14 @@ export default function NovaPage() {
     totalXP: number
   } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef      = useRef<HTMLTextAreaElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+
+  // ── Image attachment ────────────────────────────────────────────────────────
+  const [pendingImage, setPendingImage] = useState<{
+    data: string; mimeType: 'image/jpeg'; previewUrl: string
+  } | null>(null)
+  const [imageCompressing, setImageCompressing] = useState(false)
 
   // ── Voice I/O ──────────────────────────────────────────────────────────────
   const [voiceMode, setVoiceMode]       = useState(false)
@@ -495,20 +525,47 @@ export default function NovaPage() {
     if (conversationId === id) startNewChat()
   }
 
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    // Reset so the same file can be re-selected
+    e.target.value = ''
+    setImageCompressing(true)
+    try {
+      const compressed = await compressImage(file)
+      // Revoke previous preview to avoid memory leak
+      if (pendingImage) URL.revokeObjectURL(pendingImage.previewUrl)
+      setPendingImage(compressed)
+    } catch {
+      toast.error('Could not load image — try a different file')
+    } finally {
+      setImageCompressing(false)
+    }
+  }
+
+  const clearPendingImage = () => {
+    if (pendingImage) URL.revokeObjectURL(pendingImage.previewUrl)
+    setPendingImage(null)
+  }
+
   const sendMessage = async (messageText?: string) => {
     const text = (messageText || input).trim()
-    if (!text || loading) return
+    if ((!text && !pendingImage) || loading) return
 
+    const imagePreviewUrl = pendingImage?.previewUrl
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: selectedMood ? `[Mood: ${selectedMood}] ${text}` : text,
       timestamp: new Date(),
+      imagePreviewUrl,
     }
 
+    const capturedImage = pendingImage
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setSelectedMood(null)
+    setPendingImage(null)  // clear before API call (previewUrl still in userMessage)
     setShowWelcome(false)
     setShowCapabilities(false)
     setLoading(true)
@@ -537,6 +594,7 @@ export default function NovaPage() {
           mood: selectedMood,
           conversationId,
           correlationInsights,
+          ...(capturedImage ? { imageData: capturedImage.data, mediaType: capturedImage.mimeType } : {}),
         }),
       })
 
@@ -857,6 +915,15 @@ export default function NovaPage() {
                         : 'bg-[var(--bg-surface)] border border-white/7 text-white/90 rounded-tl-sm'
                     )}
                   >
+                    {/* Image thumbnail in user bubble */}
+                    {msg.imagePreviewUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={msg.imagePreviewUrl}
+                        alt="Attached"
+                        className="w-full max-w-[220px] rounded-xl mb-2 object-cover border border-white/10"
+                      />
+                    )}
                     <p className="whitespace-pre-wrap">
                       {msg.content.replace(/^\[Mood: .+?\] /, '')}
                     </p>
@@ -983,6 +1050,47 @@ export default function NovaPage() {
         </div>
       )}
 
+      {/* Hidden file input for image selection */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleImageSelect}
+      />
+
+      {/* Image preview strip — shown when an image is pending */}
+      {(pendingImage || imageCompressing) && (
+        <div className="px-4 pb-2 animate-fade-in">
+          <div className="flex items-center gap-3 bg-white/4 border border-white/10 rounded-xl px-3 py-2">
+            {imageCompressing ? (
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-lg bg-white/10 animate-pulse" />
+                <span className="font-mono text-[0.6rem] text-white/30">Compressing…</span>
+              </div>
+            ) : pendingImage && (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={pendingImage.previewUrl}
+                  alt="Attached"
+                  className="w-10 h-10 rounded-lg object-cover border border-white/10 flex-shrink-0"
+                />
+                <span className="font-mono text-[0.6rem] text-white/50 flex-1">Image ready to send</span>
+                <button
+                  onClick={clearPendingImage}
+                  className="text-white/30 hover:text-red-400 text-xs transition-colors"
+                  aria-label="Remove image"
+                >
+                  ✕
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Input area */}
       <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[var(--bg-base)]">
         {!isUnlimited && !isPremium && usageLeft <= 3 && usageLeft > 0 && (
@@ -1043,6 +1151,23 @@ export default function NovaPage() {
               </button>
             )}
 
+            {/* Camera button — attach an image for Nova Vision */}
+            <button
+              onClick={() => imageInputRef.current?.click()}
+              disabled={imageCompressing || loading}
+              className={cn(
+                'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all border',
+                pendingImage
+                  ? 'bg-teal-600/20 border-teal-500/40'
+                  : 'bg-white/5 border-white/10 hover:bg-white/10',
+                (imageCompressing || loading) && 'opacity-40 cursor-not-allowed'
+              )}
+              aria-label="Attach image"
+              title="Snap or attach an image — exam paper, textbook, notes"
+            >
+              📷
+            </button>
+
             {/* Text input */}
             <div className="flex-1 relative">
               <textarea
@@ -1089,7 +1214,7 @@ export default function NovaPage() {
             {/* Send button */}
             <button
               onClick={() => sendMessage()}
-              disabled={!input.trim() || loading || sr.isListening}
+              disabled={(!input.trim() && !pendingImage) || loading || sr.isListening}
               className="flex-shrink-0 w-10 h-10 rounded-xl bg-teal-600 hover:bg-teal-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all"
               aria-label="Send message"
             >

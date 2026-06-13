@@ -419,6 +419,16 @@ export async function POST(request: NextRequest) {
     const correlationInsights: CorrelationInsight[] | null = Array.isArray(body?.correlationInsights)
       ? (body.correlationInsights as CorrelationInsight[]).slice(0, 5)
       : null
+
+    // Image attachment (optional) — base64 data + MIME type sent from client after compression
+    const rawImageData: unknown = body?.imageData
+    const imageData: string | null =
+      typeof rawImageData === 'string' && rawImageData.length > 0 && rawImageData.length < 6_000_000
+        ? rawImageData
+        : null
+    const imageMimeType = (['image/jpeg','image/png','image/gif','image/webp'] as const).includes(body?.mediaType)
+      ? (body.mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp')
+      : 'image/jpeg' as const
     // conversationId: client passes the active conversation UUID so we append to the
     // right row. If absent (new chat), we INSERT a fresh row and return the new ID.
     const conversationId: string | undefined =
@@ -426,12 +436,12 @@ export async function POST(request: NextRequest) {
         ? body.conversationId
         : undefined
 
-    if (!message) {
+    if (!message && !imageData) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
     // ─── Crisis detection — always check first ─────────────────────────────
-    const isCrisis = detectCrisis(message)
+    const isCrisis = detectCrisis(message || '')
 
     // ─── Pre-built response check — zero API cost ──────────────────────────
     // For breathing exercises, crisis, sleep tips, Pomodoro, etc. — respond instantly
@@ -511,6 +521,18 @@ export async function POST(request: NextRequest) {
     // Topic-based resource links (appended to response, not API call)
     const topicResources = detectTopicResources(message)
 
+    const userText = mood ? `[Mood: ${mood}] ${message || 'What do you see in this image?'}` : (message || 'What do you see in this image?')
+
+    const userContent: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[] = imageData
+      ? [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: imageMimeType, data: imageData },
+          },
+          { type: 'text', text: userText },
+        ]
+      : [{ type: 'text', text: userText }]
+
     const messages: Anthropic.MessageParam[] = [
       ...history.slice(-20).map(msg => ({
         role: msg.role,
@@ -518,13 +540,18 @@ export async function POST(request: NextRequest) {
       })),
       {
         role: 'user' as const,
-        content: mood ? `[Mood: ${mood}] ${message}` : message,
+        content: userContent,
       },
     ]
 
     // ─── Prompt Caching: 2-block system ───────────────────────────────────
     // Block 1: Large static knowledge base — CACHED (~90% cost savings)
     // Block 2: Dynamic student context — NOT cached (fresh each call)
+    const dynamicCtx = buildDynamicContext(ctx, usageGuidance, correlationInsights)
+    const imageNote = imageData
+      ? '\n\n**[Image attached]** The student has sent an image. Analyse it carefully and respond helpfully. If it looks like an exam paper, past paper, textbook page, or handwritten notes — provide detailed academic help. If it is something else, describe what you see and assist accordingly.'
+      : ''
+
     const systemBlocks: Anthropic.TextBlockParam[] = [
       {
         type: 'text',
@@ -534,7 +561,7 @@ export async function POST(request: NextRequest) {
       },
       {
         type: 'text',
-        text: buildDynamicContext(ctx, usageGuidance, correlationInsights),
+        text: dynamicCtx + imageNote,
         // @ts-expect-error — cache_control supported at runtime, not in all SDK types
         cache_control: { type: 'ephemeral' },
       },
@@ -567,9 +594,13 @@ export async function POST(request: NextRequest) {
     // messagesUsed already set by the atomic RPC above — no separate update needed
 
     // ── Persist conversation history (best-effort, non-blocking) ─────────────
+    // Strip image data from history — store a short placeholder instead to keep Supabase rows small
+    const userHistoryContent = imageData
+      ? `[📷 Image attached] ${message || ''}`.trim()
+      : message
     const updatedMessages = [
       ...history.slice(-40),
-      { role: 'user', content: message, timestamp: new Date().toISOString() },
+      { role: 'user', content: userHistoryContent, timestamp: new Date().toISOString() },
       { role: 'assistant', content: assistantMessage, timestamp: new Date().toISOString() },
     ]
     const newMessageCount = updatedMessages.length
