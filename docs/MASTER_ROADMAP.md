@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-13 (Phase 7 COMPLETE ✅)
+> Last updated: 2026-06-14 (Phase 8 COMPLETE ✅ — Phase 9 active 🔨)
 
 ---
 
@@ -779,14 +779,25 @@ All 9 life-domain modules shipped: NSFAS Tracker OS, Weather, Safety OS, Habit B
 9. 🎯 Offline-first CRUD — tasks + flashcards + Pomodoro fully offline with sync-on-reconnect
 10. 🎯 "Graduation Optimizer" — AI-powered module selection to graduate on time
 
-### 📋 Future (Phase 8 — Platform & Revenue)
-1. Expo React Native app (iOS + Android beyond TWA)
-2. PayFast subscription management UI (upgrade/downgrade/cancel flow)
-3. Parent/Guardian view — optional read-only access for parents
-4. Institutional onboarding — bulk sign-up for universities
-5. SRC/Admin dashboard — institution-level analytics
-6. API for third-party integrations (library systems, timetable feeds, e-learning)
-7. VarsityOS for TVET colleges — adapted content and modules
+### ✅ Complete (Phase 8 — Platform & Revenue)
+1. ✅ TWA Android app — Bubblewrap config + GitHub Actions CI (`twa-manifest.json`, `.github/workflows/twa-build.yml`)
+2. ✅ PayFast subscription UI — upgrade/cancel flow, ITN webhook, success/cancel pages, ProfileClient SubscriptionSection
+3. ✅ Graduation Optimizer — Claude Haiku `tool_use`, weekly localStorage cache, GraduationOptimizer component in GraduationAudit
+4. ✅ Institutional onboarding — Migration 000018, `/institutions` landing, `/admin/institution` portal, invite system, `/join/institution/[token]`
+
+### 🔨 Now (Phase 9 — Community Scale & Institutional Intelligence)
+1. 🔨 ICS Timetable Import — parse university .ics calendar files, auto-populate timetable + exam tables
+2. 🎯 Study Pods — AI-matched peer study partners (by modules + schedule + campus)
+3. 🎯 Nova Voice Mode — Web Speech API (speak to Nova, read responses aloud); ElevenLabs TTS for premium
+4. 🎯 SRC Analytics Dashboard — institution-level aggregate insights for institutional admins
+5. 🎯 Institution Broadcast — admin pushes announcements/alerts to all linked students via push notification
+
+### 📋 Future (Phase 10+)
+1. Parent/Guardian view — optional read-only dashboard with magic-link access
+2. VarsityOS for TVET colleges — NCV/NC(V) qualifications, TVET NSFAS rules
+3. LMS integrations — Blackboard, Moodle, Canvas webhooks for grade sync
+4. Nova multi-modal — image input (scan exam paper, textbook page)
+5. Cohort comparison — anonymous benchmarking vs same-degree peers
 
 ---
 
@@ -946,7 +957,7 @@ d6ca96e  fix: add untracked InsightsCard and API routes missing from repo
 ## Supabase Migration Log
 
 All migrations must be run manually in the VarsityOS Supabase SQL editor (NOT via MCP).
-Next migration number: **000018**
+Next migration number: **000019**
 
 | File | Status | Description |
 |---|---|---|
@@ -973,7 +984,7 @@ Next migration number: **000018**
 | `20260613000015_nsfas_disbursements.sql` | ✅ Run | nsfas_disbursements for Inngest late-payment alert |
 | `20260613000016_graduation_modules.sql` | ✅ Run | graduation_modules, degree_config |
 | `20260613000017_skill_progress.sql` | ✅ Run | skill_progress JSONB map |
-| `20260613000018_*` | 📋 Next | TBD — Nova context injection tables or push state-alert queue |
+| `20260613000018_institutions.sql` | ✅ Run | institutions, institution_admins, institution_invites; profiles.institution_id |
 
 ---
 
