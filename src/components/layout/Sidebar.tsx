@@ -127,7 +127,7 @@ export function Sidebar() {
                   width: '100%',
                   height: 40,
                   borderRadius: 10,
-                  color: active ? accent : isHovered ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.28)',
+                  color: active ? accent : isHovered ? 'var(--text-secondary)' : 'var(--text-tertiary)',
                   background: active
                     ? accentDim
                     : isHovered
@@ -239,7 +239,7 @@ export function Sidebar() {
         <div
           title={online ? 'Online' : 'Offline'}
           style={{
-            color: online ? '#00CFA0' : 'rgba(255,255,255,0.2)',
+            color: online ? '#00CFA0' : 'var(--text-muted)',
             transition: 'color 300ms ease',
           }}
         >

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import {
   Home, BookOpen, Sparkles, Wallet,
   Utensils, Briefcase, Users, UserCircle,
@@ -95,6 +96,8 @@ const APP_PREFIXES = [
 
 export function BottomNav() {
   const pathname    = usePathname()
+  const { theme }   = useTheme()
+  const isOutdoor   = theme === 'outdoor'
   const [moreOpen, setMoreOpen]     = useState(false)
   const [streakCount, setStreakCount] = useState(0)
 
@@ -144,8 +147,8 @@ export function BottomNav() {
           maxHeight: 'calc(100vh - 72px)',
           overflowY: 'auto',
           transform: moreOpen ? 'translateY(0)' : 'translateY(110%)',
-          background: 'rgba(10,12,17,0.98)',
-          borderTop: '0.5px solid rgba(255,255,255,0.1)',
+          background: isOutdoor ? 'var(--bg-base)' : 'rgba(10,12,17,0.98)',
+          borderTop: isOutdoor ? '1px solid var(--border-default)' : '0.5px solid rgba(255,255,255,0.1)',
           borderRadius: '20px 20px 0 0',
           padding: '14px 16px 32px',
           transition: 'transform 0.32s cubic-bezier(0.32,0,0.15,1)',
@@ -155,12 +158,12 @@ export function BottomNav() {
       >
         {/* Handle bar + close */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+          <div style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: isOutdoor ? 'var(--text-muted)' : 'rgba(255,255,255,0.3)', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
             All features
           </div>
           <button
             onClick={() => setMoreOpen(false)}
-            style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.4)' }}
+            style={{ background: isOutdoor ? 'var(--bg-elevated)' : 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isOutdoor ? 'var(--text-secondary)' : 'rgba(255,255,255,0.4)' }}
           >
             <X size={14} />
           </button>
@@ -202,16 +205,16 @@ export function BottomNav() {
                     <div style={{
                       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
                       padding: '10px 4px 8px',
-                      background: active ? `${accent}18` : 'rgba(255,255,255,0.04)',
-                      border: `0.5px solid ${active ? accent + '40' : 'rgba(255,255,255,0.07)'}`,
+                      background: active ? `${accent}18` : isOutdoor ? 'var(--bg-surface)' : 'rgba(255,255,255,0.04)',
+                      border: `0.5px solid ${active ? accent + '40' : isOutdoor ? 'var(--border-subtle)' : 'rgba(255,255,255,0.07)'}`,
                       borderRadius: 12, position: 'relative',
                       transition: 'all 0.15s',
                     }}>
                       <div style={{
                         width: 32, height: 32, borderRadius: 9,
-                        background: active ? `${accent}25` : 'rgba(255,255,255,0.06)',
+                        background: active ? `${accent}25` : isOutdoor ? 'var(--bg-elevated)' : 'rgba(255,255,255,0.06)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: active ? accent : 'rgba(255,255,255,0.5)',
+                        color: active ? accent : isOutdoor ? 'var(--text-secondary)' : 'rgba(255,255,255,0.5)',
                         position: 'relative',
                       }}>
                         <Icon size={16} strokeWidth={active ? 2.2 : 1.7} />
@@ -230,7 +233,7 @@ export function BottomNav() {
                       <span style={{
                         fontSize: 9.5, fontFamily: 'DM Sans, sans-serif',
                         fontWeight: active ? 600 : 400,
-                        color: active ? accent : 'rgba(255,255,255,0.45)',
+                        color: active ? accent : isOutdoor ? 'var(--text-secondary)' : 'rgba(255,255,255,0.45)',
                         letterSpacing: '0.01em', textAlign: 'center', lineHeight: 1.2,
                       }}>
                         {label}
@@ -249,8 +252,8 @@ export function BottomNav() {
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
         style={{
           height: 60,
-          background: 'rgba(6,10,8,0.95)',
-          borderTop: '0.5px solid rgba(255,255,255,0.07)',
+          background: isOutdoor ? 'var(--bg-base)' : 'rgba(6,10,8,0.95)',
+          borderTop: isOutdoor ? '1px solid var(--border-default)' : '0.5px solid rgba(255,255,255,0.07)',
           backdropFilter: 'blur(20px) saturate(180%)',
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           paddingBottom: 'max(0px, env(safe-area-inset-bottom))',
@@ -269,7 +272,7 @@ export function BottomNav() {
                 href={href}
                 onClick={() => !active && trackEvent('feature_opened', { feature: label.toLowerCase(), path: href })}
                 className="flex flex-col items-center justify-center gap-1 flex-1 relative"
-                style={{ color: active ? activeColor : 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color 0.15s ease' }}
+                style={{ color: active ? activeColor : isOutdoor ? 'var(--text-tertiary)' : 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color 0.15s ease' }}
               >
                 {active && (
                   <span style={{ position: 'absolute', top: 0, left: '22%', right: '22%', height: 2, borderRadius: '0 0 2px 2px', background: activeColor }} />
@@ -287,7 +290,7 @@ export function BottomNav() {
             onClick={() => setMoreOpen(v => !v)}
             className="flex flex-col items-center justify-center gap-1 flex-1 relative"
             style={{
-              color: moreOpen || isMoreActive ? '#c9a84c' : 'rgba(255,255,255,0.35)',
+              color: moreOpen || isMoreActive ? '#c9a84c' : isOutdoor ? 'var(--text-tertiary)' : 'rgba(255,255,255,0.35)',
               background: 'none', border: 'none', cursor: 'pointer',
               transition: 'color 0.15s ease',
             }}

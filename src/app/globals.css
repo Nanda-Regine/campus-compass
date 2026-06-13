@@ -558,23 +558,93 @@ html.light {
   --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.18), 0 1px 6px rgba(0, 0, 0, 0.12);
 }
 
-/* Outdoor mode — force readable text on all hardcoded-colour elements */
-[data-theme="outdoor"] .dash-card-in,
+/* ── Outdoor Mode: Comprehensive Readability ────────────────────────── */
+
+/* 1. Base: any white-opacity inline-styled element → force dark readable text.
+      This covers the 840 hardcoded dark-mode rgba() values across 60+ components.
+      Navigation bars (sidebar, bottom nav) are fixed separately in their TSX. */
 [data-theme="outdoor"] [style*="rgba(255,255,255,0."] {
+  color: var(--text-primary) !important;
+}
+
+/* 2. .dash-card-in animation wrapper — ensure text readable */
+[data-theme="outdoor"] .dash-card-in {
   color: var(--text-primary);
 }
 
+/* 3. Skeleton shimmer — flip from white-glow to grey-pulse for white bg */
+[data-theme="outdoor"] .skeleton-row {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.11) 50%,
+    rgba(0, 0, 0, 0.05) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+}
+
+/* 4. All form inputs — force readable no matter what inline style they carry */
+[data-theme="outdoor"] input,
+[data-theme="outdoor"] textarea,
+[data-theme="outdoor"] select {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
+}
+[data-theme="outdoor"] input::placeholder,
+[data-theme="outdoor"] textarea::placeholder {
+  color: rgba(0, 0, 0, 0.38) !important;
+}
+
+/* 5. Hardcoded dark-background overlay panels (modals, sheets) that are
+      intentionally dark: restore white text inside them.
+      These are identified by their specific hardcoded bg colors. */
+[data-theme="outdoor"] [style*="rgba(10,12,17"],
+[data-theme="outdoor"] [style*="rgba(6,10,8"],
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.9"],
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.95"],
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.98"] {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+/* …and their children */
+[data-theme="outdoor"] [style*="rgba(10,12,17"] *,
+[data-theme="outdoor"] [style*="rgba(6,10,8"] *,
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.9"] *,
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.95"] *,
+[data-theme="outdoor"] [style*="rgba(0,0,0,0.98"] * {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* 6. Buttons and links with hardcoded accent colours — keep their colour */
+[data-theme="outdoor"] button[style*="color: #"],
+[data-theme="outdoor"] a[style*="color: #"] {
+  color: unset;
+}
+
+/* 7. Borders: white-opacity borders are invisible on white — darken them */
+[data-theme="outdoor"] [style*="rgba(255,255,255,0."] {
+  border-color: rgba(0, 0, 0, 0.16) !important;
+}
+
+/* 8. Selection */
 [data-theme="outdoor"] ::selection {
   background: rgba(6, 95, 70, 0.22);
   color: #000000;
 }
 
+/* 9. Scrollbars */
 [data-theme="outdoor"] * {
   scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
 }
-
 [data-theme="outdoor"] ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.18);
+}
+
+/* 10. Toast notifications — always dark-on-light in outdoor */
+[data-theme="outdoor"] [data-sonner-toast],
+[data-theme="outdoor"] [data-hot-toast] {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */
