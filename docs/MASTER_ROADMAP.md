@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-14 (Phase 8 COMPLETE ✅ — Phase 9 active 🔨)
+> Last updated: 2026-06-14 (Phase 8 ✅ — Phase 9: 9A + 9B ✅ — 9C active 🔨)
 
 ---
 
@@ -786,9 +786,9 @@ All 9 life-domain modules shipped: NSFAS Tracker OS, Weather, Safety OS, Habit B
 4. ✅ Institutional onboarding — Migration 000018, `/institutions` landing, `/admin/institution` portal, invite system, `/join/institution/[token]`
 
 ### 🔨 Now (Phase 9 — Community Scale & Institutional Intelligence)
-1. 🔨 ICS Timetable Import — parse university .ics calendar files, auto-populate timetable + exam tables
-2. 🎯 Study Pods — AI-matched peer study partners (by modules + schedule + campus)
-3. 🎯 Nova Voice Mode — Web Speech API (speak to Nova, read responses aloud); ElevenLabs TTS for premium
+1. ✅ ICS Timetable Import — parse university .ics calendar files, auto-populate timetable + exam tables; SSRF protection, 2MB cap, batch inserts, SAST timezone; migration 000019
+2. ✅ Study Pods — AI-matched peer study partners; migration 000019 (study_pod_profiles + study_pod_connections); Claude Haiku blurbs; weekly cache; opt-in form → matches → connections UI
+3. 🔨 Nova Voice Mode — Web Speech API (speak to Nova, read responses aloud); ElevenLabs TTS for premium
 4. 🎯 SRC Analytics Dashboard — institution-level aggregate insights for institutional admins
 5. 🎯 Institution Broadcast — admin pushes announcements/alerts to all linked students via push notification
 
