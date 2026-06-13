@@ -1,7 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { WifiOff, RefreshCw } from 'lucide-react'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export default function OfflinePage() {
   const [retrying, setRetrying] = useState(false)
@@ -20,9 +21,10 @@ export default function OfflinePage() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
-      style={{ background: '#080f0e' }}
+      style={{ background: '#080f0e', position: 'relative' }}
     >
-      <div className="w-full max-w-sm space-y-6">
+      <AmbientImage zone="alerts" opacity={0.18} blurPx={30} saturation={0.8} />
+      <div className="w-full max-w-sm space-y-6" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex justify-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center bg-white/5 border border-white/10">
             <WifiOff className="w-9 h-9 text-white/30" />

@@ -1,7 +1,8 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import ReferralPageClient from '@/components/referral/ReferralPageClient'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -29,12 +30,17 @@ export default async function ReferralPage() {
   const referralUrl = `${appUrl}/auth/signup?ref=${profile?.referral_code}`
 
   return (
-    <ReferralPageClient
-      referralCode={profile?.referral_code ?? ''}
-      referralUrl={referralUrl}
-      referralCount={referralCount ?? 0}
-      creditsEarned={profile?.referral_credits ?? 0}
-      name={profile?.name ?? 'Student'}
-    />
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
+      <AmbientImage zone="dashboard" opacity={0.32} blurPx={20} saturation={1.1} />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <ReferralPageClient
+          referralCode={profile?.referral_code ?? ''}
+          referralUrl={referralUrl}
+          referralCount={referralCount ?? 0}
+          creditsEarned={profile?.referral_credits ?? 0}
+          name={profile?.name ?? 'Student'}
+        />
+      </div>
+    </div>
   )
 }

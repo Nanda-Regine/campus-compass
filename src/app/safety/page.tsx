@@ -11,17 +11,9 @@ export default async function SafetyPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/setup')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('ambient_image_url, university')
-    .eq('id', user.id)
-    .single()
-
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative' }}>
-      {profile?.ambient_image_url && (
-        <AmbientImage src={profile.ambient_image_url} opacity={0.20} />
-      )}
+      <AmbientImage zone="safety" opacity={0.35} blurPx={18} saturation={1.2} />
       <TopBar title="Safety OS" />
       <div style={{ padding: '16px 16px 100px', maxWidth: 600, margin: '0 auto' }}>
         <SafetyOS />
