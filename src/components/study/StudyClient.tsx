@@ -15,6 +15,7 @@ import FlashcardsTab from '@/components/study/FlashcardsTab'
 import WellnessTab from '@/components/study/WellnessTab'
 import HabitBuilder from '@/components/habits/HabitBuilder'
 import GraduationAudit from '@/components/study/GraduationAudit'
+import CalendarTab from '@/components/study/CalendarTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface StudyClientProps {
@@ -48,6 +49,7 @@ const MODE_HEADER: Record<string, { gradient: string; label: string }> = {
 
 const TAB_CONFIG = [
   { id: 'tasks',      label: 'Tasks',    icon: '✓',  accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
+  { id: 'calendar',   label: 'Calendar', icon: '📅', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
   { id: 'timetable',  label: 'Schedule', icon: '⊞',  accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
   { id: 'exams',      label: 'Exams',    icon: '◉',  accent: '#f59e0b', glow: 'rgba(245,158,11,0.2)' },
   { id: 'grades',     label: 'Grades',   icon: '▲',  accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
@@ -246,6 +248,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
       {/* ── Tab content ── */}
       <div className="max-w-2xl mx-auto px-4 py-4">
         {activeTab === 'tasks'      && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} />}
+        {activeTab === 'calendar'   && <CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} />}
         {activeTab === 'timetable'  && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
         {activeTab === 'exams'      && <ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} />}
         {activeTab === 'grades'     && <GradesTab    modules={modules} />}

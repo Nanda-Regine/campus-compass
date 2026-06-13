@@ -25,6 +25,8 @@ import SundayPlanning from '@/components/orchestration/SundayPlanning'
 import WeatherWidget from '@/components/dashboard/WeatherWidget'
 import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
+import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
+import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1267,6 +1269,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [lastSleepHours, setLastSleepHours] = useState<number | null>(null)
   const [weekWorkouts, setWeekWorkouts] = useState(0)
 
+  // Guardian: auto-spawn todos from timetable, deadlines, and domain state
+  useAutoTodoSpawner()
+
   // 1. Store init
   useEffect(() => {
     store.setProfile(initialData.profile)
@@ -1584,6 +1589,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
               {/* Orchestration — daily brief */}
               <DailyBrief />
+
+              {/* Task calendar: day / week toggle */}
+              <TaskCalendarStrip tasks={allTasks} />
 
               {/* Weekly planning ritual */}
               <SundayPlanning />
