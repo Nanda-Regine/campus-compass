@@ -19,9 +19,8 @@ function phpUrlencode(str: string): string {
 }
 
 const TIERS: Record<string, { price: number; itemName: string }> = {
-  scholar:        { price: 39,  itemName: 'VarsityOS Scholar' },
-  premium:        { price: 79,  itemName: 'VarsityOS Premium' },
-  nova_unlimited: { price: 129, itemName: 'VarsityOS Nova Unlimited' },
+  scholar:        { price: 29, itemName: 'VarsityOS Nova Scholar' },
+  nova_unlimited: { price: 89, itemName: 'VarsityOS Nova Unlimited' },
 }
 
 export async function POST(request: Request) {

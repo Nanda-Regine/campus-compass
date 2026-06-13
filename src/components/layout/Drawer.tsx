@@ -90,7 +90,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const { profile, subscription, reset, setProfile } = useAppStore()
   const supabase = createClient()
-  const isPremium = profile?.is_premium || subscription?.plan === 'premium'
+  const isPremium = profile?.is_premium || ['scholar', 'nova_unlimited'].includes(subscription?.plan ?? '')
   const [savingLang, setSavingLang] = useState(false)
 
   const handleLanguageChange = async (lang: SALanguage) => {

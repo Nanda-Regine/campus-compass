@@ -63,7 +63,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
           const p = profile as Profile
           posthog.identify(userId, {
-            tier: p.subscription_tier || (p.is_premium ? 'premium' : 'free'),
+            tier: p.subscription_tier || (p.is_premium ? 'scholar' : 'free'),
             university: p.university,
             year: p.year_of_study,
             funding_type: p.funding_type,
@@ -81,7 +81,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
       if (profile) {
         const p = profile as Profile
-        const tier = p.subscription_tier || (p.is_premium ? 'premium' : 'free')
+        const tier = p.subscription_tier || (p.is_premium ? 'scholar' : 'free')
         const derivedSub: Subscription = {
           id: p.id,
           user_id: p.id,

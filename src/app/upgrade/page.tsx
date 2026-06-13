@@ -15,47 +15,28 @@ export const metadata: Metadata = { title: 'Upgrade — VarsityOS' }
 const TIERS = [
   {
     id: 'scholar',
-    name: 'Scholar',
-    price: 39,
+    name: 'Nova Scholar',
+    price: 29,
     highlight: true,
     badge: 'Most popular',
-    novaMessages: '100',
+    novaMessages: '150',
     features: [
-      { icon: '🌟', label: '100 Nova messages / month' },
+      { icon: '🌟', label: '150 Nova messages / month' },
       { icon: '🍲', label: 'AI Recipe Generator' },
       { icon: '📊', label: 'AI Budget Coach' },
       { icon: '📚', label: 'AI Study Plans & Exam Prep' },
       { icon: '⚡', label: 'Priority support' },
     ],
-    itemName: 'VarsityOS Scholar',
+    itemName: 'VarsityOS Nova Scholar',
     colour: '#e8956e',
-    gold: false,
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    price: 79,
-    highlight: false,
-    badge: null,
-    novaMessages: '250',
-    features: [
-      { icon: '🌟', label: '250 Nova messages / month' },
-      { icon: '🍲', label: 'AI Recipe Generator' },
-      { icon: '📊', label: 'AI Budget Coach' },
-      { icon: '📚', label: 'AI Study Plans & Exam Prep' },
-      { icon: '📥', label: 'CSV Export Reports' },
-      { icon: '🚀', label: 'Early access to new features' },
-    ],
-    itemName: 'VarsityOS Premium',
-    colour: '#0d9488',
     gold: false,
   },
   {
     id: 'nova_unlimited',
     name: 'Nova Unlimited',
-    price: 129,
+    price: 89,
     highlight: false,
-    badge: 'Most Nova',
+    badge: 'Best value',
     novaMessages: '∞',
     features: [
       { icon: '♾️', label: 'Unlimited Nova messages' },
@@ -88,7 +69,7 @@ export default async function UpgradePage() {
   const currentTier =
     (profile as { subscription_tier?: string | null } | null)?.subscription_tier ||
     (profile as { plan?: string | null } | null)?.plan ||
-    (profile?.is_premium ? 'premium' : 'free')
+    (profile?.is_premium ? 'scholar' : 'free')
 
   // Already on Nova Unlimited — no higher tier to offer
   if (currentTier === 'nova_unlimited') redirect('/dashboard')
@@ -140,7 +121,7 @@ export default async function UpgradePage() {
           </div>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[
-              { label: '15 Nova messages / month' },
+              { label: '20 Nova messages / month' },
               { label: 'Full Study Planner' },
               { label: 'Budget & NSFAS tracker' },
               { label: 'Flexible Wallet + Savings Goals' },

@@ -42,10 +42,9 @@ export default function TermsPage() {
             <p>VarsityOS is a digital student support platform providing tools including academic planning, flexible wallet tracking, savings goals, AI-powered assistance (Nova), meal planning, group assignment management, and part-time work management. The platform works offline via PWA technology.</p>
             <p className="mt-2">The platform is offered on a freemium basis:</p>
             <ul className="list-disc list-inside text-white/55 mt-1 space-y-1">
-              <li><strong className="text-white/75">Free tier:</strong> Core features + 15 Nova AI messages per month</li>
-              <li><strong className="text-white/75">Scholar (R39/month):</strong> 100 Nova messages per month, AI Recipe Generator, study session tracking, priority support</li>
-              <li><strong className="text-white/75">Premium (R79/month):</strong> 250 Nova messages per month, all Scholar features, CSV data export, early access to new features</li>
-              <li><strong className="text-white/75">Nova Unlimited (R129/month):</strong> Unlimited Nova messages, all Premium features, first access to new Nova capabilities, direct feedback channel to the builder</li>
+              <li><strong className="text-white/75">Free tier:</strong> All features + 20 Nova AI messages per month — no credit card required</li>
+              <li><strong className="text-white/75">Nova Scholar (R29/month):</strong> 150 Nova messages per month, AI Recipe Generator, AI Budget Coach, AI Study Plans, priority support</li>
+              <li><strong className="text-white/75">Nova Unlimited (R89/month):</strong> Unlimited Nova messages, CSV data export, first access to new Nova capabilities, direct feedback channel to the builder</li>
             </ul>
             <p className="mt-2 text-xs text-white/40">We process your personal information in compliance with POPIA (Act 4 of 2013). Mirembe Muse (Pty) Ltd POPIA Registration No.: <strong className="text-white/60">2026-005658</strong>.</p>
           </section>

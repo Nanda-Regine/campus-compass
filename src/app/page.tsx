@@ -41,10 +41,9 @@ const jsonLd = {
       applicationCategory: 'EducationApplication',
       operatingSystem: 'Web, iOS, Android (PWA)',
       offers: [
-        { '@type': 'Offer', name: 'Free Plan', price: '0', priceCurrency: 'ZAR', description: 'Full access to Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova AI messages per month. Works offline.' },
-        { '@type': 'Offer', name: 'Scholar Plan', price: '39', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '100 Nova messages per month, AI Recipe Generator, study session tracking, and priority support.' },
-        { '@type': 'Offer', name: 'Premium Plan', price: '79', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '250 Nova messages per month, all features, CSV export, and early access to new features.' },
-        { '@type': 'Offer', name: 'Nova Unlimited Plan', price: '129', priceCurrency: 'ZAR', billingDuration: 'P1M', description: 'Unlimited Nova messages, all Premium features, first access to new Nova capabilities, and a direct feedback channel to the builder.' },
+        { '@type': 'Offer', name: 'Free Plan', price: '0', priceCurrency: 'ZAR', description: 'Full access to all features including Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 20 Nova AI messages per month. Works offline.' },
+        { '@type': 'Offer', name: 'Nova Scholar', price: '29', priceCurrency: 'ZAR', billingDuration: 'P1M', description: '150 Nova messages per month, AI Recipe Generator, AI Budget Coach, AI Study Plans, and priority support.' },
+        { '@type': 'Offer', name: 'Nova Unlimited', price: '89', priceCurrency: 'ZAR', billingDuration: 'P1M', description: 'Unlimited Nova messages, CSV export, first access to new Nova capabilities, and a direct feedback channel to the builder.' },
       ],
       featureList: [
         'NSFAS allowance tracker', 'Student budget management', 'Flexible spending wallet',
@@ -97,14 +96,14 @@ const jsonLd = {
     {
       '@type': 'FAQPage',
       mainEntity: [
-        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever with full access to the Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova AI messages per month. Scholar is R39/month for 100 messages, Premium is R79/month for 250 messages, and Nova Unlimited is R129/month for unlimited messages.' } },
+        { '@type': 'Question', name: 'Is VarsityOS free for South African students?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is free forever — all features plus 20 Nova AI messages per month. Nova Scholar is R29/month for 150 messages, and Nova Unlimited is R89/month for unlimited messages. No credit card required for the free plan.' } },
         { '@type': 'Question', name: 'What is NSFAS and how does VarsityOS help me track it?', acceptedAnswer: { '@type': 'Answer', text: "NSFAS (National Student Financial Aid Scheme) is South Africa's government student funding programme. VarsityOS lets you log and track your NSFAS allowances, set spending categories, and monitor your balance in real time so you never run short before month-end." } },
         { '@type': 'Question', name: 'What is Nova and how does it help students?', acceptedAnswer: { '@type': 'Answer', text: "Nova is VarsityOS's AI companion built specifically for SA students. Nova provides CBT-based mental health support, crisis detection with SA helpline resources, imposter syndrome coaching, study strategies, NSFAS financial guidance, and load-shedding study plans." } },
         { '@type': 'Question', name: 'Which South African universities and colleges does VarsityOS support?', acceptedAnswer: { '@type': 'Answer', text: 'VarsityOS works for students at all 26 South African public universities including UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, UL, UFS, UMP, SMU, SPU, Univen, UniZulu, DUT, CPUT, TUT, CUT, VUT, and MUT — plus all 50 TVET colleges and major private HEIs including Varsity College (IIE), Rosebank College, Boston City Campus, MANCOSA, Pearson, Stadio, and Damelin.' } },
         { '@type': 'Question', name: 'Can I install VarsityOS on my phone?', acceptedAnswer: { '@type': 'Answer', text: "Yes. VarsityOS is a Progressive Web App (PWA). Open it in Chrome or Safari and tap 'Add to Home Screen'. No app store needed, and it works offline during load shedding." } },
         { '@type': 'Question', name: 'How does VarsityOS help with the NSFAS N+ rule?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS tracks your credits completed vs attempted so you can monitor your N+ standing. Nova AI can explain how the N+ rule works at your specific institution and what steps to take if you're at risk of losing funding." } },
         { '@type': 'Question', name: 'Does VarsityOS work without internet / during load shedding?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. VarsityOS is a PWA with offline support. Your timetable, tasks, exams, expenses, and savings data sync to your device and remain accessible during load shedding or when you have no data.' } },
-        { '@type': 'Question', name: 'How much does the Scholar plan cost?', acceptedAnswer: { '@type': 'Answer', text: 'The Scholar plan costs R39 per month. It includes 100 Nova AI messages per month, the AI Recipe Generator, AI Budget Coach, AI Study Plans, and priority support — everything in Free plus AI-powered features.' } },
+        { '@type': 'Question', name: 'How much does the Nova Scholar plan cost?', acceptedAnswer: { '@type': 'Answer', text: 'Nova Scholar costs R29 per month. It includes 150 Nova AI messages per month, the AI Recipe Generator, AI Budget Coach, AI Study Plans, and priority support — everything in Free plus AI-powered features. Nova Unlimited is R89/month for unlimited messages.' } },
         { '@type': 'Question', name: 'Is VarsityOS safe? Does it store my banking details?', acceptedAnswer: { '@type': 'Answer', text: "VarsityOS does not store any banking details. Payments are processed securely by PayFast. Your data is encrypted, stored in Supabase (South Africa region), and protected by Row-Level Security so only you can see your data." } },
         { '@type': 'Question', name: 'Can I track my part-time job earnings on VarsityOS?', acceptedAnswer: { '@type': 'Answer', text: "Yes. The Work module lets you log part-time jobs, record shifts and hours, track earnings, and get conflict alerts when a shift clashes with your lecture timetable or an exam." } },
         { '@type': 'Question', name: 'What is the Flexible Wallet feature?', acceptedAnswer: { '@type': 'Answer', text: "The Flexible Wallet lets you manage spending from sources beyond NSFAS — such as bursaries, family support, part-time income, or allowances. You can create custom spending buckets and track each separately." } },
@@ -174,7 +173,7 @@ const PRICING = [
     name: 'Free',
     price: 'R0',
     sub: 'forever, no catch',
-    features: ['Full Study Planner', 'Budget & NSFAS tracker', 'Flexible Wallet', 'Savings Goals', 'Meal Prep & Work tracker', '15 Nova messages / month', 'Works offline (PWA)'],
+    features: ['All 30+ tools included', 'Budget & NSFAS tracker', 'Study Planner & Exam Prep', 'Savings Goals + Stokvel OS', 'Safety OS, Fitness, Meal Prep', '20 Nova messages / month', 'Works offline (PWA)'],
     cta: 'Get started free',
     href: '/auth/signup',
     highlight: false,
@@ -183,39 +182,27 @@ const PRICING = [
     checkColor: '#3b82f6',
   },
   {
-    name: 'Scholar',
-    price: 'R39',
+    name: 'Nova Scholar',
+    price: 'R29',
     sub: 'per month',
-    features: ['Everything in Free', '100 Nova messages / month', 'AI Recipe Generator', 'Study session tracking', 'Priority support'],
+    features: ['Everything in Free', '150 Nova messages / month', 'AI Recipe Generator', 'AI Budget Coach', 'AI Study Plans & Exam Prep', 'Priority support'],
     cta: 'Go Scholar',
     href: '/upgrade',
     highlight: true,
-    badge: 'Best value',
+    badge: 'Most popular',
     gold: false,
     accentColor: '#e07858',
     checkColor: '#e07858',
   },
   {
-    name: 'Premium',
-    price: 'R79',
-    sub: 'per month',
-    features: ['Everything in Scholar', '250 Nova messages / month', 'CSV data export', 'Early access to new features', 'Priority support'],
-    cta: 'Go Premium',
-    href: '/upgrade',
-    highlight: false,
-    gold: false,
-    accentColor: '#0d9488',
-    checkColor: '#0d9488',
-  },
-  {
     name: 'Nova Unlimited',
-    price: 'R129',
+    price: 'R89',
     sub: 'per month',
-    features: ['Everything in Premium', 'Unlimited Nova messages', 'First access to new Nova features', 'Direct feedback channel to the builder'],
+    features: ['Everything in Scholar', 'Unlimited Nova messages', 'CSV data export', 'First access to new Nova features', 'Direct feedback channel to builder'],
     cta: 'Go Unlimited',
     href: '/upgrade',
     highlight: false,
-    badge: 'Most Nova',
+    badge: 'Best value',
     gold: true,
     accentColor: '#d4a847',
     checkColor: '#d4a847',
@@ -767,7 +754,7 @@ export default function LandingPage() {
             <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Start free. Upgrade only when you need more Nova.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {PRICING.map((tier) => (
               <div
                 key={tier.name}
@@ -865,13 +852,13 @@ export default function LandingPage() {
           </div>
           <div className="space-y-2">
             {[
-              { q: 'Is VarsityOS actually free?', a: 'Yes. The free plan gives you full access to the Study Planner, Budget & NSFAS tracker, Flexible Wallet, Savings Goals, Meal Prep, Work tracker, and 15 Nova messages every month — forever. Paid plans unlock more Nova.' },
+              { q: 'Is VarsityOS actually free?', a: 'Yes. The free plan gives you all 30+ tools — Study Planner, Budget & NSFAS tracker, Safety OS, Fitness Tracker, Stokvel OS, Meal Prep, Work tracker, and 20 Nova messages every month — forever. Paid plans unlock more Nova messages.' },
               { q: 'How does VarsityOS help me track my NSFAS?', a: "Log your NSFAS allowances, track spending by category, and see exactly how much you have left. Nova can also answer questions about N+ rules and what happens if you fail modules." },
               { q: 'What makes Nova different from ChatGPT?', a: 'Nova is built specifically for SA students. It knows NSFAS rules, understands load shedding, speaks to imposter syndrome in first-gen students, uses CBT techniques, and detects mental health crises with instant access to SA helplines. It speaks your reality.' },
               { q: 'Which universities does VarsityOS work for?', a: 'All SA universities — UCT, Wits, UP, Stellenbosch, UKZN, UJ, UWC, NMU, Rhodes, UFH, WSU, UNISA, DUT, CPUT, TUT, and more.' },
               { q: 'Does VarsityOS work offline (during load shedding)?', a: "Yes. VarsityOS is a Progressive Web App (PWA). Once loaded, your budget, tasks, timetable, and study data are available offline. Changes sync automatically when you reconnect. Open it in Chrome or Safari and tap 'Add to Home Screen' to install it like a native app." },
               { q: "I'm not on NSFAS — can I still use it?", a: "Absolutely. The Flexible Wallet lets you track any income source — bursaries, family support, part-time work. The budget and savings tools work for every SA student, not just NSFAS recipients." },
-              { q: 'What does the Scholar plan include vs Premium vs Nova Unlimited?', a: 'Scholar (R39/month) gives you 100 Nova messages per month and the AI Recipe Generator. Premium (R79/month) gives you 250 Nova messages, CSV export, and early access to new features. Nova Unlimited (R129/month) removes all Nova limits entirely — unlimited messages, first access to new Nova capabilities, and a direct line to the builder.' },
+              { q: 'What does Nova Scholar include vs Nova Unlimited?', a: 'Nova Scholar (R29/month) gives you 150 Nova messages per month, AI Recipe Generator, AI Budget Coach, and AI Study Plans. Nova Unlimited (R89/month) gives you unlimited Nova messages, CSV export, and first access to new features. Both plans include all 30+ tools — the difference is Nova message volume.' },
               { q: 'Is my data safe? How does VarsityOS comply with POPIA?', a: 'VarsityOS is registered under POPIA (Act 4 of 2013), Registration No. 2026-005658. Your data is stored securely in South Africa via Supabase. We never sell your data. You can request deletion at any time. See our Privacy Policy for full details.' },
               { q: 'Can I use VarsityOS if I have a bursary instead of NSFAS?', a: 'Yes. The Flexible Wallet lets you track any funding source — Funza Lushaka, ISFAP, Ikusasa, employer bursaries, family support, or part-time income. Create separate spending buckets for each and track them independently alongside your study budget.' },
               { q: 'Does VarsityOS work for UNISA distance learning students?', a: 'Yes. UNISA students can use the Study Planner for self-paced modules, track assignment due dates, set exam reminders, and use Nova for study support — even without a fixed class timetable. The offline PWA is especially useful when data is limited.' },

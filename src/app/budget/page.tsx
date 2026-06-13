@@ -25,7 +25,7 @@ export default async function BudgetPage() {
     supabase.from('income_entries').select('id,source_type,label,amount,received_date,is_recurring').eq('user_id', user.id).gte('received_date', start).order('received_date', { ascending: false }),
   ])
 
-  const isPremium = profile?.is_premium || profile?.subscription_tier === 'premium' || profile?.subscription_tier === 'scholar'
+  const isPremium = profile?.is_premium || ['scholar', 'nova_unlimited'].includes(profile?.subscription_tier ?? '')
 
   return (
     <BudgetClient

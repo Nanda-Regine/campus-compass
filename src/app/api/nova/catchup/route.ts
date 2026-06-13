@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         {
           error: 'limit_reached',
           message: tier === 'free'
-            ? `You've used all ${NOVA_LIMITS.free} Nova messages this month. Upgrade to Scholar (R39) for 100 messages/month.`
+            ? `You've used all ${NOVA_LIMITS.free} Nova messages this month. Upgrade to Nova Scholar (R29) for 150 messages/month.`
             : `You've reached your Nova message limit for this month. Upgrade for more.`,
           upgradeUrl: tier === 'nova_unlimited' ? null : '/upgrade',
           tier,

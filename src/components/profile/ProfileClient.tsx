@@ -618,7 +618,7 @@ export default function ProfileClient() {
                       Active until {new Date(profile.premium_until).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                   ) : (
-                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>15 Nova messages / month</p>
+                    <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>20 Nova messages / month</p>
                   )}
                 </div>
                 {!isPremium && (

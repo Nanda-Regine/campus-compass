@@ -132,10 +132,9 @@ export async function POST(request: NextRequest) {
     const userId = stripped.slice(0, 36)
     // tier is the segment after the uuid — check known values by prefix to handle nova_unlimited's underscore
     const afterUuid = stripped.slice(37)
-    const tier: 'scholar' | 'premium' | 'nova_unlimited' =
+    const tier: 'scholar' | 'nova_unlimited' =
       afterUuid.startsWith('nova_unlimited') ? 'nova_unlimited'
-      : afterUuid.startsWith('scholar') ? 'scholar'
-      : 'premium'
+      : 'scholar'
 
     // Always log — non-fatal
     try {
@@ -150,9 +149,7 @@ export async function POST(request: NextRequest) {
     } catch { /* non-fatal */ }
 
     if ((data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT') && userId) {
-      const novaLimit = tier === 'nova_unlimited' ? 9999
-        : tier === 'premium' ? 250
-        : 100 // scholar
+      const novaLimit = tier === 'nova_unlimited' ? 9999 : 150 // scholar
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -203,7 +200,7 @@ export async function POST(request: NextRequest) {
           plan: 'free',
           subscription_tier: 'free',
           is_premium: false,
-          nova_messages_limit: 15,
+          nova_messages_limit: 20,
         })
         .eq('id', userId)
 

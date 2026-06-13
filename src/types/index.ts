@@ -17,8 +17,8 @@ export interface Profile {
   year_of_study: number | null
   student_number: string | null
   avatar_url: string | null
-  plan: 'free' | 'scholar' | 'premium' | 'nova_unlimited'
-  subscription_tier: 'free' | 'scholar' | 'premium' | 'nova_unlimited' | null
+  plan: 'free' | 'scholar' | 'nova_unlimited'
+  subscription_tier: 'free' | 'scholar' | 'nova_unlimited' | null
   is_premium: boolean
   nova_messages_used: number
   nova_messages_limit: number
@@ -164,7 +164,7 @@ export interface Subscription {
   user_id: string
   payfast_payment_id: string | null
   payfast_subscription_token: string | null
-  plan: 'free' | 'scholar' | 'premium' | 'nova_unlimited'
+  plan: 'free' | 'scholar' | 'nova_unlimited'
   status: 'active' | 'cancelled' | 'expired' | 'pending'
   amount: number | null
   billing_date: string | null

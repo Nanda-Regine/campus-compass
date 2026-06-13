@@ -276,9 +276,9 @@ export default function NovaPage() {
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [messageCount, setMessageCount] = useState(0)
-  const [messageLimit, setMessageLimit] = useState(15)
+  const [messageLimit, setMessageLimit] = useState(20)
   const [isPremium, setIsPremium] = useState(false)
-  const [userTier, setUserTier] = useState<'free' | 'scholar' | 'premium' | 'nova_unlimited'>('free')
+  const [userTier, setUserTier] = useState<'free' | 'scholar' | 'nova_unlimited'>('free')
   const [showMoods, setShowMoods] = useState(false)
   const [showCrisisPanel, setShowCrisisPanel] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
@@ -487,7 +487,7 @@ export default function NovaPage() {
             )}
             {isPremium && !isUnlimited && (
               <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
-                ⭐ {userTier === 'scholar' ? 'SCHOLAR' : 'PREMIUM'}
+                ⭐ {userTier === 'scholar' ? 'SCHOLAR' : 'UNLIMITED'}
               </span>
             )}
           </div>
@@ -712,17 +712,15 @@ export default function NovaPage() {
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
             <p className="font-display font-bold text-white text-sm mb-1">Monthly limit reached</p>
             <p className="font-mono text-[0.62rem] text-white/40 mb-3">
-              {userTier === 'premium'
-                ? 'Nova Unlimited (R129/month) removes all caps'
-                : userTier === 'scholar'
-                ? 'Upgrade to Premium for 250 messages, or go Unlimited for R129'
-                : 'Scholar gives you 100 messages for R39/month'}
+              {userTier === 'scholar'
+                ? 'Nova Unlimited (R89/month) removes all caps — unlimited messages'
+                : 'Nova Scholar gives you 150 messages for R29/month'}
             </p>
             <Link
               href="/upgrade"
               className="inline-block font-display font-bold text-sm bg-amber-500/10 text-amber-400 border border-amber-500/20 px-5 py-2 rounded-xl hover:bg-amber-500/20 transition-all"
             >
-              ⭐ {userTier === 'premium' ? 'Go Nova Unlimited — R129/month' : userTier === 'scholar' ? 'Upgrade to Premium — R79/month' : 'Unlock Scholar — R39/month'}
+              ⭐ {userTier === 'scholar' ? 'Go Nova Unlimited — R89/month' : 'Unlock Nova Scholar — R29/month'}
             </Link>
           </div>
         ) : (

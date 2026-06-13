@@ -322,6 +322,14 @@ export default function DemoPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: '#05040C', color: '#fff', overflowX: 'hidden', position: 'relative' }}>
+      <style>{`
+        .demo-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; align-items: start; }
+        @media (max-width: 640px) {
+          .demo-grid { grid-template-columns: 1fr; }
+          .demo-preview { order: -1; }
+          .demo-nav-label { display: none; }
+        }
+      `}</style>
       <AmbientImage zone="dashboard" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
 
       {/* Nav */}
@@ -379,7 +387,7 @@ export default function DemoPage() {
               }}
             >
               <span style={{ fontSize: 16 }}>{d.icon}</span>
-              {d.label}
+              <span className="demo-nav-label">{d.label}</span>
             </button>
           ))}
         </div>
@@ -387,7 +395,7 @@ export default function DemoPage() {
 
       {/* Main demo content */}
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 16px 60px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 24, alignItems: 'start' }}>
+        <div className="demo-grid">
 
           {/* Left: copy */}
           <div style={{ padding: '8px 0' }}>
@@ -431,7 +439,7 @@ export default function DemoPage() {
           </div>
 
           {/* Right: live preview */}
-          <div>
+          <div className="demo-preview">
             <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0d9488', animation: 'pulse 2s ease-in-out infinite' }} />
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live preview</span>

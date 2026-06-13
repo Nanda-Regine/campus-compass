@@ -130,21 +130,17 @@ export function exportToCSV(data: Record<string, unknown>[], filename: string): 
 }
 
 // ─── Nova usage limits ────────────────────────────────────────
-export const NOVA_FREE_LIMIT             = 15   // hard block for free users (15/month)
-export const NOVA_SCHOLAR_LIMIT          = 100  // hard block for scholar users (100/month)
-export const NOVA_PREMIUM_HARD_CAP       = 250  // hard block for premium users (250/month — ~8/day)
-export const NOVA_PREMIUM_SOFT_CAP       = 200  // premium: responses shift resource-forward above this
-export const NOVA_PREMIUM_RESOURCE_START = 150  // premium: start weaving in resources above this
+export const NOVA_FREE_LIMIT    = 20   // hard block for free users (20/month)
+export const NOVA_SCHOLAR_LIMIT = 150  // hard block for scholar users (150/month)
 
 // Internal cost-protection cap for Nova Unlimited — never shown to users.
-// At ~R0.18/message, 500 msgs ≈ R90 API cost vs R129 revenue = R39 gross margin (30%).
+// At ~R0.04/message (blended Haiku/Sonnet), 1000 msgs ≈ R40 API cost vs R89 revenue = R49 gross margin.
 // Most users never approach this; it protects against extreme edge cases.
-const NOVA_UNLIMITED_INTERNAL_CAP = 500
+const NOVA_UNLIMITED_INTERNAL_CAP = 1000
 
 export const NOVA_LIMITS = {
-  free:           15,
-  scholar:        100,
-  premium:        250,
+  free:           20,
+  scholar:        150,
   nova_unlimited: NOVA_UNLIMITED_INTERNAL_CAP,
 } as const
 
@@ -164,9 +160,8 @@ export function novaMessagesRemaining(used: number, plan: NovaTier): number | 'u
 }
 
 // ─── Pricing (ZAR) ───────────────────────────────────────────
-export const NOVA_SCHOLAR_PRICE   = 39   // R39/month — target tier, 63%+ gross margin
-export const NOVA_PREMIUM_PRICE   = 79   // R79/month — 250 msg hard cap
-export const NOVA_UNLIMITED_PRICE = 129  // R129/month — unlimited Nova messages
+export const NOVA_SCHOLAR_PRICE   = 29   // R29/month — ~79% gross margin on Nova API costs
+export const NOVA_UNLIMITED_PRICE = 89   // R89/month — unlimited Nova (fair use up to 1 000 msgs)
 
 // ─── PayFast signature ────────────────────────────────────────
 export function generatePayFastSignature(data: Record<string, string>, passphrase?: string): string {

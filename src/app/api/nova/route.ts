@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { detectCrisis, currentMonthRange, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_PREMIUM_HARD_CAP, NOVA_PREMIUM_SOFT_CAP, NOVA_PREMIUM_RESOURCE_START, NOVA_LIMITS } from '@/lib/utils'
+import { detectCrisis, currentMonthRange, NOVA_FREE_LIMIT, NOVA_SCHOLAR_LIMIT, NOVA_LIMITS } from '@/lib/utils'
 import type { NovaTier } from '@/lib/utils'
 import Anthropic from '@anthropic-ai/sdk'
 import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
@@ -73,7 +73,7 @@ function getUsageGuidance(
 ): string {
   if (tier === 'free' || tier === 'nova_unlimited') return ''
 
-  if (messageCount >= NOVA_PREMIUM_SOFT_CAP) {
+  if (messageCount >= 120) {
     const topicLine = heavyTopic
       ? ` They have been intensively studying ${heavyTopic} — recommend a specific free resource (e.g. Siyavula, Khan Academy, Professor Leonard on YouTube, or campus tutoring centre) and give one key insight rather than a full tutoring session.`
       : ' Suggest a relevant free SA study resource where applicable.'
@@ -87,7 +87,7 @@ function getUsageGuidance(
     return `\n\n[NOVA USAGE GUIDANCE]: Student is a frequent user (${messageCount} messages). Be helpful but concise. Weave in a relevant free resource suggestion.${topicLine}`
   }
 
-  if (messageCount >= NOVA_PREMIUM_RESOURCE_START && heavyTopic) {
+  if (messageCount >= 80 && heavyTopic) {
     return `\n\n[NOVA USAGE GUIDANCE]: Student has been asking a lot about ${heavyTopic}. Consider mentioning one specific free resource (Siyavula / Khan Academy / campus tutor / Professor Leonard) to help them build independent practice alongside your explanation.`
   }
 
@@ -445,10 +445,8 @@ export async function POST(request: NextRequest) {
       const limitMessage = tier === 'nova_unlimited'
         ? "Nova is taking a well-earned rest for the remainder of this month — your messages reset on the 1st. In the meantime, check out Siyavula, Khan Academy, or your campus counselling centre."
         : tier === 'free'
-          ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Scholar (R39) for 100 messages/month.`
-          : tier === 'scholar'
-            ? `You've reached your 100-message Scholar limit. Upgrade to Premium (R79) for 250 messages, or Nova Unlimited (R129) for much more.`
-            : `You've reached your 250-message Premium limit. Upgrade to Nova Unlimited (R129) for extended access.`
+          ? `You've used all ${effectiveFreeLimit} Nova messages this month. Upgrade to Nova Scholar (R29) for 150 messages/month.`
+          : `You've reached your 150-message Scholar limit. Upgrade to Nova Unlimited (R89) for unlimited messages.`
 
       return NextResponse.json({
         error: 'limit_reached',
@@ -552,8 +550,8 @@ export async function POST(request: NextRequest) {
       // Always return -1 (unlimited) to UI for nova_unlimited — internal cap is invisible to users
       messagesLimit: tier === 'nova_unlimited' ? -1 : tierLimit,
       tier,
-      nearSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_SOFT_CAP,
-      pastSoftCap: tier === 'premium' && messagesUsed >= NOVA_PREMIUM_HARD_CAP,
+      nearSoftCap: false,
+      pastSoftCap: false,
     })
   } catch (error) {
     console.error('Nova API error:', error)
@@ -629,7 +627,6 @@ export async function GET(request: NextRequest) {
     ) as NovaTier
     const messageCount = (p?.nova_messages_used as number) || 0
     const messageLimit = tier === 'nova_unlimited' ? -1
-      : tier === 'premium' ? NOVA_PREMIUM_HARD_CAP
       : tier === 'scholar' ? NOVA_SCHOLAR_LIMIT
       : NOVA_FREE_LIMIT
 

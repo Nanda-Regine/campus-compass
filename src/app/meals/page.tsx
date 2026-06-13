@@ -26,7 +26,7 @@ export default async function MealsPage() {
     supabase.from('budgets').select('food_budget').eq('user_id', user.id).maybeSingle(),
   ])
 
-  const isPremium = profile?.is_premium || profile?.subscription_tier === 'premium' || profile?.subscription_tier === 'scholar'
+  const isPremium = profile?.is_premium || ['scholar', 'nova_unlimited'].includes(profile?.subscription_tier ?? '')
 
   return (
     <MealsClient
