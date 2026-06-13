@@ -169,7 +169,7 @@ function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile 
     <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: 16, position: 'relative', overflow: 'hidden' }}>
       <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9b6fd4 0%,rgba(155,111,212,0.15) 100%)' }} />
       <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 8, fontWeight: 600 }}>Nova Study Tips</div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 10 }}>
+      <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 10 }}>
         {(exam.module as Module | undefined)?.module_name ?? ''} · {Math.max(0, getDaysUntil(exam.exam_date))}d to go
       </div>
       {loading && (
@@ -183,7 +183,7 @@ function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile 
             <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(155,111,212,0.06)', borderRadius: 8, border: '0.5px solid rgba(155,111,212,0.15)' }}>
               <span style={{ fontSize: 12, flexShrink: 0, color: '#9b6fd4', fontWeight: 700, lineHeight: 1.5 }}>{i + 1}</span>
               <div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>{tip.text}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{tip.text}</div>
                 <div style={{ fontSize: 10, color: 'rgba(155,111,212,0.65)', marginTop: 2 }}>{tip.source}</div>
               </div>
             </div>
@@ -191,7 +191,7 @@ function StudyTipsCard({ exam, profile }: { exam: Exam | null; profile: Profile 
         </div>
       )}
       {!loading && !tips && (
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', textAlign: 'center', padding: '12px 0' }}>Tips unavailable</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '12px 0' }}>Tips unavailable</div>
       )}
     </div>
   )
@@ -259,14 +259,14 @@ function CoachSummaryCard({ userId, totalBudget, amountSpent, expenses }: {
             return (
               <div key={i} style={{ padding: '8px 10px', background: `${color}12`, borderRadius: 8, border: `0.5px solid ${color}28` }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color, fontWeight: 700, marginBottom: 3 }}>{ins.tag}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>{ins.text}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{ins.text}</div>
               </div>
             )
           })}
         </div>
       )}
       {!loading && !insights && (
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)', textAlign: 'center', padding: '12px 0' }}>Set a budget to get insights</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '12px 0' }}>Set a budget to get insights</div>
       )}
     </div>
   )
@@ -558,7 +558,7 @@ function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streak
           }}>
             {value}{suffix && <span style={{ marginLeft: 4 }}>{suffix}</span>}
           </div>
-          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.42)', marginTop: 7 }}>{label}</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginTop: 7 }}>{label}</div>
         </div>
       ))}
     </div>
@@ -592,9 +592,9 @@ function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
           return (
             <div key={slot.id} style={{ flexShrink: 0, minWidth: 140, padding: '10px 12px', background: 'var(--bg-surface)', border: `1px solid ${isNow ? colour + '60' : 'var(--border-subtle)'}`, borderLeft: `2px solid ${colour}`, borderRadius: '0 10px 10px 0', position: 'relative' }}>
               {isNow && <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: colour, textTransform: 'uppercase' }}>NOW</span>}
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>{moduleName}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: isNow ? 32 : 0 }}>{moduleName}</div>
               {(slot.start_time || slot.venue) && (
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
                   {slot.start_time && `${slot.start_time}${slot.end_time ? ` – ${slot.end_time}` : ''}`}{slot.venue && ` · ${slot.venue}`}
                 </div>
               )}
@@ -634,8 +634,8 @@ function UrgentTasksStrip({ tasks }: { tasks: Task[] }) {
           return (
             <div key={task.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.05)', borderLeft: `2px solid ${isToday ? '#c9a84c' : '#ff6b6b'}`, borderRadius: '0 8px 8px 0' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.title}</div>
-                {task.module && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.module.module_name}</div>}
+                <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.title}</div>
+                {task.module && <div style={{ fontSize: 12, color: 'var(--text-tertiary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.module.module_name}</div>}
               </div>
               <span style={{ flexShrink: 0, fontSize: 11, padding: '2px 8px', borderRadius: 9999, background: isToday ? 'rgba(201,168,76,0.1)' : 'rgba(255,107,107,0.1)', color: isToday ? '#c9a84c' : '#ff6b6b', border: `0.5px solid ${isToday ? 'rgba(201,168,76,0.25)' : 'rgba(255,107,107,0.25)'}` }}>
                 {isToday ? 'Due today' : `${diffDays}d late`}
@@ -731,7 +731,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14, position: 'relative' }}>
                     <div style={{ width: 46, height: 46, borderRadius: 14, background: iconBg, border: `1px solid ${accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0, boxShadow: `0 0 18px ${accent}30` }}>✨</div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.95)', letterSpacing: '-0.01em' }}>Nova AI</div>
+                      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>Nova AI</div>
                       <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
                     </div>
                     <span style={{ fontSize: 20, color: `${accent}70`, flexShrink: 0 }}>›</span>
@@ -744,7 +744,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
                 // Compact wide bar
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 30, height: 30, borderRadius: 9, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, flexShrink: 0 }}>👥</div>
-                  <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>Groups</span>
+                  <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Groups</span>
                   <span style={{ fontSize: 12, color: subtitle.color ?? accent, marginLeft: 4 }}>{subtitle.text}</span>
                   <span style={{ flex: 1 }} />
                   <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.2)' }}>›</span>
@@ -754,7 +754,7 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
                 <>
                   <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: accent, opacity: 0.55, borderRadius: '2px 0 0 2px' }} />
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{FEATURE_ICONS[label]}</div>
-                  <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 10 }}>{label}</div>
+                  <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginTop: 10 }}>{label}</div>
                   <div style={{ fontSize: 12, color: subtitle.color ?? accent, marginTop: 2 }}>{subtitle.text}</div>
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.04)' }}>
                     <div className="bar-fill-anim" style={{ height: '100%', width: `${subtitle.pct}%`, background: subtitle.barColor, borderRadius: 3 }} />
@@ -869,7 +869,7 @@ function LifeOSSection({ liveStats }: { liveStats?: { todayStudyMins: number; la
 
   return (
     <section>
-      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', fontWeight: 600, marginBottom: 12 }}>
+      <div style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600, marginBottom: 12 }}>
         ◈ Your Life OS · 9 Domains
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
@@ -991,7 +991,7 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: 
 
   return (
     <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: compact ? 12 : 16 }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: compact ? 8 : 12 }}>This Month</div>
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: compact ? 8 : 12 }}>This Month</div>
       <div style={{ display: 'flex', flexDirection: compact ? 'column' : 'row', alignItems: 'center', gap: compact ? 6 : 16 }}>
         <div style={{ flexShrink: 0, position: 'relative', width: size, height: size }}>
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
@@ -1000,20 +1000,20 @@ function BudgetRingCard({ monthSpent, totalBudget, expenses, compact = false }: 
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 11 : 16, fontWeight: 700, color: ringColor, lineHeight: 1 }}>{pct}%</div>
-            {!compact && <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>used</div>}
+            {!compact && <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>used</div>}
           </div>
         </div>
         <div style={{ flex: compact ? 'unset' : 1, minWidth: 0, textAlign: compact ? 'center' : 'left' }}>
           <div>
             <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: compact ? 13 : 18, fontWeight: 700, color: '#c9a84c' }}>R{Math.round(monthSpent)}</span>
-            {!compact && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)' }}> of R{Math.round(totalBudget)}</span>}
+            {!compact && <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}> of R{Math.round(totalBudget)}</span>}
           </div>
           {compact ? (
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>of R{Math.round(totalBudget)}</div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>of R{Math.round(totalBudget)}</div>
           ) : topCats.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 10 }}>
               {topCats.map(([cat, amt]) => (
-                <span key={cat} style={{ fontSize: 10, padding: '3px 8px', borderRadius: 9999, background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)' }}>
+                <span key={cat} style={{ fontSize: 10, padding: '3px 8px', borderRadius: 9999, background: 'var(--bg-elevated)', border: '0.5px solid var(--border-subtle)', color: 'var(--text-tertiary)' }}>
                   {cat} · R{Math.round(amt)}
                 </span>
               ))}
@@ -1147,6 +1147,52 @@ function MobileTasksToday({ tasks, onComplete }: { tasks: Task[]; onComplete: (i
         </div>
       )}
     </div>
+  )
+}
+
+/* ── PrescriptionReminderCard ──────────────────────────── */
+interface RxEntry { id: number; name: string; dose: string; frequency: string; nextRefill: string; instructions: string }
+
+function PrescriptionReminderCard() {
+  const [meds, setMeds] = useState<RxEntry[]>([])
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('varsityos-prescriptions') || '[]') as RxEntry[]
+      setMeds(stored)
+    } catch { /* ignore */ }
+  }, [])
+
+  const today = new Date().toISOString().split('T')[0]
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+  const urgent = meds.filter(m => m.nextRefill && m.nextRefill <= tomorrow)
+  if (!urgent.length) return null
+
+  return (
+    <Link href="/health?tab=prescriptions" style={{ textDecoration: 'none' }}>
+      <div className="dash-card-in" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(244,114,182,0.30)', borderRadius: 14, padding: '12px 14px', position: 'relative', overflow: 'hidden' }}>
+        <span style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--rose),rgba(244,114,182,0.15))' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14 }}>💊</span>
+            <span style={{ fontSize: 10, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--rose)', fontWeight: 700 }}>Prescription Reminder</span>
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>→</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {urgent.map(m => (
+            <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 10px', background: 'rgba(244,114,182,0.06)', border: '0.5px solid rgba(244,114,182,0.20)', borderRadius: 8 }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{m.name}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{m.dose} · {m.frequency}</div>
+              </div>
+              <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 9999, fontFamily: 'var(--font-mono)', fontWeight: 700, background: m.nextRefill <= today ? 'rgba(153,27,27,0.10)' : 'rgba(244,114,182,0.10)', color: m.nextRefill <= today ? 'var(--danger)' : 'var(--rose)', border: `0.5px solid ${m.nextRefill <= today ? 'rgba(153,27,27,0.30)' : 'rgba(244,114,182,0.30)'}` }}>
+                {m.nextRefill <= today ? 'Overdue' : 'Tomorrow'}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Link>
   )
 }
 
@@ -1554,6 +1600,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
               <div className="hidden md:block"><TodaysClasses timetable={initialData.timetable} /></div>
               <div className="hidden md:block"><UrgentTasksStrip tasks={allTasks} /></div>
+
+              {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
+              <PrescriptionReminderCard />
 
               {/* Quick-access bento tiles (mobile) */}
               <div className="md:hidden">

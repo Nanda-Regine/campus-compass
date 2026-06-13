@@ -418,6 +418,165 @@ html.light {
   --shadow-elevated: 0 4px 24px rgba(26, 18, 8, 0.12), 0 1px 6px rgba(26, 18, 8, 0.08);
 }
 
+/* ── CSS Variables — Outdoor Theme (Max Contrast for Bright Sunlight) ── */
+
+[data-theme="outdoor"] {
+  --font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
+  --font-body:    'DM Sans', 'Plus Jakarta Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-pill: 9999px;
+  --ease-out:    cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast:  120ms;
+  --duration-base:  200ms;
+  --duration-slow:  350ms;
+  --duration-xslow: 600ms;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+
+  /* ── Surfaces — Pure white, zero noise ── */
+  --bg-base:           #FFFFFF;
+  --bg-surface:        #F3F4F6;
+  --bg-elevated:       #E5E7EB;
+  --bg-glass:          rgba(255, 255, 255, 0.97);
+  --bg-surface-hover:  rgba(0, 0, 0, 0.05);
+  --bg-surface-raised: rgba(0, 0, 0, 0.08);
+  --bg-hero:           linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+  --dark-bg:       #FFFFFF;
+  --dark-bg2:      #F3F4F6;
+  --dark-surface:  rgba(0, 0, 0, 0.04);
+  --dark-surface2: rgba(0, 0, 0, 0.07);
+
+  /* ── Borders — solid, always visible in sunlight ── */
+  --border-subtle:   rgba(0, 0, 0, 0.22);
+  --border-default:  rgba(0, 0, 0, 0.38);
+  --border-emphasis: rgba(0, 0, 0, 0.58);
+  --border-accent:   rgba(0, 102, 68, 0.55);
+  --dark-border:     rgba(0, 0, 0, 0.22);
+  --dark-border2:    rgba(0, 0, 0, 0.38);
+
+  /* ── Text — maximum contrast, WCAG AAA ── */
+  --text-primary:   #000000;
+  --text-secondary: #111827;
+  --text-tertiary:  #374151;
+  --text-muted:     #6B7280;
+  --text-label:     rgba(0, 0, 0, 0.55);
+  --text-light:     #000000;
+  --text-light2:    #111827;
+  --text-light3:    #374151;
+
+  /* ── Teal — deepened for sunlight readability ── */
+  --teal:         #065F46;
+  --teal-light:   #047857;
+  --teal-dim:     rgba(6, 95, 70, 0.12);
+  --teal-border:  rgba(6, 95, 70, 0.45);
+  --teal-glow:    rgba(6, 95, 70, 0.08);
+
+  /* ── Purple / Nova — deepened ── */
+  --purple:       #4C1D95;
+  --nova:         #4C1D95;
+  --nova-deep:    #3B0764;
+  --nova-dim:     rgba(76, 29, 149, 0.10);
+  --nova-border:  rgba(76, 29, 149, 0.40);
+  --nova-bg:      linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+  --purple-dim:   rgba(76, 29, 149, 0.10);
+
+  /* ── Gold — deep bronze for contrast ── */
+  --gold:         #78350F;
+  --gold-bright:  #92400E;
+  --gold-dim:     rgba(120, 53, 15, 0.12);
+  --gold-border:  rgba(120, 53, 15, 0.42);
+
+  /* ── Red — deep crimson ── */
+  --red:          #991B1B;
+  --danger:       #991B1B;
+  --danger-dim:   rgba(153, 27, 27, 0.10);
+  --danger-border: rgba(153, 27, 27, 0.42);
+
+  /* ── Feature accents ── */
+  --meals-orange:  #9A3412;
+  --work-blue:     #1E3A8A;
+  --groups-green:  #14532D;
+  --campus-purple: #4C1D95;
+  --exam-blue:     #1E40AF;
+  --exam-blue-dim:    rgba(30, 64, 175, 0.10);
+  --exam-blue-border: rgba(30, 64, 175, 0.40);
+  --coral:        #9A3412;
+  --coral-light:  #C2410C;
+  --coral-dim:    rgba(154, 52, 18, 0.10);
+  --amber:        #78350F;
+  --green:        #14532D;
+  --blue:         #1E3A8A;
+
+  /* ── Life Domain Pillars — all darkened 2× for sunlight ── */
+  --rose:         #9D174D;
+  --rose-dim:     rgba(157, 23, 77, 0.10);
+  --rose-border:  rgba(157, 23, 77, 0.40);
+  --rose-glow:    rgba(157, 23, 77, 0.07);
+
+  --emerald:        #064E3B;
+  --emerald-dim:    rgba(6, 78, 59, 0.10);
+  --emerald-border: rgba(6, 78, 59, 0.40);
+  --emerald-glow:   rgba(6, 78, 59, 0.07);
+
+  --sky:         #075985;
+  --sky-dim:     rgba(7, 89, 133, 0.10);
+  --sky-border:  rgba(7, 89, 133, 0.40);
+  --sky-glow:    rgba(7, 89, 133, 0.07);
+
+  --indigo:        #3730A3;
+  --indigo-dim:    rgba(55, 48, 163, 0.10);
+  --indigo-border: rgba(55, 48, 163, 0.40);
+  --indigo-glow:   rgba(55, 48, 163, 0.07);
+
+  --lime:        #3F6212;
+  --lime-dim:    rgba(63, 98, 18, 0.10);
+  --lime-border: rgba(63, 98, 18, 0.40);
+  --lime-glow:   rgba(63, 98, 18, 0.07);
+
+  /* ── Risk states ── */
+  --risk-safe:           var(--teal);
+  --risk-safe-dim:       rgba(6, 95, 70, 0.10);
+  --risk-safe-border:    rgba(6, 95, 70, 0.40);
+  --risk-watch:          var(--gold);
+  --risk-watch-dim:      rgba(120, 53, 15, 0.10);
+  --risk-watch-border:   rgba(120, 53, 15, 0.40);
+  --risk-warning:        var(--coral);
+  --risk-warning-dim:    rgba(154, 52, 18, 0.10);
+  --risk-warning-border: rgba(154, 52, 18, 0.40);
+  --risk-critical:       var(--danger);
+  --risk-critical-dim:   rgba(153, 27, 27, 0.10);
+  --risk-critical-border: rgba(153, 27, 27, 0.40);
+
+  /* ── Shadows — crisp, no glow blur ── */
+  --shadow-glow: 0 0 0 2px rgba(6, 95, 70, 0.30);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.10);
+  --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.18), 0 1px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Outdoor mode — force readable text on all hardcoded-colour elements */
+[data-theme="outdoor"] .dash-card-in,
+[data-theme="outdoor"] [style*="rgba(255,255,255,0."] {
+  color: var(--text-primary);
+}
+
+[data-theme="outdoor"] ::selection {
+  background: rgba(6, 95, 70, 0.22);
+  color: #000000;
+}
+
+[data-theme="outdoor"] * {
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+
+[data-theme="outdoor"] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+}
+
 /* ── Base Reset ──────────────────────────────────────────── */
 
 *, *::before, *::after {

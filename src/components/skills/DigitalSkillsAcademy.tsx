@@ -1224,6 +1224,529 @@ Now you understand: loops + os.listdir() + string formatting = any batch file op
       },
     ],
   },
+
+  // ──────────────────────────────────────────────────────────────────
+  // 8. Financial Adulting SA
+  // ──────────────────────────────────────────────────────────────────
+  {
+    id: 'finance', title: 'Financial Adulting SA', emoji: '💳', color: '#D4A84B', xp: 600,
+    description: 'Budgeting, credit, investing, and building wealth on a student income. Proven SA-specific frameworks.',
+    lessons: [
+      {
+        id: 'fa1', title: 'The 50/30/20 rule — adapted for SA students', duration: '8 min', type: 'read', completed: false,
+        content: `The 50/30/20 rule is the simplest budgeting framework that actually works. Here is the SA student version.
+
+**THE STANDARD RULE**
+• 50% of income → Needs (rent, food, transport, data)
+• 30% of income → Wants (eating out, clothes, entertainment)
+• 20% of income → Savings and debt repayment
+
+**ADAPTED FOR NSFAS / STUDENT INCOME**
+On a R1,500/month NSFAS living allowance:
+• R750 (50%) → Needs: food + transport + data + toiletries
+• R300 (20%) → Savings: R300/month × 12 = R3,600/year. This is your emergency fund.
+• R450 (30%) → Flexible: books, social, extras
+
+**WHY THE 20% SAVINGS FIRST RULE MATTERS**
+Pay yourself first. Transfer savings on the day money arrives — before spending anything. What remains is your spending budget. This is the most powerful habit in personal finance. Dave Ramsey, Ramit Sethi, and every financial advisor agrees: automate savings before you see the money.
+
+**WHAT COUNTS AS A NEED vs WANT**
+Needs: rent, taxi fare, electricity, food (pap, rice, eggs, vegetables), airtime for academic apps
+Wants: takeaways, new clothes (when you have clothes), streaming, alcohol, eating out
+
+**TRACKING YOUR SPENDING**
+VarsityOS budget tracker categorises every expense. Review weekly: are you on track? Most people overspend on 2–3 categories and don't know it.
+
+**THE HARDEST TRUTH**
+You cannot out-earn bad spending habits. A student who saves R200/month for 4 years has R9,600 in savings + compound interest when they graduate. A graduate who earns R20,000 but saves nothing has nothing. Start now, not later.`,
+      },
+      {
+        id: 'fa2', title: 'Understanding credit in South Africa', duration: '10 min', type: 'read', completed: false,
+        content: `Your credit score will follow you for life. Understanding it at 20 means you build a good one before you need it.
+
+**WHAT IS A CREDIT SCORE?**
+A number (0–999 in SA, TransUnion/Experian) that tells lenders how likely you are to repay debt. Banks use it for home loans, car finance, credit cards, and even rental applications.
+
+**SCORE RANGES (TransUnion SA)**
+• 629 and below — Poor (high risk, high interest rates or declined)
+• 630–699 — Fair (limited options)
+• 700–767 — Good (most lenders will work with you)
+• 768–832 — Very Good (better rates)
+• 833–999 — Excellent (best rates, most trust)
+
+**WHAT BUILDS YOUR SCORE**
+✓ Paying accounts on time — the single biggest factor (35% of score)
+✓ Low credit utilisation — using less than 30% of your limit
+✓ Length of credit history — older accounts = better
+✓ Mix of account types — retail, credit card, personal loan
+✓ Not applying for too many accounts at once
+
+**WHAT DESTROYS YOUR SCORE**
+✗ Missing payments — even one missed payment shows for 2 years
+✗ Going over your credit limit
+✗ Having accounts handed over to debt collectors
+✗ Too many credit applications in a short period (multiple hard enquiries)
+
+**HOW TO CHECK YOUR SCORE FOR FREE**
+TransUnion: credit.co.za — free annual report, legally guaranteed
+ClearScore: clearscore.co.za — free, updates monthly
+MyCreditCheck: mycreditcheck.co.za — R50 instant report
+
+**YOUR FIRST CREDIT PRODUCT (WHEN READY)**
+Best options for students with no history:
+• Woolworths Store Card — low limit, easy to manage
+• Capitec Credit Card — apply when employed
+• FNB Connect or Discovery Bank student account — builds history without debt
+• Never: Clothing store accounts at 21%+ interest. Pay cash for clothes.
+
+**THE COMPOUND DEBT TRAP**
+On a R5,000 debt at 21% interest, making only minimum payments (R150/month), you pay back R13,000+ over 7 years. This is why consumer debt is the fastest route to poverty. If you have debt, pay it aggressively — highest interest rate first (avalanche method).`,
+      },
+      {
+        id: 'fa3', title: 'Stokvel: SA\'s original wealth-building tool', duration: '8 min', type: 'read', completed: false,
+        content: `A stokvel is a rotating savings circle — one of the most powerful community financial tools in the world. 11 million South Africans participate in stokvels, pooling R50+ billion annually.
+
+**HOW IT WORKS**
+A group (usually 10–12 people) agree to contribute a fixed amount monthly (e.g., R500/month each). Each month, one person gets the full pot (R5,000). After 10 months, everyone has received R5,000 once. No interest, no bank, no debt.
+
+**WHY STOKVELS WORK WHERE BANKS FAIL**
+• Social accountability — you don't miss a contribution because your community depends on you
+• Lump sum discipline — most people struggle to save R5,000 alone; a stokvel forces it
+• No fees, no bank, no minimum balance
+• Flexible — investment stokvels, grocery stokvels, emergency stokvels
+
+**STOKVEL VS SAVING ALONE**
+Saving R500/month alone: requires iron discipline, easy to dip into, no deadline pressure
+Stokvel R500/month: social contract makes you committed, lump sum arrives on a schedule
+
+**HOW TO START A STUDENT STOKVEL**
+1. Gather 5–10 trusted friends (reliability matters more than friendship)
+2. Agree on: contribution amount, payout date, rotation order, penalty for missing
+3. Document the rules (VarsityOS Stokvel OS can track this)
+4. Open a shared account (Capitec has an easy joint account setup)
+5. Payout order — drawn randomly or by need
+
+**TYPES OF STOKVELS**
+• Rotating credit (classic) — one person gets the full pot monthly
+• Savings stokvel — everyone contributes, pot grows with interest, payout once yearly (e.g., December groceries)
+• Investment stokvel — contributions go into unit trusts / shares, grows long-term
+• Grocery stokvel — bulk buy monthly groceries together (saves 15–30% vs individual shopping)
+
+**STOKVELS vs INVESTING**
+A R500/month stokvel is not investing — you get back exactly what you put in. But the discipline it builds + the lump sum is the foundation. Once you receive your payout, invest it in a TFSA (Tax-Free Savings Account) — and let compound interest work.`,
+      },
+      {
+        id: 'fa4', title: 'Investing basics: Tax-Free Savings Accounts & unit trusts', duration: '10 min', type: 'read', completed: false,
+        content: `You don't need a lot of money to start investing. You need to start early. This is the most important financial lesson of your 20s.
+
+**COMPOUND INTEREST — THE 8TH WONDER OF THE WORLD**
+R500/month invested at 10% annual return:
+• Start at 20: R2.7 million by 60
+• Start at 30: R1.1 million by 60
+• Start at 40: R380,000 by 60
+Same contribution. The difference is time. Starting 10 years earlier = R2.3 million more.
+
+**TAX-FREE SAVINGS ACCOUNT (TFSA) — START HERE**
+A TFSA lets you invest R36,000/year (R500,000 lifetime) with:
+• Zero tax on growth
+• Zero tax on dividends
+• Zero tax on withdrawal
+This is the South African government's gift to savers. If you do nothing else, open a TFSA.
+
+**WHERE TO OPEN A TFSA**
+• Easy Equities — opens in 10 minutes, R5 minimum, beginner-friendly
+• Satrix — SA's biggest index fund provider, low fees (0.19%/year)
+• Old Mutual — established, mobile app
+• Sygnia — research-backed, ultra-low fees
+• Capitec Bank TFSA — simple, easy, no jargon
+
+**WHAT TO BUY INSIDE YOUR TFSA (BEGINNER)**
+S&P 500 index fund — tracks the 500 largest US companies. 10–12% average annual return historically. You own tiny pieces of Apple, Microsoft, Google, Amazon.
+Satrix Top 40 — tracks SA's 40 largest companies. Includes Naspers, Standard Bank, Anglo American.
+Balance both: 50% global (S&P 500) + 50% SA (Top 40) = geographic diversification.
+
+**WHAT NOT TO DO**
+✗ Pick individual stocks (too risky for beginners, fund managers mostly lose to index funds)
+✗ Crypto as an investment (treat it as speculation, not savings)
+✗ MLM "investment opportunities" — these are not investments, they are pyramid schemes
+✗ Wait until you can afford to invest more — R50/month beats R0/month always
+
+**THE RULE OF 72**
+Divide 72 by your annual return rate = years to double your money.
+10% return → 72 ÷ 10 = 7.2 years to double
+Your R5,000 TFSA today → R10,000 in 7 years → R20,000 in 14 years → R40,000 in 21 years.
+Without touching it.`,
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────
+  // 9. SA Adulting Checklist
+  // ──────────────────────────────────────────────────────────────────
+  {
+    id: 'adulting', title: 'SA Adulting Checklist', emoji: '🏠', color: '#10B981', xp: 500,
+    description: 'SARS registration, eFiling, IRP5s, renting, tenant rights, and navigating South African adult life.',
+    lessons: [
+      {
+        id: 'ad1', title: 'SARS: register and file your first tax return', duration: '12 min', type: 'practice', completed: false,
+        content: `If you earned income (part-time job, freelance, tutoring), you may need to file a tax return. Here is the complete walkthrough.
+
+**DO YOU NEED TO FILE?**
+You MUST register for tax if:
+• You earned more than R95,750 in the 2025/26 tax year (this threshold increases annually)
+• You have a side income (tutoring, Uber, freelance)
+• Your employer deducted PAYE (it appears on your IRP5)
+
+You do NOT need to file if:
+• You earned below R95,750 from a single employer
+• Your employer deducted PAYE and that is your only income
+• You had no income at all
+
+**REGISTERING WITH SARS**
+1. Go to sars.gov.za → eFiling → Register
+2. You'll need: SA ID number, email address, cellphone number, banking details
+3. SARS will send an OTP to verify
+4. Set up a username and password
+5. You're registered — SARS assigns you a tax reference number
+
+**YOUR IRP5 — WHAT IS IT?**
+An IRP5 is a tax certificate from your employer showing:
+• How much you earned
+• How much PAYE (Pay As You Earn tax) was deducted
+• Your employer's tax number
+
+Your employer must give you your IRP5 by 31 May each year. It's automatically submitted to SARS electronically — you just need to confirm the numbers.
+
+**FILING YOUR RETURN (EFILING)**
+1. Log in at efiling.sars.gov.za
+2. Click "Returns" → "Returns Issued" → select the tax year
+3. Your IRP5 information is pre-populated (verify it matches your certificate)
+4. Add any other income sources
+5. Claim deductions you qualify for:
+   • Travel allowance (if your employer pays one and you kept a logbook)
+   • Medical expenses above your medical aid threshold
+   • Retirement annuity contributions (RA)
+6. SARS calculates what you owe or what they owe you
+7. Submit → you get a reference number
+
+**IF YOU'RE OWED A REFUND**
+SARS deposits refunds within 7–21 working days. Use your banking details — make sure they're correct in your eFiling profile. Refunds are not guaranteed — it depends on whether you overpaid tax.
+
+**IMPORTANT DATES**
+• Tax year runs: 1 March to 28/29 February
+• eFiling deadline (non-provisional): 31 October each year
+• Late filing = penalties (usually 25% of tax owed or R2,000, whichever is higher)`,
+      },
+      {
+        id: 'ad2', title: 'Renting your first place: what they don\'t tell you', duration: '12 min', type: 'read', completed: false,
+        content: `Your first rental is the biggest financial commitment of student life. Know the rules before you sign anything.
+
+**THE RENTAL AGREEMENT (LEASE)**
+A written lease is your legal protection. Never rent without one. It must include:
+• Names of landlord and tenant
+• Property address
+• Monthly rental amount
+• Lease duration (usually 12 months or month-to-month)
+• Deposit amount
+• Who pays utilities (electricity, water, prepaid meter?)
+• Notice period for termination (usually 1 month)
+• Rules about pets, guests, alterations
+
+**THE DEPOSIT — YOUR MOST IMPORTANT PROTECTION**
+Legally the deposit must be:
+• Held in an interest-bearing account in the landlord's name
+• Returned within 7–14 days of lease end (depending on inspection outcome)
+• You are entitled to the interest earned on your deposit
+
+**BEFORE YOU MOVE IN: THE INSPECTION**
+Do a joint inspection with the landlord before moving in. Document every existing damage:
+• Take dated photos/video of every room, every wall, every appliance
+• Both parties sign an inspection report listing existing damage
+• This protects you — without it, a landlord can claim your deposit for pre-existing damage
+
+**WHEN A LANDLORD CAN KEEP YOUR DEPOSIT**
+• Damage you caused (not normal wear and tear)
+• Unpaid rent
+• Unpaid utility bills you were responsible for
+
+**WHEN A LANDLORD CANNOT KEEP YOUR DEPOSIT**
+• Normal wear and tear (small nail holes, slight carpet fade from sunlight)
+• Damage that was already there when you moved in (if documented)
+• Any deductions not supported by receipts and quotes
+
+**YOUR RIGHTS AS A TENANT (CPA & RHA)**
+The Consumer Protection Act and Rental Housing Act protect you:
+• A landlord cannot evict you without a court order — EVER
+• A landlord cannot cut your electricity without a court order as a way to force you out
+• You have a right to habitable, safe living conditions
+• No illegal entry — minimum 24h written notice for non-emergency inspections
+• Right to dispute at the Rental Housing Tribunal (free, no lawyer needed)
+
+**UTILITIES AND PREPAID METERS**
+Clarify before signing:
+• Who pays for electricity, water, gas?
+• Is the meter prepaid or postpaid?
+• What is included in the rent? (some include water, not electricity)
+• Get all verbal agreements in writing as a WhatsApp message at minimum
+
+**BEFORE MOVING OUT**
+• Give written notice (WhatsApp counts) within the lease timeframe
+• Arrange a joint exit inspection
+• Leave the property in the same condition as when you moved in
+• Get written confirmation of the final inspection and deposit return`,
+      },
+      {
+        id: 'ad3', title: 'Payslip decoded: every line explained', duration: '8 min', type: 'read', completed: false,
+        content: `When you get your first job, your payslip looks like a puzzle. Here is every line decoded.
+
+**BASIC SALARY / GROSS SALARY**
+This is what your contract says you earn. Before any deductions. If your contract says "R10,000/month CTC", your actual take-home will be significantly less.
+
+**CTC (COST TO COMPANY) vs TAKE-HOME PAY**
+CTC includes everything your employer pays for you:
+• Your salary
+• Employer's UIF contribution
+• Employer's pension/provident fund contribution
+• Medical aid (employer portion)
+CTC of R10,000 → take-home might be R6,800–R7,500 after all deductions.
+
+**DEDUCTIONS — WHAT COMES OFF**
+
+**PAYE (Pay As You Earn)**
+Income tax deducted by your employer on SARS's behalf. Amount depends on your annual income bracket and any tax rebates.
+
+**UIF (Unemployment Insurance Fund)**
+1% of your salary (you pay) + 1% (employer pays) = 2% total
+Maximum: R148.72/month (based on 2024 cap)
+This entitles you to claim UIF if you lose your job. Register at uif.gov.za
+
+**Pension / Provident Fund**
+Usually 5–10% of salary. Grows with employer contributions. Do NOT withdraw when changing jobs — let it grow or transfer to a Retirement Annuity.
+
+**Medical Aid**
+Deducted if your employer offers a scheme. You can claim the tax credit on your tax return.
+
+**WHAT YOUR PAYSLIP MUST INCLUDE BY LAW**
+Under the Basic Conditions of Employment Act:
+• Employer's name and address
+• Your name and occupation
+• Period of payment
+• Remuneration and deductions clearly listed
+• Net pay
+
+If your employer gives you cash only with no payslip, they are breaking the law. You can report this to the Department of Employment and Labour.
+
+**MINIMUM WAGE (2024/25)**
+R27.58/hour. For farm workers: R26.29/hour. For domestic workers: R26.29/hour.
+If you are paid less, report to the Department of Employment and Labour (0800 204 855) — it is free.`,
+      },
+      {
+        id: 'ad4', title: 'UIF: claim what you\'re owed if you lose your job', duration: '8 min', type: 'practice', completed: false,
+        content: `You contribute to UIF every month you work. If you lose your job, you can claim. Most South Africans don't know how — here's how.
+
+**WHO CAN CLAIM UIF?**
+• Formally employed workers (permanent, fixed-term, or part-time) who lose their job
+• Workers on maternity leave (for up to 4 months)
+• Workers on parental leave (10 days)
+• Workers who are ill and cannot work (illness benefit)
+• Dependants of deceased contributors
+
+You CANNOT claim if you:
+• Resigned voluntarily
+• Were dismissed for misconduct
+• Are a domestic worker working less than 24 hours/month
+• Are over pension age (65)
+
+**HOW MUCH DO YOU GET?**
+Between 38–60% of your salary, depending on income level and length of contribution.
+You can claim for 1 day for every 6 days worked (up to 365 days maximum).
+
+**HOW TO CLAIM**
+Option 1: uFiling (ufi.gov.za) — register online, submit online
+Option 2: Visit a Labour Centre in person
+
+**WHAT YOU NEED TO CLAIM**
+• Your South African ID
+• UI-19 form (completed by your employer — they must provide this when you leave)
+• Letter of service (from employer — dates employed, reason for leaving)
+• Your last 6 payslips
+• Your bank account details (for direct payment)
+
+**EMPLOYER'S OBLIGATIONS**
+When you leave employment, your employer must:
+• Give you a UI-19 form within 2 weeks
+• Give you a letter of service
+• Ensure your UIF contributions were paid to the fund (check on ufi.gov.za)
+
+If your employer didn't register you for UIF or didn't pay contributions — report them to the Department of Labour (0800 204 855). You may still be able to claim.
+
+**TIMELINE**
+File within 6 months of becoming unemployed (after 6 months, you lose the right to claim for that period).
+Payment: usually 4–8 weeks from approved claim.`,
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────
+  // 10. Job Hunt & Career Launch
+  // ──────────────────────────────────────────────────────────────────
+  {
+    id: 'career', title: 'Job Hunt & Career Launch', emoji: '📋', color: '#4A9EF5', xp: 550,
+    description: 'CV writing, LinkedIn, job applications, interview skills, and salary negotiation for SA graduates.',
+    lessons: [
+      {
+        id: 'jh1', title: 'Write a CV that gets past Applicant Tracking Systems', duration: '14 min', type: 'practice', completed: false,
+        content: `Most CVs are rejected before a human reads them. ATS (Applicant Tracking Systems) scan for keywords first. Here is how to beat them.
+
+**ATS-PROOF CV STRUCTURE (1–2 pages max)**
+
+**1. CONTACT INFORMATION**
+Full name · Email (professional — firstname.lastname@gmail.com) · Cellphone · LinkedIn URL · City (not full address)
+
+**2. PROFESSIONAL SUMMARY (3–4 lines)**
+Who you are + what you bring + what you're looking for.
+Example: "BCom Accounting student at Wits (graduating 2025) with 2 years of part-time bookkeeping experience. Strong Excel, Pastel Accounting, and data analysis skills. Seeking graduate position in financial services or auditing."
+
+**3. EDUCATION**
+• Degree, University, Expected Graduation Year
+• Relevant modules (only list if applying for your field)
+• Academic achievements (Dean's List, merit bursary — if you have them)
+• Matric results only if it was excellent OR you have no other achievements yet
+
+**4. WORK EXPERIENCE (reverse chronological)**
+For each role:
+Company · Title · Dates (Month Year – Month Year)
+• Use action verbs: Managed, Analysed, Developed, Led, Reduced, Increased
+• Quantify results: "Managed petty cash for R15,000 float" is stronger than "handled cash"
+• Focus on outcomes, not tasks: "Implemented new filing system, reducing retrieval time by 40%"
+
+**5. SKILLS**
+Technical: MS Excel (Advanced), Python, SAP, Pastel, SPSS, Adobe Suite
+Languages: English (fluent), Zulu (native), Afrikaans (conversational)
+Soft skills: Do NOT list "hardworking" or "team player" — everyone says this.
+
+**6. EXTRACURRICULARS / VOLUNTEERING**
+SRC membership, DebSoc, community tutoring, faith community leadership — all valid.
+These show initiative, leadership, and that you exist outside lectures.
+
+**ATS KEYWORD RULES**
+• Copy keywords from the job description — use their exact words
+• If the job says "financial modelling" — use those words, not "financial analysis"
+• ATS matches exact phrases. Synonyms often don't trigger a match.
+• Use a clean font (Calibri, Arial, Times New Roman) — no tables, no text boxes, no columns (ATS can't read them)
+• Save as PDF for human reviewers; save as DOCX for ATS-heavy applications (some can't parse PDF)
+
+**WHAT SA EMPLOYERS ACTUALLY LOOK FOR**
+1. Relevant qualification (matched to role)
+2. Relevant experience (any practical experience)
+3. Skills match (especially software)
+4. Communication ability (grammar in the CV is your first test)
+5. Extracurriculars (show initiative outside academics)`,
+      },
+      {
+        id: 'jh2', title: 'LinkedIn profile that makes recruiters find you', duration: '12 min', type: 'practice', completed: false,
+        content: `LinkedIn is the most important professional platform in South Africa. Recruiters search it daily. Here is how to be found.
+
+**YOUR PROFILE PHOTO**
+Professional headshot — clean background, professional clothing, direct eye contact, genuine smile.
+No group photos. No party photos. No phone-in-mirror selfies.
+A good profile photo increases recruiter contact by 14×.
+
+**YOUR HEADLINE (most searched field)**
+Not just "Student at Wits" — this is your billboard.
+Template: [Your role/identity] | [Your skill/speciality] | [What you're looking for]
+Example: "BCom Accounting Student | Financial Modelling · Excel · Pastel | Seeking 2025 Internship"
+
+**ABOUT SECTION (500–700 words)**
+Write in first person. Tell your story:
+• Who are you professionally?
+• What experience do you have?
+• What are you passionate about in your field?
+• What are you looking for?
+End with a clear call to action: "Open to part-time accounting roles and 2025 internship opportunities. DM me or email [address]."
+
+**EXPERIENCE SECTION**
+Add every job, including part-time and informal:
+• Spaza shop assistant → Customer Service | Stock Management | Cash Handling
+• Tutoring → Private Tutor | Academic Content Development | Communication
+• Community work → Volunteer Programme Coordinator | Project Management
+
+**SKILLS SECTION**
+Add 20+ relevant skills. Connections can endorse you for these — ask your university friends.
+LinkedIn's algorithm shows you in more searches when you have more skills listed.
+
+**EDUCATION**
+Connect your university's LinkedIn page. This links you to alumni — extremely valuable for networking.
+
+**OPEN TO WORK BANNER**
+Settings → Job preferences → toggle "Open to Work"
+Choose: "Recruiters only" if you're employed; "Everyone" if you're job hunting.
+
+**CONNECTING STRATEGICALLY**
+• Connect with every lecturer you've had
+• Connect with professionals in your field after networking events
+• Connect with company employees before applying to their company
+• When connecting, always send a personalised note: "Hi [Name], I'm a Wits BCom student interested in a career in audit. I'd love to connect."
+
+**THE 500+ CONNECTIONS GOAL**
+LinkedIn shows "500+" connections publicly. This signals you're active and connected. Get there by: classmates, alumni, professionals, lecturers.`,
+      },
+      {
+        id: 'jh3', title: 'Ace the interview: SA-specific preparation', duration: '14 min', type: 'read', completed: false,
+        content: `Interviews are a skill. Like any skill, preparation is the differentiator. Most candidates do minimal prep. This is your edge.
+
+**BEFORE THE INTERVIEW**
+
+**Research (non-negotiable)**
+• Company website: what they do, how they make money, recent news
+• LinkedIn: who is interviewing you? What is their role?
+• Industry news: what challenges does this industry face?
+• Their competitors: who are they competing against?
+• If it's a listed company: recent results announcement (SENS / JSE)
+
+Why: interviewers almost always ask "What do you know about our company?" Unprepared candidates fail here.
+
+**THE STAR METHOD — FOR BEHAVIOURAL QUESTIONS**
+Most interview questions are behavioural: "Tell me about a time when..."
+Answer using STAR:
+• **Situation** — context (where, when)
+• **Task** — what you were responsible for
+• **Action** — what YOU specifically did (not the team — you)
+• **Result** — the outcome, preferably quantified
+
+Example: "Tell me about a time you managed a difficult team member."
+S: In my SRC role, a team member was missing deadlines that delayed our campaign.
+T: As project lead, I was responsible for the campaign launch date.
+A: I had a direct conversation with her, asked what was blocking her, and restructured her tasks to match her capacity.
+R: Campaign launched on time and she stayed engaged for the rest of the year.
+
+**COMMON SA INTERVIEW QUESTIONS + HOW TO ANSWER**
+
+"Tell me about yourself" — 90-second professional story. Education → relevant experience → skills → why this role.
+
+"Why do you want to work here?" — Use your research. Specific reason. Never: "Because it's a big company" or "Good salary."
+
+"What is your greatest weakness?" — Real weakness + what you've actively done to improve it. Never: "I work too hard" or "I'm a perfectionist."
+
+"Where do you see yourself in 5 years?" — Shows ambition. Align with the company's growth. "I want to develop into [role], and I see this position as the foundation for that."
+
+"Do you have any questions for us?" — ALWAYS have 3 questions prepared. Never ask about salary first (unless they bring it up). Good questions: "What does success look like in this role in the first 6 months?" "What are the biggest challenges the team is facing?"
+
+**SALARY NEGOTIATION (SA CONTEXT)**
+Research: LinkedIn Salary, Glassdoor, PNet salary guides, ask alumni in similar roles.
+Never be the first to name a number if possible. If forced: give a range, with your target at the bottom of the range.
+When they offer: "Thank you — can I have 24 hours to review?" Always counter-offer. The worst they can say is no. Most companies expect negotiation. Starting salary affects every future salary calculation.
+
+**VIRTUAL INTERVIEW CHECKLIST**
+• Stable internet + backup (mobile hotspot)
+• Quiet room, clean background (virtual backgrounds are acceptable)
+• Camera at eye level — stack your laptop on books
+• Dress professionally from the waist up (and below — in case you need to stand)
+• Mute notifications 30 min before
+• Log in 5 min early to test audio/video`,
+      },
+    ],
+  },
 ]
 
 export default function DigitalSkillsAcademy() {
@@ -1339,7 +1862,7 @@ export default function DigitalSkillsAcademy() {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#6366F1,#4ecf9e,transparent)' }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#6366F1', letterSpacing: '0.09em', marginBottom: 4 }}>DIGITAL SKILLS ACADEMY</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Skills for school, assignments & work</div>
-        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: 3, lineHeight: 1.5 }}>Google Workspace · Research & Citations · AI Tools · Excel · Professional Skills · Security · Python</div>
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: 3, lineHeight: 1.5 }}>Google Workspace · Research & Citations · AI Tools · Excel · Professional Skills · Security · Python · Financial Adulting SA · SA Adulting Checklist · Job Hunt & Career Launch</div>
       </div>
 
       {/* XP progress */}
