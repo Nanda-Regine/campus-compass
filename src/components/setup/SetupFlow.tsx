@@ -303,6 +303,7 @@ export default function SetupFlow() {
       dispatchXP('task_complete', 'Completed VarsityOS onboarding')
 
       try { localStorage.removeItem(`setup_progress_${user.id}`) } catch { /* ok */ }
+      try { localStorage.setItem('varsityos-new-user', name || 'Student') } catch { /* ok */ }
       toast.success('All set! Welcome to VarsityOS 🎉')
       router.push('/dashboard')
       router.refresh()

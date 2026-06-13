@@ -23,6 +23,8 @@ import InterventionModal from '@/components/orchestration/InterventionModal'
 import DailyBrief from '@/components/orchestration/DailyBrief'
 import SundayPlanning from '@/components/orchestration/SundayPlanning'
 import WeatherWidget from '@/components/dashboard/WeatherWidget'
+import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
+import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1477,6 +1479,12 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         }} />
 
         <div style={{ padding: '20px 24px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+
+          {/* Welcome banner — shows once after onboarding completes */}
+          <WelcomeBanner />
+
+          {/* Push notification opt-in — shows once for new users */}
+          <NotificationPrompt />
 
           {/* Orchestration — intervention banner (urgency 1-4) */}
           <div style={{ marginBottom: 12 }}>

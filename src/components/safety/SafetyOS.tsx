@@ -97,17 +97,75 @@ const DEFENCE_TIPS = [
 
 const LEVEL_ORDER = ['Awareness', 'Beginner', 'Intermediate', 'Critical']
 
+// Small reactive banner — reads localStorage at render time
+function ContactsEmptyWarning() {
+  const [empty, setEmpty] = useState(true)
+  useEffect(() => {
+    try {
+      const c = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]')
+      setEmpty(c.length === 0)
+    } catch { /* ignore */ }
+  }, [])
+  if (!empty) return null
+  return (
+    <div style={{
+      width: '100%', padding: '10px 14px',
+      background: 'var(--gold-dim)', border: '1px solid var(--gold-border)',
+      borderRadius: 10, fontSize: '0.73rem', color: 'var(--text-secondary)',
+    }}>
+      ⚠️ Add emergency contacts under the Contacts tab so SOS can alert them via WhatsApp.
+    </div>
+  )
+}
+
 // ─── SOS Tab ──────────────────────────────────────────────────
 
 function SosTab() {
   const [countdown, setCountdown] = useState<number | null>(null)
   const [sent, setSent] = useState(false)
+  const [alertedCount, setAlertedCount] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const profile = useAppStore(s => s.profile)
 
+  // Fire real alerts when `sent` flips true
+  useEffect(() => {
+    if (!sent) return
+    const contacts: EmergencyContact[] = (() => {
+      try { return JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') }
+      catch { return [] }
+    })()
+    if (contacts.length === 0) return
+
+    const profileName = profile?.name ?? 'VarsityOS user'
+
+    const sendAlerts = (locationText: string) => {
+      const msg = `🆘 SOS from ${profileName}\n${locationText}\nThis is an emergency — please respond or call 10111.`
+      const encoded = encodeURIComponent(msg)
+      contacts.forEach((c, i) => {
+        const clean = c.number.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
+        setTimeout(() => {
+          window.open(`https://wa.me/${clean}?text=${encoded}`, '_blank')
+        }, i * 900)
+      })
+      setAlertedCount(contacts.length)
+    }
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const { latitude, longitude } = pos.coords
+          sendAlerts(`📍 My location: https://maps.google.com/?q=${latitude},${longitude}`)
+        },
+        () => sendAlerts('📍 Location unavailable — please contact me urgently'),
+        { timeout: 6000, enableHighAccuracy: false }
+      )
+    } else {
+      sendAlerts('📍 Location unavailable — please contact me urgently')
+    }
+  }, [sent, profile?.name])
+
   const handleSOSPress = () => {
     if (countdown !== null) {
-      // Cancel
       if (timerRef.current) clearInterval(timerRef.current)
       setCountdown(null)
       return
@@ -119,7 +177,6 @@ function SosTab() {
         if (prev <= 1) {
           if (timerRef.current) clearInterval(timerRef.current)
           setSent(true)
-          // In a real app: trigger push notification + SMS to emergency contacts
           return null
         }
         return prev - 1
@@ -163,12 +220,14 @@ function SosTab() {
       {sent ? (
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--danger)', marginBottom: 4 }}>
-            🚨 SOS sent to your emergency contacts
+            🚨 SOS sent{alertedCount > 0 ? ` to ${alertedCount} contact${alertedCount !== 1 ? 's' : ''} via WhatsApp` : ''}
           </div>
           <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
-            Your location and status have been shared. Help is on the way.
+            {alertedCount > 0
+              ? 'Your location and a WhatsApp message have been sent. Help is on the way.'
+              : 'Add emergency contacts under the Contacts tab so they get alerted next time.'}
           </div>
-          <button onClick={() => setSent(false)} style={{
+          <button onClick={() => { setSent(false); setAlertedCount(0) }} style={{
             marginTop: 12, padding: '8px 20px',
             background: 'transparent', border: '1px solid var(--border-subtle)',
             borderRadius: 8, color: 'var(--text-tertiary)',
@@ -216,15 +275,7 @@ function SosTab() {
         </div>
       </div>
 
-      {!profile?.name && (
-        <div style={{
-          width: '100%', padding: '10px 14px',
-          background: 'var(--gold-dim)', border: '1px solid var(--gold-border)',
-          borderRadius: 10, fontSize: '0.73rem', color: 'var(--text-secondary)',
-        }}>
-          ⚠️ Add emergency contacts under the Contacts tab to enable SOS alerts.
-        </div>
-      )}
+      <ContactsEmptyWarning />
     </div>
   )
 }
