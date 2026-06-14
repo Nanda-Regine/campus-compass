@@ -6,6 +6,8 @@ import type { Module } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
 import { MODULE_COLOURS } from '@/types'
 import { loadDecksFromDB, saveDeckToDB, deleteDeckFromDB, updateCardInDB } from '@/lib/db/flashcards'
+import { useAppStore } from '@/store'
+import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -661,30 +663,38 @@ type Screen = { type: 'list' } | { type: 'study'; deckId: string } | { type: 'ed
 interface Props { modules: Module[] }
 
 export default function FlashcardsTab({ modules }: Props) {
+  const appProfile = useAppStore(s => s.profile)
+  const isPremium  = appProfile?.is_premium || ['scholar', 'nova_unlimited'].includes(appProfile?.subscription_tier ?? '')
+  const { show: showUpgrade, modal: upgradeModal } = useUpgradePrompt()
+
   const [decks,   setDecks]   = useState<Deck[]>([])
   const [screen,  setScreen]  = useState<Screen>({ type: 'list' })
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     async function init() {
-      const dbDecks = await loadDecksFromDB()
-      if (dbDecks.length > 0) {
-        setDecks(dbDecks)
-        saveDecks(dbDecks)
-      } else {
-        setDecks(loadDecks())
+      if (isPremium) {
+        const dbDecks = await loadDecksFromDB()
+        if (dbDecks.length > 0) {
+          setDecks(dbDecks)
+          saveDecks(dbDecks)
+          setMounted(true)
+          return
+        }
       }
+      setDecks(loadDecks())
       setMounted(true)
     }
     init()
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPremium])
 
   function handleSaveDeck(d: Deck) {
     const idx = decks.findIndex(x => x.id === d.id)
     const updated = idx >= 0 ? decks.map((x, i) => i === idx ? d : x) : [...decks, d]
     setDecks(updated)
     saveDecks(updated)
-    saveDeckToDB(d).catch(() => {})
+    if (isPremium) saveDeckToDB(d).catch(() => {})
     setScreen({ type: 'list' })
   }
 
@@ -692,7 +702,7 @@ export default function FlashcardsTab({ modules }: Props) {
     const updated = decks.filter(d => d.id !== id)
     setDecks(updated)
     saveDecks(updated)
-    deleteDeckFromDB(id).catch(() => {})
+    if (isPremium) deleteDeckFromDB(id).catch(() => {})
   }
 
   function handleRate(deckId: string, cardId: string, quality: 0 | 1 | 2 | 3) {
@@ -707,7 +717,7 @@ export default function FlashcardsTab({ modules }: Props) {
     })
     setDecks(updated)
     saveDecks(updated)
-    if (ratedCard) updateCardInDB(ratedCard, deckId).catch(() => {})
+    if (ratedCard && isPremium) updateCardInDB(ratedCard, deckId).catch(() => {})
   }
 
   if (!mounted) return <div style={{ height: 100 }} />
@@ -738,12 +748,36 @@ export default function FlashcardsTab({ modules }: Props) {
   }
 
   return (
-    <DeckListScreen
-      decks={decks}
-      modules={modules}
-      onStudy={id => setScreen({ type: 'study', deckId: id })}
-      onEdit={id => setScreen({ type: 'edit', deckId: id })}
-      onNewDeck={() => setScreen({ type: 'edit', deckId: null })}
-    />
+    <>
+      {upgradeModal}
+      {!isPremium && (
+        <button
+          onClick={() => showUpgrade(
+            'Flashcard cloud sync',
+            'Your decks and SM-2 progress sync across devices and are never lost. Upgrade to Nova Scholar to unlock cloud sync.',
+          )}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderRadius: 10, marginBottom: 12, cursor: 'pointer',
+            background: 'rgba(56,189,248,0.05)', border: '1px solid rgba(56,189,248,0.18)',
+            textAlign: 'left',
+          }}
+        >
+          <span style={{ fontSize: 16 }}>☁️</span>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#38BDF8' }}>Cloud sync — Scholar feature</div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Decks saved locally only · Tap to upgrade</div>
+          </div>
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgba(56,189,248,0.6)' }}>⭐ R29</span>
+        </button>
+      )}
+      <DeckListScreen
+        decks={decks}
+        modules={modules}
+        onStudy={id => setScreen({ type: 'study', deckId: id })}
+        onEdit={id => setScreen({ type: 'edit', deckId: id })}
+        onNewDeck={() => setScreen({ type: 'edit', deckId: null })}
+      />
+    </>
   )
 }

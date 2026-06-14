@@ -903,3 +903,151 @@ export const orchestrationIntervention = inngest.createFunction(
     return { triggered, atRisk: atRiskUsers.length }
   },
 )
+
+// ─── Streak Nudge ─────────────────────────────────────────────────────────────
+// Fires daily at 21:00 SAST.
+// Sends a push to students with a streak ≥ 3 whose last_activity is before today,
+// i.e. they are about to break their streak. Respects a 20-hour push cooldown.
+export const streakNudge = inngest.createFunction(
+  { id: 'streak-nudge', name: 'Daily Streak Nudge', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 0 21 * * *' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+
+    const atRisk = await step.run('find-at-risk-streaks', async () => {
+      const today = new Date().toISOString().slice(0, 10)
+
+      // Students with streak ≥ 3 whose last activity was before today
+      const { data: rows } = await supabase
+        .from('streaks')
+        .select('user_id, current_streak, last_activity')
+        .gte('current_streak', 3)
+        .lt('last_activity', today)
+
+      if (!rows?.length) return []
+
+      // Only students who have push subscriptions
+      const userIds = rows.map((r: { user_id: string }) => r.user_id)
+      const { data: subs } = await supabase
+        .from('push_subscriptions')
+        .select('user_id')
+        .in('user_id', userIds)
+      const subSet = new Set((subs ?? []).map((s: { user_id: string }) => s.user_id))
+
+      // Respect 20-hour cooldown per user for this rule
+      const cutoff = new Date(Date.now() - 20 * 3600 * 1000).toISOString()
+      const { data: recentCooldowns } = await supabase
+        .from('push_cooldowns')
+        .select('user_id')
+        .eq('rule_id', 'streak_nudge')
+        .gte('sent_at', cutoff)
+        .in('user_id', userIds)
+      const cooledSet = new Set((recentCooldowns ?? []).map((c: { user_id: string }) => c.user_id))
+
+      return (rows as { user_id: string; current_streak: number }[])
+        .filter(r => subSet.has(r.user_id) && !cooledSet.has(r.user_id))
+    }) as { user_id: string; current_streak: number }[]
+
+    if (!atRisk.length) return { sent: 0 }
+
+    // Cap at 500 per run
+    const batch = atRisk.slice(0, 500)
+
+    const sent = await step.run('send-streak-nudges', async () => {
+      let count = 0
+      for (const r of batch) {
+        const n = await notifyUser(supabase, r.user_id, {
+          title: `Don't break your ${r.current_streak}-day streak`,
+          body:  'Log a study session, check your tasks, or mark attendance — anything counts. Keep the chain alive.',
+          url:   '/dashboard',
+          tag:   'streak-nudge',
+        })
+        if (n > 0) {
+          await supabase.from('push_cooldowns').upsert(
+            { user_id: r.user_id, rule_id: 'streak_nudge', sent_at: new Date().toISOString() },
+            { onConflict: 'user_id,rule_id' }
+          )
+          count++
+        }
+      }
+      return count
+    })
+
+    logger.info(`Streak nudge: ${sent} sent`)
+    return { sent }
+  },
+)
+
+// ─── Sunday Planner Reminder ───────────────────────────────────────────────────
+// Fires every Sunday at 19:00 SAST.
+// Sends a push to students who have NOT created a weekly plan for the upcoming week.
+export const sundayPlannerReminder = inngest.createFunction(
+  { id: 'sunday-planner-reminder', name: 'Sunday Planning Reminder', retries: 2 },
+  { cron: 'TZ=Africa/Johannesburg 0 19 * * 0' },
+  async ({ step, logger }: FnCtx) => {
+    if (!canSendPush()) { logger.warn('VAPID not configured'); return { sent: 0 } }
+    const supabase = createAdminSupabaseClient()
+
+    const toRemind = await step.run('find-unplanned-students', async () => {
+      // Next Monday's date (start of the upcoming week)
+      const now = new Date()
+      const daysUntilMonday = (8 - now.getDay()) % 7 || 7
+      const nextMonday = new Date(now)
+      nextMonday.setDate(now.getDate() + daysUntilMonday)
+      const weekStart = nextMonday.toISOString().slice(0, 10)
+
+      // Students who HAVE a weekly plan for this upcoming week
+      const { data: planned } = await supabase
+        .from('weekly_plans')
+        .select('user_id')
+        .eq('week_start', weekStart)
+      const plannedSet = new Set((planned ?? []).map((p: { user_id: string }) => p.user_id))
+
+      // All students with push subscriptions
+      const { data: subs } = await supabase
+        .from('push_subscriptions')
+        .select('user_id')
+      const allSubUsers = (subs ?? []).map((s: { user_id: string }) => s.user_id)
+
+      // Respect 6-day cooldown (don't re-remind if already sent this week)
+      const cutoff = new Date(Date.now() - 6 * 24 * 3600 * 1000).toISOString()
+      const { data: recentCooldowns } = await supabase
+        .from('push_cooldowns')
+        .select('user_id')
+        .eq('rule_id', 'sunday_planner')
+        .gte('sent_at', cutoff)
+        .in('user_id', allSubUsers)
+      const cooledSet = new Set((recentCooldowns ?? []).map((c: { user_id: string }) => c.user_id))
+
+      return allSubUsers.filter((uid: string) => !plannedSet.has(uid) && !cooledSet.has(uid))
+    }) as string[]
+
+    if (!toRemind.length) return { sent: 0 }
+
+    const batch = toRemind.slice(0, 500)
+
+    const sent = await step.run('send-sunday-reminders', async () => {
+      let count = 0
+      for (const userId of batch) {
+        const n = await notifyUser(supabase, userId, {
+          title: 'Plan your week before it plans you',
+          body:  '5 minutes of Sunday planning saves 5 hours of chaos. Set your priorities for the week now.',
+          url:   '/study?tab=sunday',
+          tag:   'sunday-planner',
+        })
+        if (n > 0) {
+          await supabase.from('push_cooldowns').upsert(
+            { user_id: userId, rule_id: 'sunday_planner', sent_at: new Date().toISOString() },
+            { onConflict: 'user_id,rule_id' }
+          )
+          count++
+        }
+      }
+      return count
+    })
+
+    logger.info(`Sunday planner reminder: ${sent} sent`)
+    return { sent }
+  },
+)

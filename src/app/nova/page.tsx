@@ -12,6 +12,7 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
 import NovaMarkdown from '@/components/nova/NovaMarkdown'
+import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 
 interface Resource {
   title: string
@@ -312,6 +313,7 @@ export default function NovaPage() {
   const [showWelcome, setShowWelcome] = useState(false)
   const [showCapabilities, setShowCapabilities] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
+  const { show: showUpgrade, modal: upgradeModal } = useUpgradePrompt()
   const [historyList, setHistoryList] = useState<Array<{
     id: string; title: string | null; conversation_type: string;
     crisis_detected: boolean; updated_at: string; message_count: number;
@@ -670,8 +672,13 @@ export default function NovaPage() {
           return
         }
         if (data.error === 'limit_reached' || data.error === 'free_limit_reached') {
-          toast.error(data.message || "You've reached your monthly message limit")
-          router.push('/upgrade')
+          showUpgrade(
+            'Nova message limit reached',
+            userTier === 'scholar'
+              ? 'You\'ve used all 150 Scholar messages this month. Upgrade to Nova Unlimited for unlimited conversations.'
+              : 'You\'ve used all 20 free messages this month. Upgrade to Nova Scholar for 150 messages/month.',
+            userTier === 'scholar' ? 'nova_unlimited' : 'scholar',
+          )
           return
         }
         throw new Error(data.error || 'Failed to send message')
@@ -722,6 +729,7 @@ export default function NovaPage() {
 
   return (
     <div className="chat-page-height flex flex-col bg-[var(--bg-base)]" style={{ position: 'relative', overflow: 'hidden' }}>
+      {upgradeModal}
       {/* Nova deep-space ambient — grainy nebula behind the chat */}
       <AmbientImage zone="nova" opacity={0.38} blurPx={5} saturation={1.6}
         overlayColor="linear-gradient(180deg,rgba(5,4,12,0.12) 0%,rgba(10,9,23,0.04) 100%)" />
