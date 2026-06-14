@@ -275,6 +275,17 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               </div>
             </div>
 
+            {/* Load shedding callout */}
+            <div
+              className="rounded-xl px-3.5 py-3 space-y-1"
+              style={{ background: 'rgba(251,191,36,0.06)', border: '0.5px solid rgba(251,191,36,0.2)' }}
+            >
+              <div className="font-mono text-[0.58rem] text-amber-400 uppercase tracking-widest">⚡ Load shedding + sleep</div>
+              <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed">
+                Phone or laptop screens during outages expose you to blue light with no ambient light to balance it. This suppresses melatonin and can delay your sleep by 1–2 hours. Switch to a red-tinted screen mode or warm candlelight during load shedding — your brain needs the darkness signal to start winding down.
+              </p>
+            </div>
+
             {/* Notes */}
             <div>
               <label className="font-mono text-[0.58rem] text-white/40 block mb-1.5">Notes (optional)</label>

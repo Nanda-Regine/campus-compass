@@ -721,96 +721,185 @@ function DocumentsTab({ documents, userId, onUpdate }: { documents: NsfasDocumen
 // ─── Guide sub-tab ────────────────────────────────────────────
 
 const GUIDE_STEPS = [
-  {
-    step: 1,
-    title: 'Check your status on myNSFAS',
-    detail: 'Log in at my.nsfas.org.za using your SA ID number. Check "Funding Status" — it should say "Approved". If it says "Provisionally Funded", your allowances may be on hold.',
-    color: 'var(--teal)',
-    link:  'https://my.nsfas.org.za',
-  },
-  {
-    step: 2,
-    title: 'Verify your banking details',
-    detail: 'NSFAS pays into a Fundi-linked wallet or your bank account. Ensure your banking details match your ID exactly — a single character mismatch blocks payment.',
-    color: 'var(--gold)',
-  },
-  {
-    step: 3,
-    title: 'Check N+ rule compliance',
-    detail: 'NSFAS funds you for the minimum duration of your qualification plus N extra years (N+1 for 3-year degrees, N+2 for 4-year degrees). If you\'ve exceeded this, you must appeal.',
-    color: 'var(--coral)',
-  },
-  {
-    step: 4,
-    title: 'Contact your institution\'s NSFAS office',
-    detail: 'Before calling NSFAS directly, speak to your Student Financial Aid Office (SFAO). They can escalate on your behalf and have a direct channel to NSFAS.',
-    color: 'var(--nova)',
-  },
-  {
-    step: 5,
-    title: 'Submit a formal appeal',
-    detail: 'If your payment is late by more than 5 business days: log the appeal here, gather proof (bank statement showing no credit), and submit via the NSFAS online portal. Note your reference number.',
-    color: 'var(--gold)',
-    link:  'https://my.nsfas.org.za',
-  },
-  {
-    step: 6,
-    title: 'Escalate to the DHET if unresolved',
-    detail: 'If NSFAS does not resolve within 15 business days, escalate to the Department of Higher Education and Training (DHET) via their complaints portal or email: highereducation@dhet.gov.za',
-    color: 'var(--danger)',
-  },
+  { step: 1, title: 'Check your status on myNSFAS', detail: 'Log in at my.nsfas.org.za using your SA ID number. Check "Funding Status" — it should say "Approved". If it says "Provisionally Funded", your allowances may be on hold pending your institution\'s registration confirmation.', color: 'var(--teal)', link: 'https://my.nsfas.org.za' },
+  { step: 2, title: 'Verify your banking details', detail: 'NSFAS pays into a Fundi-linked wallet or your bank account. Ensure your banking details match your ID exactly — a single character mismatch blocks payment. Check under "My Profile → Banking Details" on myNSFAS.', color: 'var(--gold)' },
+  { step: 3, title: 'Check N+ rule compliance', detail: 'NSFAS funds you for the minimum duration of your qualification plus grace years: N+1 for 3-year degrees, N+2 for 4-year degrees, N+1 for diplomas. Repeated modules or failed years count towards your N+ clock.', color: 'var(--coral)' },
+  { step: 4, title: 'Contact your institution\'s SFAO', detail: 'Before calling NSFAS directly, speak to your Student Financial Aid Office (SFAO). They have a direct channel to NSFAS and can escalate registration issues, missing academic records, or payment blocks on your behalf.', color: 'var(--nova)' },
+  { step: 5, title: 'Submit a formal appeal on myNSFAS', detail: 'If payment is late by more than 5 business days: log it here, gather proof (bank statement showing no credit received), and submit via the Appeals section on my.nsfas.org.za. Note your reference number — you\'ll need it to follow up.', color: 'var(--gold)', link: 'https://my.nsfas.org.za' },
+  { step: 6, title: 'Escalate to DHET if unresolved', detail: 'If NSFAS does not resolve within 15 business days, escalate to the Department of Higher Education and Training (DHET) via their complaints portal or email highereducation@dhet.gov.za. Include your NSFAS reference number and institution student number.', color: 'var(--danger)' },
+]
+
+const NSFAS_CONTACTS = [
+  { label: 'NSFAS Call Centre',       value: '0800 067 327',              note: 'Free · Mon–Fri 8am–5pm' },
+  { label: 'myNSFAS Portal',          value: 'my.nsfas.org.za',           note: 'Status, banking details, appeals', link: 'https://my.nsfas.org.za' },
+  { label: 'NSFAS WhatsApp',          value: '083 087 1538',              note: 'WhatsApp only · status queries' },
+  { label: 'DHET Complaints',         value: 'highereducation@dhet.gov.za', note: 'Escalate unresolved cases' },
+  { label: 'NSFAS Email',             value: 'info@nsfas.org.za',          note: 'Non-urgent queries' },
+]
+
+const ACADEMIC_RULES = [
+  { rule: 'Satisfactory Progress',  detail: 'You must pass at least 50% of your registered credits per academic year to retain NSFAS funding. Dropping below triggers a funding review — not automatic cancellation.' },
+  { rule: 'N+ Rule',                detail: '3-year degree: funded for 4 years (N+1). 4-year degree: funded for 5 years (N+2). Professional degrees (medicine, law): check your specific qualification\'s N+ allocation with your SFAO.' },
+  { rule: 'Module Repeats',         detail: 'Each time you repeat a module, the extra semester counts towards your N+ clock. Two or more repeats of the same module may trigger an automatic funding review.' },
+  { rule: 'Academic Exclusion',     detail: 'If your institution academically excludes you, NSFAS suspends funding immediately. You must appeal re-admission AND file a separate NSFAS academic progress appeal.' },
+  { rule: 'Change of Qualification', detail: 'Switching to a longer qualification (e.g., diploma to degree) resets your N+ clock to the new qualification\'s minimum. Submit a Change of Qualification form via your SFAO.' },
+]
+
+const ELIGIBILITY_THRESHOLDS = [
+  { category: 'Combined household income cap', value: 'R350,000 / year', note: 'All sources: parents, guardians, grants. SASSA recipients qualify automatically.' },
+  { category: 'SA citizenship / permanent residency', value: 'Required', note: 'Plus valid SA ID number.' },
+  { category: 'First-time entering higher education', value: 'Preferred, not mandatory', note: 'Gap-year students and re-entrants may still qualify.' },
+  { category: 'Age limit', value: 'None', note: 'NSFAS has no upper age limit for first-time applicants.' },
+  { category: 'Accredited institution', value: 'DHET-registered only', note: 'Must be a public university or TVET college.' },
 ]
 
 function GuideTab() {
+  const [section, setSection] = useState<'escalation'|'eligibility'|'academic'|'contacts'|'timeline'>('escalation')
+
+  const sectionTabs = [
+    { id: 'escalation', label: 'What to do', icon: '🗺️' },
+    { id: 'eligibility', label: 'Who qualifies', icon: '✅' },
+    { id: 'academic', label: 'Progress rules', icon: '📐' },
+    { id: 'contacts', label: 'Contacts', icon: '📞' },
+    { id: 'timeline', label: 'Timeline', icon: '⏱️' },
+  ] as const
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{
-        background: 'var(--gold-dim)', border: '1px solid var(--gold-border)',
-        borderRadius: 12, padding: '12px 14px', fontSize: '0.76rem',
-        color: 'var(--text-secondary)', lineHeight: 1.6,
-      }}>
-        This guide covers what to do when NSFAS is late, underpaid, or not paying at all. Each step escalates to the next.
+      {/* Inner tab switcher */}
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2 }}>
+        {sectionTabs.map(t => (
+          <button key={t.id} onClick={() => setSection(t.id)} style={{
+            flexShrink: 0, padding: '5px 10px', borderRadius: 8, fontSize: '0.67rem',
+            fontFamily: 'var(--font-mono)', fontWeight: 600, cursor: 'pointer', border: 'none',
+            background: section === t.id ? 'var(--gold-dim)' : 'var(--bg-surface)',
+            color: section === t.id ? 'var(--gold)' : 'var(--text-tertiary)',
+            outline: section === t.id ? '1px solid var(--gold-border)' : '1px solid var(--border-subtle)',
+          }}>
+            {t.icon} {t.label}
+          </button>
+        ))}
       </div>
-      {GUIDE_STEPS.map(s => (
-        <div key={s.step} style={{
-          position: 'relative', overflow: 'hidden',
-          background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
-          borderLeft: `3px solid ${s.color}`,
-          borderRadius: 12, padding: '14px 14px 12px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-            <div style={{
-              flexShrink: 0, width: 26, height: 26, borderRadius: '50%',
-              background: `${s.color}18`, border: `1px solid ${s.color}40`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.7rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: s.color,
-            }}>
-              {s.step}
+
+      {/* Escalation steps */}
+      {section === 'escalation' && (
+        <>
+          <div style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', borderRadius: 12, padding: '10px 14px', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            What to do when NSFAS is late, underpaid, or not paying. Each step escalates to the next.
+          </div>
+          {GUIDE_STEPS.map(s => (
+            <div key={s.step} style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderLeft: `3px solid ${s.color}`, borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div style={{ flexShrink: 0, width: 24, height: 24, borderRadius: '50%', background: `${s.color}18`, border: `1px solid ${s.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: s.color }}>
+                  {s.step}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{s.title}</div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{s.detail}</div>
+                  {s.link && (
+                    <a href={s.link} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 6, fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: s.color, textDecoration: 'none' }}>
+                      Open portal →
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 5 }}>
-                {s.title}
+          ))}
+        </>
+      )}
+
+      {/* Eligibility thresholds */}
+      {section === 'eligibility' && (
+        <>
+          <div style={{ background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.15)', borderRadius: 12, padding: '10px 14px', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            NSFAS 2025/26 eligibility criteria. Meeting all conditions does not guarantee approval — funding depends on available budget allocation.
+          </div>
+          {ELIGIBILITY_THRESHOLDS.map(e => (
+            <div key={e.category} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)' }}>{e.category}</div>
+                <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--teal)', flexShrink: 0 }}>{e.value}</div>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                {s.detail}
-              </div>
-              {s.link && (
-                <a
-                  href={s.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-block', marginTop: 8,
-                    fontSize: '0.68rem', fontFamily: 'var(--font-mono)',
-                    color: s.color, textDecoration: 'none',
-                  }}>
-                  Open portal →
-                </a>
-              )}
+              <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>{e.note}</div>
+            </div>
+          ))}
+          <div style={{ background: 'rgba(255,107,107,0.06)', border: '1px solid rgba(255,107,107,0.15)', borderRadius: 12, padding: '10px 14px', fontSize: '0.68rem', color: 'rgba(255,107,107,0.8)', lineHeight: 1.6 }}>
+            ⚠️ The R350,000 threshold is combined family income. Even if your family earns slightly above this, apply — NSFAS sometimes makes exceptions for SASSA households and students with extenuating circumstances.
+          </div>
+        </>
+      )}
+
+      {/* Academic progress rules */}
+      {section === 'academic' && (
+        <>
+          <div style={{ background: 'rgba(232,131,74,0.08)', border: '1px solid rgba(232,131,74,0.15)', borderRadius: 12, padding: '10px 14px', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            These rules determine whether NSFAS continues funding you year to year. Understand them before results come out.
+          </div>
+          {ACADEMIC_RULES.map(r => (
+            <div key={r.rule} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderLeft: '3px solid var(--coral)', borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 5 }}>{r.rule}</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{r.detail}</div>
+            </div>
+          ))}
+          <div style={{ background: 'rgba(78,207,158,0.06)', border: '1px solid rgba(78,207,158,0.12)', borderRadius: 12, padding: '10px 14px' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--teal)', marginBottom: 4 }}>Pro tip</div>
+            <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.55 }}>
+              If you failed a semester and are at risk of breaching the 50% threshold, visit your SFAO immediately — before results are officially released. Early intervention (supplementary exams, academic support plans) can prevent a funding suspension.
             </div>
           </div>
-        </div>
-      ))}
+        </>
+      )}
+
+      {/* Contacts */}
+      {section === 'contacts' && (
+        <>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '10px 14px', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            Save these contacts before you need them. The call centre is free from any SA mobile network.
+          </div>
+          {NSFAS_CONTACTS.map(c => (
+            <div key={c.label} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '12px 14px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 3 }}>{c.label}</div>
+                <div style={{ fontSize: '0.64rem', color: 'var(--text-tertiary)', lineHeight: 1.4 }}>{c.note}</div>
+              </div>
+              <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                {c.link ? (
+                  <a href={c.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', fontWeight: 700, textDecoration: 'none' }}>
+                    {c.value} →
+                  </a>
+                ) : (
+                  <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', fontWeight: 700 }}>{c.value}</div>
+                )}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+
+      {/* Timeline */}
+      {section === 'timeline' && (
+        <>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '10px 14px', fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            What to expect at each stage of the NSFAS payment process — and when to start worrying.
+          </div>
+          {[
+            { phase: 'Application approved', timing: 'Nov – Jan', detail: 'After NSFAS approves your application, your institution confirms your registration. This triggers the first allowance disbursement.', color: 'var(--teal)' },
+            { phase: 'First disbursement', timing: '5–7 business days after registration confirmed', detail: 'Living, transport, and book allowances are released to your wallet or bank. If your banking details are unverified, expect a 10–14 day delay while verification completes.', color: 'var(--gold)' },
+            { phase: 'Monthly allowances', timing: '1st–5th of each month', detail: 'Living and transport allowances should arrive by the 5th of each month. If they haven\'t by the 7th, start the escalation process (Step 1 in the escalation guide).', color: 'var(--gold)' },
+            { phase: 'Late payment trigger', timing: 'Day 6+', detail: 'A payment more than 5 business days late qualifies for a formal appeal. Gather your bank statement (showing no credit) as evidence before submitting.', color: 'var(--coral)' },
+            { phase: 'Appeal resolution', timing: '15 business days', detail: 'NSFAS is required to resolve appeals within 15 business days of receipt. If unresolved, escalate to DHET with your appeal reference number.', color: 'var(--danger)' },
+            { phase: 'Academic year end', timing: 'Nov–Dec', detail: 'NSFAS checks your academic progress before confirming funding for the following year. Ensure your results are submitted to NSFAS by your institution before December.', color: 'var(--text-secondary)' },
+          ].map((t, i) => (
+            <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderLeft: `3px solid ${t.color}`, borderRadius: 12, padding: '12px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>{t.phase}</div>
+                <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: t.color, flexShrink: 0 }}>{t.timing}</div>
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{t.detail}</div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   )
 }

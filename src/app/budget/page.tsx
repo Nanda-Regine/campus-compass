@@ -34,11 +34,16 @@ export default async function BudgetPage({ searchParams }: { searchParams: { tab
       .order('shift_date', { ascending: false }),
   ])
 
+  const VALID_BUDGET_TABS = ['overview','expenses','wallet','nsfas','ai_coach','appeal','credit','literacy'] as const
+  type BudgetTab = typeof VALID_BUDGET_TABS[number]
+  const rawBudgetTab = searchParams.tab
+  const validatedTab: BudgetTab | undefined = VALID_BUDGET_TABS.includes(rawBudgetTab as BudgetTab) ? rawBudgetTab as BudgetTab : undefined
+
   const isPremium = profile?.is_premium || ['scholar', 'nova_unlimited'].includes(profile?.subscription_tier ?? '')
 
   return (
     <BudgetClient
-      initialTab={searchParams.tab}
+      initialTab={validatedTab}
       initialData={{
         budget:        budget        ?? null,
         expenses:      expenses      ?? [],

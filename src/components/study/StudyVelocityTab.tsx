@@ -31,7 +31,8 @@ interface ModuleVelocity {
   risk: 'on_track' | 'watch' | 'behind' | 'critical' | 'no_exam'
 }
 
-const HOURS_PER_CREDIT = 10 // NQF SA standard: ~10 notional hours per credit
+const HOURS_PER_CREDIT_STANDARD = 10 // NQF SA standard
+const HOURS_PER_CREDIT_HARD    = 13 // user-flagged hard module multiplier
 
 function calcRisk(ratio: number | null): ModuleVelocity['risk'] {
   if (ratio === null) return 'no_exam'
@@ -58,6 +59,13 @@ function VelocityBar({ ratio, color }: { ratio: number; color: string }) {
   )
 }
 
+const HARD_MODS_KEY = 'varsityos-hard-modules'
+function loadHardMods(): Set<string> {
+  if (typeof window === 'undefined') return new Set()
+  try { return new Set(JSON.parse(localStorage.getItem(HARD_MODS_KEY) ?? '[]') as string[]) }
+  catch { return new Set() }
+}
+
 export default function StudyVelocityTab({ modules, userId }: { modules: Module[]; userId: string }) {
   const supabase   = createClient()
   const [velocity, setVelocity]   = useState<ModuleVelocity[]>([])
@@ -65,6 +73,17 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
   const [logging,  setLogging]    = useState(false)
   const [form,     setForm]       = useState({ moduleId: '', minutes: 60, notes: '' })
   const [showForm, setShowForm]   = useState(false)
+  const [hardMods, setHardMods]   = useState<Set<string>>(loadHardMods)
+
+  const toggleHard = (id: string) => {
+    setHardMods(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      if (typeof window !== 'undefined') localStorage.setItem(HARD_MODS_KEY, JSON.stringify([...next]))
+      return next
+    })
+    load()
+  }
 
   const load = useCallback(async () => {
     if (!modules.length) { setLoading(false); return }
@@ -90,7 +109,8 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
         .reduce((acc, s) => acc + (s.duration_minutes ?? 0), 0) / 60
       const avgHoursPerDay = last7Hours / 7
 
-      const requiredHours = (mod.credits || 4) * HOURS_PER_CREDIT
+      const hpc = hardMods.has(mod.id) ? HOURS_PER_CREDIT_HARD : HOURS_PER_CREDIT_STANDARD
+      const requiredHours = (mod.credits || 4) * hpc
       const remainingHours = Math.max(0, requiredHours - totalHours)
 
       const nextExam = exams
@@ -357,14 +377,66 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
                   Add an exam date to see required pace.
                 </div>
               )}
+
+              {/* Difficulty toggle */}
+              <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  onClick={() => toggleHard(v.module.id)}
+                  style={{
+                    fontSize: '0.6rem', fontFamily: 'var(--font-mono)', cursor: 'pointer',
+                    padding: '3px 8px', borderRadius: 6, border: 'none',
+                    background: hardMods.has(v.module.id) ? 'rgba(249,115,22,0.12)' : 'var(--bg-base)',
+                    color: hardMods.has(v.module.id) ? '#f97316' : 'var(--text-muted)',
+                    outline: `0.5px solid ${hardMods.has(v.module.id) ? '#f9731630' : 'var(--border-subtle)'}`,
+                  }}
+                >
+                  {hardMods.has(v.module.id) ? '🔥 Hard module (13h/credit)' : '○ Mark as hard module (13h/credit)'}
+                </button>
+              </div>
             </div>
           </div>
         )
       })}
 
+      {/* Sleep-study balance warning */}
+      {(() => {
+        const totalRequired = velocity.reduce((s, v) => s + (v.requiredPerDay ?? 0), 0)
+        if (totalRequired > 4) return (
+          <div style={{ padding: '12px 14px', borderRadius: 12, background: 'rgba(251,113,133,0.07)', border: '1px solid rgba(251,113,133,0.2)' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fb7185', marginBottom: 4 }}>⚠️ Pace risk: {totalRequired.toFixed(1)}h/day required across all modules</div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              Sustained studying at {totalRequired.toFixed(1)}h/day is unsustainable. Research shows cognitive performance declines sharply after 4 hours of focused work per day. Prioritise: (1) Drop non-assessed content, (2) Focus on past-paper question patterns, (3) Sleep 7h minimum — sleep consolidates memory more effectively than an extra study hour.
+            </div>
+          </div>
+        )
+        return null
+      })()}
+
+      {/* Recovery plan for critical modules */}
+      {velocity.some(v => v.risk === 'critical') && (
+        <div style={{ padding: '14px', borderRadius: 14, background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f87171', marginBottom: 10 }}>🚨 Critical velocity recovery plan</div>
+          {[
+            { step: '1', action: 'Triage', detail: 'Identify the 20% of topics that appear in 80% of past papers for this module. Study only those until 3 days before the exam.' },
+            { step: '2', action: 'Past papers', detail: 'Do one past paper under timed conditions every 2 days. Don\'t study randomly — study what the exam actually tests.' },
+            { step: '3', action: 'Consolidate notes', detail: 'Convert your notes into a single 1-page summary sheet per module. Writing it forces your brain to prioritise.' },
+            { step: '4', action: 'Study blocks', detail: 'Three 1.5-hour focused blocks per day (morning, afternoon, evening) with 30-min breaks between. Total: 4.5h/day max — beyond that is cognitive debt.' },
+            { step: '5', action: 'Ask for help', detail: 'If you\'re this far behind, book a session with a peer tutor or lecturer. One session can unlock more understanding than 3 days of solo reading.' },
+          ].map(s => (
+            <div key={s.step} style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+              <div style={{ width: 20, height: 20, flexShrink: 0, borderRadius: '50%', background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#f87171' }}>{s.step}</div>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>{s.action}</div>
+                <div style={{ fontSize: '0.67rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{s.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Footer note */}
       <div style={{ textAlign: 'center', fontSize: '0.62rem', color: 'var(--text-muted)', paddingBottom: 8 }}>
-        Required hours estimated at {HOURS_PER_CREDIT}h per credit (NQF notional hours). Log sessions after studying to keep velocity accurate.
+        Standard: {HOURS_PER_CREDIT_STANDARD}h per credit · Hard mode: {HOURS_PER_CREDIT_HARD}h per credit (NQF notional hours). Toggle difficulty per module above.
       </div>
     </div>
   )

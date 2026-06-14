@@ -27,7 +27,7 @@ interface Habit {
   totalCompleted: number
 }
 
-type HabitPack = 'study' | 'wellness' | 'finances' | 'social' | 'morning' | 'custom'
+type HabitPack = 'study' | 'wellness' | 'finances' | 'social' | 'morning' | 'mental_health' | 'load_shedding' | 'exam_mode' | 'deep_work' | 'custom'
 
 // ─── Pre-built packs ──────────────────────────────────────────
 
@@ -101,6 +101,51 @@ const PACKS: Pack[] = [
       { id: 'c2', name: 'Introduce yourself to one new person', cue: 'First day of every week', reward: 'Your network grows 52x per year', frequency: 'weekly', emoji: '👋' },
       { id: 'c3', name: 'Attend one study group session', cue: 'Wednesdays', reward: 'Accountability + shared notes', frequency: 'weekly', emoji: '👥' },
       { id: 'c4', name: 'Do one thing kind without being asked', cue: 'Random daily trigger', reward: 'Positive ripple you can\'t predict', frequency: 'daily', emoji: '💚' },
+    ],
+  },
+  {
+    id: 'mental_health', name: 'Mind First', description: 'Daily rituals that protect your mental health through the academic grind.',
+    color: 'var(--rose, #FB7185)', bg: 'rgba(251,113,133,0.08)', emoji: '🧠',
+    habits: [
+      { id: 'mh1', name: 'Morning gratitude (3 things)', cue: 'Before you check your phone', reward: 'Retrains your brain to notice good — backed by 12-week studies', frequency: 'daily', emoji: '🙏' },
+      { id: 'mh2', name: '10-minute free journal', cue: 'After dinner, pen and paper only', reward: 'Externalises anxiety — stops thoughts looping at 2am', frequency: 'daily', emoji: '📓' },
+      { id: 'mh3', name: 'Digital sunset at 9pm', cue: 'Set a phone alarm called "Sunset"', reward: '40% deeper sleep; less comparison anxiety', frequency: 'daily', emoji: '🌅' },
+      { id: 'mh4', name: '5-minute nature or sunlight break', cue: 'Between study blocks', reward: 'Serotonin boost that lasts 2–3 hours', frequency: 'daily', emoji: '☀️' },
+      { id: 'mh5', name: 'Box breathing when stressed', cue: 'When you feel your chest tighten', reward: 'Cortisol drops measurably in 90 seconds', frequency: 'daily', emoji: '🫁' },
+      { id: 'mh6', name: 'One screen-free social hour', cue: 'Saturday afternoon', reward: 'Real connection restores what social media drains', frequency: 'weekly', emoji: '🤝' },
+    ],
+  },
+  {
+    id: 'load_shedding', name: 'Load Shedding Proof', description: 'Stay productive when Eskom cuts the power. Built for SA students.',
+    color: 'var(--gold)', bg: 'var(--gold-dim)', emoji: '🕯️',
+    habits: [
+      { id: 'ls1', name: 'Charge devices before 8am', cue: 'First thing after waking', reward: 'Never caught at 5% when power goes', frequency: 'daily', emoji: '🔋' },
+      { id: 'ls2', name: 'Print or screenshot tomorrow\'s key notes', cue: 'Night before, while power is on', reward: 'Offline revision ready for any outage', frequency: 'daily', emoji: '🖨️' },
+      { id: 'ls3', name: 'Pre-plan candle/torch study spot', cue: 'When load shedding schedule drops', reward: 'No scramble when it goes dark at 6pm', frequency: 'weekly', emoji: '🕯️' },
+      { id: 'ls4', name: 'Download lectures/videos for offline', cue: 'After your last online session', reward: 'Content available even on Stage 6', frequency: 'daily', emoji: '⬇️' },
+      { id: 'ls5', name: 'Use load shedding for flashcard review', cue: 'When power goes — no laptop needed', reward: 'Turns frustration into 25 min of spaced repetition', frequency: 'daily', emoji: '🗂️' },
+    ],
+  },
+  {
+    id: 'exam_mode', name: 'Exam Mode', description: 'The habits that separate distinction students from those who just scrape through.',
+    color: 'var(--coral, #F97316)', bg: 'rgba(249,115,22,0.08)', emoji: '📝',
+    habits: [
+      { id: 'em1', name: 'One past paper per day (timed)', cue: 'After your first study block', reward: 'Question pattern recognition builds in 5 days', frequency: 'daily', emoji: '📄' },
+      { id: 'em2', name: 'Sleep by 10:30pm', cue: 'Phone alarm at 10pm = start winding down', reward: 'Memory consolidates during sleep — cramming at 2am costs more than it earns', frequency: 'daily', emoji: '🌙' },
+      { id: 'em3', name: 'No social media after 9pm', cue: 'Put phone in drawer after dinner', reward: 'Removes comparison anxiety before sleep + saves 45 min of scrolling', frequency: 'daily', emoji: '📵' },
+      { id: 'em4', name: 'Protein breakfast on exam day', cue: 'Set ingredients out night before', reward: 'Brain needs glucose + protein — skipping breakfast drops concentration by 20%', frequency: 'daily', emoji: '🥚' },
+      { id: 'em5', name: 'Review weak topics first each session', cue: 'Before you open what you already know', reward: 'Strengthens lowest-scored areas first — maximises marks gained', frequency: 'daily', emoji: '🎯' },
+    ],
+  },
+  {
+    id: 'deep_work', name: 'Deep Work', description: 'Cal Newport\'s framework for producing your best academic work without distraction.',
+    color: 'var(--indigo, #6366F1)', bg: 'rgba(99,102,241,0.08)', emoji: '🔬',
+    habits: [
+      { id: 'dw1', name: '90-min deep work block (phone away)', cue: 'After morning routine — before 11am', reward: 'Produces 4× the output of distracted working — Cal Newport', frequency: 'daily', emoji: '🔒' },
+      { id: 'dw2', name: 'Single-task only (one tab open)', cue: 'When you sit at your desk', reward: 'Task-switching costs 23 min recovery time per interruption', frequency: 'daily', emoji: '🎯' },
+      { id: 'dw3', name: 'End-of-day shutdown ritual', cue: 'When your last study session ends', reward: 'Tells your brain work is done — prevents evening anxiety', frequency: 'daily', emoji: '✅' },
+      { id: 'dw4', name: 'Plan tomorrow the night before', cue: 'During shutdown ritual', reward: 'Zeigarnik effect: planning releases the mental "open loop" so you sleep better', frequency: 'daily', emoji: '📋' },
+      { id: 'dw5', name: 'Weekly deep work review (Sunday 5pm)', cue: 'Before the week starts', reward: 'Know exactly what got done vs planned — compound improvement week on week', frequency: 'weekly', emoji: '📊' },
     ],
   },
 ]

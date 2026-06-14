@@ -232,6 +232,44 @@ export default function GraduationOptimizer({ hasModules }: { hasModules: boolea
           </div>
         )}
       </div>
+
+      {/* ── Static info panel ── always shown ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 4 }}>
+
+        {/* Gap type legend */}
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
+          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Understanding gaps</div>
+          {[
+            { type: 'Failed core module', detail: 'A compulsory module you didn\'t pass. Must be repeated — no equivalent substitution. Delays graduation by at least one semester.', color: '#ef4444' },
+            { type: 'Missing prerequisite', detail: 'A module that must be passed before you can register for a later one. Check your faculty handbook for chains.', color: '#f97316' },
+            { type: 'Credit shortfall', detail: 'You don\'t have enough credits to qualify for graduation. Typically 360 credits for a 3-year degree, 480 for 4-year.', color: '#f59e0b' },
+            { type: 'N+ rule risk', detail: 'You are approaching or have exceeded the funded years (N+1 or N+2). NSFAS funding may be suspended. Appeals are possible.', color: '#a78bfa' },
+          ].map(g => (
+            <div key={g.type} style={{ display: 'flex', gap: 8, marginBottom: 7, paddingLeft: 8, borderLeft: `2px solid ${g.color}` }}>
+              <div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: g.color, marginBottom: 2 }}>{g.type}</div>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{g.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* SA-specific graduation info */}
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
+          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>SA graduation calendar</div>
+          {[
+            { item: 'Graduation ceremonies', detail: 'Most South African public universities hold two ceremonies per year: April (for November/December completions) and December/October (for June completions). If you complete mid-year, you\'ll often wait 6 months for your ceremony.' },
+            { item: 'Supplementary exams', detail: 'If your final mark is 40–49%, most SA institutions offer a supplementary (supp) exam — one more attempt at the paper. A supp pass is usually capped at 50%. Below 40% = repeat the module (not a supp). Check your faculty rules — some departments don\'t offer supps for all modules.' },
+            { item: 'Cost of extending graduation', detail: 'One extra semester at a South African public university typically costs R15,000–R45,000 in tuition (depending on institution and qualification). Add accommodation: R6,000–R18,000. Extension is expensive — addressing gaps early costs far less than extending.' },
+            { item: 'Alternative options', detail: 'If you\'re significantly behind: (1) Part-time registration reduces annual cost, (2) Summer school at some universities allows extra credits, (3) Credit transfer from a related completed qualification may reduce remaining modules. Discuss with your faculty advisor.' },
+          ].map(i => (
+            <div key={i.item} style={{ marginBottom: 10, paddingLeft: 8, borderLeft: '2px solid rgba(56,189,248,0.3)' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#38BDF8', marginBottom: 2 }}>{i.item}</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{i.detail}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

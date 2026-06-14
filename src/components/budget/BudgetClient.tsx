@@ -17,6 +17,7 @@ import ReceiptScanner from '@/components/budget/ReceiptScanner'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
 import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
+import FinancialLiteracy101 from '@/components/finance/FinancialLiteracy101'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
 interface WorkedShift {
@@ -43,16 +44,17 @@ interface BudgetClientProps {
   }
 }
 
-type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit'
+type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit' | 'literacy'
 
 const TABS = [
-  { id: 'overview' as TabId, label: 'Overview', icon: '📊' },
-  { id: 'expenses' as TabId, label: 'Expenses', icon: '💳' },
-  { id: 'wallet' as TabId, label: 'Wallet', icon: '💼' },
-  { id: 'nsfas' as TabId, label: 'NSFAS', icon: '🏛️' },
-  { id: 'ai_coach' as TabId, label: 'AI Coach', icon: '🤖' },
-  { id: 'appeal' as TabId, label: 'Appeal', icon: '📝' },
-  { id: 'credit' as TabId, label: 'Credit', icon: '📈' },
+  { id: 'overview' as TabId,  label: 'Overview',  icon: '📊' },
+  { id: 'expenses' as TabId,  label: 'Expenses',  icon: '💳' },
+  { id: 'wallet' as TabId,    label: 'Wallet',    icon: '💼' },
+  { id: 'nsfas' as TabId,     label: 'NSFAS',     icon: '🏛️' },
+  { id: 'ai_coach' as TabId,  label: 'AI Coach',  icon: '🤖' },
+  { id: 'appeal' as TabId,    label: 'Appeal',    icon: '📝' },
+  { id: 'credit' as TabId,    label: 'Credit',    icon: '📈' },
+  { id: 'literacy' as TabId,  label: 'Money 101', icon: '🎓' },
 ]
 
 interface IncomeEntry {
@@ -814,9 +816,52 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               </button>
             </div>
 
+            {/* Savings Score card — shown when there are goals */}
+            {savingsGoals.length > 0 && (() => {
+              const totalPct = savingsGoals.reduce((s, g) => {
+                return s + (g.target_amount > 0 ? Math.min(100, Math.round((g.current_amount / g.target_amount) * 100)) : 0)
+              }, 0)
+              const avgPct = Math.round(totalPct / savingsGoals.length)
+              const score = Math.round((savingsGoals.length * 10) + avgPct)
+              const scoreColor = score >= 80 ? '#4ecf9e' : score >= 50 ? '#f59e0b' : '#FB7185'
+              return (
+                <div className="rounded-2xl p-4 flex items-center gap-4" style={{ background: `${scoreColor}0C`, border: `0.5px solid ${scoreColor}30` }}>
+                  <div className="text-center flex-shrink-0">
+                    <div className="font-display font-black text-2xl" style={{ color: scoreColor }}>{score}</div>
+                    <div className="font-mono text-[0.5rem] text-white/30 mt-0.5">Savings Score</div>
+                  </div>
+                  <div>
+                    <div className="font-display font-bold text-white text-xs">{savingsGoals.length} active goal{savingsGoals.length !== 1 ? 's' : ''}</div>
+                    <div className="font-mono text-[0.58rem] text-white/40 mt-0.5">Avg {avgPct}% funded · Keep contributing weekly to grow your score</div>
+                  </div>
+                </div>
+              )
+            })()}
+
             {showGoalForm && (
               <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Create savings goal</div>
+                {/* Quick templates */}
+                <div>
+                  <div className="font-mono text-[0.55rem] text-white/25 mb-1.5">Quick templates</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { emoji: '🛡️', name: 'Emergency Fund',  target: '3000' },
+                      { emoji: '📚', name: 'Textbooks',        target: '1500' },
+                      { emoji: '💻', name: 'Laptop',           target: '8000' },
+                      { emoji: '🏖️', name: 'Holiday',          target: '2500' },
+                      { emoji: '🚗', name: 'Car Deposit',      target: '15000' },
+                    ].map(t => (
+                      <button
+                        key={t.name}
+                        onClick={() => { setGoalEmoji(t.emoji); setGoalName(t.name); setGoalTarget(t.target) }}
+                        className="px-2.5 py-1 rounded-full font-mono text-[0.55rem] border bg-white/5 border-white/10 text-white/50 hover:text-teal-400 hover:border-teal-600/40 transition-all"
+                      >
+                        {t.emoji} {t.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex gap-2">
                   <input
                     className="w-12 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-2 py-2.5 text-lg text-center outline-none transition-all"
@@ -861,41 +906,86 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="text-3xl mb-2">🎯</div>
                 <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a target and track progress toward it.</p>
+                <div className="flex flex-wrap justify-center gap-1.5 mt-3 px-4">
+                  {[
+                    { emoji: '🛡️', name: 'Emergency Fund',  target: '3000' },
+                    { emoji: '📚', name: 'Textbooks',        target: '1500' },
+                    { emoji: '💻', name: 'Laptop',           target: '8000' },
+                  ].map(t => (
+                    <button
+                      key={t.name}
+                      onClick={() => { setGoalEmoji(t.emoji); setGoalName(t.name); setGoalTarget(t.target); setShowGoalForm(true) }}
+                      className="px-3 py-1.5 rounded-full font-mono text-[0.58rem] border bg-teal-600/10 border-teal-500/25 text-teal-400 hover:bg-teal-600/20 transition-all"
+                    >
+                      {t.emoji} {t.name}
+                    </button>
+                  ))}
+                </div>
                 <button
                   onClick={() => setShowGoalForm(true)}
-                  className="mt-4 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
+                  className="mt-3 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
                 >
-                  + Set a goal
+                  + Custom goal
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
                 {savingsGoals.map(goal => {
                   const pct = goal.target_amount > 0 ? Math.min(100, Math.round((goal.current_amount / goal.target_amount) * 100)) : 0
+                  const isComplete = pct >= 100
+                  const milestones = [25, 50, 75, 100]
+                  const barColor = isComplete ? '#f59e0b' : '#14b8a6'
                   return (
-                    <div key={goal.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
+                    <div key={goal.id} className="rounded-2xl p-4 transition-all" style={{
+                      background: isComplete ? 'rgba(245,158,11,0.06)' : 'var(--bg-surface)',
+                      border: isComplete ? '0.5px solid rgba(245,158,11,0.4)' : '0.5px solid var(--border-subtle)',
+                    }}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">{goal.emoji}</span>
                           <div>
-                            <div className="font-display font-bold text-white text-sm">{goal.name}</div>
+                            <div className="flex items-center gap-1.5">
+                              <div className="font-display font-bold text-white text-sm">{goal.name}</div>
+                              {isComplete && <span className="text-xs">✨</span>}
+                            </div>
                             {goal.deadline && (
                               <div className="font-mono text-[0.55rem] text-white/30">By {fmt.dateShort(goal.deadline)}</div>
                             )}
                           </div>
                         </div>
-                        <button
-                          onClick={() => contributeToGoal(goal.id, goal.current_amount, goal.target_amount)}
-                          className="font-mono text-[0.6rem] bg-teal-600/15 hover:bg-teal-600/30 text-teal-400 px-3 py-1 rounded-lg transition-all border border-teal-600/20"
-                        >
-                          + Add
-                        </button>
+                        {!isComplete ? (
+                          <button
+                            onClick={() => contributeToGoal(goal.id, goal.current_amount, goal.target_amount)}
+                            className="font-mono text-[0.6rem] bg-teal-600/15 hover:bg-teal-600/30 text-teal-400 px-3 py-1 rounded-lg transition-all border border-teal-600/20"
+                          >
+                            + Add
+                          </button>
+                        ) : (
+                          <span className="font-mono text-[0.58rem] text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-lg">Goal reached!</span>
+                        )}
                       </div>
                       <div className="h-2 bg-white/8 rounded-full overflow-hidden mb-2">
-                        <div className="h-full bg-teal-500 rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+                        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: barColor }} />
+                      </div>
+                      {/* Milestone diamonds */}
+                      <div className="flex items-center gap-1 mb-2">
+                        {milestones.map(m => {
+                          const hit = pct >= m
+                          const milestoneBadges: Record<number, string> = { 25: '¼', 50: '½', 75: '¾', 100: '✓' }
+                          return (
+                            <div key={m} className="flex items-center gap-0.5">
+                              <span className="font-mono text-[0.5rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
+                                ◆
+                              </span>
+                              <span className="font-mono text-[0.45rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
+                                {milestoneBadges[m]}
+                              </span>
+                            </div>
+                          )
+                        })}
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(goal.current_amount)}</div>
+                        <div className="font-mono text-[0.58rem]" style={{ color: barColor }}>{fmt.currencyShort(goal.current_amount)}</div>
                         <div className="font-mono text-[0.58rem] text-white/30">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
                       </div>
                     </div>
@@ -1091,6 +1181,11 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         {/* ─── Credit Score Education Tab ─── */}
         {activeTab === 'credit' && (
           <CreditScoreEducation />
+        )}
+
+        {/* ─── Financial Literacy 101 Tab ─── */}
+        {activeTab === 'literacy' && (
+          <FinancialLiteracy101 />
         )}
 
         </TabErrorBoundary>

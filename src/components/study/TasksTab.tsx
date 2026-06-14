@@ -354,6 +354,9 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
         </div>
       )}
 
+      {/* ── GTD insight strip ── */}
+      {view === 'today' && pendingTasks.length > 0 && <GTDInsightCard pendingCount={pendingTasks.length} overdueCount={overdueCount} />}
+
       {/* ── Task list ── */}
       {filteredTasks.length === 0 ? (
         <div className="text-center py-12">
@@ -550,6 +553,64 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
           <Input label="Notes (optional)" placeholder="Any extra details…" {...register('notes')} />
         </form>
       </Modal>
+    </div>
+  )
+}
+
+// ─── GTD Insight card ────────────────────────────────────────────────────────
+
+function GTDInsightCard({ pendingCount, overdueCount }: { pendingCount: number; overdueCount: number }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{
+      borderRadius: 13, overflow: 'hidden',
+      background: 'rgba(99,102,241,0.05)',
+      border: '0.5px solid rgba(99,102,241,0.2)',
+    }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          width: '100%', padding: '9px 12px', background: 'none', border: 'none',
+          cursor: 'pointer', textAlign: 'left', gap: 8,
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span style={{ fontSize: 11 }}>📥</span>
+          <span className="font-mono text-[0.6rem] font-bold" style={{ color: '#818CF8', letterSpacing: '0.06em' }}>
+            GTD principles for {pendingCount} open task{pendingCount !== 1 ? 's' : ''}
+          </span>
+        </span>
+        <span style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+      </button>
+      {open && (
+        <div className="space-y-3 px-3 pb-3">
+          {overdueCount > 0 && (
+            <div className="rounded-lg p-2.5 font-mono text-[0.6rem]" style={{ background: 'rgba(239,68,68,0.08)', border: '0.5px solid rgba(239,68,68,0.2)', color: '#f87171' }}>
+              ⚠️ {overdueCount} overdue task{overdueCount !== 1 ? 's' : ''} — GTD rule: overdue items create mental load and kill focus. Address them before adding anything new.
+            </div>
+          )}
+          {[
+            {
+              book: 'Getting Things Done — David Allen',
+              insight: 'The GTD system has 5 steps: Capture (get every commitment out of your head into this list), Clarify (define the next physical action), Organise (assign due date + priority), Reflect (weekly review — look at every open task and decide its next step), Engage (work by context: assignments together, admin together, not randomly).',
+            },
+            {
+              book: 'The Compound Effect — Darren Hardy',
+              insight: '"Small, seemingly insignificant steps completed consistently over time will create a radical difference." Breaking an assignment into 4–5 smaller tasks and completing one daily beats one panicked all-nighter. Every task you close today compounds into exam readiness next month.',
+            },
+            {
+              book: 'Atomic Habits — James Clear',
+              insight: 'Pair habits with tasks: "After my 9am class, I will immediately open my task list and complete one item before lunch." This implementation intention removes decision fatigue. Clear also recommends a weekly review — match your task list to your study schedule every Sunday.',
+            },
+          ].map(item => (
+            <div key={item.book} className="pl-2.5" style={{ borderLeft: '2px solid rgba(99,102,241,0.4)' }}>
+              <div className="font-mono text-[0.55rem] mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{item.book}</div>
+              <div className="font-mono text-[0.62rem] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.insight}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

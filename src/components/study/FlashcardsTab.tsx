@@ -103,6 +103,54 @@ function moduleAccent(modules: Module[], id: string | null): string {
   return MODULE_COLOURS[mod.color]?.dot ?? '#4ecf9e'
 }
 
+// ── SM-2 explainer ────────────────────────────────────────────────────────────
+
+function SM2Explainer() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{
+      borderRadius: 13, overflow: 'hidden',
+      background: 'rgba(129,140,248,0.05)',
+      border: '0.5px solid rgba(129,140,248,0.2)',
+    }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+          cursor: 'pointer', textAlign: 'left', gap: 8,
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span style={{ fontSize: 12 }}>🧠</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700, color: '#818CF8', letterSpacing: '0.06em' }}>
+            How SM-2 spaced repetition works
+          </span>
+        </span>
+        <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+      </button>
+      {open && (
+        <div style={{ padding: '0 14px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <p style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+            SM-2 (SuperMemo 2) is the algorithm behind the most effective flashcard apps. It schedules each card based on how well you remember it — cards you find easy come back much later; cards you struggle with come back tomorrow.
+          </p>
+          {[
+            { label: 'The forgetting curve', text: 'Within 24 hours of learning, you forget ~70% of new information (Ebbinghaus, 1885). SM-2 schedules a review just before you forget, reinforcing the memory at the perfect moment.' },
+            { label: 'Ease factor', text: 'Each card has an ease factor (starts at 2.5). If you rate a card "Again" or "Hard", the factor drops — intervals stay short. "Easy" ratings push it up — the card disappears for weeks or months.' },
+            { label: 'How intervals work', text: 'Review 1: next day. Review 2: 6 days later. Review 3+: interval × ease factor. A card with factor 2.5 reviewed every 6 days grows to 15 days, then 38 days, then 95 days — exponentially.' },
+            { label: 'Why it matters', text: 'Students who use spaced repetition score 50–90% higher on retention tests vs re-reading. 20 minutes of SM-2 flashcards beats 2 hours of passive review.' },
+          ].map(item => (
+            <div key={item.label} style={{ paddingLeft: 8, borderLeft: '2px solid rgba(129,140,248,0.35)' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#818CF8', marginBottom: 2 }}>{item.label}</div>
+              <div style={{ fontSize: '0.63rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{item.text}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function DueChip({ count, color }: { count: number; color: string }) {
@@ -156,6 +204,9 @@ function DeckListScreen({
           </div>
         </div>
       )}
+
+      {/* SM-2 How it works — collapsible */}
+      <SM2Explainer />
 
       {/* Deck cards */}
       {decks.length === 0 ? (

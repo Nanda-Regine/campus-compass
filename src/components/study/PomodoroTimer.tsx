@@ -454,9 +454,71 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         </div>
       </div>
 
+      {/* ── Flow State insight ────────────────────────────────────────────── */}
+      <FlowInsightCard workMinutes={settings.workMinutes} />
+
       {/* ── Settings panel ────────────────────────────────────────────────── */}
       {showSettings && (
         <SettingsPanel settings={settings} onApply={applySettings} onClose={() => setShowSettings(false)} />
+      )}
+    </div>
+  )
+}
+
+// ─── Flow State insight card ─────────────────────────────────────────────────
+
+function FlowInsightCard({ workMinutes }: { workMinutes: number }) {
+  const [open, setOpen] = useState(false)
+  const inFlowZone = workMinutes >= 25 && workMinutes <= 90
+  return (
+    <div style={{
+      borderRadius: 14, overflow: 'hidden',
+      background: 'rgba(13,148,136,0.05)',
+      border: '0.5px solid rgba(13,148,136,0.2)',
+    }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+          cursor: 'pointer', textAlign: 'left', gap: 8,
+        }}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span style={{ fontSize: 12 }}>🌊</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700, color: '#4db6ac', letterSpacing: '0.06em' }}>
+            The science of deep focus
+          </span>
+        </span>
+        <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+      </button>
+      {open && (
+        <div style={{ padding: '0 14px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {inFlowZone && (
+            <div style={{ background: 'rgba(13,148,136,0.12)', border: '0.5px solid rgba(13,148,136,0.3)', borderRadius: 9, padding: '7px 10px', fontSize: '0.62rem', color: '#4db6ac', fontFamily: 'var(--font-mono)' }}>
+              ✓ Your {workMinutes}m session is in the optimal flow range (25–90 min)
+            </div>
+          )}
+          {[
+            {
+              book: 'Flow — Mihaly Csikszentmihalyi',
+              insight: 'Flow is a state of complete absorption where time disappears and performance peaks. It requires clear goals, immediate feedback, and a task that slightly exceeds your current skill. Your Pomodoro timer creates the time container; picking a specific task creates the clear goal.',
+            },
+            {
+              book: 'Deep Work — Cal Newport',
+              insight: 'Newport defines deep work as cognitively demanding tasks performed in a distraction-free state. He found that 90 minutes is the maximum most people can sustain true deep work in one block. Under 25 minutes and your brain doesn\'t have time to fully engage. The sweet spot: 45–90 minute focused sessions.',
+            },
+            {
+              book: 'Why We Sleep — Matthew Walker',
+              insight: 'Concentration and memory encoding both peak in the first 6 hours after waking. Trying to study after 10pm is significantly less effective — the hippocampus consolidates what you learn during sleep, not while awake. Study in morning/afternoon blocks, sleep 7–9 hours, let memory form overnight.',
+            },
+          ].map(item => (
+            <div key={item.book} style={{ paddingLeft: 8, borderLeft: '2px solid rgba(13,148,136,0.4)' }}>
+              <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.35)', marginBottom: 3 }}>{item.book}</div>
+              <div style={{ fontSize: '0.63rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.55 }}>{item.insight}</div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )

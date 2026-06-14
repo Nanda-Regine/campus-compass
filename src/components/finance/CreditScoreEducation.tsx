@@ -39,7 +39,7 @@ function estimateScore(s:ScenarioInput):number{
   return Math.round(Math.min(850,Math.max(300,score)))
 }
 
-type Tab='what'|'bands'|'build'|'simulator'
+type Tab='what'|'bands'|'build'|'sa_rights'|'simulator'
 export default function CreditScoreEducation() {
   const [tab,setTab]=useState<Tab>('what')
   const [scenario,setScenario]=useState<ScenarioInput>({onTimePayments:0,creditUtilisation:80,accountAge:0,inquiries:2})
@@ -57,7 +57,7 @@ export default function CreditScoreEducation() {
       </div>
 
       <div style={{display:'flex',gap:0,overflowX:'auto',borderBottom:'1px solid var(--border-subtle)'}}>
-        {([['what','What is it','📊'],['bands','Score bands','🎯'],['build','How to build','🏗️'],['simulator','Simulator','🔢']] as [Tab,string,string][]).map(([id,l,e])=>(
+        {([['what','What is it','📊'],['bands','Score bands','🎯'],['build','How to build','🏗️'],['sa_rights','SA Rights','🛡️'],['simulator','Simulator','🔢']] as [Tab,string,string][]).map(([id,l,e])=>(
           <button key={id} onClick={()=>setTab(id)} style={{flexShrink:0,padding:'8px 10px',background:'none',border:'none',borderBottom:tab===id?'2px solid var(--gold)':'2px solid transparent',color:tab===id?'var(--gold)':'var(--text-tertiary)',fontSize:'0.65rem',fontFamily:'var(--font-mono)',fontWeight:tab===id?700:400,cursor:'pointer',marginBottom:-1,whiteSpace:'nowrap'}}>
             {e} {l}
           </button>
@@ -114,6 +114,56 @@ export default function CreditScoreEducation() {
           ))}
           <div style={{padding:'10px 14px',background:'rgba(52,211,153,0.06)',border:'1px solid rgba(52,211,153,0.15)',borderRadius:9,fontSize:'0.7rem',color:'var(--teal)',lineHeight:1.6}}>
             💡 ClearScore SA (clearscore.com/za) gives you a free monthly score — no credit card required. Check it every month to track your progress.
+          </div>
+        </div>
+      )}
+
+      {tab==='sa_rights'&&(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{padding:'10px 14px',background:'rgba(99,102,241,0.06)',border:'1px solid rgba(99,102,241,0.15)',borderRadius:10,fontSize:'0.72rem',color:'var(--text-secondary)',lineHeight:1.6}}>
+            South Africa has strong consumer credit rights under the <strong style={{color:'var(--text-primary)'}}>National Credit Act (NCA)</strong>. Most students don&apos;t know these protections exist.
+          </div>
+
+          <div style={{fontSize:'0.68rem',fontFamily:'var(--font-mono)',color:'var(--text-tertiary)',letterSpacing:'0.07em',textTransform:'uppercase',marginTop:4}}>The 3 credit bureaus in SA</div>
+          {[
+            {name:'Experian SA',detail:'One of the largest. Used by most major banks and landlords. Free annual report at experian.co.za.',link:'https://www.experian.co.za'},
+            {name:'TransUnion SA',detail:'Heavily used in retail and vehicle finance decisions. Free annual report at transunion.co.za.',link:'https://www.transunion.co.za'},
+            {name:'XDS (Xpert Decision Systems)',detail:'Smaller bureau, common in telecom and retail credit. Part of the same NCA dispute rights.',link:'https://www.xds.co.za'},
+          ].map(b=>(
+            <div key={b.name} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:11,padding:'11px 14px'}}>
+              <div style={{fontSize:'0.8rem',fontWeight:700,color:'var(--gold)',marginBottom:3}}>{b.name}</div>
+              <div style={{fontSize:'0.7rem',color:'var(--text-secondary)',lineHeight:1.55}}>{b.detail}</div>
+            </div>
+          ))}
+
+          <div style={{fontSize:'0.68rem',fontFamily:'var(--font-mono)',color:'var(--text-tertiary)',letterSpacing:'0.07em',textTransform:'uppercase',marginTop:4}}>Your rights under the NCA</div>
+          {[
+            {right:'Free annual credit report',detail:'Every South African is entitled to one free credit report per year from each bureau. You have 3 bureaus = 3 free reports. Space them across the year (Jan, May, Sep) to monitor your score quarterly for free.'},
+            {right:'Right to dispute errors',detail:'If you find incorrect information on your report (wrong amount, wrong account, wrong status), you can dispute it. The bureau has 20 business days to investigate and respond. If they can\'t verify the information, it must be removed.'},
+            {right:'Prescribed debt',detail:'Debt that is more than 3 years old (for unsecured debt) and where no payment or court action has occurred may be "prescribed" — meaning the creditor loses the right to collect it. This does not apply to home loans, maintenance orders, or recent student loans.'},
+            {right:'Debt counselling protection',detail:'If you are over-indebted (debt repayments exceed income), you have the right to apply for debt counselling under Section 86 of the NCA. A registered debt counsellor (NCR-registered) restructures your payments. No creditor can take legal action while you are in counselling.'},
+          ].map(r=>(
+            <div key={r.right} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderLeft:'3px solid var(--teal)',borderRadius:11,padding:'11px 14px'}}>
+              <div style={{fontSize:'0.78rem',fontWeight:600,color:'var(--text-primary)',marginBottom:4}}>{r.right}</div>
+              <div style={{fontSize:'0.7rem',color:'var(--text-secondary)',lineHeight:1.6}}>{r.detail}</div>
+            </div>
+          ))}
+
+          <div style={{fontSize:'0.68rem',fontFamily:'var(--font-mono)',color:'var(--text-tertiary)',letterSpacing:'0.07em',textTransform:'uppercase',marginTop:4}}>NSFAS &amp; student loan defaults</div>
+          {[
+            {q:'Does NSFAS default hit my credit score?',a:'NSFAS is a bursary-grant system for qualifying students — if you qualify under the means test, your NSFAS debt is converted to a bursary and does not hit credit bureaus. However, if NSFAS deems you ineligible after funding (e.g., income fraud discovered), you may owe the full amount, and failure to repay can be referred to a debt collector which does hit your record.'},
+            {q:'What about private student loans?',a:'Private student loans (e.g., FUNDI, Standard Bank Student Loan, Nedbank Education Loan) behave like any other credit. Missed payments are reported to bureaus and affect your score the same as a credit card default. Set debit orders — never miss these payments.'},
+            {q:'How do I rebuild credit after a default?',a:'1. Negotiate a settlement with the lender — get it in writing. 2. Once paid, request a "paid-up letter" and give it to the bureau to update your record. 3. Open a new secured account (prepaid credit card or small store account). 4. Pay perfectly for 12 months. 5. A default stays on your record for 5 years, but a pattern of good payments after it significantly improves your score.'},
+          ].map(r=>(
+            <div key={r.q} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderLeft:'3px solid var(--coral)',borderRadius:11,padding:'11px 14px'}}>
+              <div style={{fontSize:'0.76rem',fontWeight:600,color:'var(--text-primary)',marginBottom:4}}>{r.q}</div>
+              <div style={{fontSize:'0.7rem',color:'var(--text-secondary)',lineHeight:1.6}}>{r.a}</div>
+            </div>
+          ))}
+
+          <div style={{padding:'10px 14px',background:'rgba(78,207,158,0.06)',border:'1px solid rgba(78,207,158,0.12)',borderRadius:9}}>
+            <div style={{fontSize:'0.7rem',fontWeight:700,color:'var(--teal)',marginBottom:3}}>Need debt help?</div>
+            <div style={{fontSize:'0.67rem',color:'var(--text-tertiary)',lineHeight:1.55}}>NCR (National Credit Regulator) helpline: <strong style={{color:'var(--text-primary)'}}>0860 627 627</strong> · DebtBusters: 0861 663 328 · Both offer free consultations before committing to debt review.</div>
           </div>
         </div>
       )}

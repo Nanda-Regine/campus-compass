@@ -311,12 +311,86 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
         )
       })}
 
+      {/* ── Action plan by overall grade ── */}
+      <div style={{ padding: '14px 16px', borderRadius: 16, background: `${avgMeta.color}08`, border: `0.5px solid ${avgMeta.color}20` }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: avgMeta.color, marginBottom: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          Your action plan — {avgMeta.label}
+        </div>
+        {avgGrade === 'critical' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {['⚡ Do 2 focused 1-hour study sessions every day from now until the exam. No exceptions.', '📄 Download past papers immediately — they\'re your fastest route to understanding question patterns. Check your institution\'s LMS, past exam portal, or StudyPool.', '🎯 Drop everything except core concepts for each module. Use the 80/20 rule: which 20% of topics appear in 80% of past papers? Study those first.', '👥 Tell a friend or family member you\'re in exam crisis — accountability makes cancelling study sessions harder.', '😴 Sleep 7 hours no matter what. Sleep deprivation reduces memory recall by 40%. An all-nighter before an exam costs you more than it buys.'].map((a, i) => (
+              <div key={i} style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6, padding: '6px 10px', background: 'rgba(255,107,107,0.06)', borderRadius: 8, borderLeft: '2px solid #ff6b6b' }}>{a}</div>
+            ))}
+          </div>
+        )}
+        {avgGrade === 'at-risk' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {['📅 Create a per-day study schedule for the remaining days. Assign each day to specific modules — no "I\'ll study whatever" days.', '📄 Start past papers for your lowest-confidence subjects. Do at least one full paper under timed conditions.', '🗂️ For modules where confidence is below 2★: use flashcards for 20 minutes daily to lock in terminology and definitions.', '🚫 Cancel non-essential social commitments for the next week. You can recover socially after results come out.', '🧘 5-minute box breathing before each study session: inhale 4s, hold 4s, exhale 4s, hold 4s. Lowers cortisol so you actually retain what you study.'].map((a, i) => (
+              <div key={i} style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6, padding: '6px 10px', background: 'rgba(232,131,74,0.06)', borderRadius: 8, borderLeft: '2px solid #e8834a' }}>{a}</div>
+            ))}
+          </div>
+        )}
+        {avgGrade === 'fair' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {['📋 Complete your outstanding tasks for each module — you\'re behind on task completion which is dragging your score down.', '📄 Do at least one past paper per subject under timed exam conditions. Mark it honestly and focus revision on the sections you lost marks in.', '🔁 For modules below 3★ confidence: use spaced repetition (flashcards here) daily for the next 5 days to boost confidence.', '✅ Do a 15-minute "exam brain dump" each night — write everything you know about each subject from memory. What you can\'t write, you haven\'t learned yet.'].map((a, i) => (
+              <div key={i} style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6, padding: '6px 10px', background: 'rgba(245,158,11,0.06)', borderRadius: 8, borderLeft: '2px solid #f59e0b' }}>{a}</div>
+            ))}
+          </div>
+        )}
+        {avgGrade === 'good' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {['✅ You\'re on track. Maintain your current study pace — consistency beats cramming.', '📄 Do past papers now to convert your knowledge into marks. Knowing content and passing exams are different skills.', '🎯 Identify your one weakest subject and dedicate 30% of remaining study time to it. Don\'t neglect a subject because you\'re strong in others.', '🧠 Start active recall sessions: close your notes and test yourself. This is 2× more effective than re-reading (research-backed).'].map((a, i) => (
+              <div key={i} style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6, padding: '6px 10px', background: 'rgba(112,144,208,0.06)', borderRadius: 8, borderLeft: '2px solid #7090d0' }}>{a}</div>
+            ))}
+          </div>
+        )}
+        {avgGrade === 'excellent' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {['🌟 Outstanding readiness. Your task completion and confidence are strong.', '📄 Use remaining time to refine, not cram: do past papers, review marking memos, and identify any edge-case topics.', '😴 Prioritise sleep in the final 3 days before each exam. Memory consolidation happens during deep sleep — a rested brain outperforms a crammed one every time.', '📝 On exam day: arrive 20 minutes early, read ALL questions before answering any, allocate time per mark (1 mark ≈ 1 min in most SA exams).'].map((a, i) => (
+              <div key={i} style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.6, padding: '6px 10px', background: 'rgba(78,207,158,0.06)', borderRadius: 8, borderLeft: '2px solid #4ecf9e' }}>{a}</div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Past papers guide ── */}
+      <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(99,102,241,0.06)', border: '0.5px solid rgba(99,102,241,0.15)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#a5b4fc', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Where to find past papers</div>
+        {[
+          { source: 'Institution LMS', detail: 'Blackboard, Moodle, eFundi, or iKamva — check your module page under "Resources" or "Past Assessments".' },
+          { source: 'StudyPool / Ananzi', detail: 'Student-uploaded SA past papers across most public universities. Search "[module code] past exam paper".' },
+          { source: 'Library portal', detail: 'Your institution library portal often archives exam papers by year and module. Ask at the reference desk if you can\'t find them online.' },
+          { source: 'Senior students', detail: 'Study groups and WhatsApp channels for your course are the fastest source. Past papers circulate heavily in these communities.' },
+        ].map(p => (
+          <div key={p.source} style={{ marginBottom: 8 }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#a5b4fc', marginBottom: 2 }}>{p.source}</div>
+            <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>{p.detail}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Anxiety management ── */}
+      <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(251,113,133,0.05)', border: '0.5px solid rgba(251,113,133,0.15)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#fb7185', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Exam anxiety — what actually works</div>
+        {[
+          { tip: 'Box breathing (4-4-4-4)', detail: 'Inhale 4 seconds, hold 4, exhale 4, hold 4. Do 4 cycles. Clinically proven to lower cortisol within 90 seconds — do this before you open the paper.' },
+          { tip: 'Perspective reframe', detail: 'Ask: "Will this exam matter in 5 years?" Rarely yes. Your effort matters more than any single result. NSFAS appeals exist. Supp exams exist. Your life is not defined by one paper.' },
+          { tip: 'The night before', detail: 'Stop studying by 9pm. Your brain needs consolidation sleep more than extra cramming. Pack your bag, set two alarms, sleep by 10:30pm.' },
+          { tip: 'In the exam room', detail: 'Read the entire paper before writing anything — 5 minutes. Mark what you know easily vs what needs thought. Attempt all questions; partial marks count in SA exams.' },
+          { tip: 'If you blank', detail: 'Skip the question, move on, come back. Write anything loosely related — examiners give method marks. A blank space scores zero; an attempt scores something.' },
+        ].map(a => (
+          <div key={a.tip} style={{ marginBottom: 10, paddingLeft: 10, borderLeft: '2px solid rgba(251,113,133,0.3)' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#fb7185', marginBottom: 2 }}>{a.tip}</div>
+            <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.55 }}>{a.detail}</div>
+          </div>
+        ))}
+        <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'rgba(251,113,133,0.5)', marginTop: 6 }}>
+          SADAG crisis line: 0800 567 567 · Lifeline: 0861 322 322
+        </div>
+      </div>
+
       {/* ── Score legend ── */}
-      <div style={{
-        padding: '14px 16px', borderRadius: 16,
-        background: 'rgba(78,207,158,0.05)',
-        border: '0.5px solid rgba(78,207,158,0.1)',
-      }}>
+      <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(78,207,158,0.05)', border: '0.5px solid rgba(78,207,158,0.1)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#4ecf9e', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           How your score is calculated
         </div>
