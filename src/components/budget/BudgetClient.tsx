@@ -904,7 +904,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
 
         {/* ─── NSFAS Tracker OS ─── */}
         {activeTab === 'nsfas' && (
-          <NsfasTrackerOS budget={budget} userId={initialData.userId} />
+          <NsfasTrackerOS budget={budget} userId={initialData.userId} fundingType={initialData.profile?.funding_type} />
         )}
 
         {/* ─── AI Coach Tab ─── */}

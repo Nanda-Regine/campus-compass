@@ -820,9 +820,10 @@ function GuideTab() {
 interface Props {
   budget: Budget | null
   userId: string
+  fundingType?: string | null
 }
 
-export default function NsfasTrackerOS({ budget, userId }: Props) {
+export default function NsfasTrackerOS({ budget, userId, fundingType }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('overview')
   const [disbursements, setDisbursements] = useState<NsfasDisbursement[]>([])
   const [appeals, setAppeals] = useState<NsfasAppeal[]>([])
@@ -877,15 +878,45 @@ export default function NsfasTrackerOS({ budget, userId }: Props) {
           background: 'linear-gradient(90deg, var(--gold), transparent)',
         }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.09em', marginBottom: 4 }}>
-          NSFAS TRACKER OS
+          {fundingType === 'tvet_nsfas' ? 'TVET NSFAS TRACKER' : 'NSFAS TRACKER OS'}
         </div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-          Payment Intelligence
+          {fundingType === 'tvet_nsfas' ? 'TVET Payment Intelligence' : 'Payment Intelligence'}
         </div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>
           Track every disbursement, appeal, and document — all in one place.
         </div>
       </div>
+
+      {/* TVET-specific info banner */}
+      {fundingType === 'tvet_nsfas' && (
+        <div style={{
+          background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)',
+          borderRadius: 14, padding: '14px 16px',
+        }}>
+          <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 8 }}>
+            TVET NSFAS RULES
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[
+              { label: 'Living allowance', value: 'R1 625/month (day student) or R2 900/month (residential)' },
+              { label: 'Transport allowance', value: 'R625/month if you commute more than 5km' },
+              { label: 'Book allowance', value: 'R5 000/year, paid at start of semester' },
+              { label: 'Meals', value: 'R1 625/month for residential students' },
+              { label: 'Clothing', value: 'R1 625 once per year for new students' },
+              { label: 'N-level progression', value: 'NSFAS covers N1–N6; must pass each level to continue funding' },
+            ].map(row => (
+              <div key={row.label} style={{ display: 'flex', gap: 10 }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text-secondary)', minWidth: 140, flexShrink: 0 }}>{row.label}</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{row.value}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 10, fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)' }}>
+            Amounts are 2025/26 DHET-approved rates. Contact your TVET campus financial aid office for your institution-specific schedule.
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 0, overflowX: 'auto', borderBottom: '1px solid var(--border-subtle)' }}>

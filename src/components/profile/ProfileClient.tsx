@@ -16,6 +16,7 @@ import BadgesPanel from '@/components/gamification/BadgesPanel'
 import VarsityScore from '@/components/gamification/VarsityScore'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { getStoredLocale, type AppLocale } from '@/lib/i18n/IntlProvider'
+import GuardianAccess from '@/components/profile/GuardianAccess'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -59,10 +60,11 @@ interface Stats {
 const YEAR_OPTIONS = ['1st year', '2nd year', '3rd year', '4th year', '5th year', 'Honours', 'Masters', 'PhD', 'Other']
 
 const FUNDING_OPTIONS = [
-  { value: 'nsfas',       label: 'NSFAS' },
-  { value: 'bursary',     label: 'Bursary' },
-  { value: 'scholarship', label: 'Scholarship' },
-  { value: 'family',      label: 'Family Support' },
+  { value: 'nsfas',        label: 'NSFAS' },
+  { value: 'tvet_nsfas',   label: 'TVET NSFAS' },
+  { value: 'bursary',      label: 'Bursary' },
+  { value: 'scholarship',  label: 'Scholarship' },
+  { value: 'family',       label: 'Family Support' },
   { value: 'self_funded', label: 'Self-Funded' },
   { value: 'other',       label: 'Other / Mixed' },
 ]
@@ -739,6 +741,11 @@ export default function ProfileClient() {
 
             {/* Subscription */}
             <SubscriptionSection profile={profile} isPremium={isPremium} />
+
+            {/* Guardian Access */}
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <GuardianAccess />
+            </div>
 
             {/* Account info */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>

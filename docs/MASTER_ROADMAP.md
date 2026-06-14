@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-14 (Phases 1–9 ✅ complete — Phase 10 active 🔨)
+> Last updated: 2026-06-14 (Phases 1–10 ✅ complete — Phase 11 next 🎯)
 
 ---
 
@@ -792,12 +792,23 @@ All 9 life-domain modules shipped: NSFAS Tracker OS, Weather, Safety OS, Habit B
 4. ✅ SRC Analytics Dashboard — /api/admin/analytics (admin client, Promise.allSettled); /admin/institution Overview|Analytics tabs; CSS bar charts: year distribution, task completion, top modules, Nova engagement, active students, Study Pods adoption
 5. ✅ Institution Broadcast — migration 000020 (institution_broadcasts + RLS); POST /api/admin/broadcast (rate-limit 3/24h, batch notifyUser in waves of 50); GET history; admin page compose form + priority selector + recent history list
 
-### 🔨 Now (Phase 10 — Growth & Reach)
-1. 🎯 Parent/Guardian view — optional read-only dashboard with magic-link access
-2. 🎯 Nova multi-modal — image input (scan exam paper, past paper, textbook page → instant analysis)
-3. 🎯 Cohort comparison — anonymous benchmarking vs same-degree peers (task completion %, GPA bracket, study velocity)
-4. 📋 VarsityOS for TVET colleges — NCV/NC(V) qualifications, TVET NSFAS rules, N-level certificate tracking
-5. 📋 LMS integrations — Blackboard, Moodle, Canvas webhooks for grade sync + assignment import
+### ✅ Phase 10 — Growth & Reach (Complete)
+
+**Sprint date: 2026-06-14**
+
+1. ✅ **10A: Nova multi-modal** — Already fully implemented (image capture → Claude Vision API → UI camera button). Confirmed complete, no rebuild needed.
+2. ✅ **10B: Parent/Guardian view** — Magic-link read-only dashboard. `guardian_access_tokens` table (migration 000023, 90-day expiry, max 5 per student). Public `/guardian/[token]` page (server component, no auth). Token management UI in Profile → Account tab (`GuardianAccess.tsx`). Privacy: first name only, no rand amounts, risk levels not raw data. API routes: GET/POST `/api/guardian/tokens`, DELETE `/api/guardian/tokens/[id]`, GET `/api/guardian/[token]` (admin client).
+3. ✅ **10C: Cohort comparison** — Anonymous peer benchmarking. `/api/insights/cohort` (admin client, min 5 peers anonymity threshold). Metrics: streak percentile, study velocity percentile, task completion percentile. `CohortCard.tsx` on dashboard with 10-min sessionStorage cache, PercentileBar components, silently hides if cohort too small.
+4. ✅ **10D: TVET college support foundation** — `tvet_nsfas` funding type added to Profile funding options. `NsfasTrackerOS` accepts `fundingType` prop; shows TVET-specific info banner with 2025/26 DHET allowance amounts (living, transport, books, meals, clothing) and N-level progression rule. BudgetClient passes `fundingType={initialData.profile?.funding_type}` to NsfasTrackerOS.
+5. 📋 **10E: LMS integrations** — Blackboard, Moodle, Canvas webhooks for grade sync + assignment import (backlog — requires institutional partnerships)
+
+### Phase 10 — What Was Also Shipped (Phase 7.3 Quick Wins)
+
+Shipped in the same sprint as Phase 10 groundwork:
+- ✅ **7.3a: `attendance_marked` signal** — AttendanceTab emits signal on every mark; StudentState re-runs recompute
+- ✅ **7.3b: `grade_below_pass` rule** — Urgency-4 rule fires when `lowestGrade > 0 && lowestGrade < 50`; `lowestGrade` field added to AcademicSlice; localStorage cache `varsityos-grade-cache` feeds initial value
+- ✅ **7.3c: Rules engine push** — Switched from `/api/push/notify` to `/api/push/state-alert` with DB-backed cooldowns (ruleId, urgency, cooldownHours)
+- ✅ **7.3d: Correlation insights → Nova** — `patternInsights[]` computed from existing study sessions (no extra DB query); peak study window + burnout pattern injected into Nova system prompt via `novaContext.patternInsights`
 
 ---
 
@@ -1060,11 +1071,11 @@ After this sprint, VarsityOS sees ONE compound reality:
 
 One intervention. The whole person. Ubuntu.
 
-### Next — Phase 7.3
-- `attendance_marked` signal: emit from AttendanceTab on every mark
-- Grades as urgency-4 rule: GPA drop > 0.5 triggers intervention
-- ICS timetable import (000023 migration)
-- Nova voice mode (experimental)
+### ✅ Phase 7.3 — Quick Wins (Complete 2026-06-14)
+- ✅ `attendance_marked` signal emitted from AttendanceTab on every mark; StudentState recomputes
+- ✅ `grade_below_pass` urgency-4 rule (lowestGrade > 0 && < 50); lowestGrade in AcademicSlice; localStorage cache feed
+- ✅ Rules engine push switched to `/api/push/state-alert` with DB-backed cooldowns
+- ✅ Correlation pattern insights → Nova system prompt via `patternInsights[]`
 
 ---
 
@@ -1119,6 +1130,11 @@ Next migration number: **000021**
 | `20260613000018_institutions.sql` | ✅ Run | institutions, institution_admins, institution_invites; profiles.institution_id |
 | `20260614000019_study_pods.sql` | ✅ Run | study_pod_profiles, study_pod_connections; RLS policies |
 | `20260614000020_institution_broadcasts.sql` | ✅ Run | institution_broadcasts; admin SELECT + INSERT RLS |
+| `20260614000021_flashcard_tables.sql` | ✅ Run | Flashcard tables |
+| `20260614000022_custom_calendar_events.sql` | ✅ Run | Custom calendar events |
+| `20260614000023_guardian_access_tokens.sql` | ✅ Run | guardian_access_tokens; 90-day expiry; max 5 per student; admin client for public guardian page |
+
+Next migration number: **000024**
 
 ---
 

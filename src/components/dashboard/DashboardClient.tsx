@@ -32,6 +32,7 @@ import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import InsightsCard from '@/components/dashboard/InsightsCard'
 import DomainPulse from '@/components/dashboard/DomainPulse'
+import CohortCard from '@/components/dashboard/CohortCard'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
 /* ── types ──────────────────────────────────────────────── */
@@ -1489,6 +1490,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* Cross-domain correlation insights — 30-day pattern analysis */}
               <TabErrorBoundary label="Insights">
                 <InsightsCard />
+              </TabErrorBoundary>
+
+              {/* Cohort comparison — anonymous peer benchmarking */}
+              <TabErrorBoundary label="Cohort">
+                <CohortCard />
               </TabErrorBoundary>
 
               {/* Task calendar: day / week toggle */}
