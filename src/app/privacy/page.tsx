@@ -178,12 +178,30 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">14. Changes to This Policy</h2>
+            <h2 className="font-display font-bold text-white text-lg mb-3">14. Access to Records Under PAIA</h2>
+            <p className="mb-2">
+              In addition to your POPIA data rights, you may also request access to records held by Mirembe Muse (Pty) Ltd under the <strong className="text-white/75">Promotion of Access to Information Act 2 of 2000 (&quot;PAIA&quot;)</strong>.
+            </p>
+            <p className="mb-3 text-white/55">
+              PAIA requests require a completed <strong className="text-white/70">Form C</strong> (from the Information Regulator) and payment of a non-refundable request fee of <strong className="text-white/70">R50</strong>. We must respond within 30 days. Our full PAIA manual covers request procedures, fees, grounds for refusal, and our annual report.
+            </p>
+            <div className="rounded-lg border border-sky-600/20 bg-sky-600/5 px-4 py-3">
+              <p className="text-xs text-white/50 mb-2">
+                <strong className="text-sky-400">Tip:</strong> If you only want access to your <em>own</em> personal information (your account data, messages, entries), use your POPIA rights under Section 8 above — no Form C or fee required.
+              </p>
+              <Link href="/paia" className="text-teal-400 hover:text-teal-300 text-xs font-display font-bold">
+                View PAIA Section 51 Manual &amp; Annual Report →
+              </Link>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">15. Changes to This Policy</h2>
             <p>We may update this policy. Material changes will be communicated via email or prominent in-app notice at least 30 days before they take effect. Continued use after the effective date constitutes acceptance.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact &amp; Information Regulator</h2>
+            <h2 className="font-display font-bold text-white text-lg mb-3">16. Contact &amp; Information Regulator</h2>
             <div className="space-y-2 text-white/55">
               <p><strong className="text-white/75">Information Officer:</strong> <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
               <p><strong className="text-white/75">Company:</strong> Mirembe Muse (Pty) Ltd, South Africa</p>

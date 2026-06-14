@@ -147,18 +147,33 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">13. Governing Law and Disputes</h2>
+            <h2 className="font-display font-bold text-white text-lg mb-3">13. Access to Information (PAIA)</h2>
+            <p className="mb-2">
+              Mirembe Muse (Pty) Ltd has compiled a Section 51 Manual under the <strong className="text-white/75">Promotion of Access to Information Act 2 of 2000 (&quot;PAIA&quot;)</strong>. This manual describes what records we hold, how to request access, applicable fees, and grounds for refusal.
+            </p>
+            <p className="text-white/55">
+              To submit a PAIA request, download Form C from the Information Regulator, complete it, and email it with the R50 request fee to{' '}
+              <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a>.
+              We respond within 30 days.
+            </p>
+            <p className="mt-2">
+              <a href="/paia" className="text-teal-400 hover:text-teal-300 text-xs font-display font-bold">View PAIA Section 51 Manual →</a>
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-display font-bold text-white text-lg mb-3">15. Governing Law and Disputes</h2>
             <p>These Terms are governed by the laws of South Africa. Any dispute shall be subject to the jurisdiction of the South African courts. We encourage resolution of disputes through good-faith negotiation before legal proceedings.</p>
             <p className="mt-2">For disputes under R200,000 you may approach the Small Claims Court. For larger disputes, the High Court of South Africa has jurisdiction.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">14. Changes to Terms</h2>
+            <h2 className="font-display font-bold text-white text-lg mb-3">16. Changes to Terms</h2>
             <p>We may update these Terms. We will provide at least 30 days&apos; notice of material changes via email or prominent in-app notice. Continued use after the effective date constitutes acceptance. If you do not agree to the changes, you must stop using the platform and may request account deletion.</p>
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">15. Contact Us</h2>
+            <h2 className="font-display font-bold text-white text-lg mb-3">17. Contact Us</h2>
             <div className="space-y-1 text-white/55">
               <p>General: <a href="mailto:hello@varsityos.co.za" className="text-teal-400 hover:text-teal-300">hello@varsityos.co.za</a></p>
               <p>Privacy: <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
