@@ -25,12 +25,13 @@ import Link from 'next/link'
 
 interface StudyClientProps {
   initialData: {
-    modules:    Module[]
-    tasks:      Task[]
-    timetable:  TimetableEntry[]
-    exams:      Exam[]
-    workShifts: import('@/types').WorkShift[]
-    userId:     string
+    modules:        Module[]
+    tasks:          Task[]
+    timetable:      TimetableEntry[]
+    exams:          Exam[]
+    workShifts:     import('@/types').WorkShift[]
+    calendarEvents: import('@/types').CalendarEvent[]
+    userId:         string
   }
 }
 
@@ -258,7 +259,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
       {/* ── Tab content ── */}
       <div className="max-w-2xl mx-auto px-4 py-4">
         {activeTab === 'tasks'      && <TabErrorBoundary label="Tasks"><TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} /></TabErrorBoundary>}
-        {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} workShifts={initialData.workShifts} /></TabErrorBoundary>}
+        {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} workShifts={initialData.workShifts} calendarEvents={initialData.calendarEvents} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'timetable'  && <TabErrorBoundary label="Timetable"><TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} /></TabErrorBoundary>}
         {activeTab === 'exams'      && <TabErrorBoundary label="Exams"><ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} /></TabErrorBoundary>}
         {activeTab === 'grades'     && <TabErrorBoundary label="Grades"><GradesTab    modules={modules} /></TabErrorBoundary>}

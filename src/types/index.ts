@@ -595,6 +595,19 @@ export interface WorkShift {
   job?: PartTimeJob
 }
 
+export interface CalendarEvent {
+  id: string
+  user_id: string
+  title: string
+  event_date: string    // YYYY-MM-DD
+  start_time: string | null   // HH:MM
+  end_time: string | null     // HH:MM
+  category: string
+  color: string
+  notes: string | null
+  created_at: string
+}
+
 export interface EarningsLog {
   id: string
   student_id: string

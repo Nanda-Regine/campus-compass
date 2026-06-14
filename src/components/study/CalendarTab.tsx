@@ -8,11 +8,12 @@
 //             see productivity density build over months
 // ============================================================
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import { loadGratitudeEntries } from '@/components/orchestration/GratitudePrompt'
-import type { TimetableEntry, Task, Exam, Module, WorkShift } from '@/types'
+import { createClient } from '@/lib/supabase/client'
+import type { TimetableEntry, Task, Exam, Module, WorkShift, CalendarEvent } from '@/types'
 
 type CalMode = 'week' | 'month'
 
@@ -53,14 +54,33 @@ function formatTime(t: string) {
   return `${h % 12 || 12}:${mStr}${h >= 12 ? 'PM' : 'AM'}`
 }
 
+// ─── Category config ───────────────────────────────────────────
+
+const CATEGORIES: { id: string; label: string; icon: string; color: string }[] = [
+  { id: 'gym',       label: 'Gym',        icon: '🏋️', color: '#10b981' },
+  { id: 'cooking',   label: 'Cooking',    icon: '🍳', color: '#f59e0b' },
+  { id: 'study',     label: 'Self-study', icon: '📖', color: '#38bdf8' },
+  { id: 'social',    label: 'Social',     icon: '👥', color: '#ec4899' },
+  { id: 'errands',   label: 'Errands',    icon: '🛒', color: '#94a3b8' },
+  { id: 'self_care', label: 'Self-care',  icon: '💆', color: '#c084fc' },
+  { id: 'church',    label: 'Church',     icon: '✝️',  color: '#fbbf24' },
+  { id: 'other',     label: 'Other',      icon: '⭐', color: '#4ecf9e' },
+]
+
+function catFor(id: string) {
+  return CATEGORIES.find(c => c.id === id) ?? CATEGORIES[CATEGORIES.length - 1]
+}
+
 // ─── Types ────────────────────────────────────────────────────
 
 interface Props {
-  timetable:  TimetableEntry[]
-  tasks:      Task[]
-  exams:      Exam[]
-  modules:    Module[]
-  workShifts?: WorkShift[]
+  timetable:      TimetableEntry[]
+  tasks:          Task[]
+  exams:          Exam[]
+  modules:        Module[]
+  workShifts?:    WorkShift[]
+  calendarEvents?: CalendarEvent[]
+  userId?:        string
 }
 
 // ─── Work shift block ─────────────────────────────────────
@@ -79,6 +99,36 @@ function ShiftBlock({ shift, top, height }: { shift: WorkShift; top: number; hei
       {height > 34 && (
         <div style={{ fontSize: '0.56rem', color: 'rgba(168,85,247,0.85)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {label}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Personal event block ────────────────────────────────────
+function EventBlock({ event, top, height, onDelete }: {
+  event: CalendarEvent; top: number; height: number; onDelete: () => void
+}) {
+  const cat = catFor(event.category)
+  const col = event.color || cat.color
+  return (
+    <div
+      title={`${event.title} — tap to delete`}
+      onClick={onDelete}
+      style={{
+        position: 'absolute', top, height: Math.max(height, 28),
+        left: 2, right: 2, zIndex: 2,
+        background: `${col}18`, border: `1px solid ${col}55`,
+        borderRadius: 6, padding: '3px 5px', overflow: 'hidden',
+        cursor: 'pointer',
+      }}
+    >
+      <div style={{ fontSize: '0.62rem', fontWeight: 700, color: col, lineHeight: 1.2 }}>
+        {cat.icon}
+      </div>
+      {height > 28 && (
+        <div style={{ fontSize: '0.55rem', color: col, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: 0.9 }}>
+          {event.title}
         </div>
       )}
     </div>
@@ -331,10 +381,56 @@ function ActivityScore({ tasks, expenses }: { tasks: Task[]; expenses: { expense
 
 // ─── Main component ───────────────────────────────────────────
 
-export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }: Props) {
-  const [mode, setMode]         = useState<CalMode>('week')
+interface DraftEvent {
+  date: string
+  title: string
+  category: string
+  startTime: string
+  endTime: string
+  notes: string
+}
+
+export default function CalendarTab({ timetable, tasks, exams, workShifts = [], calendarEvents: initialEvents = [], userId = '' }: Props) {
+  const [mode, setMode]             = useState<CalMode>('week')
   const [weekOffset, setWeekOffset] = useState(0)
+  const [events, setEvents]         = useState<CalendarEvent[]>(initialEvents)
+  const [showModal, setShowModal]   = useState(false)
+  const [saving, setSaving]         = useState(false)
+  const [draft, setDraft]           = useState<DraftEvent>({
+    date: '', title: '', category: 'other', startTime: '08:00', endTime: '09:00', notes: '',
+  })
   const { expenses } = useAppStore()
+  const supabase = useRef(createClient()).current
+
+  const openModal = (date: string) => {
+    setDraft({ date, title: '', category: 'other', startTime: '08:00', endTime: '09:00', notes: '' })
+    setShowModal(true)
+  }
+
+  const saveEvent = async () => {
+    if (!draft.title.trim()) return
+    setSaving(true)
+    const cat   = catFor(draft.category)
+    const row   = {
+      user_id:    userId,
+      title:      draft.title.trim(),
+      event_date: draft.date,
+      start_time: draft.startTime || null,
+      end_time:   draft.endTime   || null,
+      category:   draft.category,
+      color:      cat.color,
+      notes:      draft.notes.trim() || null,
+    }
+    const { data, error } = await supabase.from('calendar_events').insert(row).select().single()
+    if (!error && data) setEvents(prev => [...prev, data as CalendarEvent])
+    setSaving(false)
+    setShowModal(false)
+  }
+
+  const deleteEvent = async (id: string) => {
+    setEvents(prev => prev.filter(e => e.id !== id))
+    await supabase.from('calendar_events').delete().eq('id', id)
+  }
 
   const monday = addDays(getMondayOf(new Date()), weekOffset * 7)
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(monday, i))
@@ -368,6 +464,15 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
     const key = s.shift_date.slice(0, 10)
     if (!shiftsByDate[key]) shiftsByDate[key] = []
     shiftsByDate[key].push(s)
+  }
+
+  // Group personal events by date
+  const eventsByDate: Record<string, CalendarEvent[]> = {}
+  for (const ev of events) {
+    if (!ev.event_date) continue
+    const key = ev.event_date.slice(0, 10)
+    if (!eventsByDate[key]) eventsByDate[key] = []
+    eventsByDate[key].push(ev)
   }
 
   // Group exams by date
@@ -524,6 +629,16 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
                   fontFamily: 'var(--font-mono)',
                 }}>EXAM</div>
               )}
+              <button
+                onClick={() => openModal(iso)}
+                title={`Add event on ${iso}`}
+                style={{
+                  marginTop: 2, padding: '1px 5px', borderRadius: 4,
+                  background: 'transparent', border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-muted)', fontSize: '0.55rem', cursor: 'pointer',
+                  lineHeight: 1.4,
+                }}
+              >+</button>
             </div>
           )
         })}
@@ -559,10 +674,11 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
           {/* Day columns */}
           {weekDays.map((d, dayIdx) => {
             const iso      = weekDayIsos[dayIdx]
-            const slots     = slotsByDay[dayIdx] ?? []
-            const dayTasks  = tasksByDate[iso] ?? []
-            const dayExams  = examsByDate[iso] ?? []
-            const dayShifts = shiftsByDate[iso] ?? []
+            const slots      = slotsByDay[dayIdx] ?? []
+            const dayTasks   = tasksByDate[iso]  ?? []
+            const dayExams   = examsByDate[iso]  ?? []
+            const dayShifts  = shiftsByDate[iso] ?? []
+            const dayEvents  = eventsByDate[iso] ?? []
             const isToday  = iso === todayIso
 
             // Current time indicator
@@ -618,6 +734,16 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
                   const top       = ((startMins - HOUR_START * 60) / 60) * CELL_H
                   const height    = ((endMins - startMins) / 60) * CELL_H
                   return <ShiftBlock key={shift.id} shift={shift} top={top} height={height} />
+                })}
+
+                {/* Personal event blocks */}
+                {dayEvents.map(ev => {
+                  if (!ev.start_time) return null
+                  const startMins = timeToMins(ev.start_time)
+                  const endMins   = ev.end_time ? timeToMins(ev.end_time) : startMins + 60
+                  const top       = ((startMins - HOUR_START * 60) / 60) * CELL_H
+                  const height    = ((endMins - startMins) / 60) * CELL_H
+                  return <EventBlock key={ev.id} event={ev} top={top} height={height} onDelete={() => deleteEvent(ev.id)} />
                 })}
 
                 {/* Exam badges (top of day column) */}
@@ -686,6 +812,10 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Work shift</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.45)' }} />
+          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Personal event <span style={{ opacity: 0.6 }}>(tap to delete)</span></span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <div style={{ width: 24, height: 2, background: 'var(--teal)', borderRadius: 1 }} />
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Now</span>
         </div>
@@ -695,6 +825,121 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }
       </div>
 
       </>}
+
+      {/* ── Add-event modal ─────────────────────────────────── */}
+      {showModal && (
+        <div
+          onClick={() => setShowModal(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 200,
+            background: 'rgba(0,0,0,0.6)', display: 'flex',
+            alignItems: 'flex-end', justifyContent: 'center',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 480,
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '20px 20px 0 0',
+              padding: '20px 20px 32px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Add event — {draft.date}
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.1rem', cursor: 'pointer' }}
+              >✕</button>
+            </div>
+
+            {/* Category picker */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setDraft(d => ({ ...d, category: cat.id }))}
+                  style={{
+                    padding: '5px 10px', borderRadius: 20, cursor: 'pointer',
+                    fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
+                    background: draft.category === cat.id ? `${cat.color}22` : 'var(--bg-elevated)',
+                    border: `1px solid ${draft.category === cat.id ? cat.color : 'var(--border-subtle)'}`,
+                    color: draft.category === cat.id ? cat.color : 'var(--text-secondary)',
+                    fontWeight: draft.category === cat.id ? 700 : 400,
+                  }}
+                >
+                  {cat.icon} {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Title */}
+            <input
+              autoFocus
+              type="text"
+              placeholder="Event title (e.g. Leg day, Bible study)"
+              value={draft.title}
+              onChange={e => setDraft(d => ({ ...d, title: e.target.value }))}
+              onKeyDown={e => e.key === 'Enter' && saveEvent()}
+              style={{
+                width: '100%', padding: '10px 12px', marginBottom: 10,
+                background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+                borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem',
+                fontFamily: 'var(--font-display)', boxSizing: 'border-box',
+              }}
+            />
+
+            {/* Time row */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: 4, fontFamily: 'var(--font-mono)' }}>Start</div>
+                <input
+                  type="time"
+                  value={draft.startTime}
+                  onChange={e => setDraft(d => ({ ...d, startTime: e.target.value }))}
+                  style={{
+                    width: '100%', padding: '8px 10px',
+                    background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+                    borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.8rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginBottom: 4, fontFamily: 'var(--font-mono)' }}>End</div>
+                <input
+                  type="time"
+                  value={draft.endTime}
+                  onChange={e => setDraft(d => ({ ...d, endTime: e.target.value }))}
+                  style={{
+                    width: '100%', padding: '8px 10px',
+                    background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+                    borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.8rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={saveEvent}
+              disabled={saving || !draft.title.trim()}
+              style={{
+                width: '100%', padding: '12px 0', borderRadius: 12, cursor: 'pointer',
+                background: draft.title.trim() ? catFor(draft.category).color : 'var(--bg-elevated)',
+                border: 'none', color: draft.title.trim() ? '#000' : 'var(--text-muted)',
+                fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--font-mono)',
+                opacity: saving ? 0.6 : 1,
+              }}
+            >
+              {saving ? 'Saving…' : '+ Add to calendar'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

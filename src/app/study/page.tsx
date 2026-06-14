@@ -11,12 +11,16 @@ export default async function StudyPage() {
 
   if (!user) redirect('/auth/login')
 
+  const rangeStart = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+  const rangeEnd   = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+
   const [
     { data: modules },
     { data: tasks },
     { data: timetable },
     { data: exams },
     { data: workShifts },
+    { data: calendarEvents },
   ] = await Promise.all([
     supabase
       .from('modules')
@@ -41,19 +45,27 @@ export default async function StudyPage() {
       .from('work_shifts')
       .select('*, job:part_time_jobs(id,employer_name,role_title,hourly_rate)')
       .eq('student_id', user.id)
-      .gte('shift_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
+      .gte('shift_date', rangeStart)
       .order('shift_date', { ascending: true }),
+    supabase
+      .from('calendar_events')
+      .select('*')
+      .eq('user_id', user.id)
+      .gte('event_date', rangeStart)
+      .lte('event_date', rangeEnd)
+      .order('event_date', { ascending: true }),
   ])
 
   return (
     <StudyClient
       initialData={{
-        modules:    modules    ?? [],
-        tasks:      tasks      ?? [],
-        timetable:  timetable  ?? [],
-        exams:      exams      ?? [],
-        workShifts: workShifts ?? [],
-        userId:     user.id,
+        modules:        modules        ?? [],
+        tasks:          tasks          ?? [],
+        timetable:      timetable      ?? [],
+        exams:          exams          ?? [],
+        workShifts:     workShifts     ?? [],
+        calendarEvents: calendarEvents ?? [],
+        userId:         user.id,
       }}
     />
   )
