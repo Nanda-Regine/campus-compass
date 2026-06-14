@@ -36,8 +36,19 @@ const withPWA = require('@ducanh2912/next-pwa').default({
       handler: 'NetworkFirst',
       options: {
         cacheName: 'pages',
-        expiration: { maxEntries: 32, maxAgeSeconds: 24 * 60 * 60 },
-        networkTimeoutSeconds: 10,
+        // Increased from 32 → 80 to cache all rooms and sub-routes for offline
+        expiration: { maxEntries: 80, maxAgeSeconds: 24 * 60 * 60 },
+        networkTimeoutSeconds: 8,
+      },
+    },
+    // Static SA reference data from third-party APIs (weather, load shedding ETA)
+    // Use StaleWhileRevalidate so offline sees last-known data
+    {
+      urlPattern: /^https:\/\/.*(?:openweathermap|eskomsepush)\..*\/api\/.*/i,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'external-api',
+        expiration: { maxEntries: 10, maxAgeSeconds: 30 * 60 }, // 30min
       },
     },
     // Supabase API — network only (always fresh data)
@@ -113,8 +124,16 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          // Prevent window.opener attacks from popups (PayFast uses popups, so allow-popups variant)
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
+          // Prevent DNS prefetch from leaking visited subdomains
+          { key: 'X-DNS-Prefetch-Control', value: 'off' },
+          // Prevent IE/Edge from executing downloads in the page context
+          { key: 'X-Download-Options', value: 'noopen' },
+          // Block Flash/Acrobat cross-domain policy files
+          { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
           {
             key: 'Content-Security-Policy',
             value: [

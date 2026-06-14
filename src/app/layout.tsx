@@ -11,6 +11,8 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { GlobalFAB } from '@/components/layout/GlobalFAB'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
+import { OfflineIndicator } from '@/components/layout/OfflineIndicator'
+import { PWAUpdateNotifier } from '@/components/PWAUpdateNotifier'
 import ConsentBanner from '@/components/ConsentBanner'
 import PageTransition from '@/components/PageTransition'
 import './globals.css'
@@ -513,8 +515,10 @@ a.appendChild(r);
           />
         </noscript>
         <Providers>
+          <PWAUpdateNotifier />
           <Sidebar />
           <OfflineBanner />
+          <OfflineIndicator />
           <ConsentBanner />
           {/* md+: sidebar offset, no bottom-nav padding; mobile: 60px reserve for bottom nav */}
           <div className="md:ml-[48px] pb-[60px] md:pb-0">

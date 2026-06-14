@@ -17,7 +17,14 @@ export type OfflineDB = IDBPDatabase<{
   meal_plans: { key: string; value: Record<string, unknown> }
   pending_writes: {
     key: number
-    value: { table: string; operation: string; data: Record<string, unknown>; timestamp: number }
+    value: {
+      id?: number
+      table: string
+      operation: string
+      data: Record<string, unknown>
+      timestamp: number
+      retries: number
+    }
   }
 }>
 
@@ -39,7 +46,14 @@ export function getOfflineDB(): Promise<OfflineDB> {
       meal_plans: { key: string; value: Record<string, unknown> }
       pending_writes: {
         key: number
-        value: { table: string; operation: string; data: Record<string, unknown>; timestamp: number }
+        value: {
+          id?: number
+          table: string
+          operation: string
+          data: Record<string, unknown>
+          timestamp: number
+          retries: number
+        }
       }
     }>(DB_NAME, DB_VERSION, {
       upgrade(db) {

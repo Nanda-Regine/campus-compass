@@ -7,7 +7,7 @@ export async function queueWrite(
   data: Record<string, unknown>
 ): Promise<void> {
   const db = await getOfflineDB()
-  await db.add('pending_writes', { table, operation, data, timestamp: Date.now() })
+  await db.add('pending_writes', { table, operation, data, timestamp: Date.now(), retries: 0 })
 }
 
 export async function getPendingCount(): Promise<number> {

@@ -963,6 +963,7 @@ export default function LandingPage() {
                 { href: '/privacy', label: 'Privacy' },
                 { href: '/terms', label: 'Terms' },
                 { href: '/paia', label: 'PAIA' },
+                { href: '/security', label: 'Security' },
                 { href: '/auth/signup', label: 'Sign up' },
               ].map(link => (
                 <a

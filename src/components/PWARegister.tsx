@@ -3,20 +3,21 @@
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useAppStore } from '@/store'
+import { initOfflineSync, flushPendingWrites } from '@/lib/offline/sync'
 
 export default function PWARegister() {
   const setIsOnline = useAppStore(s => s.setIsOnline)
 
   useEffect(() => {
-    // Service worker is auto-registered by next-pwa (sw.js generated at build time)
-    // We just handle online/offline state + toast notifications here
+    // Initialise offline → online sync listener
+    initOfflineSync()
 
     // Set initial online state
     setIsOnline(navigator.onLine)
 
     const handleOffline = () => {
       setIsOnline(false)
-      toast('You\'re offline — showing saved data', {
+      toast('Offline — showing saved data', {
         icon: '📶',
         duration: 5000,
         style: {
@@ -27,9 +28,21 @@ export default function PWARegister() {
       })
     }
 
-    const handleOnline = () => {
+    const handleOnline = async () => {
       setIsOnline(true)
       toast.success('Back online', { duration: 3000 })
+      // Flush any writes that were queued while offline
+      try {
+        const result = await flushPendingWrites()
+        if (result.flushed > 0) {
+          toast.success(`Synced ${result.flushed} change${result.flushed !== 1 ? 's' : ''}`, {
+            icon: '✓',
+            duration: 3000,
+          })
+        }
+      } catch {
+        // Sync failure is non-fatal — changes remain queued
+      }
     }
 
     window.addEventListener('offline', handleOffline)
