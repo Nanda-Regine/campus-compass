@@ -1126,6 +1126,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   // 4. Parallel client-side fetch: meals, shifts, groups
   useEffect(() => {
     const fetchLiveData = async () => {
+      if (!navigator.onLine) return
       try {
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
@@ -1291,6 +1292,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           sessionStorage.setItem(`streak_${new Date().toISOString().split('T')[0]}`, JSON.stringify(d))
         }
       }
+      if (!navigator.onLine) return
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()

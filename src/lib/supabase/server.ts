@@ -7,10 +7,13 @@ import { cookies } from 'next/headers'
 export function createServerSupabaseClient() {
   const cookieStore = cookies()
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  // Fallback placeholders allow Next.js to detect cookies() usage and mark pages
+  // as dynamic during `next build` without env vars (local dev). Real values always
+  // present on Vercel — placeholders are never used in production.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co'
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-anon-key'
+
+  return createServerClient(url, key, {
       cookies: {
         getAll() {
           return cookieStore.getAll()
@@ -44,8 +47,8 @@ export function createAdminClient() {
 export function createServiceRoleClient() {
   const cookieStore = cookies()
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co',
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'placeholder-service-key',
     {
       cookies: {
         getAll() { return cookieStore.getAll() },

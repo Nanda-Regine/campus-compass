@@ -21,6 +21,7 @@ import StudyVelocityTab from '@/components/study/StudyVelocityTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import StudyPodsTab from '@/components/study/StudyPodsTab'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
+import Link from 'next/link'
 
 interface StudyClientProps {
   initialData: {
@@ -88,6 +89,7 @@ export default function StudyClient({ initialData }: StudyClientProps) {
   }, [])
 
   const handleRefresh = useCallback(async () => {
+    if (!navigator.onLine) return
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     const [{ data: tasks }, { data: exams }, { data: timetable }, { data: modules }] = await Promise.all([
@@ -268,6 +270,28 @@ export default function StudyClient({ initialData }: StudyClientProps) {
         {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
+      </div>
+
+      {/* ── Reading Mode CTA ── */}
+      <div className="max-w-2xl mx-auto px-4 pb-2">
+        <Link href="/reader" style={{
+          display: 'flex', alignItems: 'center', gap: 12,
+          padding: '12px 16px', borderRadius: 14,
+          border: '1px solid rgba(245,158,11,0.18)',
+          background: 'rgba(245,158,11,0.05)',
+          textDecoration: 'none',
+        }}>
+          <span style={{ fontSize: 22, flexShrink: 0 }}>📖</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: '#f59e0b', margin: 0 }}>
+              Reading Mode
+            </p>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
+              Upload a PDF or Word doc — read section by section, not all at once
+            </p>
+          </div>
+          <span style={{ color: 'rgba(245,158,11,0.5)', fontSize: 16, flexShrink: 0 }}>→</span>
+        </Link>
       </div>
 
       {/* ── Quick-add FAB ── */}

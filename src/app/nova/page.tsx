@@ -301,6 +301,7 @@ export default function NovaPage() {
   const [selectedMood, setSelectedMood] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
   const [messageCount, setMessageCount] = useState(0)
   const [messageLimit, setMessageLimit] = useState(20)
   const [isPremium, setIsPremium] = useState(false)
@@ -351,8 +352,57 @@ export default function NovaPage() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
+  // Online / offline detection
+  useEffect(() => {
+    const up = () => setIsOnline(true)
+    const down = () => setIsOnline(false)
+    window.addEventListener('online', up)
+    window.addEventListener('offline', down)
+    return () => { window.removeEventListener('online', up); window.removeEventListener('offline', down) }
+  }, [])
+
+  // Persist messages to localStorage after every exchange (enables offline read-back)
+  useEffect(() => {
+    if (messages.length === 0) return
+    try {
+      localStorage.setItem('nova-session-cache', JSON.stringify({
+        messages: messages.map(m => ({
+          ...m,
+          imagePreviewUrl: undefined, // object URLs die on unmount — don't persist
+          timestamp: m.timestamp instanceof Date ? m.timestamp.toISOString() : String(m.timestamp),
+        })),
+        messageCount,
+        messageLimit,
+        isPremium,
+      }))
+    } catch { /* storage quota */ }
+  }, [messages, messageCount, messageLimit, isPremium])
+
   useEffect(() => {
     const loadHistory = async () => {
+      // Offline — restore last session from localStorage
+      if (!navigator.onLine) {
+        try {
+          const cached = localStorage.getItem('nova-session-cache')
+          if (cached) {
+            const data = JSON.parse(cached)
+            if (data.messages?.length > 0) {
+              setMessages(data.messages.map((m: { id: string; role: 'user' | 'assistant'; content: string; timestamp: string }) => ({
+                ...m, timestamp: new Date(m.timestamp),
+              })))
+            } else {
+              setShowWelcome(true)
+            }
+            setMessageCount(data.messageCount || 0)
+            setMessageLimit(data.messageLimit || 10)
+            setIsPremium(data.isPremium || false)
+          } else {
+            setShowWelcome(true)
+          }
+        } catch { setShowWelcome(true) }
+        setInitialLoading(false)
+        return
+      }
       try {
         const res = await fetch('/api/nova')
         if (!res.ok) {
@@ -398,12 +448,22 @@ export default function NovaPage() {
 
   const openHistory = async () => {
     setShowHistory(true)
+    if (!isOnline) {
+      // Show cached conversation list
+      try {
+        const cached = localStorage.getItem('nova-history-list-cache')
+        if (cached) setHistoryList(JSON.parse(cached))
+      } catch { /* ignore */ }
+      return
+    }
     setHistoryLoading(true)
     try {
       const res = await fetch('/api/nova/history')
       if (res.ok) {
         const data = await res.json()
-        setHistoryList(data.conversations ?? [])
+        const list = data.conversations ?? []
+        setHistoryList(list)
+        try { localStorage.setItem('nova-history-list-cache', JSON.stringify(list)) } catch { /* quota */ }
       }
     } catch { /* silent */ } finally {
       setHistoryLoading(false)
@@ -552,6 +612,7 @@ export default function NovaPage() {
   const sendMessage = async (messageText?: string) => {
     const text = (messageText || input).trim()
     if ((!text && !pendingImage) || loading) return
+    if (!isOnline) { toast.error("You're offline — Nova needs internet to respond"); return }
 
     const imagePreviewUrl = pendingImage?.previewUrl
     const userMessage: Message = {
@@ -1127,6 +1188,15 @@ export default function NovaPage() {
             </Link>
           </div>
         ) : (
+          <>
+          {!isOnline && (
+            <div style={{ margin: '0 0 10px', padding: '8px 14px', borderRadius: 10, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 14 }}>📴</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(245,158,11,0.9)' }}>
+                Offline — showing last session. Nova can&apos;t respond until you reconnect.
+              </span>
+            </div>
+          )}
           <div className="flex items-end gap-3">
             {/* Mood button */}
             <button
@@ -1238,6 +1308,7 @@ export default function NovaPage() {
               )}
             </button>
           </div>
+          </>
         )}
 
         <p className="font-mono text-[0.54rem] text-white/15 text-center mt-2">
