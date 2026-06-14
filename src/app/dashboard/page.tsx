@@ -25,6 +25,7 @@ export default async function DashboardPage() {
     { data: timetable },
     { data: recentExpenses },
     { data: incomeEntries },
+    { data: workedShifts },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
@@ -63,6 +64,13 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
       .gte('received_date', start)
       .order('received_date', { ascending: false }),
+    supabase
+      .from('work_shifts')
+      .select('earnings')
+      .eq('student_id', user.id)
+      .eq('status', 'worked')
+      .gte('shift_date', start)
+      .lte('shift_date', end),
   ])
 
   // Redirect to setup if profile incomplete
@@ -79,6 +87,7 @@ export default async function DashboardPage() {
         timetable:      timetable ?? [],
         recentExpenses: recentExpenses ?? [],
         incomeEntries:  incomeEntries ?? [],
+        shiftEarnings:  (workedShifts ?? []).reduce((s, sh) => s + (sh.earnings ?? 0), 0),
         subscription:   null,
       }}
     />

@@ -16,6 +16,7 @@ export interface DomainPulseProps {
   weekWorkouts:    number
   totalBudget:     number
   remaining:       number
+  shiftEarnings:   number
   nsfasDelayed:    boolean
   mealPlanExists:  boolean
   shiftsThisWeek:  number
@@ -106,21 +107,23 @@ function computeDomains(p: DomainPulseProps): ScoredDomain[] {
   // ── Money ────────────────────────────────────────────────────────
   let moneyU = 0
   let moneyH = '', moneyS = '', moneyAL = 'Open budget', moneyAH = '/budget'
+  const earnedLabel = p.shiftEarnings > 0 ? ` · ⚡ R${Math.round(p.shiftEarnings)} earned` : ''
 
   if (p.totalBudget <= 0) {
     moneyU = 12; moneyH = 'No budget set'; moneyS = 'Set a budget to track spending'; moneyAL = 'Set budget'
   } else if (p.remaining < 0) {
-    moneyU = 82; moneyH = 'Over budget'; moneyS = `R${Math.abs(Math.round(p.remaining))} overspent`; moneyAL = 'Review expenses'
+    moneyU = 82; moneyH = 'Over budget'; moneyS = `R${Math.abs(Math.round(p.remaining))} overspent${earnedLabel}`; moneyAL = 'Review expenses'
   } else if (p.remaining < 100) {
-    moneyU = 68; moneyH = `R${Math.round(p.remaining)} left`; moneyS = 'Nearly out — plan carefully'; moneyAL = 'View budget'
+    moneyU = 68; moneyH = `R${Math.round(p.remaining)} left`; moneyS = `Nearly out — plan carefully${earnedLabel}`; moneyAL = 'View budget'
   } else if (budgetPct < 20) {
-    moneyU = 48; moneyH = `${Math.round(budgetPct)}% budget remaining`; moneyS = 'Running low'
+    moneyU = 48; moneyH = `${Math.round(budgetPct)}% budget remaining`; moneyS = `Running low${earnedLabel}`
   } else if (budgetPct < 40) {
-    moneyU = 25; moneyH = `R${Math.round(p.remaining)} remaining`; moneyS = `${Math.round(budgetPct)}% of budget left`
+    moneyU = 25; moneyH = `R${Math.round(p.remaining)} remaining`; moneyS = `${Math.round(budgetPct)}% of budget left${earnedLabel}`
   } else {
-    moneyH = `R${Math.round(p.remaining)} remaining`; moneyS = 'Budget on track ✓'
+    moneyH = `R${Math.round(p.remaining)} remaining`
+    moneyS = p.shiftEarnings > 0 ? `Budget on track ✓${earnedLabel}` : 'Budget on track ✓'
   }
-  if (p.nsfasDelayed) { moneyU += 32; moneyS = 'NSFAS payment delayed'; moneyAL = 'Check NSFAS'; moneyAH = '/budget?tab=nsfas' }
+  if (p.nsfasDelayed) { moneyU += 32; moneyS = `NSFAS payment delayed${earnedLabel}`; moneyAL = 'Check NSFAS'; moneyAH = '/budget?tab=nsfas' }
 
   // ── Body ─────────────────────────────────────────────────────────
   let bodyU = 0

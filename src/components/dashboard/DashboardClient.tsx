@@ -48,6 +48,7 @@ interface DashboardClientProps {
     timetable: TimetableEntry[]
     recentExpenses: Expense[]
     incomeEntries: IncomeEntry[]
+    shiftEarnings: number
     subscription: Subscription | null
   }
 }
@@ -1335,9 +1336,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const recentExp = expenses.length ? expenses : initialData.recentExpenses
   const sub       = store.subscription ?? initialData.subscription
 
-  const baseBudget  = b ? calcTotalBudget(b) : 0
-  const totalIncome = initialData.incomeEntries.reduce((s, e) => s + e.amount, 0)
-  const totalBudget = baseBudget + totalIncome
+  const baseBudget    = b ? calcTotalBudget(b) : 0
+  const manualIncome  = initialData.incomeEntries.reduce((s, e) => s + e.amount, 0)
+  const shiftEarnings = initialData.shiftEarnings
+  const totalIncome   = manualIncome + shiftEarnings
+  const totalBudget   = baseBudget + totalIncome
   const monthSpent  = recentExp.reduce((s, e) => s + e.amount, 0)
   const remaining   = totalBudget - monthSpent
   const isPremium   = p?.is_premium || ['scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
@@ -1510,6 +1513,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   weekWorkouts={weekWorkouts}
                   totalBudget={totalBudget}
                   remaining={remaining}
+                  shiftEarnings={shiftEarnings}
                   nsfasDelayed={store.nsfasDelayed}
                   mealPlanExists={mealPlanExists}
                   shiftsThisWeek={shiftsThisWeek}
