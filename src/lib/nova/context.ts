@@ -81,6 +81,14 @@ export interface NovaMessage {
   createdAt: string
 }
 
+export interface NovaWellnessContext {
+  moodAvg: number | null           // 0–5, last 7 days (null = no data)
+  moodTrend: 'improving' | 'stable' | 'declining' | 'unknown'
+  workHoursThisWeek: number        // hours worked across all jobs
+  workShiftsThisWeek: number       // shift count this week
+  burnoutProxy: number             // 0–100 estimated from mood + work
+}
+
 export interface NovaContext {
   profile: NovaProfile
   budget: NovaBudgetContext
@@ -89,6 +97,7 @@ export interface NovaContext {
   pendingTasks: NovaTask[]
   studySessions: NovaStudySession[] // last 7 days
   recentMessages: NovaMessage[]     // last 20
+  wellness: NovaWellnessContext
   crisisFlags: string[]
   fetchedAt: number
 }
@@ -138,8 +147,9 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   // 30 days back for expenses
   const expenseStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
-  // 7 days back for study sessions
+  // 7 days back for study sessions and wellness
   const sessionStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const week7AgoDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   // Start of current month for budget
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
@@ -153,6 +163,8 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     tasksRes,
     studySessionsRes,
     messagesRes,
+    moodLogsRes,
+    workShiftsRes,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -196,6 +208,20 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .order('updated_at', { ascending: false })
       .limit(1)
       .single(),
+    // Mood logs — graceful: table may not exist in all environments
+    supabase
+      .from('mood_logs')
+      .select('score,logged_at')
+      .eq('user_id', userId)
+      .gte('logged_at', sessionStart)
+      .order('logged_at', { ascending: true }),
+    // Worked shifts this week for burnout context
+    supabase
+      .from('work_shifts')
+      .select('start_time,end_time')
+      .eq('student_id', userId)
+      .eq('status', 'worked')
+      .gte('shift_date', week7AgoDate),
   ])
 
   // ── Profile ──────────────────────────────────────────────────────────────
@@ -303,6 +329,51 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     createdAt: m.created_at || '',
   }))
 
+  // ── Wellness context ─────────────────────────────────────────────────────
+  const rawMoodLogs = (moodLogsRes.data || []) as Array<{ score: number; logged_at: string }>
+  let moodAvg: number | null = null
+  let moodTrend: NovaWellnessContext['moodTrend'] = 'unknown'
+  if (rawMoodLogs.length >= 3) {
+    const scores = rawMoodLogs.map(m => m.score)
+    moodAvg = scores.reduce((s, v) => s + v, 0) / scores.length
+    const mid = Math.ceil(scores.length / 2)
+    const avgFirst = scores.slice(0, mid).reduce((s, v) => s + v, 0) / mid
+    const avgSecond = scores.slice(mid).reduce((s, v) => s + v, 0) / (scores.length - mid)
+    const delta = avgSecond - avgFirst
+    moodTrend = delta > 0.4 ? 'improving' : delta < -0.4 ? 'declining' : 'stable'
+  }
+
+  const rawWorkShifts = (workShiftsRes.data || []) as Array<{ start_time: string | null; end_time: string | null }>
+  let workHoursThisWeek = 0
+  let workShiftsThisWeek = rawWorkShifts.length
+  for (const shift of rawWorkShifts) {
+    if (shift.start_time && shift.end_time) {
+      const [sh, sm] = shift.start_time.split(':').map(Number)
+      const [eh, em] = shift.end_time.split(':').map(Number)
+      let hrs = (eh + em / 60) - (sh + sm / 60)
+      if (hrs < 0) hrs += 24
+      workHoursThisWeek += hrs
+    } else {
+      // Fallback: assume 4h per shift when times not recorded
+      workHoursThisWeek += 4
+    }
+  }
+  workHoursThisWeek = parseFloat(workHoursThisWeek.toFixed(1))
+
+  const burnoutProxy = Math.min(100, Math.round(
+    (moodAvg !== null && moodAvg < 2.5 ? (2.5 - moodAvg) / 2.5 * 40 : 0) +
+    (workHoursThisWeek > 20 ? Math.min(30, (workHoursThisWeek - 20) * 3) : 0) +
+    (overdueTasks.length * 8)
+  ))
+
+  const wellness: NovaWellnessContext = {
+    moodAvg,
+    moodTrend,
+    workHoursThisWeek,
+    workShiftsThisWeek,
+    burnoutProxy,
+  }
+
   // ── Crisis flags (keyword scan on recent messages) ────────────────────────
   const crisisKeywords = ['suicid', 'kill myself', 'self-harm', 'end it', 'no reason to live', 'hopeless', 'worthless', 'can\'t go on']
   const recentText = recentMessages.map((m) => m.content.toLowerCase()).join(' ')
@@ -316,6 +387,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     pendingTasks,
     studySessions,
     recentMessages,
+    wellness,
     crisisFlags,
     fetchedAt: Date.now(),
   }
@@ -356,6 +428,19 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? `Study this week: ${ctx.studySessions.reduce((s, ss) => s + ss.durationMinutes, 0)} min total. Subjects: ${[...new Set(ctx.studySessions.map((s) => s.module).filter(Boolean))].join(', ') || 'various'}.`
     : 'No study sessions logged this week.'
 
+  const w = ctx.wellness
+  const moodNote = w.moodAvg !== null
+    ? `Mood avg: ${w.moodAvg.toFixed(1)}/5 (${w.moodTrend}). `
+    : 'Mood: not logged. '
+  const workNote = w.workShiftsThisWeek > 0
+    ? `Work: ${w.workShiftsThisWeek} shift${w.workShiftsThisWeek > 1 ? 's' : ''} (≈${w.workHoursThisWeek}h) this week.`
+    : 'No shifts worked this week.'
+  const burnoutNote = w.burnoutProxy > 60
+    ? ` ⚠️ Burnout risk HIGH (${w.burnoutProxy}/100) — prioritise recovery in your advice.`
+    : w.burnoutProxy > 35
+    ? ` Burnout risk moderate (${w.burnoutProxy}/100).`
+    : ''
+
   const challengesNote = p.biggest_challenges?.length
     ? `Self-reported challenges: ${p.biggest_challenges.join(', ')}.`
     : ''
@@ -390,6 +475,9 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 
 **Study:**
 - ${studyNote}
+
+**Wellness & Work:**
+- ${moodNote}${workNote}${burnoutNote}
 ${crisisNote}
 **Instructions:**
 - You are Nova 🌟. Use the knowledge base above for SA context. Personalise using ${firstName}'s live data.

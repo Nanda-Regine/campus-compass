@@ -26,7 +26,8 @@ interface WorkedShift {
   end_time: string
   earnings: number | null
   duration_hours: number
-  job?: { id: string; employer_name: string | null; role_title: string | null } | null
+  // Supabase join returns array; access [0] to get the job record
+  job?: Array<{ id: string; employer_name: string | null; role_title: string | null }> | null
 }
 
 interface BudgetClientProps {
@@ -684,8 +685,9 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               // Group by employer
               const byJob: Record<string, { name: string; shifts: number; earned: number }> = {}
               for (const sh of initialData.workedShifts) {
-                const key  = sh.job?.id ?? 'unknown'
-                const name = sh.job?.employer_name ?? sh.job?.role_title ?? 'Side hustle'
+                const j    = Array.isArray(sh.job) ? sh.job[0] : sh.job
+                const key  = j?.id ?? 'unknown'
+                const name = j?.employer_name ?? j?.role_title ?? 'Side hustle'
                 if (!byJob[key]) byJob[key] = { name, shifts: 0, earned: 0 }
                 byJob[key].shifts++
                 byJob[key].earned += sh.earnings ?? 0

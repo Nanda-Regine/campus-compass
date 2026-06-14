@@ -66,7 +66,7 @@ export default async function DashboardPage() {
       .order('received_date', { ascending: false }),
     supabase
       .from('work_shifts')
-      .select('earnings')
+      .select('earnings,start_time,end_time,shift_date')
       .eq('student_id', user.id)
       .eq('status', 'worked')
       .gte('shift_date', start)
@@ -76,19 +76,47 @@ export default async function DashboardPage() {
   // Redirect to setup if profile incomplete
   if (!profile?.onboarding_complete) redirect('/setup')
 
+  // Compute shift earnings and weekly work hours from the month's worked shifts
+  type WorkedShift = { earnings: number | null; start_time: string | null; end_time: string | null; shift_date: string }
+  const shifts = (workedShifts ?? []) as WorkedShift[]
+  const shiftEarnings = shifts.reduce((s, sh) => s + (sh.earnings ?? 0), 0)
+
+  // Compute hours for THIS week only (to seed the burnout calculation)
+  const now = new Date()
+  const jsDay = now.getDay()
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - (jsDay === 0 ? 6 : jsDay - 1))
+  weekStart.setHours(0, 0, 0, 0)
+  const weekStartStr = weekStart.toISOString().split('T')[0]
+
+  let shiftHoursThisWeek = 0
+  for (const sh of shifts) {
+    if (!sh.shift_date || sh.shift_date < weekStartStr) continue
+    if (sh.start_time && sh.end_time) {
+      const [sh2, sm] = sh.start_time.split(':').map(Number)
+      const [eh, em] = sh.end_time.split(':').map(Number)
+      let hrs = (eh + em / 60) - (sh2 + sm / 60)
+      if (hrs < 0) hrs += 24
+      shiftHoursThisWeek += hrs
+    } else {
+      shiftHoursThisWeek += 4  // fallback: assume 4h per untimed shift
+    }
+  }
+
   return (
     <DashboardClient
       initialData={{
-        profile:        profile!,
-        budget:         budget ?? null,
-        tasks:          tasks ?? [],
-        exams:          exams ?? [],
-        modules:        modules ?? [],
-        timetable:      timetable ?? [],
-        recentExpenses: recentExpenses ?? [],
-        incomeEntries:  incomeEntries ?? [],
-        shiftEarnings:  (workedShifts ?? []).reduce((s, sh) => s + (sh.earnings ?? 0), 0),
-        subscription:   null,
+        profile:             profile!,
+        budget:              budget ?? null,
+        tasks:               tasks ?? [],
+        exams:               exams ?? [],
+        modules:             modules ?? [],
+        timetable:           timetable ?? [],
+        recentExpenses:      recentExpenses ?? [],
+        incomeEntries:       incomeEntries ?? [],
+        shiftEarnings,
+        shiftHoursThisWeek:  parseFloat(shiftHoursThisWeek.toFixed(1)),
+        subscription:        null,
       }}
     />
   )

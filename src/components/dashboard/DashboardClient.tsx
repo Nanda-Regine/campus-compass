@@ -49,6 +49,7 @@ interface DashboardClientProps {
     recentExpenses: Expense[]
     incomeEntries: IncomeEntry[]
     shiftEarnings: number
+    shiftHoursThisWeek: number
     subscription: Subscription | null
   }
 }
@@ -1095,6 +1096,19 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     store.setTimetable(initialData.timetable)
     store.setExpenses(initialData.recentExpenses)
     if (initialData.subscription) store.setSubscription(initialData.subscription)
+    // Seed work-hours cache so the orchestration layer can factor it into burnout
+    if (initialData.shiftHoursThisWeek > 0) {
+      const now = new Date()
+      const jsDay = now.getDay()
+      const weekStart = new Date(now)
+      weekStart.setDate(now.getDate() - (jsDay === 0 ? 6 : jsDay - 1))
+      try {
+        localStorage.setItem('varsityos-work-hours-cache', JSON.stringify({
+          weekHours: initialData.shiftHoursThisWeek,
+          weekOf:    weekStart.toISOString().split('T')[0],
+        }))
+      } catch { /* quota full */ }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

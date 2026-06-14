@@ -936,6 +936,138 @@ d6ca96e  fix: add untracked InsightsCard and API routes missing from repo
 
 ---
 
+## Phase 7.2 — Ubuntu OS: Cross-Domain Intelligence & Nervous System Stability 🔨 (2026-06-14)
+
+> *"Think about what in the app feeds into what and how we can contribute to stable nervous systems through this Life OS."*
+> — Nanda Regine, 2026-06-14
+
+This sprint closes the most critical gap in VarsityOS: the app knew everything **within** domains but nothing **between** them. A student working 30 hours, burning out, with an exam in 4 days and R50 left saw four separate warnings. This sprint gives them one compound view — and the OS starts learning what these signals mean **together**.
+
+### The Ubuntu Principle Applied to Data Flow
+
+Ubuntu: "I am because we are." A student's Mind is not separate from their Body, which is not separate from their Money. A student working night shifts is a different student than one who isn't — they have less sleep, less study time, more financial security, but more burnout risk. The OS must see them whole.
+
+**10 cross-domain connection gaps identified in the data flow audit:**
+
+| Gap | What was missing | Risk |
+|---|---|---|
+| Work shifts → Budget | Shift earnings not included in budget calculations | Budget showed fake deficit |
+| Work shifts → Dashboard | Income from work not in dashboard total | Wrong financial picture |
+| Work shifts → AI insights | Budget AI ignored shift earnings entirely | Wrong spending advice |
+| Work hours → Burnout score | Working 30h/week had zero burnout contribution | Burnout underestimated |
+| Work hours → Nova context | Nova didn't know if student was working | Advice ignored life reality |
+| Mood → Nova context | Nova didn't know student's mood trend | Generic advice regardless of emotional state |
+| Compound signals → Rules engine | burnout + exam + budget failures seen separately | No crisis-level compound intervention |
+| Flashcards → DB | Flashcards lost on session close (no persistence) | SM-2 algorithm wasted |
+| Calendar events → Personal life | No way to add gym/church/errands to timetable | Work/life not visible together |
+| Budget AI → Work earnings | Insights route didn't know about income | Bad financial health scoring |
+
+### What shipped
+
+#### Monetary System — Full interconnection ✅
+
+**`src/app/dashboard/page.tsx`**: Fetches `work_shifts` (status=worked, current month) with earnings, start_time, end_time. Computes `shiftEarnings` (total rand) + `shiftHoursThisWeek` (hours in current week from time diff). Both passed to DashboardClient.
+
+**`src/components/dashboard/DashboardClient.tsx`**: 
+- `shiftHoursThisWeek` seeds `varsityos-work-hours-cache` localStorage on mount (same pattern as mood cache) so the orchestration layer picks it up on every StudentState recompute.
+- `manualIncome + shiftEarnings = totalIncome` → `totalBudget = baseBudget + totalIncome`.
+- DomainPulse shows "⚡ Rx earned" label on Money domain when shifts > 0.
+
+**`src/components/budget/BudgetClient.tsx`**: Wallet tab groups shift earnings by employer, shows shift count + earnings, links to /dashboard/work.
+
+**`src/app/api/budget/insights/route.ts`**: Budget AI now knows `baseBudget`, `shiftEarnings`, `manualIncome`, `totalBudget` — gives advice on real total, not just allowance.
+
+#### Personal Calendar Events ✅
+
+**Migration `20260614000022_custom_calendar_events.sql`**: `calendar_events` table (user_id, title, event_date, start_time, end_time, category, color, notes). RLS.
+
+**`src/components/study/CalendarTab.tsx`**: 8-category personal events (gym, cooking, study, social, errands, self_care, church, other) with colour-coded EventBlock components, optimistic CRUD, bottom-sheet modal, category chips. Work shifts appear as purple ShiftBlock. Full week view now shows a student's complete life — classes + study + work + personal.
+
+**`src/app/study/page.tsx`**: Fetches `calendar_events` for ±90 day window and passes to CalendarTab.
+
+#### Flashcard Persistence ✅
+
+**Migration `20260614000021_flashcard_tables.sql`**: `flashcard_decks` + `flashcard_cards` with SM-2 fields (interval_days, ease_factor, repetitions, next_review, last_review). RLS. Cards now survive sessions.
+
+#### Wellness into StudentState ✅
+
+**`src/store/studentState.ts`**:
+- `WellnessSlice` gets `workHoursThisWeek: number`
+- `RecomputeInput` gets `workHoursThisWeek?: number`
+- `computeWellness()`: work hours > 20h/week → up to 15 pts added to burnout score
+- `readWorkHoursCache()`: reads from `varsityos-work-hours-cache` (same pattern as `readMoodCache`)
+- `initOrchestration()`: passes `workHoursThisWeek: readWorkHoursCache()` to every recompute
+- `burnout_computed` signal emitted after every recompute (was previously a dead signal)
+
+#### Cross-Domain Rules — 6 new rules ✅
+
+**`src/lib/rules.ts`** — Added compound-aware rules that REPLACE four separate warnings with one compound view:
+
+| Rule | Urgency | Cross-domain trigger |
+|---|---|---|
+| `compound_crisis` | 5 (modal) | burnout > 60 AND exam pressure ≥ 65 AND runway < 14d |
+| `work_exam_collision` | 4 (banner) | workHoursThisWeek ≥ 20 AND examPressure ≥ 65 |
+| `burnout_exam_trap` | 4 (banner) | burnout > 55 AND examPressure ≥ 65 AND sleepDebt ≥ 5h |
+| `mood_cascade_risk` | 4 (banner) | mood declining AND avg < 2.8 AND burnout > 40 OR academic risk |
+| `money_stress_academic_drain` | 3 (banner) | emergency mode AND academic risk ≠ safe |
+| `movement_recovery_nudge` | 2 (nudge) | mood < 2.8 AND burnout > 35 → "move your body" |
+
+**The compound_crisis rule is the most important:** for the first time, VarsityOS can detect when a student is failing across 3 domains simultaneously and escalate to a crisis modal instead of three separate quiet banners.
+
+#### Nova Wellness Context ✅
+
+**`src/lib/nova/context.ts`**:
+- New `NovaWellnessContext` type: `{ moodAvg, moodTrend, workHoursThisWeek, workShiftsThisWeek, burnoutProxy }`
+- `buildNovaContext()` now fetches `mood_logs` (last 7 days) + `work_shifts` (last 7 days, status=worked) in the same `Promise.all`
+- Computes `burnoutProxy`: mood deficit + work overload + overdue tasks
+- `formatNovaContext()` adds **Wellness & Work** section to every Nova prompt:
+  ```
+  Mood avg: 3.2/5 (declining). Work: 3 shifts (≈18h) this week. Burnout risk moderate (42/100).
+  ```
+  When burnout > 60: `⚠️ Burnout risk HIGH — prioritise recovery in your advice.`
+
+Nova now gives burnout-aware, work-aware advice for the first time.
+
+### The data flow after this sprint
+
+```
+work_shifts (Supabase)
+  → dashboard/page.tsx: shiftEarnings + shiftHoursThisWeek
+    → DashboardClient: totalIncome + totalBudget (display)
+    → localStorage: varsityos-work-hours-cache (weekHours, weekOf)
+      → initOrchestration: workHoursThisWeek in every recompute
+        → computeWellness: burnoutScore += work hours overload penalty
+          → signals.emit('burnout_computed') [was dead signal — now live]
+          → rules engine: compound_crisis, work_exam_collision, burnout_exam_trap
+          → Nova context: burnoutProxy, workHoursThisWeek, moodTrend in every prompt
+
+mood_logs (Supabase)
+  → buildNovaContext: moodAvg + moodTrend
+    → formatNovaContext: Wellness & Work section
+      → Nova advice adapts to emotional state in real-time
+```
+
+### What this means for Nomvula
+
+Before this sprint, VarsityOS saw four separate problems:
+- "3 tasks overdue" (academic warning)
+- "R80 left" (budget warning)  
+- "burnout score 72" (wellness warning)
+- "shift tomorrow" (schedule entry)
+
+After this sprint, VarsityOS sees ONE compound reality:
+- **compound_crisis fires**: "Mind, money, and body all under pressure at once. Burnout 72/100. Exam pressure 85/100. 3 days of money left. This is the #1 reason students drop out. Let Nova help you triage right now."
+
+One intervention. The whole person. Ubuntu.
+
+### Next — Phase 7.3
+- `attendance_marked` signal: emit from AttendanceTab on every mark
+- Grades as urgency-4 rule: GPA drop > 0.5 triggers intervention
+- ICS timetable import (000023 migration)
+- Nova voice mode (experimental)
+
+---
+
 ## Technical Decisions Log
 
 | Date | Decision | Reason |

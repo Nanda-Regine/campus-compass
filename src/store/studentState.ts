@@ -59,6 +59,7 @@ export interface WellnessSlice {
   moodAvg: number                           // 0–5 average of last 7 logged days
   sleepDebt: number                         // hours (future: from sleep_logs table)
   recoveryNeeded: boolean                   // burnoutScore > 60 or mood persistently low
+  workHoursThisWeek: number                 // hours worked across all jobs this week
 }
 
 export interface ScheduleSlice {
@@ -86,6 +87,7 @@ export interface RecomputeInput {
   nsfasDelayed?: boolean    // true when nsfas_disbursements has overdue expected rows
   streakDays?: number       // current study streak (from AppStore.streakDays)
   streakTodayDone?: boolean // true when streak already safe today (from AppStore.streakTodayDone)
+  workHoursThisWeek?: number // hours worked this week (from varsityos-work-hours-cache)
 }
 
 // ─── Full store interface ──────────────────────────────────────
@@ -257,7 +259,7 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
   }
 }
 
-function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0): WellnessSlice {
+function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0, workHoursThisWeek = 0): WellnessSlice {
   const today      = todayStr()
   const active     = tasks.filter(t => t.status !== 'done')
   const overdue    = active.filter(t => t.due_date && t.due_date < today)
@@ -293,6 +295,11 @@ function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0
     burnoutScore += Math.min(20, Math.round(sleepDebt * 20 / 14))
   }
 
+  // Work hours: > 20h/week is overload for a studying student; up to 15 pts
+  if (workHoursThisWeek > 20) {
+    burnoutScore += Math.min(15, Math.round((workHoursThisWeek - 20) * 1.5))
+  }
+
   burnoutScore = Math.min(100, Math.round(burnoutScore))
 
   return {
@@ -300,6 +307,7 @@ function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0
     moodTrend,
     moodAvg,
     sleepDebt,
+    workHoursThisWeek,
     recoveryNeeded: burnoutScore > 60 || (moodAvg > 0 && moodAvg < 2) || sleepDebt > 10,
   }
 }
@@ -344,7 +352,7 @@ function computeCompleteness(data: RecomputeInput): number {
 
 const DEFAULT_ACADEMIC: AcademicSlice  = { riskLevel: 'safe', moduleRisks: {}, studyVelocity: 0, catchUpDebtHrs: 0, completionRate: 100, examPressure: 0 }
 const DEFAULT_FINANCIAL: FinancialSlice = { runwayDays: 30, healthScore: 75, nsfasStatus: 'unknown', spendingTrend: 'on_track', emergencyMode: false }
-const DEFAULT_WELLNESS: WellnessSlice  = { burnoutScore: 0, moodTrend: 'unknown', moodAvg: 0, sleepDebt: 0, recoveryNeeded: false }
+const DEFAULT_WELLNESS: WellnessSlice  = { burnoutScore: 0, moodTrend: 'unknown', moodAvg: 0, sleepDebt: 0, workHoursThisWeek: 0, recoveryNeeded: false }
 const DEFAULT_SCHEDULE: ScheduleSlice  = { planCoverage: 100, procrastIndex: 0, todayPlan: [], weekPlan: [], lastPlannedAt: null, streakDays: 0, streakTodayDone: false }
 
 // ─── Zustand store ─────────────────────────────────────────────
@@ -362,7 +370,7 @@ export const useStudentState = create<StudentStateStore>()(
       recompute(data: RecomputeInput) {
         const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0)
         const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false)
-        const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0)
+        const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0)
         // Preserve lastPlannedAt across recomputes
         const prevLastPlanned = get().schedule.lastPlannedAt
         const schedule    = { ...computeSchedule(data.tasks, data.streakDays ?? 0, data.streakTodayDone ?? false), lastPlannedAt: prevLastPlanned }
@@ -377,6 +385,15 @@ export const useStudentState = create<StudentStateStore>()(
             dataCompleteness: computeCompleteness(data),
           },
         })
+
+        // Emit burnout signal so components can react to meaningful changes
+        if (typeof window !== 'undefined') {
+          const prev = get().wellness
+          const trend = wellness.burnoutScore < prev.burnoutScore - 5 ? 'improving'
+            : wellness.burnoutScore > prev.burnoutScore + 5 ? 'worsening'
+            : 'stable'
+          signals.emit({ type: 'burnout_computed', payload: { score: wellness.burnoutScore, trend } })
+        }
       },
 
       queueIntervention(intervention: Intervention) {
@@ -456,23 +473,44 @@ function readMoodCache(): number[] {
   }
 }
 
+// Read cached work hours (written by DashboardClient after live shift fetch).
+// Format: { weekHours: number, weekOf: string (ISO date of week start) }
+function readWorkHoursCache(): number {
+  if (typeof window === 'undefined') return 0
+  try {
+    const raw = localStorage.getItem('varsityos-work-hours-cache')
+    if (!raw) return 0
+    const parsed = JSON.parse(raw) as { weekHours?: number; weekOf?: string }
+    if (typeof parsed?.weekHours !== 'number') return 0
+    // Discard if cached more than 8 days ago
+    const weekOf = parsed.weekOf
+    if (!weekOf) return 0
+    const ageDays = (Date.now() - new Date(weekOf).getTime()) / 86_400_000
+    if (ageDays > 8) return 0
+    return parsed.weekHours
+  } catch {
+    return 0
+  }
+}
+
 export function initOrchestration(): () => void {
   _unsubscribe?.()
 
   const runRecompute = (state: ReturnType<typeof useAppStore.getState>) => {
     useStudentState.getState().recompute({
-      tasks:           state.tasks,
-      modules:         state.modules,
-      exams:           state.exams,
-      expenses:        state.expenses,
-      budget:          state.budget,
-      profile:         state.profile,
-      moodScores:      readMoodCache(),
-      sleepDebt:       state.sleepDebt,
-      studyVelocity:   state.studyVelocity7d,
-      nsfasDelayed:    state.nsfasDelayed,
-      streakDays:      state.streakDays,
-      streakTodayDone: state.streakTodayDone,
+      tasks:              state.tasks,
+      modules:            state.modules,
+      exams:              state.exams,
+      expenses:           state.expenses,
+      budget:             state.budget,
+      profile:            state.profile,
+      moodScores:         readMoodCache(),
+      sleepDebt:          state.sleepDebt,
+      studyVelocity:      state.studyVelocity7d,
+      nsfasDelayed:       state.nsfasDelayed,
+      streakDays:         state.streakDays,
+      streakTodayDone:    state.streakTodayDone,
+      workHoursThisWeek:  readWorkHoursCache(),
     })
   }
 

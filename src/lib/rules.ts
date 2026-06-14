@@ -76,6 +76,24 @@ function isOnCooldown(ruleId: string): boolean {
 const RULES: Rule[] = [
   // ── URGENCY 5 — CRISIS: full-screen modal ─────────────────
 
+  // ⚡ CROSS-DOMAIN: mind + money + body all failing simultaneously
+  {
+    id:           'compound_crisis',
+    urgency:      5,
+    variant:      'modal',
+    cooldownMins: 6 * 60,
+    test: ({ academic, financial, wellness }) =>
+      wellness.burnoutScore > 60 &&
+      academic.examPressure >= 65 &&
+      (financial.runwayDays < 14 || financial.emergencyMode),
+    build: ({ academic, financial, wellness }) => ({
+      title:       'Mind, money, and body under pressure at once',
+      message:     `Burnout ${wellness.burnoutScore}/100. Exam pressure ${academic.examPressure}/100. ${financial.runwayDays < 14 ? `${financial.runwayDays} days of money left.` : 'Budget tight.'} This compound stress is the #1 reason students drop out. Let Nova help you triage right now.`,
+      actionLabel: 'Open triage with Nova',
+      actionRoute: '/nova?prompt=i-need-help-with-everything',
+    }),
+  },
+
   {
     id:           'academic_exclusion_risk',
     urgency:      5,
@@ -107,6 +125,56 @@ const RULES: Rule[] = [
   },
 
   // ── URGENCY 4 — HIGH: sticky banner ──────────────────────
+
+  // ⚡ CROSS-DOMAIN: work hours colliding with exam window
+  {
+    id:           'work_exam_collision',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 8 * 60,
+    test: ({ academic, wellness }) =>
+      wellness.workHoursThisWeek >= 20 && academic.examPressure >= 65,
+    build: ({ academic, wellness }) => ({
+      title:       `${wellness.workHoursThisWeek}h of work this week — exam is approaching`,
+      message:     `Exam pressure at ${academic.examPressure}/100. Working ${wellness.workHoursThisWeek}h leaves too little recovery time. Protect the 48h before your exam — no new shifts.`,
+      actionLabel: 'Review your week',
+      actionRoute: '/dashboard/work',
+    }),
+  },
+
+  // ⚡ CROSS-DOMAIN: burnout + sleep debt + exam = dangerous zone
+  {
+    id:           'burnout_exam_trap',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 10 * 60,
+    test: ({ academic, wellness }) =>
+      wellness.burnoutScore > 55 && academic.examPressure >= 65 && wellness.sleepDebt >= 5,
+    build: ({ academic, wellness }) => ({
+      title:       'Burnout + sleep debt + exam = high-risk zone',
+      message:     `Burnout ${wellness.burnoutScore}/100, ${wellness.sleepDebt.toFixed(0)}h sleep deficit, exam pressure ${academic.examPressure}/100. Sleep is now your most important revision tool.`,
+      actionLabel: 'Build recovery plan',
+      actionRoute: '/study?tab=wellness',
+    }),
+  },
+
+  // ⚡ CROSS-DOMAIN: mood declining while under academic + work pressure
+  {
+    id:           'mood_cascade_risk',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 12 * 60,
+    test: ({ academic, wellness }) =>
+      wellness.moodTrend === 'declining' &&
+      wellness.moodAvg > 0 && wellness.moodAvg < 2.8 &&
+      (wellness.burnoutScore > 40 || academic.riskLevel === 'warning' || academic.riskLevel === 'critical'),
+    build: ({ wellness }) => ({
+      title:       'Your mood is dropping under pressure',
+      message:     `Mood average ${wellness.moodAvg.toFixed(1)}/5 and falling. When burnout and academic pressure combine with low mood, it compounds fast. Reach out — SADAG 0800 456 789.`,
+      actionLabel: 'Talk to Nova',
+      actionRoute: '/nova?prompt=i-am-struggling-emotionally',
+    }),
+  },
 
   {
     id:           'exam_crunch_unprepared',
@@ -157,6 +225,23 @@ const RULES: Rule[] = [
   },
 
   // ── URGENCY 3 — MEDIUM: inline dashboard banner ──────────
+
+  // ⚡ CROSS-DOMAIN: financial crisis draining academic focus
+  {
+    id:           'money_stress_academic_drain',
+    urgency:      3,
+    variant:      'banner',
+    cooldownMins: 8 * 60,
+    test: ({ academic, financial }) =>
+      (financial.emergencyMode || financial.runwayDays < 7) &&
+      academic.riskLevel !== 'safe',
+    build: ({ academic, financial }) => ({
+      title:       'Money stress is affecting your studies',
+      message:     `${financial.runwayDays < 7 ? `${financial.runwayDays} days of budget left` : 'Budget in emergency'}. Your academic risk is ${academic.riskLevel}. Financial anxiety drains the cognitive bandwidth you need to study.`,
+      actionLabel: 'Emergency budget mode',
+      actionRoute: '/budget?mode=emergency',
+    }),
+  },
 
   {
     id:           'academic_warning',
@@ -280,6 +365,22 @@ const RULES: Rule[] = [
   },
 
   // ── URGENCY 2 — LOW: subtle nudge ────────────────────────
+
+  // ⚡ CROSS-DOMAIN: movement as nervous system reset
+  {
+    id:           'movement_recovery_nudge',
+    urgency:      2,
+    variant:      'nudge',
+    cooldownMins: 24 * 60,
+    test: ({ wellness }) =>
+      wellness.moodAvg > 0 && wellness.moodAvg < 2.8 && wellness.burnoutScore > 35,
+    build: () => ({
+      title:       'Movement resets your nervous system',
+      message:     'When burnout and low mood combine, movement is the fastest reset — even 20 minutes changes your neurochemistry. No gym required.',
+      actionLabel: 'Log a workout',
+      actionRoute: '/fitness',
+    }),
+  },
 
   {
     id:           'no_plan_for_today',
