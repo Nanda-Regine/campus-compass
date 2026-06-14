@@ -213,11 +213,11 @@ function GradeCalcCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <button
             onClick={e => { e.stopPropagation(); onRemove() }}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.25)', padding: 4 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.55)', padding: 4 }}
           >
             <Trash2 size={13} />
           </button>
-          <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.3)', transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none' }}>
+          <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.55)', transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none' }}>
             ▾
           </span>
         </div>
@@ -260,7 +260,7 @@ function GradeCalcCard({
               borderBottom: '0.5px solid rgba(255,255,255,0.08)',
             }}>
               {['Assessment', 'Mark (%)', 'Weight (%)', ''].map(h => (
-                <span key={h} style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)' }}>
+                <span key={h} style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)' }}>
                   {h}
                 </span>
               ))}
@@ -294,7 +294,7 @@ function GradeCalcCard({
                 />
                 <button
                   onClick={() => removeAssessment(a.id)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Trash2 size={12} />
                 </button>
@@ -381,7 +381,7 @@ function GradeCalcCard({
                   </div>
                 </>
               ) : (
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontFamily: 'DM Sans, sans-serif' }}>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif' }}>
                   Enter your assessment weights and marks to calculate
                 </div>
               )}
@@ -445,8 +445,8 @@ function GpaCalculator({
           GPA Calculator
         </span>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
-          <Info size={11} color="rgba(255,255,255,0.25)" />
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', fontFamily: 'DM Sans' }}>credit-weighted</span>
+          <Info size={11} color="rgba(255,255,255,0.55)" />
+          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', fontFamily: 'DM Sans' }}>credit-weighted</span>
         </div>
       </div>
 
@@ -454,7 +454,7 @@ function GpaCalculator({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 60px 28px', gap: 6 }}>
           {['Module', 'Mark (%)', 'Credits', ''].map(h => (
-            <span key={h} style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)' }}>
+            <span key={h} style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)' }}>
               {h}
             </span>
           ))}
@@ -501,7 +501,7 @@ function GpaCalculator({
               />
               <button
                 onClick={() => removeRow(row.id)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <Trash2 size={12} />
               </button>
@@ -537,7 +537,7 @@ function GpaCalculator({
               <div style={{ fontSize: 13, fontFamily: 'Sora, sans-serif', fontWeight: 700, color: gradeColour(gpa) }}>
                 {grade.label}
               </div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'JetBrains Mono' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', fontFamily: 'JetBrains Mono' }}>
                 {grade.points}/7 pts
               </div>
             </div>
@@ -546,10 +546,10 @@ function GpaCalculator({
           {/* Progress to distinction bar */}
           <div style={{ marginTop: 6 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans' }}>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', fontFamily: 'DM Sans' }}>
                 Progress to Distinction
               </span>
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'JetBrains Mono' }}>
+              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', fontFamily: 'JetBrains Mono' }}>
                 {progressToDistinction.toFixed(0)}%
               </span>
             </div>
@@ -688,7 +688,7 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
             background: `${g.color}10`, border: `0.5px solid ${g.color}30`,
           }}>
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: g.color }}>{g.letter}</span>
-            <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif' }}>{g.pct}%</span>
+            <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.55)', fontFamily: 'DM Sans, sans-serif' }}>{g.pct}%</span>
           </div>
         ))}
       </div>

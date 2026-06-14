@@ -141,7 +141,7 @@ export default function ReaderPage() {
   if (!doc) {
     return (
       <div style={{
-        minHeight: '100dvh',
+        position: 'fixed', inset: 0, zIndex: 100, overflowY: 'auto',
         background: 'linear-gradient(160deg, #060d0b 0%, #091410 100%)',
         display: 'flex',
         flexDirection: 'column',
@@ -251,7 +251,7 @@ export default function ReaderPage() {
 
   return (
     <div
-      style={{ height: '100dvh', display: 'flex', flexDirection: 'column', background: '#060d0b', overflow: 'hidden' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: '#060d0b', overflow: 'hidden' }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >

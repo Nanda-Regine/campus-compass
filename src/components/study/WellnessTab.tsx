@@ -95,7 +95,7 @@ function BurnoutRing({ score, color }: { score: number; color: string }) {
       </svg>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 22, fontWeight: 700, color, lineHeight: 1 }}>{score}</div>
-        <div style={{ fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>burnout</div>
+        <div style={{ fontSize: 8, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>burnout</div>
       </div>
     </div>
   )
@@ -117,7 +117,7 @@ function Sparkline({ checkins }: { checkins: CheckIn[] }) {
 
   return (
     <div>
-      <div style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: 6 }}>7-day trend</div>
+      <div style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 6 }}>7-day trend</div>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <polyline points={pts} fill="none" stroke="rgba(112,144,208,0.5)" strokeWidth={1.5} strokeLinejoin="round" />
         {scores.map((s, i) => {
@@ -129,7 +129,7 @@ function Sparkline({ checkins }: { checkins: CheckIn[] }) {
       </svg>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
         {last7.map((c, i) => (
-          <div key={i} style={{ fontSize: 8, color: 'rgba(255,255,255,0.2)', textAlign: 'center' }}>
+          <div key={i} style={{ fontSize: 8, color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
             {new Date(c.date + 'T00:00:00').toLocaleDateString('en-ZA', { weekday: 'short' }).slice(0, 1)}
           </div>
         ))}
@@ -171,8 +171,8 @@ function DimSlider({ dim, value, onChange }: {
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 24 }}>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>{dim.lo}</span>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>{dim.hi}</span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>{dim.lo}</span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>{dim.hi}</span>
       </div>
     </div>
   )
@@ -193,13 +193,13 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
         35-day burnout heatmap
       </div>
       {/* Day labels */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
         {['M','T','W','T','F','S','S'].map((d, i) => (
-          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.46rem', color: 'rgba(255,255,255,0.18)', textAlign: 'center' }}>{d}</div>
+          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.46rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>{d}</div>
         ))}
       </div>
       {/* Week rows */}
@@ -231,11 +231,11 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
       ))}
       {/* Legend */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.22)' }}>Thriving</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.55)' }}>Thriving</span>
         {['#4ecf9e','#7090d0','#c9a84c','#e8834a','#ff6b6b'].map(c => (
           <div key={c} style={{ width: 10, height: 10, borderRadius: 2, background: `${c}45`, border: `1px solid ${c}35` }} />
         ))}
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.22)' }}>Burnt out</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.55)' }}>Burnt out</span>
       </div>
     </div>
   )
@@ -308,7 +308,7 @@ function SleepScience() {
               ].map(s => (
                 <div key={s.l} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '10px 8px', textAlign: 'center' }}>
                   <div style={{ fontSize: '1rem', fontWeight: 700, color: s.c, fontFamily: 'var(--font-mono)' }}>{s.v}</div>
-                  <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{s.l}</div>
+                  <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{s.l}</div>
                 </div>
               ))}
             </div>
@@ -335,11 +335,11 @@ function SleepScience() {
             <div key={l.date} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9 }}>
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{l.date}</div>
-                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 1 }}>{l.bedtime} → {l.wakeup}</div>
+                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>{l.bedtime} → {l.wakeup}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: l.hours >= 7 ? '#4ecf9e' : l.hours >= 6 ? '#c9a84c' : '#ff6b6b' }}>{l.hours}h</div>
-                <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)' }}>{'★'.repeat(l.quality)}{'☆'.repeat(5 - l.quality)}</div>
+                <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)' }}>{'★'.repeat(l.quality)}{'☆'.repeat(5 - l.quality)}</div>
               </div>
             </div>
           ))}
@@ -465,7 +465,7 @@ export default function WellnessTab() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.55)', fontSize: 13 }}>
         Loading wellness data…
       </div>
     )
@@ -504,7 +504,7 @@ export default function WellnessTab() {
               <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 18, fontWeight: 700, color: risk.color, marginBottom: 4 }}>{risk.label}</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{risk.tip}</div>
               {avgScore !== null && checkins.length >= 3 && (
-                <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+                <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>
                   7-day avg: <span style={{ color: getRisk(avgScore).color, fontWeight: 600 }}>{avgScore}</span>
                 </div>
               )}
@@ -514,7 +514,7 @@ export default function WellnessTab() {
           {/* Sliders */}
           {!saved ? (
             <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '18px 16px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>How are you feeling today?</div>
+              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>How are you feeling today?</div>
               {DIMENSIONS.map(dim => (
                 <DimSlider
                   key={dim.key}
@@ -537,7 +537,7 @@ export default function WellnessTab() {
             </div>
           ) : (
             <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
-              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 14, fontWeight: 600 }}>Today&apos;s check-in</div>
+              <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 14, fontWeight: 600 }}>Today&apos;s check-in</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
                 {DIMENSIONS.map(dim => {
                   const v = dims[dim.key]
@@ -548,7 +548,7 @@ export default function WellnessTab() {
                     <div key={dim.key} style={{ textAlign: 'center', padding: '10px 8px', background: `${col}0d`, border: `1px solid ${col}28`, borderRadius: 10 }}>
                       <div style={{ fontSize: 18, marginBottom: 4 }}>{dim.icon}</div>
                       <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 16, fontWeight: 700, color: col }}>{v}</div>
-                      <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', marginTop: 2, lineHeight: 1.3 }}>{dim.label.split(' ')[0]}</div>
+                      <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.55)', marginTop: 2, lineHeight: 1.3 }}>{dim.label.split(' ')[0]}</div>
                     </div>
                   )
                 })}
@@ -569,7 +569,7 @@ export default function WellnessTab() {
                 <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg,#9b6fd4,#6b3fa0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>✦</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#c5a8f0', fontFamily: 'Sora,sans-serif' }}>Talk to Nova about how you&apos;re feeling</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Your check-in score will be shared automatically</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>Your check-in score will be shared automatically</div>
                 </div>
                 <span style={{ color: '#9b6fd4', fontSize: 18 }}>→</span>
               </div>
@@ -594,7 +594,7 @@ export default function WellnessTab() {
       {view === 'history' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {checkins.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'rgba(255,255,255,0.25)', fontSize: 13 }}>
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'rgba(255,255,255,0.55)', fontSize: 13 }}>
               No check-ins yet. Start tracking today.
             </div>
           ) : (
@@ -623,7 +623,7 @@ export default function WellnessTab() {
                   ].map(({ label, value, color }) => (
                     <div key={label} style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '12px', textAlign: 'center' }}>
                       <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 20, fontWeight: 700, color }}>{value}</div>
-                      <div style={{ fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>{label}</div>
+                      <div style={{ fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginTop: 4 }}>{label}</div>
                     </div>
                   ))}
                 </div>
@@ -641,7 +641,7 @@ export default function WellnessTab() {
                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: r.color, flexShrink: 0 }} />
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{dateLabel}</div>
-                          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 1 }}>
+                          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>
                             {DIMENSIONS.map(d => `${d.icon}${c[d.key]}`).join('  ')}
                           </div>
                         </div>

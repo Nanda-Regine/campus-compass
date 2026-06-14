@@ -16,6 +16,7 @@ export default async function StudyPage() {
     { data: tasks },
     { data: timetable },
     { data: exams },
+    { data: workShifts },
   ] = await Promise.all([
     supabase
       .from('modules')
@@ -36,16 +37,23 @@ export default async function StudyPage() {
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .order('exam_date', { ascending: true }),
+    supabase
+      .from('work_shifts')
+      .select('*, job:part_time_jobs(id,employer_name,role_title,hourly_rate)')
+      .eq('student_id', user.id)
+      .gte('shift_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
+      .order('shift_date', { ascending: true }),
   ])
 
   return (
     <StudyClient
       initialData={{
-        modules:   modules   ?? [],
-        tasks:     tasks     ?? [],
-        timetable: timetable ?? [],
-        exams:     exams     ?? [],
-        userId:    user.id,
+        modules:    modules    ?? [],
+        tasks:      tasks      ?? [],
+        timetable:  timetable  ?? [],
+        exams:      exams      ?? [],
+        workShifts: workShifts ?? [],
+        userId:     user.id,
       }}
     />
   )

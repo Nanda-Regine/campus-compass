@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import { loadGratitudeEntries } from '@/components/orchestration/GratitudePrompt'
-import type { TimetableEntry, Task, Exam, Module } from '@/types'
+import type { TimetableEntry, Task, Exam, Module, WorkShift } from '@/types'
 
 type CalMode = 'week' | 'month'
 
@@ -56,10 +56,33 @@ function formatTime(t: string) {
 // ─── Types ────────────────────────────────────────────────────
 
 interface Props {
-  timetable: TimetableEntry[]
-  tasks:     Task[]
-  exams:     Exam[]
-  modules:   Module[]
+  timetable:  TimetableEntry[]
+  tasks:      Task[]
+  exams:      Exam[]
+  modules:    Module[]
+  workShifts?: WorkShift[]
+}
+
+// ─── Work shift block ─────────────────────────────────────
+function ShiftBlock({ shift, top, height }: { shift: WorkShift; top: number; height: number }) {
+  const label = shift.job?.employer_name ?? shift.job?.role_title ?? 'Work shift'
+  return (
+    <div style={{
+      position: 'absolute', top, height: Math.max(height, 28),
+      left: 2, right: 2, zIndex: 1,
+      background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.45)',
+      borderRadius: 6, padding: '3px 5px', overflow: 'hidden',
+    }}>
+      <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#a855f7', fontFamily: 'var(--font-mono)', lineHeight: 1.2 }}>
+        💼
+      </div>
+      {height > 34 && (
+        <div style={{ fontSize: '0.56rem', color: 'rgba(168,85,247,0.85)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {label}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── Timetable block (positioned absolutely in time grid) ─────
@@ -308,7 +331,7 @@ function ActivityScore({ tasks, expenses }: { tasks: Task[]; expenses: { expense
 
 // ─── Main component ───────────────────────────────────────────
 
-export default function CalendarTab({ timetable, tasks, exams }: Props) {
+export default function CalendarTab({ timetable, tasks, exams, workShifts = [] }: Props) {
   const [mode, setMode]         = useState<CalMode>('week')
   const [weekOffset, setWeekOffset] = useState(0)
   const { expenses } = useAppStore()
@@ -329,12 +352,22 @@ export default function CalendarTab({ timetable, tasks, exams }: Props) {
     if (idx !== undefined) slotsByDay[idx].push(slot)
   }
 
-  // Group tasks by due date (iso string)
+  // Group tasks by due date (normalize ISO timestamp to date-only)
   const tasksByDate: Record<string, Task[]> = {}
   for (const t of tasks) {
     if (!t.due_date || t.status === 'done') continue
-    if (!tasksByDate[t.due_date]) tasksByDate[t.due_date] = []
-    tasksByDate[t.due_date].push(t)
+    const key = t.due_date.slice(0, 10)
+    if (!tasksByDate[key]) tasksByDate[key] = []
+    tasksByDate[key].push(t)
+  }
+
+  // Group work shifts by date
+  const shiftsByDate: Record<string, WorkShift[]> = {}
+  for (const s of workShifts) {
+    if (!s.shift_date) continue
+    const key = s.shift_date.slice(0, 10)
+    if (!shiftsByDate[key]) shiftsByDate[key] = []
+    shiftsByDate[key].push(s)
   }
 
   // Group exams by date
@@ -526,9 +559,10 @@ export default function CalendarTab({ timetable, tasks, exams }: Props) {
           {/* Day columns */}
           {weekDays.map((d, dayIdx) => {
             const iso      = weekDayIsos[dayIdx]
-            const slots    = slotsByDay[dayIdx] ?? []
-            const dayTasks = tasksByDate[iso] ?? []
-            const dayExams = examsByDate[iso] ?? []
+            const slots     = slotsByDay[dayIdx] ?? []
+            const dayTasks  = tasksByDate[iso] ?? []
+            const dayExams  = examsByDate[iso] ?? []
+            const dayShifts = shiftsByDate[iso] ?? []
             const isToday  = iso === todayIso
 
             // Current time indicator
@@ -574,6 +608,16 @@ export default function CalendarTab({ timetable, tasks, exams }: Props) {
                   const top       = ((startMins - HOUR_START * 60) / 60) * CELL_H
                   const height    = ((endMins - startMins) / 60) * CELL_H
                   return <SlotBlock key={slot.id} slot={slot} top={top} height={height} />
+                })}
+
+                {/* Work shift blocks */}
+                {dayShifts.map(shift => {
+                  if (!shift.start_time) return null
+                  const startMins = timeToMins(shift.start_time)
+                  const endMins   = shift.end_time ? timeToMins(shift.end_time) : startMins + 60
+                  const top       = ((startMins - HOUR_START * 60) / 60) * CELL_H
+                  const height    = ((endMins - startMins) / 60) * CELL_H
+                  return <ShiftBlock key={shift.id} shift={shift} top={top} height={height} />
                 })}
 
                 {/* Exam badges (top of day column) */}
@@ -636,6 +680,10 @@ export default function CalendarTab({ timetable, tasks, exams }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(245,158,11,0.3)', border: '1px solid rgba(245,158,11,0.4)' }} />
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Exam</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <div style={{ width: 10, height: 10, borderRadius: 3, background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.45)' }} />
+          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Work shift</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <div style={{ width: 24, height: 2, background: 'var(--teal)', borderRadius: 1 }} />

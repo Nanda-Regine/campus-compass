@@ -148,10 +148,10 @@ function WeekView({ tasks, onDaySelect }: { tasks: Task[]; onDaySelect: (date: s
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
       {weekDays.map(day => {
-        const dayTasks = tasks.filter(t => t.status !== 'done' && t.due_date === day.date)
+        const dayTasks = tasks.filter(t => t.status !== 'done' && (t.due_date ?? '').slice(0, 10) === day.date)
         const urgentCount  = dayTasks.filter(t => t.priority === 'urgent').length
         const highCount    = dayTasks.filter(t => t.priority === 'high').length
-        const overdue      = tasks.filter(t => t.status !== 'done' && t.due_date === day.date && day.date < todayStr())
+        const overdue      = tasks.filter(t => t.status !== 'done' && (t.due_date ?? '').slice(0, 10) === day.date && day.date < todayStr())
 
         const dotColor = urgentCount > 0 ? 'var(--danger)' :
           highCount > 0  ? 'var(--coral)' :
