@@ -43,6 +43,7 @@ export interface AcademicSlice {
   catchUpDebtHrs: number                    // estimated hours needed to get back on track
   completionRate: number                    // 0–100, tasks completed this week
   examPressure: number                      // 0–100, composite score from nearest exam
+  lowestGrade: number                       // 0 = no data; lowest module assessment avg (0–100)
 }
 
 export interface FinancialSlice {
@@ -88,6 +89,7 @@ export interface RecomputeInput {
   streakDays?: number       // current study streak (from AppStore.streakDays)
   streakTodayDone?: boolean // true when streak already safe today (from AppStore.streakTodayDone)
   workHoursThisWeek?: number // hours worked this week (from varsityos-work-hours-cache)
+  lowestGrade?: number       // lowest module grade (from varsityos-grade-cache); 0 = no data
 }
 
 // ─── Full store interface ──────────────────────────────────────
@@ -144,7 +146,7 @@ function weekBounds(): { start: string; end: string } {
 
 // ─── Domain computation functions ─────────────────────────────
 
-function computeAcademic(tasks: Task[], modules: Module[], exams: Exam[], studyVelocity = 0): AcademicSlice {
+function computeAcademic(tasks: Task[], modules: Module[], exams: Exam[], studyVelocity = 0, lowestGrade = 0): AcademicSlice {
   const today = todayStr()
   const { start: weekStart, end: weekEnd } = weekBounds()
 
@@ -200,6 +202,7 @@ function computeAcademic(tasks: Task[], modules: Module[], exams: Exam[], studyV
     catchUpDebtHrs: overdueTasks.length * 2,  // 2h estimate per overdue task
     completionRate,
     examPressure,
+    lowestGrade,
   }
 }
 
@@ -350,7 +353,7 @@ function computeCompleteness(data: RecomputeInput): number {
 
 // ─── Defaults ─────────────────────────────────────────────────
 
-const DEFAULT_ACADEMIC: AcademicSlice  = { riskLevel: 'safe', moduleRisks: {}, studyVelocity: 0, catchUpDebtHrs: 0, completionRate: 100, examPressure: 0 }
+const DEFAULT_ACADEMIC: AcademicSlice  = { riskLevel: 'safe', moduleRisks: {}, studyVelocity: 0, catchUpDebtHrs: 0, completionRate: 100, examPressure: 0, lowestGrade: 0 }
 const DEFAULT_FINANCIAL: FinancialSlice = { runwayDays: 30, healthScore: 75, nsfasStatus: 'unknown', spendingTrend: 'on_track', emergencyMode: false }
 const DEFAULT_WELLNESS: WellnessSlice  = { burnoutScore: 0, moodTrend: 'unknown', moodAvg: 0, sleepDebt: 0, workHoursThisWeek: 0, recoveryNeeded: false }
 const DEFAULT_SCHEDULE: ScheduleSlice  = { planCoverage: 100, procrastIndex: 0, todayPlan: [], weekPlan: [], lastPlannedAt: null, streakDays: 0, streakTodayDone: false }
@@ -368,7 +371,7 @@ export const useStudentState = create<StudentStateStore>()(
       meta:          { lastComputedAt: null, dataCompleteness: 0 },
 
       recompute(data: RecomputeInput) {
-        const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0)
+        const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0, data.lowestGrade ?? 0)
         const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false)
         const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0)
         // Preserve lastPlannedAt across recomputes
@@ -493,6 +496,20 @@ function readWorkHoursCache(): number {
   }
 }
 
+// Read cached lowest grade (written by grade_updated signal handler).
+// Format: { lowestGrade: number, moduleCode: string }
+function readGradeCache(): number {
+  if (typeof window === 'undefined') return 0
+  try {
+    const raw = localStorage.getItem('varsityos-grade-cache')
+    if (!raw) return 0
+    const parsed = JSON.parse(raw) as { lowestGrade?: number }
+    return typeof parsed?.lowestGrade === 'number' ? parsed.lowestGrade : 0
+  } catch {
+    return 0
+  }
+}
+
 export function initOrchestration(): () => void {
   _unsubscribe?.()
 
@@ -511,6 +528,7 @@ export function initOrchestration(): () => void {
       streakDays:         state.streakDays,
       streakTodayDone:    state.streakTodayDone,
       workHoursThisWeek:  readWorkHoursCache(),
+      lowestGrade:        readGradeCache(),
     })
   }
 
@@ -529,7 +547,22 @@ export function initOrchestration(): () => void {
   const getState = () => useAppStore.getState()
   const signalUnsubs = [
     signals.on('task_completed',      () => runRecompute(getState())),
-    signals.on('grade_updated',       () => runRecompute(getState())),
+    signals.on('attendance_marked',   () => runRecompute(getState())),
+    signals.on('grade_updated',       ({ payload }) => {
+      // Cache the lowest grade seen across all modules so the rules engine can fire on it
+      if (typeof window !== 'undefined') {
+        try {
+          const existing = JSON.parse(localStorage.getItem('varsityos-grade-cache') ?? '{}') as { lowestGrade?: number }
+          if (!existing.lowestGrade || payload.grade < existing.lowestGrade) {
+            localStorage.setItem('varsityos-grade-cache', JSON.stringify({
+              lowestGrade:  payload.grade,
+              moduleCode:   payload.moduleCode,
+            }))
+          }
+        } catch { /* quota full */ }
+      }
+      runRecompute(getState())
+    }),
     signals.on('expense_logged',      () => runRecompute(getState())),
     // Mood logged → re-read localStorage cache; AppStore not involved
     signals.on('mood_logged',         () => runRecompute(getState())),

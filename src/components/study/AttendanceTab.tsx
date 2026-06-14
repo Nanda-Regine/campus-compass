@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { AlertTriangle, CheckCircle2, XCircle, Clock, Wifi, X, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { signals } from '@/store/signals'
 
 interface Module { id: string; module_name: string }
 interface AttendanceRecord {
@@ -120,8 +121,19 @@ export default function AttendanceTab({ modules, userId }: { modules: Module[]; 
       { user_id: userId, module_id: moduleId, date: selectedDate, status },
       { onConflict: 'user_id,module_id,date' }
     )
-    if (error) { toast.error('Could not save'); }
-    else       { toast.success(STATUS_LABELS[status]); await loadRecords() }
+    if (error) { toast.error('Could not save') }
+    else {
+      toast.success(STATUS_LABELS[status])
+      signals.emit({
+        type: 'attendance_marked',
+        payload: {
+          moduleId,
+          attended: status !== 'absent',
+          moduleCode: stats.find(s => s.module.id === moduleId)?.module.module_name ?? '',
+        },
+      })
+      await loadRecords()
+    }
     setMarking(null)
   }
 

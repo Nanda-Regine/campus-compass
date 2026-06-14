@@ -99,6 +99,7 @@ export interface NovaContext {
   recentMessages: NovaMessage[]     // last 20
   wellness: NovaWellnessContext
   crisisFlags: string[]
+  patternInsights: string[]    // correlation insights from 30-day behavioural data
   fetchedAt: number
 }
 
@@ -374,6 +375,38 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     burnoutProxy,
   }
 
+  // ── Pattern insights (computed from already-fetched study sessions) ─────────
+  const patternInsights: string[] = []
+
+  // Peak study hour window
+  if (studySessions.length >= 5) {
+    const hourCounts = new Array(24).fill(0) as number[]
+    const rawSessions = studySessionsRes.data ?? []
+    rawSessions.forEach(s => {
+      const h = new Date(s.started_at as string).getHours()
+      hourCounts[h]++
+    })
+    let maxCount = 0, peakHour = -1
+    for (let h = 0; h < 22; h++) {
+      const count = hourCounts[h] + (hourCounts[h + 1] ?? 0)
+      if (count > maxCount) { maxCount = count; peakHour = h }
+    }
+    const peakPct = Math.round(maxCount / rawSessions.length * 100)
+    const fmtH = (h: number) => h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`
+    if (peakHour >= 0 && peakPct >= 35) {
+      patternInsights.push(`${peakPct}% of study sessions start between ${fmtH(peakHour)}–${fmtH(peakHour + 2)} — protect this natural deep-work window`)
+    }
+  }
+
+  // Mood → study load correlation (rough proxy from this week's data)
+  if (wellness.moodAvg !== null && studySessions.length > 0) {
+    const totalStudyMins = studySessions.reduce((s, ss) => s + ss.durationMinutes, 0)
+    const avgMinsPerDay  = totalStudyMins / 7
+    if (wellness.moodAvg < 2.5 && avgMinsPerDay > 90) {
+      patternInsights.push(`Low mood (${wellness.moodAvg.toFixed(1)}/5) despite high study load (${Math.round(avgMinsPerDay)} min/day avg) — possible burnout pattern`)
+    }
+  }
+
   // ── Crisis flags (keyword scan on recent messages) ────────────────────────
   const crisisKeywords = ['suicid', 'kill myself', 'self-harm', 'end it', 'no reason to live', 'hopeless', 'worthless', 'can\'t go on']
   const recentText = recentMessages.map((m) => m.content.toLowerCase()).join(' ')
@@ -389,6 +422,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     recentMessages,
     wellness,
     crisisFlags,
+    patternInsights,
     fetchedAt: Date.now(),
   }
 
@@ -453,6 +487,10 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? `\n⚠️ CRISIS SIGNALS DETECTED in recent messages. Lead with warmth, validate feelings, share SADAG number (0800 456 789), and encourage them to speak to campus counselling before moving to practical advice.`
     : ''
 
+  const patternsNote = ctx.patternInsights.length > 0
+    ? `\n**${firstName}'s behavioural patterns (reference when relevant):**\n${ctx.patternInsights.map(i => `- ${i}`).join('\n')}`
+    : ''
+
   return `---
 
 ## STUDENT LIVE DATA (fresh — use to personalise every response)
@@ -478,6 +516,7 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 
 **Wellness & Work:**
 - ${moodNote}${workNote}${burnoutNote}
+${patternsNote}
 ${crisisNote}
 **Instructions:**
 - You are Nova 🌟. Use the knowledge base above for SA context. Personalise using ${firstName}'s live data.

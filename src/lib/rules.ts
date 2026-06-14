@@ -126,6 +126,21 @@ const RULES: Rule[] = [
 
   // ── URGENCY 4 — HIGH: sticky banner ──────────────────────
 
+  // Grade below pass mark — failing a module delays graduation + threatens NSFAS funding
+  {
+    id:           'grade_below_pass',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 24 * 60,
+    test: ({ academic }) => academic.lowestGrade > 0 && academic.lowestGrade < 50,
+    build: ({ academic }) => ({
+      title:       `Module grade ${academic.lowestGrade}% — below pass mark`,
+      message:     `One of your modules is sitting at ${academic.lowestGrade}%. Failing delays graduation and can affect NSFAS funding. Build a targeted study plan now.`,
+      actionLabel: 'Open catch-up planner',
+      actionRoute: '/study?tab=exams&catchup=true',
+    }),
+  },
+
   // ⚡ CROSS-DOMAIN: work hours colliding with exam window
   {
     id:           'work_exam_collision',
@@ -541,13 +556,16 @@ export function runRules(): void {
     // The intervention cooldown above already ensures this fires at most
     // once per cooldown window per rule — no extra rate-limiting needed.
     if (rule.urgency >= 4) {
-      fetch('/api/push/notify', {
+      fetch('/api/push/state-alert', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
-          title: intervention.title,
-          body:  intervention.message,
-          url:   intervention.actionRoute,
+          ruleId:        rule.id,
+          urgency:       rule.urgency,
+          title:         intervention.title,
+          body:          intervention.message,
+          url:           intervention.actionRoute,
+          cooldownHours: rule.cooldownMins / 60,
         }),
       }).catch(() => {})
     }
