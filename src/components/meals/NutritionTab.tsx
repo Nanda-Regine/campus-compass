@@ -239,6 +239,16 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
   const calPct = Math.min(totals.calories / DAILY_TARGETS.calories, 1)
   const calColor = calPct > 1.05 ? '#FB7185' : calPct > 0.85 ? '#4ecf9e' : '#f59e0b'
 
+  // Health score 0–100: calories in range (40pts) + protein met (20pts) + carbs met (20pts) + hydration (20pts)
+  const healthScore = Math.round(
+    (calPct > 0.6 && calPct <= 1.1 ? 40 : calPct > 0.3 ? 20 : 0) +
+    Math.min(totals.protein / DAILY_TARGETS.protein, 1) * 20 +
+    Math.min(totals.carbs   / DAILY_TARGETS.carbs,   1) * 20 +
+    Math.min(water          / DAILY_TARGETS.water,   1) * 20
+  )
+  const scoreColor = healthScore >= 75 ? '#4ecf9e' : healthScore >= 45 ? '#f59e0b' : '#FB7185'
+  const scoreLabel = healthScore >= 75 ? 'On track' : healthScore >= 45 ? 'Getting there' : 'Log more meals'
+
   if (loading) {
     return (
       <div className="space-y-3">
@@ -253,7 +263,18 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="font-display font-bold text-white">Today&apos;s Nutrition</div>
-        <div className="font-mono text-[0.58rem] text-white/30">{today}</div>
+        <div className="flex items-center gap-2">
+          <div className="font-mono text-[0.58rem] text-white/30">{today}</div>
+          {logs.length > 0 && (
+            <div
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border"
+              style={{ background: `${scoreColor}12`, borderColor: `${scoreColor}35` }}
+            >
+              <span className="font-mono text-[0.6rem] font-bold" style={{ color: scoreColor }}>{healthScore}</span>
+              <span className="font-mono text-[0.52rem]" style={{ color: `${scoreColor}80` }}>{scoreLabel}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Macro summary card */}
@@ -403,6 +424,16 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
           </div>
         )
       })}
+
+      {/* Study brain fuel tip */}
+      {healthScore >= 75 && totals.protein >= 40 && (
+        <div className="bg-indigo-500/8 border border-indigo-500/15 rounded-xl px-4 py-3">
+          <div className="font-mono text-[0.58rem] text-indigo-400 mb-1">🧠 Brain fuelled</div>
+          <div className="font-body text-sm text-white/65">
+            Good protein + carbs today means sustained focus. Your brain needs glucose every 2–3 hours — keep a snack nearby during long study sessions.
+          </div>
+        </div>
+      )}
 
       {/* Contextual nutrition tips */}
       {totals.calories > 0 && totals.protein < 30 && (

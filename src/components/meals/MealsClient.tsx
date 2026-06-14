@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import TopBar from '@/components/layout/TopBar'
 import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
@@ -8,6 +8,15 @@ import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NutritionTab from './NutritionTab'
+
+const GROCERY_CATS = [
+  { id: 'protein', icon: '🥩', label: 'Protein', color: '#FB7185', tip: 'eggs, tuna, lentils, chicken, beans' },
+  { id: 'carbs',   icon: '🍞', label: 'Carbs',   color: '#f59e0b', tip: 'bread, rice, pasta, pap, potatoes' },
+  { id: 'veg',     icon: '🥦', label: 'Veg/Fruit', color: '#4ecf9e', tip: 'tomatoes, spinach, bananas, apples' },
+  { id: 'dairy',   icon: '🥛', label: 'Dairy',   color: '#38BDF8', tip: 'milk, amasi, yoghurt, cheese' },
+  { id: 'pantry',  icon: '🧂', label: 'Pantry',  color: '#818CF8', tip: 'oil, salt, spices, sauces, stock' },
+  { id: 'treats',  icon: '🍭', label: 'Treats',  color: '#e8834a', tip: 'biscuits, sweets, cold drinks' },
+]
 
 interface MealsClientProps {
   initialData: {
@@ -121,6 +130,24 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   const [groceryItems, setGroceryItems] = useState<GroceryItem[]>(initialData.groceryItems)
   const [groceryInput, setGroceryInput] = useState('')
   const [groceryPrice, setGroceryPrice] = useState('')
+  const [selectedCat, setSelectedCat] = useState<string>('protein')
+  const [itemCats, setItemCats] = useState<Record<string, string>>({})
+
+  // Persist grocery categories in localStorage (no DB migration needed)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('grocery_item_cats')
+      if (stored) setItemCats(JSON.parse(stored))
+    } catch {}
+  }, [])
+
+  function saveItemCat(itemId: string, cat: string) {
+    setItemCats(prev => {
+      const next = { ...prev, [itemId]: cat }
+      localStorage.setItem('grocery_item_cats', JSON.stringify(next))
+      return next
+    })
+  }
 
   // AI Recipe state
   const [ingredients, setIngredients] = useState('')
@@ -251,7 +278,9 @@ export default function MealsClient({ initialData }: MealsClientProps) {
         .single()
 
       if (error) throw error
-      setGroceryItems(prev => [item as GroceryItem, ...prev])
+      const newItem = item as GroceryItem
+      setGroceryItems(prev => [newItem, ...prev])
+      saveItemCat(newItem.id, selectedCat)
       setGroceryInput('')
       setGroceryPrice('')
     } catch {
@@ -462,7 +491,15 @@ export default function MealsClient({ initialData }: MealsClientProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="font-display font-bold text-white">This week</div>
-              <div className="font-mono text-[0.58rem] text-white/30">{initialData.weekStart}</div>
+              <div className="flex items-center gap-3">
+                <div className="font-mono text-[0.58rem] text-white/30">{initialData.weekStart}</div>
+                <button
+                  onClick={() => setActiveTab('nutrition')}
+                  className="font-mono text-[0.55rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg transition-all"
+                >
+                  🥗 Log nutrition →
+                </button>
+              </div>
             </div>
             {WEEKDAYS.map(day => (
               <div key={day} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden">
@@ -554,105 +591,182 @@ export default function MealsClient({ initialData }: MealsClientProps) {
         )}
 
         {/* ─── Grocery Tab ─── */}
-        {activeTab === 'grocery' && (
-          <>
-            {/* Add item */}
-            <div className="flex gap-2">
-              <input
-                value={groceryInput}
-                onChange={e => setGroceryInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && addGroceryItem()}
-                placeholder="Add grocery item…"
-                className="flex-1 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
-              />
-              <input
-                type="number"
-                value={groceryPrice}
-                onChange={e => setGroceryPrice(e.target.value)}
-                placeholder="R"
-                className="w-20 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
-              />
-              <button
-                onClick={addGroceryItem}
-                className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2.5 rounded-xl transition-all"
-              >
-                +
-              </button>
-            </div>
+        {activeTab === 'grocery' && (() => {
+          // Cart nutrition balance analysis
+          const catCounts: Record<string, number> = {}
+          groceryItems.filter(i => !i.checked).forEach(i => {
+            const cat = itemCats[i.id] || 'pantry'
+            catCounts[cat] = (catCounts[cat] || 0) + 1
+          })
+          const hasProtein = (catCounts['protein'] || 0) >= 1
+          const hasVeg     = (catCounts['veg']     || 0) >= 1
+          const hasCarbs   = (catCounts['carbs']   || 0) >= 1
 
-            {/* Total */}
-            {groceryItems.length > 0 && (
-              <div className="flex items-center justify-between">
-                <div className="font-mono text-[0.6rem] text-white/40">
-                  {groceryItems.filter(i => !i.checked).length} items · estimated total
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="font-display font-black text-teal-400">{fmt.currencyShort(groceryTotal)}</div>
-                  {groceryItems.some(i => i.checked) && (
+          return (
+            <>
+              {/* Category chips */}
+              <div className="space-y-2">
+                <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest">Category</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {GROCERY_CATS.map(cat => (
                     <button
-                      onClick={clearChecked}
-                      className="font-mono text-[0.58rem] text-white/30 hover:text-red-400 transition-colors"
+                      key={cat.id}
+                      onClick={() => setSelectedCat(cat.id)}
+                      title={cat.tip}
+                      className={cn(
+                        'flex items-center gap-1 px-2.5 py-1.5 rounded-full font-mono text-[0.58rem] border transition-all',
+                        selectedCat === cat.id
+                          ? 'border-white/30 text-white'
+                          : 'border-white/10 text-white/45 hover:text-white/70'
+                      )}
+                      style={selectedCat === cat.id ? { background: `${cat.color}18`, borderColor: `${cat.color}50`, color: cat.color } : {}}
                     >
-                      Clear checked
+                      {cat.icon} {cat.label}
                     </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add item */}
+              <div className="flex gap-2">
+                <input
+                  value={groceryInput}
+                  onChange={e => setGroceryInput(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && addGroceryItem()}
+                  placeholder={`Add ${GROCERY_CATS.find(c => c.id === selectedCat)?.label.toLowerCase() ?? 'item'}…`}
+                  className="flex-1 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                />
+                <input
+                  type="number"
+                  value={groceryPrice}
+                  onChange={e => setGroceryPrice(e.target.value)}
+                  placeholder="R"
+                  className="w-20 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                />
+                <button
+                  onClick={addGroceryItem}
+                  className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2.5 rounded-xl transition-all"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Cart balance insight */}
+              {groceryItems.filter(i => !i.checked).length > 2 && (
+                <div className="bg-[var(--bg-surface)] border border-white/8 rounded-xl p-3 space-y-2">
+                  <div className="font-mono text-[0.55rem] text-white/35 uppercase tracking-widest">Cart balance</div>
+                  <div className="flex gap-2 flex-wrap">
+                    {GROCERY_CATS.map(cat => {
+                      const count = catCounts[cat.id] || 0
+                      return (
+                        <div key={cat.id} className="flex items-center gap-1" style={{ opacity: count > 0 ? 1 : 0.3 }}>
+                          <span style={{ fontSize: 13 }}>{cat.icon}</span>
+                          <span className="font-mono text-[0.55rem]" style={{ color: count > 0 ? cat.color : 'rgba(255,255,255,0.3)' }}>
+                            ×{count}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  {/* Smart suggestions */}
+                  {!hasProtein && (
+                    <div className="text-[0.7rem] text-rose-400/80">🥩 No protein yet — eggs, tinned tuna, or lentils keep you fuller for longer during study</div>
+                  )}
+                  {!hasVeg && (
+                    <div className="text-[0.7rem] text-teal-400/80">🥦 Add some veg — tomatoes, spinach, or carrots boost iron and brain function</div>
+                  )}
+                  {hasProtein && hasVeg && hasCarbs && (
+                    <div className="text-[0.7rem] text-white/50">✓ Balanced cart — protein, carbs, and veg all covered</div>
                   )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* List */}
-            {groceryItems.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-3xl mb-3">🛒</div>
-                <p className="font-display font-bold text-white text-sm">Grocery list is empty</p>
-                <p className="font-mono text-[0.6rem] text-white/30 mt-1">Add items above to start your shopping list.</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {groceryItems.map(item => (
-                  <div
-                    key={item.id}
-                    className={cn(
-                      'flex items-center gap-3 bg-[var(--bg-surface)] border rounded-xl px-4 py-3 transition-all group',
-                      item.checked ? 'border-white/5 opacity-50' : 'border-white/8'
-                    )}
-                  >
-                    <button
-                      onClick={() => toggleGroceryItem(item.id, !item.checked)}
-                      className={cn(
-                        'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all',
-                        item.checked ? 'border-teal-600 bg-teal-600' : 'border-white/30 hover:border-teal-600'
-                      )}
-                    >
-                      {item.checked && (
-                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                          <path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
-                    </button>
-                    <div className="flex-1">
-                      <div className={cn('font-body text-sm text-white', item.checked && 'line-through text-white/40')}>
-                        {item.name}
-                      </div>
-                      {item.quantity && (
-                        <div className="font-mono text-[0.55rem] text-white/30">{item.quantity}</div>
-                      )}
-                    </div>
-                    {item.price && (
-                      <div className="font-display font-bold text-sm text-white/60">{fmt.currencyShort(item.price)}</div>
-                    )}
-                    <button
-                      onClick={() => deleteGroceryItem(item.id)}
-                      className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs"
-                    >
-                      ✕
-                    </button>
+              {/* Total */}
+              {groceryItems.length > 0 && (
+                <div className="flex items-center justify-between">
+                  <div className="font-mono text-[0.6rem] text-white/40">
+                    {groceryItems.filter(i => !i.checked).length} items · estimated total
                   </div>
-                ))}
-              </div>
-            )}
-          </>
-        )}
+                  <div className="flex items-center gap-3">
+                    <div className="font-display font-black text-teal-400">{fmt.currencyShort(groceryTotal)}</div>
+                    {groceryItems.some(i => i.checked) && (
+                      <button
+                        onClick={clearChecked}
+                        className="font-mono text-[0.58rem] text-white/30 hover:text-red-400 transition-colors"
+                      >
+                        Clear checked
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* List */}
+              {groceryItems.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-3xl mb-3">🛒</div>
+                  <p className="font-display font-bold text-white text-sm">Grocery list is empty</p>
+                  <p className="font-mono text-[0.6rem] text-white/30 mt-1">Pick a category above, then add items.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {groceryItems.map(item => {
+                    const cat = GROCERY_CATS.find(c => c.id === (itemCats[item.id] || ''))
+                    return (
+                      <div
+                        key={item.id}
+                        className={cn(
+                          'flex items-center gap-3 bg-[var(--bg-surface)] border rounded-xl px-4 py-3 transition-all group',
+                          item.checked ? 'border-white/5 opacity-50' : 'border-white/8'
+                        )}
+                      >
+                        <button
+                          onClick={() => toggleGroceryItem(item.id, !item.checked)}
+                          className={cn(
+                            'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all',
+                            item.checked ? 'border-teal-600 bg-teal-600' : 'border-white/30 hover:border-teal-600'
+                          )}
+                        >
+                          {item.checked && (
+                            <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                              <path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                        </button>
+                        {/* Category dot */}
+                        {cat && (
+                          <span
+                            className="text-sm flex-shrink-0"
+                            title={cat.label}
+                          >
+                            {cat.icon}
+                          </span>
+                        )}
+                        <div className="flex-1">
+                          <div className={cn('font-body text-sm text-white', item.checked && 'line-through text-white/40')}>
+                            {item.name}
+                          </div>
+                          {cat && (
+                            <div className="font-mono text-[0.52rem]" style={{ color: `${cat.color}70` }}>{cat.label}</div>
+                          )}
+                        </div>
+                        {item.price && (
+                          <div className="font-display font-bold text-sm text-white/60">{fmt.currencyShort(item.price)}</div>
+                        )}
+                        <button
+                          onClick={() => deleteGroceryItem(item.id)}
+                          className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </>
+          )
+        })()}
 
         {/* ─── Recipes Tab ─── */}
         {activeTab === 'recipes' && (

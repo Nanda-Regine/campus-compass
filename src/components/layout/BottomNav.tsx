@@ -48,13 +48,15 @@ const ROOMS: RoomDef[] = [
     quickLinks: [
       { href: '/study?tab=tasks',      icon: '✓',  label: 'Tasks' },
       { href: '/study?tab=exams',      icon: '📝', label: 'Exams' },
-      { href: '/study?tab=flashcards', icon: '🧠', label: 'Flashcards' },
-      { href: '/study?tab=pomodoro',   icon: '⏱️', label: 'Pomodoro' },
+      { href: '/study?tab=flashcards', icon: '🧠', label: 'Cards' },
+      { href: '/study?tab=pomodoro',   icon: '⏱',  label: 'Focus' },
       { href: '/study?tab=grades',     icon: '▲',  label: 'Grades' },
       { href: '/study?tab=velocity',   icon: '📈', label: 'Velocity' },
-      { href: '/study?tab=timetable',  icon: '⊞',  label: 'Timetable' },
+      { href: '/study?tab=attendance', icon: '📋', label: 'Attendance' },
+      { href: '/study?tab=pods',       icon: '👥', label: 'Study Pods' },
+      { href: '/study?tab=timetable',  icon: '⊞',  label: 'Schedule' },
       { href: '/study?tab=calendar',   icon: '📅', label: 'Calendar' },
-      { href: '/study?tab=graduation', icon: '🎓', label: 'Graduation' },
+      { href: '/study?tab=graduation', icon: '🎓', label: 'Grad Audit' },
       { href: '/study?tab=habits',     icon: '🌱', label: 'Habits' },
       { href: '/reader',               icon: '📖', label: 'Reader' },
       { href: '/study-groups',         icon: '🤝', label: 'Groups' },
@@ -160,15 +162,10 @@ export function BottomNav() {
 
   const openRoom = ROOMS.find(r => r.id === openSheet) ?? null
 
+  // Always open sheet on first tap — users pick the exact section from there
   const handleRoomTap = (room: RoomDef) => {
-    if (activeRoomId === room.id) {
-      // already on this room — toggle quick sheet
-      setOpenSheet(prev => prev === room.id ? null : room.id)
-    } else {
-      // navigate to primary route
-      setOpenSheet(null)
-      trackEvent('feature_opened', { feature: room.label.toLowerCase(), path: room.primaryHref, source: 'bottom_nav' })
-    }
+    setOpenSheet(prev => prev === room.id ? null : room.id)
+    trackEvent('feature_opened', { feature: room.label.toLowerCase(), path: room.primaryHref, source: 'bottom_nav' })
   }
 
   return (
@@ -201,14 +198,22 @@ export function BottomNav() {
       >
         {openRoom && (
           <>
-            {/* Sheet header */}
+            {/* Sheet header — tap label to go to primary page */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Link
+                href={openRoom.primaryHref}
+                onClick={() => {
+                  setOpenSheet(null)
+                  trackEvent('feature_opened', { feature: openRoom.label.toLowerCase(), path: openRoom.primaryHref, source: 'room_sheet_header' })
+                }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}
+              >
                 <span style={{ fontSize: 16 }}>{openRoom.icon}</span>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: openRoom.color }}>
                   {openRoom.label} Room
                 </span>
-              </div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: `${openRoom.color}80`, letterSpacing: '0.04em' }}>↗</span>
+              </Link>
               <button
                 onClick={() => setOpenSheet(null)}
                 style={{ background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.4)' }}
@@ -280,14 +285,14 @@ export function BottomNav() {
           {ROOMS.map(room => {
             const isActive  = activeRoomId === room.id
             const isOpen    = openSheet === room.id
-            const highlight = isActive || isOpen
+            const highlight = isActive || isOpen  // lit when on this room OR sheet is open
 
             return (
               <Link
                 key={room.id}
-                href={highlight ? '#' : room.primaryHref}
+                href="#"
                 onClick={e => {
-                  if (highlight) e.preventDefault()
+                  e.preventDefault()
                   handleRoomTap(room)
                 }}
                 className="flex flex-col items-center justify-center gap-0.5 flex-1 relative select-none"
