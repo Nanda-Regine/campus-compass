@@ -32,21 +32,29 @@ export async function GET(_request: NextRequest) {
       { data: budget },
       { data: expenses },
       { data: profile },
+      { data: incomeEntries },
+      { data: workedShifts },
     ] = await Promise.all([
       supabase.from('budgets').select('*').eq('user_id', user.id).single(),
       supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end),
       supabase.from('profiles').select('funding_type, university, year_of_study, ai_language').eq('id', user.id).single(),
+      supabase.from('income_entries').select('source_type,amount').eq('user_id', user.id).gte('received_date', start),
+      supabase.from('work_shifts').select('earnings').eq('student_id', user.id).eq('status', 'worked').gte('shift_date', start).lte('shift_date', end),
     ])
 
     if (!budget || !expenses) {
       return NextResponse.json({ error: 'No budget data found' }, { status: 404 })
     }
 
-    const totalBudget = (budget.monthly_budget ?? 0) +
+    const baseBudget    = (budget.monthly_budget ?? 0) +
       (budget.nsfas_enabled ? ((budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)) : 0)
-    const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
-    const remaining = totalBudget - totalSpent
-    const spentPct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
+    const manualIncome  = (incomeEntries ?? []).reduce((s: number, e: { amount: number }) => s + e.amount, 0)
+    const shiftEarnings = (workedShifts  ?? []).reduce((s: number, sh: { earnings: number | null }) => s + (sh.earnings ?? 0), 0)
+    const totalIncome   = manualIncome + shiftEarnings
+    const totalBudget   = baseBudget + totalIncome
+    const totalSpent    = expenses.reduce((s, e) => s + e.amount, 0)
+    const remaining     = totalBudget - totalSpent
+    const spentPct      = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0
 
     const categoryTotals: Record<string, number> = {}
     expenses.forEach(e => {
@@ -70,7 +78,9 @@ STUDENT CONTEXT:
 - NSFAS: ${budget.nsfas_enabled ? 'YES' : 'NO'}
 
 FINANCIAL DATA (${now.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' })}):
-- Monthly budget: R${totalBudget.toFixed(0)}
+- Base budget (allowance): R${baseBudget.toFixed(0)}
+- Income earned (shifts + manual): R${totalIncome.toFixed(0)}${shiftEarnings > 0 ? ` (R${shiftEarnings.toFixed(0)} from worked shifts, R${manualIncome.toFixed(0)} manual)` : ''}
+- Total available: R${totalBudget.toFixed(0)}
 - Spent so far: R${totalSpent.toFixed(0)} (${spentPct}%)
 - Remaining: R${remaining.toFixed(0)}
 - Days left in month: ${daysLeft}
@@ -113,6 +123,9 @@ TASK: Respond with valid JSON only (no markdown). Use this exact structure:
       insights,
       budgetData: {
         total: totalBudget,
+        baseBudget,
+        totalIncome,
+        shiftEarnings,
         spent: totalSpent,
         remaining,
         spentPct,

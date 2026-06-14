@@ -19,6 +19,16 @@ import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
 import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
+interface WorkedShift {
+  id: string
+  shift_date: string
+  start_time: string
+  end_time: string
+  earnings: number | null
+  duration_hours: number
+  job?: { id: string; employer_name: string | null; role_title: string | null } | null
+}
+
 interface BudgetClientProps {
   initialData: {
     budget: Budget | null
@@ -27,6 +37,7 @@ interface BudgetClientProps {
     isPremium: boolean
     userId: string
     incomeEntries: IncomeEntry[]
+    workedShifts: WorkedShift[]
   }
 }
 
@@ -115,8 +126,10 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   const [appealLetter, setAppealLetter] = useState('')
   const [appealLoading, setAppealLoading] = useState(false)
 
-  const totalBudget = budget ? calcTotalBudget(budget) : 0
-  const totalIncome = incomeEntries.reduce((s, e) => s + e.amount, 0)
+  const totalBudget    = budget ? calcTotalBudget(budget) : 0
+  const manualIncome   = incomeEntries.reduce((s, e) => s + e.amount, 0)
+  const shiftEarnings  = initialData.workedShifts.reduce((s, sh) => s + (sh.earnings ?? 0), 0)
+  const totalIncome    = manualIncome + shiftEarnings
   const effectiveTotal = totalBudget + totalIncome
   const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
   const remaining = effectiveTotal - totalSpent
@@ -440,8 +453,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                   {[
                     { label: 'Remaining', value: fmt.currencyShort(Math.max(0, remaining)), colour: overBudget ? 'text-red-400' : 'text-teal-400' },
                     { label: 'Spent',  value: fmt.currencyShort(totalSpent),    colour: 'text-white' },
-                    { label: 'Budget', value: fmt.currencyShort(totalBudget),   colour: 'text-white/55' },
-                    { label: 'Income', value: fmt.currencyShort(totalIncome),   colour: 'text-teal-400' },
+                    { label: 'Budget',  value: fmt.currencyShort(totalBudget),   colour: 'text-white/55' },
+                    { label: 'Income',  value: fmt.currencyShort(totalIncome),   colour: 'text-teal-400' },
                   ].map(stat => (
                     <div key={stat.label}>
                       <div className={cn('font-display font-black text-base leading-none', stat.colour)}>{stat.value}</div>
@@ -652,7 +665,10 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               <div>
                 <div className="font-display font-bold text-white text-base">Income this month</div>
                 <div className="font-mono text-[0.6rem] text-white/30">
-                  {fmt.currencyShort(incomeEntries.reduce((s, e) => s + e.amount, 0))} received
+                  {fmt.currencyShort(totalIncome)} total
+                  {shiftEarnings > 0 && (
+                    <span className="text-teal-400/70"> · {fmt.currencyShort(shiftEarnings)} from shifts</span>
+                  )}
                 </div>
               </div>
               <button
@@ -662,6 +678,44 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 + Log income
               </button>
             </div>
+
+            {/* ── Auto-synced shift earnings ── */}
+            {initialData.workedShifts.length > 0 && (() => {
+              // Group by employer
+              const byJob: Record<string, { name: string; shifts: number; earned: number }> = {}
+              for (const sh of initialData.workedShifts) {
+                const key  = sh.job?.id ?? 'unknown'
+                const name = sh.job?.employer_name ?? sh.job?.role_title ?? 'Side hustle'
+                if (!byJob[key]) byJob[key] = { name, shifts: 0, earned: 0 }
+                byJob[key].shifts++
+                byJob[key].earned += sh.earnings ?? 0
+              }
+              return (
+                <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">⚡</span>
+                      <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Shift earnings — auto-synced</div>
+                    </div>
+                    <div className="font-display font-black text-sm text-teal-400">+{fmt.currencyShort(shiftEarnings)}</div>
+                  </div>
+                  <div className="space-y-2 mb-3">
+                    {Object.values(byJob).map(job => (
+                      <div key={job.name} className="flex items-center justify-between">
+                        <div>
+                          <div className="font-body text-sm text-white">{job.name}</div>
+                          <div className="font-mono text-[0.55rem] text-white/30">{job.shifts} shift{job.shifts !== 1 ? 's' : ''} worked this month</div>
+                        </div>
+                        <div className="font-display font-bold text-sm text-white/70">+{fmt.currencyShort(job.earned)}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <Link href="/dashboard/work" className="font-mono text-[0.6rem] text-teal-400/70 hover:text-teal-400 transition-colors">
+                    View all shifts →
+                  </Link>
+                </div>
+              )
+            })()}
 
             {showIncomeForm && (
               <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
@@ -706,11 +760,16 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
               </div>
             )}
 
+            {/* Manual income label */}
+            <div className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest">
+              Manual income — NSFAS, bursary, pocket money
+            </div>
+
             {incomeEntries.length === 0 && !showIncomeForm ? (
               <div className="text-center py-8 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
                 <div className="text-3xl mb-2">💵</div>
                 <p className="font-display font-bold text-white text-sm">No income logged this month</p>
-                <p className="font-mono text-[0.6rem] text-white/30 mt-1">Track NSFAS, bursary, shifts, and more.</p>
+                <p className="font-mono text-[0.6rem] text-white/30 mt-1">Track NSFAS, bursary, pocket money and more.</p>
                 <button
                   onClick={() => setShowIncomeForm(true)}
                   className="mt-4 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
