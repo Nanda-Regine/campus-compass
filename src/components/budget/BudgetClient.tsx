@@ -31,6 +31,7 @@ interface WorkedShift {
 }
 
 interface BudgetClientProps {
+  initialTab?: string
   initialData: {
     budget: Budget | null
     expenses: Expense[]
@@ -85,11 +86,14 @@ interface AIInsight {
 }
 
 
-export default function BudgetClient({ initialData }: BudgetClientProps) {
+export default function BudgetClient({ initialData, initialTab }: BudgetClientProps) {
   const supabase = createClient()
   const router = useRouter()
   const { setExpenses } = useAppStore()
-  const [activeTab, setActiveTab] = useState<TabId>('overview')
+  const VALID_BUDGET_TABS: TabId[] = ['overview','expenses','nsfas','wallet','ai_coach','appeal','credit']
+  const [activeTab, setActiveTab] = useState<TabId>(
+    initialTab && VALID_BUDGET_TABS.includes(initialTab as TabId) ? initialTab as TabId : 'overview'
+  )
   const [expenses, setLocalExpenses] = useState<Expense[]>(initialData.expenses)
   const [budget] = useState<Budget | null>(initialData.budget)
   const [aiInsights, setAiInsights] = useState<AIInsight | null>(null)

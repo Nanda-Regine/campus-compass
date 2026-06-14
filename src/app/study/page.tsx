@@ -5,7 +5,12 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Study Planner' }
 
-export default async function StudyPage() {
+const VALID_STUDY_TABS = ['tasks','calendar','timetable','exams','grades','flashcards','wellness','modules','pomodoro','habits','graduation','attendance','velocity','pods'] as const
+type StudyTab = typeof VALID_STUDY_TABS[number]
+
+export default async function StudyPage({ searchParams }: { searchParams: { tab?: string } }) {
+  const rawTab = searchParams.tab
+  const initialTab: StudyTab | undefined = VALID_STUDY_TABS.includes(rawTab as StudyTab) ? rawTab as StudyTab : undefined
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -58,6 +63,7 @@ export default async function StudyPage() {
 
   return (
     <StudyClient
+      initialTab={initialTab}
       initialData={{
         modules:        modules        ?? [],
         tasks:          tasks          ?? [],

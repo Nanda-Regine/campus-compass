@@ -24,6 +24,7 @@ import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 import Link from 'next/link'
 
 interface StudyClientProps {
+  initialTab?: string
   initialData: {
     modules:        Module[]
     tasks:          Task[]
@@ -73,9 +74,12 @@ const TAB_CONFIG = [
 
 type TabId = typeof TAB_CONFIG[number]['id']
 
-export default function StudyClient({ initialData }: StudyClientProps) {
+export default function StudyClient({ initialData, initialTab }: StudyClientProps) {
   const store = useAppStore()
-  const [activeTab, setActiveTab] = useState<TabId>('tasks')
+  const validTabs = TAB_CONFIG.map(t => t.id) as string[]
+  const [activeTab, setActiveTab] = useState<TabId>(
+    initialTab && validTabs.includes(initialTab) ? initialTab as TabId : 'tasks'
+  )
   const [triggerAdd, setTriggerAdd] = useState(0)
   const [hour, setHour] = useState(new Date().getHours())
   const supabase = createClient()

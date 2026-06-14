@@ -6,7 +6,7 @@ import { currentMonthRange } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Budget & NSFAS' }
 
-export default async function BudgetPage() {
+export default async function BudgetPage({ searchParams }: { searchParams: { tab?: string } }) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
@@ -38,6 +38,7 @@ export default async function BudgetPage() {
 
   return (
     <BudgetClient
+      initialTab={searchParams.tab}
       initialData={{
         budget:        budget        ?? null,
         expenses:      expenses      ?? [],
