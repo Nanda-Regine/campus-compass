@@ -10,6 +10,7 @@ import {
   Flame, Gift, MoreHorizontal, X, TrendingUp, GraduationCap,
   BookMarked, School, Shield, Heart, Rocket, Tag, Vote,
   Leaf, Coins, Receipt, Briefcase as BriefcaseIcon, MonitorSmartphone, Activity, Moon, Cloud, Navigation,
+  Brain, Timer, CalendarDays, ClipboardList, Banknote, BarChart3, CreditCard, Landmark,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
@@ -23,12 +24,30 @@ const PRIMARY_TABS = [
 // Sectioned MORE drawer — mirrors the Drawer nav sections
 const MORE_SECTIONS = [
   {
+    label: 'Study Tools', color: '#4ecf9e',
+    items: [
+      { href: '/study?tab=flashcards', icon: Brain,          label: 'Flashcards', accent: '#4ecf9e' },
+      { href: '/study?tab=timer',      icon: Timer,          label: 'Timer',      accent: '#38BDF8' },
+      { href: '/study?tab=exams',      icon: ClipboardList,  label: 'Exams',      accent: '#f59e0b' },
+      { href: '/study?tab=calendar',   icon: CalendarDays,   label: 'Calendar',   accent: '#818CF8' },
+    ],
+  },
+  {
     label: 'Academic', color: '#4ecf9e',
     items: [
       { href: '/notes',        icon: BookMarked,      label: 'Notes',    accent: '#4ecf9e' },
       { href: '/study-groups', icon: Users,           label: 'Groups',   accent: '#6366F1' },
       { href: '/tutoring',     icon: School,          label: 'Tutoring', accent: '#c9a84c' },
       { href: '/textbooks',    icon: BookMarked,      label: 'Books',    accent: '#4ecf9e' },
+    ],
+  },
+  {
+    label: 'Budget Tools', color: '#D4AF37',
+    items: [
+      { href: '/budget?tab=nsfas',     icon: Landmark,      label: 'NSFAS',    accent: '#34D399' },
+      { href: '/budget?tab=insights',  icon: BarChart3,     label: 'AI Insights',accent: '#c9a84c' },
+      { href: '/budget?tab=income',    icon: Banknote,      label: 'Income',   accent: '#D4AF37' },
+      { href: '/budget?tab=credit',    icon: CreditCard,    label: 'Credit',   accent: '#7090d0' },
     ],
   },
   {

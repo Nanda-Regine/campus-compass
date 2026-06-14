@@ -30,22 +30,29 @@ const NAV_SECTIONS = [
   {
     section: 'Academic',
     items: [
-      { href: '/study',              icon: '📚', label: 'Study Tools' },
-      { href: '/study-groups',       icon: '👥', label: 'Study Groups' },
-      { href: '/tutoring',           icon: '🎓', label: 'Peer Tutoring' },
-      { href: '/notes',              icon: '📖', label: 'Notes Marketplace' },
-      { href: '/textbooks',          icon: '📗', label: 'Textbook Marketplace' },
-      { href: '/dashboard/campus-life', icon: '🎪', label: 'Campus Life' },
+      { href: '/study',                   icon: '📚', label: 'Study Planner',           sub: 'Tasks · Calendar · Modules' },
+      { href: '/study?tab=flashcards',    icon: '🧠', label: 'Flashcards (SM-2)' },
+      { href: '/study?tab=timer',         icon: '⏱️', label: 'Study Timer (Pomodoro)' },
+      { href: '/study?tab=exams',         icon: '📝', label: 'Exam Prep & Catch-Up' },
+      { href: '/study-groups',            icon: '👥', label: 'Study Groups' },
+      { href: '/tutoring',                icon: '🎓', label: 'Peer Tutoring' },
+      { href: '/notes',                   icon: '📖', label: 'Notes Marketplace' },
+      { href: '/textbooks',               icon: '📗', label: 'Textbook Marketplace' },
+      { href: '/dashboard/campus-life',   icon: '🎪', label: 'Campus Life' },
     ],
   },
   {
     section: 'Money',
     items: [
-      { href: '/budget',        icon: '💰', label: 'Budget & NSFAS' },
-      { href: '/bursaries',     icon: '🎓', label: 'Bursaries & Scholarships' },
-      { href: '/stokvel',       icon: '🪙', label: 'Stokvel OS' },
-      { href: '/tax',           icon: '🧾', label: 'Tax Return Helper' },
-      { href: '/discounts',     icon: '🏷️', label: 'Student Discounts' },
+      { href: '/budget',             icon: '💰', label: 'Budget & NSFAS',          sub: 'Overview · Expenses · Income' },
+      { href: '/budget?tab=nsfas',   icon: '🏛️', label: 'NSFAS Oracle' },
+      { href: '/budget?tab=insights',icon: '📊', label: 'AI Budget Insights' },
+      { href: '/budget?tab=income',  icon: '💵', label: 'Income Tracker' },
+      { href: '/budget?tab=credit',  icon: '💳', label: 'Credit Score Guide' },
+      { href: '/bursaries',          icon: '🎓', label: 'Bursaries & Scholarships' },
+      { href: '/stokvel',            icon: '🪙', label: 'Stokvel OS' },
+      { href: '/tax',                icon: '🧾', label: 'Tax Return Helper' },
+      { href: '/discounts',          icon: '🏷️', label: 'Student Discounts' },
     ],
   },
   {
@@ -196,21 +203,31 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                 {section.section}
               </div>
               {section.items.map(item => {
-                const active = pathname === item.href || pathname.startsWith(item.href + '/')
+                const isDeepLink = item.href.includes('?tab=')
+                const baseHref   = item.href.split('?')[0]
+                const active     = pathname === baseHref || pathname.startsWith(baseHref + '/')
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={onClose}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150 mb-0.5',
+                      'flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 mb-0.5',
+                      isDeepLink ? 'ml-4' : '',
                       active
                         ? 'bg-teal-600/15 text-teal-400 border border-teal-600/20'
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                     )}
                   >
-                    <span className="text-base w-5 text-center">{item.icon}</span>
-                    <span className="font-display">{item.label}</span>
+                    <span className={cn('text-center flex-shrink-0', isDeepLink ? 'text-sm w-4' : 'text-base w-5')}>{item.icon}</span>
+                    <div className="min-w-0">
+                      <span className={cn('font-display block leading-tight', isDeepLink ? 'text-xs' : 'text-sm font-medium')}>
+                        {item.label}
+                      </span>
+                      {'sub' in item && item.sub && (
+                        <span className="font-mono text-[0.5rem] text-white/25 tracking-wide">{item.sub}</span>
+                      )}
+                    </div>
                     {item.href === '/nova' && !isPremium && (
                       <span className="ml-auto font-mono text-[0.52rem] text-white/30">10/mo free</span>
                     )}
