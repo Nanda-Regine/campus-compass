@@ -11,6 +11,7 @@ import { trackEvent } from '@/lib/analytics'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
+import NovaMarkdown from '@/components/nova/NovaMarkdown'
 
 interface Resource {
   title: string
@@ -924,9 +925,15 @@ export default function NovaPage() {
                         className="w-full max-w-[220px] rounded-xl mb-2 object-cover border border-white/10"
                       />
                     )}
-                    <p className="whitespace-pre-wrap">
-                      {msg.content.replace(/^\[Mood: .+?\] /, '')}
-                    </p>
+                    {msg.role === 'assistant' ? (
+                      <NovaMarkdown>
+                        {msg.content.replace(/^\[Mood: .+?\] /, '')}
+                      </NovaMarkdown>
+                    ) : (
+                      <p className="whitespace-pre-wrap">
+                        {msg.content.replace(/^\[Mood: .+?\] /, '')}
+                      </p>
+                    )}
                     <div className={cn(
                       'flex items-center mt-1.5',
                       msg.role === 'user' ? 'justify-end' : 'justify-between'
