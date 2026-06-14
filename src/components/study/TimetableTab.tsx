@@ -185,22 +185,27 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
         </div>
       </div>
 
-      {/* Empty states */}
+      {/* Empty state — ICS import as primary CTA */}
       {timetable.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '24px 0 8px' }}>
-          <div style={{ fontSize: 28, marginBottom: 6 }}>🗓️</div>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>
+        <div style={{
+          margin: '8px 0 12px',
+          padding: '20px 16px 16px',
+          borderRadius: 16,
+          border: '1px solid rgba(56,189,248,0.15)',
+          background: 'rgba(56,189,248,0.04)',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>🗓️</div>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13, margin: 0 }}>
             Your timetable is empty
           </p>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
-            Tap any time slot to add a class.
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', margin: '4px 0 14px' }}>
+            Import your university calendar to add all classes at once, or tap any slot below.
           </p>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ICSImportButton onImported={() => { toast.success('Timetable imported!'); router.refresh() }} />
+          </div>
         </div>
-      )}
-      {modules.length === 0 && timetable.length === 0 && (
-        <p style={{ textAlign: 'center', fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>
-          Add modules first to assign colours.
-        </p>
       )}
 
       {/* ── Calendar grid ─────────────────────────────────────────────────── */}

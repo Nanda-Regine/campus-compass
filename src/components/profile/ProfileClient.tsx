@@ -356,7 +356,8 @@ export default function ProfileClient() {
       if (json.error) throw new Error(json.error)
       setProfile(prev => prev ? { ...prev, avatar_url: pub.publicUrl } : prev)
       toast.success('Photo updated')
-    } catch {
+    } catch (err) {
+      console.error('[ProfileClient] uploadAvatar:', err)
       toast.error('Could not upload photo')
     } finally {
       setUploadingAvatar(false)
@@ -380,7 +381,8 @@ export default function ProfileClient() {
       if (data.error) throw new Error(data.error)
       toast.success('Profile saved')
       setProfile(prev => prev ? { ...prev, name, bio: bio || null, emoji, university, year_of_study: yearOfStudy, faculty, funding_type: fundingType, dietary_pref: dietaryPref, living_situation: livingSituation, ai_language: aiLanguage } : prev)
-    } catch {
+    } catch (err) {
+      console.error('[ProfileClient] handleSave:', err)
       toast.error('Could not save profile')
     } finally {
       setSaving(false)
@@ -400,7 +402,8 @@ export default function ProfileClient() {
       if (!res.ok) throw new Error('Failed')
       await supabase.auth.signOut()
       router.push('/?deleted=1')
-    } catch {
+    } catch (err) {
+      console.error('[ProfileClient] deleteAccount:', err)
       toast.error('Account deletion failed. Please try again or contact support.')
       setDeleting(false)
     }

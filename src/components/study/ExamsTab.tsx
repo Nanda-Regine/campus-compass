@@ -304,7 +304,8 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
       if (error) throw error
       ;(inserted ?? []).forEach(t => addTask(t))
       toast.success(`${newTasks.length} study tasks created for ${exam.exam_name}!`)
-    } catch {
+    } catch (err) {
+      console.error('[ExamsTab] generateStudyPlan:', err)
       toast.error('Could not generate plan')
     } finally {
       setPlanGenerating(null)
@@ -478,7 +479,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
       </div>
 
       {/* Readiness panel */}
-      {view === 'readiness' && <ExamReadinessPanel exams={exams} tasks={tasks} />}
+      {view === 'readiness' && <ExamReadinessPanel exams={exams} tasks={tasks} onSwitchToList={() => setView('list')} />}
 
       {/* List view */}
       {view === 'list' && (

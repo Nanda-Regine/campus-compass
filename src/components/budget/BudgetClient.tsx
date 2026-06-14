@@ -17,6 +17,7 @@ import ReceiptScanner from '@/components/budget/ReceiptScanner'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
 import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
+import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
 interface BudgetClientProps {
   initialData: {
@@ -135,7 +136,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       const data = await res.json()
       setAiInsights(data.insights)
       setBudgetData(data.budgetData)
-    } catch {
+    } catch (err) {
+      console.error('[BudgetClient] loadInsights:', err)
       toast.error('Could not load AI insights')
     } finally {
       setInsightsLoading(false)
@@ -199,7 +201,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       setIncomeEntries(prev => [data as IncomeEntry, ...prev])
       setIncomeLabel(''); setIncomeAmount(''); setShowIncomeForm(false)
       toast.success('Income recorded!')
-    } catch { toast.error('Failed to record income') }
+    } catch (err) { console.error('[BudgetClient] addIncome:', err); toast.error('Failed to record income') }
     finally { setAddingIncome(false) }
   }
 
@@ -222,7 +224,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       setSavingsGoals(prev => [...prev, data as SavingsGoal])
       setGoalName(''); setGoalTarget(''); setGoalDeadline(''); setShowGoalForm(false)
       toast.success('Savings goal created!')
-    } catch { toast.error('Failed to create goal') }
+    } catch (err) { console.error('[BudgetClient] addGoal:', err); toast.error('Failed to create goal') }
     finally { setAddingGoal(false) }
   }
 
@@ -277,7 +279,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       }
       // Fire-and-forget 80% budget alert check
       fetch('/api/budget/alert', { method: 'POST' }).catch(() => null)
-    } catch {
+    } catch (err) {
+      console.error('[BudgetClient] logExpense:', err)
       toast.error('Failed to log expense')
     } finally {
       setAddingExpense(false)
@@ -285,13 +288,17 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   }
 
   const refreshExpenses = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('expenses')
       .select('*')
       .eq('user_id', initialData.userId)
       .gte('expense_date', currentMonthRange().start)
       .lte('expense_date', currentMonthRange().end)
       .order('expense_date', { ascending: false })
+    if (error) {
+      console.error('[BudgetClient] refreshExpenses:', error)
+      return
+    }
     if (data) {
       setLocalExpenses(data as Expense[])
       setExpenses(data as Expense[])
@@ -299,11 +306,20 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
   }
 
   const deleteExpense = async (id: string) => {
+    const previous = [...expenses]
     const updated = expenses.filter(e => e.id !== id)
     setLocalExpenses(updated)
     setExpenses(updated)
-    await supabase.from('expenses').delete().eq('id', id)
-    toast.success('Expense removed')
+    try {
+      const { error } = await supabase.from('expenses').delete().eq('id', id)
+      if (error) throw error
+      toast.success('Expense removed')
+    } catch (err) {
+      console.error('[BudgetClient] deleteExpense:', err)
+      setLocalExpenses(previous)
+      setExpenses(previous)
+      toast.error('Could not remove expense — please try again')
+    }
   }
 
   const generateAppeal = async () => {
@@ -320,7 +336,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       })
       const data = await res.json()
       setAppealLetter(data.letter)
-    } catch {
+    } catch (err) {
+      console.error('[BudgetClient] generateAppeal:', err)
       toast.error('Failed to generate letter')
     } finally {
       setAppealLoading(false)
@@ -363,6 +380,7 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+        <TabErrorBoundary key={activeTab} label={activeTab}>
 
         {/* ─── Overview Tab ─── */}
         {activeTab === 'overview' && (
@@ -693,6 +711,12 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="text-3xl mb-2">💵</div>
                 <p className="font-display font-bold text-white text-sm">No income logged this month</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Track NSFAS, bursary, shifts, and more.</p>
+                <button
+                  onClick={() => setShowIncomeForm(true)}
+                  className="mt-4 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
+                >
+                  + Record income
+                </button>
               </div>
             ) : (
               <div className="space-y-2">
@@ -772,6 +796,12 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
                 <div className="text-3xl mb-2">🎯</div>
                 <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
                 <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a target and track progress toward it.</p>
+                <button
+                  onClick={() => setShowGoalForm(true)}
+                  className="mt-4 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
+                >
+                  + Set a goal
+                </button>
               </div>
             ) : (
               <div className="space-y-3">
@@ -997,6 +1027,8 @@ export default function BudgetClient({ initialData }: BudgetClientProps) {
         {activeTab === 'credit' && (
           <CreditScoreEducation />
         )}
+
+        </TabErrorBoundary>
       </div>
     </div>
   )

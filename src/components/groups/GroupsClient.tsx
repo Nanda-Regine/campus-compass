@@ -73,7 +73,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
       }
       const data = await res.json()
       setAssignments(data.assignments || [])
-    } catch {
+    } catch (err) {
+      console.error('[GroupsClient] load:', err)
       toast.error('Failed to load group assignments')
     } finally {
       setLoading(false)

@@ -47,7 +47,8 @@ export function FeedbackModal({ open, onClose }: Props) {
         toast.success('Thank you — your feedback goes directly to the builder.')
         onClose()
       }
-    } catch {
+    } catch (err) {
+      console.error('[FeedbackModal] submit:', err)
       toast.error('Failed to send feedback — please try again.')
     } finally {
       setSubmitting(false)

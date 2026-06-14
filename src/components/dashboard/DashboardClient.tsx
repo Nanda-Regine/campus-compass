@@ -32,6 +32,7 @@ import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import InsightsCard from '@/components/dashboard/InsightsCard'
 import DomainPulse from '@/components/dashboard/DomainPulse'
+import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1411,7 +1412,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
           {/* Orchestration — intervention banner (urgency 1-4) */}
           <div style={{ marginBottom: 12 }}>
-            <InterventionBanner />
+            <TabErrorBoundary label="Intervention Banner">
+              <InterventionBanner />
+            </TabErrorBoundary>
           </div>
 
           {/* Nova proactive insights */}
@@ -1460,10 +1463,14 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </div>
 
               {/* Orchestration — daily brief */}
-              <DailyBrief />
+              <TabErrorBoundary label="Daily Brief">
+                <DailyBrief />
+              </TabErrorBoundary>
 
               {/* Cross-domain correlation insights — 30-day pattern analysis */}
-              <InsightsCard />
+              <TabErrorBoundary label="Insights">
+                <InsightsCard />
+              </TabErrorBoundary>
 
               {/* Task calendar: day / week toggle */}
               <TaskCalendarStrip tasks={allTasks} />
@@ -1488,24 +1495,26 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </div>
 
               {/* Domain Pulse — 9 life domains ranked by urgency score */}
-              <DomainPulse
-                overdueTasks={domainOverdue}
-                nextExamDays={domainExamDays}
-                streakDays={streakDays}
-                streakTodayDone={streakTodayDone}
-                todayStudyMins={todayStudyMins}
-                studyVelocity={store.studyVelocity7d}
-                lastSleepHours={lastSleepHours}
-                sleepDebt={store.sleepDebt}
-                weekWorkouts={weekWorkouts}
-                totalBudget={totalBudget}
-                remaining={remaining}
-                nsfasDelayed={store.nsfasDelayed}
-                mealPlanExists={mealPlanExists}
-                shiftsThisWeek={shiftsThisWeek}
-                activeGroups={activeGroups}
-                hour={currentHour}
-              />
+              <TabErrorBoundary label="Domain Pulse">
+                <DomainPulse
+                  overdueTasks={domainOverdue}
+                  nextExamDays={domainExamDays}
+                  streakDays={streakDays}
+                  streakTodayDone={streakTodayDone}
+                  todayStudyMins={todayStudyMins}
+                  studyVelocity={store.studyVelocity7d}
+                  lastSleepHours={lastSleepHours}
+                  sleepDebt={store.sleepDebt}
+                  weekWorkouts={weekWorkouts}
+                  totalBudget={totalBudget}
+                  remaining={remaining}
+                  nsfasDelayed={store.nsfasDelayed}
+                  mealPlanExists={mealPlanExists}
+                  shiftsThisWeek={shiftsThisWeek}
+                  activeGroups={activeGroups}
+                  hour={currentHour}
+                />
+              </TabErrorBoundary>
             </div>
 
             {/* Column 2 */}

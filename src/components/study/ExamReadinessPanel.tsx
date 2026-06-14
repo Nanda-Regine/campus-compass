@@ -6,8 +6,9 @@ import { getDaysUntil } from '@/lib/utils'
 import { loadExamConfidences, saveExamConfidence } from '@/lib/db/exam-confidence'
 
 interface Props {
-  exams:   Exam[]
-  tasks:   Task[]
+  exams:          Exam[]
+  tasks:          Task[]
+  onSwitchToList?: () => void
 }
 
 type Grade = 'excellent' | 'good' | 'fair' | 'at-risk' | 'critical'
@@ -122,7 +123,7 @@ function MiniBar({ label, value, color }: { label: string; value: number; color:
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-export default function ExamReadinessPanel({ exams, tasks }: Props) {
+export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Props) {
   const upcoming = exams.filter(e => getDaysUntil(e.exam_date) >= 0)
   const [confs, setConfs]   = useState<Record<string, number>>({})
   const [mounted, setMounted] = useState(false)
@@ -144,14 +145,33 @@ export default function ExamReadinessPanel({ exams, tasks }: Props) {
 
   if (upcoming.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px 0' }}>
-        <div style={{ fontSize: 32 }}>✓</div>
-        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-primary)', fontSize: 14, marginTop: 8 }}>
+      <div style={{ textAlign: 'center', padding: '48px 16px 40px' }}>
+        <div style={{ fontSize: 36, marginBottom: 12 }}>📋</div>
+        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text-primary)', fontSize: 14, margin: 0 }}>
           No upcoming exams
         </p>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 4 }}>
-          Add exams in List view to track readiness.
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 6, lineHeight: 1.7 }}>
+          Add your exams to track readiness scores,{'\n'}study countdowns, and AI prep guides.
         </p>
+        {onSwitchToList && (
+          <button
+            onClick={onSwitchToList}
+            style={{
+              marginTop: 16,
+              padding: '9px 20px',
+              borderRadius: 10,
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: 12,
+              background: 'rgba(78,207,158,0.12)',
+              border: '1px solid rgba(78,207,158,0.3)',
+              color: '#4ecf9e',
+              cursor: 'pointer',
+            }}
+          >
+            + Add your first exam
+          </button>
+        )}
       </div>
     )
   }

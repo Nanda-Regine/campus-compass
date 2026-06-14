@@ -68,7 +68,8 @@ export default function LoginForm() {
       if (error) throw error
       toast.success('Verification email sent!')
       setResendCooldown(RESEND_COOLDOWN)
-    } catch {
+    } catch (err) {
+      console.error('[LoginForm] resendVerification:', err)
       toast.error('Could not send email. Please try again.')
     } finally {
       setResendLoading(false)

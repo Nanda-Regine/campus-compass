@@ -103,7 +103,8 @@ function PostCard({
       })
       if (res.ok) toast.success('Report submitted — thank you')
       else toast.error('Could not submit report')
-    } catch {
+    } catch (err) {
+      console.error('[CampusFeed] reportPost:', err)
       toast.error('Could not submit report')
     } finally {
       setReporting(false)
@@ -140,7 +141,8 @@ function PostCard({
       setComments(prev => [...prev, { ...comment, author_name: 'You', author_emoji: '🎓', is_own: true }])
       setLocalCount(c => c + 1)
       setNewComment('')
-    } catch {
+    } catch (err) {
+      console.error('[CampusFeed] postComment:', err)
       toast.error('Could not post comment')
     } finally {
       setPosting(false)

@@ -20,6 +20,7 @@ import CalendarTab from '@/components/study/CalendarTab'
 import StudyVelocityTab from '@/components/study/StudyVelocityTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import StudyPodsTab from '@/components/study/StudyPodsTab'
+import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
 interface StudyClientProps {
   initialData: {
@@ -253,20 +254,20 @@ export default function StudyClient({ initialData }: StudyClientProps) {
 
       {/* ── Tab content ── */}
       <div className="max-w-2xl mx-auto px-4 py-4">
-        {activeTab === 'tasks'      && <TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} />}
-        {activeTab === 'calendar'   && <CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} />}
-        {activeTab === 'timetable'  && <TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} />}
-        {activeTab === 'exams'      && <ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} />}
-        {activeTab === 'grades'     && <GradesTab    modules={modules} />}
-        {activeTab === 'flashcards' && <FlashcardsTab modules={modules} />}
-        {activeTab === 'wellness'   && <WellnessTab />}
-        {activeTab === 'modules'    && <ModulesTab   modules={modules} tasks={tasks} exams={exams} userId={userId} supabase={supabase} />}
-        {activeTab === 'pomodoro'   && <PomodoroTimer modules={modules} tasks={tasks} userId={userId} />}
-        {activeTab === 'habits'     && <HabitBuilder />}
-        {activeTab === 'graduation' && <GraduationAudit />}
-        {activeTab === 'attendance' && <AttendanceTab modules={modules} userId={userId} />}
-        {activeTab === 'velocity'   && <StudyVelocityTab modules={modules} userId={userId} />}
-        {activeTab === 'pods'       && <StudyPodsTab userId={userId} />}
+        {activeTab === 'tasks'      && <TabErrorBoundary label="Tasks"><TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} /></TabErrorBoundary>}
+        {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} /></TabErrorBoundary>}
+        {activeTab === 'timetable'  && <TabErrorBoundary label="Timetable"><TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} /></TabErrorBoundary>}
+        {activeTab === 'exams'      && <TabErrorBoundary label="Exams"><ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} /></TabErrorBoundary>}
+        {activeTab === 'grades'     && <TabErrorBoundary label="Grades"><GradesTab    modules={modules} /></TabErrorBoundary>}
+        {activeTab === 'flashcards' && <TabErrorBoundary label="Flashcards"><FlashcardsTab modules={modules} /></TabErrorBoundary>}
+        {activeTab === 'wellness'   && <TabErrorBoundary label="Wellness"><WellnessTab /></TabErrorBoundary>}
+        {activeTab === 'modules'    && <TabErrorBoundary label="Modules"><ModulesTab   modules={modules} tasks={tasks} exams={exams} userId={userId} supabase={supabase} /></TabErrorBoundary>}
+        {activeTab === 'pomodoro'   && <TabErrorBoundary label="Pomodoro"><PomodoroTimer modules={modules} tasks={tasks} userId={userId} /></TabErrorBoundary>}
+        {activeTab === 'habits'     && <TabErrorBoundary label="Habits"><HabitBuilder /></TabErrorBoundary>}
+        {activeTab === 'graduation' && <TabErrorBoundary label="Graduation Audit"><GraduationAudit /></TabErrorBoundary>}
+        {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
+        {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
+        {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
       </div>
 
       {/* ── Quick-add FAB ── */}

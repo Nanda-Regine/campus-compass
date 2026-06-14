@@ -11,6 +11,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import PWAInstallBanner from '@/components/PWAInstallBanner'
 import ExamPushBanner from '@/components/study/ExamPushBanner'
+import ICSImportButton from '@/components/study/ICSImportButton'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import { dispatchXP } from '@/lib/xp-engine'
@@ -136,6 +137,9 @@ export default function SetupFlow() {
           if (p.modules?.length) setModules(p.modules)
           if (p.living)      setLiving(p.living)
           if (p.diet)        setDiet(p.diet)
+          if (p.icsImported) setIcsImported(p.icsImported)
+          if (p.nextExamName) setNextExamName(p.nextExamName)
+          if (p.nextExamDate) setNextExamDate(p.nextExamDate)
         }
       } catch { /* ignore corrupt data */ }
 
@@ -166,6 +170,9 @@ export default function SetupFlow() {
   const [moduleInput,  setModuleInput]  = useState('')
   const [living,       setLiving]       = useState('')
   const [diet,         setDiet]         = useState('No restrictions')
+  const [icsImported,  setIcsImported]  = useState(false)
+  const [nextExamName, setNextExamName] = useState('')
+  const [nextExamDate, setNextExamDate] = useState('')
 
   // Save progress to localStorage on every change
   useEffect(() => {
@@ -175,12 +182,12 @@ export default function SetupFlow() {
       localStorage.setItem(`setup_progress_${uid}`, JSON.stringify({
         step, name, emoji, university, year, faculty, funding,
         nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
-        modules, living, diet,
+        modules, living, diet, icsImported, nextExamName, nextExamDate,
       }))
     } catch { /* storage full or private mode */ }
   }, [step, name, emoji, university, year, faculty, funding,
       nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
-      modules, living, diet])
+      modules, living, diet, icsImported, nextExamName, nextExamDate])
 
   // Close combobox on outside click
   useEffect(() => {
@@ -297,6 +304,21 @@ export default function SetupFlow() {
           color: colours[i % colours.length],
         }))
         await supabase.from('modules').insert(moduleRows)
+      }
+
+      // Save next exam if provided
+      if (nextExamName.trim() && nextExamDate) {
+        await supabase.from('exams').insert({
+          user_id: user.id,
+          module_id: null,
+          exam_name: nextExamName.trim(),
+          exam_date: nextExamDate,
+          start_time: '09:00',
+          venue: null,
+          duration_minutes: null,
+          exam_type: 'exam',
+          notes: null,
+        })
       }
 
       // Award XP for completing onboarding
@@ -532,18 +554,55 @@ export default function SetupFlow() {
             </div>
           )}
 
-          {/* STEP 3 — Modules */}
+          {/* STEP 3 — Timetable & Modules */}
           {step === 3 && (
             <div>
               <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 4 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">
-                {isTVET ? 'What are you studying at TVET?' : 'What are you studying?'}
+                {isTVET ? 'What are you studying at TVET?' : 'Subjects & timetable'}
               </h2>
               <p className="text-sm text-white/50 mb-5">
-                {isTVET ? 'Select your N-level or NCV programme.' : 'Add your modules. You can edit these anytime.'}
+                {isTVET ? 'Select your N-level or NCV programme.' : 'Import your full timetable or add subjects manually.'}
               </p>
 
               <div className="space-y-4">
+                {/* ICS Import — primary CTA for non-TVET */}
+                {!isTVET && (
+                  <div className={cn(
+                    'rounded-xl border p-4 transition-all',
+                    icsImported
+                      ? 'border-teal-500/30 bg-teal-900/10'
+                      : 'border-sky-500/20 bg-sky-500/5'
+                  )}>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <span className="font-mono text-[0.57rem] text-sky-400 uppercase tracking-widest">Fastest way</span>
+                        <p className="font-display font-bold text-sm text-white mt-0.5">Import your university timetable</p>
+                        <p className="font-mono text-[0.58rem] text-white/35 mt-0.5">Adds all classes + exams from a .ics calendar file</p>
+                      </div>
+                      {icsImported && (
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 text-xs font-bold">✓</span>
+                      )}
+                    </div>
+                    {icsImported ? (
+                      <p className="font-mono text-[0.62rem] text-teal-400">Timetable imported — your classes and exams are in VarsityOS.</p>
+                    ) : (
+                      <ICSImportButton onImported={() => setIcsImported(true)} />
+                    )}
+                  </div>
+                )}
+
+                {/* Divider (only before module list shows) */}
+                {!isTVET && (
+                  <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-white/8" />
+                    <span className="font-mono text-[0.57rem] text-white/25 uppercase">
+                      {icsImported ? 'add extra subjects' : 'or add manually'}
+                    </span>
+                    <div className="h-px flex-1 bg-white/8" />
+                  </div>
+                )}
+
                 {/* Existing modules list */}
                 {modules.length > 0 && (
                   <div className="space-y-2">
@@ -621,6 +680,31 @@ export default function SetupFlow() {
                       onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addModule() } }}
                     />
                     <Button onClick={addModule} variant="teal" size="md" className="flex-shrink-0 px-4">Add</Button>
+                  </div>
+                )}
+
+                {/* Next exam quick-capture */}
+                {!isTVET && (
+                  <div className="pt-3 border-t border-white/8 space-y-3">
+                    <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wide">Next exam (optional)</div>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="e.g. Mathematics 201"
+                        value={nextExamName}
+                        onChange={e => setNextExamName(e.target.value)}
+                      />
+                      <input
+                        type="date"
+                        value={nextExamDate}
+                        onChange={e => setNextExamDate(e.target.value)}
+                        className="flex-shrink-0 w-36 bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-3 text-sm text-white outline-none transition-all"
+                      />
+                    </div>
+                    {nextExamName && nextExamDate && (
+                      <p className="font-mono text-[0.6rem] text-teal-400">
+                        VarsityOS will count down to this exam and prep your study plan.
+                      </p>
+                    )}
                   </div>
                 )}
 

@@ -424,6 +424,33 @@ export default function CalendarTab({ timetable, tasks, exams }: Props) {
         </button>
       </div>
 
+      {/* First-use hint when timetable is empty */}
+      {timetable.length === 0 && (
+        <div style={{
+          padding: '12px 14px',
+          borderRadius: 12,
+          border: '1px dashed rgba(56,189,248,0.2)',
+          background: 'rgba(56,189,248,0.04)',
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <span style={{ fontSize: 18, flexShrink: 0 }}>📅</span>
+          <div>
+            <p style={{
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              fontSize: '0.75rem', color: 'var(--text-primary)', margin: 0,
+            }}>
+              No classes scheduled yet
+            </p>
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+              color: 'var(--text-muted)', margin: '2px 0 0', lineHeight: 1.6,
+            }}>
+              Go to the Timetable tab to import your .ics calendar or add classes manually.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Day header row */}
       <div style={{
         display: 'grid',
