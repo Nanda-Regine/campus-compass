@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { dispatchXP } from '@/lib/xp-engine'
 import TopBar from '@/components/layout/TopBar'
 import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
 import { fmt, cn } from '@/lib/utils'
@@ -196,6 +197,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
       setLocalMeals(prev => [...prev.filter(m => !(m.day_of_week === day && m.meal_slot === slot)), saved])
       setEditingSlot(null)
       setEditValue('')
+      dispatchXP('meal_planned')
       toast.success('Meal saved')
     } catch { toast.error('Failed to save meal') }
     finally { setSavingSlot(false) }
@@ -257,6 +259,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setGeneratedPlan(data.plan)
+      dispatchXP('weekly_meal_plan')
     } catch {
       toast.error('Meal plan generation failed')
     } finally {

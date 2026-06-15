@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { dispatchXP } from '@/lib/xp-engine'
 import { createClient } from '@/lib/supabase/client'
 import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/store'
@@ -220,6 +221,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
       if (error) throw error
       setIncomeEntries(prev => [data as IncomeEntry, ...prev])
       setIncomeLabel(''); setIncomeAmount(''); setShowIncomeForm(false)
+      dispatchXP('income_logged')
       toast.success('Income recorded!')
     } catch (err) { console.error('[BudgetClient] addIncome:', err); toast.error('Failed to record income') }
     finally { setAddingIncome(false) }
@@ -257,6 +259,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     if (!error) {
       setSavingsGoals(prev => prev.map(g => g.id === goalId ? { ...g, current_amount: newAmount, is_completed: newAmount >= target } : g).filter(g => !g.is_completed))
       await supabase.from('savings_contributions').insert({ user_id: initialData.userId, goal_id: goalId, amount: amt, contribution_date: new Date().toISOString().split('T')[0] })
+      if (newAmount >= target) dispatchXP('savings_goal_hit')
       toast.success(newAmount >= target ? 'Goal completed! 🎉' : `+${fmt.currencyShort(amt)} added!`)
     }
   }
@@ -288,6 +291,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
       setDesc('')
       setAmount('')
       setShowAddForm(false)
+      dispatchXP('budget_entry')
       toast.success('Expense logged!')
       // Emit signals for orchestration layer
       const newTotalSpent = updated.reduce((s, e) => s + e.amount, 0)

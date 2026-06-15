@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, type CSSProperties } from 'react'
+import { dispatchXP } from '@/lib/xp-engine'
 import Link from 'next/link'
 import { Search, ChevronDown, ChevronUp, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react'
 import { BURSARIES, filterBursaries, type Bursary, type BursaryBasisFilter } from '@/lib/bursary-data'
@@ -49,7 +50,7 @@ function BursaryCard({
     }}>
       {/* Header — always visible */}
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => { if (!open) dispatchXP('bursary_viewed'); setOpen(v => !v) }}
         style={{
           width: '100%', padding: '14px 16px', background: 'none', border: 'none',
           cursor: 'pointer', textAlign: 'left', display: 'flex', gap: 10, alignItems: 'flex-start',

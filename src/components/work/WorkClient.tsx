@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { dispatchXP } from '@/lib/xp-engine'
 import { type PartTimeJob, type WorkShift, JOB_TYPE_LABELS } from '@/types'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -65,6 +66,7 @@ export default function WorkClient({ userId }: Props) {
     })
     if (res.ok) {
       setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, status: 'worked' as const } : s))
+      dispatchXP('shift_logged')
       toast.success('Shift marked as worked!')
     }
   }

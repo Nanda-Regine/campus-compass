@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { dispatchXP } from '@/lib/xp-engine'
 
 interface Props {
   userId: string
@@ -123,6 +124,7 @@ export default function SideHustleTracker({ userId }: Props) {
         .single()
       if (dbError) throw dbError
       setHustles(prev => [data, ...prev])
+      dispatchXP('side_hustle_logged')
       setAddModal(false)
       setForm({
         type: 'tutoring',

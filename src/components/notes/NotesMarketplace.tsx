@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { dispatchXP } from '@/lib/xp-engine'
 import { Search, BookMarked, ExternalLink, Bookmark, BookmarkCheck, Trash2, Plus, TrendingUp, Clock, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { type CommunityNote, FILE_TYPE_LABELS, FILE_TYPE_COLORS } from '@/lib/notes-data'
@@ -51,6 +52,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
     })
     if (!res.ok) return
     const { saved } = await res.json()
+    if (saved) dispatchXP('note_saved')
     setNotes(prev => prev.map(n => n.id === note.id ? { ...n, is_saved: saved, save_count: n.save_count + (saved ? 1 : -1) } : n))
     toast.success(saved ? 'Saved to your collection' : 'Removed from saved')
   }

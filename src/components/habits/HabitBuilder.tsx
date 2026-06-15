@@ -8,6 +8,7 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react'
+import { dispatchXP } from '@/lib/xp-engine'
 import { signals } from '@/store/signals'
 import { createClient } from '@/lib/supabase/client'
 
@@ -396,6 +397,12 @@ export default function HabitBuilder() {
       const newStreak = calcStreak(h, checking)
 
       if (checking) {
+        // XP for check-in
+        dispatchXP('habit_checkin')
+        // Streak milestone XP
+        if (newStreak === 7)   dispatchXP('habit_streak_7')
+        if (newStreak === 30)  dispatchXP('habit_streak_30')
+        if (newStreak === 100) dispatchXP('habit_streak_100')
         // Emit signal
         signals.emit({
           type: 'habit_completed',

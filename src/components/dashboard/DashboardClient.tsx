@@ -20,6 +20,7 @@ import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
 import { getDataSaverEnabled } from '@/lib/dataSaver'
 import LevelCard from '@/components/gamification/LevelCard'
 import DailyChallenges from '@/components/gamification/DailyChallenges'
+import StreakWidget from '@/components/gamification/StreakWidget'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import InterventionBanner from '@/components/orchestration/InterventionBanner'
 import InterventionModal from '@/components/orchestration/InterventionModal'
@@ -1538,6 +1539,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <WeatherWidget />
 
               <LevelCard />
+              <StreakWidget />
               <DailyChallenges />
 
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />

@@ -21,6 +21,8 @@ interface Props {
   onCreated: () => void
 }
 
+import { dispatchXP } from '@/lib/xp-engine'
+
 export default function NoteUploadModal({ userInstitution, userFaculty, userYear, onClose, onCreated }: Props) {
   const [title, setTitle] = useState('')
   const [moduleCode, setModuleCode] = useState('')
@@ -48,6 +50,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
         }),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
+      dispatchXP('note_shared')
       toast.success('Notes shared!')
       onCreated()
     } catch (err) {
