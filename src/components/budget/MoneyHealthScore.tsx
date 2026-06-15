@@ -53,9 +53,9 @@ export default function MoneyHealthScore(props: Props) {
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
       <p className="text-xs uppercase tracking-wider" style={{ color: '#9ca3af' }}>Money Health</p>
 
-      <div className="flex items-center gap-4 mt-3">
-        <div className="relative flex-shrink-0" style={{ width: 90, height: 90 }}>
-          <svg width="90" height="90" viewBox="0 0 90 90">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flexShrink: 0, width: 80, height: 80 }}>
+          <svg width="80" height="80" viewBox="0 0 90 90">
             <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
             <circle
               cx="45" cy="45" r="38" fill="none"
@@ -73,7 +73,7 @@ export default function MoneyHealthScore(props: Props) {
           </div>
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div style={{ flex: 1, minWidth: 0 }}>
           <p className="text-xs" style={{ color: '#9ca3af' }}>{band.desc}</p>
 
           <div className="mt-3 space-y-2">

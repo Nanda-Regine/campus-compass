@@ -1501,7 +1501,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <MoodCheckin userId={p.id} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
                 <TabErrorBoundary><BurnoutRadar userId={p.id} /></TabErrorBoundary>
                 <TabErrorBoundary>
                   <MoneyHealthScore

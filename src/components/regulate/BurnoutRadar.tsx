@@ -92,30 +92,30 @@ export default function BurnoutRadar({ userId }: Props) {
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
       <p style={{ color: '#9ca3af', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Burnout Radar</p>
 
-      <div className="flex items-center gap-4">
-        <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', width: 72, height: 72, flexShrink: 0 }}>
           <div style={{
-            width: 80, height: 80, borderRadius: '50%',
+            width: 72, height: 72, borderRadius: '50%',
             border: `4px solid ${band.color}`,
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             background: 'rgba(0,0,0,0.3)',
           }}>
-            <span style={{ color: '#e5e7eb', fontSize: 22, fontWeight: 700, lineHeight: 1 }}>{todayScore}</span>
+            <span style={{ color: '#e5e7eb', fontSize: 20, fontWeight: 700, lineHeight: 1 }}>{todayScore}</span>
             <span style={{ color: band.color, fontSize: 9, fontWeight: 600, marginTop: 2 }}>{band.label}</span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-1 flex-1">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: trendColor, fontSize: 18, fontWeight: 700 }}>{trendIcon}</span>
-            <span style={{ color: '#9ca3af', fontSize: 12 }}>{trend}</span>
+            <span style={{ color: trendColor, fontSize: 16, fontWeight: 700 }}>{trendIcon}</span>
+            <span style={{ color: '#9ca3af', fontSize: 11 }}>{trend}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 24 }}>
-            {sparkScores.slice(-14).map((s, i) => {
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 22, overflow: 'hidden' }}>
+            {sparkScores.slice(-10).map((s, i) => {
               const b = getBand(s)
-              const h = Math.max(3, Math.round((s / maxScore) * 24))
+              const h = Math.max(3, Math.round((s / maxScore) * 22))
               return (
-                <div key={i} style={{ width: 4, height: h, background: b.color, borderRadius: 2, flexShrink: 0 }} />
+                <div key={i} style={{ width: 5, height: h, background: b.color, borderRadius: 2, flexShrink: 0 }} />
               )
             })}
           </div>
