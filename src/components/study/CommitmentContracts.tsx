@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { dispatchXP, penalizeXP } from '@/lib/xp-engine'
+import { ProcrastinationReflectionModal } from '@/components/study/ProcrastinationJournal'
 
 const STYLE_ID = 'varsityos-cc-styles'
 function injectStyles() {
@@ -176,10 +177,11 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
 // ── Main Widget ───────────────────────────────────────────────────────────────
 
 export default function CommitmentContracts() {
-  const [contracts, setContracts]   = useState<Contract[]>([])
-  const [loading, setLoading]       = useState(true)
-  const [showCreate, setShowCreate] = useState(false)
-  const [acting, setActing]         = useState<string | null>(null)
+  const [contracts,    setContracts]    = useState<Contract[]>([])
+  const [loading,      setLoading]      = useState(true)
+  const [showCreate,   setShowCreate]   = useState(false)
+  const [acting,       setActing]       = useState<string | null>(null)
+  const [failedDesc,   setFailedDesc]   = useState<string | null>(null)
 
   useEffect(() => { injectStyles() }, [])
 
@@ -223,6 +225,9 @@ export default function CommitmentContracts() {
         dispatchXP('contract_completed')
       } else {
         penalizeXP(xpStake, 'Commitment contract failed')
+        // Trigger reflection journal
+        const failedContract = contracts.find(c => c.id === id)
+        if (failedContract) setFailedDesc(failedContract.task_description)
       }
     } catch { /* offline */ } finally {
       setActing(null)
@@ -359,6 +364,15 @@ export default function CommitmentContracts() {
         <CreateModal
           onClose={() => setShowCreate(false)}
           onCreate={c => { setContracts(prev => [c, ...prev]); setShowCreate(false) }}
+        />
+      )}
+
+      {failedDesc && (
+        <ProcrastinationReflectionModal
+          trigger="contract_failed"
+          taskDesc={failedDesc}
+          onClose={() => setFailedDesc(null)}
+          onSaved={() => setFailedDesc(null)}
         />
       )}
     </div>

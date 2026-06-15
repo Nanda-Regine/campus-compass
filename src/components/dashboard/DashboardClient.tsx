@@ -44,6 +44,10 @@ import ProcrastinationAlarm from '@/components/dashboard/ProcrastinationAlarm'
 import JustStartButton from '@/components/study/JustStartButton'
 import DeadlineTelescope from '@/components/study/DeadlineTelescope'
 import CommitmentContracts from '@/components/study/CommitmentContracts'
+import ImplementationIntentions from '@/components/study/ImplementationIntentions'
+import BodyDoubleMode from '@/components/study/BodyDoubleMode'
+import ProcrastinationJournal from '@/components/study/ProcrastinationJournal'
+import RewardUnlock from '@/components/gamification/RewardUnlock'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1561,6 +1565,21 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <CommitmentContracts />
               </TabErrorBoundary>
 
+              {/* Implementation Intentions — schedule when + where */}
+              <TabErrorBoundary label="Implementation Intentions">
+                <ImplementationIntentions tasks={allTasks} />
+              </TabErrorBoundary>
+
+              {/* Reward Unlock — temptation bundling */}
+              <TabErrorBoundary label="Reward Unlock">
+                <RewardUnlock />
+              </TabErrorBoundary>
+
+              {/* Procrastination Journal — reflect & rewire */}
+              <TabErrorBoundary label="Procrastination Journal">
+                <ProcrastinationJournal />
+              </TabErrorBoundary>
+
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
 
               {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
@@ -1600,6 +1619,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* Deadline Telescope — shows when exam < 21 days */}
               <TabErrorBoundary label="Deadline Telescope">
                 <DeadlineTelescope exams={allExams} />
+              </TabErrorBoundary>
+
+              {/* Body Double Mode — Supabase Realtime study presence */}
+              <TabErrorBoundary label="Body Double Mode">
+                <BodyDoubleMode />
               </TabErrorBoundary>
 
               {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}

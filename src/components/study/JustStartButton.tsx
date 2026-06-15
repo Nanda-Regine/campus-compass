@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { dispatchXP } from '@/lib/xp-engine'
 import type { Task } from '@/types'
+import FocusEnvironmentSetup from '@/components/study/FocusEnvironmentSetup'
 
 const STYLE_ID = 'varsityos-juststart-styles'
 function injectStyles() {
@@ -286,7 +287,8 @@ interface Props { tasks: Task[] }
 
 export default function JustStartButton({ tasks }: Props) {
   const [showModal, setShowModal] = useState(false)
-  const [mounted, setMounted]     = useState(false)
+  const [showEnv,   setShowEnv]   = useState(false)
+  const [mounted,   setMounted]   = useState(false)
   const topTask = pickTopTask(tasks)
 
   useEffect(() => { injectStyles(); setMounted(true) }, [])
@@ -339,7 +341,7 @@ export default function JustStartButton({ tasks }: Props) {
         )}
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowEnv(true)}
           style={{
             width: '100%', padding: '13px 0',
             fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 15,
@@ -354,6 +356,14 @@ export default function JustStartButton({ tasks }: Props) {
           ▶ Just Start
         </button>
       </div>
+
+      {showEnv && (
+        <FocusEnvironmentSetup
+          taskTitle={topTask.title}
+          onReady={() => { setShowEnv(false); setShowModal(true) }}
+          onSkip={() => { setShowEnv(false); setShowModal(true) }}
+        />
+      )}
 
       {showModal && (
         <FocusSessionModal

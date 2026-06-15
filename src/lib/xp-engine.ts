@@ -44,6 +44,10 @@ export type XPEventName =
   | 'past_paper_attempted'
   // Commitment Contracts
   | 'contract_completed'
+  // Tier 2 Anti-Procrastination
+  | 'intention_set'
+  | 'body_double_joined'
+  | 'journal_entry'
 
 export const XP_VALUES: Record<XPEventName, number> = {
   task_complete:            15,
@@ -80,6 +84,10 @@ export const XP_VALUES: Record<XPEventName, number> = {
   past_paper_attempted:     20,
   // Commitment Contracts
   contract_completed:       75,
+  // Tier 2 Anti-Procrastination
+  intention_set:             5,
+  body_double_joined:       15,
+  journal_entry:            10,
 }
 
 // Max fires per day per event (undefined = unlimited).
@@ -99,6 +107,9 @@ const MAX_DAILY_FIRES: Partial<Record<XPEventName, number>> = {
   habit_checkin:          10,
   past_paper_attempted:   2,
   contract_completed:     1,
+  intention_set:          3,
+  body_double_joined:     1,
+  journal_entry:          2,
 }
 
 /* ── Level System ───────────────────────────────────────────────────────────*/
