@@ -8,6 +8,7 @@ import Providers from '@/components/Providers'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { MobileSidebar } from '@/components/layout/MobileSidebar'
 import { GlobalFAB } from '@/components/layout/GlobalFAB'
 import OnboardingTooltip from '@/components/OnboardingTooltip'
 import { OfflineBanner } from '@/components/ui/OfflineBanner'
@@ -384,6 +385,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-ZA" suppressHydrationWarning>
       <head>
+        {/* Initialize sidebar CSS var before paint to avoid layout flash */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var c=localStorage.getItem('varsityos_sidebar_collapsed');document.documentElement.style.setProperty('--sidebar-w',c==='true'?'56px':'220px');}catch(e){}})();` }} />
 
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="32x32" />
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="48x48" />
@@ -519,11 +522,13 @@ a.appendChild(r);
         <Providers>
           <PWAUpdateNotifier />
           <Sidebar />
+          <MobileSidebar />
           <OfflineBanner />
           <OfflineIndicator />
           <ConsentBanner />
-          {/* md+: sidebar offset, no bottom-nav padding; mobile: 60px reserve for bottom nav */}
-          <div className="md:ml-[48px] pb-[60px] md:pb-0">
+          {/* md+: sidebar offset (CSS var --sidebar-w set by Sidebar.tsx); mobile: 60px for bottom nav */}
+          <div className="md:ml-[var(--sidebar-w)] pb-[60px] md:pb-0"
+            style={{ transition: 'margin-left 0.28s cubic-bezier(0.4,0,0.2,1)' }}>
             <PageTransition>{children}</PageTransition>
           </div>
           <GlobalFAB />

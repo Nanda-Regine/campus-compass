@@ -109,6 +109,11 @@
 
 /* ── CSS Variables — Dark Theme (Cosmic Campus) [default] ─── */
 
+:root {
+  /* Sidebar width — updated at runtime by Sidebar.tsx based on collapsed state */
+  --sidebar-w: 220px;
+}
+
 :root,
 [data-theme="dark"],
 html:not(.light) {

@@ -8,7 +8,8 @@ import TopBar from '@/components/layout/TopBar'
 import ReferralWidget from '@/components/referral/ReferralWidget'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
-import { SA_UNIVERSITIES, SA_LANGUAGES } from '@/types'
+import { SA_LANGUAGES } from '@/types'
+import InstitutionPicker from '@/components/profile/InstitutionPicker'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
@@ -33,6 +34,11 @@ interface ProfileData {
   dietary_pref: string | null
   living_situation: string | null
   ai_language: string | null
+  province: string | null
+  monthly_allowance: string | null
+  study_schedule: string | null
+  is_first_gen: boolean
+  commute_type: string | null
   is_premium: boolean
   premium_until: string | null
   subscription_tier: 'free' | 'scholar' | 'nova_unlimited' | null
@@ -74,6 +80,51 @@ const DIETARY_OPTIONS = ['No restrictions', 'Vegetarian', 'Vegan', 'Halaal', 'Ko
 const LIVING_OPTIONS = ['On-campus res', 'Off-campus rent', 'At home (family)', 'Private student accommodation', 'Other']
 
 const EMOJI_OPTIONS = ['🎓', '📚', '🌟', '⚡', '🔥', '💡', '🚀', '🎯', '🧠', '🌍', '✨', '💪']
+
+const SA_PROVINCES = [
+  'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal',
+  'Limpopo', 'Mpumalanga', 'Northern Cape', 'North West', 'Western Cape',
+]
+
+const ALLOWANCE_OPTIONS = [
+  { value: 'under_500',   label: 'Under R500/month' },
+  { value: '500_1500',    label: 'R500 – R1 500/month' },
+  { value: '1500_3000',   label: 'R1 500 – R3 000/month' },
+  { value: '3000_5000',   label: 'R3 000 – R5 000/month' },
+  { value: 'over_5000',   label: 'Over R5 000/month' },
+  { value: 'varies',      label: 'Varies / unsure' },
+]
+
+const SCHEDULE_OPTIONS = [
+  { value: 'morning',   label: '🌅 Morning person (before 12pm)' },
+  { value: 'afternoon', label: '☀️ Afternoon (12pm–6pm)' },
+  { value: 'night',     label: '🌙 Night owl (after 6pm)' },
+  { value: 'mixed',     label: '🔀 Depends on the day' },
+]
+
+const COMMUTE_OPTIONS = [
+  { value: 'on_campus',  label: '🏠 I live on campus' },
+  { value: 'walk',       label: '🚶 I walk to campus' },
+  { value: 'taxi',       label: '🚌 Taxi / bus commuter' },
+  { value: 'car',        label: '🚗 I drive myself' },
+  { value: 'bicycle',    label: '🚲 I cycle' },
+  { value: 'train',      label: '🚆 Train / Metrorail' },
+]
+
+// What each field unlocks in the OS
+const FIELD_UNLOCKS: Record<string, string> = {
+  university:        'institution-specific events, textbook marketplace, study twins',
+  year_of_study:     'correct academic pacing, exam readiness, year-appropriate resources',
+  faculty:           'Nova speaks your subject language, relevant bursaries and tutors',
+  funding_type:      'NSFAS Oracle, budget coaching, financial health scoring',
+  province:          'load shedding schedule, local clinic info, regional weather context',
+  monthly_allowance: 'meal budget targets, grocery list value, spending benchmarks',
+  study_schedule:    'Nova schedules Pomodoro sessions at your peak hours',
+  is_first_gen:      'extra process guidance, first-gen bursaries surfaced, simplified admin help',
+  commute_type:      'time budgeting, transport cost tracking, safety route planning',
+  dietary_pref:      'AI meal plans respect your diet, grocery list filters by dietary need',
+  living_situation:  'cooking tips match your kitchen access, relevant off-campus resources',
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -291,6 +342,11 @@ export default function ProfileClient() {
   const [dietaryPref, setDietaryPref] = useState('')
   const [livingSituation, setLivingSituation] = useState('')
   const [aiLanguage, setAiLanguage] = useState('')
+  const [province, setProvince] = useState('')
+  const [monthlyAllowance, setMonthlyAllowance] = useState('')
+  const [studySchedule, setStudySchedule] = useState('')
+  const [isFirstGen, setIsFirstGen] = useState(false)
+  const [commuteType, setCommuteType] = useState('')
   const [uiLocale, setUiLocale] = useState<AppLocale>('en')
   const [myListings, setMyListings] = useState<MyListing[]>([])
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -321,6 +377,11 @@ export default function ProfileClient() {
         setYearOfStudy(p.year_of_study ?? '')
         setFaculty(p.faculty ?? '')
         setFundingType(p.funding_type ?? '')
+        setProvince(p.province ?? '')
+        setMonthlyAllowance(p.monthly_allowance ?? '')
+        setStudySchedule(p.study_schedule ?? '')
+        setIsFirstGen(p.is_first_gen ?? false)
+        setCommuteType(p.commute_type ?? '')
         setDietaryPref(p.dietary_pref ?? '')
         setLivingSituation(p.living_situation ?? '')
         setAiLanguage(p.ai_language ?? 'English')
@@ -378,13 +439,16 @@ export default function ProfileClient() {
           year_of_study: yearOfStudy, faculty, funding_type: fundingType,
           dietary_pref: dietaryPref, living_situation: livingSituation,
           ai_language: aiLanguage,
+          province: province || null, monthly_allowance: monthlyAllowance || null,
+          study_schedule: studySchedule || null, is_first_gen: isFirstGen,
+          commute_type: commuteType || null,
         }),
         signal: AbortSignal.timeout(10000),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       toast.success('Profile saved')
-      setProfile(prev => prev ? { ...prev, name, bio: bio || null, emoji, university, year_of_study: yearOfStudy, faculty, funding_type: fundingType, dietary_pref: dietaryPref, living_situation: livingSituation, ai_language: aiLanguage } : prev)
+      setProfile(prev => prev ? { ...prev, name, bio: bio || null, emoji, university, year_of_study: yearOfStudy, faculty, funding_type: fundingType, dietary_pref: dietaryPref, living_situation: livingSituation, ai_language: aiLanguage, province: province || null, monthly_allowance: monthlyAllowance || null, study_schedule: studySchedule || null, is_first_gen: isFirstGen, commute_type: commuteType || null } : prev)
     } catch (err) {
       console.error('[ProfileClient] handleSave:', err)
       toast.error('Could not save profile')
@@ -585,6 +649,74 @@ export default function ProfileClient() {
           </div>
         )}
 
+        {/* ── OS Personalization summary ───────────────────────────────────── */}
+        {profile && (() => {
+          const checks = [
+            { key: 'university',        val: profile.university,        label: profile.university?.split('(')[0].trim() ?? '', emoji: '🎓' },
+            { key: 'year_of_study',     val: profile.year_of_study,     label: profile.year_of_study ?? '', emoji: '📅' },
+            { key: 'faculty',           val: profile.faculty,           label: profile.faculty ?? '', emoji: '📖' },
+            { key: 'funding_type',      val: profile.funding_type,      label: profile.funding_type?.toUpperCase().replace('_', ' ') ?? '', emoji: '💰' },
+            { key: 'province',          val: profile.province,          label: profile.province ?? '', emoji: '📍' },
+            { key: 'monthly_allowance', val: profile.monthly_allowance, label: ALLOWANCE_OPTIONS.find(o => o.value === profile.monthly_allowance)?.label ?? '', emoji: '💵' },
+            { key: 'study_schedule',    val: profile.study_schedule,    label: SCHEDULE_OPTIONS.find(o => o.value === profile.study_schedule)?.label ?? '', emoji: '⏰' },
+            { key: 'commute_type',      val: profile.commute_type,      label: COMMUTE_OPTIONS.find(o => o.value === profile.commute_type)?.label ?? '', emoji: '🚌' },
+            { key: 'is_first_gen',      val: profile.is_first_gen ? 'yes' : null, label: 'First-gen student', emoji: '👤' },
+            { key: 'living_situation',  val: profile.living_situation,  label: profile.living_situation ?? '', emoji: '🏠' },
+            { key: 'dietary_pref',      val: profile.dietary_pref,      label: profile.dietary_pref ?? '', emoji: '🥗' },
+          ]
+          const filled  = checks.filter(c => c.val)
+          const missing = checks.filter(c => !c.val)
+          const pct     = Math.round((filled.length / checks.length) * 100)
+
+          return (
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                    OS personalisation
+                  </p>
+                  <p className="font-display font-bold text-sm text-white mt-0.5">{pct}% complete</p>
+                </div>
+                <div className="text-right">
+                  <div className="font-mono text-[0.6rem]" style={{ color: pct === 100 ? '#4ecf9e' : 'rgba(255,255,255,0.3)' }}>
+                    {filled.length}/{checks.length} fields
+                  </div>
+                  {pct < 100 && (
+                    <div className="font-mono text-[0.52rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                      {missing.length} unlock{missing.length !== 1 ? 's' : ''} waiting
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                <div className="h-full rounded-full transition-all duration-700"
+                  style={{ width: `${pct}%`, background: pct === 100 ? '#4ecf9e' : 'linear-gradient(90deg, #4ecf9e, #0891b2)' }} />
+              </div>
+
+              {/* Filled tags */}
+              {filled.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {filled.map(c => (
+                    <span key={c.key} className="font-mono text-[0.5rem] px-2 py-1 rounded-full"
+                      style={{ background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.15)', color: 'rgba(78,207,158,0.7)' }}>
+                      {c.emoji} {c.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Missing nudge */}
+              {missing.length > 0 && pct < 100 && (
+                <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.22)' }}>
+                  Missing: {missing.slice(0, 4).map(c => c.emoji + ' ' + c.key.replace(/_/g, ' ')).join(' · ')}{missing.length > 4 ? ` + ${missing.length - 4} more` : ''}
+                </p>
+              )}
+            </div>
+          )
+        })()}
+
         {/* ── Section tabs ─────────────────────────────────────────────────── */}
         <div
           className="flex gap-1 p-1 rounded-2xl"
@@ -638,8 +770,13 @@ export default function ProfileClient() {
                 />
                 <p className="font-mono text-[0.52rem] text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{bio.length}/160</p>
               </Field>
-              <Field label="University">
-                <SelectInput value={university} options={[...SA_UNIVERSITIES]} onChange={setUniversity} />
+              <Field label="Institution">
+                <InstitutionPicker value={university} onChange={setUniversity} />
+                {university && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.university}
+                  </p>
+                )}
               </Field>
             </div>
 
@@ -654,7 +791,41 @@ export default function ProfileClient() {
               </div>
               <Field label="Faculty / Department">
                 <TextInput value={faculty} onChange={setFaculty} placeholder="e.g. Science and Technology" maxLength={80} />
+                {faculty && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.faculty}
+                  </p>
+                )}
               </Field>
+              <Field label="Province where you study">
+                <SelectInput value={province} options={['', ...SA_PROVINCES].map(v => ({ value: v, label: v || 'Select province…' }))} onChange={setProvince} />
+                {province && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.province}
+                  </p>
+                )}
+              </Field>
+              <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
+                <div>
+                  <div className="font-mono text-[0.58rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>First-generation student</div>
+                  <div className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                    {isFirstGen ? '✓ First in your family to study at university/college' : 'Are you the first in your family to study?'}
+                  </div>
+                  {isFirstGen && (
+                    <p className="font-mono text-[0.52rem] mt-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                      🔓 {FIELD_UNLOCKS.is_first_gen}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={() => setIsFirstGen(v => !v)}
+                  className="ml-4 flex-shrink-0 w-11 h-6 rounded-full transition-all relative"
+                  style={{ background: isFirstGen ? '#4ecf9e' : 'rgba(255,255,255,0.1)' }}
+                >
+                  <div className="absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all shadow-sm"
+                    style={{ left: isFirstGen ? '22px' : '2px' }} />
+                </button>
+              </div>
             </div>
 
             <SaveButton onClick={handleSave} saving={saving} label="Save profile" />
@@ -667,9 +838,43 @@ export default function ProfileClient() {
             <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <Field label="Living situation">
                 <SelectInput value={livingSituation} options={LIVING_OPTIONS} onChange={setLivingSituation} />
+                {livingSituation && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.living_situation}
+                  </p>
+                )}
+              </Field>
+              <Field label="Monthly allowance / budget">
+                <SelectInput value={monthlyAllowance} options={[{ value: '', label: 'Select range…' }, ...ALLOWANCE_OPTIONS]} onChange={setMonthlyAllowance} />
+                {monthlyAllowance && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.monthly_allowance}
+                  </p>
+                )}
               </Field>
               <Field label="Dietary preference">
                 <SelectInput value={dietaryPref} options={DIETARY_OPTIONS} onChange={setDietaryPref} />
+                {dietaryPref && dietaryPref !== 'No restrictions' && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.dietary_pref}
+                  </p>
+                )}
+              </Field>
+              <Field label="When do you study best?">
+                <SelectInput value={studySchedule} options={[{ value: '', label: 'Select schedule…' }, ...SCHEDULE_OPTIONS]} onChange={setStudySchedule} />
+                {studySchedule && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.study_schedule}
+                  </p>
+                )}
+              </Field>
+              <Field label="How do you get to campus?">
+                <SelectInput value={commuteType} options={[{ value: '', label: 'Select commute…' }, ...COMMUTE_OPTIONS]} onChange={setCommuteType} />
+                {commuteType && (
+                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    🔓 {FIELD_UNLOCKS.commute_type}
+                  </p>
+                )}
               </Field>
               <Field label="Nova language">
                 <SelectInput value={aiLanguage} options={SA_LANGUAGES.map(l => ({ value: l.value, label: l.label }))} onChange={setAiLanguage} />

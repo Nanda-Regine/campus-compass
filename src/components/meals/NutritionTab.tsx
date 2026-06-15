@@ -5,32 +5,42 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
-// Common SA student foods with macro data per typical serving
+// SA student foods with macro data per typical serving — budget-friendly focus
 const SA_FOODS = [
   // Breakfast
-  { name: 'Pap (200g)', icon: '🌽', slot: 'breakfast', cal: 363, protein: 8, carbs: 73, fat: 4 },
-  { name: 'Eggs ×2', icon: '🥚', slot: 'breakfast', cal: 140, protein: 12, carbs: 0, fat: 10 },
-  { name: 'White bread ×2 slices', icon: '🍞', slot: 'breakfast', cal: 160, protein: 6, carbs: 30, fat: 2 },
-  { name: 'Oats (cooked 200g)', icon: '🥣', slot: 'breakfast', cal: 142, protein: 5, carbs: 24, fat: 2.8 },
-  { name: 'Amasi (100ml)', icon: '🥛', slot: 'breakfast', cal: 64, protein: 3.5, carbs: 4.9, fat: 3.5 },
-  { name: 'Milo with milk', icon: '☕', slot: 'breakfast', cal: 220, protein: 9, carbs: 29, fat: 8 },
+  { name: 'Pap (200g)',          icon: '🌽', slot: 'breakfast', cal: 363, protein: 8,   carbs: 73, fat: 4,   price: 2  },
+  { name: 'Eggs ×2',             icon: '🥚', slot: 'breakfast', cal: 140, protein: 12,  carbs: 0,  fat: 10,  price: 8  },
+  { name: 'Brown bread ×2',      icon: '🍞', slot: 'breakfast', cal: 156, protein: 7,   carbs: 28, fat: 2.2, price: 5  },
+  { name: 'Oats (200g cooked)',  icon: '🥣', slot: 'breakfast', cal: 142, protein: 5,   carbs: 24, fat: 2.8, price: 4  },
+  { name: 'Amasi (100ml)',       icon: '🥛', slot: 'breakfast', cal: 64,  protein: 3.5, carbs: 4.9,fat: 3.5, price: 5  },
+  { name: 'Milo with milk',      icon: '☕', slot: 'breakfast', cal: 220, protein: 9,   carbs: 29, fat: 8,   price: 9  },
+  { name: 'Peanut butter toast', icon: '🫙', slot: 'breakfast', cal: 240, protein: 8,   carbs: 28, fat: 11,  price: 7  },
+  { name: 'Weetbix ×3',         icon: '🌾', slot: 'breakfast', cal: 211, protein: 6,   carbs: 40, fat: 1.5, price: 6  },
   // Lunch
-  { name: 'Rice (cooked 200g)', icon: '🍚', slot: 'lunch', cal: 260, protein: 5.4, carbs: 56, fat: 0.6 },
-  { name: 'Chakalaka (200g)', icon: '🌶️', slot: 'lunch', cal: 90, protein: 4, carbs: 16, fat: 2 },
-  { name: 'Tinned tuna (100g)', icon: '🐟', slot: 'lunch', cal: 116, protein: 26, carbs: 0, fat: 0.6 },
-  { name: 'Samp & beans (200g)', icon: '🫘', slot: 'lunch', cal: 390, protein: 14, carbs: 76, fat: 2 },
-  { name: 'Bunny chow half', icon: '🥐', slot: 'lunch', cal: 700, protein: 25, carbs: 90, fat: 28 },
-  { name: 'Pasta (cooked 200g)', icon: '🍝', slot: 'lunch', cal: 262, protein: 10, carbs: 50, fat: 2.2 },
+  { name: 'Rice (200g cooked)',  icon: '🍚', slot: 'lunch', cal: 260, protein: 5.4, carbs: 56, fat: 0.6, price: 5  },
+  { name: 'Chakalaka (200g)',    icon: '🌶️', slot: 'lunch', cal: 90,  protein: 4,   carbs: 16, fat: 2,   price: 8  },
+  { name: 'Tinned tuna (100g)', icon: '🐟', slot: 'lunch', cal: 116, protein: 26,  carbs: 0,  fat: 0.6, price: 15 },
+  { name: 'Samp & beans (200g)',icon: '🫘', slot: 'lunch', cal: 390, protein: 14,  carbs: 76, fat: 2,   price: 10 },
+  { name: 'Bunny chow (half)',  icon: '🥐', slot: 'lunch', cal: 700, protein: 25,  carbs: 90, fat: 28,  price: 40 },
+  { name: 'Pasta (200g cooked)',icon: '🍝', slot: 'lunch', cal: 262, protein: 10,  carbs: 50, fat: 2.2, price: 8  },
+  { name: 'Sardines on bread',  icon: '🐠', slot: 'lunch', cal: 280, protein: 22,  carbs: 28, fat: 9,   price: 12 },
+  { name: 'Butternut soup',     icon: '🍜', slot: 'lunch', cal: 120, protein: 2,   carbs: 22, fat: 4,   price: 15 },
   // Supper
-  { name: 'Braai chicken (100g)', icon: '🍗', slot: 'supper', cal: 239, protein: 27, carbs: 0, fat: 14 },
-  { name: 'Boerewors (100g)', icon: '🌭', slot: 'supper', cal: 384, protein: 17, carbs: 1, fat: 34 },
-  { name: 'Sweet potato (150g)', icon: '🍠', slot: 'supper', cal: 129, protein: 2.4, carbs: 30, fat: 0.15 },
-  { name: 'Lentils (cooked 150g)', icon: '🟤', slot: 'supper', cal: 174, protein: 13.5, carbs: 30, fat: 0.6 },
+  { name: 'Braai chicken (100g)',icon: '🍗', slot: 'supper', cal: 239, protein: 27,  carbs: 0,  fat: 14,  price: 25 },
+  { name: 'Boerewors (100g)',   icon: '🌭', slot: 'supper', cal: 384, protein: 17,  carbs: 1,  fat: 34,  price: 22 },
+  { name: 'Sweet potato (150g)',icon: '🍠', slot: 'supper', cal: 129, protein: 2.4, carbs: 30, fat: 0.15,price: 8  },
+  { name: 'Lentils (150g)',     icon: '🟤', slot: 'supper', cal: 174, protein: 13.5,carbs: 30, fat: 0.6, price: 6  },
+  { name: 'Spinach & egg fry', icon: '🥬', slot: 'supper', cal: 180, protein: 13,  carbs: 5,  fat: 12,  price: 12 },
+  { name: 'Umngqusho (200g)',   icon: '🍲', slot: 'supper', cal: 380, protein: 15,  carbs: 72, fat: 2,   price: 9  },
+  { name: 'Mince & pap (200g)',icon: '🍖', slot: 'supper', cal: 450, protein: 28,  carbs: 46, fat: 16,  price: 30 },
+  { name: 'Stir-fry veg & rice',icon: '🥦', slot: 'supper', cal: 320, protein: 8,  carbs: 55, fat: 6,   price: 18 },
   // Snacks
-  { name: 'Mageu (200ml)', icon: '🥤', slot: 'snack', cal: 145, protein: 4, carbs: 30, fat: 1 },
-  { name: 'Banana', icon: '🍌', slot: 'snack', cal: 89, protein: 1.1, carbs: 23, fat: 0.3 },
-  { name: 'Peanuts (28g)', icon: '🥜', slot: 'snack', cal: 166, protein: 7.6, carbs: 4.8, fat: 14 },
-  { name: 'Biscuits ×2', icon: '🍪', slot: 'snack', cal: 100, protein: 1, carbs: 13, fat: 5 },
+  { name: 'Mageu (200ml)',      icon: '🥤', slot: 'snack', cal: 145, protein: 4,   carbs: 30, fat: 1,   price: 8  },
+  { name: 'Banana',             icon: '🍌', slot: 'snack', cal: 89,  protein: 1.1, carbs: 23, fat: 0.3, price: 4  },
+  { name: 'Peanuts (28g)',      icon: '🥜', slot: 'snack', cal: 166, protein: 7.6, carbs: 4.8,fat: 14,  price: 7  },
+  { name: 'Provita ×4',        icon: '🍘', slot: 'snack', cal: 88,  protein: 2.5, carbs: 16, fat: 1.5, price: 5  },
+  { name: 'Fruit (apple/pear)', icon: '🍎', slot: 'snack', cal: 80,  protein: 0.4, carbs: 21, fat: 0.2, price: 6  },
+  { name: 'Hard-boiled egg',    icon: '🥚', slot: 'snack', cal: 70,  protein: 6,   carbs: 0.5,fat: 5,   price: 4  },
 ]
 
 interface NutritionLog {
@@ -390,7 +400,11 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                       <span className="text-base flex-shrink-0">{food.icon}</span>
                       <div className="min-w-0">
                         <div className="font-body text-[0.72rem] text-white/80 leading-tight truncate">{food.name}</div>
-                        <div className="font-mono text-[0.52rem] text-white/32">{food.cal} kcal</div>
+                        <div className="font-mono text-[0.52rem] text-white/32 flex gap-2">
+                          <span>{food.cal} kcal</span>
+                          {food.protein > 5 && <span className="text-rose-400/60">P{Math.round(food.protein)}g</span>}
+                          {'price' in food && <span className="text-emerald-400/50">~R{(food as typeof food & {price:number}).price}</span>}
+                        </div>
                       </div>
                     </button>
                   ))}

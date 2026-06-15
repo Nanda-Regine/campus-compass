@@ -70,6 +70,7 @@ export async function PATCH(request: NextRequest) {
       'funding_type', 'phone', 'preferred_language', 'notifications_enabled',
       'avatar_url', 'onboarding_complete',
       'faculty', 'dietary_pref', 'living_situation', 'ai_language',
+      'province', 'monthly_allowance', 'study_schedule', 'is_first_gen', 'commute_type',
     ]
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {

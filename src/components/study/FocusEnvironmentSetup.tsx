@@ -134,13 +134,19 @@ export default function FocusEnvironmentSetup({ taskTitle, onReady, onSkip }: Pr
           {isReady ? "▶ I'm ready — let's go" : `${[...nonGoalItems.map(c => checked.includes(c.id)), goal.trim().length > 2].filter(Boolean).length} / 4 complete`}
         </button>
 
-        <button onClick={onSkip} style={{
-          display: 'block', margin: '14px auto 0',
-          fontFamily: '"JetBrains Mono",monospace', fontSize: 10,
-          background: 'none', border: 'none', cursor: 'pointer',
-          color: 'rgba(255,255,255,0.2)',
-        }}>
-          skip ritual →
+        <button
+          onClick={onSkip}
+          style={{
+            display: 'block', width: '100%', margin: '10px 0 0',
+            fontFamily: 'Sora,sans-serif', fontSize: 13, fontWeight: 500,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 12, padding: '11px 0',
+            cursor: 'pointer', color: 'rgba(255,255,255,0.45)',
+            transition: 'all 0.2s',
+          }}
+        >
+          ▶ Skip ritual — just start now
         </button>
       </div>
     </div>

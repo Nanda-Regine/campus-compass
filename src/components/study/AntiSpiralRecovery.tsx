@@ -6,6 +6,7 @@
 // — Pychyl & Flett, 2012; the 2-minute rule (Allen, Getting Things Done).
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { loadXPState } from '@/lib/xp-engine'
 import { dispatchXP } from '@/lib/xp-engine'
 import type { Task } from '@/types'
@@ -59,8 +60,9 @@ const STEPS = [
     n: 1,
     icon: '🎯',
     title: 'Name one task',
-    desc: 'Just one. The smallest one you can possibly do in the next 5 minutes.',
-    cta: 'I know what I\'ll do',
+    desc: 'Just one. The smallest one you can possibly do in the next 5 minutes. Your task list is open — pick it.',
+    cta: 'Open my task list',
+    ctaLink: '/study',
     color: '#ff6b6b',
   },
   {
@@ -69,14 +71,16 @@ const STEPS = [
     title: 'Do a 5-min Pomodoro',
     desc: 'Set a timer for 5 minutes only. No 25-minute pressure. Just start.',
     cta: 'Start 5-min timer',
+    ctaLink: null,
     color: '#f59e0b',
   },
   {
     n: 3,
     icon: '👥',
     title: 'Find your body double',
-    desc: 'Open Body Double Mode and work alongside even one other person online.',
-    cta: 'I\'m not alone',
+    desc: 'Work alongside someone else — even silently. Go to Study Groups, find an active session, or share your WhatsApp status.',
+    cta: 'Find study partner',
+    ctaLink: '/dashboard/groups',
     color: '#7090d0',
   },
   {
@@ -85,6 +89,7 @@ const STEPS = [
     title: 'Reset your mindset',
     desc: 'You don\'t need to "feel like it." Action comes before motivation, not after.',
     cta: 'I\'m back. Let\'s go.',
+    ctaLink: null,
     color: '#4ecf9e',
   },
 ]
@@ -143,6 +148,7 @@ function MiniTimer({ onDone }: { onDone: () => void }) {
 interface Props { tasks: Task[] }
 
 export default function AntiSpiralRecovery({ tasks }: Props) {
+  const router = useRouter()
   const [idleDays,   setIdleDays]   = useState(0)
   const [overdue,    setOverdue]    = useState(0)
   const [dismissed,  setDismissed]  = useState(false)
@@ -172,14 +178,18 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
     dispatchXP('recovery_initiated')
   }, [])
 
-  const advance = useCallback(() => {
+  const advance = useCallback((link?: string | null) => {
     if (step >= 4) {
       setDone(true)
       return
     }
-    // Step 2 CTA starts the timer inline — handled inside the step render
+    if (link) {
+      setDone(true)
+      router.push(link)
+      return
+    }
     setStep(s => s + 1)
-  }, [step])
+  }, [step, router])
 
   if (!mounted || !inSpiral) return null
 
@@ -282,17 +292,17 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
 
         {/* CTA */}
         {step !== 2 && (
-          <button onClick={advance} style={{
+          <button onClick={() => advance(current.ctaLink)} style={{
             width: '100%', padding: '14px 0', borderRadius: 14, border: 'none', cursor: 'pointer',
             background: current.color, color: step === 4 ? '#000' : '#fff',
             fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15,
             transition: 'transform 0.1s', marginTop: step === 2 ? 16 : 0,
           }}>
-            {step === 4 ? `✓ ${current.cta}` : `${current.cta} →`}
+            {step === 4 ? `✓ ${current.cta}` : current.ctaLink ? `${current.cta} ↗` : `${current.cta} →`}
           </button>
         )}
         {step === 2 && (
-          <button onClick={advance} style={{
+          <button onClick={() => advance(null)} style={{
             width: '100%', marginTop: 12, padding: '11px 0', borderRadius: 12,
             border: '1px solid rgba(255,255,255,0.1)',
             background: 'transparent', color: 'rgba(255,255,255,0.35)',

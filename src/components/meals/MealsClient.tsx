@@ -9,6 +9,8 @@ import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NutritionTab from './NutritionTab'
+import RecipesTab from './RecipesTab'
+import KitchenGuide from './KitchenGuide'
 
 const GROCERY_CATS = [
   { id: 'protein', icon: '🥩', label: 'Protein', color: '#FB7185', tip: 'eggs, tuna, lentils, chicken, beans' },
@@ -31,7 +33,7 @@ interface MealsClientProps {
   }
 }
 
-type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes' | 'nutrition'
+type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes' | 'nutrition' | 'kitchen'
 
 const TABS = [
   { id: 'ai_plan'   as TabId, label: 'AI Planner', icon: '🤖' },
@@ -39,47 +41,11 @@ const TABS = [
   { id: 'grocery'   as TabId, label: 'Groceries',  icon: '🛒' },
   { id: 'recipes'   as TabId, label: 'Recipes',    icon: '👨‍🍳' },
   { id: 'nutrition' as TabId, label: 'Nutrition',  icon: '🥗' },
+  { id: 'kitchen'   as TabId, label: 'Kitchen 101',icon: '🫙' },
 ]
 
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-const SAMPLE_RECIPES = [
-  {
-    name: 'Chakalaka & Pap',
-    cost: 'R18',
-    time: '25 min',
-    desc: 'A SA classic — spiced bean and veg relish with smooth pap. Under R20 for 2.',
-    icon: '🌶️',
-  },
-  {
-    name: 'Egg Fried Rice',
-    cost: 'R12',
-    time: '15 min',
-    desc: 'Leftover rice, eggs, soy sauce. Cheap, fast, filling.',
-    icon: '🍳',
-  },
-  {
-    name: 'Boerewors Roll',
-    cost: 'R22',
-    time: '20 min',
-    desc: 'Grilled boerewors in a hotdog roll with tomato sauce. Student braai essential.',
-    icon: '🌭',
-  },
-  {
-    name: 'Samp & Beans',
-    cost: 'R15',
-    time: '45 min',
-    desc: 'Batch cook on Sunday — lasts 3 days in the fridge. Nutritious and cheap.',
-    icon: '🫘',
-  },
-  {
-    name: 'Tuna Pasta',
-    cost: 'R28',
-    time: '20 min',
-    desc: 'Tinned tuna, pasta, onion, and a tin of tomatoes. Classic student staple.',
-    icon: '🐟',
-  },
-]
 
 interface GeneratedRecipe {
   name: string
@@ -315,6 +281,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     grocery:   '#7090d0',
     recipes:   '#e8834a',
     nutrition: '#FB7185',
+    kitchen:   '#a78bfa',
   }
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
@@ -607,6 +574,30 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
           return (
             <>
+              {/* Starter Kit banner — shown to first-timers or empty lists */}
+              {groceryItems.length === 0 && (
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(78,207,158,0.08) 0%, rgba(0,0,0,0) 80%)',
+                  border: '1px solid rgba(78,207,158,0.2)', borderRadius: 16, padding: '16px 18px', marginBottom: 16,
+                }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>DON&apos;T KNOW WHAT TO BUY?</div>
+                  <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 6 }}>Load a beginner starter kit</div>
+                  <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 12 }}>
+                    22 essentials · feeds you for a week · works for beginners · under R350
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('kitchen')}
+                    style={{
+                      padding: '9px 20px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                      background: '#4ecf9e', color: '#000',
+                      fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 12.5,
+                    }}
+                  >
+                    🛒 See starter kit in Kitchen 101 →
+                  </button>
+                </div>
+              )}
+
               {/* Category chips */}
               <div className="space-y-2">
                 <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest">Category</div>
@@ -773,101 +764,11 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
         {/* ─── Recipes Tab ─── */}
         {activeTab === 'recipes' && (
-          <>
-            {/* Generated recipe */}
-            {generatedRecipe && (
-              <div className="bg-gradient-to-br from-teal-900/20 to-teal-950/10 border border-teal-600/20 rounded-2xl p-5 animate-fade-up space-y-4">
-                <div>
-                  <div className="font-mono text-[0.58rem] text-teal-400 uppercase tracking-widest mb-1">AI Generated Recipe</div>
-                  <div className="font-display font-black text-xl text-white">{generatedRecipe.name}</div>
-                  <div className="flex items-center gap-3 mt-2 flex-wrap">
-                    <span className="font-mono text-[0.6rem] bg-teal-600/15 text-teal-400 border border-teal-600/20 px-2 py-1 rounded-full">
-                      {fmt.currencyShort(generatedRecipe.totalCost)} total
-                    </span>
-                    <span className="font-mono text-[0.6rem] text-white/40">{fmt.currencyShort(generatedRecipe.costPerServing)}/serving</span>
-                    <span className="font-mono text-[0.6rem] text-white/40">⏱ {generatedRecipe.cookTime}</span>
-                    <span className="font-mono text-[0.6rem] text-white/40 capitalize">{generatedRecipe.difficulty}</span>
-                    <span className="font-mono text-[0.6rem] text-white/40">🍽 {generatedRecipe.servings} servings</span>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest mb-2">Ingredients</div>
-                  <div className="space-y-1.5">
-                    {generatedRecipe.ingredients.map((ing, i) => (
-                      <div key={i} className="flex items-center gap-3 bg-[var(--bg-surface)] rounded-xl px-3 py-2">
-                        <div className="w-1.5 h-1.5 bg-teal-600 rounded-full flex-shrink-0" />
-                        <div className="flex-1 font-body text-sm text-white">{ing.item}</div>
-                        <div className="font-mono text-[0.58rem] text-white/40">{ing.amount}</div>
-                        <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(ing.estimatedCost)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest mb-2">Steps</div>
-                  <div className="space-y-2">
-                    {generatedRecipe.steps.map((step) => (
-                      <div key={step.step} className="flex gap-3">
-                        <div className="w-6 h-6 bg-teal-600/20 text-teal-400 rounded-full flex items-center justify-center font-mono text-[0.6rem] font-bold flex-shrink-0 mt-0.5">
-                          {step.step}
-                        </div>
-                        <div className="font-body text-sm text-white/80 leading-relaxed">{step.instruction}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {generatedRecipe.tips.length > 0 && (
-                  <div className="bg-amber-500/8 border border-amber-500/15 rounded-xl p-3">
-                    <div className="font-mono text-[0.58rem] text-amber-400 uppercase tracking-widest mb-2">💡 Tips</div>
-                    {generatedRecipe.tips.map((tip, i) => (
-                      <div key={i} className="font-body text-sm text-white/70">{tip}</div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="font-mono text-[0.58rem] text-white/30">{generatedRecipe.nutritionNote}</div>
-                {generatedRecipe.storageTip && (
-                  <div className="font-mono text-[0.58rem] text-white/30">🥡 {generatedRecipe.storageTip}</div>
-                )}
-              </div>
-            )}
-
-            {/* Static sample recipes */}
-            <div>
-              <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-3">Budget SA Recipes</div>
-              <div className="space-y-3">
-                {SAMPLE_RECIPES.map(recipe => (
-                  <div key={recipe.name} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-white/15 rounded-2xl p-4 transition-all">
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl flex-shrink-0">{recipe.icon}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <div className="font-display font-bold text-white text-sm">{recipe.name}</div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <span className="font-mono text-[0.58rem] text-teal-400">{recipe.cost}</span>
-                            <span className="font-mono text-[0.55rem] text-white/30">{recipe.time}</span>
-                          </div>
-                        </div>
-                        <div className="font-body text-[0.8rem] text-white/55 leading-relaxed">{recipe.desc}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {!generatedRecipe && (
-              <button
-                onClick={() => setActiveTab('ai_plan')}
-                className="w-full font-display font-bold text-sm bg-teal-600/10 hover:bg-teal-600/20 border border-teal-600/20 text-teal-400 py-3 rounded-xl transition-all"
-              >
-                🤖 Generate a recipe from your ingredients →
-              </button>
-            )}
-          </>
+          <RecipesTab
+            generatedRecipe={generatedRecipe}
+            onGoToAIPlanner={() => setActiveTab('ai_plan')}
+            fmt={fmt}
+          />
         )}
 
         {/* ─── Nutrition Tab ─── */}
@@ -878,6 +779,9 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             today={today}
           />
         )}
+
+        {/* ─── Kitchen 101 Tab ─── */}
+        {activeTab === 'kitchen' && <KitchenGuide />}
       </div>
     </div>
   )
