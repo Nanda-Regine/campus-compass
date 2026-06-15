@@ -3,12 +3,43 @@
 import { useState, useEffect, type CSSProperties } from 'react'
 import { Trash2, ChevronLeft, Edit3 } from 'lucide-react'
 import { FSRS, createEmptyCard, generatorParameters, Rating, type Card as FSRSCard } from 'ts-fsrs'
+import katex from 'katex'
 import type { Module } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
 import { MODULE_COLOURS } from '@/types'
 import { loadDecksFromDB, saveDeckToDB, deleteDeckFromDB, updateCardInDB } from '@/lib/db/flashcards'
 import { useAppStore } from '@/store'
 import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
+
+// ── Math rendering ────────────────────────────────────────────────────────────
+// Supports $...$ inline and $$...$$ block math (KaTeX). Falls back to plain text.
+
+function renderMathSegment(latex: string, display: boolean): string {
+  try {
+    return katex.renderToString(latex, { throwOnError: false, displayMode: display, output: 'htmlAndMathml' })
+  } catch {
+    return display ? `$$${latex}$$` : `$${latex}$`
+  }
+}
+
+function parseMathHtml(text: string): string {
+  // Replace $$...$$ first (block), then $...$ (inline)
+  return text
+    .replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => renderMathSegment(m, true))
+    .replace(/\$([^\$\n]+?)\$/g, (_, m) => renderMathSegment(m, false))
+}
+
+function MathText({ text, style }: { text: string; style?: CSSProperties }) {
+  const hasMath = /\$/.test(text)
+  if (!hasMath) return <span style={style}>{text}</span>
+  return (
+    <span
+      style={style}
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: parseMathHtml(text) }}
+    />
+  )
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -643,12 +674,13 @@ function StudyScreen({
             }}>
               Question
             </div>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: '1.1rem', color: 'var(--text-primary)', lineHeight: 1.4, maxWidth: 320,
-            }}>
-              {card.front}
-            </div>
+            <MathText
+              text={card.front}
+              style={{
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                fontSize: '1.1rem', color: 'var(--text-primary)', lineHeight: 1.4, maxWidth: 320,
+              }}
+            />
             <div style={{
               fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
               color: deck.color, opacity: 0.6, marginTop: 4,
@@ -676,12 +708,13 @@ function StudyScreen({
             }}>
               Answer
             </div>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: 1.5, maxWidth: 320,
-            }}>
-              {card.back}
-            </div>
+            <MathText
+              text={card.back}
+              style={{
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                fontSize: '0.95rem', color: 'var(--text-primary)', lineHeight: 1.5, maxWidth: 320,
+              }}
+            />
           </div>
         </div>
       </div>

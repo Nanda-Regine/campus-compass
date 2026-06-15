@@ -7,7 +7,124 @@
 // Domain colour: --gold (Money OS)
 // ============================================================
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+// ── Currency Converter (Frankfurter — no API key needed) ─────────────────────
+
+const PAIRS = [
+  { code: 'USD', flag: '🇺🇸', name: 'US Dollar' },
+  { code: 'EUR', flag: '🇪🇺', name: 'Euro' },
+  { code: 'GBP', flag: '🇬🇧', name: 'British Pound' },
+  { code: 'ZMW', flag: '🇿🇲', name: 'Zambian Kwacha' },
+  { code: 'BWP', flag: '🇧🇼', name: 'Botswana Pula' },
+  { code: 'CNY', flag: '🇨🇳', name: 'Chinese Yuan' },
+]
+
+interface FxRates { date: string; rates: Record<string, number> }
+
+function useFxRates() {
+  const [rates, setRates] = useState<FxRates | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const cacheKey = 'varsityos_fx_zar'
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(cacheKey) ?? 'null') as (FxRates & { ts: number }) | null
+      if (cached && Date.now() - cached.ts < 3_600_000) {
+        setRates(cached)
+        return
+      }
+    } catch { /* ignore */ }
+    setLoading(true)
+    const symbols = PAIRS.map(p => p.code).join(',')
+    fetch(`https://api.frankfurter.dev/v2/latest?base=ZAR&symbols=${symbols}`)
+      .then(r => r.json() as Promise<FxRates>)
+      .then(data => {
+        setRates(data)
+        try { sessionStorage.setItem(cacheKey, JSON.stringify({ ...data, ts: Date.now() })) } catch { /* ignore */ }
+      })
+      .catch(() => { /* silently degrade */ })
+      .finally(() => setLoading(false))
+  }, [])
+
+  return { rates, loading }
+}
+
+function CurrencyConverter() {
+  const [zarAmount, setZarAmount] = useState('100')
+  const { rates, loading } = useFxRates()
+  const amt = parseFloat(zarAmount) || 0
+
+  return (
+    <div style={{
+      background: 'rgba(250,204,21,0.04)', border: '0.5px solid rgba(250,204,21,0.2)',
+      borderRadius: 14, padding: '14px 16px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <span style={{ fontSize: 16 }}>💱</span>
+        <div>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+            ZAR Currency Converter
+          </div>
+          {rates && (
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', marginTop: 1 }}>
+              Live rates · {rates.date}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700 }}>R</span>
+        <input
+          type="number"
+          value={zarAmount}
+          onChange={e => setZarAmount(e.target.value)}
+          min="0"
+          style={{
+            flex: 1, padding: '8px 12px', borderRadius: 8,
+            border: '0.5px solid rgba(250,204,21,0.25)',
+            background: 'rgba(250,204,21,0.06)', color: 'var(--text-primary)',
+            fontFamily: 'var(--font-mono)', fontSize: '0.85rem', fontWeight: 700,
+            outline: 'none',
+          }}
+        />
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>ZAR</span>
+      </div>
+
+      {loading && (
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', textAlign: 'center', padding: '8px 0' }}>
+          Fetching live rates…
+        </div>
+      )}
+
+      {rates && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {PAIRS.map(({ code, flag, name }) => {
+            const rate = rates.rates[code]
+            if (!rate) return null
+            const converted = (amt * rate).toFixed(code === 'ZMW' || code === 'CNY' ? 0 : 2)
+            return (
+              <div key={code} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '6px 10px', borderRadius: 8,
+                background: 'rgba(255,255,255,0.025)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ fontSize: 14 }}>{flag}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{name}</span>
+                </div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {code === 'USD' ? '$' : code === 'EUR' ? '€' : code === 'GBP' ? '£' : ''}{converted} <span style={{ fontSize: '0.58rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>{code}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
 
 type Chapter = 'foundations' | 'budgeting' | 'emergency' | 'banking' | 'investing' | 'debt_traps' | 'insurance'
 
@@ -52,6 +169,9 @@ export default function FinancialLiteracy101() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+      {/* Live currency converter */}
+      <CurrencyConverter />
 
       {/* Header + XP bar */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(250,204,21,0.2)', borderRadius: 16, padding: '14px 16px' }}>

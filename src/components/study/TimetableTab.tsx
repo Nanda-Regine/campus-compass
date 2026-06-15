@@ -14,6 +14,23 @@ import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import ICSImportButton from './ICSImportButton'
 
+interface SAHoliday { date: string; localName: string; name: string }
+
+async function fetchSAHolidays(year: number): Promise<SAHoliday[]> {
+  const key = `varsityos_holidays_${year}`
+  try {
+    const cached = sessionStorage.getItem(key)
+    if (cached) return JSON.parse(cached) as SAHoliday[]
+  } catch { /* ignore */ }
+  try {
+    const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/ZA`, { next: { revalidate: 86400 } })
+    if (!res.ok) return []
+    const data = await res.json() as SAHoliday[]
+    try { sessionStorage.setItem(key, JSON.stringify(data)) } catch { /* ignore */ }
+    return data
+  } catch { return [] }
+}
+
 // ─── Grid geometry ────────────────────────────────────────────────────────────
 const GRID_START  = 7   // 07:00 first visible hour
 const GRID_END    = 22  // 22:00 last visible hour
@@ -150,6 +167,11 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
   const todayName = DAYS_OF_WEEK[today.getDay() === 0 ? 6 : today.getDay() - 1] as string
   const nowTop   = (nowMins - GRID_START * 60) / 60 * ROW_H
 
+  const [holidays, setHolidays] = useState<SAHoliday[]>([])
+  useEffect(() => {
+    fetchSAHolidays(today.getFullYear()).then(setHolidays)
+  }, [today.getFullYear()])
+
   const dayEntries = (day: string) =>
     timetable.filter(e =>
       (e as unknown as { day_of_week_text?: string }).day_of_week_text === day ||
@@ -161,6 +183,16 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
     const tIdx = today.getDay() === 0 ? 6 : today.getDay() - 1
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + (idx - tIdx)).getDate()
   }
+
+  const getDayISO = (day: string) => {
+    const idx  = WEEKDAYS.indexOf(day as DayOfWeek)
+    const tIdx = today.getDay() === 0 ? 6 : today.getDay() - 1
+    const d    = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (idx - tIdx))
+    return d.toISOString().split('T')[0]
+  }
+
+  const getDayHoliday = (day: string): SAHoliday | undefined =>
+    holidays.find(h => h.date === getDayISO(day))
 
   // Cognitive load heatmap (0–1): more classes → higher load
   const cogLoad  = (day: string) => Math.min(1, dayEntries(day).length / 5)
@@ -236,6 +268,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
             const windows  = detectStudyWindows(entries)
             const load     = cogLoad(day)
             const dateNum  = getDayDate(day)
+            const holiday  = getDayHoliday(day)
 
             return (
               <div key={day} style={{ flex: 1, minWidth: 66 }}>
@@ -255,16 +288,37 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                   <div style={{
                     width: 24, height: 24, borderRadius: '50%', margin: '0 auto',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isToday ? 'rgba(78,207,158,0.15)' : 'transparent',
-                    border: isToday
-                      ? '1.5px solid rgba(78,207,158,0.45)'
-                      : '1px solid transparent',
+                    background: holiday
+                      ? 'rgba(251,191,36,0.15)'
+                      : isToday ? 'rgba(78,207,158,0.15)' : 'transparent',
+                    border: holiday
+                      ? '1.5px solid rgba(251,191,36,0.45)'
+                      : isToday ? '1.5px solid rgba(78,207,158,0.45)' : '1px solid transparent',
                     fontFamily: 'JetBrains Mono, monospace', fontSize: 9.5, fontWeight: 700,
-                    color: isToday ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
-                    boxShadow: isToday ? '0 0 12px rgba(78,207,158,0.2)' : 'none',
+                    color: holiday ? '#fbbf24' : isToday ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+                    boxShadow: holiday
+                      ? '0 0 10px rgba(251,191,36,0.15)'
+                      : isToday ? '0 0 12px rgba(78,207,158,0.2)' : 'none',
                   }}>
                     {dateNum}
                   </div>
+                  {/* Public holiday pill */}
+                  {holiday && (
+                    <div
+                      title={holiday.localName}
+                      style={{
+                        margin: '3px 2px 0',
+                        background: 'rgba(251,191,36,0.1)',
+                        border: '0.5px solid rgba(251,191,36,0.3)',
+                        borderRadius: 4, padding: '1px 3px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: 6, color: '#fbbf24',
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      }}
+                    >
+                      🇿🇦 {holiday.localName.length > 10 ? holiday.localName.slice(0, 9) + '…' : holiday.localName}
+                    </div>
+                  )}
                   {/* Cognitive-load bar */}
                   <div style={{
                     height: 2, borderRadius: 1, overflow: 'hidden',
