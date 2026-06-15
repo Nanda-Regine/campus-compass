@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-15 (Phases 1–12 ✅ complete — Amplification Sprint + Phase 12 intelligence layer shipped)
+> Last updated: 2026-06-15 (Phases 1–13 ✅ complete — Open APIs + Client Intelligence shipped; live on Vercel)
 
 ---
 
@@ -579,7 +579,8 @@ Content modules (illustrated + video where possible):
 
 #### Weather Intelligence ✅
 ```
-API: OpenWeatherMap or AccuWeather (South African cities)
+API: Open-Meteo (free, no key) + OpenAQ v2 for PM2.5 air quality — Phase 13
+Previously OpenWeatherMap (removed Phase 13; OPENWEATHER_API_KEY no longer needed)
 Features:
   - Daily "What to wear" summary: temperature + rain + wind + SA context
   - Pack for class checklist: weather + today's timetable combined
@@ -1136,6 +1137,95 @@ Next migration number: **000021**
 | `20260615000001_varsityos_amplification.sql` | ✅ Run | Amplification sprint: 15 tables — regulation_sessions, nervous_system_scores, past_papers, cycle_tracking, safe_walk_sessions, data_budget, health_conditions, wisdom_posts, wisdom_votes, mutual_aid_requests, study_accountability, walking_routes, user_values, safety_incidents, side_hustle_entries — all with RLS |
 
 Next migration number: **000025**
+
+---
+
+## Phase 11 — Engagement & Monetisation Hardening ✅ (2026-06-14)
+
+| Item | Status | Detail |
+|---|---|---|
+| Streak nudge cron | ✅ | Inngest 21:00 SAST — fires for streak ≥ 3 students who haven't opened today; 20h cooldown via push_cooldowns; 500/run cap |
+| Sunday planner reminder | ✅ | Inngest 19:00 SAST every Sunday — skips users with existing weekly_plan; 6-day cooldown; 500/run cap |
+| Paywall hardening | ✅ | `UpgradePromptModal.tsx` + `useUpgradePrompt()` hook — Nova quota hit opens modal instead of toast; Study Pods join gated for free users; FlashcardsTab cloud sync gated (free = localStorage only with banner) |
+| Referral flow | ✅ | Referral code generation, claim endpoint, attribution on signup |
+| ICS timetable import | ✅ | Confirmed fully implemented: `ICSImportButton` + `/api/timetable/import-ics` with SSRF guard, 2MB cap, preview+confirm, RRULE support, SAST timezone |
+
+---
+
+## Phase 12 — Intelligence Layer for New Rooms ✅ (2026-06-15)
+
+Wired the 10 amplification-sprint rooms into the core orchestration layer so every user action feeds burnout score, rules engine, and Nova context.
+
+### Signal bus additions
+```ts
+| { type: 'regulation_completed'; payload: { sessionType: string; durationSeconds: number } }
+| { type: 'ns_score_updated';     payload: { score: number } }
+| { type: 'cycle_phase_logged';   payload: { phase: string; energyLevel: number | null } }
+```
+
+### StudentState — WellnessSlice additions
+- `regulationSessionsToday` — regulation recovery bonus (up to −16 pts from burnout)
+- `nsScore` — 60/40 blend with burnout proxy
+- `cyclePhase` / `cycleEnergyLevel` — menstrual cycle-aware energy adaptation
+
+### 6 new rules
+| Rule | Urgency | Trigger |
+|---|---|---|
+| `ns_score_critical` | 4 | nsScore < 30 |
+| `exam_week_regulate` | 4 | burnout > 65 AND examPressure ≥ 65 AND no regulation today |
+| `suggest_regulation` | 3 | burnout > 55 AND no regulation today |
+| `cycle_low_energy_adapt` | 2 | menstrual/luteal phase AND energyLevel ≤ 2 |
+| `regulation_reward` | 1 | regulationSessionsToday ≥ 2 |
+| `cycle_peak_window` | 1 | cyclePhase = ovulation |
+
+### Nova context extensions
+4 new parallel fetches (regulation_sessions, NS scores, cycle_tracking, safety_incidents last 48h) → nsNote, regulationNote, cycleNote, safetyNote sections in every prompt.
+
+### Supabase — Amplification Migration (000024)
+15 new tables executed: `regulation_sessions`, `nervous_system_scores`, `past_papers`, `cycle_tracking`, `safe_walk_sessions`, `data_budget`, `health_conditions`, `wisdom_posts`, `wisdom_votes`, `mutual_aid_requests`, `study_accountability`, `walking_routes`, `user_values`, `safety_incidents`, `side_hustle_entries` — all with RLS.
+
+---
+
+## Phase 13 — Open APIs + Client Intelligence ✅ (2026-06-15)
+
+Four zero-API-key integrations. No new paid dependencies.
+
+### 13A — Open-Meteo Weather (replaces OpenWeatherMap)
+- `src/app/api/weather/route.ts` fully rewritten
+- Geocoding via `geocoding-api.open-meteo.com` — falls back to 16 hardcoded SA city coordinates
+- Single Open-Meteo call: current temp/UV/humidity/wind/precip/weather-code + 2-day daily forecast (vs. 3 separate OWM calls)
+- WMO weather-code decoder covers all 30+ codes including SA-relevant fog, drizzle, thunderstorm-with-hail
+- **`OPENWEATHER_API_KEY` env var no longer needed** — remove from Vercel + `.env.local`
+- Same response shape → `WeatherWidget` works unchanged
+
+### 13B — OpenAQ Air Quality
+- New `air_quality` field on the weather response
+- `https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=50000&parameter=pm25` — no key required
+- PM2.5 → AQI category with SA-contextualised advice strings (4 risk tiers + "stay indoors" for very unhealthy)
+- Best-effort: response is `null` if OpenAQ is unreachable, weather still returns normally
+
+### 13C — Tesseract.js v7 OCR
+- New **"Scan" tab** in `PastPaperVault` — before Upload, after tab bar
+- Mobile camera capture: `<input type="file" accept="image/*" capture="environment">`
+- Data-usage warning before first run (~8MB WASM + language pack download) — critical for Nomvula's prepaid plan
+- Dynamic `import('tesseract.js')` — zero SSR bundle impact; WASM loaded only when user taps "Scan anyway"
+- Live progress bar (0–100%) during recognition
+- Extracted text auto-populates the Upload form's `extracted_text` field → 1.2s redirect to Upload tab
+- **Privacy**: OCR runs entirely on-device; no image is sent to any server
+
+### 13D — React Flow Orbit Map (@xyflow/react v12)
+- New component: `src/components/study/ModuleOrbitMap.tsx`
+- New tab in StudyClient: "Orbit Map" (⊙ icon, indigo accent)
+- Layout: centre node = student (🎓), inner orbit (r=152) = registered modules colour-coded by `module.color`, outer orbit (r=280) = upcoming exams
+- Edges: solid for centre→module; dashed amber for module→exam; animated red pulse for exams ≤7 days away
+- Fully read-only: `nodesDraggable={false}`, `panOnDrag={false}`, `zoomOnScroll={false}`, `fitView`
+- Empty state when no modules registered
+
+### Commit
+```
+1d29613  feat: Open-Meteo weather, OpenAQ air quality, Tesseract OCR, React Flow orbit map
+```
+**Vercel deploy:** `dpl_5MAVowvbkLTRMhkqMfR3z9H4Vuix` — triggered automatically from GitHub push on 2026-06-15.
 
 ---
 
