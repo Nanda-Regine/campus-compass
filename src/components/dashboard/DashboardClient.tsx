@@ -595,7 +595,7 @@ function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ecf9e', display: 'inline-block' }} />
           <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#4ecf9e', fontWeight: 600 }}>Today&apos;s Classes</span>
         </div>
-        <Link href="/study/timetable" style={{ fontSize: 12, color: '#4ecf9e', textDecoration: 'none' }}>See all →</Link>
+        <Link href="/study?tab=timetable" style={{ fontSize: 12, color: '#4ecf9e', textDecoration: 'none' }}>See all →</Link>
       </div>
       <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
         {displaySlots.map(slot => {
@@ -615,7 +615,7 @@ function TodaysClasses({ timetable }: { timetable: TimetableEntry[] }) {
           )
         })}
         {todaySlots.length > 3 && (
-          <Link href="/study/timetable" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+          <Link href="/study?tab=timetable" style={{ textDecoration: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
             <div style={{ fontSize: 12, color: '#4ecf9e', padding: '10px 12px', whiteSpace: 'nowrap' }}>+{todaySlots.length - 3} more →</div>
           </Link>
         )}

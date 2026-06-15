@@ -54,13 +54,13 @@ interface Props {
 
 function DayView({ tasks, selectedDate }: { tasks: Task[]; selectedDate: string }) {
   const dayTasks = tasks
-    .filter(t => t.status !== 'done' && t.due_date === selectedDate)
+    .filter(t => t.status !== 'done' && (t.due_date ?? '').slice(0, 10) === selectedDate)
     .sort((a, b) => {
       const order: Record<string, number> = { urgent: 0, high: 1, medium: 2, low: 3 }
       return (order[a.priority] ?? 3) - (order[b.priority] ?? 3)
     })
 
-  const overdue = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr())
+  const overdue = tasks.filter(t => t.status !== 'done' && t.due_date && (t.due_date).slice(0, 10) < todayStr())
 
   return (
     <div>

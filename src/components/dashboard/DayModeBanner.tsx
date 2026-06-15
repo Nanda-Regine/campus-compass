@@ -97,7 +97,7 @@ function getContextLine(
       const firstClass = todaySlots.sort((a,b) => (a.start_time??'').localeCompare(b.start_time??''))[0]
       if (firstClass) return {
         primary: `First class: ${moduleName(firstClass)} at ${firstClass.start_time?.slice(0,5)}`,
-        cta: 'See today', ctaHref: '/study/timetable',
+        cta: 'See today', ctaHref: '/study?tab=timetable',
       }
       if (dueSoon) return {
         primary: `${dueSoon} task${dueSoon>1?'s':''} due in the next 2 days`,
@@ -109,7 +109,7 @@ function getContextLine(
     case 'commute': {
       if (next) return {
         primary: `${moduleName(next)} starts in ${minutesToNext} min · ${next.venue ?? 'check timetable'}`,
-        cta: 'Directions', ctaHref: '/study/timetable',
+        cta: 'Directions', ctaHref: '/study?tab=timetable',
       }
       if (overdue) return {
         primary: `${overdue} overdue task${overdue>1?'s':''} waiting — commute time to plan`,
@@ -121,11 +121,11 @@ function getContextLine(
     case 'class': {
       if (current) return {
         primary: `Now: ${moduleName(current)} · ends ${current.end_time?.slice(0,5)}`,
-        cta: 'Next class', ctaHref: '/study/timetable',
+        cta: 'Next class', ctaHref: '/study?tab=timetable',
       }
       if (next) return {
         primary: `Up next: ${moduleName(next)} in ${minutesToNext} min`,
-        cta: next.venue ? `Room: ${next.venue}` : 'See timetable', ctaHref: '/study/timetable',
+        cta: next.venue ? `Room: ${next.venue}` : 'See timetable', ctaHref: '/study?tab=timetable',
       }
       if (daysToExam !== null && daysToExam <= 14) return {
         primary: `${daysToExam}d to ${(nextExam!.module as Module | undefined)?.module_name ?? 'exam'}`,

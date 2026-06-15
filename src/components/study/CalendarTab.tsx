@@ -819,7 +819,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
           <div style={{ width: 24, height: 2, background: 'var(--teal)', borderRadius: 1 }} />
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Now</span>
         </div>
-        <Link href="/study/timetable" style={{ fontSize: '0.65rem', color: 'var(--teal)', textDecoration: 'none', marginLeft: 'auto' }}>
+        <Link href="/study?tab=timetable" style={{ fontSize: '0.65rem', color: 'var(--teal)', textDecoration: 'none', marginLeft: 'auto' }}>
           Edit timetable →
         </Link>
       </div>
