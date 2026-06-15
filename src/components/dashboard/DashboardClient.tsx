@@ -1572,8 +1572,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {monthSpent > 0 && (
                 <TabErrorBoundary>
                   <FinancialStressLink
-                    moneyHealthScore={Math.max(0, 100 - Math.round((monthSpent / (b?.monthly_budget || 1)) * 80))}
-                    onDismiss={() => {}}
+                    stressLevel={
+                      monthSpent / (b?.monthly_budget || 1) < 0.5 ? 'low'
+                      : monthSpent / (b?.monthly_budget || 1) < 0.85 ? 'medium'
+                      : 'high'
+                    }
                   />
                 </TabErrorBoundary>
               )}

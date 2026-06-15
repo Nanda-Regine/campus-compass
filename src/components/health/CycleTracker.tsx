@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { signals } from '@/store/signals'
 
 type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal'
 type FlowLevel = 'none' | 'light' | 'medium' | 'heavy'
@@ -136,6 +137,11 @@ export default function CycleTracker({ userId }: { userId: string }) {
       symptoms: modalSymptoms,
       notes: modalNotes || null,
     }, { onConflict: 'user_id,date' })
+
+    // Emit signal so orchestration layer can adapt study/regulation advice
+    if (logModal?.date === today) {
+      signals.emit({ type: 'cycle_phase_logged', payload: { phase: modalPhase, energyLevel: modalEnergy } })
+    }
 
     const { data } = await supabase
       .from('cycle_tracking')

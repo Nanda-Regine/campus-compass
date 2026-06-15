@@ -24,6 +24,9 @@ export type Signal =
   | { type: 'mood_logged';          payload: { score: MoodScore; date: string } }
   | { type: 'sleep_logged';         payload: { hoursSlept: number; quality: number } }
   | { type: 'burnout_computed';     payload: { score: number; trend: 'improving' | 'stable' | 'worsening' } }
+  | { type: 'regulation_completed'; payload: { sessionType: string; durationSeconds: number } }
+  | { type: 'ns_score_updated';     payload: { score: number } }
+  | { type: 'cycle_phase_logged';   payload: { phase: string; energyLevel: number | null } }
   // Habits & Growth
   | { type: 'habit_completed';       payload: { habitId: string; habitName: string; streakDays: number; pack: string } }
   | { type: 'gratitude_logged';      payload: { date: string; entries: [string, string, string] } }

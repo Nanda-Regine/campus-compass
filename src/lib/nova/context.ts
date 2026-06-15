@@ -87,6 +87,11 @@ export interface NovaWellnessContext {
   workHoursThisWeek: number        // hours worked across all jobs
   workShiftsThisWeek: number       // shift count this week
   burnoutProxy: number             // 0–100 estimated from mood + work
+  regulationSessionsThisWeek: number // completed regulation sessions this week
+  nsScore: number | null           // latest nervous system score (0–100, null = not checked in)
+  cyclePhase: string | null        // current cycle phase if tracked (null = not tracked/not applicable)
+  cycleEnergyLevel: number | null  // self-reported energy 1–5 from cycle tracker
+  recentSafetyIncidents: number    // campus safety incidents in last 48h at their institution
 }
 
 export interface NovaContext {
@@ -152,6 +157,9 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   const sessionStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
   const week7AgoDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
+  // 48h back for safety incidents
+  const safety48hAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString()
+
   // Start of current month for budget
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
@@ -166,6 +174,10 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     messagesRes,
     moodLogsRes,
     workShiftsRes,
+    regulationSessionsRes,
+    nsScoreRes,
+    cycleRes,
+    safetyIncidentsRes,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -223,6 +235,34 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .eq('student_id', userId)
       .eq('status', 'worked')
       .gte('shift_date', week7AgoDate),
+    // Regulation sessions this week
+    supabase
+      .from('regulation_sessions')
+      .select('id,session_type,completed')
+      .eq('user_id', userId)
+      .eq('completed', true)
+      .gte('created_at', sessionStart),
+    // Latest nervous system score
+    supabase
+      .from('nervous_system_scores')
+      .select('ns_score,score_date')
+      .eq('user_id', userId)
+      .order('score_date', { ascending: false })
+      .limit(1)
+      .single(),
+    // Latest cycle entry (most recent date)
+    supabase
+      .from('cycle_tracking')
+      .select('phase,energy_level,entry_date')
+      .eq('user_id', userId)
+      .order('entry_date', { ascending: false })
+      .limit(1)
+      .single(),
+    // Safety incidents at their institution in last 48h (graceful — may be empty)
+    supabase
+      .from('safety_incidents')
+      .select('id,severity')
+      .gte('created_at', safety48hAgo),
   ])
 
   // ── Profile ──────────────────────────────────────────────────────────────
@@ -367,12 +407,30 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     (overdueTasks.length * 8)
   ))
 
+  // Regulation sessions this week
+  const regulationSessionsThisWeek = (regulationSessionsRes.data || []).length
+
+  // NS Score (latest — may be from a past day)
+  const nsScore = (nsScoreRes.data?.ns_score as number | null) ?? null
+
+  // Cycle phase
+  const cyclePhase = (cycleRes.data?.phase as string | null) ?? null
+  const cycleEnergyLevel = (cycleRes.data?.energy_level as number | null) ?? null
+
+  // Safety incidents count
+  const recentSafetyIncidents = (safetyIncidentsRes.data || []).length
+
   const wellness: NovaWellnessContext = {
     moodAvg,
     moodTrend,
     workHoursThisWeek,
     workShiftsThisWeek,
     burnoutProxy,
+    regulationSessionsThisWeek,
+    nsScore,
+    cyclePhase,
+    cycleEnergyLevel,
+    recentSafetyIncidents,
   }
 
   // ── Pattern insights (computed from already-fetched study sessions) ─────────
@@ -475,6 +533,19 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? ` Burnout risk moderate (${w.burnoutProxy}/100).`
     : ''
 
+  const nsNote = w.nsScore !== null
+    ? `NS score: ${w.nsScore}/100${w.nsScore < 30 ? ' ⚠️ CRITICAL — nervous system depleted, advise regulation before study' : w.nsScore < 50 ? ' (strained)' : ' (ok)'}.`
+    : ''
+  const regulationNote = w.regulationSessionsThisWeek > 0
+    ? `Regulation this week: ${w.regulationSessionsThisWeek} session${w.regulationSessionsThisWeek > 1 ? 's' : ''} completed.`
+    : 'No regulation sessions this week.'
+  const cycleNote = w.cyclePhase
+    ? `Cycle phase: ${w.cyclePhase}${w.cycleEnergyLevel !== null ? `, self-reported energy ${w.cycleEnergyLevel}/5` : ''}. Adapt study advice to phase (menstrual/luteal = rest/review focus; ovulation = peak performance; follicular = learning new concepts).`
+    : ''
+  const safetyNote = w.recentSafetyIncidents > 0
+    ? `⚠️ Campus safety: ${w.recentSafetyIncidents} incident${w.recentSafetyIncidents > 1 ? 's' : ''} reported in the last 48h. Be aware if they mention campus safety or walking at night.`
+    : ''
+
   const challengesNote = p.biggest_challenges?.length
     ? `Self-reported challenges: ${p.biggest_challenges.join(', ')}.`
     : ''
@@ -516,6 +587,9 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 
 **Wellness & Work:**
 - ${moodNote}${workNote}${burnoutNote}
+- ${regulationNote}${nsNote ? ' ' + nsNote : ''}
+${cycleNote ? `- ${cycleNote}` : ''}
+${safetyNote ? `- ${safetyNote}` : ''}
 ${patternsNote}
 ${crisisNote}
 **Instructions:**

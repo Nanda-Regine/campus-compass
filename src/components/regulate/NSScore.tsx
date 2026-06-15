@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { saveWellnessCheckin } from '@/lib/db/wellness'
 import { dispatchXP } from '@/lib/xp-engine'
+import { signals } from '@/store/signals'
 import type { CheckIn } from '@/lib/db/wellness'
 
 interface RiskBand {
@@ -79,6 +80,8 @@ export default function NSScore({ userId }: Props) {
     })
     if (!error) {
       dispatchXP('wellness_checkin')
+      const nsScore = Math.max(0, Math.min(100, 100 - Math.max(0, Math.min(100, score))))
+      signals.emit({ type: 'ns_score_updated', payload: { score: nsScore } })
       const supabase = createClient()
       const { data } = await supabase
         .from('wellness_checkins')

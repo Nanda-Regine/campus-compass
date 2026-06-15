@@ -495,6 +495,106 @@ const RULES: Rule[] = [
       actionRoute: '/study',
     }),
   },
+
+  // ── PHASE 12: Regulation + Cycle Intelligence ─────────────────
+
+  // NS score critically low — override everything
+  {
+    id:           'ns_score_critical',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 4 * 60,
+    test: ({ wellness }) => wellness.nsScore !== null && wellness.nsScore < 30,
+    build: ({ wellness }) => ({
+      title:       'Your nervous system is depleted',
+      message:     `NS score ${wellness.nsScore}/100. At this level your brain physically cannot consolidate new information. One regulation session before you open a textbook will double your study effectiveness.`,
+      actionLabel: 'Regulate now',
+      actionRoute: '/regulate',
+    }),
+  },
+
+  // Burnout + exam pressure — regulation is the lever
+  {
+    id:           'exam_week_regulate',
+    urgency:      4,
+    variant:      'banner',
+    cooldownMins: 6 * 60,
+    test: ({ academic, wellness }) =>
+      wellness.burnoutScore > 65 &&
+      academic.examPressure >= 65 &&
+      wellness.regulationSessionsToday === 0,
+    build: ({ academic, wellness }) => ({
+      title:       'Exam pressure + high burnout = study amnesia risk',
+      message:     `Burnout ${wellness.burnoutScore}/100 with exams ${academic.examPressure >= 100 ? 'this week' : 'coming up'}. Science shows 4 minutes of box breathing before study increases retention by up to 23%. It takes less time than scrolling.`,
+      actionLabel: 'Box breathing now',
+      actionRoute: '/regulate',
+    }),
+  },
+
+  // Suggest regulation when burnout is high but no session yet today
+  {
+    id:           'suggest_regulation',
+    urgency:      3,
+    variant:      'banner',
+    cooldownMins: 4 * 60,
+    test: ({ wellness }) =>
+      wellness.burnoutScore > 55 &&
+      wellness.regulationSessionsToday === 0,
+    build: ({ wellness }) => ({
+      title:       'High stress detected — 4 minutes can shift this',
+      message:     `Your stress indicators are elevated (burnout ${wellness.burnoutScore}/100). A single physiological sigh — double inhale, long exhale — is the fastest anxiety reducer known to science. No app needed, but we'll guide you.`,
+      actionLabel: 'Start regulation',
+      actionRoute: '/regulate',
+    }),
+  },
+
+  // Cycle phase: menstrual/luteal + low energy → study strategy tip
+  {
+    id:           'cycle_low_energy_adapt',
+    urgency:      2,
+    variant:      'nudge',
+    cooldownMins: 12 * 60,
+    test: ({ wellness }) =>
+      (wellness.cyclePhase === 'menstrual' || wellness.cyclePhase === 'luteal') &&
+      wellness.cycleEnergyLevel !== null &&
+      wellness.cycleEnergyLevel <= 2,
+    build: ({ wellness }) => ({
+      title:       `${wellness.cyclePhase === 'menstrual' ? 'Menstrual' : 'Luteal'} phase — work WITH your body`,
+      message:     'Your energy is low right now — that\'s biology, not weakness. Review existing notes rather than tackling new material. Short sessions with breaks outperform long pushes in this phase.',
+      actionLabel: 'See phase tips',
+      actionRoute: '/health/cycle',
+    }),
+  },
+
+  // Regulation reward — positive reinforcement
+  {
+    id:           'regulation_reward',
+    urgency:      1,
+    variant:      'chip',
+    cooldownMins: 24 * 60,
+    test: ({ wellness }) => wellness.regulationSessionsToday >= 2,
+    build: ({ wellness }) => ({
+      title:       `${wellness.regulationSessionsToday} regulation sessions today`,
+      message:     'Your nervous system is in recovery mode. Studies show regulated students retain 40% more from their next study session.',
+      actionLabel: 'Study now',
+      actionRoute: '/study',
+    }),
+  },
+
+  // Ovulation peak window — positive reinforcement
+  {
+    id:           'cycle_peak_window',
+    urgency:      1,
+    variant:      'chip',
+    cooldownMins: 12 * 60,
+    test: ({ wellness }) => wellness.cyclePhase === 'ovulation',
+    build: () => ({
+      title:       'Peak cognitive window',
+      message:     'Ovulation phase: energy, focus, and social cognition are at their highest. Ideal for tackling your hardest material, group study, or any work requiring deep concentration.',
+      actionLabel: 'Study hardest topic',
+      actionRoute: '/study',
+    }),
+  },
 ]
 
 // ─── Evaluation engine ─────────────────────────────────────────

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { dispatchXP } from '@/lib/xp-engine'
+import { signals } from '@/store/signals'
 import BreathingExercise from './BreathingExercise'
 import ExamWeekProtocol from './ExamWeekProtocol'
 import NSScore from './NSScore'
@@ -51,6 +52,7 @@ async function saveSession(userId: string, sessionType: string, durationSeconds:
     completed: true,
   })
   dispatchXP('wellness_checkin')
+  signals.emit({ type: 'regulation_completed', payload: { sessionType, durationSeconds } })
 }
 
 function useTimer(seconds: number, onDone: () => void) {

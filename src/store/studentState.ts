@@ -61,6 +61,10 @@ export interface WellnessSlice {
   sleepDebt: number                         // hours (future: from sleep_logs table)
   recoveryNeeded: boolean                   // burnoutScore > 60 or mood persistently low
   workHoursThisWeek: number                 // hours worked across all jobs this week
+  regulationSessionsToday: number           // completed regulation sessions today
+  nsScore: number | null                    // nervous system score 0–100 from today's checkin
+  cyclePhase: string | null                 // current cycle phase from cache (if tracked)
+  cycleEnergyLevel: number | null           // self-reported energy 1–5 from cycle tracker
 }
 
 export interface ScheduleSlice {
@@ -88,8 +92,12 @@ export interface RecomputeInput {
   nsfasDelayed?: boolean    // true when nsfas_disbursements has overdue expected rows
   streakDays?: number       // current study streak (from AppStore.streakDays)
   streakTodayDone?: boolean // true when streak already safe today (from AppStore.streakTodayDone)
-  workHoursThisWeek?: number // hours worked this week (from varsityos-work-hours-cache)
-  lowestGrade?: number       // lowest module grade (from varsityos-grade-cache); 0 = no data
+  workHoursThisWeek?: number      // hours worked this week (from varsityos-work-hours-cache)
+  lowestGrade?: number            // lowest module grade (from varsityos-grade-cache); 0 = no data
+  regulationSessionsToday?: number // completed regulation sessions today
+  nsScore?: number | null         // latest NS score from varsityos-ns-score-cache
+  cyclePhase?: string | null      // current cycle phase from varsityos-cycle-cache
+  cycleEnergyLevel?: number | null // logged energy level 1–5 from cycle tracker
 }
 
 // ─── Full store interface ──────────────────────────────────────
@@ -262,7 +270,7 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
   }
 }
 
-function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0, workHoursThisWeek = 0): WellnessSlice {
+function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0, workHoursThisWeek = 0, regulationSessionsToday = 0, nsScore: number | null = null, cyclePhase: string | null = null, cycleEnergyLevel: number | null = null): WellnessSlice {
   const today      = todayStr()
   const active     = tasks.filter(t => t.status !== 'done')
   const overdue    = active.filter(t => t.due_date && t.due_date < today)
@@ -303,6 +311,15 @@ function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0
     burnoutScore += Math.min(15, Math.round((workHoursThisWeek - 20) * 1.5))
   }
 
+  // Regulation recovery: each completed session reduces burnout (max 2 sessions * 8 pts = 16)
+  const regulationBonus = Math.min(regulationSessionsToday, 2) * 8
+  burnoutScore = Math.max(0, burnoutScore - regulationBonus)
+
+  // NS Score integration: if available from today's checkin, blend with computed burnout
+  if (nsScore !== null) {
+    burnoutScore = Math.round(burnoutScore * 0.6 + (100 - nsScore) * 0.4)
+  }
+
   burnoutScore = Math.min(100, Math.round(burnoutScore))
 
   return {
@@ -311,6 +328,10 @@ function computeWellness(tasks: Task[], moodScores: number[] = [], sleepDebt = 0
     moodAvg,
     sleepDebt,
     workHoursThisWeek,
+    regulationSessionsToday,
+    nsScore,
+    cyclePhase,
+    cycleEnergyLevel,
     recoveryNeeded: burnoutScore > 60 || (moodAvg > 0 && moodAvg < 2) || sleepDebt > 10,
   }
 }
@@ -355,7 +376,7 @@ function computeCompleteness(data: RecomputeInput): number {
 
 const DEFAULT_ACADEMIC: AcademicSlice  = { riskLevel: 'safe', moduleRisks: {}, studyVelocity: 0, catchUpDebtHrs: 0, completionRate: 100, examPressure: 0, lowestGrade: 0 }
 const DEFAULT_FINANCIAL: FinancialSlice = { runwayDays: 30, healthScore: 75, nsfasStatus: 'unknown', spendingTrend: 'on_track', emergencyMode: false }
-const DEFAULT_WELLNESS: WellnessSlice  = { burnoutScore: 0, moodTrend: 'unknown', moodAvg: 0, sleepDebt: 0, workHoursThisWeek: 0, recoveryNeeded: false }
+const DEFAULT_WELLNESS: WellnessSlice  = { burnoutScore: 0, moodTrend: 'unknown', moodAvg: 0, sleepDebt: 0, workHoursThisWeek: 0, regulationSessionsToday: 0, nsScore: null, cyclePhase: null, cycleEnergyLevel: null, recoveryNeeded: false }
 const DEFAULT_SCHEDULE: ScheduleSlice  = { planCoverage: 100, procrastIndex: 0, todayPlan: [], weekPlan: [], lastPlannedAt: null, streakDays: 0, streakTodayDone: false }
 
 // ─── Zustand store ─────────────────────────────────────────────
@@ -373,7 +394,7 @@ export const useStudentState = create<StudentStateStore>()(
       recompute(data: RecomputeInput) {
         const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0, data.lowestGrade ?? 0)
         const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false)
-        const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0)
+        const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0, data.regulationSessionsToday ?? 0, data.nsScore ?? null, data.cyclePhase ?? null, data.cycleEnergyLevel ?? null)
         // Preserve lastPlannedAt across recomputes
         const prevLastPlanned = get().schedule.lastPlannedAt
         const schedule    = { ...computeSchedule(data.tasks, data.streakDays ?? 0, data.streakTodayDone ?? false), lastPlannedAt: prevLastPlanned }
@@ -510,25 +531,66 @@ function readGradeCache(): number {
   }
 }
 
+// Regulation sessions completed today (written by regulation_completed signal handler).
+function readRegulationCache(): number {
+  if (typeof window === 'undefined') return 0
+  try {
+    const raw = localStorage.getItem('varsityos-regulation-cache')
+    if (!raw) return 0
+    const parsed = JSON.parse(raw) as { date?: string; count?: number }
+    const today = new Date().toISOString().split('T')[0]
+    return parsed.date === today && typeof parsed.count === 'number' ? parsed.count : 0
+  } catch { return 0 }
+}
+
+// Latest NS score from today's wellness check-in (written by ns_score_updated handler).
+function readNsScoreCache(): number | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem('varsityos-ns-score-cache')
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { date?: string; score?: number }
+    const today = new Date().toISOString().split('T')[0]
+    return parsed.date === today && typeof parsed.score === 'number' ? parsed.score : null
+  } catch { return null }
+}
+
+// Latest cycle phase + energy level (written by cycle_phase_logged handler).
+// Not date-gated — cycle phase stays relevant for several days.
+function readCycleCache(): { phase: string; energyLevel: number | null } | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem('varsityos-cycle-cache')
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { phase?: string; energyLevel?: number | null }
+    return typeof parsed.phase === 'string' ? { phase: parsed.phase, energyLevel: parsed.energyLevel ?? null } : null
+  } catch { return null }
+}
+
 export function initOrchestration(): () => void {
   _unsubscribe?.()
 
   const runRecompute = (state: ReturnType<typeof useAppStore.getState>) => {
+    const cycle = readCycleCache()
     useStudentState.getState().recompute({
-      tasks:              state.tasks,
-      modules:            state.modules,
-      exams:              state.exams,
-      expenses:           state.expenses,
-      budget:             state.budget,
-      profile:            state.profile,
-      moodScores:         readMoodCache(),
-      sleepDebt:          state.sleepDebt,
-      studyVelocity:      state.studyVelocity7d,
-      nsfasDelayed:       state.nsfasDelayed,
-      streakDays:         state.streakDays,
-      streakTodayDone:    state.streakTodayDone,
-      workHoursThisWeek:  readWorkHoursCache(),
-      lowestGrade:        readGradeCache(),
+      tasks:                   state.tasks,
+      modules:                 state.modules,
+      exams:                   state.exams,
+      expenses:                state.expenses,
+      budget:                  state.budget,
+      profile:                 state.profile,
+      moodScores:              readMoodCache(),
+      sleepDebt:               state.sleepDebt,
+      studyVelocity:           state.studyVelocity7d,
+      nsfasDelayed:            state.nsfasDelayed,
+      streakDays:              state.streakDays,
+      streakTodayDone:         state.streakTodayDone,
+      workHoursThisWeek:       readWorkHoursCache(),
+      lowestGrade:             readGradeCache(),
+      regulationSessionsToday: readRegulationCache(),
+      nsScore:                 readNsScoreCache(),
+      cyclePhase:              cycle?.phase ?? null,
+      cycleEnergyLevel:        cycle?.energyLevel ?? null,
     })
   }
 
@@ -570,6 +632,38 @@ export function initOrchestration(): () => void {
     signals.on('sleep_logged',        () => { refreshSleepDebt().catch(() => {}) }),
     signals.on('study_session_ended', () => { refreshStudyVelocity().catch(() => {}); refreshStreak().catch(() => {}) }),
     signals.on('nsfas_status_change', () => { refreshNsfas().catch(() => {}) }),
+    // Regulation session completed → update today's count cache then recompute
+    signals.on('regulation_completed', () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const today = new Date().toISOString().split('T')[0]
+          const raw = localStorage.getItem('varsityos-regulation-cache')
+          const existing = raw ? JSON.parse(raw) as { date?: string; count?: number } : {}
+          const count = existing.date === today ? (existing.count ?? 0) + 1 : 1
+          localStorage.setItem('varsityos-regulation-cache', JSON.stringify({ date: today, count }))
+        } catch { /* quota */ }
+      }
+      runRecompute(getState())
+    }),
+    // NS score updated → cache and recompute so rules fire instantly
+    signals.on('ns_score_updated', ({ payload }) => {
+      if (typeof window !== 'undefined') {
+        try {
+          const today = new Date().toISOString().split('T')[0]
+          localStorage.setItem('varsityos-ns-score-cache', JSON.stringify({ date: today, score: payload.score }))
+        } catch { /* quota */ }
+      }
+      runRecompute(getState())
+    }),
+    // Cycle phase logged → cache and recompute (no expiry — phase persists for days)
+    signals.on('cycle_phase_logged', ({ payload }) => {
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('varsityos-cycle-cache', JSON.stringify({ phase: payload.phase, energyLevel: payload.energyLevel }))
+        } catch { /* quota */ }
+      }
+      runRecompute(getState())
+    }),
   ]
 
   return () => {
