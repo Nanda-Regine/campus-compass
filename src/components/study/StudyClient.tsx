@@ -24,6 +24,7 @@ import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 import PastPaperVault from '@/components/study/PastPaperVault'
 import SmartGradeForecaster from '@/components/study/SmartGradeForecaster'
 import StudyContextEngine from '@/components/study/StudyContextEngine'
+import ModuleOrbitMap from '@/components/study/ModuleOrbitMap'
 import Link from 'next/link'
 
 interface StudyClientProps {
@@ -75,6 +76,7 @@ const TAB_CONFIG = [
   { id: 'pods',        label: 'Study Pods', icon: '👥', accent: '#38BDF8', glow: 'rgba(56,189,248,0.2)' },
   { id: 'pastpapers',  label: 'Past Papers', icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
   { id: 'forecaster',  label: 'Forecast',    icon: '📊', accent: '#fbbf24', glow: 'rgba(251,191,36,0.2)' },
+  { id: 'orbit',       label: 'Orbit Map',   icon: '⊙',  accent: '#818cf8', glow: 'rgba(129,140,248,0.2)' },
 ] as const
 
 type TabId = typeof TAB_CONFIG[number]['id']
@@ -284,6 +286,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
         {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
         {activeTab === 'pastpapers' && <TabErrorBoundary><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
         {activeTab === 'forecaster' && <TabErrorBoundary><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
+        {activeTab === 'orbit'      && <TabErrorBoundary label="Orbit Map"><ModuleOrbitMap modules={modules} exams={exams} /></TabErrorBoundary>}
       </div>
 
       {/* ── Reading Mode CTA ── */}

@@ -1,14 +1,15 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { PastPaper, PaperType, PaperInsights } from '@/types'
 
 interface Props {
   userId: string
 }
 
-type ActiveTab = 'upload' | 'papers' | 'insights'
+type ActiveTab = 'scan' | 'upload' | 'papers' | 'insights'
+type ScanState = 'idle' | 'data_warning' | 'scanning' | 'done' | 'error'
 
 interface UploadForm {
   module_code: string
@@ -36,6 +37,10 @@ export default function PastPaperVault({ userId }: Props) {
     paper_type: 'exam',
     extracted_text: '',
   })
+  const [scanState, setScanState] = useState<ScanState>('idle')
+  const [ocrProgress, setOcrProgress] = useState(0)
+  const [scanError, setScanError] = useState('')
+  const pendingFileRef = useRef<File | null>(null)
 
   async function fetchPapers() {
     const supabase = createClient()
@@ -80,6 +85,43 @@ export default function PastPaperVault({ userId }: Props) {
     }
   }
 
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    pendingFileRef.current = file
+    setScanState('data_warning')
+  }
+
+  async function runOCR() {
+    const file = pendingFileRef.current
+    if (!file) return
+    setScanState('scanning')
+    setOcrProgress(0)
+    setScanError('')
+    try {
+      const { createWorker } = await import('tesseract.js')
+      const worker = await createWorker('eng', 1, {
+        logger: (m: { status: string; progress: number }) => {
+          if (m.status === 'recognizing text') {
+            setOcrProgress(Math.round(m.progress * 100))
+          }
+        },
+      })
+      const { data: { text } } = await worker.recognize(file)
+      await worker.terminate()
+      const cleaned = text.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
+      setUploadForm(f => ({ ...f, extracted_text: cleaned }))
+      setScanState('done')
+      setTimeout(() => {
+        setScanState('idle')
+        setActiveTab('upload')
+      }, 1200)
+    } catch {
+      setScanState('error')
+      setScanError('OCR failed. Try a clearer image or paste text manually.')
+    }
+  }
+
   async function handleDelete(id: string) {
     const supabase = createClient()
     await supabase.from('past_papers').delete().eq('id', id)
@@ -89,9 +131,10 @@ export default function PastPaperVault({ userId }: Props) {
   const PAPER_TYPES: PaperType[] = ['exam', 'test', 'assignment']
 
   const TABS: { id: ActiveTab; label: string }[] = [
-    { id: 'upload', label: 'Upload' },
-    { id: 'papers', label: `My Papers (${papers.length})` },
-    { id: 'insights', label: 'Insights' },
+    { id: 'scan',    label: 'Scan' },
+    { id: 'upload',  label: 'Upload' },
+    { id: 'papers',  label: `My Papers (${papers.length})` },
+    { id: 'insights',label: 'Insights' },
   ]
 
   function TopicFrequencyChart() {
@@ -185,6 +228,101 @@ export default function PastPaperVault({ userId }: Props) {
           </button>
         ))}
       </div>
+
+      {/* Scan Tab (Tesseract.js OCR) */}
+      {activeTab === 'scan' && (
+        <div className="flex flex-col gap-4">
+          {/* Data usage warning */}
+          {scanState === 'data_warning' && (
+            <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: '14px', padding: '16px' }}>
+              <p style={{ color: '#fcd34d', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Uses ~8 MB on first scan</p>
+              <p style={{ color: '#d1d5db', fontSize: '12px', lineHeight: '1.6', marginBottom: '12px' }}>
+                Tesseract.js downloads language models once (cached afterwards). If you are on a prepaid or limited plan,
+                you may want to paste the text manually instead.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={runOCR}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.4)', color: '#fcd34d', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}
+                >
+                  Scan anyway
+                </button>
+                <button
+                  onClick={() => { setScanState('idle'); setActiveTab('upload') }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  Paste text instead
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Idle / file picker */}
+          {(scanState === 'idle' || scanState === 'error') && (
+            <>
+              <div style={{
+                background: 'rgba(78,207,158,0.06)',
+                border: '2px dashed rgba(78,207,158,0.25)',
+                borderRadius: '16px',
+                padding: '32px 24px',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: '40px', marginBottom: '10px' }}>📸</div>
+                <p style={{ color: '#d1fae5', fontWeight: 600, marginBottom: '6px', fontSize: '14px' }}>Scan your past paper</p>
+                <p style={{ color: '#6b7280', fontSize: '12px', lineHeight: '1.6', maxWidth: '300px', margin: '0 auto 16px' }}>
+                  Take a photo of a printed paper or upload an image. Nova will extract the text and generate insights automatically.
+                </p>
+                <label style={{ cursor: 'pointer' }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileSelect}
+                    style={{ display: 'none' }}
+                  />
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '10px 24px',
+                    borderRadius: '10px',
+                    background: `linear-gradient(135deg, ${ACCENT}, #38bdf8)`,
+                    color: '#0a0a0f',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                  }}>
+                    Choose image / Take photo
+                  </span>
+                </label>
+              </div>
+              {scanError && (
+                <p style={{ color: '#f87171', fontSize: '12px', textAlign: 'center' }}>{scanError}</p>
+              )}
+            </>
+          )}
+
+          {/* Scanning in progress */}
+          {scanState === 'scanning' && (
+            <div style={{ background: 'rgba(78,207,158,0.06)', border: '1px solid rgba(78,207,158,0.15)', borderRadius: '16px', padding: '28px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '32px', marginBottom: '10px' }}>🔍</div>
+              <p style={{ color: '#d1fae5', fontWeight: 600, marginBottom: '12px', fontSize: '14px' }}>Reading your paper…</p>
+              <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '999px', height: '8px', overflow: 'hidden', margin: '0 auto', maxWidth: '260px' }}>
+                <div style={{ width: `${ocrProgress}%`, height: '100%', background: `linear-gradient(90deg, ${ACCENT}, #38bdf8)`, borderRadius: '999px', transition: 'width 0.3s ease' }} />
+              </div>
+              <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '10px' }}>{ocrProgress}% complete</p>
+            </div>
+          )}
+
+          {/* Done */}
+          {scanState === 'done' && (
+            <div style={{ background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.3)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
+              <p style={{ color: '#d1fae5', fontWeight: 700, fontSize: '15px' }}>Text extracted. Opening upload form…</p>
+            </div>
+          )}
+
+          <p style={{ color: '#4b5563', fontSize: '11px', textAlign: 'center', lineHeight: '1.5' }}>
+            OCR runs entirely on your device — no image is uploaded to any server.
+          </p>
+        </div>
+      )}
 
       {/* Upload Tab */}
       {activeTab === 'upload' && (

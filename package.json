@@ -21,6 +21,7 @@
     "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^1.3.1",
     "@vercel/speed-insights": "^1.0.12",
+    "@xyflow/react": "^12.11.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "csv-stringify": "^6.5.1",
@@ -45,6 +46,7 @@
     "recharts": "^2.12.7",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^2.4.0",
+    "tesseract.js": "^7.0.0",
     "web-push": "^3.6.7",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"

@@ -1,105 +1,166 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// ─── OpenWeatherMap proxy ──────────────────────────────────────
-// Caches for 30 minutes — stays within OWM free-tier quota (1 000 calls/day)
-// and keeps data costs low for Nomvula's 2GB plan.
+// ─── Open-Meteo + OpenAQ proxy ────────────────────────────────────────────────
+// Zero API keys required. Open-Meteo is free/open. OpenAQ v2 is public.
+// Cached 30 minutes to protect Nomvula's 2GB data plan.
 
 export const runtime = 'nodejs'
 
-interface OWMCurrent {
-  coord:   { lat: number; lon: number }
-  weather: { id: number; main: string; description: string }[]
-  main:    { temp: number; feels_like: number; humidity: number }
-  wind:    { speed: number }
-  rain?:   { '1h'?: number }
-  sys:     { sunrise: number; sunset: number }
-  name:    string
+// ── WMO weather-code decoder ──────────────────────────────────────────────────
+interface WMOInfo {
+  label: string
+  isRainy: boolean
+  isThunder: boolean
+  isSnow: boolean
+  isFog: boolean
 }
 
-interface OWMForecastItem {
-  dt:     number
-  main:   { temp: number; temp_max: number; temp_min: number }
-  weather: { id: number; description: string }[]
-  rain?:  { '3h'?: number }
+function wmoInfo(code: number): WMOInfo {
+  if (code === 0)             return { label: 'Clear',              isRainy: false, isThunder: false, isSnow: false, isFog: false }
+  if (code <= 2)              return { label: 'Mainly Clear',       isRainy: false, isThunder: false, isSnow: false, isFog: false }
+  if (code === 3)             return { label: 'Overcast',           isRainy: false, isThunder: false, isSnow: false, isFog: false }
+  if (code <= 48)             return { label: 'Fog',                isRainy: false, isThunder: false, isSnow: false, isFog: true  }
+  if (code <= 57)             return { label: 'Drizzle',            isRainy: true,  isThunder: false, isSnow: false, isFog: false }
+  if (code === 61)            return { label: 'Light Rain',         isRainy: true,  isThunder: false, isSnow: false, isFog: false }
+  if (code <= 65)             return { label: code === 63 ? 'Rain' : 'Heavy Rain', isRainy: true, isThunder: false, isSnow: false, isFog: false }
+  if (code <= 67)             return { label: 'Freezing Rain',      isRainy: true,  isThunder: false, isSnow: false, isFog: false }
+  if (code <= 77)             return { label: 'Snow',               isRainy: false, isThunder: false, isSnow: true,  isFog: false }
+  if (code <= 82)             return { label: 'Rain Showers',       isRainy: true,  isThunder: false, isSnow: false, isFog: false }
+  if (code <= 86)             return { label: 'Snow Showers',       isRainy: false, isThunder: false, isSnow: true,  isFog: false }
+  if (code === 95)            return { label: 'Thunderstorm',       isRainy: true,  isThunder: true,  isSnow: false, isFog: false }
+  return                             { label: 'Thunderstorm + Hail',isRainy: true,  isThunder: true,  isSnow: false, isFog: false }
 }
 
-interface OWMForecast {
-  list: OWMForecastItem[]
+// ── SA city fallback coordinates (geocoding API unreachable) ──────────────────
+const SA_COORDS: Record<string, { lat: number; lon: number }> = {
+  'cape town':        { lat: -33.9249, lon: 18.4241 },
+  'johannesburg':     { lat: -26.2041, lon: 28.0473 },
+  'durban':           { lat: -29.8587, lon: 31.0218 },
+  'pretoria':         { lat: -25.7479, lon: 28.2293 },
+  'bloemfontein':     { lat: -29.0852, lon: 26.1596 },
+  'port elizabeth':   { lat: -33.9608, lon: 25.6022 },
+  'east london':      { lat: -33.0153, lon: 27.9116 },
+  'pietermaritzburg': { lat: -29.6006, lon: 30.3794 },
+  'nelspruit':        { lat: -25.4713, lon: 30.9701 },
+  'polokwane':        { lat: -23.9045, lon: 29.4688 },
+  'stellenbosch':     { lat: -33.9321, lon: 18.8602 },
+  'grahamstown':      { lat: -33.3042, lon: 26.5328 },
+  'kimberley':        { lat: -28.7282, lon: 24.7499 },
+  'george':           { lat: -33.9631, lon: 22.4617 },
+  'rustenburg':       { lat: -25.6671, lon: 27.2426 },
+  'witbank':          { lat: -25.8755, lon: 29.2412 },
 }
 
-interface OWMUvi { value: number }
-
-function formatTime(unix: number): string {
-  const d = new Date(unix * 1000)
-  const h = d.getHours(), m = d.getMinutes()
+function parseLocalTime(isoStr: string): string {
+  const timePart = (isoStr.split('T')[1] ?? '00:00').slice(0, 5)
+  const [h, m] = timePart.split(':').map(Number)
   const ampm = h >= 12 ? 'PM' : 'AM'
-  const hh = h % 12 || 12
+  const hh   = h % 12 || 12
   return `${hh}:${String(m).padStart(2, '0')} ${ampm}`
 }
 
-function owmIdToCondition(id: number): string {
-  if (id >= 200 && id < 300) return 'Thunderstorm'
-  if (id >= 300 && id < 400) return 'Drizzle'
-  if (id >= 500 && id < 600) return 'Rain'
-  if (id >= 600 && id < 700) return 'Snow'
-  if (id === 741 || id === 701 || id === 711 || id === 721) return 'Fog'
-  if (id >= 700 && id < 800) return 'Haze'
-  if (id === 800) return 'Clear'
-  if (id <= 802) return 'Partly Cloudy'
-  return 'Cloudy'
+// ── PM2.5 → AQI category ──────────────────────────────────────────────────────
+function pm25ToAqi(pm25: number): { category: string; color: string; advice: string } {
+  if (pm25 <= 12)   return { category: 'Good',                           color: '#4ecf9e', advice: 'Air quality is clean. Safe for outdoor study sessions.' }
+  if (pm25 <= 35.4) return { category: 'Moderate',                      color: '#f59e0b', advice: 'Acceptable air quality. Sensitive individuals should limit prolonged outdoor time.' }
+  if (pm25 <= 55.4) return { category: 'Unhealthy for Sensitive Groups', color: '#f97316', advice: 'Keep outdoor time short. Use campus indoor spaces.' }
+  if (pm25 <= 150)  return { category: 'Unhealthy',                     color: '#ef4444', advice: 'Reduce outdoor exercise. Wear a mask if walking across campus.' }
+  return                   { category: 'Very Unhealthy',                 color: '#9333ea', advice: 'Stay indoors. Wear N95 mask if you must go out.' }
 }
 
 export async function GET(req: NextRequest) {
-  const key = process.env.OPENWEATHER_API_KEY
-  if (!key) {
-    return NextResponse.json({ error: 'OPENWEATHER_API_KEY not configured' }, { status: 500 })
-  }
-
   const { searchParams } = new URL(req.url)
   const city = (searchParams.get('city') ?? 'Cape Town').trim()
-  const base = 'https://api.openweathermap.org/data/2.5'
 
   try {
-    // Fetch current weather + 5-day forecast in parallel
-    const [curRes, fcRes] = await Promise.all([
-      fetch(`${base}/weather?q=${encodeURIComponent(city)},ZA&units=metric&appid=${key}`),
-      fetch(`${base}/forecast?q=${encodeURIComponent(city)},ZA&units=metric&cnt=16&appid=${key}`),
+    // ── Step 1: Geocode city → lat/lon (Open-Meteo, free) ────────────────────
+    let lat: number, lon: number, resolvedName: string
+
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`,
+      { signal: AbortSignal.timeout(4_000) }
+    ).catch(() => null)
+
+    if (geoRes?.ok) {
+      const geoData = await geoRes.json() as { results?: { latitude: number; longitude: number; name: string }[] }
+      const r = geoData.results?.[0]
+      if (r) {
+        lat = r.latitude; lon = r.longitude; resolvedName = r.name
+      } else {
+        const key = city.toLowerCase()
+        const fb = SA_COORDS[key] ?? SA_COORDS['cape town']
+        lat = fb.lat; lon = fb.lon; resolvedName = city
+      }
+    } else {
+      const key = city.toLowerCase()
+      const fb = SA_COORDS[key] ?? SA_COORDS['cape town']
+      lat = fb.lat; lon = fb.lon; resolvedName = city
+    }
+
+    // ── Step 2: Fetch weather + air quality in parallel ───────────────────────
+    const weatherUrl =
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation,weather_code,uv_index,is_day` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max,sunrise,sunset` +
+      `&timezone=Africa%2FJohannesburg&forecast_days=2`
+
+    const aqUrl =
+      `https://api.openaq.org/v2/latest` +
+      `?coordinates=${lat},${lon}&radius=50000&limit=5&parameter=pm25&order_by=distance`
+
+    const [wxRes, aqRes] = await Promise.all([
+      fetch(weatherUrl, { signal: AbortSignal.timeout(5_000) }),
+      fetch(aqUrl, { signal: AbortSignal.timeout(4_000) }).catch(() => null),
     ])
 
-    if (!curRes.ok) {
+    if (!wxRes.ok) {
       return NextResponse.json({ error: 'Weather service unavailable' }, { status: 502 })
     }
 
-    const cur: OWMCurrent = await curRes.json()
-    const fc: OWMForecast = fcRes.ok ? await fcRes.json() : { list: [] }
+    const wx = await wxRes.json() as {
+      current: {
+        temperature_2m: number
+        apparent_temperature: number
+        relative_humidity_2m: number
+        wind_speed_10m: number
+        precipitation: number
+        weather_code: number
+        uv_index: number | null
+        is_day: 0 | 1
+      }
+      daily: {
+        weather_code:      number[]
+        temperature_2m_max: number[]
+        temperature_2m_min: number[]
+        precipitation_sum:  number[]
+        uv_index_max:       number[]
+        sunrise:            string[]
+        sunset:             string[]
+      }
+    }
 
-    // UV index requires lat/lon from the weather response
-    const uvRes = await fetch(`${base}/uvi?lat=${cur.coord.lat}&lon=${cur.coord.lon}&appid=${key}`)
-    const uvData: OWMUvi = uvRes.ok ? await uvRes.json() : { value: 0 }
+    const cur     = wx.current
+    const daily   = wx.daily
+    const wmo     = wmoInfo(cur.weather_code)
 
-    const uv      = Math.round(uvData.value)
-    const uvRisk  = uv >= 8 ? 'very high' : uv >= 6 ? 'high' : uv >= 3 ? 'moderate' : 'low'
-    const tempC   = Math.round(cur.main.temp)
-    const windKmph = Math.round(cur.wind.speed * 3.6)
-    const precipMm = cur.rain?.['1h'] ?? 0
+    const tempC      = Math.round(cur.temperature_2m)
+    const feelsC     = Math.round(cur.apparent_temperature)
+    const windKmph   = Math.round(cur.wind_speed_10m)
+    const precipMm   = Math.round(cur.precipitation * 10) / 10
+    const uv         = Math.round(cur.uv_index ?? daily.uv_index_max[0] ?? 0)
+    const uvRisk     = uv >= 8 ? 'very high' : uv >= 6 ? 'high' : uv >= 3 ? 'moderate' : 'low'
+    const isWind     = windKmph > 30
 
-    const weatherId = cur.weather[0]?.id ?? 800
-    const isThunder = weatherId >= 200 && weatherId < 300
-    const isSnow    = weatherId >= 600 && weatherId < 700
-    const isFog     = weatherId >= 700 && weatherId < 800
-    const isRainy   = (weatherId >= 300 && weatherId < 600) || precipMm > 0
-    const isWind    = windKmph > 30
-
-    // "What to wear" outfit logic
-    let outfit: string
-    let outfitEmoji: string
-    if (isThunder) {
+    // ── Outfit advice ──────────────────────────────────────────────────────────
+    let outfit: string, outfitEmoji: string
+    if (wmo.isThunder) {
       outfit = 'Stay indoors if possible. Raincoat + closed shoes — lightning risk.'
       outfitEmoji = '⛈️'
-    } else if (isSnow) {
+    } else if (wmo.isSnow) {
       outfit = 'Warm layers, waterproof jacket, and boots.'
       outfitEmoji = '❄️'
-    } else if (isRainy) {
+    } else if (wmo.isRainy) {
       outfit = 'Rain jacket or umbrella. Quick-dry shoes — puddles likely.'
       outfitEmoji = '🌧️'
     } else if (tempC <= 8) {
@@ -116,51 +177,66 @@ export async function GET(req: NextRequest) {
       outfitEmoji = uv >= 6 ? '🧴' : '☀️'
     }
 
-    // Campus tips
+    // ── Campus tips ────────────────────────────────────────────────────────────
     const tips: string[] = []
-    if (isRainy)  tips.push('Carry an umbrella to avoid walking between lecture halls in the rain.')
-    if (uv >= 6)  tips.push(`UV index is ${uv} — apply SPF 30+ before outdoor classes.`)
-    if (isWind)   tips.push('Strong winds today — secure notes and documents.')
-    if (isFog)    tips.push('Reduced visibility — allow extra travel time from res.')
-    if (tempC > 30) tips.push('Stay hydrated during long lecture blocks — heat can reduce focus.')
+    if (wmo.isRainy)  tips.push('Carry an umbrella to avoid walking between lecture halls in the rain.')
+    if (uv >= 6)      tips.push(`UV index is ${uv} — apply SPF 30+ before outdoor classes.`)
+    if (isWind)       tips.push('Strong winds today — secure notes and documents.')
+    if (wmo.isFog)    tips.push('Reduced visibility — allow extra travel time from res.')
+    if (tempC > 30)   tips.push('Stay hydrated during long lecture blocks — heat can reduce focus.')
 
-    // Tomorrow: pull forecast items that fall on the next calendar day
-    const todayDate = new Date().toISOString().slice(0, 10)
-    const tomorrowItems = fc.list.filter(item =>
-      new Date(item.dt * 1000).toISOString().slice(0, 10) > todayDate
-    ).slice(0, 8)
+    // ── Tomorrow from daily[1] ─────────────────────────────────────────────────
+    const tomorrowWmo = wmoInfo(daily.weather_code[1] ?? 0)
+    const tomorrow = daily.temperature_2m_max[1] != null ? {
+      max_C:     Math.round(daily.temperature_2m_max[1]),
+      min_C:     Math.round(daily.temperature_2m_min[1]),
+      condition: tomorrowWmo.label,
+      is_rainy:  tomorrowWmo.isRainy,
+    } : null
 
-    const tomorrowMax = tomorrowItems.length
-      ? Math.round(Math.max(...tomorrowItems.map(i => i.main.temp_max))) : null
-    const tomorrowMin = tomorrowItems.length
-      ? Math.round(Math.min(...tomorrowItems.map(i => i.main.temp_min))) : null
-    const tomorrowMidId = tomorrowItems[3]?.weather[0]?.id ?? 800
-    const tomorrowRainy = tomorrowItems.some(i => {
-      const id = i.weather[0]?.id ?? 800
-      return (id >= 300 && id < 600) || (i.rain?.['3h'] ?? 0) > 0
-    })
+    // ── Air quality (OpenAQ v2, best-effort) ───────────────────────────────────
+    let air_quality: { pm25: number; category: string; color: string; advice: string; station: string } | null = null
+    if (aqRes?.ok) {
+      try {
+        const aqData = await aqRes.json() as {
+          results?: { location: string; measurements: { parameter: string; value: number }[] }[]
+        }
+        for (const r of aqData.results ?? []) {
+          const m = r.measurements.find(m => m.parameter === 'pm25')
+          if (m && m.value >= 0) {
+            const aqi = pm25ToAqi(m.value)
+            air_quality = {
+              pm25:     Math.round(m.value * 10) / 10,
+              category: aqi.category,
+              color:    aqi.color,
+              advice:   aqi.advice,
+              station:  r.location,
+            }
+            break
+          }
+        }
+      } catch {
+        // graceful degradation — air quality is optional
+      }
+    }
 
     const payload = {
-      area:         cur.name || city,
+      area:         resolvedName,
       temp_C:       tempC,
-      feels_like_C: Math.round(cur.main.feels_like),
-      condition:    owmIdToCondition(weatherId),
-      humidity:     cur.main.humidity,
+      feels_like_C: feelsC,
+      condition:    wmo.label,
+      humidity:     cur.relative_humidity_2m,
       wind_kmph:    windKmph,
       uv,
       uv_risk:      uvRisk,
-      is_rainy:     isRainy,
+      is_rainy:     wmo.isRainy,
       precip_mm:    precipMm,
-      sunrise:      formatTime(cur.sys.sunrise),
-      sunset:       formatTime(cur.sys.sunset),
+      sunrise:      parseLocalTime(daily.sunrise[0] ?? ''),
+      sunset:       parseLocalTime(daily.sunset[0] ?? ''),
       outfit:       { text: outfit, emoji: outfitEmoji },
       tips,
-      tomorrow: (tomorrowMax !== null && tomorrowMin !== null) ? {
-        max_C:     tomorrowMax,
-        min_C:     tomorrowMin,
-        condition: owmIdToCondition(tomorrowMidId),
-        is_rainy:  tomorrowRainy,
-      } : null,
+      tomorrow,
+      air_quality,
     }
 
     return NextResponse.json(payload, {
