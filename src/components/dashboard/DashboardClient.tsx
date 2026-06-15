@@ -34,6 +34,11 @@ import InsightsCard from '@/components/dashboard/InsightsCard'
 import DomainPulse from '@/components/dashboard/DomainPulse'
 import CohortCard from '@/components/dashboard/CohortCard'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
+import BurnoutRadar from '@/components/regulate/BurnoutRadar'
+import MoneyHealthScore from '@/components/budget/MoneyHealthScore'
+import FinancialStressLink from '@/components/finance/FinancialStressLink'
+import SassaSrdGuide from '@/components/finance/SassaSrdGuide'
+import FitnessNudge from '@/components/fitness/FitnessNudge'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1482,6 +1487,18 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <MoodCheckin userId={p.id} />
               </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                <TabErrorBoundary><BurnoutRadar userId={p.id} /></TabErrorBoundary>
+                <TabErrorBoundary>
+                  <MoneyHealthScore
+                    budget={b}
+                    monthlyExpenses={monthSpent}
+                    nsfasStatus="ok"
+                    savingsRate={0}
+                  />
+                </TabErrorBoundary>
+              </div>
+
               {/* Orchestration — daily brief */}
               <TabErrorBoundary label="Daily Brief">
                 <DailyBrief />
@@ -1552,6 +1569,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             {/* Column 3 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+              {monthSpent > 0 && (
+                <TabErrorBoundary>
+                  <FinancialStressLink
+                    moneyHealthScore={Math.max(0, 100 - Math.round((monthSpent / (b?.monthly_budget || 1)) * 80))}
+                    onDismiss={() => {}}
+                  />
+                </TabErrorBoundary>
+              )}
+              {(p.funding_type === 'nsfas' || p.funding_type === 'other' || !p.funding_type) && (
+                <TabErrorBoundary><SassaSrdGuide /></TabErrorBoundary>
+              )}
               <LoadSheddingWidget />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
             </div>

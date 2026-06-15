@@ -21,6 +21,9 @@ import StudyVelocityTab from '@/components/study/StudyVelocityTab'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import StudyPodsTab from '@/components/study/StudyPodsTab'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
+import PastPaperVault from '@/components/study/PastPaperVault'
+import SmartGradeForecaster from '@/components/study/SmartGradeForecaster'
+import StudyContextEngine from '@/components/study/StudyContextEngine'
 import Link from 'next/link'
 
 interface StudyClientProps {
@@ -70,6 +73,8 @@ const TAB_CONFIG = [
   { id: 'attendance',  label: 'Attendance', icon: '📋', accent: '#f59e0b', glow: 'rgba(245,158,11,0.2)' },
   { id: 'velocity',    label: 'Velocity',   icon: '📈', accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
   { id: 'pods',        label: 'Study Pods', icon: '👥', accent: '#38BDF8', glow: 'rgba(56,189,248,0.2)' },
+  { id: 'pastpapers',  label: 'Past Papers', icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
+  { id: 'forecaster',  label: 'Forecast',    icon: '📊', accent: '#fbbf24', glow: 'rgba(251,191,36,0.2)' },
 ] as const
 
 type TabId = typeof TAB_CONFIG[number]['id']
@@ -262,6 +267,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
 
       {/* ── Tab content ── */}
       <div className="max-w-2xl mx-auto px-4 py-4">
+        <StudyContextEngine exams={exams} userId={initialData.userId} />
         {activeTab === 'tasks'      && <TabErrorBoundary label="Tasks"><TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} /></TabErrorBoundary>}
         {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} workShifts={initialData.workShifts} calendarEvents={initialData.calendarEvents} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'timetable'  && <TabErrorBoundary label="Timetable"><TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} /></TabErrorBoundary>}
@@ -276,6 +282,8 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
         {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
+        {activeTab === 'pastpapers' && <TabErrorBoundary><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
+        {activeTab === 'forecaster' && <TabErrorBoundary><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
       </div>
 
       {/* ── Reading Mode CTA ── */}

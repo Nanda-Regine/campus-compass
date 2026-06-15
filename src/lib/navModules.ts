@@ -18,4 +18,5 @@ export const NAV_MODULES: readonly NavModule[] = [
   { href: '/meals',            label: 'Meals',  icon: '🍲', color: '#e8834a', iconBg: 'rgba(232,131,74,0.10)'                    },
   { href: '/dashboard/work',   label: 'Work',   icon: '💼', color: '#7090d0', iconBg: 'rgba(112,144,208,0.10)'                   },
   { href: '/dashboard/groups', label: 'Groups', icon: '👥', color: '#7090d0', iconBg: 'rgba(112,144,208,0.10)', wideInGrid: true  },
+  { href: '/regulate', label: 'Regulate', icon: '🫁', color: '#a78bfa', iconBg: 'rgba(167,139,250,0.12)' },
 ]

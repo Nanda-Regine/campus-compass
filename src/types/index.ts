@@ -675,3 +675,256 @@ export interface MoodCheckinRecord {
   checked_in_at: string
   date: string
 }
+
+// ─── Regulation / Nervous System ─────────────────────────────
+export type RegulationSessionType = 'box_breathing' | 'physiological_sigh' | '478_breath' | 'somatic_shake' | 'vagal_toning' | 'eye_movement' | 'progressive_muscle'
+
+export interface RegulationSession {
+  id: string
+  user_id: string
+  session_type: RegulationSessionType
+  duration_seconds: number
+  completed: boolean
+  notes: string | null
+  created_at: string
+}
+
+export interface NSScore {
+  id: string
+  user_id: string
+  score_date: string
+  ns_score: number
+  contributing_factors: Record<string, number> | null
+  created_at: string
+}
+
+// ─── Past Papers ─────────────────────────────────────────────
+export type PaperType = 'exam' | 'test' | 'assignment'
+
+export interface PaperInsights {
+  topTopics: { topic: string; frequency: number; yearsAppeared: number[] }[]
+  likelyQuestions: string[]
+  studyTips: string[]
+  difficultyLevel: 'easy' | 'medium' | 'hard'
+  estimatedPrepHours: number
+}
+
+export interface PastPaper {
+  id: string
+  user_id: string
+  module_id: string | null
+  institution: string | null
+  module_name: string
+  module_code: string
+  year: number
+  paper_type: PaperType
+  file_url: string | null
+  extracted_text: string | null
+  ai_insights: PaperInsights | null
+  question_count: number | null
+  created_at: string
+}
+
+// ─── Cycle Tracking ──────────────────────────────────────────
+export type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal'
+export type FlowLevel = 'none' | 'light' | 'medium' | 'heavy'
+
+export interface CycleEntry {
+  id: string
+  user_id: string
+  entry_date: string
+  phase: CyclePhase
+  flow_level: FlowLevel | null
+  symptoms: string[]
+  energy_level: number | null
+  notes: string | null
+  created_at: string
+}
+
+export interface CyclePhaseInfo {
+  phase: CyclePhase
+  energy: 'low' | 'medium' | 'high'
+  cognitive: 'low' | 'medium' | 'high'
+  mood: string
+  studyTip: string
+  color: string
+}
+
+// ─── Safe Walk ───────────────────────────────────────────────
+export interface SafeWalkSession {
+  id: string
+  user_id: string
+  destination: string
+  contact_name: string
+  contact_phone: string
+  duration_minutes: number
+  started_at: string
+  check_in_at: string | null
+  completed: boolean
+  alert_sent: boolean
+  created_at: string
+}
+
+// ─── Data Budget ─────────────────────────────────────────────
+export interface DataBudget {
+  id: string
+  user_id: string
+  month_year: string
+  data_budget_mb: number
+  data_used_mb: number
+  wifi_sessions: number
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ─── Health Conditions ────────────────────────────────────────
+export type ConditionType = 'chronic' | 'acute' | 'mental_health' | 'reproductive' | 'other'
+
+export interface HealthCondition {
+  id: string
+  user_id: string
+  condition_name: string
+  condition_type: ConditionType
+  medications: string[]
+  triggers: string[]
+  notes: string | null
+  is_active: boolean
+  created_at: string
+}
+
+// ─── Wisdom Archive ───────────────────────────────────────────
+export type WisdomCategory = 'nsfas' | 'study_tips' | 'campus_life' | 'accommodation' | 'lecturer' | 'admin' | 'wellness' | 'finance' | 'general'
+
+export interface WisdomPost {
+  id: string
+  user_id: string
+  institution: string | null
+  category: WisdomCategory
+  title: string
+  content: string
+  upvotes: number
+  is_verified: boolean
+  is_anonymous: boolean
+  created_at: string
+}
+
+// ─── Mutual Aid ───────────────────────────────────────────────
+export type AidRequestType = 'offer' | 'request'
+export type AidCategory = 'textbook' | 'notes' | 'food' | 'transport' | 'tutoring' | 'accommodation' | 'other'
+
+export interface MutualAidRequest {
+  id: string
+  user_id: string
+  request_type: AidRequestType
+  category: AidCategory
+  title: string
+  description: string
+  is_anonymous: boolean
+  is_fulfilled: boolean
+  institution: string | null
+  expiry_date: string | null
+  created_at: string
+}
+
+// ─── Study Accountability ─────────────────────────────────────
+export type AccountabilityStatus = 'pending' | 'active' | 'completed' | 'cancelled'
+
+export interface StudyAccountability {
+  id: string
+  requester_id: string
+  partner_id: string | null
+  shared_goal: string
+  goal_deadline: string | null
+  status: AccountabilityStatus
+  requester_checkin_date: string | null
+  partner_checkin_date: string | null
+  created_at: string
+}
+
+// ─── Walking Routes ───────────────────────────────────────────
+export interface WalkingRoute {
+  id: string
+  contributor_id: string
+  institution: string
+  route_name: string
+  description: string
+  distance_km: number
+  duration_minutes: number
+  safety_rating: number
+  scenery_rating: number
+  times_logged: number
+  start_point: string
+  end_point: string
+  created_at: string
+}
+
+// ─── User Values ──────────────────────────────────────────────
+export interface UserValues {
+  id: string
+  user_id: string
+  values_selected: string[]
+  top_3: string[]
+  values_statement: string
+  completed_at: string | null
+  updated_at: string
+}
+
+// ─── Safety Incidents ─────────────────────────────────────────
+export type IncidentType = 'protest' | 'crime' | 'unsafe_area' | 'harassment' | 'gbv' | 'other'
+export type IncidentSeverity = 'low' | 'medium' | 'high' | 'critical'
+
+export interface SafetyIncident {
+  id: string
+  reporter_id: string
+  institution: string
+  incident_type: IncidentType
+  severity: IncidentSeverity
+  location_description: string
+  description: string
+  is_anonymous: boolean
+  is_resolved: boolean
+  upvotes: number
+  created_at: string
+}
+
+// ─── Side Hustle ──────────────────────────────────────────────
+export type HustleType = 'tutoring' | 'crafts' | 'food' | 'reselling' | 'digital' | 'services' | 'other'
+
+export interface SideHustleEntry {
+  id: string
+  user_id: string
+  hustle_name: string
+  hustle_type: HustleType
+  description: string
+  income_this_month: number
+  hours_this_month: number
+  started_date: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// ─── Burnout Score (computed) ─────────────────────────────────
+export interface BurnoutScore {
+  date: string
+  score: number
+  label: 'Thriving' | 'Balanced' | 'Strained' | 'At risk' | 'Burnt out'
+  trend: 'improving' | 'stable' | 'declining'
+}
+
+// ─── Cooking Setup ────────────────────────────────────────────
+export type CookingSetup = 'full' | 'hotplate' | 'kettle_microwave' | 'no_cooking'
+
+// ─── Dietary Preferences ─────────────────────────────────────
+export interface DietaryPrefs {
+  isHalal: boolean
+  isKosher: boolean
+  isVegetarian: boolean
+  isVegan: boolean
+  isGlutenFree: boolean
+  isDairyFree: boolean
+  traditionalFoods: boolean
+  nutAllergy: boolean
+  otherRestrictions: string
+}
