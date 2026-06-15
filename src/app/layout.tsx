@@ -16,6 +16,7 @@ import { PWAUpdateNotifier } from '@/components/PWAUpdateNotifier'
 import ConsentBanner from '@/components/ConsentBanner'
 import PageTransition from '@/components/PageTransition'
 import GameLayer from '@/components/gamification/GameLayer'
+import DistractionDumper from '@/components/study/DistractionDumper'
 import './globals.css'
 
 const soraFont = Sora({
@@ -529,6 +530,7 @@ a.appendChild(r);
           <OnboardingTooltip />
           <BottomNav />
           <GameLayer />
+          <DistractionDumper />
         </Providers>
         <Toaster
           position="bottom-center"

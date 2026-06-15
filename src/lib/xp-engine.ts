@@ -48,6 +48,10 @@ export type XPEventName =
   | 'intention_set'
   | 'body_double_joined'
   | 'journal_entry'
+  // Tier 3 Anti-Procrastination
+  | 'profiler_completed'
+  | 'accountability_shared'
+  | 'recovery_initiated'
 
 export const XP_VALUES: Record<XPEventName, number> = {
   task_complete:            15,
@@ -88,6 +92,10 @@ export const XP_VALUES: Record<XPEventName, number> = {
   intention_set:             5,
   body_double_joined:       15,
   journal_entry:            10,
+  // Tier 3 Anti-Procrastination
+  profiler_completed:       10,
+  accountability_shared:    20,
+  recovery_initiated:       15,
 }
 
 // Max fires per day per event (undefined = unlimited).
@@ -110,6 +118,9 @@ const MAX_DAILY_FIRES: Partial<Record<XPEventName, number>> = {
   intention_set:          3,
   body_double_joined:     1,
   journal_entry:          2,
+  profiler_completed:     1,
+  accountability_shared:  2,
+  recovery_initiated:     1,
 }
 
 /* ── Level System ───────────────────────────────────────────────────────────*/
@@ -683,4 +694,8 @@ const EVENT_LABELS: Partial<Record<XPEventName, string>> = {
   shift_logged:             'Shift logged',
   side_hustle_logged:       'Side hustle recorded',
   past_paper_attempted:     'Past paper attempted',
+  // Tier 3 Anti-Procrastination
+  profiler_completed:       'Procrastination profile done',
+  accountability_shared:    'Commitment shared publicly 💪',
+  recovery_initiated:       'Spiral recovery started',
 }

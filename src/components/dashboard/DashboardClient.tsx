@@ -48,6 +48,10 @@ import ImplementationIntentions from '@/components/study/ImplementationIntention
 import BodyDoubleMode from '@/components/study/BodyDoubleMode'
 import ProcrastinationJournal from '@/components/study/ProcrastinationJournal'
 import RewardUnlock from '@/components/gamification/RewardUnlock'
+import FocusMomentumScore from '@/components/dashboard/FocusMomentumScore'
+import ProcrastinationProfiler from '@/components/study/ProcrastinationProfiler'
+import AccountabilityPartner from '@/components/study/AccountabilityPartner'
+import AntiSpiralRecovery from '@/components/study/AntiSpiralRecovery'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1479,6 +1483,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             </div>
           ))}
 
+          {/* Anti-Spiral Recovery — full recovery protocol when 2+ idle days or 4+ overdue */}
+          <TabErrorBoundary label="Anti-Spiral Recovery">
+            <AntiSpiralRecovery tasks={allTasks} />
+          </TabErrorBoundary>
+
           {/* Procrastination Alarm — shows only when severity > safe */}
           <TabErrorBoundary label="Procrastination Alarm">
             <ProcrastinationAlarm tasks={allTasks} exams={allExams} />
@@ -1580,6 +1589,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <ProcrastinationJournal />
               </TabErrorBoundary>
 
+              {/* Procrastination Profiler — identify your type */}
+              <TabErrorBoundary label="Procrastination Profiler">
+                <ProcrastinationProfiler />
+              </TabErrorBoundary>
+
+              {/* Accountability Partner — go public with your commitment */}
+              <TabErrorBoundary label="Accountability Partner">
+                <AccountabilityPartner tasks={allTasks} />
+              </TabErrorBoundary>
+
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
 
               {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
@@ -1632,6 +1651,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
             {/* Column 3 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
+              <TabErrorBoundary label="Focus Momentum Score">
+                <FocusMomentumScore />
+              </TabErrorBoundary>
+
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
               {monthSpent > 0 && (
                 <TabErrorBoundary>
