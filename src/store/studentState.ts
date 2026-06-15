@@ -392,6 +392,9 @@ export const useStudentState = create<StudentStateStore>()(
       meta:          { lastComputedAt: null, dataCompleteness: 0 },
 
       recompute(data: RecomputeInput) {
+        // Capture prev wellness BEFORE set() — Zustand set() is synchronous,
+        // so get().wellness after set() returns the new value, making delta always 0.
+        const prevWellness = get().wellness
         const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0, data.lowestGrade ?? 0)
         const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false)
         const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0, data.regulationSessionsToday ?? 0, data.nsScore ?? null, data.cyclePhase ?? null, data.cycleEnergyLevel ?? null)
@@ -412,9 +415,8 @@ export const useStudentState = create<StudentStateStore>()(
 
         // Emit burnout signal so components can react to meaningful changes
         if (typeof window !== 'undefined') {
-          const prev = get().wellness
-          const trend = wellness.burnoutScore < prev.burnoutScore - 5 ? 'improving'
-            : wellness.burnoutScore > prev.burnoutScore + 5 ? 'worsening'
+          const trend = wellness.burnoutScore < prevWellness.burnoutScore - 5 ? 'improving'
+            : wellness.burnoutScore > prevWellness.burnoutScore + 5 ? 'worsening'
             : 'stable'
           signals.emit({ type: 'burnout_computed', payload: { score: wellness.burnoutScore, trend } })
         }
@@ -476,6 +478,10 @@ export const useStudentState = create<StudentStateStore>()(
 // It subscribes to the app store and recomputes StudentState on every change.
 
 let _unsubscribe: (() => void) | null = null
+// Module-level signal unsubs — stored here so re-calling initOrchestration()
+// (e.g. React 18 strict-mode double-invoke) cleans up the previous handlers
+// before registering new ones, preventing duplicate signal processing.
+let _signalUnsubs: Array<() => void> = []
 
 // Read last 7 days of mood scores from the localStorage cache written by MoodCheckin.
 // Sorted oldest-first so computeWellness can detect trend direction.
@@ -510,7 +516,7 @@ function readWorkHoursCache(): number {
     const weekOf = parsed.weekOf
     if (!weekOf) return 0
     const ageDays = (Date.now() - new Date(weekOf).getTime()) / 86_400_000
-    if (ageDays > 8) return 0
+    if (ageDays > 7) return 0
     return parsed.weekHours
   } catch {
     return 0
@@ -569,6 +575,7 @@ function readCycleCache(): { phase: string; energyLevel: number | null } | null 
 
 export function initOrchestration(): () => void {
   _unsubscribe?.()
+  _signalUnsubs.forEach(u => u())
 
   const runRecompute = (state: ReturnType<typeof useAppStore.getState>) => {
     const cycle = readCycleCache()
@@ -607,20 +614,25 @@ export function initOrchestration(): () => void {
   // the updated value. For signals where the data is already in the
   // AppStore (tasks, grades, expenses) we call runRecompute directly.
   const getState = () => useAppStore.getState()
-  const signalUnsubs = [
+  _signalUnsubs = [
     signals.on('task_completed',      () => runRecompute(getState())),
     signals.on('attendance_marked',   () => runRecompute(getState())),
     signals.on('grade_updated',       ({ payload }) => {
-      // Cache the lowest grade seen across all modules so the rules engine can fire on it
+      // Store all grades by module code and recompute the minimum.
+      // A map (not just the lowest) ensures the cache updates correctly
+      // when a previously-failing module improves above the pass mark.
       if (typeof window !== 'undefined') {
         try {
-          const existing = JSON.parse(localStorage.getItem('varsityos-grade-cache') ?? '{}') as { lowestGrade?: number }
-          if (!existing.lowestGrade || payload.grade < existing.lowestGrade) {
-            localStorage.setItem('varsityos-grade-cache', JSON.stringify({
-              lowestGrade:  payload.grade,
-              moduleCode:   payload.moduleCode,
-            }))
-          }
+          const raw = localStorage.getItem('varsityos-grade-cache') ?? '{}'
+          const existing = JSON.parse(raw) as { grades?: Record<string, number> }
+          const grades = { ...(existing.grades ?? {}), [payload.moduleCode]: payload.grade }
+          const lowestGrade = Math.min(...Object.values(grades))
+          const lowestEntry = Object.entries(grades).find(([, g]) => g === lowestGrade)
+          localStorage.setItem('varsityos-grade-cache', JSON.stringify({
+            grades,
+            lowestGrade,
+            moduleCode: lowestEntry?.[0] ?? payload.moduleCode,
+          }))
         } catch { /* quota full */ }
       }
       runRecompute(getState())
@@ -668,6 +680,6 @@ export function initOrchestration(): () => void {
 
   return () => {
     _unsubscribe?.()
-    signalUnsubs.forEach(u => u())
+    _signalUnsubs.forEach(u => u())
   }
 }

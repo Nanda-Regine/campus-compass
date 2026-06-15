@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from 'next/server'
 // Cached 30 minutes to protect Nomvula's 2GB data plan.
 
 export const runtime = 'nodejs'
+// nodejs runtime doesn't honour s-maxage via CDN automatically — use Next.js ISR instead
+export const revalidate = 1800
 
 // ── WMO weather-code decoder ──────────────────────────────────────────────────
 interface WMOInfo {
@@ -19,6 +21,7 @@ function wmoInfo(code: number): WMOInfo {
   if (code === 0)             return { label: 'Clear',              isRainy: false, isThunder: false, isSnow: false, isFog: false }
   if (code <= 2)              return { label: 'Mainly Clear',       isRainy: false, isThunder: false, isSnow: false, isFog: false }
   if (code === 3)             return { label: 'Overcast',           isRainy: false, isThunder: false, isSnow: false, isFog: false }
+  if (code <= 44)             return { label: 'Cloudy',             isRainy: false, isThunder: false, isSnow: false, isFog: false }
   if (code <= 48)             return { label: 'Fog',                isRainy: false, isThunder: false, isSnow: false, isFog: true  }
   if (code <= 57)             return { label: 'Drizzle',            isRainy: true,  isThunder: false, isSnow: false, isFog: false }
   if (code === 61)            return { label: 'Light Rain',         isRainy: true,  isThunder: false, isSnow: false, isFog: false }
@@ -70,7 +73,7 @@ function pm25ToAqi(pm25: number): { category: string; color: string; advice: str
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const city = (searchParams.get('city') ?? 'Cape Town').trim()
+  const city = (searchParams.get('city') ?? 'Cape Town').trim().slice(0, 100)
 
   try {
     // ── Step 1: Geocode city → lat/lon (Open-Meteo, free) ────────────────────

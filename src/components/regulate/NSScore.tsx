@@ -65,10 +65,10 @@ export default function NSScore({ userId }: Props) {
 
   async function handleCheckin() {
     setSaving(true)
-    const score = Math.round(
-      (((5 - (sleep + energy + 3) / 2) / 4) * 80 * 0.6) +
-      (((stress - 1) / 4) * 100 * 0.4)
-    )
+    // Use calcBurnout so the stored score matches what the display dial shows.
+    // social and motivation default to 3 (modal only collects sleep/stress/energy).
+    const burnout = calcBurnout({ date: today, sleep, stress, energy, social: 3, motivation: 3, score: 0 } as CheckIn)
+    const score = Math.max(0, Math.min(100, burnout))
     const { error } = await saveWellnessCheckin({
       date: today,
       sleep,
@@ -76,11 +76,11 @@ export default function NSScore({ userId }: Props) {
       energy,
       social: 3,
       motivation: 3,
-      score: Math.max(0, Math.min(100, score)),
+      score,
     })
     if (!error) {
       dispatchXP('wellness_checkin')
-      const nsScore = Math.max(0, Math.min(100, 100 - Math.max(0, Math.min(100, score))))
+      const nsScore = Math.max(0, Math.min(100, 100 - score))
       signals.emit({ type: 'ns_score_updated', payload: { score: nsScore } })
       const supabase = createClient()
       const { data } = await supabase

@@ -531,15 +531,18 @@ const RULES: Rule[] = [
     }),
   },
 
-  // Suggest regulation when burnout is high but no session yet today
+  // Suggest regulation when burnout is high but no session yet today.
+  // Guard excludes the exam_week_regulate scenario (urgency 4) to prevent both rules
+  // queuing a "go regulate" banner simultaneously.
   {
     id:           'suggest_regulation',
     urgency:      3,
     variant:      'banner',
     cooldownMins: 4 * 60,
-    test: ({ wellness }) =>
+    test: ({ wellness, academic }) =>
       wellness.burnoutScore > 55 &&
-      wellness.regulationSessionsToday === 0,
+      wellness.regulationSessionsToday === 0 &&
+      !(wellness.burnoutScore > 65 && academic.examPressure >= 65),
     build: ({ wellness }) => ({
       title:       'High stress detected — 4 minutes can shift this',
       message:     `Your stress indicators are elevated (burnout ${wellness.burnoutScore}/100). A single physiological sigh — double inhale, long exhale — is the fastest anxiety reducer known to science. No app needed, but we'll guide you.`,
@@ -697,13 +700,13 @@ export function initRulesEngine(): () => void {
   // Run immediately on init
   runRules()
 
-  return _rulesUnsubscribe
+  return () => { _rulesUnsubscribe?.() }
 }
 
 // ─── Debug utility ─────────────────────────────────────────────
 
 /** Returns which rules would fire right now (ignoring cooldowns). */
-export function previewRules(): { id: string; urgency: number; would_fire: boolean }[] {
+export function previewRules(): { id: string; urgency: number; would_fire: boolean; on_cooldown: boolean }[] {
   const store = useStudentState.getState()
   const snapshot: RuleSnapshot = {
     academic:  store.academic,

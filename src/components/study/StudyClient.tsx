@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import PullToRefresh from '@/components/ui/PullToRefresh'
@@ -89,7 +89,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
   )
   const [triggerAdd, setTriggerAdd] = useState(0)
   const [hour, setHour] = useState(new Date().getHours())
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     store.setModules(initialData.modules)
@@ -284,8 +284,8 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
         {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
         {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'pastpapers' && <TabErrorBoundary><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
-        {activeTab === 'forecaster' && <TabErrorBoundary><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
+        {activeTab === 'pastpapers' && <TabErrorBoundary label="Past Papers"><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
+        {activeTab === 'forecaster' && <TabErrorBoundary label="Forecast"><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
         {activeTab === 'orbit'      && <TabErrorBoundary label="Orbit Map"><ModuleOrbitMap modules={modules} exams={exams} /></TabErrorBoundary>}
       </div>
 

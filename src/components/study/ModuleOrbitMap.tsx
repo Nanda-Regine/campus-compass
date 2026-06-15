@@ -97,23 +97,14 @@ const CY = CANVAS_H / 2
 const INNER_R = 152
 const OUTER_R = 280
 
-// SA university module colours → a consistent orbit ring colour
+// Module colour tokens → hex. Must include every value in the ModuleColour union.
 const MODULE_COLORS: Record<string, string> = {
-  red:    '#f87171',
-  orange: '#fb923c',
-  amber:  '#fbbf24',
-  yellow: '#facc15',
-  lime:   '#a3e635',
-  green:  '#4ade80',
   teal:   '#4ecf9e',
-  cyan:   '#22d3ee',
-  sky:    '#38bdf8',
-  blue:   '#60a5fa',
-  indigo: '#818cf8',
-  violet: '#a78bfa',
+  coral:  '#f97316',
   purple: '#c084fc',
-  pink:   '#f472b6',
-  rose:   '#fb7185',
+  amber:  '#fbbf24',
+  blue:   '#60a5fa',
+  green:  '#4ade80',
 }
 
 function moduleColor(m: Module): string {
@@ -121,10 +112,12 @@ function moduleColor(m: Module): string {
   return MODULE_COLORS[raw.toLowerCase()] ?? '#4ecf9e'
 }
 
-function buildGraph(modules: Module[], exams: Exam[]): { nodes: Node[]; edges: Edge[] } {
+function buildGraph(modules: Module[], exams: Exam[]): { nodes: Node[]; edges: Edge[]; upcomingCount: number } {
   const nodes: Node[] = []
   const edges: Edge[] = []
-  const upcoming = exams.filter(e => new Date(e.exam_date) >= new Date())
+  // Compare date strings directly to avoid UTC-midnight timezone shift on date-only strings
+  const todayStr = new Date().toISOString().split('T')[0]
+  const upcoming = exams.filter(e => e.exam_date >= todayStr)
 
   // Center node
   nodes.push({
@@ -190,14 +183,12 @@ function buildGraph(modules: Module[], exams: Exam[]): { nodes: Node[]; edges: E
     })
   })
 
-  return { nodes, edges }
+  return { nodes, edges, upcomingCount: upcoming.length }
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function ModuleOrbitMap({ modules, exams }: Props) {
-  const { nodes, edges } = useMemo(() => buildGraph(modules, exams), [modules, exams])
-
-  const upcomingCount = exams.filter(e => new Date(e.exam_date) >= new Date()).length
+  const { nodes, edges, upcomingCount } = useMemo(() => buildGraph(modules, exams), [modules, exams])
 
   return (
     <div style={{
@@ -232,6 +223,7 @@ export default function ModuleOrbitMap({ modules, exams }: Props) {
             panOnScroll={false}
             zoomOnScroll={false}
             zoomOnPinch={false}
+            zoomOnDoubleClick={false}
             nodesDraggable={false}
             nodesConnectable={false}
             elementsSelectable={false}

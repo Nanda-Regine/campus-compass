@@ -76,11 +76,11 @@ class SignalBus {
     return this.history.slice(-n)
   }
 
-  // How many times has a given signal type fired in the last N minutes?
-  countRecent(type: SignalType, withinMins = 60): number {
-    const cutoff = Date.now() - withinMins * 60 * 1000
-    // Signals don't carry timestamps — history is ordered by emit time,
-    // so we use position as proxy. This is a best-effort count.
+  // Count how many times a given signal type appears in the rolling MAX_HISTORY window.
+  // Note: signals don't carry timestamps, so this is a count across recent history,
+  // not strictly within a time window. Callers that need temporal precision should
+  // add an emittedAt field to the Signal union and filter here instead.
+  countRecent(type: SignalType): number {
     return this.history.filter(s => s.type === type).length
   }
 }

@@ -539,12 +539,12 @@ export default function RegulationRoom({ userId, exams }: Props) {
     if (breathingProtocol) {
       const durationMap: Record<BreathProtocol, number> = { box: 240, physiological_sigh: 120, '478': 240 }
       const typeMap: Record<BreathProtocol, string> = { box: 'box_breathing', physiological_sigh: 'physiological_sigh', '478': '478_breath' }
-      saveSession(userId, typeMap[breathingProtocol], durationMap[breathingProtocol])
+      saveSession(userId, typeMap[breathingProtocol], durationMap[breathingProtocol]).catch(() => {})
     }
   }
 
   function handleTimerDone(type: string, seconds: number) {
-    saveSession(userId, type, seconds)
+    saveSession(userId, type, seconds).catch(() => {})
   }
 
   return (
