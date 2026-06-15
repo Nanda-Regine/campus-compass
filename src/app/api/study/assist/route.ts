@@ -1,9 +1,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
+import { callGroq, groqUnconfiguredResponse, GroqMissingKeyError } from '@/lib/groq'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
-import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,13 +19,11 @@ function parseAiJson(text: string): Record<string, unknown> | null {
 }
 
 export async function POST(request: NextRequest) {
-  const anthropicKey = process.env.ANTHROPIC_API_KEY
-  if (!anthropicKey) return anthropicUnconfiguredResponse()
-  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!process.env.GROQ_API_KEY) return groqUnconfiguredResponse()
 
     const rateCheck = await checkRateLimitAsync(user.id, 'study-assist', 10, 60_000)
     if (!rateCheck.allowed) {
@@ -86,13 +83,7 @@ Respond with valid JSON only:
   "motivationNote": <1 encouraging sentence>
 }`
 
-      const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1200,
-        messages: [{ role: 'user', content: prompt }],
-      })
-
-      const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
+      const rawText = await callGroq([{ role: 'user', content: prompt }], { maxTokens: 1200 })
       const plan = parseAiJson(rawText)
       if (!plan) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
 
@@ -131,13 +122,7 @@ Calculate precisely and explain clearly. Respond with valid JSON only:
   ]
 }`
 
-      const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
-        messages: [{ role: 'user', content: prompt }],
-      })
-
-      const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
+      const rawText = await callGroq([{ role: 'user', content: prompt }], { maxTokens: 600 })
       const result = parseAiJson(rawText)
       if (!result) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ result })
@@ -199,13 +184,7 @@ Respond with valid JSON only:
   "burnoutNote": <if burnout risk, 1 supportive sentence>
 }`
 
-      const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 800,
-        messages: [{ role: 'user', content: prompt }],
-      })
-
-      const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
+      const rawText = await callGroq([{ role: 'user', content: prompt }], { maxTokens: 800 })
       const analysis = parseAiJson(rawText)
       if (!analysis) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ analysis, tasks: taskList, exams: examList })
@@ -246,13 +225,7 @@ Respond with valid JSON only:
   "saResources": [<1-2 free SA-specific study resources, e.g. Siyavula, UCT OpenContent>]
 }`
 
-      const response = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1200,
-        messages: [{ role: 'user', content: prompt }],
-      })
-
-      const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
+      const rawText = await callGroq([{ role: 'user', content: prompt }], { maxTokens: 1200 })
       const guide = parseAiJson(rawText)
       if (!guide) return NextResponse.json({ error: 'AI response parse error — please try again' }, { status: 502 })
       return NextResponse.json({ guide })
@@ -260,6 +233,7 @@ Respond with valid JSON only:
 
     return NextResponse.json({ error: 'Unknown study assist type' }, { status: 400 })
   } catch (error) {
+    if (error instanceof GroqMissingKeyError) return groqUnconfiguredResponse()
     console.error('Study assist error:', error)
     return NextResponse.json({ error: 'Failed to generate study assistance' }, { status: 500 })
   }

@@ -6,26 +6,32 @@
 //   flashcard_decks  — id, user_id, name, module_id, module_name, color,
 //                       created_at, updated_at
 //   flashcard_cards  — id, deck_id, user_id, front, back,
-//                       interval_days, ease_factor, repetitions,
-//                       next_review (DATE), last_review (DATE | null),
+//                       interval_days (→ scheduled_days), ease_factor (→ difficulty),
+//                       repetitions (→ reps), next_review (→ due), last_review,
 //                       created_at, updated_at
 //
+// DB columns keep their original names; FSRS field names live in-app only.
 // Cards are deleted via ON DELETE CASCADE when the parent deck is deleted.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { createClient } from '@/lib/supabase/client'
 
-// ── App-level types (camelCase) ───────────────────────────────────────────────
+// ── App-level types (FSRS-5 fields) ──────────────────────────────────────────
 
 export interface Card {
-  id:          string
-  front:       string
-  back:        string
-  interval:    number        // days between reviews  (← interval_days)
-  easeFactor:  number        // SM-2 ease factor      (← ease_factor)
-  repetitions: number
-  nextReview:  string        // ISO date string YYYY-MM-DD (← next_review)
-  lastReview:  string | null //                           (← last_review)
+  id:             string
+  front:          string
+  back:           string
+  due:            string        // ISO date YYYY-MM-DD  (← next_review)
+  stability:      number        // estimated from interval_days on load
+  difficulty:     number        // FSRS difficulty 1–10 (← ease_factor)
+  elapsed_days:   number        // always 0 on DB load; computed live by FSRS
+  scheduled_days: number        // interval in days     (← interval_days)
+  reps:           number        // review count         (← repetitions)
+  lapses:         number        // always 0 on DB load; not stored
+  learning_steps: number        // position in learning step sequence; not stored in DB
+  state:          0 | 1 | 2 | 3 // New/Learning/Review/Relearning
+  last_review:    string | null //                      (← last_review)
 }
 
 export interface Deck {
@@ -52,32 +58,38 @@ interface DeckRow {
 }
 
 interface CardRow {
-  id:           string
-  deck_id:      string
-  user_id:      string
-  front:        string
-  back:         string
+  id:            string
+  deck_id:       string
+  user_id:       string
+  front:         string
+  back:          string
   interval_days: number
-  ease_factor:  number
-  repetitions:  number
-  next_review:  string
-  last_review:  string | null
-  created_at:   string
-  updated_at:   string
+  ease_factor:   number
+  repetitions:   number
+  next_review:   string
+  last_review:   string | null
+  created_at:    string
+  updated_at:    string
 }
 
 // ── Mappers ───────────────────────────────────────────────────────────────────
 
 function cardFromRow(row: CardRow): Card {
+  const reps = row.repetitions ?? 0
   return {
-    id:          row.id,
-    front:       row.front,
-    back:        row.back,
-    interval:    row.interval_days,
-    easeFactor:  row.ease_factor,
-    repetitions: row.repetitions,
-    nextReview:  row.next_review,
-    lastReview:  row.last_review,
+    id:             row.id,
+    front:          row.front,
+    back:           row.back,
+    due:            row.next_review,
+    stability:      Math.max(1, (row.interval_days ?? 0) * 0.5),
+    difficulty:     row.ease_factor ?? 5.0,
+    elapsed_days:   0,
+    scheduled_days: row.interval_days ?? 0,
+    reps,
+    lapses:         0,
+    learning_steps: 0,
+    state:          reps === 0 ? 0 : 2,
+    last_review:    row.last_review ?? null,
   }
 }
 
@@ -106,7 +118,6 @@ export async function loadDecksFromDB(): Promise<Deck[]> {
     const { data: { user }, error: authErr } = await supabase.auth.getUser()
     if (authErr || !user) return []
 
-    // Fetch all decks for this user
     const { data: deckRows, error: deckErr } = await supabase
       .from('flashcard_decks')
       .select('*')
@@ -120,7 +131,6 @@ export async function loadDecksFromDB(): Promise<Deck[]> {
 
     if (deckRows.length === 0) return []
 
-    // Fetch all cards for these decks in one query
     const deckIds = deckRows.map((d: DeckRow) => d.id)
 
     const { data: cardRows, error: cardErr } = await supabase
@@ -134,7 +144,6 @@ export async function loadDecksFromDB(): Promise<Deck[]> {
       return []
     }
 
-    // Group cards by deck_id
     const cardsByDeck = new Map<string, Card[]>()
     for (const row of (cardRows ?? []) as CardRow[]) {
       const list = cardsByDeck.get(row.deck_id) ?? []
@@ -169,7 +178,6 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
 
     const now = new Date().toISOString()
 
-    // Upsert deck row
     const { error: deckErr } = await supabase
       .from('flashcard_decks')
       .upsert(
@@ -191,7 +199,6 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
       return
     }
 
-    // Upsert all card rows
     if (deck.cards.length > 0) {
       const cardUpserts = deck.cards.map(card => ({
         id:            card.id,
@@ -199,11 +206,11 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
         user_id:       user.id,
         front:         card.front,
         back:          card.back,
-        interval_days: card.interval,
-        ease_factor:   card.easeFactor,
-        repetitions:   card.repetitions,
-        next_review:   card.nextReview,
-        last_review:   card.lastReview ?? null,
+        interval_days: card.scheduled_days,
+        ease_factor:   card.difficulty,
+        repetitions:   card.reps,
+        next_review:   card.due,
+        last_review:   card.last_review ?? null,
         updated_at:    now,
       }))
 
@@ -217,11 +224,9 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
       }
     }
 
-    // Delete cards that were removed from the deck (not in the new array)
     const currentCardIds = deck.cards.map(c => c.id)
 
     if (currentCardIds.length > 0) {
-      // Delete cards that belong to this deck but are not in the current list
       const { error: deleteErr } = await supabase
         .from('flashcard_cards')
         .delete()
@@ -233,7 +238,6 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
         console.error('[flashcards] saveDeckToDB card delete error:', deleteErr)
       }
     } else {
-      // No cards left — delete all cards for this deck
       const { error: deleteAllErr } = await supabase
         .from('flashcard_cards')
         .delete()
@@ -269,7 +273,7 @@ export async function deleteDeckFromDB(deckId: string): Promise<void> {
       .from('flashcard_decks')
       .delete()
       .eq('id', deckId)
-      .eq('user_id', user.id)   // safety: only delete own decks
+      .eq('user_id', user.id)
 
     if (error) {
       console.error('[flashcards] deleteDeckFromDB error:', error)
@@ -281,8 +285,8 @@ export async function deleteDeckFromDB(deckId: string): Promise<void> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. updateCardInDB
-//    Persists only the SM-2 scheduling fields after a review session.
-//    Avoids a full deck re-save when only a single card changed.
+//    Persists FSRS scheduling fields after a review session without a full
+//    deck re-save.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function updateCardInDB(card: Card, deckId: string): Promise<void> {
@@ -298,16 +302,16 @@ export async function updateCardInDB(card: Card, deckId: string): Promise<void> 
     const { error } = await supabase
       .from('flashcard_cards')
       .update({
-        interval_days: card.interval,
-        ease_factor:   card.easeFactor,
-        repetitions:   card.repetitions,
-        next_review:   card.nextReview,
-        last_review:   card.lastReview ?? null,
+        interval_days: card.scheduled_days,
+        ease_factor:   card.difficulty,
+        repetitions:   card.reps,
+        next_review:   card.due,
+        last_review:   card.last_review ?? null,
         updated_at:    new Date().toISOString(),
       })
       .eq('id', card.id)
       .eq('deck_id', deckId)
-      .eq('user_id', user.id)   // safety: only update own cards
+      .eq('user_id', user.id)
 
     if (error) {
       console.error('[flashcards] updateCardInDB error:', error)

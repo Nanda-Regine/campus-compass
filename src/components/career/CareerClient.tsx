@@ -860,6 +860,173 @@ function SkillGroup({ title, required, items, matched }: { title: string; requir
 }
 
 /* ══════════════════════════════════════════════════════════════
+   SA JOBS (ADZUNA)
+══════════════════════════════════════════════════════════════ */
+
+interface AdzunaJob {
+  id: string
+  title: string
+  company: { display_name: string }
+  location: { display_name: string }
+  description: string
+  redirect_url: string
+  salary_min?: number
+  salary_max?: number
+  created: string
+}
+
+function JobsTab() {
+  const [query, setQuery]     = useState('')
+  const [location, setLoc]    = useState('')
+  const [jobs, setJobs]       = useState<AdzunaJob[]>([])
+  const [count, setCount]     = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [error, setError]     = useState('')
+  const [unconfigured, setUnconfigured] = useState(false)
+  const [searched, setSearched] = useState(false)
+
+  async function search(e?: React.FormEvent) {
+    e?.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      const params = new URLSearchParams({ q: query, location })
+      const res = await fetch(`/api/career/jobs?${params}`)
+      if (!res.ok) { setError('Failed to load jobs. Try again.'); return }
+      const data = await res.json() as { results: AdzunaJob[]; count: number; unconfigured?: boolean }
+      if (data.unconfigured) { setUnconfigured(true); return }
+      setJobs(data.results ?? [])
+      setCount(data.count ?? 0)
+      setSearched(true)
+    } catch {
+      setError('Network error — check your connection.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (unconfigured) {
+    return (
+      <div style={{ textAlign: 'center', padding: '48px 0' }}>
+        <div style={{ fontSize: 36 }}>🔧</div>
+        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginTop: 12 }}>
+          Job search not configured
+        </p>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 6, maxWidth: 260, margin: '6px auto 0' }}>
+          Add ADZUNA_APP_ID and ADZUNA_APP_KEY to your environment variables to enable SA job listings.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Search bar */}
+      <form onSubmit={search} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Job title, skill, or keyword…"
+          style={{
+            padding: '10px 14px', borderRadius: 10, border: '0.5px solid rgba(74,158,245,0.3)',
+            background: 'rgba(74,158,245,0.05)', color: 'var(--text-primary)',
+            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none',
+          }}
+        />
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            value={location}
+            onChange={e => setLoc(e.target.value)}
+            placeholder="City (e.g. Cape Town, Johannesburg)"
+            style={{
+              flex: 1, padding: '10px 14px', borderRadius: 10, border: '0.5px solid rgba(74,158,245,0.3)',
+              background: 'rgba(74,158,245,0.05)', color: 'var(--text-primary)',
+              fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none',
+            }}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: '10px 18px', borderRadius: 10, border: 'none', cursor: loading ? 'default' : 'pointer',
+              background: loading ? 'rgba(74,158,245,0.15)' : '#4A9EF5',
+              color: loading ? 'rgba(255,255,255,0.4)' : '#0a1628',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem',
+              flexShrink: 0,
+            }}
+          >
+            {loading ? '…' : 'Search'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(255,107,107,0.08)', border: '0.5px solid rgba(255,107,107,0.2)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#ff6b6b' }}>
+          {error}
+        </div>
+      )}
+
+      {searched && !loading && (
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)' }}>
+          {count.toLocaleString()} jobs found in South Africa
+        </div>
+      )}
+
+      {!searched && !loading && (
+        <div style={{ textAlign: 'center', padding: '36px 0' }}>
+          <div style={{ fontSize: 36 }}>💼</div>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 10 }}>
+            Search thousands of SA graduate jobs, internships, and part-time roles
+          </p>
+        </div>
+      )}
+
+      {jobs.map(job => (
+        <a
+          key={job.id}
+          href={job.redirect_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none' }}
+        >
+          <div style={{
+            borderRadius: 14, padding: '14px 16px',
+            background: 'rgba(74,158,245,0.04)',
+            border: '0.5px solid rgba(74,158,245,0.15)',
+            transition: 'border-color 0.15s',
+          }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: 4 }}>
+              {job.title}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4A9EF5' }}>
+                {job.company.display_name}
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text-tertiary)' }}>
+                📍 {job.location.display_name}
+              </span>
+              {(job.salary_min || job.salary_max) && (
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#4ecf9e' }}>
+                  R{job.salary_min ? Math.round(job.salary_min / 1000) + 'k' : '?'}
+                  {job.salary_max ? ` – R${Math.round(job.salary_max / 1000)}k` : '+'}
+                </span>
+              )}
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-secondary)',
+              lineHeight: 1.5,
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+            }}>
+              {job.description.replace(/<[^>]*>/g, '').slice(0, 200)}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════
    MAIN CAREER CLIENT
 ══════════════════════════════════════════════════════════════ */
 
@@ -867,6 +1034,7 @@ const TABS = [
   { id: 'cv',        label: 'CV Builder',    icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
   { id: 'interview', label: 'Mock Interview', icon: '🎤', accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
   { id: 'skills',    label: 'Skills Gap',    icon: '🎯', accent: '#c084fc', glow: 'rgba(192,132,252,0.2)' },
+  { id: 'jobs',      label: 'SA Jobs',       icon: '💼', accent: '#4A9EF5', glow: 'rgba(74,158,245,0.2)' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -931,9 +1099,10 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
 
       {/* Content */}
       <div className="max-w-2xl mx-auto px-4 py-4">
-        {activeTab === 'cv'        && <CVBuilder     profile={profile} modules={modules} />}
+        {activeTab === 'cv'        && <CVBuilder      profile={profile} modules={modules} />}
         {activeTab === 'interview' && <MockInterviewer profile={profile} modules={modules} />}
-        {activeTab === 'skills'    && <SkillsGap     modules={modules} />}
+        {activeTab === 'skills'    && <SkillsGap      modules={modules} />}
+        {activeTab === 'jobs'      && <JobsTab />}
       </div>
     </div>
   )

@@ -4,6 +4,74 @@ import { createClient } from '@/lib/supabase/client'
 import { useState, useEffect, useRef } from 'react'
 import type { PastPaper, PaperType, PaperInsights } from '@/types'
 
+const ACCENT = '#4ecf9e'
+
+function TopicFrequencyChart({ papers }: { papers: PastPaper[] }) {
+  const allTopics: Record<string, number> = {}
+  papers.forEach(p => {
+    if (p.ai_insights?.topTopics) {
+      p.ai_insights.topTopics.forEach(t => {
+        allTopics[t.topic] = (allTopics[t.topic] ?? 0) + t.frequency
+      })
+    }
+  })
+  const sorted = Object.entries(allTopics)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+  const max = sorted[0]?.[1] ?? 1
+  return (
+    <div className="flex flex-col gap-2">
+      {sorted.map(([topic, freq]) => (
+        <div key={topic}>
+          <div className="flex justify-between mb-1">
+            <span style={{ color: '#e5e7eb', fontSize: '13px' }}>{topic}</span>
+            <span style={{ color: '#9ca3af', fontSize: '12px' }}>{freq}x</span>
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '4px', height: '8px' }}>
+            <div
+              style={{
+                width: `${(freq / max) * 100}%`,
+                background: 'rgba(78,207,158,0.6)',
+                borderRadius: '4px',
+                height: '8px',
+                transition: 'width 0.4s ease',
+              }}
+            />
+          </div>
+        </div>
+      ))}
+      {sorted.length === 0 && (
+        <p style={{ color: '#9ca3af', fontSize: '13px' }}>No topic data yet. Upload papers to see patterns.</p>
+      )}
+    </div>
+  )
+}
+
+function AllQuestions({ papers }: { papers: PastPaper[] }) {
+  const seen = new Set<string>()
+  const questions: string[] = []
+  papers.forEach(p => {
+    p.ai_insights?.likelyQuestions?.forEach(q => {
+      const key = q.toLowerCase().trim()
+      if (!seen.has(key)) {
+        seen.add(key)
+        questions.push(q)
+      }
+    })
+  })
+  if (questions.length === 0) return <p style={{ color: '#9ca3af', fontSize: '13px' }}>No predicted questions yet.</p>
+  return (
+    <div className="flex flex-col gap-2">
+      {questions.map((q, i) => (
+        <div key={i} className="flex gap-2 items-start">
+          <span style={{ color: ACCENT, fontSize: '12px', marginTop: '3px' }}>→</span>
+          <span style={{ color: '#d1fae5', fontSize: '13px' }}>{q}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 interface Props {
   userId: string
 }
@@ -19,7 +87,6 @@ interface UploadForm {
   extracted_text: string
 }
 
-const ACCENT = '#4ecf9e'
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 2014 }, (_, i) => CURRENT_YEAR - i)
 
@@ -41,6 +108,12 @@ export default function PastPaperVault({ userId }: Props) {
   const [ocrProgress, setOcrProgress] = useState(0)
   const [scanError, setScanError] = useState('')
   const pendingFileRef = useRef<File | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const workerRef = useRef<any>(null)
+
+  useEffect(() => {
+    return () => { workerRef.current?.terminate() }
+  }, [])
 
   async function fetchPapers() {
     const supabase = createClient()
@@ -100,15 +173,16 @@ export default function PastPaperVault({ userId }: Props) {
     setScanError('')
     try {
       const { createWorker } = await import('tesseract.js')
-      const worker = await createWorker('eng', 1, {
+      workerRef.current = await createWorker('eng', 1, {
         logger: (m: { status: string; progress: number }) => {
           if (m.status === 'recognizing text') {
             setOcrProgress(Math.round(m.progress * 100))
           }
         },
       })
-      const { data: { text } } = await worker.recognize(file)
-      await worker.terminate()
+      const { data: { text } } = await workerRef.current.recognize(file)
+      await workerRef.current.terminate()
+      workerRef.current = null
       const cleaned = text.replace(/\r\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim()
       setUploadForm(f => ({ ...f, extracted_text: cleaned }))
       setScanState('done')
@@ -136,72 +210,6 @@ export default function PastPaperVault({ userId }: Props) {
     { id: 'papers',  label: `My Papers (${papers.length})` },
     { id: 'insights',label: 'Insights' },
   ]
-
-  function TopicFrequencyChart() {
-    const allTopics: Record<string, number> = {}
-    papers.forEach(p => {
-      if (p.ai_insights?.topTopics) {
-        p.ai_insights.topTopics.forEach(t => {
-          allTopics[t.topic] = (allTopics[t.topic] ?? 0) + t.frequency
-        })
-      }
-    })
-    const sorted = Object.entries(allTopics)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-    const max = sorted[0]?.[1] ?? 1
-    return (
-      <div className="flex flex-col gap-2">
-        {sorted.map(([topic, freq]) => (
-          <div key={topic}>
-            <div className="flex justify-between mb-1">
-              <span style={{ color: '#e5e7eb', fontSize: '13px' }}>{topic}</span>
-              <span style={{ color: '#9ca3af', fontSize: '12px' }}>{freq}x</span>
-            </div>
-            <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '4px', height: '8px' }}>
-              <div
-                style={{
-                  width: `${(freq / max) * 100}%`,
-                  background: 'rgba(78,207,158,0.6)',
-                  borderRadius: '4px',
-                  height: '8px',
-                  transition: 'width 0.4s ease',
-                }}
-              />
-            </div>
-          </div>
-        ))}
-        {sorted.length === 0 && (
-          <p style={{ color: '#9ca3af', fontSize: '13px' }}>No topic data yet. Upload papers to see patterns.</p>
-        )}
-      </div>
-    )
-  }
-
-  function AllQuestions() {
-    const seen = new Set<string>()
-    const questions: string[] = []
-    papers.forEach(p => {
-      p.ai_insights?.likelyQuestions?.forEach(q => {
-        const key = q.toLowerCase().trim()
-        if (!seen.has(key)) {
-          seen.add(key)
-          questions.push(q)
-        }
-      })
-    })
-    if (questions.length === 0) return <p style={{ color: '#9ca3af', fontSize: '13px' }}>No predicted questions yet.</p>
-    return (
-      <div className="flex flex-col gap-2">
-        {questions.map((q, i) => (
-          <div key={i} className="flex gap-2 items-start">
-            <span style={{ color: ACCENT, fontSize: '12px', marginTop: '3px' }}>→</span>
-            <span style={{ color: '#d1fae5', fontSize: '13px' }}>{q}</span>
-          </div>
-        ))}
-      </div>
-    )
-  }
 
   const totalPrepHours = papers.reduce((acc, p) => acc + (p.ai_insights?.estimatedPrepHours ?? 0), 0)
 
@@ -640,7 +648,7 @@ export default function PastPaperVault({ userId }: Props) {
                 padding: '20px',
               }}>
                 <p style={{ color: ACCENT, fontSize: '13px', fontWeight: 600, marginBottom: '16px' }}>Topic Frequency Across Papers</p>
-                <TopicFrequencyChart />
+                <TopicFrequencyChart papers={papers} />
               </div>
 
               <div style={{
@@ -650,7 +658,7 @@ export default function PastPaperVault({ userId }: Props) {
                 padding: '20px',
               }}>
                 <p style={{ color: ACCENT, fontSize: '13px', fontWeight: 600, marginBottom: '16px' }}>High-Probability Questions</p>
-                <AllQuestions />
+                <AllQuestions papers={papers} />
               </div>
 
               <div style={{

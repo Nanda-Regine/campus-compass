@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import PullToRefresh from '@/components/ui/PullToRefresh'
@@ -90,12 +90,16 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
   const [triggerAdd, setTriggerAdd] = useState(0)
   const [hour, setHour] = useState(new Date().getHours())
   const supabase = useMemo(() => createClient(), [])
+  // True once the store has been seeded on mount; avoids falling back to stale
+  // initialData when the store is intentionally empty (e.g. user deleted all tasks).
+  const storeSeeded = useRef(false)
 
   useEffect(() => {
     store.setModules(initialData.modules)
     store.setTasks(initialData.tasks)
     store.setTimetable(initialData.timetable)
     store.setExams(initialData.exams)
+    storeSeeded.current = true
     const tick = setInterval(() => setHour(new Date().getHours()), 60_000)
     return () => clearInterval(tick)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,10 +122,10 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
   }, [supabase, store])
 
   const userId    = initialData.userId
-  const modules   = store.modules.length   ? store.modules   : initialData.modules
-  const tasks     = store.tasks.length     ? store.tasks     : initialData.tasks
-  const timetable = store.timetable.length ? store.timetable : initialData.timetable
-  const exams     = store.exams.length     ? store.exams     : initialData.exams
+  const modules   = storeSeeded.current ? store.modules   : initialData.modules
+  const tasks     = storeSeeded.current ? store.tasks     : initialData.tasks
+  const timetable = storeSeeded.current ? store.timetable : initialData.timetable
+  const exams     = storeSeeded.current ? store.exams     : initialData.exams
 
   const today          = new Date().toISOString().split('T')[0]
   const pendingTasks   = tasks.filter(t => t.status !== 'done')

@@ -433,9 +433,10 @@ export async function POST(request: NextRequest) {
             typeof i.detail === 'string'
           )
           .map(i => ({
-            strength: String(i.strength).slice(0, 20),
-            text: String(i.text).slice(0, 200),
-            detail: String(i.detail).slice(0, 300),
+            key:      typeof i.key === 'string' ? String(i.key).slice(0, 50) : '',
+            strength: String(i.strength).slice(0, 20) as CorrelationInsight['strength'],
+            text:     String(i.text).slice(0, 200),
+            detail:   String(i.detail).slice(0, 300),
           }))
       : null
 

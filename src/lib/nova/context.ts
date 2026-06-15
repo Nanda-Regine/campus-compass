@@ -261,7 +261,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     // Safety incidents at their institution in last 48h (graceful — may be empty)
     supabase
       .from('safety_incidents')
-      .select('id,severity')
+      .select('id,severity,institution')
       .gte('created_at', safety48hAgo),
   ])
 
@@ -287,11 +287,11 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     emergency_contact_name: rawProfile?.emergency_contact_name || null,
     emergency_contact_number: rawProfile?.emergency_contact_number || null,
     plan: rawProfile?.plan || 'free',
-    nova_messages_used: rawProfile?.nova_messages_used || 0,
-    nova_messages_limit: rawProfile?.nova_messages_limit || 15,
+    nova_messages_used: rawProfile?.nova_messages_used ?? 0,
+    nova_messages_limit: rawProfile?.nova_messages_limit ?? 15,
     preferred_language: rawProfile?.preferred_language || 'en',
     ai_language: rawProfile?.ai_language || 'English',
-    streak_count: rawProfile?.streak_count || 0,
+    streak_count: rawProfile?.streak_count ?? 0,
   }
 
   // ── Budget ───────────────────────────────────────────────────────────────
@@ -417,8 +417,11 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   const cyclePhase = (cycleRes.data?.phase as string | null) ?? null
   const cycleEnergyLevel = (cycleRes.data?.energy_level as number | null) ?? null
 
-  // Safety incidents count
-  const recentSafetyIncidents = (safetyIncidentsRes.data || []).length
+  // Safety incidents count — filtered to user's institution only
+  const safetyData = (safetyIncidentsRes.data || []) as Array<{ id: string; severity: string; institution: string }>
+  const recentSafetyIncidents = safetyData.filter(inc =>
+    !rawProfile?.university || inc.institution === rawProfile.university
+  ).length
 
   const wellness: NovaWellnessContext = {
     moodAvg,

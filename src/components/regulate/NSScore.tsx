@@ -44,6 +44,8 @@ export default function NSScore({ userId }: Props) {
   const [sleep, setSleep] = useState(3)
   const [stress, setStress] = useState(3)
   const [energy, setEnergy] = useState(3)
+  const [social, setSocial] = useState(3)
+  const [motivation, setMotivation] = useState(3)
   const [saving, setSaving] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
@@ -65,24 +67,21 @@ export default function NSScore({ userId }: Props) {
 
   async function handleCheckin() {
     setSaving(true)
-    // Use calcBurnout so the stored score matches what the display dial shows.
-    // social and motivation default to 3 (modal only collects sleep/stress/energy).
-    const burnout = calcBurnout({ date: today, sleep, stress, energy, social: 3, motivation: 3, score: 0 } as CheckIn)
+    const burnout = calcBurnout({ date: today, sleep, stress, energy, social, motivation, score: 0 } as CheckIn)
     const score = Math.max(0, Math.min(100, burnout))
-    const { error } = await saveWellnessCheckin({
-      date: today,
-      sleep,
-      stress,
-      energy,
-      social: 3,
-      motivation: 3,
-      score,
-    })
+    const nsScore = Math.max(0, Math.min(100, 100 - score))
+    const supabase = createClient()
+    const { error } = await saveWellnessCheckin({ date: today, sleep, stress, energy, social, motivation, score })
     if (!error) {
+      // Write to nervous_system_scores so Nova context has a real nsScore
+      await supabase.from('nervous_system_scores').upsert({
+        user_id: userId,
+        score_date: today,
+        ns_score: nsScore,
+        contributing_factors: { sleep, stress, energy, social, motivation },
+      }, { onConflict: 'user_id,score_date' })
       dispatchXP('wellness_checkin')
-      const nsScore = Math.max(0, Math.min(100, 100 - score))
       signals.emit({ type: 'ns_score_updated', payload: { score: nsScore } })
-      const supabase = createClient()
       const { data } = await supabase
         .from('wellness_checkins')
         .select('*')
@@ -180,6 +179,8 @@ export default function NSScore({ userId }: Props) {
               { label: 'Sleep quality', value: sleep, set: setSleep },
               { label: 'Stress level', value: stress, set: setStress },
               { label: 'Energy level', value: energy, set: setEnergy },
+              { label: 'Social connection', value: social, set: setSocial },
+              { label: 'Motivation', value: motivation, set: setMotivation },
             ] as { label: string; value: number; set: (v: number) => void }[]).map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: 20 }}>
                 <div className="flex justify-between mb-1">

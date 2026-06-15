@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, type CSSProperties } from 'react'
-import { Plus, Trash2, ChevronLeft, Layers, BookOpen, Edit3, Check } from 'lucide-react'
+import { Trash2, ChevronLeft, Edit3 } from 'lucide-react'
+import { FSRS, createEmptyCard, generatorParameters, Rating, type Card as FSRSCard } from 'ts-fsrs'
 import type { Module } from '@/types'
 import { dispatchXP } from '@/lib/xp-engine'
 import { MODULE_COLOURS } from '@/types'
@@ -12,14 +13,20 @@ import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface Card {
-  id:          string
-  front:       string
-  back:        string
-  interval:    number        // days between reviews
-  easeFactor:  number        // SM-2 ease factor, starts 2.5
-  repetitions: number
-  nextReview:  string        // ISO date string
-  lastReview:  string | null
+  id:             string
+  front:          string
+  back:           string
+  // FSRS-5 scheduling state
+  due:            string        // ISO date YYYY-MM-DD
+  stability:      number
+  difficulty:     number
+  elapsed_days:   number
+  scheduled_days: number
+  reps:           number
+  lapses:         number
+  learning_steps: number        // position in the learning step sequence
+  state:          0 | 1 | 2 | 3  // New / Learning / Review / Relearning
+  last_review:    string | null
 }
 
 interface Deck {
@@ -32,43 +39,84 @@ interface Deck {
   createdAt:  string
 }
 
-// ── SM-2 algorithm ────────────────────────────────────────────────────────────
-// quality: 0=Again  1=Hard  2=Good  3=Easy
+// ── FSRS-5 algorithm ─────────────────────────────────────────────────────────
+// Ratings: 1=Again  2=Hard  3=Good  4=Easy
 
-function sm2(card: Card, quality: 0 | 1 | 2 | 3): Card {
-  const today = new Date().toISOString().split('T')[0]
-  let { interval, easeFactor, repetitions } = card
+const _fsrs = new FSRS(generatorParameters({ enable_fuzz: true }))
 
-  if (quality < 2) {
-    // Forgotten — reset
-    interval    = 1
-    repetitions = 0
-  } else {
-    // Remembered
-    if (repetitions === 0)      interval = 1
-    else if (repetitions === 1) interval = 6
-    else interval = Math.round(interval * easeFactor)
-
-    easeFactor = Math.max(1.3, easeFactor + 0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02))
-    repetitions++
+function rateCard(card: Card, rating: 1 | 2 | 3 | 4): Card {
+  const now = new Date()
+  const fsrsCard: FSRSCard = {
+    due:            new Date(card.due),
+    stability:      card.stability,
+    difficulty:     card.difficulty,
+    elapsed_days:   card.elapsed_days,
+    scheduled_days: card.scheduled_days,
+    reps:           card.reps,
+    lapses:         card.lapses,
+    learning_steps: card.learning_steps,
+    state:          card.state,
+    last_review:    card.last_review ? new Date(card.last_review) : undefined,
   }
-
-  const next = new Date()
-  next.setDate(next.getDate() + interval)
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = (_fsrs.repeat(fsrsCard, now) as any)[rating] as { card: FSRSCard }
+  const next   = result.card
   return {
     ...card,
-    interval,
-    easeFactor,
-    repetitions,
-    lastReview: today,
-    nextReview: next.toISOString().split('T')[0],
+    due:            next.due.toISOString().split('T')[0],
+    stability:      next.stability,
+    difficulty:     next.difficulty,
+    elapsed_days:   next.elapsed_days,
+    scheduled_days: next.scheduled_days,
+    reps:           next.reps,
+    lapses:         next.lapses,
+    learning_steps: next.learning_steps ?? 0,
+    state:          next.state as 0 | 1 | 2 | 3,
+    last_review:    now.toISOString().split('T')[0],
   }
 }
 
 function isDue(card: Card): boolean {
-  const today = new Date().toISOString().split('T')[0]
-  return card.nextReview <= today
+  return card.due <= new Date().toISOString().split('T')[0]
+}
+
+// ── Migrate old SM-2 cards to FSRS on first load ─────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function migrateCard(raw: Record<string, any>): Card {
+  if (typeof raw.due === 'string' && typeof raw.stability === 'number') {
+    return { learning_steps: 0, ...raw } as Card  // Already FSRS; backfill learning_steps if absent
+  }
+  const reps = (raw.repetitions as number) ?? 0
+  return {
+    id:            raw.id as string,
+    front:         raw.front as string,
+    back:          raw.back as string,
+    due:            (raw.nextReview as string) ?? today(),
+    stability:      Math.max(1, (raw.interval as number) ?? 0),
+    difficulty:     5.0,
+    elapsed_days:   0,
+    scheduled_days: (raw.interval as number) ?? 0,
+    reps,
+    lapses:         0,
+    learning_steps: 0,
+    state:          reps === 0 ? 0 : 2,
+    last_review:    (raw.lastReview as string | null) ?? null,
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function migrateDeck(raw: Record<string, any>): Deck {
+  return {
+    id:         raw.id as string,
+    name:       raw.name as string,
+    moduleId:   raw.moduleId as string | null,
+    moduleName: raw.moduleName as string,
+    color:      raw.color as string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cards:      ((raw.cards as any[]) ?? []).map(migrateCard),
+    createdAt:  raw.createdAt as string,
+  }
 }
 
 // ── localStorage helpers ──────────────────────────────────────────────────────
@@ -77,7 +125,11 @@ const LS_KEY = 'varsityos_flashcard_decks'
 
 function loadDecks(): Deck[] {
   if (typeof window === 'undefined') return []
-  try { return JSON.parse(localStorage.getItem(LS_KEY) ?? '[]') as Deck[] }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw = JSON.parse(localStorage.getItem(LS_KEY) ?? '[]') as Record<string, any>[]
+    return raw.map(migrateDeck)
+  }
   catch { return [] }
 }
 function saveDecks(decks: Deck[]) {
@@ -89,7 +141,22 @@ function uid() { return Math.random().toString(36).slice(2, 9) }
 function today() { return new Date().toISOString().split('T')[0] }
 
 function newCard(front: string, back: string): Card {
-  return { id: uid(), front, back, interval: 0, easeFactor: 2.5, repetitions: 0, nextReview: today(), lastReview: null }
+  const empty = createEmptyCard()
+  return {
+    id:            uid(),
+    front,
+    back,
+    due:           today(),
+    stability:     empty.stability,
+    difficulty:    empty.difficulty,
+    elapsed_days:  empty.elapsed_days,
+    scheduled_days: empty.scheduled_days,
+    reps:           empty.reps,
+    lapses:         empty.lapses,
+    learning_steps: empty.learning_steps ?? 0,
+    state:          empty.state as 0 | 1 | 2 | 3,
+    last_review:    null,
+  }
 }
 
 // ── Module colour lookup ──────────────────────────────────────────────────────
@@ -103,9 +170,9 @@ function moduleAccent(modules: Module[], id: string | null): string {
   return MODULE_COLOURS[mod.color]?.dot ?? '#4ecf9e'
 }
 
-// ── SM-2 explainer ────────────────────────────────────────────────────────────
+// ── FSRS explainer ────────────────────────────────────────────────────────────
 
-function SM2Explainer() {
+function FSRSExplainer() {
   const [open, setOpen] = useState(false)
   return (
     <div style={{
@@ -124,7 +191,7 @@ function SM2Explainer() {
         <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <span style={{ fontSize: 12 }}>🧠</span>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 700, color: '#818CF8', letterSpacing: '0.06em' }}>
-            How SM-2 spaced repetition works
+            How FSRS-5 spaced repetition works
           </span>
         </span>
         <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
@@ -132,13 +199,13 @@ function SM2Explainer() {
       {open && (
         <div style={{ padding: '0 14px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           <p style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-            SM-2 (SuperMemo 2) is the algorithm behind the most effective flashcard apps. It schedules each card based on how well you remember it — cards you find easy come back much later; cards you struggle with come back tomorrow.
+            FSRS-5 (Free Spaced Repetition Scheduler) is the current state-of-the-art memory algorithm — measurably more accurate than SM-2. It models your memory using two parameters: <em>stability</em> (how long a memory lasts) and <em>difficulty</em> (how hard a card is for you personally).
           </p>
           {[
-            { label: 'The forgetting curve', text: 'Within 24 hours of learning, you forget ~70% of new information (Ebbinghaus, 1885). SM-2 schedules a review just before you forget, reinforcing the memory at the perfect moment.' },
-            { label: 'Ease factor', text: 'Each card has an ease factor (starts at 2.5). If you rate a card "Again" or "Hard", the factor drops — intervals stay short. "Easy" ratings push it up — the card disappears for weeks or months.' },
-            { label: 'How intervals work', text: 'Review 1: next day. Review 2: 6 days later. Review 3+: interval × ease factor. A card with factor 2.5 reviewed every 6 days grows to 15 days, then 38 days, then 95 days — exponentially.' },
-            { label: 'Why it matters', text: 'Students who use spaced repetition score 50–90% higher on retention tests vs re-reading. 20 minutes of SM-2 flashcards beats 2 hours of passive review.' },
+            { label: 'Stability & difficulty', text: 'Every card tracks its own stability (how quickly you forget it) and difficulty (1–10). Easy cards build stability fast; hard cards need more reviews at shorter intervals. FSRS learns your patterns over time.' },
+            { label: 'Optimal interval', text: 'FSRS schedules your next review at exactly the moment your recall probability would drop below 90%. This is mathematically optimal — no wasted reviews, no forgotten cards. SM-2 approximated this; FSRS computes it.' },
+            { label: 'Four ratings', text: 'Again (forgot) · Hard (struggled) · Good (remembered with effort) · Easy (instant recall). Each updates the card\'s stability and difficulty independently, so your review schedule adapts to you specifically.' },
+            { label: 'Why it matters', text: 'In independent benchmarks, FSRS achieves ~10–20% better retention than SM-2 at the same number of reviews. For a 200-card deck studied over a semester, that\'s real grade-point difference.' },
           ].map(item => (
             <div key={item.label} style={{ paddingLeft: 8, borderLeft: '2px solid rgba(129,140,248,0.35)' }}>
               <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#818CF8', marginBottom: 2 }}>{item.label}</div>
@@ -205,8 +272,8 @@ function DeckListScreen({
         </div>
       )}
 
-      {/* SM-2 How it works — collapsible */}
-      <SM2Explainer />
+      {/* FSRS-5 How it works — collapsible */}
+      <FSRSExplainer />
 
       {/* Deck cards */}
       {decks.length === 0 ? (
@@ -226,7 +293,7 @@ function DeckListScreen({
         decks.map(deck => {
           const due    = deck.cards.filter(isDue).length
           const total  = deck.cards.length
-          const mastered = deck.cards.filter(c => c.repetitions >= 3).length
+          const mastered = deck.cards.filter(c => c.reps >= 3).length
 
           return (
             <div key={deck.id} style={{
@@ -441,9 +508,9 @@ function DeckEditorScreen({
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
                       {c.back}
                     </div>
-                    {c.repetitions > 0 && (
+                    {c.reps > 0 && (
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: accentColor, marginTop: 4 }}>
-                        {c.repetitions}× reviewed · due {c.nextReview}
+                        {c.reps}× reviewed · due {c.due}
                       </div>
                     )}
                   </div>
@@ -480,7 +547,7 @@ function StudyScreen({
   deck, onRate, onBack,
 }: {
   deck:   Deck
-  onRate: (cardId: string, quality: 0 | 1 | 2 | 3) => void
+  onRate: (cardId: string, rating: 1 | 2 | 3 | 4) => void
   onBack: () => void
 }) {
   const dueCards = deck.cards.filter(isDue)
@@ -493,8 +560,8 @@ function StudyScreen({
 
   function flip() { setFlipped(true); setPhase('back') }
 
-  function rate(q: 0 | 1 | 2 | 3) {
-    onRate(card.id, q)
+  function rate(rating: 1 | 2 | 3 | 4) {
+    onRate(card.id, rating)
     const next = idx + 1
     if (next >= dueCards.length) {
       dispatchXP('flashcard_review')
@@ -627,12 +694,12 @@ function StudyScreen({
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
             {([
-              { q: 0 as const, label: 'Again',  sub: 'Reset',  color: '#ff6b6b' },
-              { q: 1 as const, label: 'Hard',   sub: '< 1 day', color: '#e8834a' },
-              { q: 2 as const, label: 'Good',   sub: 'Next', color: '#7090d0' },
-              { q: 3 as const, label: 'Easy',   sub: 'Skip',  color: '#4ecf9e' },
-            ]).map(({ q, label, sub, color }) => (
-              <button key={q} onClick={() => rate(q)} style={{
+              { r: 1 as const, label: 'Again', sub: 'Forgot',   color: '#ff6b6b' },
+              { r: 2 as const, label: 'Hard',  sub: 'Struggled', color: '#e8834a' },
+              { r: 3 as const, label: 'Good',  sub: 'Recalled',  color: '#7090d0' },
+              { r: 4 as const, label: 'Easy',  sub: 'Instant',   color: '#4ecf9e' },
+            ]).map(({ r, label, sub, color }) => (
+              <button key={r} onClick={() => rate(r)} style={{
                 padding: '10px 4px', borderRadius: 10, border: `0.5px solid ${color}40`,
                 background: `${color}12`, cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.72rem',
@@ -756,13 +823,13 @@ export default function FlashcardsTab({ modules }: Props) {
     if (isPremium) deleteDeckFromDB(id).catch(() => {})
   }
 
-  function handleRate(deckId: string, cardId: string, quality: 0 | 1 | 2 | 3) {
+  function handleRate(deckId: string, cardId: string, rating: 1 | 2 | 3 | 4) {
     let ratedCard: Card | undefined
     const updated = decks.map(d => {
       if (d.id !== deckId) return d
       return { ...d, cards: d.cards.map(c => {
         if (c.id !== cardId) return c
-        ratedCard = sm2(c, quality)
+        ratedCard = rateCard(c, rating)
         return ratedCard
       })}
     })
@@ -792,7 +859,7 @@ export default function FlashcardsTab({ modules }: Props) {
     return (
       <StudyScreen
         deck={deck}
-        onRate={(cardId, q) => handleRate(deck.id, cardId, q)}
+        onRate={(cardId, r) => handleRate(deck.id, cardId, r)}
         onBack={() => setScreen({ type: 'list' })}
       />
     )
@@ -805,7 +872,7 @@ export default function FlashcardsTab({ modules }: Props) {
         <button
           onClick={() => showUpgrade(
             'Flashcard cloud sync',
-            'Your decks and SM-2 progress sync across devices and are never lost. Upgrade to Nova Scholar to unlock cloud sync.',
+            'Your decks and FSRS progress sync across devices and are never lost. Upgrade to Nova Scholar to unlock cloud sync.',
           )}
           style={{
             width: '100%', display: 'flex', alignItems: 'center', gap: 10,
