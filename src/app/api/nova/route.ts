@@ -11,12 +11,14 @@ import { NOVA_KNOWLEDGE_BASE } from '@/lib/nova-knowledge-base'
 import { detectPrebuilt, detectTopicResources, formatResourceLinks } from '@/lib/nova-resources'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-  defaultHeaders: {
-    'anthropic-beta': 'prompt-caching-2024-07-31',
-  },
-})
+function makeAnthropicClient(): Anthropic | null {
+  const key = process.env.ANTHROPIC_API_KEY
+  if (!key) return null
+  return new Anthropic({
+    apiKey: key,
+    defaultHeaders: { 'anthropic-beta': 'prompt-caching-2024-07-31' },
+  })
+}
 
 // ─── XP level lookup (mirrors xp-engine.ts — server-safe, no 'use client') ─
 const XP_LEVELS = [
@@ -387,6 +389,11 @@ ${proactiveBlock}
 
 export async function POST(request: NextRequest) {
   try {
+    const anthropic = makeAnthropicClient()
+    if (!anthropic) {
+      return NextResponse.json({ error: 'AI service is temporarily unavailable' }, { status: 503 })
+    }
+
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -417,7 +424,19 @@ export async function POST(request: NextRequest) {
       : []
     const mood: string | undefined = body?.mood
     const correlationInsights: CorrelationInsight[] | null = Array.isArray(body?.correlationInsights)
-      ? (body.correlationInsights as CorrelationInsight[]).slice(0, 5)
+      ? (body.correlationInsights as CorrelationInsight[])
+          .slice(0, 5)
+          .filter(i =>
+            i && typeof i === 'object' &&
+            typeof i.strength === 'string' &&
+            typeof i.text === 'string' &&
+            typeof i.detail === 'string'
+          )
+          .map(i => ({
+            strength: String(i.strength).slice(0, 20),
+            text: String(i.text).slice(0, 200),
+            detail: String(i.detail).slice(0, 300),
+          }))
       : null
 
     // Image attachment (optional) — base64 data + MIME type sent from client after compression

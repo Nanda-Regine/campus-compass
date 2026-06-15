@@ -53,8 +53,9 @@ export async function GET() {
   const streakPercentile = computePercentile(myStreak, peerStreaks)
 
   // ── Study velocity percentile (last 7 days) ───────────────────
-  // Get study session totals for peers in this cohort
-  const peerIds = (peers ?? []).map(p => p.id as string)
+  // Cap peer IDs for downstream .in() queries — 100 is statistically sufficient
+  // for percentile estimates and prevents URL/query size blowout at 500 peers.
+  const peerIds = (peers ?? []).map(p => p.id as string).slice(0, 100)
 
   const { data: peerSessions } = await admin
     .from('study_sessions')

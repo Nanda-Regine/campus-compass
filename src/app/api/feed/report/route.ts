@@ -1,22 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-
-function makeSupabase() {
-  const cookieStore = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  )
-}
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 const VALID_REASONS = ['spam', 'harassment', 'hate_speech', 'misinformation', 'other'] as const
 type Reason = typeof VALID_REASONS[number]
 
 // POST /api/feed/report — report a campus post
 export async function POST(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

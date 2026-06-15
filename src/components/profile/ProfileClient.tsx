@@ -164,7 +164,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
     setCancelling(true)
     setCancelError(null)
     try {
-      const res = await fetch('/api/payfast/cancel', { method: 'POST' })
+      const res = await fetch('/api/payfast/cancel', { method: 'POST', signal: AbortSignal.timeout(10000) })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Cancellation failed')
       setCancelled(true)
@@ -307,7 +307,7 @@ export default function ProfileClient() {
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    fetch('/api/profile')
+    fetch('/api/profile', { signal: AbortSignal.timeout(10000) })
       .then(r => r.json())
       .then(data => {
         if (data.error) return
@@ -353,6 +353,7 @@ export default function ProfileClient() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_url: pub.publicUrl }),
+        signal: AbortSignal.timeout(10000),
       })
       const json = await res.json()
       if (json.error) throw new Error(json.error)
@@ -378,6 +379,7 @@ export default function ProfileClient() {
           dietary_pref: dietaryPref, living_situation: livingSituation,
           ai_language: aiLanguage,
         }),
+        signal: AbortSignal.timeout(10000),
       })
       const data = await res.json()
       if (data.error) throw new Error(data.error)
@@ -400,7 +402,7 @@ export default function ProfileClient() {
     if (deleteConfirmText !== 'DELETE') return
     setDeleting(true)
     try {
-      const res = await fetch('/api/account/delete', { method: 'DELETE' })
+      const res = await fetch('/api/account/delete', { method: 'DELETE', signal: AbortSignal.timeout(10000) })
       if (!res.ok) throw new Error('Failed')
       await supabase.auth.signOut()
       router.push('/?deleted=1')

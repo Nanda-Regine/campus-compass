@@ -5,8 +5,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 interface StateSnapshot {
   academic: {
@@ -41,6 +40,9 @@ interface StateSnapshot {
 }
 
 export async function POST(req: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -85,27 +85,35 @@ export default function LoadSheddingWidget() {
 
   // Fetch national status on mount
   useEffect(() => {
-    fetch('/api/load-shedding')
+    const ctrl = new AbortController()
+
+    fetch('/api/load-shedding', { signal: ctrl.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d?.status) setStatus(d.status)
         setApiAvailable(d?.apiAvailable ?? false)
       })
-      .catch(() => {})
+      .catch(e => { if (e instanceof Error && e.name === 'AbortError') return })
       .finally(() => setLoading(false))
+
+    return () => ctrl.abort()
   }, [])
 
   // Fetch area schedule when area is set
   useEffect(() => {
     if (!areaId) return
-    fetch(`/api/load-shedding?action=schedule&area_id=${encodeURIComponent(areaId)}`)
+    const ctrl = new AbortController()
+
+    fetch(`/api/load-shedding?action=schedule&area_id=${encodeURIComponent(areaId)}`, { signal: ctrl.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d?.schedule?.events) {
           setTodayEvents(getTodayEvents(d.schedule.events))
         }
       })
-      .catch(() => {})
+      .catch(e => { if (e instanceof Error && e.name === 'AbortError') return })
+
+    return () => ctrl.abort()
   }, [areaId])
 
   // Search debounce

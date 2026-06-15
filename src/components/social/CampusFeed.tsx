@@ -100,6 +100,7 @@ function PostCard({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ post_id: post.id, reason }),
+        signal: AbortSignal.timeout(10000),
       })
       if (res.ok) toast.success('Report submitted — thank you')
       else toast.error('Could not submit report')
@@ -113,12 +114,14 @@ function PostCard({
 
   async function loadComments() {
     if (commentsLoaded) return
-    const res = await fetch(`/api/feed/${post.id}/comments`)
-    if (res.ok) {
-      const d = await res.json()
-      setComments(d.comments ?? [])
-    }
-    setCommentsLoaded(true)
+    try {
+      const res = await fetch(`/api/feed/${post.id}/comments`, { signal: AbortSignal.timeout(10000) })
+      if (res.ok) {
+        const d = await res.json()
+        setComments(d.comments ?? [])
+      }
+      setCommentsLoaded(true)
+    } catch { /* timeout or network error — leave commentsLoaded false so user can retry */ }
   }
 
   function toggleComments() {
@@ -135,6 +138,7 @@ function PostCard({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: newComment.trim() }),
+        signal: AbortSignal.timeout(10000),
       })
       if (!res.ok) throw new Error()
       const { comment } = await res.json()
@@ -356,6 +360,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: content.trim(), category }),
+        signal: AbortSignal.timeout(10000),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
       const { post } = await res.json()
@@ -481,7 +486,7 @@ export default function CampusFeed({ institution }: Props) {
     if (!reset && cursorRef.current) params.set('cursor', cursorRef.current)
 
     try {
-      const res = await fetch(`/api/feed?${params}`)
+      const res = await fetch(`/api/feed?${params}`, { signal: AbortSignal.timeout(10000) })
       if (!res.ok) return
       const { posts: fetched } = await res.json() as { posts: Post[] }
       if (reset) {
@@ -512,7 +517,7 @@ export default function CampusFeed({ institution }: Props) {
           // Scope filter: skip campus posts from other institutions
           if (scope === 'campus' && institution && newRow.institution !== institution) return
           // Re-fetch the full post (with author join + reaction counts)
-          fetch(`/api/feed?id=${newRow.id}`)
+          fetch(`/api/feed?id=${newRow.id}`, { signal: AbortSignal.timeout(10000) })
             .then(r => r.ok ? r.json() : null)
             .then((data: { post?: Post } | null) => {
               if (data?.post) {
@@ -539,7 +544,7 @@ export default function CampusFeed({ institution }: Props) {
   }, [scope, institution])
 
   function handleDelete(id: string) {
-    fetch(`/api/feed?id=${id}`, { method: 'DELETE' })
+    fetch(`/api/feed?id=${id}`, { method: 'DELETE', signal: AbortSignal.timeout(10000) }).catch(() => {})
     setPosts(prev => prev.filter(p => p.id !== id))
     toast.success('Post deleted')
   }
@@ -556,7 +561,8 @@ export default function CampusFeed({ institution }: Props) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ post_id: id }),
-    })
+      signal: AbortSignal.timeout(10000),
+    }).catch(() => {})
   }
 
   return (

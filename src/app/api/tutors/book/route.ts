@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { notifyUser } from '@/lib/push-notify'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
-
-function makeSupabase() {
-  const cookieStore = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  )
-}
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 // POST /api/tutors/book — student books a session
 export async function POST(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

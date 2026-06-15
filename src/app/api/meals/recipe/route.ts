@@ -3,13 +3,15 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-
 export async function POST(request: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -109,6 +111,9 @@ Respond with valid JSON only (no markdown):
 
 // Meal plan suggestion for the week
 export async function GET(_request: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()

@@ -74,7 +74,7 @@ function LibraryTab({ institution }: { institution: string }) {
   const [checking, setChecking] = useState(false)
 
   const load = useCallback(async () => {
-    const res = await fetch('/api/campus/library')
+    const res = await fetch('/api/campus/library', { signal: AbortSignal.timeout(10000) })
     if (res.ok) setData(await res.json())
     setLoading(false)
   }, [])
@@ -92,6 +92,7 @@ function LibraryTab({ institution }: { institution: string }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ zone }),
+      signal: AbortSignal.timeout(10000),
     })
     if (res.ok) { toast.success(`Checked in to ${zone}`); load() }
     else toast.error('Check-in failed')
@@ -100,7 +101,7 @@ function LibraryTab({ institution }: { institution: string }) {
 
   async function checkOut() {
     setChecking(true)
-    await fetch('/api/campus/library', { method: 'DELETE' })
+    await fetch('/api/campus/library', { method: 'DELETE', signal: AbortSignal.timeout(10000) })
     toast.success('Checked out')
     load()
     setChecking(false)
@@ -231,7 +232,7 @@ function EventsTab() {
     setLoading(true)
     const params = new URLSearchParams()
     if (category) params.set('category', category)
-    const res = await fetch(`/api/campus/events?${params}`)
+    const res = await fetch(`/api/campus/events?${params}`, { signal: AbortSignal.timeout(10000) })
     if (res.ok) setEvents((await res.json()).events ?? [])
     setLoading(false)
   }, [category])
@@ -243,6 +244,7 @@ function EventsTab() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ event_id: event.id }),
+      signal: AbortSignal.timeout(10000),
     })
     if (!res.ok) { toast.error('RSVP failed'); return }
     const { going } = await res.json()
@@ -255,7 +257,7 @@ function EventsTab() {
 
   async function deleteEvent(id: string) {
     if (!confirm('Delete this event?')) return
-    await fetch(`/api/campus/events?id=${id}`, { method: 'DELETE' })
+    await fetch(`/api/campus/events?id=${id}`, { method: 'DELETE', signal: AbortSignal.timeout(10000) })
     setEvents(prev => prev.filter(e => e.id !== id))
     toast.success('Event deleted')
   }
@@ -376,6 +378,7 @@ function CreateEventForm({ onCreated, onClose }: { onCreated: () => void; onClos
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, description, venue, event_date: eventDate, event_time: eventTime, category }),
+        signal: AbortSignal.timeout(10000),
       })
       if (!res.ok) throw new Error()
       toast.success('Event posted!')

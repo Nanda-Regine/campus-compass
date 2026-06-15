@@ -67,7 +67,9 @@ export default function CohortCard() {
       } catch {}
     }
 
-    fetch('/api/insights/cohort')
+    const ctrl = new AbortController()
+
+    fetch('/api/insights/cohort', { signal: ctrl.signal })
       .then(r => r.json())
       .then(json => {
         if (json.insufficient || json.error) {
@@ -77,8 +79,13 @@ export default function CohortCard() {
           sessionStorage.setItem('varsityos-cohort-cache', JSON.stringify({ data: json, ts: Date.now() }))
         }
       })
-      .catch(() => setError('network'))
+      .catch(e => {
+        if (e instanceof Error && e.name === 'AbortError') return
+        setError('network')
+      })
       .finally(() => setLoading(false))
+
+    return () => ctrl.abort()
   }, [])
 
   if (loading) {

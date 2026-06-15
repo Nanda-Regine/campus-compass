@@ -1,8 +1,11 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export async function POST(req: Request) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -10,7 +13,7 @@ export async function POST(req: Request) {
   const { question, answer, job_type, industry } = await req.json()
   if (!question || !answer) return NextResponse.json({ error: 'Missing question or answer' }, { status: 400 })
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+  const client = new Anthropic({ apiKey: anthropicKey })
   const response = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 800,

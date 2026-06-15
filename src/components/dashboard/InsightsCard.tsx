@@ -55,7 +55,9 @@ export default function InsightsCard() {
       }
     } catch { /* ignore */ }
 
-    fetch('/api/insights/correlations')
+    const ctrl = new AbortController()
+
+    fetch('/api/insights/correlations', { signal: ctrl.signal })
       .then(r => {
         if (!r.ok) { setFetchError(true); return null }
         return r.json()
@@ -66,8 +68,13 @@ export default function InsightsCard() {
           try { localStorage.setItem(cacheKey, JSON.stringify(d)) } catch { /* quota */ }
         }
       })
-      .catch(() => setFetchError(true))
+      .catch(e => {
+        if (e instanceof Error && e.name === 'AbortError') return
+        setFetchError(true)
+      })
       .finally(() => setLoading(false))
+
+    return () => ctrl.abort()
   }, [])
 
   return (

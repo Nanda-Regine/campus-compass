@@ -4,13 +4,15 @@ import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { currentMonthRange } from '@/lib/utils'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-
 export async function GET(_request: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()

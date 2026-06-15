@@ -12,8 +12,7 @@ import type { NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 interface PlanContext {
   riskLevel?:        string
@@ -122,6 +121,9 @@ Max 350 words.`
 }
 
 export async function POST(req: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   // ── Auth ──────────────────────────────────────────────────────────────────
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()

@@ -4,8 +4,7 @@ export const dynamic = 'force-dynamic'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export interface GradPlan {
   headline:       string
@@ -23,6 +22,9 @@ export interface GradPlanInsufficient {
 }
 
 export async function POST() {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()

@@ -264,17 +264,21 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
   const [joining, setJoining] = useState(false)
 
   const loadProfile = useCallback(async () => {
-    const res = await fetch('/api/study-pods/join')
-    const { profile: p } = await res.json()
-    setProfile(p ?? null)
+    try {
+      const res = await fetch('/api/study-pods/join', { signal: AbortSignal.timeout(10000) })
+      const { profile: p } = await res.json()
+      setProfile(p ?? null)
+    } catch { /* timeout or network error */ }
   }, [])
 
   const loadConnections = useCallback(async () => {
     setConnLoading(true)
-    const res = await fetch('/api/study-pods/connect')
-    const { connections: c } = await res.json()
-    setConnections(c ?? [])
-    setConnLoading(false)
+    try {
+      const res = await fetch('/api/study-pods/connect', { signal: AbortSignal.timeout(10000) })
+      const { connections: c } = await res.json()
+      setConnections(c ?? [])
+    } catch { /* timeout or network error */ }
+    finally { setConnLoading(false) }
   }, [])
 
   const loadMatches = useCallback(async (bypassCache = false) => {
@@ -286,7 +290,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
     }
     setMatchLoading(true); setMatchError('')
     try {
-      const res = await fetch('/api/study-pods/matches')
+      const res = await fetch('/api/study-pods/matches', { signal: AbortSignal.timeout(10000) })
       const data = await res.json()
       if (!res.ok) { setMatchError(data.error || 'Failed to load matches'); return }
       if (data.notOptedIn) { await loadProfile(); return }
@@ -310,43 +314,52 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
 
   const handleJoin = async () => {
     setJoining(true)
-    const res = await fetch('/api/study-pods/join', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ study_style: style, preferred_times: times, bio }),
-    })
-    if (res.ok) { await loadProfile(); setView('matches'); loadMatches(true) }
-    setJoining(false)
+    try {
+      const res = await fetch('/api/study-pods/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ study_style: style, preferred_times: times, bio }),
+        signal: AbortSignal.timeout(10000),
+      })
+      if (res.ok) { await loadProfile(); setView('matches'); loadMatches(true) }
+    } catch { /* timeout or network error */ }
+    finally { setJoining(false) }
   }
 
   const handleConnect = async (match: Match) => {
     setConnecting(match.user_id)
-    const res = await fetch('/api/study-pods/connect', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        recipient_id:   match.user_id,
-        shared_modules: match.sharedModules,
-        match_score:    match.score,
-        ai_blurb:       match.blurb,
-      }),
-    })
-    if (res.ok) {
-      setMatches(prev => prev?.filter(m => m.user_id !== match.user_id) ?? [])
-      await loadConnections()
-    }
-    setConnecting(null)
+    try {
+      const res = await fetch('/api/study-pods/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipient_id:   match.user_id,
+          shared_modules: match.sharedModules,
+          match_score:    match.score,
+          ai_blurb:       match.blurb,
+        }),
+        signal: AbortSignal.timeout(10000),
+      })
+      if (res.ok) {
+        setMatches(prev => prev?.filter(m => m.user_id !== match.user_id) ?? [])
+        await loadConnections()
+      }
+    } catch { /* timeout or network error */ }
+    finally { setConnecting(null) }
   }
 
   const handleAction = async (id: string, action: 'accept' | 'decline' | 'cancel') => {
     setActing(true)
-    await fetch('/api/study-pods/connect', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, action }),
-    })
-    await loadConnections()
-    setActing(false)
+    try {
+      await fetch('/api/study-pods/connect', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action }),
+        signal: AbortSignal.timeout(10000),
+      })
+      await loadConnections()
+    } catch { /* timeout or network error */ }
+    finally { setActing(false) }
   }
 
   // Loading

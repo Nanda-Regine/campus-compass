@@ -1,28 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import arcjet, { tokenBucket } from '@arcjet/next'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 const aj = arcjet({
   key: process.env.ARCJET_KEY!,
   rules: [tokenBucket({ mode: 'LIVE', refillRate: 20, interval: 60, capacity: 40 })],
 })
 
-function makeSupabase() {
-  const cookieStore = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  )
-}
-
 // GET /api/notes — list notes, optionally filtered
 export async function GET(req: NextRequest) {
   const decision = await aj.protect(req, { requested: 1 })
   if (decision.isDenied()) return NextResponse.json({ error: 'Rate limited' }, { status: 429 })
 
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -77,7 +67,7 @@ export async function POST(req: NextRequest) {
   const decision = await aj.protect(req, { requested: 2 })
   if (decision.isDenied()) return NextResponse.json({ error: 'Rate limited' }, { status: 429 })
 
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -107,7 +97,7 @@ export async function POST(req: NextRequest) {
 
 // DELETE /api/notes — delete a note (by id in body)
 export async function DELETE(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

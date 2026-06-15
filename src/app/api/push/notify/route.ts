@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { webpush, canSendPush } from '@/lib/webpush'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -15,6 +16,12 @@ export async function POST(req: NextRequest) {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Rate limit: max 10 push notifications per user per hour
+    const rateCheck = await checkRateLimitAsync(user.id, 'push_notify', 10, 60 * 60 * 1000)
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: 'Too many notifications — try again later' }, { status: 429 })
+    }
 
     const rawBody = await req.json()
     const { title, body } = rawBody

@@ -34,8 +34,10 @@ function getSupabase() {
   )
 }
 
-function getAnthropic() {
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+function getAnthropic(): Anthropic {
+  const key = process.env.ANTHROPIC_API_KEY
+  if (!key) throw new Error('ANTHROPIC_API_KEY not configured')
+  return new Anthropic({ apiKey: key })
 }
 
 // ─── Meta HMAC-SHA256 signature verification ──────────────────────────────────
@@ -115,7 +117,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const supabaseAdmin = getSupabase()
-  const anthropic     = getAnthropic()
+  let anthropic: Anthropic
+  try {
+    anthropic = getAnthropic()
+  } catch {
+    console.error('[whatsapp] ANTHROPIC_API_KEY not set — AI responses disabled')
+    return new NextResponse('Service Unavailable', { status: 503 })
+  }
 
   const rawBody   = await req.text()
   const sigHeader = req.headers.get('x-hub-signature-256')
@@ -152,6 +160,13 @@ export async function POST(req: NextRequest) {
 
   const phone = from.startsWith('+') ? from : `+${from}`
 
+  // Validate phone is E.164 format before interpolating into Supabase filter
+  const E164_RE = /^\+\d{7,15}$/
+  if (!E164_RE.test(phone)) {
+    console.warn('[whatsapp] Malformed phone number rejected:', phone.slice(0, 20))
+    return NextResponse.json({ status: 'ok' })
+  }
+
   // ── Per-phone rate limit: 20 messages / minute ───────────────────────────
   const rl = await checkRateLimitAsync(phone, 'whatsapp-bot', 20, 60_000)
   if (!rl.allowed) {
@@ -159,11 +174,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 'ok' })
   }
 
-  // Look up user by phone number
+  // Look up user by phone number (both variants: with/without leading +)
+  const phoneDigitsOnly = phone.slice(1) // strip leading +
   const { data: profile } = await supabaseAdmin
     .from('profiles')
     .select('id, name, university')
-    .or(`phone.eq.${phone},phone.eq.${from}`)
+    .or(`phone.eq.${phone},phone.eq.${phoneDigitsOnly}`)
     .maybeSingle()
 
   if (!profile) {

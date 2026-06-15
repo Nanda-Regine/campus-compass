@@ -3,11 +3,10 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 /** Parse AI JSON response safely — returns null on parse failure (caller should return 502). */
 function parseAiJson(text: string): Record<string, unknown> | null {
@@ -21,6 +20,9 @@ function parseAiJson(text: string): Record<string, unknown> | null {
 }
 
 export async function POST(request: NextRequest) {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()

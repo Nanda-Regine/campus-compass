@@ -5,8 +5,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
 
 interface CandidateProfile {
   user_id: string
@@ -28,7 +27,8 @@ async function generateBlurbs(
   myName: string,
   myYear: string,
   myStyle: string,
-  candidates: CandidateProfile[]
+  candidates: CandidateProfile[],
+  anthropic: Anthropic
 ): Promise<Record<string, string>> {
   if (candidates.length === 0) return {}
 
@@ -71,6 +71,9 @@ Reference shared modules, study styles, and any bio details. Keep it under 40 wo
 }
 
 export async function GET() {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (!anthropicKey) return anthropicUnconfiguredResponse()
+  const anthropic = new Anthropic({ apiKey: anthropicKey })
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -190,7 +193,8 @@ export async function GET() {
       myProfile.full_name?.split(' ')[0] ?? 'you',
       String(myProfile.year_of_study ?? 1),
       myPodProfile.study_style,
-      top5
+      top5,
+      anthropic
     )
 
     const matches: MatchResult[] = candidates.map(c => ({

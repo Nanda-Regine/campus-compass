@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-
-function makeSupabase() {
-  const cookieStore = cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  )
-}
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 
 // GET /api/feed?scope=campus|all&category=&cursor=
 // GET /api/feed?id={postId}  — single post (used by realtime to hydrate new INSERT)
 export async function GET(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -145,7 +135,7 @@ function containsBlocked(text: string): boolean {
 
 // POST /api/feed — create a post
 export async function POST(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -179,7 +169,7 @@ export async function POST(req: NextRequest) {
 
 // DELETE /api/feed?id=
 export async function DELETE(req: NextRequest) {
-  const supabase = makeSupabase()
+  const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

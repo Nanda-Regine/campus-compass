@@ -1122,11 +1122,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   useEffect(() => {
     const pendingRef = localStorage.getItem('pending_ref')
     if (!pendingRef) return
+    const ctrl = new AbortController()
     localStorage.removeItem('pending_ref')
-    fetch('/api/referral', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: pendingRef }) })
+    fetch('/api/referral', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: pendingRef }) })
       .then(r => r.json())
       .then(d => { if (d.success) import('react-hot-toast').then(({ default: toast }) => { toast.success(`Referral applied! +${d.bonusMessages} Nova messages.`) }) })
       .catch(() => {})
+    return () => ctrl.abort()
   }, [])
 
   // 3. Load proactive nova insights — session-cached to prevent layout shift on re-navigation
@@ -1146,6 +1148,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   // 4. Parallel client-side fetch: meals, shifts, groups
   useEffect(() => {
+    let mounted = true
     const fetchLiveData = async () => {
       if (!navigator.onLine) return
       try {
@@ -1166,11 +1169,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           // NSFAS delayed: any expected disbursement whose expected_date has passed
           supabase.from('nsfas_disbursements').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'expected').lt('expected_date', todayStr),
         ])
-        if (mealsRes.status === 'fulfilled') setMealPlanExists((mealsRes.value.count ?? 0) > 0)
-        if (shiftsRes.status === 'fulfilled') setShiftsThisWeek(shiftsRes.value.count ?? 0)
-        if (groupsRes.status === 'fulfilled') setActiveGroups(groupsRes.value.count ?? 0)
+        if (mealsRes.status === 'fulfilled') { if (mounted) setMealPlanExists((mealsRes.value.count ?? 0) > 0) }
+        if (shiftsRes.status === 'fulfilled') { if (mounted) setShiftsThisWeek(shiftsRes.value.count ?? 0) }
+        if (groupsRes.status === 'fulfilled') { if (mounted) setActiveGroups(groupsRes.value.count ?? 0) }
         // Always write nsfasDelayed so a resolved payment clears the flag
-        if (nsfasRes.status === 'fulfilled') store.setNsfasDelayed((nsfasRes.value.count ?? 0) > 0)
+        if (nsfasRes.status === 'fulfilled') { if (mounted) store.setNsfasDelayed((nsfasRes.value.count ?? 0) > 0) }
         const week7Ago = new Date(now.getTime() - 7 * 86_400_000).toISOString().split('T')[0]
         const [studyRes, sleepRes, workoutRes, study7Res, sleep7Res] = await Promise.allSettled([
           supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${todayStr}T00:00:00`),
@@ -1183,7 +1186,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         ])
         if (studyRes.status === 'fulfilled') {
           const rows = studyRes.value.data as Array<{ duration_minutes: number }> | null
-          if (rows) setTodayStudyMins(rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0))
+          if (rows && mounted) setTodayStudyMins(rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0))
         }
         if (sleepRes.status === 'fulfilled') {
           const row = (sleepRes.value.data as Array<{ bedtime: string | null; wake_time: string | null }> | null)?.[0]
@@ -1192,17 +1195,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             const [wh, wm] = row.wake_time.split(':').map(Number)
             let hrs = (wh + wm / 60) - (bh + bm / 60)
             if (hrs < 0) hrs += 24
-            setLastSleepHours(parseFloat(hrs.toFixed(1)))
+            if (mounted) setLastSleepHours(parseFloat(hrs.toFixed(1)))
           }
         }
-        if (workoutRes.status === 'fulfilled') setWeekWorkouts(workoutRes.value.count ?? 0)
+        if (workoutRes.status === 'fulfilled') { if (mounted) setWeekWorkouts(workoutRes.value.count ?? 0) }
 
         // Study velocity: avg hours/day over last 7 days
         if (study7Res.status === 'fulfilled') {
           const rows = study7Res.value.data as Array<{ duration_minutes: number }> | null
           if (rows && rows.length > 0) {
             const totalMins = rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0)
-            store.setStudyVelocity7d(parseFloat((totalMins / (7 * 60)).toFixed(2)))
+            if (mounted) store.setStudyVelocity7d(parseFloat((totalMins / (7 * 60)).toFixed(2)))
           }
         }
 
@@ -1219,12 +1222,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               if (hrs < 0) hrs += 24
               debt += Math.max(0, 7 - hrs)
             }
-            store.setSleepDebt(parseFloat(debt.toFixed(1)))
+            if (mounted) store.setSleepDebt(parseFloat(debt.toFixed(1)))
           }
         }
       } catch { /* silent */ }
     }
     fetchLiveData()
+    return () => { mounted = false }
   }, [])
 
   // 5. Nova check-in — localStorage cached per day; skipped in Data Saver mode
@@ -1234,10 +1238,12 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     const cachedDate = localStorage.getItem('nova_last_checkin_date')
     const cachedMsg  = localStorage.getItem('nova_checkin_message')
     if (cachedDate === today && cachedMsg) { setNovaCheckin(cachedMsg); return }
-    fetch('/api/nova/checkin')
+    const ctrl = new AbortController()
+    fetch('/api/nova/checkin', { signal: ctrl.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.message) { setNovaCheckin(d.message); localStorage.setItem('nova_last_checkin_date', today); localStorage.setItem('nova_checkin_message', d.message) } })
       .catch(() => {})
+    return () => ctrl.abort()
   }, [])
 
   // 6. Streak — session-cached
@@ -1254,7 +1260,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         return
       } catch { /* ignore */ }
     }
-    fetch('/api/streak')
+    const ctrl = new AbortController()
+    fetch('/api/streak', { signal: ctrl.signal })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (d && !d.error) {
@@ -1266,6 +1273,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         }
       })
       .catch(() => {})
+    return () => ctrl.abort()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
