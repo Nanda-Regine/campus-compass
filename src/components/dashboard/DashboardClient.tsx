@@ -658,7 +658,8 @@ const CARD_STYLE: Record<string, { radius: number; minH: number; bg: string }> =
   Budget: { radius: 14, minH: 104, bg: 'linear-gradient(135deg,rgba(201,168,76,0.08) 0%,transparent 100%)' },
   Meals:  { radius: 20, minH: 104, bg: 'linear-gradient(135deg,rgba(232,131,74,0.08) 0%,transparent 100%)' },
   Work:   { radius: 16, minH: 100, bg: 'linear-gradient(135deg,rgba(112,144,208,0.08) 0%,transparent 100%)' },
-  Groups: { radius: 14, minH: 52,  bg: 'linear-gradient(90deg,rgba(78,207,158,0.06) 0%,transparent 100%)' },
+  Groups:   { radius: 14, minH: 52,  bg: 'linear-gradient(90deg,rgba(78,207,158,0.06) 0%,transparent 100%)' },
+  Regulate: { radius: 16, minH: 100, bg: 'linear-gradient(135deg,rgba(167,139,250,0.08) 0%,transparent 100%)' },
 }
 
 function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscription, profile, mealPlanExists, shiftsThisWeek, activeGroups, streakDays }: {
@@ -684,7 +685,8 @@ function FeatureGrid({ tasks, expenses, totalBudget, remaining, modules, subscri
     Meals:  mealPlanExists ? { text: 'Week planned ✓', color: '#4ecf9e', pct: 90, barColor: '#4ecf9e' } : { text: 'Plan your week →', color: '#e8834a', pct: 10, barColor: '#e8834a' },
     Work:   shiftsThisWeek > 0 ? { text: `${shiftsThisWeek} shift${shiftsThisWeek > 1 ? 's' : ''} ahead`, color: '#7090d0', pct: 80, barColor: '#7090d0' } : { text: 'No shifts soon', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#7090d0' },
     Nova:   isUnlimited ? { text: 'Unlimited', color: '#9b6fd4', pct: 100, barColor: '#9b6fd4' } : { text: `${novaLeft} msgs left`, color: novaLeft < 5 ? '#ff6b6b' : '#9b6fd4', pct: novaPct, barColor: novaLeft < 5 ? '#ff6b6b' : '#9b6fd4' },
-    Groups: activeGroups > 0 ? { text: `${activeGroups} group${activeGroups > 1 ? 's' : ''}`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : { text: 'Join a group →', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#4ecf9e' },
+    Groups:   activeGroups > 0 ? { text: `${activeGroups} group${activeGroups > 1 ? 's' : ''}`, color: '#4ecf9e', pct: 70, barColor: '#4ecf9e' } : { text: 'Join a group →', color: 'rgba(255,255,255,0.3)', pct: 0, barColor: '#4ecf9e' },
+    Regulate: { text: 'Breathe & reset', color: '#a78bfa', pct: 100, barColor: '#a78bfa' },
   }
 
   return (
