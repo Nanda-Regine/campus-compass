@@ -15,6 +15,7 @@ import { OfflineIndicator } from '@/components/layout/OfflineIndicator'
 import { PWAUpdateNotifier } from '@/components/PWAUpdateNotifier'
 import ConsentBanner from '@/components/ConsentBanner'
 import PageTransition from '@/components/PageTransition'
+import GameLayer from '@/components/gamification/GameLayer'
 import './globals.css'
 
 const soraFont = Sora({
@@ -527,6 +528,7 @@ a.appendChild(r);
           <GlobalFAB />
           <OnboardingTooltip />
           <BottomNav />
+          <GameLayer />
         </Providers>
         <Toaster
           position="bottom-center"

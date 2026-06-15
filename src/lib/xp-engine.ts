@@ -269,6 +269,10 @@ export function dispatchXP(eventName: XPEventName, labelOverride?: string) {
     if (todayLog.includes(eventName)) return  // already fired today
   }
 
+  // Snapshot pre-mutation for badge/level diff
+  const prevUnlockedIds = new Set(getUnlockedBadges(state).map(b => b.id))
+  const prevLevel       = getLevel(state.totalXP)
+
   const xp = XP_VALUES[eventName]
   const label = labelOverride ?? EVENT_LABELS[eventName] ?? eventName
 
@@ -305,8 +309,19 @@ export function dispatchXP(eventName: XPEventName, labelOverride?: string) {
   }
   saveChallengeCompletion(completion)
 
-  // Notify all listeners
+  // Notify XP listeners
   window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName, xp } }))
+
+  // Emit badge unlock events for newly earned badges
+  for (const badge of getUnlockedBadges(state).filter(b => !prevUnlockedIds.has(b.id))) {
+    window.dispatchEvent(new CustomEvent('varsityos:badge_unlock', { detail: badge }))
+  }
+
+  // Emit level-up event if player crossed a level boundary
+  const newLevel = getLevel(state.totalXP)
+  if (newLevel.name !== prevLevel.name) {
+    window.dispatchEvent(new CustomEvent('varsityos:level_up', { detail: newLevel }))
+  }
 
   // Background DB sync — fire and forget
   saveXPStateToDB(state).catch(() => {})

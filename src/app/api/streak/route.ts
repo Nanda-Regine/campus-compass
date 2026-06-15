@@ -25,13 +25,23 @@ export async function GET() {
       .order('completed_at', { ascending: false })
 
     if (!completions || completions.length === 0) {
-      return NextResponse.json({ streak: 0, longestStreak: 0, todayDone: false })
+      return NextResponse.json({
+        streak: 0, longestStreak: 0, todayDone: false,
+        last7days: Array(7).fill(false),
+      })
     }
 
     // Get unique dates (SAST) where tasks were completed
     const uniqueDates = new Set(
       completions.map(c => new Date(c.completed_at!).toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' }))
     )
+
+    // Compute last 7 days booleans: index 0 = 6 days ago, index 6 = today
+    const last7days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date()
+      d.setDate(d.getDate() - (6 - i))
+      return uniqueDates.has(d.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' }))
+    })
 
     const today = new Date().toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })
     const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })
@@ -47,7 +57,7 @@ export async function GET() {
       const yesterdayDate = new Date(Date.now() - 86400000)
       const yesterdayStr = yesterdayDate.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })
       if (!uniqueDates.has(yesterdayStr)) {
-        return NextResponse.json({ streak: 0, longestStreak: uniqueDates.size, todayDone: false })
+        return NextResponse.json({ streak: 0, longestStreak: uniqueDates.size, todayDone: false, last7days })
       }
       checkDate = yesterdayDate
     }
@@ -67,11 +77,12 @@ export async function GET() {
       streak,
       longestStreak: Math.max(streak, uniqueDates.size), // rough estimate
       todayDone,
+      last7days,
       today,
       yesterday,
     })
   } catch (error) {
     console.error('Streak error:', error)
-    return NextResponse.json({ streak: 0, longestStreak: 0, todayDone: false })
+    return NextResponse.json({ streak: 0, longestStreak: 0, todayDone: false, last7days: Array(7).fill(false) })
   }
 }
