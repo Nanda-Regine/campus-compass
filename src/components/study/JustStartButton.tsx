@@ -341,7 +341,7 @@ export default function JustStartButton({ tasks }: Props) {
         )}
 
         <button
-          onClick={() => setShowEnv(true)}
+          onClick={() => setShowModal(true)}
           style={{
             width: '100%', padding: '13px 0',
             fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 15,

@@ -256,26 +256,36 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="px-5 pt-4 pb-2 flex gap-2 overflow-x-auto no-scrollbar">
-        {TABS.map(({ key, label: tLabel, icon: Icon }) => (
-          <button
-            key={key}
-            onClick={() => { setTab(key); if (key === 'lift-club') loadLiftPosts() }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono whitespace-nowrap transition-all border flex-shrink-0"
-            style={{
-              background: tab === key ? 'rgba(14,165,233,0.15)' : 'rgba(255,255,255,0.04)',
-              border: `1px solid ${tab === key ? 'rgba(14,165,233,0.35)' : 'rgba(255,255,255,0.08)'}`,
-              color: tab === key ? '#38bdf8' : 'rgba(255,255,255,0.45)',
-            }}
-          >
-            <Icon size={13} />
-            {tLabel}
-          </button>
-        ))}
-      </div>
+      {/* Main layout: vertical tab rail + content */}
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 57px)' }}>
+        {/* Vertical tab rail */}
+        <div style={{ width: 60, flexShrink: 0, position: 'sticky', top: 57, height: 'calc(100vh - 57px)', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(255,255,255,0.07)', background: 'var(--bg-base)', zIndex: 10, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {TABS.map(({ key, label: tLabel, icon: Icon }) => {
+            const active = tab === key
+            return (
+              <button
+                key={key}
+                onClick={() => { setTab(key); if (key === 'lift-club') loadLiftPosts() }}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                  padding: '10px 4px',
+                  background: active ? 'rgba(14,165,233,0.12)' : 'transparent',
+                  border: 'none',
+                  borderLeft: active ? '2px solid #38bdf8' : '2px solid transparent',
+                  cursor: 'pointer', width: '100%',
+                }}
+              >
+                <Icon size={18} style={{ opacity: active ? 1 : 0.45, color: active ? '#38bdf8' : 'rgba(255,255,255,0.45)' }} />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                  {tLabel.slice(0, 5).toUpperCase()}
+                </span>
+              </button>
+            )
+          })}
+        </div>
 
-      <div className="px-5 pt-3 space-y-4">
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0 }} className="px-4 pt-3 space-y-4">
 
         {/* ── Get There — Google Maps Embed ─────────────────── */}
         {tab === 'get-there' && (
@@ -668,6 +678,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
           </div>
         )}
 
+      </div>
       </div>
     </div>
     </>

@@ -1045,7 +1045,7 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
   const activeTabConfig = TABS.find(t => t.id === activeTab)!
 
   return (
-    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       {/* Deep navy velvet — professional ambition texture */}
       <AmbientImage zone="career" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
 
@@ -1070,8 +1070,12 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex gap-0 overflow-x-auto scrollbar-none">
+      </div>
+
+      {/* Main layout: vertical tab rail + content */}
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 57px)' }}>
+        {/* Vertical tab rail */}
+        <div style={{ width: 60, flexShrink: 0, position: 'sticky', top: 57, height: 'calc(100vh - 57px)', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)', zIndex: 10, overflowY: 'auto', scrollbarWidth: 'none' }}>
           {TABS.map(tab => {
             const active = activeTab === tab.id
             return (
@@ -1079,30 +1083,30 @@ export default function CareerClient({ userId: _userId, profile, modules }: Prop
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  position: 'relative', display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '10px 14px', fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-                  fontWeight: active ? 700 : 400,
-                  color: active ? tab.accent : 'var(--text-tertiary)',
-                  background: active ? `${tab.accent}0c` : 'transparent',
-                  border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                  transition: 'all 0.15s', flexShrink: 0,
-                  borderBottom: active ? `2px solid ${tab.accent}` : '2px solid transparent',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                  padding: '10px 4px',
+                  background: active ? `${tab.accent}14` : 'transparent',
+                  border: 'none',
+                  borderLeft: active ? `2px solid ${tab.accent}` : '2px solid transparent',
+                  cursor: 'pointer', width: '100%',
                 }}
               >
-                <span>{tab.icon}</span>
-                {tab.label}
+                <span style={{ fontSize: '1.1rem', opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tab.accent : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                  {tab.label.slice(0, 5).toUpperCase()}
+                </span>
               </button>
             )
           })}
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-2xl mx-auto px-4 py-4">
-        {activeTab === 'cv'        && <CVBuilder      profile={profile} modules={modules} />}
-        {activeTab === 'interview' && <MockInterviewer profile={profile} modules={modules} />}
-        {activeTab === 'skills'    && <SkillsGap      modules={modules} />}
-        {activeTab === 'jobs'      && <JobsTab />}
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0 }} className="px-4 py-4">
+          {activeTab === 'cv'        && <CVBuilder      profile={profile} modules={modules} />}
+          {activeTab === 'interview' && <MockInterviewer profile={profile} modules={modules} />}
+          {activeTab === 'skills'    && <SkillsGap      modules={modules} />}
+          {activeTab === 'jobs'      && <JobsTab />}
+        </div>
       </div>
     </div>
   )

@@ -1102,33 +1102,40 @@ export default function SafetyOS() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, overflowX: 'auto', borderBottom: '1px solid var(--border-subtle)' }}>
-        {TABS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              flexShrink: 0, padding: '9px 12px',
-              background: 'none', border: 'none',
-              borderBottom: activeTab === tab.id ? '2px solid var(--emerald, #34D399)' : '2px solid transparent',
-              color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'var(--text-tertiary)',
-              fontSize: '0.7rem', fontFamily: 'var(--font-mono)', fontWeight: activeTab === tab.id ? 700 : 400,
-              cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap',
-            }}>
-            {tab.icon} {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Main layout: vertical tab rail + content */}
+      <div style={{ display: 'flex', minHeight: 400 }}>
+        {/* Vertical tab rail */}
+        <div style={{ width: 60, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)' }}>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                padding: '10px 4px',
+                background: activeTab === tab.id ? 'rgba(52,211,153,0.1)' : 'transparent',
+                border: 'none',
+                borderLeft: activeTab === tab.id ? '2px solid var(--emerald, #34D399)' : '2px solid transparent',
+                cursor: 'pointer', width: '100%',
+              }}
+            >
+              <span style={{ fontSize: '1.1rem', opacity: activeTab === tab.id ? 1 : 0.45 }}>{tab.icon}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                {tab.label.slice(0, 6).toUpperCase()}
+              </span>
+            </button>
+          ))}
+        </div>
 
-      {/* Content */}
-      <div style={{ animation: 'fadeInUp 0.25s ease' }}>
-        {activeTab === 'sos'      && <SosTab />}
-        {activeTab === 'walk'     && <WalkMeHomeTab />}
-        {activeTab === 'defence'  && <DefenceTab />}
-        {activeTab === 'contacts' && <ContactsTab />}
-        {activeTab === 'report'   && <ReportTab />}
-        {activeTab === 'rights'   && <RightsTab />}
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0, animation: 'fadeInUp 0.25s ease' }}>
+          {activeTab === 'sos'      && <SosTab />}
+          {activeTab === 'walk'     && <WalkMeHomeTab />}
+          {activeTab === 'defence'  && <DefenceTab />}
+          {activeTab === 'contacts' && <ContactsTab />}
+          {activeTab === 'report'   && <ReportTab />}
+          {activeTab === 'rights'   && <RightsTab />}
+        </div>
       </div>
 
       <style>{`

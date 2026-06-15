@@ -284,46 +284,53 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     kitchen:   '#a78bfa',
   }
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       {/* Terracotta earth tones — African soil energy for the food domain */}
       <AmbientImage zone="meals" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Meal Prep" />
 
-      {/* Tabs */}
-      <div className="sticky top-[57px] z-20 border-b border-white/7" style={{ background: 'var(--bg-base)', transition: 'background 0.3s' }}>
-        {/* Budget bar */}
-        {initialData.foodBudget > 0 && (
-          <div className="flex items-center gap-2 px-4 pt-2 pb-0 max-w-2xl mx-auto">
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
-            {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
-            )}
-          </div>
-        )}
-        <div className="flex px-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
+      {/* Main layout: vertical tab rail + content */}
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 57px)' }}>
+        {/* Vertical tab rail */}
+        <div style={{ width: 64, flexShrink: 0, position: 'sticky', top: 57, height: 'calc(100vh - 57px)', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)', zIndex: 10, overflowY: 'auto', scrollbarWidth: 'none' }}>
           {TABS.map(tab => {
             const tabAccent = TAB_ACCENTS[tab.id]
+            const active = activeTab === tab.id
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-3 font-display text-xs font-bold transition-all relative whitespace-nowrap"
                 style={{
-                  color: activeTab === tab.id ? tabAccent : 'rgba(255,255,255,0.4)',
-                  borderBottom: activeTab === tab.id ? `2px solid ${tabAccent}` : '2px solid transparent',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                  padding: '10px 4px',
+                  background: active ? `${tabAccent}14` : 'transparent',
+                  border: 'none',
+                  borderLeft: active ? `2px solid ${tabAccent}` : '2px solid transparent',
+                  cursor: 'pointer', width: '100%',
                 }}
               >
-                <span className="hidden sm:inline">{tab.icon}</span>
-                {tab.label}
+                <span style={{ fontSize: '1.1rem', opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tabAccent : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                  {tab.label.slice(0, 7).toUpperCase()}
+                </span>
               </button>
             )
           })}
         </div>
-      </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+        {/* Content column */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {initialData.foodBudget > 0 && (
+            <div className="flex items-center gap-2 px-3 pt-2 pb-1 border-b border-white/7">
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
+              {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
+              )}
+            </div>
+          )}
+          <div className="px-3 py-4 space-y-4">
 
         {/* ─── AI Planner Tab ─── */}
         {activeTab === 'ai_plan' && (
@@ -782,6 +789,8 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
         {/* ─── Kitchen 101 Tab ─── */}
         {activeTab === 'kitchen' && <KitchenGuide />}
+          </div>
+        </div>
       </div>
     </div>
   )
