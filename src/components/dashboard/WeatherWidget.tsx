@@ -81,6 +81,28 @@ function conditionEmoji(condition: string): string {
   return '🌤️'
 }
 
+function getProactiveTip(data: WeatherData): { icon: string; text: string; accent: string } {
+  const { temp_C, is_rainy, uv, wind_kmph, condition } = data
+  const c = condition.toLowerCase()
+  if (c.includes('thunder') || c.includes('storm'))
+    return { icon: '⛈️', text: 'Storm alert — work from home if you can. Library or res study is safest.', accent: '#ef4444' }
+  if (is_rainy && wind_kmph > 30)
+    return { icon: '🌧️', text: 'Heavy rain + wind. Leave 10min early, pack your charger and a rain jacket.', accent: '#7090d0' }
+  if (is_rainy)
+    return { icon: '🌦️', text: 'Rain day — perfect for deep focus inside. Set a 90-min block and close your tabs.', accent: '#7090d0' }
+  if (temp_C >= 34)
+    return { icon: '🌡️', text: 'Extreme heat. Drink water every 30min — dehydration tanks your focus by 20%.', accent: '#ef4444' }
+  if (temp_C >= 28)
+    return { icon: '🔆', text: `${temp_C}° — hot. Find AC or shade, avoid peak sun 11am–3pm.`, accent: '#f59e0b' }
+  if (uv >= 8)
+    return { icon: '🕶️', text: `UV ${uv} (${data.uv_risk}) — apply sunscreen before your commute.`, accent: '#f59e0b' }
+  if (temp_C >= 20 && !is_rainy)
+    return { icon: '🌳', text: 'Great conditions — try studying outside for 30min. Sunlight boosts serotonin.', accent: '#4ecf9e' }
+  if (temp_C < 10)
+    return { icon: '🧥', text: 'Cold morning — warm up before your commute. Cold slows reaction time by 8%.', accent: '#38bdf8' }
+  return { icon: '✅', text: 'Good conditions for campus. Aim for one focus block before lunch.', accent: '#4ecf9e' }
+}
+
 function tempColor(t: number): string {
   if (t >= 32) return 'var(--danger)'
   if (t >= 28) return 'var(--coral)'
@@ -145,6 +167,7 @@ export default function WeatherWidget() {
 
   const emoji = conditionEmoji(data.condition)
   const color = tempColor(data.temp_C)
+  const tip   = getProactiveTip(data)
 
   return (
     <div style={{
@@ -162,22 +185,35 @@ export default function WeatherWidget() {
         }}
       >
         <div style={{ fontSize: '2rem', lineHeight: 1 }}>{emoji}</div>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
             <span style={{
               fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-mono)',
               color,
             }}>{data.temp_C}°</span>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{data.condition}</span>
+            {data.tomorrow && (
+              <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginLeft: 4 }}>
+                · tmrw {conditionEmoji(data.tomorrow.condition)} {data.tomorrow.min_C}–{data.tomorrow.max_C}°
+              </span>
+            )}
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
-            {data.area} · feels like {data.feels_like_C}° · {data.outfit.emoji} {data.outfit.text}
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {data.area} · feels {data.feels_like_C}° · {data.outfit.emoji} {data.outfit.text}
+          </div>
+          {/* Proactive tip — always visible */}
+          <div style={{
+            marginTop: 6, fontSize: '0.67rem', lineHeight: 1.4,
+            color: tip.accent, display: 'flex', gap: 4, alignItems: 'flex-start',
+          }}>
+            <span style={{ flexShrink: 0 }}>{tip.icon}</span>
+            <span style={{ color: 'rgba(255,255,255,0.7)' }}>{tip.text}</span>
           </div>
         </div>
         <div style={{
-          fontSize: '0.6rem', color: 'var(--text-muted)',
+          fontSize: '0.6rem', color: 'var(--text-muted)', flexShrink: 0,
           transform: expanded ? 'rotate(180deg)' : 'none',
-          transition: 'transform 0.2s ease',
+          transition: 'transform 0.2s ease', alignSelf: 'flex-start', marginTop: 4,
         }}>▾</div>
       </button>
 

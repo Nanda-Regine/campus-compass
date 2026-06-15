@@ -399,25 +399,44 @@ export interface DailyChallenge {
 }
 
 const CHALLENGE_POOL: DailyChallenge[] = [
-  { id: 'c_task2',      title: 'Task duo',         description: 'Complete 2 tasks today',           xp: 30, icon: '✅', autoDetect: 'task_complete' },
-  { id: 'c_checkin',    title: 'Check in',          description: 'Do your wellness check-in',         xp: 25, icon: '🧠', autoDetect: 'wellness_checkin' },
-  { id: 'c_pomodoro',   title: 'Focus block',       description: 'Complete a Pomodoro session',       xp: 30, icon: '⏱️', autoDetect: 'pomodoro_session' },
-  { id: 'c_flashcards', title: 'Card review',       description: 'Review flashcards today',           xp: 25, icon: '🃏', autoDetect: 'flashcard_review' },
-  { id: 'c_allclear',   title: 'All clear',         description: 'Clear all your due tasks',          xp: 50, icon: '🏁', autoDetect: 'all_tasks_done' },
-  { id: 'c_nova',       title: 'Ask Nova',          description: 'Have a conversation with Nova',     xp: 20, icon: '✦' },
-  { id: 'c_bursary',    title: 'Opportunity scout', description: 'Browse the bursary finder',         xp: 20, icon: '🎓', autoDetect: 'bursary_viewed' },
-  { id: 'c_career',     title: 'Career check',      description: 'Open your Career OS today',         xp: 20, icon: '💼', autoDetect: 'skills_gap_viewed' },
-  { id: 'c_cv',         title: 'CV builder',        description: 'Add a skill to your CV',            xp: 20, icon: '📄', autoDetect: 'cv_skill_added' },
-  { id: 'c_interview',  title: 'Practice day',      description: 'Complete a mock interview',         xp: 50, icon: '🎤', autoDetect: 'mock_interview_complete' },
-  { id: 'c_task3',      title: 'Triple win',        description: 'Complete 3 tasks today',            xp: 40, icon: '🎯', autoDetect: 'task_complete' },
-  { id: 'c_mindful',    title: 'Mind check',        description: 'Check your burnout score today',    xp: 20, icon: '🧘', autoDetect: 'wellness_checkin' },
-  // New domains
-  { id: 'c_budget',     title: 'Money tracker',     description: 'Log an expense in your budget',     xp: 20, icon: '💰', autoDetect: 'budget_entry' },
-  { id: 'c_habits',     title: 'Habit hero',        description: 'Complete 3 habits today',           xp: 30, icon: '🔄', autoDetect: 'habit_checkin' },
-  { id: 'c_meal',       title: 'Meal prep',         description: 'Plan a meal in your meal planner',  xp: 20, icon: '🍱', autoDetect: 'meal_planned' },
-  { id: 'c_note',       title: 'Note explorer',     description: 'Save a note from the marketplace',  xp: 20, icon: '📝', autoDetect: 'note_saved' },
-  { id: 'c_work',       title: 'Work logged',       description: 'Log a completed shift today',       xp: 25, icon: '⏰', autoDetect: 'shift_logged' },
-  { id: 'c_hustle',     title: 'Side hustle',       description: 'Log a side hustle entry',           xp: 25, icon: '💼', autoDetect: 'side_hustle_logged' },
+  // Study
+  { id: 'c_task2',      title: 'Task duo',         description: 'Complete 2 tasks today',                    xp: 30, icon: '✅', autoDetect: 'task_complete' },
+  { id: 'c_task3',      title: 'Triple win',       description: 'Complete 3 tasks today',                    xp: 40, icon: '🎯', autoDetect: 'task_complete' },
+  { id: 'c_allclear',   title: 'All clear',        description: 'Clear all your due tasks today',            xp: 60, icon: '🏁', autoDetect: 'all_tasks_done' },
+  { id: 'c_pomodoro',   title: 'Focus block',      description: 'Complete a Pomodoro session',               xp: 30, icon: '⏱️', autoDetect: 'pomodoro_session' },
+  { id: 'c_flashcards', title: 'Card review',      description: 'Review flashcards today',                   xp: 25, icon: '🃏', autoDetect: 'flashcard_review' },
+  { id: 'c_deep_work',  title: 'Deep work',        description: 'Do 2 Pomodoro sessions back-to-back',       xp: 50, icon: '🔥', autoDetect: 'pomodoro_session' },
+  { id: 'c_note',       title: 'Note explorer',    description: 'Save a note from the marketplace',          xp: 20, icon: '📝', autoDetect: 'note_saved' },
+  // Wellness
+  { id: 'c_checkin',    title: 'Check in',         description: 'Do your wellness check-in',                 xp: 25, icon: '🧠', autoDetect: 'wellness_checkin' },
+  { id: 'c_mindful',    title: 'Mind check',       description: 'Check your burnout score today',            xp: 20, icon: '🧘', autoDetect: 'wellness_checkin' },
+  { id: 'c_sleep_log',  title: 'Sleep logged',     description: 'Log your sleep hours today',                xp: 20, icon: '😴' },
+  { id: 'c_hydrate',    title: 'Hydration hero',   description: 'Drink 6+ glasses of water (honour system)', xp: 15, icon: '💧' },
+  { id: 'c_outside',    title: 'Touch grass',      description: 'Spend 10 min outside campus today',         xp: 20, icon: '🌳' },
+  // Budget / Money
+  { id: 'c_budget',     title: 'Money tracker',    description: 'Log an expense in your budget',             xp: 20, icon: '💰', autoDetect: 'budget_entry' },
+  { id: 'c_no_spend',   title: 'No-spend day',     description: 'Log zero non-essential spending today',     xp: 35, icon: '🤑' },
+  { id: 'c_savings',    title: 'Save R5',          description: 'Add R5 to your savings goal today',         xp: 25, icon: '🏦' },
+  // Meals
+  { id: 'c_meal',       title: 'Meal prep',        description: 'Plan a meal in your meal planner',          xp: 20, icon: '🍱', autoDetect: 'meal_planned' },
+  { id: 'c_grocery',    title: 'Grocery list',     description: 'Add 3 items to your grocery list',          xp: 20, icon: '🛒' },
+  { id: 'c_cook',       title: 'Home cook',        description: 'Cook a meal at home today (no takeaways)',   xp: 30, icon: '👨‍🍳' },
+  // Career
+  { id: 'c_nova',       title: 'Ask Nova',         description: 'Have a conversation with Nova',             xp: 20, icon: '✦' },
+  { id: 'c_bursary',    title: 'Opportunity scout',description: 'Browse the bursary finder',                 xp: 20, icon: '🎓', autoDetect: 'bursary_viewed' },
+  { id: 'c_career',     title: 'Career check',     description: 'Open your Career OS today',                 xp: 20, icon: '💼', autoDetect: 'skills_gap_viewed' },
+  { id: 'c_cv',         title: 'CV builder',       description: 'Add a skill to your CV',                   xp: 20, icon: '📄', autoDetect: 'cv_skill_added' },
+  { id: 'c_interview',  title: 'Practice day',     description: 'Complete a mock interview',                 xp: 50, icon: '🎤', autoDetect: 'mock_interview_complete' },
+  { id: 'c_job_search', title: 'Job scout',        description: 'Browse SA Jobs for 5 minutes',              xp: 20, icon: '🔍' },
+  // Habits / Lifestyle
+  { id: 'c_habits',     title: 'Habit hero',       description: 'Complete 3 habits today',                   xp: 30, icon: '🔄', autoDetect: 'habit_checkin' },
+  { id: 'c_streak',     title: 'Streak keeper',    description: 'Keep your study streak alive',              xp: 25, icon: '⚡', autoDetect: 'pomodoro_session' },
+  // Work
+  { id: 'c_work',       title: 'Work logged',      description: 'Log a completed shift today',               xp: 25, icon: '⏰', autoDetect: 'shift_logged' },
+  { id: 'c_hustle',     title: 'Side hustle',      description: 'Log a side hustle entry',                   xp: 25, icon: '💼', autoDetect: 'side_hustle_logged' },
+  // Safety / Movement
+  { id: 'c_commute',    title: 'Safe route',       description: 'Plan your commute route in Movement OS',    xp: 15, icon: '🚌' },
+  { id: 'c_safety',     title: 'Safety ready',     description: 'Check emergency contacts in Safety OS',     xp: 15, icon: '🛡️' },
 ]
 
 function dateStr(d = new Date()) { return d.toISOString().split('T')[0] }

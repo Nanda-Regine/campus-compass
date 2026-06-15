@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { Rss, Users } from 'lucide-react'
+import { Rss, Users, Handshake } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
-const CampusFeed  = dynamic(() => import('./CampusFeed'),  { ssr: false })
-const StudyTwins  = dynamic(() => import('./StudyTwins'),  { ssr: false })
+const CampusFeed           = dynamic(() => import('./CampusFeed'),  { ssr: false })
+const StudyTwins           = dynamic(() => import('./StudyTwins'),  { ssr: false })
+const AccountabilityPartner = dynamic(() => import('@/components/community/AccountabilityPartner'), { ssr: false })
 
-type Tab = 'feed' | 'twins'
+type Tab = 'feed' | 'twins' | 'partners'
 
 interface Props {
   userId: string
@@ -16,9 +17,10 @@ interface Props {
   initialWhatsapp: string | null
 }
 
-const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; accent: string; desc: string }[] = [
-  { id: 'feed',  label: 'Campus Feed', icon: <Rss size={15} />,   accent: '#4ecf9e', desc: 'Your institution' },
-  { id: 'twins', label: 'Study Twins', icon: <Users size={15} />, accent: '#9B6FFF', desc: 'Find a study partner' },
+const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; accent: string }[] = [
+  { id: 'feed',     label: 'Campus Feed',  icon: <Rss size={15} />,       accent: '#4ecf9e' },
+  { id: 'twins',    label: 'Study Twins',  icon: <Users size={15} />,     accent: '#9B6FFF' },
+  { id: 'partners', label: 'Accountability', icon: <Handshake size={15} />, accent: '#f59e0b' },
 ]
 
 export default function SocialClient({ userId, userInstitution, initialOptIn, initialWhatsapp }: Props) {
@@ -93,6 +95,9 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
             initialOptIn={initialOptIn}
             initialWhatsapp={initialWhatsapp}
           />
+        )}
+        {tab === 'partners' && (
+          <AccountabilityPartner userId={userId} />
         )}
       </div>
     </div>

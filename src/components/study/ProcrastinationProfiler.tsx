@@ -26,6 +26,7 @@ const TYPE_META: Record<ProcType, {
   tagline:      string
   interventions: string[]
   avoid:        string
+  proactive:    string[]
 }> = {
   perfectionist: {
     label:    'The Perfectionist',
@@ -39,6 +40,13 @@ const TYPE_META: Record<ProcType, {
       "Remind yourself: shipped beats perfect every time",
     ],
     avoid: "Do not start unless you 'feel ready' — that feeling never comes",
+    proactive: [
+      "Today: Write 'good enough = ___' for your next task before opening it",
+      "This week: Submit one thing that feels 80% ready — notice nothing bad happens",
+      "Daily habit: Start a 25-min timer before you feel ready — stop when it rings",
+      "When stuck: Ask 'what would I tell a friend to do?' — then do that",
+      "Long term: Keep a wins log — done beats perfect; your brain needs evidence",
+    ],
   },
   overwhelmed: {
     label:    'The Overwhelmed',
@@ -52,6 +60,13 @@ const TYPE_META: Record<ProcType, {
       "'Break it down ✦' on every task before touching it",
     ],
     avoid: "Looking at the whole pile before starting — zoom in on one thing",
+    proactive: [
+      "Today: Open Tasks and break your biggest task into 3 bullet steps",
+      "Morning ritual: Pick your ONE most important task before checking anything else",
+      "When overwhelmed: Write a brain dump — everything on paper, nothing in your head",
+      "Weekly: Sunday Planning — map the week in 15 min; clears Sunday anxiety",
+      "Long term: Never add a task without a due date — open-ended lists crush you",
+    ],
   },
   avoidant: {
     label:    'The Avoider',
@@ -65,6 +80,13 @@ const TYPE_META: Record<ProcType, {
       "Use Body Double Mode — anxiety drops when someone is present",
     ],
     avoid: "Ruminating on the task without starting — it always feels worse than it is",
+    proactive: [
+      "Today: Write 'The worst outcome is ___ and I'd survive it because ___'",
+      "When fear hits: Start with the easiest 5% of the task — momentum is real",
+      "Weekly: Use Body Double Mode for your scariest task — presence reduces anxiety",
+      "Self-talk swap: 'I can't do this' → 'I'm learning how to do this'",
+      "Long term: Keep evidence of past hard things you survived — refer back when afraid",
+    ],
   },
   impulsive: {
     label:    'The Impulsive',
@@ -78,6 +100,13 @@ const TYPE_META: Record<ProcType, {
       "Reward yourself ONLY after the session, not during",
     ],
     avoid: "Starting work with your phone nearby — you will lose",
+    proactive: [
+      "Today: Put your phone in another room before your next study session",
+      "Session start ritual: Close all tabs, open only what you need",
+      "Distraction urge? Write it down instead of acting on it — come back later",
+      "Reward system: Choose something you want AFTER the session — only then",
+      "Long term: Track your no-distraction streaks — compete with yourself",
+    ],
   },
   bored: {
     label:    'The Boredom Procrastinator',
@@ -91,6 +120,13 @@ const TYPE_META: Record<ProcType, {
       "Pair it with something you enjoy (study music, good coffee)",
     ],
     avoid: "Waiting to 'feel motivated' — motivation follows action, not the other way",
+    proactive: [
+      "Today: Write 'this task matters because ___' before starting it",
+      "Gamify: Set a 20-min timer and try to beat your last score or word count",
+      "Environment shift: Study somewhere new this week — library, café, outside",
+      "Pair it: Choose one playlist or drink that's ONLY for study — Pavlov works",
+      "Long term: Track XP for every completed session — the streak itself becomes motivating",
+    ],
   },
 }
 
@@ -227,6 +263,32 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
         </div>
         <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
           {meta.avoid}
+        </div>
+      </div>
+
+      {/* Proactive action plan */}
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: meta.color, letterSpacing: '0.12em', marginBottom: 8 }}>
+          YOUR ACTION PLAN
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {meta.proactive.map((step, i) => (
+            <div key={i} style={{
+              display: 'flex', gap: 10, alignItems: 'flex-start',
+              padding: '8px 12px', borderRadius: 10,
+              background: `${meta.color}08`, border: `1px solid ${meta.color}18`,
+            }}>
+              <span style={{
+                fontFamily: '"JetBrains Mono",monospace', fontSize: 9, fontWeight: 700,
+                color: meta.color, flexShrink: 0, marginTop: 2, minWidth: 14,
+              }}>
+                {i + 1}.
+              </span>
+              <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
+                {step}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 

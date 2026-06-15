@@ -1,8 +1,14 @@
 ﻿import { createServerSupabaseClient as createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import WhenYouAreSick from '@/components/health/WhenYouAreSick'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+
+const ProcrastinationProfiler = dynamic(
+  () => import('@/components/study/ProcrastinationProfiler'),
+  { ssr: false }
+)
 
 const newFeatures = [
   {
@@ -42,6 +48,14 @@ export default async function HealthPage() {
       <AmbientImage zone="wellness" opacity={0.35} blurPx={18} saturation={1.2} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
         <WhenYouAreSick university={university} />
+
+        {/* Mind OS — Procrastination Profiler */}
+        <div style={{ marginTop: '28px' }}>
+          <h2 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
+            🧠 Mind Fitness
+          </h2>
+          <ProcrastinationProfiler />
+        </div>
 
         {/* New Features */}
         <div style={{ marginTop: '32px' }}>
