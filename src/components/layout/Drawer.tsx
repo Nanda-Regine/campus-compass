@@ -437,6 +437,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
             {[
               { href: '/profile',  icon: '👤', label: 'My Profile' },
               { href: '/referral', icon: '🎁', label: 'Refer & Earn' },
+              { href: '/feedback', icon: '⭐', label: 'Rate & Feedback' },
             ].map(item => (
               <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-display text-white/55 hover:text-white hover:bg-white/5 transition-all mb-0.5">
                 <span className="text-base w-5 text-center">{item.icon}</span>
