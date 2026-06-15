@@ -52,6 +52,9 @@ export type XPEventName =
   | 'profiler_completed'
   | 'accountability_shared'
   | 'recovery_initiated'
+  // Community Challenges
+  | 'battle_won'
+  | 'battle_participated'
 
 export const XP_VALUES: Record<XPEventName, number> = {
   task_complete:            15,
@@ -96,6 +99,9 @@ export const XP_VALUES: Record<XPEventName, number> = {
   profiler_completed:       10,
   accountability_shared:    20,
   recovery_initiated:       15,
+  // Community Challenges
+  battle_won:              100,
+  battle_participated:      25,
 }
 
 // Max fires per day per event (undefined = unlimited).
@@ -121,6 +127,9 @@ const MAX_DAILY_FIRES: Partial<Record<XPEventName, number>> = {
   profiler_completed:     1,
   accountability_shared:  2,
   recovery_initiated:     1,
+  // Community Challenges
+  battle_won:             1,
+  battle_participated:    2,
 }
 
 /* ── Level System ───────────────────────────────────────────────────────────*/
@@ -698,4 +707,7 @@ const EVENT_LABELS: Partial<Record<XPEventName, string>> = {
   profiler_completed:       'Procrastination profile done',
   accountability_shared:    'Commitment shared publicly 💪',
   recovery_initiated:       'Spiral recovery started',
+  // Community Challenges
+  battle_won:               '🏆 Battle won!',
+  battle_participated:      '⚔️ Battle completed',
 }

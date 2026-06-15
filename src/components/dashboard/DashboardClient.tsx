@@ -52,6 +52,7 @@ import FocusMomentumScore from '@/components/dashboard/FocusMomentumScore'
 import ProcrastinationProfiler from '@/components/study/ProcrastinationProfiler'
 import AccountabilityPartner from '@/components/study/AccountabilityPartner'
 import AntiSpiralRecovery from '@/components/study/AntiSpiralRecovery'
+import CommunityChallengesHub from '@/components/community/CommunityChallengesHub'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1654,6 +1655,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
               <TabErrorBoundary label="Focus Momentum Score">
                 <FocusMomentumScore />
+              </TabErrorBoundary>
+
+              {/* Community Challenges — leaderboard, battles, weekly bounty */}
+              <TabErrorBoundary label="Community Challenges">
+                <CommunityChallengesHub />
               </TabErrorBoundary>
 
               <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
