@@ -2,14 +2,17 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   const { searchParams } = new URL(req.url)
   const institution = searchParams.get('institution')
   const category = searchParams.get('category')
-  const supabase = createServerSupabaseClient()
 
   let query = supabase
     .from('wisdom_posts')
-    .select('*')
+    .select('id, title, content, category, tags, institution, upvotes, is_anonymous, created_at, user_id')
     .order('upvotes', { ascending: false })
     .limit(50)
 
@@ -27,9 +30,11 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
+  // Explicit allowlist prevents mass-assignment of privileged columns (upvotes, is_verified, etc.)
+  const { title, content, category, tags, institution, is_anonymous } = body as Record<string, unknown>
   const { data, error } = await supabase
     .from('wisdom_posts')
-    .insert({ ...body, user_id: user.id })
+    .insert({ title, content, category, tags, institution, is_anonymous, user_id: user.id })
     .select()
     .single()
 

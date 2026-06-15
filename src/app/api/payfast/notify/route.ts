@@ -67,6 +67,11 @@ function verifySignature(data: Record<string, string>, passphrase: string | unde
   return computed === signature
 }
 
+function safeAmount(raw: string | undefined): number {
+  const n = parseFloat(raw ?? '0')
+  return Number.isFinite(n) ? n : 0
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
@@ -92,7 +97,7 @@ export async function POST(request: NextRequest) {
       try {
         await supabase.from('payment_logs').insert({
           payfast_payment_id: data.pf_payment_id ?? null,
-          amount: parseFloat(data.amount_gross ?? '0'),
+          amount: safeAmount(data.amount_gross),
           status: 'REJECTED_IP',
           item_name: data.item_name ?? null,
           raw_data: { ...data, rejected_ip: clientIp },
@@ -112,7 +117,7 @@ export async function POST(request: NextRequest) {
       try {
         await supabase.from('payment_logs').insert({
           payfast_payment_id: data.pf_payment_id ?? null,
-          amount: parseFloat(data.amount_gross ?? '0'),
+          amount: safeAmount(data.amount_gross),
           status: 'REJECTED_SIGNATURE',
           item_name: data.item_name ?? null,
           raw_data: data,
@@ -130,6 +135,12 @@ export async function POST(request: NextRequest) {
     // Strip optional "varsityos_" prefix so the rest of the parsing is unchanged
     const stripped = mpid.startsWith('varsityos_') ? mpid.slice(10) : mpid
     const userId = stripped.slice(0, 36)
+    // Validate that userId is a well-formed UUID before using it in DB queries
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (userId && !UUID_RE.test(userId)) {
+      console.warn('[PayFast ITN] Malformed userId in m_payment_id:', mpid)
+      return new NextResponse('OK', { status: 200 })
+    }
     // tier is the segment after the uuid — check known values by prefix to handle nova_unlimited's underscore
     const afterUuid = stripped.slice(37)
     const tier: 'scholar' | 'nova_unlimited' =
@@ -140,7 +151,7 @@ export async function POST(request: NextRequest) {
     try {
       await supabase.from('payment_logs').insert({
         payfast_payment_id: data.pf_payment_id ?? null,
-        amount: parseFloat(data.amount_gross ?? '0'),
+        amount: safeAmount(data.amount_gross),
         status: data.payment_status ?? 'unknown',
         item_name: data.item_name ?? null,
         raw_data: data,
@@ -166,7 +177,7 @@ export async function POST(request: NextRequest) {
         try {
           await supabase.from('payment_logs').insert({
             payfast_payment_id: data.pf_payment_id ?? null,
-            amount: parseFloat(data.amount_gross ?? '0'),
+            amount: safeAmount(data.amount_gross),
             status: 'UPGRADE_FAILED',
             item_name: data.item_name ?? null,
             raw_data: { ...data, upgrade_error: updateError.message },
@@ -185,7 +196,7 @@ export async function POST(request: NextRequest) {
             status: 'active',
             payfast_subscription_token: data.token ?? null,
             payfast_payment_id: data.pf_payment_id ?? null,
-            amount: parseFloat(data.amount_gross ?? '0'),
+            amount: safeAmount(data.amount_gross),
             updated_at: new Date().toISOString(),
           }, { onConflict: 'user_id' })
         } catch { /* non-fatal — run migration 20260425000000 to enable */ }

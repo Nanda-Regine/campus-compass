@@ -1161,7 +1161,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         const sevenDays = new Date(now); sevenDays.setDate(now.getDate() + 7)
         const [mealsRes, shiftsRes, groupsRes, nsfasRes] = await Promise.allSettled([
           supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStart.toISOString().split('T')[0]).lte('week_start', weekEnd.toISOString().split('T')[0]),
-          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDays.toISOString().split('T')[0]),
+          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('student_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDays.toISOString().split('T')[0]),
           supabase.from('group_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
           // NSFAS delayed: any expected disbursement whose expected_date has passed
           supabase.from('nsfas_disbursements').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'expected').lt('expected_date', todayStr),
@@ -1266,7 +1266,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         }
       })
       .catch(() => {})
-  }, [store])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // 7. Exam push check (once per session)
   useEffect(() => {
@@ -1288,12 +1289,15 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     const update = () => setCurrentHour(new Date().getHours())
     const now = new Date()
     const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
+    let interval: ReturnType<typeof setInterval> | null = null
     const timeout = setTimeout(() => {
       update()
-      const interval = setInterval(update, 60_000)
-      return () => clearInterval(interval)
+      interval = setInterval(update, 60_000)
     }, msToNextMinute)
-    return () => clearTimeout(timeout)
+    return () => {
+      clearTimeout(timeout)
+      if (interval !== null) clearInterval(interval)
+    }
   }, [])
 
   const handleRefresh = useCallback(async () => {
@@ -1594,7 +1598,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       </div>
 
       {/* Orchestration — crisis modal (urgency 5, modal variant) */}
-      <InterventionModal />
+      <TabErrorBoundary label="Intervention Modal">
+        <InterventionModal />
+      </TabErrorBoundary>
     </>
   )
 }

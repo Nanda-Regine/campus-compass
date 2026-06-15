@@ -108,8 +108,6 @@ export async function POST(request: Request) {
       : 'https://www.payfast.co.za/eng/process'
 
     console.log('[PayFast] initiate | merchant:', merchantId.slice(0, 4) + '****', '| tier:', tierId, '| sandbox:', isSandbox)
-    console.log('[PayFast] sig source:', sigSource.replace(passphrase, '***'))
-    console.log('[PayFast] signature:', signature)
 
     return NextResponse.json({ action, fields: formFields })
 

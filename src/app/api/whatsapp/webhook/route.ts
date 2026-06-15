@@ -47,7 +47,9 @@ function getAnthropic() {
 function verifyMetaSignature(rawBody: string, sigHeader: string | null): boolean {
   const appSecret = process.env.META_WHATSAPP_APP_SECRET
   if (!appSecret) {
-    return process.env.NODE_ENV !== 'production'
+    // Fail closed: missing secret means we cannot verify any request, regardless of environment.
+    // Set META_WHATSAPP_APP_SECRET in .env.local to enable webhook ingestion.
+    return false
   }
 
   if (!sigHeader?.startsWith('sha256=')) return false

@@ -14,7 +14,13 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await req.json()
-  const { data, error } = await supabase.from('user_values').upsert({ ...body, user_id: user.id, updated_at: new Date().toISOString() }).select().single()
+  // Explicit allowlist prevents mass-assignment into upsert
+  const { values_list, reflection, top_value } = body as Record<string, unknown>
+  const { data, error } = await supabase
+    .from('user_values')
+    .upsert({ values_list, reflection, top_value, user_id: user.id, updated_at: new Date().toISOString() })
+    .select()
+    .single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ data })
 }
