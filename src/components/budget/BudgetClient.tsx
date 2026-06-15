@@ -376,34 +376,65 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     : 'text-white'
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       {/* Kente gold fire — subtle texture for the finance domain */}
       <AmbientImage zone="budget" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TopBar title="Budget & NSFAS" />
 
-      {/* Tab bar */}
-      <div className="sticky top-[57px] z-20 bg-[var(--bg-base)] border-b border-white/7">
-        <div className="flex px-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'flex-shrink-0 flex items-center gap-1.5 px-3 py-3 font-display text-xs font-bold transition-all relative whitespace-nowrap',
-                activeTab === tab.id ? 'text-teal-400' : 'text-white/40 hover:text-white/70'
-              )}
-            >
-              <span className="hidden sm:inline">{tab.icon}</span>
-              {tab.label}
-              {activeTab === tab.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-t-full" />
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* ── Main: vertical tab rail + content ── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
 
-      <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
+        {/* Vertical tab rail */}
+        <div style={{
+          width: 60, flexShrink: 0,
+          position: 'sticky', top: 57,
+          height: 'calc(100vh - 57px)',
+          overflowY: 'auto',
+          scrollbarWidth: 'none',
+          borderRight: '0.5px solid rgba(255,255,255,0.06)',
+          background: 'rgba(0,0,0,0.15)',
+        }}>
+          {TABS.map(tab => {
+            const active = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  width: '100%', minHeight: 62,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 4,
+                  background: active ? 'rgba(78,207,158,0.1)' : 'transparent',
+                  borderTop: 'none', borderRight: 'none', borderBottom: 'none',
+                  borderLeft: `2px solid ${active ? '#4ecf9e' : 'transparent'}`,
+                  cursor: 'pointer',
+                  transition: 'background 0.15s',
+                  padding: '4px 2px',
+                }}
+              >
+                <span style={{ fontSize: '1.2rem', lineHeight: 1, opacity: active ? 1 : 0.5 }}>{tab.icon}</span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.38rem',
+                  color: active ? '#4ecf9e' : 'rgba(255,255,255,0.3)',
+                  letterSpacing: '0.04em',
+                  lineHeight: 1,
+                  maxWidth: 54,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  textAlign: 'center',
+                }}>
+                  {tab.label.toUpperCase()}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
         <TabErrorBoundary key={activeTab} label={activeTab}>
 
         {/* ─── Overview Tab ─── */}
@@ -1193,6 +1224,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         )}
 
         </TabErrorBoundary>
+      </div>
+        </div>
       </div>
     </div>
   )

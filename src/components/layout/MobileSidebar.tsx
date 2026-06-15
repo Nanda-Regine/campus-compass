@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import {
   Home, BookOpen, Wallet, Sparkles, Utensils, Briefcase,
   Users, UserCircle, Heart, Dumbbell, Moon, Shield,
-  MapPin, MessageCircle, Award, Building2, X, Menu,
+  MapPin, MessageCircle, Award, Building2, X,
   GraduationCap, Globe, Flame,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
@@ -92,24 +92,6 @@ export function MobileSidebar() {
 
   return (
     <>
-      {/* Hamburger button — top-left, mobile only */}
-      <button
-        onClick={() => setOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50"
-        aria-label="Open navigation"
-        style={{
-          width: 38, height: 38, borderRadius: 11,
-          background: 'rgba(8,13,11,0.9)',
-          border: '0.5px solid rgba(168,85,247,0.25)',
-          backdropFilter: 'blur(12px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', color: 'rgba(255,255,255,0.7)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
-        }}
-      >
-        <Menu size={17} />
-      </button>
-
       {/* Backdrop */}
       {open && (
         <div

@@ -153,7 +153,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
   }
 
   return (
-    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div className="page-enter min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       <AmbientImage zone="schedule" opacity={0.28} blurPx={8} saturation={1.8} overlayColor="rgba(5,4,12,0.45)" />
       <PullToRefresh onRefresh={handleRefresh} />
 
@@ -217,50 +217,62 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
           </div>
         </div>
 
-        {/* ── Pill tab bar ── */}
-        <div
-          style={{
-            display: 'flex', gap: 2, padding: '0 8px',
-            overflowX: 'auto', scrollbarWidth: 'none',
-          }}
-        >
+      </div>
+
+      {/* ── Main: vertical rail + content ── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+
+        {/* Vertical tab rail */}
+        <div style={{
+          width: 56, flexShrink: 0,
+          position: 'sticky', top: 57,
+          height: 'calc(100vh - 57px)',
+          overflowY: 'auto', scrollbarWidth: 'none',
+          borderRight: '0.5px solid rgba(255,255,255,0.06)',
+          background: 'rgba(0,0,0,0.18)',
+        }}>
           {TAB_CONFIG.map(tab => {
             const active = activeTab === tab.id
             const badge  = getBadge(tab.id)
-
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 style={{
-                  position: 'relative',
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '8px 11px',
-                  borderRadius: '10px 10px 0 0',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.7rem',
-                  fontWeight: active ? 700 : 400,
-                  color: active ? tab.accent : 'rgba(255,255,255,0.32)',
-                  background: active ? `${tab.accent}10` : 'transparent',
-                  border: active ? `1px solid ${tab.accent}25` : '1px solid transparent',
-                  borderBottom: active ? `2px solid ${tab.accent}` : '2px solid transparent',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.18s ease',
-                  flexShrink: 0,
-                  boxShadow: active ? `0 -2px 12px ${tab.glow}` : 'none',
+                  width: '100%', minHeight: 52,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 3,
+                  background: active ? `${tab.accent}14` : 'transparent',
+                  borderTop: 'none', borderRight: 'none', borderBottom: 'none',
+                  borderLeft: `2px solid ${active ? tab.accent : 'transparent'}`,
+                  cursor: 'pointer', position: 'relative',
+                  transition: 'background 0.15s',
+                  padding: '6px 3px',
                 }}
               >
-                <span style={{ fontSize: '0.9rem', lineHeight: 1, opacity: active ? 1 : 0.6 }}>{tab.icon}</span>
-                <span>{tab.label}</span>
+                <span style={{ fontSize: '1.05rem', lineHeight: 1, opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.37rem',
+                  color: active ? tab.accent : 'rgba(255,255,255,0.28)',
+                  letterSpacing: '0.04em',
+                  lineHeight: 1,
+                  maxWidth: 48,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {tab.label.slice(0, 7).toUpperCase()}
+                </span>
                 {badge && (
                   <span style={{
-                    minWidth: 15, height: 15, padding: '0 3px',
-                    borderRadius: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'var(--font-mono)', fontSize: '0.48rem', fontWeight: 700,
-                    background: `${badge.color}18`, color: badge.color,
-                    border: `0.5px solid ${badge.color}35`,
-                    boxShadow: active ? `0 0 6px ${badge.glow}` : 'none',
+                    position: 'absolute', top: 5, right: 4,
+                    minWidth: 14, height: 14, padding: '0 2px',
+                    borderRadius: 9999,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.4rem', fontWeight: 700,
+                    background: `${badge.color}20`, color: badge.color,
+                    border: `0.5px solid ${badge.color}40`,
                   }}>
                     {badge.count}
                   </span>
@@ -269,50 +281,50 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
             )
           })}
         </div>
-      </div>
 
-      {/* ── Tab content ── */}
-      <div className="max-w-2xl mx-auto px-4 py-4">
-        <StudyContextEngine exams={exams} userId={initialData.userId} />
-        {activeTab === 'tasks'      && <TabErrorBoundary label="Tasks"><TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} /></TabErrorBoundary>}
-        {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} workShifts={initialData.workShifts} calendarEvents={initialData.calendarEvents} userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'timetable'  && <TabErrorBoundary label="Timetable"><TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} /></TabErrorBoundary>}
-        {activeTab === 'exams'      && <TabErrorBoundary label="Exams"><ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} /></TabErrorBoundary>}
-        {activeTab === 'grades'     && <TabErrorBoundary label="Grades"><GradesTab    modules={modules} /></TabErrorBoundary>}
-        {activeTab === 'flashcards' && <TabErrorBoundary label="Flashcards"><FlashcardsTab modules={modules} /></TabErrorBoundary>}
-        {activeTab === 'wellness'   && <TabErrorBoundary label="Wellness"><WellnessTab /></TabErrorBoundary>}
-        {activeTab === 'modules'    && <TabErrorBoundary label="Modules"><ModulesTab   modules={modules} tasks={tasks} exams={exams} userId={userId} supabase={supabase} /></TabErrorBoundary>}
-        {activeTab === 'pomodoro'   && <TabErrorBoundary label="Pomodoro"><PomodoroTimer modules={modules} tasks={tasks} userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'habits'     && <TabErrorBoundary label="Habits"><HabitBuilder /></TabErrorBoundary>}
-        {activeTab === 'graduation' && <TabErrorBoundary label="Graduation Audit"><GraduationAudit /></TabErrorBoundary>}
-        {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
-        {activeTab === 'pastpapers' && <TabErrorBoundary label="Past Papers"><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
-        {activeTab === 'forecaster' && <TabErrorBoundary label="Forecast"><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
-        {activeTab === 'orbit'      && <TabErrorBoundary label="Orbit Map"><ModuleOrbitMap modules={modules} exams={exams} /></TabErrorBoundary>}
-      </div>
-
-      {/* ── Reading Mode CTA ── */}
-      <div className="max-w-2xl mx-auto px-4 pb-2">
-        <Link href="/reader" style={{
-          display: 'flex', alignItems: 'center', gap: 12,
-          padding: '12px 16px', borderRadius: 14,
-          border: '1px solid rgba(245,158,11,0.18)',
-          background: 'rgba(245,158,11,0.05)',
-          textDecoration: 'none',
-        }}>
-          <span style={{ fontSize: 22, flexShrink: 0 }}>📖</span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: '#f59e0b', margin: 0 }}>
-              Reading Mode
-            </p>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
-              Upload a PDF or Word doc — read section by section, not all at once
-            </p>
+        {/* Tab content + Reading Mode CTA */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="max-w-2xl mx-auto px-3 py-4">
+            <StudyContextEngine exams={exams} userId={initialData.userId} />
+            {activeTab === 'tasks'      && <TabErrorBoundary label="Tasks"><TasksTab     tasks={tasks}     modules={modules}   userId={userId} supabase={supabase} triggerAdd={triggerAdd} /></TabErrorBoundary>}
+            {activeTab === 'calendar'   && <TabErrorBoundary label="Calendar"><CalendarTab  timetable={timetable} tasks={tasks} exams={exams} modules={modules} workShifts={initialData.workShifts} calendarEvents={initialData.calendarEvents} userId={userId} /></TabErrorBoundary>}
+            {activeTab === 'timetable'  && <TabErrorBoundary label="Timetable"><TimetableTab timetable={timetable} modules={modules} userId={userId} supabase={supabase} /></TabErrorBoundary>}
+            {activeTab === 'exams'      && <TabErrorBoundary label="Exams"><ExamsTab     exams={exams}     modules={modules}   tasks={tasks}   userId={userId} supabase={supabase} /></TabErrorBoundary>}
+            {activeTab === 'grades'     && <TabErrorBoundary label="Grades"><GradesTab    modules={modules} /></TabErrorBoundary>}
+            {activeTab === 'flashcards' && <TabErrorBoundary label="Flashcards"><FlashcardsTab modules={modules} /></TabErrorBoundary>}
+            {activeTab === 'wellness'   && <TabErrorBoundary label="Wellness"><WellnessTab /></TabErrorBoundary>}
+            {activeTab === 'modules'    && <TabErrorBoundary label="Modules"><ModulesTab   modules={modules} tasks={tasks} exams={exams} userId={userId} supabase={supabase} /></TabErrorBoundary>}
+            {activeTab === 'pomodoro'   && <TabErrorBoundary label="Pomodoro"><PomodoroTimer modules={modules} tasks={tasks} userId={userId} /></TabErrorBoundary>}
+            {activeTab === 'habits'     && <TabErrorBoundary label="Habits"><HabitBuilder /></TabErrorBoundary>}
+            {activeTab === 'graduation' && <TabErrorBoundary label="Graduation Audit"><GraduationAudit /></TabErrorBoundary>}
+            {activeTab === 'attendance' && <TabErrorBoundary label="Attendance"><AttendanceTab modules={modules} userId={userId} /></TabErrorBoundary>}
+            {activeTab === 'velocity'   && <TabErrorBoundary label="Study Velocity"><StudyVelocityTab modules={modules} userId={userId} /></TabErrorBoundary>}
+            {activeTab === 'pods'       && <TabErrorBoundary label="Study Pods"><StudyPodsTab userId={userId} /></TabErrorBoundary>}
+            {activeTab === 'pastpapers' && <TabErrorBoundary label="Past Papers"><PastPaperVault userId={initialData.userId} /></TabErrorBoundary>}
+            {activeTab === 'forecaster' && <TabErrorBoundary label="Forecast"><SmartGradeForecaster modules={modules} /></TabErrorBoundary>}
+            {activeTab === 'orbit'      && <TabErrorBoundary label="Orbit Map"><ModuleOrbitMap modules={modules} exams={exams} /></TabErrorBoundary>}
           </div>
-          <span style={{ color: 'rgba(245,158,11,0.5)', fontSize: 16, flexShrink: 0 }}>→</span>
-        </Link>
+          <div className="max-w-2xl mx-auto px-3 pb-2">
+            <Link href="/reader" style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '12px 16px', borderRadius: 14,
+              border: '1px solid rgba(245,158,11,0.18)',
+              background: 'rgba(245,158,11,0.05)',
+              textDecoration: 'none',
+            }}>
+              <span style={{ fontSize: 22, flexShrink: 0 }}>📖</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: '#f59e0b', margin: 0 }}>
+                  Reading Mode
+                </p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
+                  Upload a PDF or Word doc — read section by section, not all at once
+                </p>
+              </div>
+              <span style={{ color: 'rgba(245,158,11,0.5)', fontSize: 16, flexShrink: 0 }}>→</span>
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* ── Quick-add FAB ── */}
