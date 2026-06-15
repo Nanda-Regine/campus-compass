@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-14 (Phases 1–10 ✅ complete — Phase 11 next 🎯)
+> Last updated: 2026-06-15 (Phases 1–12 ✅ complete — Amplification Sprint + Phase 12 intelligence layer shipped)
 
 ---
 
@@ -1133,8 +1133,9 @@ Next migration number: **000021**
 | `20260614000021_flashcard_tables.sql` | ✅ Run | Flashcard tables |
 | `20260614000022_custom_calendar_events.sql` | ✅ Run | Custom calendar events |
 | `20260614000023_guardian_access_tokens.sql` | ✅ Run | guardian_access_tokens; 90-day expiry; max 5 per student; admin client for public guardian page |
+| `20260615000001_varsityos_amplification.sql` | ✅ Run | Amplification sprint: 15 tables — regulation_sessions, nervous_system_scores, past_papers, cycle_tracking, safe_walk_sessions, data_budget, health_conditions, wisdom_posts, wisdom_votes, mutual_aid_requests, study_accountability, walking_routes, user_values, safety_incidents, side_hustle_entries — all with RLS |
 
-Next migration number: **000024**
+Next migration number: **000025**
 
 ---
 
