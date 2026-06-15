@@ -40,6 +40,10 @@ import MoneyHealthScore from '@/components/budget/MoneyHealthScore'
 import FinancialStressLink from '@/components/finance/FinancialStressLink'
 import SassaSrdGuide from '@/components/finance/SassaSrdGuide'
 import FitnessNudge from '@/components/fitness/FitnessNudge'
+import ProcrastinationAlarm from '@/components/dashboard/ProcrastinationAlarm'
+import JustStartButton from '@/components/study/JustStartButton'
+import DeadlineTelescope from '@/components/study/DeadlineTelescope'
+import CommitmentContracts from '@/components/study/CommitmentContracts'
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -1471,11 +1475,21 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             </div>
           ))}
 
+          {/* Procrastination Alarm — shows only when severity > safe */}
+          <TabErrorBoundary label="Procrastination Alarm">
+            <ProcrastinationAlarm tasks={allTasks} exams={allExams} />
+          </TabErrorBoundary>
+
           {/* 3-column bento grid */}
           <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
 
             {/* Column 1 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {/* Just Start — zero-friction focus launcher */}
+              <TabErrorBoundary label="Just Start">
+                <JustStartButton tasks={allTasks} />
+              </TabErrorBoundary>
 
               {/* OS Command Hero — mode-adaptive, replaces bland DayModeBanner + NovaBanner */}
               <OSCommandHero
@@ -1542,6 +1556,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <StreakWidget />
               <DailyChallenges />
 
+              {/* Commitment Contracts — stake XP on task completion */}
+              <TabErrorBoundary label="Commitment Contracts">
+                <CommitmentContracts />
+              </TabErrorBoundary>
+
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
 
               {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
@@ -1578,6 +1597,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
             {/* Column 2 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* Deadline Telescope — shows when exam < 21 days */}
+              <TabErrorBoundary label="Deadline Telescope">
+                <DeadlineTelescope exams={allExams} />
+              </TabErrorBoundary>
+
               {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
               <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
             </div>

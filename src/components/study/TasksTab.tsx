@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useReducer } from 'react'
 import { signals } from '@/store/signals'
 import { queueWrite, flushPendingWrites } from '@/lib/offline/pendingWrites'
 import { useForm } from 'react-hook-form'
@@ -83,6 +83,52 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
   const [formCategory, setFormCategory] = useState<TaskCategoryGroup>('academic')
   const [swipingId, setSwipingId] = useState<string | null>(null)
   const [swipeDx, setSwipeDx] = useState(0)
+
+  // AI task decomposition — per-task state
+  interface DecompStep { id: string; title: string; minutes: number }
+  interface DecompState { loading: boolean; steps: DecompStep[]; checked: string[] }
+  type DecompAction =
+    | { type: 'start' }
+    | { type: 'done'; steps: DecompStep[] }
+    | { type: 'toggle'; id: string }
+    | { type: 'close' }
+  const [decomp, decompDispatch] = useReducer(
+    (state: Record<string, DecompState>, action: DecompAction & { taskId?: string }): Record<string, DecompState> => {
+      const id = action.taskId ?? ''
+      switch (action.type) {
+        case 'start':  return { ...state, [id]: { loading: true,  steps: [], checked: [] } }
+        case 'done':   return { ...state, [id]: { loading: false, steps: action.steps, checked: [] } }
+        case 'toggle': {
+          const cur = state[id] ?? { loading: false, steps: [], checked: [] }
+          const checked = cur.checked.includes(action.id)
+            ? cur.checked.filter(c => c !== action.id)
+            : [...cur.checked, action.id]
+          return { ...state, [id]: { ...cur, checked } }
+        }
+        case 'close':  {
+          const next = { ...state }; delete next[id]; return next
+        }
+        default: return state
+      }
+    },
+    {}
+  )
+
+  const breakItDown = useCallback(async (task: Task) => {
+    decompDispatch({ type: 'start', taskId: task.id })
+    try {
+      const res = await fetch('/api/tasks/decompose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: task.title, description: task.description }),
+      })
+      const data = await res.json()
+      decompDispatch({ type: 'done', taskId: task.id, steps: data.steps ?? [] })
+    } catch {
+      decompDispatch({ type: 'close', taskId: task.id })
+      toast.error('Could not break down task — check your connection')
+    }
+  }, [])
   const swipeStart = useRef<{ id: string; x: number } | null>(null)
 
   const handleSwipeStart = useCallback((id: string, x: number) => {
@@ -461,6 +507,44 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                       <span className="font-mono text-[0.58rem] text-white/20">Done {fmt.dateShort(task.completed_at)}</span>
                     )}
                   </div>
+                  {/* AI Decompose panel — inside content column, below metadata */}
+                  {task.status !== 'done' && decomp[task.id] && !decomp[task.id].loading && (
+                    <div className="mt-3 border-t border-white/5 pt-3 space-y-1.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-mono text-[0.55rem] text-purple-400 tracking-widest">✦ MICRO-STEPS</span>
+                        <button
+                          onClick={e => { e.stopPropagation(); decompDispatch({ type: 'close', taskId: task.id }) }}
+                          className="font-mono text-[0.55rem] text-white/25 hover:text-white/50"
+                        >✕</button>
+                      </div>
+                      {decomp[task.id].steps.map(step => {
+                        const stepDone = decomp[task.id].checked.includes(step.id)
+                        return (
+                          <button
+                            key={step.id}
+                            onClick={e => { e.stopPropagation(); decompDispatch({ type: 'toggle', taskId: task.id, id: step.id }) }}
+                            className={cn(
+                              'w-full flex items-start gap-2.5 text-left px-2.5 py-2 rounded-lg transition-all',
+                              stepDone ? 'bg-teal-600/8 opacity-50' : 'bg-white/3 hover:bg-white/6'
+                            )}
+                          >
+                            <div className={cn(
+                              'flex-shrink-0 w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center transition-all',
+                              stepDone ? 'border-teal-600 bg-teal-600' : 'border-white/20'
+                            )}>
+                              {stepDone && <svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M1 2.5l1.5 1.5L6 1" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={cn('font-sans text-xs leading-snug', stepDone ? 'line-through text-white/30' : 'text-white/80')}>
+                                {step.title}
+                              </div>
+                              <div className="font-mono text-[0.5rem] text-white/25 mt-0.5">{step.minutes} min</div>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -474,6 +558,18 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                     >
                       ✨
                     </button>
+                  )}
+                  {task.status !== 'done' && !decomp[task.id] && (
+                    <button
+                      onClick={e => { e.stopPropagation(); void breakItDown(task) }}
+                      className="opacity-50 hover:opacity-100 text-purple-400 transition-all text-[0.6rem] px-1.5 py-0.5 rounded-lg hover:bg-purple-400/10 font-mono whitespace-nowrap"
+                      title="Break into micro-steps with AI"
+                    >
+                      ✦ Break it down
+                    </button>
+                  )}
+                  {task.status !== 'done' && decomp[task.id]?.loading && (
+                    <span className="text-[0.6rem] font-mono text-purple-400/60 animate-pulse">thinking…</span>
                   )}
                   <button onClick={() => deleteTask(task.id)}
                     className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs">

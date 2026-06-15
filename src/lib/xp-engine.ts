@@ -42,6 +42,8 @@ export type XPEventName =
   | 'side_hustle_logged'
   // Learning
   | 'past_paper_attempted'
+  // Commitment Contracts
+  | 'contract_completed'
 
 export const XP_VALUES: Record<XPEventName, number> = {
   task_complete:            15,
@@ -76,6 +78,8 @@ export const XP_VALUES: Record<XPEventName, number> = {
   side_hustle_logged:       25,
   // Learning
   past_paper_attempted:     20,
+  // Commitment Contracts
+  contract_completed:       75,
 }
 
 // Max fires per day per event (undefined = unlimited).
@@ -94,6 +98,7 @@ const MAX_DAILY_FIRES: Partial<Record<XPEventName, number>> = {
   meal_planned:           5,
   habit_checkin:          10,
   past_paper_attempted:   2,
+  contract_completed:     1,
 }
 
 /* ── Level System ───────────────────────────────────────────────────────────*/
@@ -338,6 +343,17 @@ export const BADGES: Badge[] = [
     description: 'Complete your full university journey on VarsityOS — remarkable',
     check: s => s.totalXP >= 65_000,
   },
+  // ── Commitment Contracts ────────────────────────────────────────────────────
+  {
+    id: 'contract_keeper', name: 'Contract Keeper', emoji: '🤝', color: '#4ecf9e',
+    description: 'Complete your first commitment contract — your word is your bond',
+    check: s => (s.eventCounts['contract_completed'] ?? 0) >= 1,
+  },
+  {
+    id: 'word_is_bond', name: 'Word is Bond', emoji: '💎', color: '#c9a84c',
+    description: 'Complete 5 commitment contracts — you are the most reliable person you know',
+    check: s => (s.eventCounts['contract_completed'] ?? 0) >= 5,
+  },
 ]
 
 /* ── Daily Challenges ───────────────────────────────────────────────────────*/
@@ -561,6 +577,21 @@ export function getUnlockedBadges(state: XPState): Badge[] {
 export function getNewlyUnlockedBadges(prev: XPState, next: XPState): Badge[] {
   const prevIds = new Set(getUnlockedBadges(prev).map(b => b.id))
   return getUnlockedBadges(next).filter(b => !prevIds.has(b.id))
+}
+
+/* ── XP Penalty ─────────────────────────────────────────────────────────────*/
+
+export function penalizeXP(amount: number, reason: string) {
+  if (typeof window === 'undefined') return
+  const state = loadXPState()
+  const deduct = Math.min(amount, state.totalXP)
+  if (deduct <= 0) return
+
+  state.totalXP -= deduct
+  state.recentGains.push({ xp: -deduct, label: `⚠ ${reason}`, ts: Date.now() })
+  saveXPState(state)
+  saveXPStateToDB(state).catch(() => {})
+  window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName: 'penalty', xp: -deduct } }))
 }
 
 /* ── VarsityOS Score ────────────────────────────────────────────────────────*/
