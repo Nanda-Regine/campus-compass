@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   if (!assignmentId) return NextResponse.json({ error: 'assignment_id required' }, { status: 400 })
 
   const { data, error } = await supabase
-    .from('group_messages')
+    .from('assignment_messages')
     .select('id, assignment_id, user_id, content, is_decision, is_pinned, created_at')
     .eq('assignment_id', assignmentId)
     .order('created_at', { ascending: true })
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   if (!content || typeof content !== 'string' || !content.trim()) return NextResponse.json({ error: 'content required' }, { status: 400 })
 
   const { data, error } = await supabase
-    .from('group_messages')
+    .from('assignment_messages')
     .insert({
       assignment_id,
       user_id: user.id,
@@ -67,7 +67,7 @@ export async function DELETE(request: NextRequest) {
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
   const { error } = await supabase
-    .from('group_messages')
+    .from('assignment_messages')
     .delete()
     .eq('id', id)
     .eq('user_id', user.id)
