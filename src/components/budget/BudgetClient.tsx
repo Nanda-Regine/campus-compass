@@ -23,6 +23,8 @@ import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 import dynamic from 'next/dynamic'
 
 const StokvelCircle = dynamic(() => import('@/components/budget/StokvelCircle'), { ssr: false })
+const FeeBlockTracker = dynamic(() => import('@/components/budget/FeeBlockTracker'), { ssr: false })
+const DataBudgetTracker = dynamic(() => import('@/components/budget/DataBudgetTracker'), { ssr: false })
 
 const supabase = createClient()
 
@@ -50,17 +52,19 @@ interface BudgetClientProps {
   }
 }
 
-type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit' | 'literacy' | 'stokvel'
+type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'fees' | 'data' | 'ai_coach' | 'appeal' | 'credit' | 'literacy' | 'stokvel'
 
 const TABS = [
   { id: 'overview' as TabId,  label: 'Overview',  icon: '📊' },
   { id: 'expenses' as TabId,  label: 'Expenses',  icon: '💳' },
   { id: 'wallet' as TabId,    label: 'Wallet',    icon: '💼' },
+  { id: 'fees' as TabId,      label: 'Fees',      icon: '🎓' },
   { id: 'nsfas' as TabId,     label: 'NSFAS',     icon: '🏛️' },
+  { id: 'data' as TabId,      label: 'Data',      icon: '📶' },
   { id: 'ai_coach' as TabId,  label: 'AI Coach',  icon: '🤖' },
   { id: 'appeal' as TabId,    label: 'Appeal',    icon: '📝' },
   { id: 'credit' as TabId,    label: 'Credit',    icon: '📈' },
-  { id: 'literacy' as TabId,  label: 'Money 101', icon: '🎓' },
+  { id: 'literacy' as TabId,  label: 'Money 101', icon: '📚' },
   { id: 'stokvel' as TabId,   label: 'Stokvel',   icon: '🫱🏾‍🫲🏽' },
 ]
 
@@ -99,7 +103,7 @@ interface AIInsight {
 export default function BudgetClient({ initialData, initialTab }: BudgetClientProps) {
   const router = useRouter()
   const { setExpenses } = useAppStore()
-  const VALID_BUDGET_TABS: TabId[] = ['overview','expenses','nsfas','wallet','ai_coach','appeal','credit']
+  const VALID_BUDGET_TABS: TabId[] = ['overview','expenses','nsfas','wallet','fees','data','ai_coach','appeal','credit','literacy','stokvel']
   const [activeTab, setActiveTab] = useState<TabId>(
     initialTab && VALID_BUDGET_TABS.includes(initialTab as TabId) ? initialTab as TabId : 'overview'
   )
@@ -1290,6 +1294,16 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         {/* ─── Financial Literacy 101 Tab ─── */}
         {activeTab === 'literacy' && (
           <FinancialLiteracy101 />
+        )}
+
+        {/* ─── Academic Fee & Block Tracker ─── */}
+        {activeTab === 'fees' && (
+          <FeeBlockTracker userId={initialData.userId} />
+        )}
+
+        {/* ─── Mobile Data Budget ─── */}
+        {activeTab === 'data' && (
+          <DataBudgetTracker userId={initialData.userId} />
         )}
 
         {/* ─── Stokvel Savings Circle ─── */}
