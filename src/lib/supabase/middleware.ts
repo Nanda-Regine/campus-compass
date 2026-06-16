@@ -72,7 +72,7 @@ export async function updateSession(request: NextRequest) {
         .from('profiles')
         .select('onboarding_completed, onboarding_complete')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       const isOnboarded = profile?.onboarding_completed || profile?.onboarding_complete || false
 
@@ -90,7 +90,7 @@ export async function updateSession(request: NextRequest) {
         .from('profiles')
         .select('onboarding_completed, onboarding_complete')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       const isOnboarded = profile?.onboarding_completed || profile?.onboarding_complete || false
 
@@ -110,7 +110,7 @@ export async function updateSession(request: NextRequest) {
         .from('profiles')
         .select('onboarding_completed, onboarding_complete')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       const isOnboarded = profile?.onboarding_completed || profile?.onboarding_complete || false
 

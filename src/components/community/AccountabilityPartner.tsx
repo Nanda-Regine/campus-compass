@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { dispatchXP } from '@/lib/xp-engine'
+import toast from 'react-hot-toast'
+
+const supabase = createClient()
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type PartnershipStatus = 'pending' | 'active' | 'completed' | 'cancelled'
@@ -64,8 +67,6 @@ function timeAgo(dateStr: string): string {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function AccountabilityPartner({ userId }: { userId: string }) {
-  const supabase = createClient()
-
   const [partnerships, setPartnerships] = useState<StudyAccountability[]>([])
   const [myPartnership, setMyPartnership] = useState<StudyAccountability | null>(null)
   const [openGoals, setOpenGoals] = useState<StudyAccountability[]>([])
@@ -117,7 +118,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
     } finally {
       setLoading(false)
     }
-  }, [userId, supabase])
+  }, [userId])
 
   useEffect(() => {
     void loadData()
@@ -173,7 +174,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       setTab('active')
       dispatchXP('task_complete')
     } catch {
-      // fail silently
+      toast.error('Could not accept partnership — please try again')
     } finally {
       setAcceptingId(null)
     }

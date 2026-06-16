@@ -12,7 +12,8 @@ export function useCachedFetch<T>(
 
   useEffect(() => {
     if (!key) return
-    const cached = localStorage.getItem(key)
+    let cached: string | null = null
+    try { cached = localStorage.getItem(key) } catch { /* private browsing */ }
     if (cached) {
       try { setData(JSON.parse(cached)); return } catch { /* corrupted — refetch */ }
     }
@@ -21,7 +22,7 @@ export function useCachedFetch<T>(
       .then(result => {
         if (result !== null) {
           setData(result)
-          localStorage.setItem(key, JSON.stringify(result))
+          try { localStorage.setItem(key, JSON.stringify(result)) } catch { /* quota full */ }
         }
       })
       .catch(() => {})

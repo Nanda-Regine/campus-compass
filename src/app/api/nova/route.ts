@@ -115,8 +115,8 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     { data: gradesData },
     { data: savedBursaries },
   ] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('budgets').select('*').eq('user_id', userId).single(),
+    supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
+    supabase.from('budgets').select('*').eq('user_id', userId).maybeSingle(),
     supabase.from('tasks').select('*, module:modules(module_name)').eq('user_id', userId).neq('status', 'done').order('due_date', { ascending: true }),
     supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
     supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true),
@@ -708,12 +708,12 @@ export async function GET(request: NextRequest) {
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(1)
-        .single(),
+        .maybeSingle(),
       supabase
         .from('profiles')
         .select('full_name, plan, subscription_tier, nova_messages_used, nova_messages_limit, nova_messages_reset_at')
         .eq('id', user.id)
-        .single(),
+        .maybeSingle(),
       supabase
         .from('exams')
         .select('exam_name, exam_date')

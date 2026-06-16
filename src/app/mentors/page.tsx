@@ -8,7 +8,7 @@ export const metadata = { title: 'Mentor Network — VarsityOS' }
 export default async function MentorsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   const { data: profile } = await supabase
     .from('profiles').select('university').eq('id', user.id).single()

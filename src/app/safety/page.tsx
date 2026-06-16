@@ -25,9 +25,9 @@ const safetyQuickLinks = [
 ]
 
 export default async function SafetyPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/setup')
+  if (!user) redirect('/auth/login')
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative' }}>

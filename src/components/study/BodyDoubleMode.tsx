@@ -46,6 +46,7 @@ export default function BodyDoubleMode() {
   const channelRef  = useRef<RealtimeChannel | null>(null)
   const startRef    = useRef<number>(0)
   const tickRef     = useRef<ReturnType<typeof setInterval> | null>(null)
+  const xpAwardedRef = useRef(false)
 
   useEffect(() => { injectStyles(); setMounted(true) }, [])
 
@@ -56,6 +57,7 @@ export default function BodyDoubleMode() {
       channelRef.current.unsubscribe()
       channelRef.current = null
     }
+    xpAwardedRef.current = false
     setJoined(false)
     setElapsed(0)
     setXpAwarded(false)
@@ -85,8 +87,9 @@ export default function BodyDoubleMode() {
           const el = Date.now() - startRef.current
           setElapsed(el)
 
-          // Award XP after 25 minutes of body-doubling
-          if (!xpAwarded && el >= 25 * 60 * 1000) {
+          // Award XP after 25 minutes of body-doubling (use ref to avoid stale closure)
+          if (!xpAwardedRef.current && el >= 25 * 60 * 1000) {
+            xpAwardedRef.current = true
             dispatchXP('body_double_joined')
             setXpAwarded(true)
           }
@@ -95,7 +98,7 @@ export default function BodyDoubleMode() {
     })
 
     channelRef.current = channel
-  }, [xpAwarded])
+  }, [])
 
   useEffect(() => {
     return () => {

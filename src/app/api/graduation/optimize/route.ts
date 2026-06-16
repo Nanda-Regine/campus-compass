@@ -44,7 +44,7 @@ export async function POST() {
       supabase
         .from('profiles')
         .select('full_name, university, year_of_study')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .maybeSingle(),
     ])
 

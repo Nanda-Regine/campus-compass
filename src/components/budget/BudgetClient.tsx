@@ -21,6 +21,8 @@ import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
 import FinancialLiteracy101 from '@/components/finance/FinancialLiteracy101'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 
+const supabase = createClient()
+
 interface WorkedShift {
   id: string
   shift_date: string
@@ -90,7 +92,6 @@ interface AIInsight {
 
 
 export default function BudgetClient({ initialData, initialTab }: BudgetClientProps) {
-  const supabase = createClient()
   const router = useRouter()
   const { setExpenses } = useAppStore()
   const VALID_BUDGET_TABS: TabId[] = ['overview','expenses','nsfas','wallet','ai_coach','appeal','credit']

@@ -13,14 +13,14 @@ export async function POST() {
     const monthYear = currentMonthYear()
 
     const [{ data: budget }, { data: expenses }] = await Promise.all([
-      supabase.from('budgets').select('monthly_budget, nsfas_enabled, nsfas_living, nsfas_accom, nsfas_books').eq('user_id', user.id).single(),
+      supabase.from('budgets').select('monthly_budget, nsfas_enabled, nsfas_living, nsfas_accom, nsfas_books').eq('user_id', user.id).maybeSingle(),
       supabase.from('expenses').select('amount').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end),
     ])
 
     if (!budget || !expenses) return NextResponse.json({ ok: false })
 
     const totalBudget = (budget.monthly_budget || 0) +
-      (budget.nsfas_enabled ? (budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books) : 0)
+      (budget.nsfas_enabled ? ((budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)) : 0)
     if (totalBudget <= 0) return NextResponse.json({ ok: false })
 
     const totalSpent = expenses.reduce((s, e) => s + e.amount, 0)
@@ -36,7 +36,7 @@ export async function POST() {
       .eq('insight_type', 'budget_80_warning')
       .gte('created_at', start)
       .limit(1)
-      .single()
+      .maybeSingle()
 
     if (existing) return NextResponse.json({ ok: false, reason: 'already_alerted' })
 

@@ -221,12 +221,11 @@ export async function seedExpectedDisbursements(
   const rows: object[] = []
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
-  // Academic year: Feb–Nov (10 months)
-  for (let m = 1; m <= 11; m++) {
-    if (m === 0) continue
-    const period = `${year}-${String(m + 1).padStart(2, '0')}`
-    const periodLabel = `${MONTHS[m]} ${year}`
-    const expectedDate = `${year}-${String(m + 1).padStart(2, '0')}-05`
+  // Academic year: Feb(m=2)–Nov(m=11) — 10 months
+  for (let m = 2; m <= 11; m++) {
+    const period = `${year}-${String(m).padStart(2, '0')}`
+    const periodLabel = `${MONTHS[m - 1]} ${year}`
+    const expectedDate = `${year}-${String(m).padStart(2, '0')}-05`
 
     if (nsfasLiving > 0) rows.push({
       user_id: userId, period, period_label: periodLabel,

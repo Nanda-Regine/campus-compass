@@ -102,6 +102,7 @@ export async function DELETE(req: NextRequest) {
   const id = new URL(req.url).searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-  await supabase.from('campus_events').delete().eq('id', id).eq('user_id', user.id)
+  const { error: delErr } = await supabase.from('campus_events').delete().eq('id', id).eq('user_id', user.id)
+  if (delErr) return NextResponse.json({ error: delErr.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

@@ -1,11 +1,15 @@
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-import { createAdminSupabaseClient } from '@/lib/supabase/admin'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const body = await req.json() as {
       name?: string
       domain?: string
@@ -32,9 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid domain format' }, { status: 400 })
     }
 
-    const admin = createAdminSupabaseClient()
-
-    const { error } = await admin.from('institutions').insert({
+    const { error } = await supabase.from('institutions').insert({
       name:              name.trim(),
       domain:            cleanDomain,
       contact_name:      contact_name.trim(),

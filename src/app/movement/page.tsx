@@ -5,7 +5,7 @@ import MovementOS from '@/components/movement/MovementOS'
 export const metadata = { title: 'Movement OS — VarsityOS' }
 
 export default async function MovementPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login?redirectTo=/movement')
 

@@ -1371,8 +1371,12 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   }, [store, initialData.tasks])
 
   const dismissInsight = async (id: string) => {
-    setNovaInsights(prev => prev.filter(i => i.id !== id))
-    await fetch('/api/insights', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    const prev = novaInsights
+    setNovaInsights(p => p.filter(i => i.id !== id))
+    try {
+      const res = await fetch('/api/insights', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+      if (!res.ok) setNovaInsights(prev)
+    } catch { setNovaInsights(prev) }
   }
 
   const { profile, budget, tasks, exams, modules, expenses } = store

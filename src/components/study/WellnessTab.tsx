@@ -246,7 +246,7 @@ interface SleepLog { date: string; hours: number; quality: number; bedtime: stri
 
 const SLEEP_KEY = 'varsityos-sleep'
 function loadSleep(): SleepLog[] { if (typeof window === 'undefined') return []; try { return JSON.parse(localStorage.getItem(SLEEP_KEY) || '[]') } catch { return [] } }
-function saveSleep(l: SleepLog[]) { localStorage.setItem(SLEEP_KEY, JSON.stringify(l)) }
+function saveSleep(l: SleepLog[]) { try { localStorage.setItem(SLEEP_KEY, JSON.stringify(l)) } catch { /* quota */ } }
 
 const CHRONOTYPE_Qs = [
   { q: 'When left to your own schedule, what time do you naturally wake up?', opts: [{ l: 'Before 6:30', v: 0 }, { l: '6:30–8:00', v: 1 }, { l: '8:00–10:00', v: 2 }, { l: 'After 10:00', v: 3 }] },

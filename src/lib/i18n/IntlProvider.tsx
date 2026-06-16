@@ -15,11 +15,11 @@ const LOCALE_KEY = 'varsityos-locale'
 
 export function getStoredLocale(): AppLocale {
   if (typeof window === 'undefined') return 'en'
-  return (localStorage.getItem(LOCALE_KEY) as AppLocale) ?? 'en'
+  try { return (localStorage.getItem(LOCALE_KEY) as AppLocale) ?? 'en' } catch { return 'en' }
 }
 
 export function setStoredLocale(locale: AppLocale) {
-  if (typeof window !== 'undefined') localStorage.setItem(LOCALE_KEY, locale)
+  if (typeof window !== 'undefined') try { localStorage.setItem(LOCALE_KEY, locale) } catch { /* quota */ }
 }
 
 export function IntlProvider({ children }: { children: React.ReactNode }) {

@@ -183,12 +183,12 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .from('profiles')
       .select('id,name,full_name,email,university,faculty,degree,degree_name,year_of_study,funding_type,nsfas_monthly_amount,accommodation_type,dietary_preferences,languages,study_style,biggest_challenges,emergency_contact_name,emergency_contact_number,plan,nova_messages_used,nova_messages_limit,preferred_language,ai_language,streak_count')
       .eq('id', userId)
-      .single(),
+      .maybeSingle(),
     supabase
       .from('budgets')
       .select('monthly_budget,food_budget,nsfas_enabled,nsfas_living,nsfas_accom,nsfas_books')
       .eq('user_id', userId)
-      .single(),
+      .maybeSingle(),
     supabase
       .from('expenses')
       .select('category,amount')
@@ -220,7 +220,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .eq('user_id', userId)
       .order('updated_at', { ascending: false })
       .limit(1)
-      .single(),
+      .maybeSingle(),
     // Mood logs — graceful: table may not exist in all environments
     supabase
       .from('mood_logs')
@@ -249,7 +249,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .eq('user_id', userId)
       .order('score_date', { ascending: false })
       .limit(1)
-      .single(),
+      .maybeSingle(),
     // Latest cycle entry (most recent date)
     supabase
       .from('cycle_tracking')
@@ -257,7 +257,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .eq('user_id', userId)
       .order('entry_date', { ascending: false })
       .limit(1)
-      .single(),
+      .maybeSingle(),
     // Safety incidents at their institution in last 48h (graceful — may be empty)
     supabase
       .from('safety_incidents')

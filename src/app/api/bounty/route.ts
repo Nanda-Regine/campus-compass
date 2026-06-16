@@ -15,6 +15,8 @@ function weekStart(): string {
 export async function GET() {
   try {
     const supabase = createServerSupabaseClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const ws = weekStart()
 
     const TRACKED = ['pomodoro_session', 'task_complete']

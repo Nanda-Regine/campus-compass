@@ -259,7 +259,7 @@ function ActiveBattle({ battle, liveXP, isChallenger, onResult }: {
       if (!battle.end_at) return
       setCountdown(formatCountdown(battle.end_at))
       if (new Date(battle.end_at) <= new Date()) clearInterval(timerRef.current)
-    }, 30_000)
+    }, 1000)
     return () => clearInterval(timerRef.current)
   }, [battle.end_at])
 

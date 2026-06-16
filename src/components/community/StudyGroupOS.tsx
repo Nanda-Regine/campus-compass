@@ -145,8 +145,9 @@ function CreateGroupForm({ userId, university, onDone }: { userId: string; unive
   const submit = async () => {
     if (!form.name) return
     setSaving(true)
-    const { data: group } = await supabase.from('study_groups').insert({ creator_id: userId, name: form.name, subject: form.subject || null, module_code: form.module_code || null, university: form.university || null, description: form.description || null, max_members: parseInt(form.max_members) || 6, meeting_type: form.meeting_type, meeting_link: form.meeting_link || null, venue: form.venue || null }).select('id').single()
-    if (group) await supabase.from('study_group_members').insert({ group_id: group.id, user_id: userId, role: 'admin' })
+    const { data: group, error: gErr } = await supabase.from('study_groups').insert({ creator_id: userId, name: form.name, subject: form.subject || null, module_code: form.module_code || null, university: form.university || null, description: form.description || null, max_members: parseInt(form.max_members) || 6, meeting_type: form.meeting_type, meeting_link: form.meeting_link || null, venue: form.venue || null }).select('id').single()
+    if (gErr || !group) { setSaving(false); return }
+    await supabase.from('study_group_members').insert({ group_id: group.id, user_id: userId, role: 'admin' })
     setSaving(false)
     onDone()
   }

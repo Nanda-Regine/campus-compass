@@ -478,7 +478,7 @@ export function loadXPState(): XPState {
 }
 
 function saveXPState(s: XPState) {
-  localStorage.setItem(KEY_STATE, JSON.stringify({ ...s, recentGains: s.recentGains.slice(-20) }))
+  try { localStorage.setItem(KEY_STATE, JSON.stringify({ ...s, recentGains: s.recentGains.slice(-20) })) } catch { /* quota full */ }
 }
 
 function loadChallengeCompletion(): { date: string; completed: string[] } {
@@ -486,7 +486,7 @@ function loadChallengeCompletion(): { date: string; completed: string[] } {
 }
 
 function saveChallengeCompletion(c: { date: string; completed: string[] }) {
-  localStorage.setItem(KEY_CHALLENGES, JSON.stringify(c))
+  try { localStorage.setItem(KEY_CHALLENGES, JSON.stringify(c)) } catch { /* quota full */ }
 }
 
 /* ── XP Dispatch ────────────────────────────────────────────────────────────*/

@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
       `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}/stream`,
       {
         method: 'POST',
+        signal: AbortSignal.timeout(15_000),
         headers: {
           'xi-api-key':   ELEVENLABS_API_KEY,
           'Content-Type': 'application/json',

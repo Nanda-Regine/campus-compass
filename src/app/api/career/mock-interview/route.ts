@@ -39,6 +39,10 @@ Score 1-5 and give feedback. Return JSON:
 
   const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
   const jsonMatch = text.match(/\{[\s\S]*\}/)
-  const feedback = jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 3, what_worked: 'Good attempt', improve: 'Use more specific examples', example_answer: 'In my role as a student, I faced... I took action by... The result was...' }
+  const defaultFeedback = { score: 3, what_worked: 'Good attempt', improve: 'Use more specific examples', example_answer: 'In my role as a student, I faced... I took action by... The result was...' }
+  let feedback = defaultFeedback
+  if (jsonMatch) {
+    try { feedback = JSON.parse(jsonMatch[0]) } catch { feedback = defaultFeedback }
+  }
   return NextResponse.json({ data: feedback })
 }

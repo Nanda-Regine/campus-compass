@@ -11,7 +11,7 @@ export const metadata = { title: 'Growth OS — VarsityOS' }
 export default async function GrowthPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>

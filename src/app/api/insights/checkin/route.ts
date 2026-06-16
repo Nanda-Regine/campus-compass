@@ -34,8 +34,8 @@ export async function GET(_request: NextRequest) {
       { data: expenses },
       { data: modules },
     ] = await Promise.all([
-      supabase.from('profiles').select('*, ai_language').eq('id', user.id).single(),
-      supabase.from('budgets').select('*').eq('user_id', user.id).single(),
+      supabase.from('profiles').select('full_name, name, university, year_of_study, funding_type, ai_language').eq('id', user.id).maybeSingle(),
+      supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
       supabase.from('tasks').select('*').eq('user_id', user.id).neq('status', 'done'),
       supabase.from('tasks').select('*').eq('user_id', user.id).eq('status', 'done').gte('completed_at', start),
       supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', user.id).gte('exam_date', today).order('exam_date', { ascending: true }),
@@ -44,7 +44,7 @@ export async function GET(_request: NextRequest) {
     ])
 
     const totalBudget = (budget?.monthly_budget || 0) +
-      (budget?.nsfas_enabled ? (budget.nsfas_living + budget.nsfas_accom + budget.nsfas_books) : 0)
+      (budget?.nsfas_enabled ? ((budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)) : 0)
     const totalSpent = expenses?.reduce((s, e) => s + e.amount, 0) || 0
     const remaining = totalBudget - totalSpent
 

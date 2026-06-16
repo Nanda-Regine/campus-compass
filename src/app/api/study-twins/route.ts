@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   const { data: twins } = await supabase
     .from('profiles')
-    .select('id, name, emoji, university, faculty, year_of_study, whatsapp_number')
+    .select('id, name, emoji, university, faculty, year_of_study')
     .eq('university', me.university)
     .eq('study_twin_opt_in', true)
     .neq('id', user.id)

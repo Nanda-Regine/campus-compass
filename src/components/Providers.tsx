@@ -55,7 +55,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (profile) {
         setProfile(profile as Profile)

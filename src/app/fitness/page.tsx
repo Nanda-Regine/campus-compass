@@ -6,9 +6,9 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 export const metadata = { title: 'Fitness Tracker — VarsityOS' }
 
 export default async function FitnessPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>

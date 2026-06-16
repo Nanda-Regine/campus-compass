@@ -59,36 +59,51 @@ export async function POST(req: NextRequest) {
 
   const contextLines: string[] = []
 
-  if (academic.riskLevel === 'critical' || academic.riskLevel === 'warning') {
-    contextLines.push(`Academic risk: ${academic.riskLevel} (${academic.catchUpDebtHrs}h of overdue work, ${academic.completionRate}% completion rate)`)
+  const riskLevel = academic?.riskLevel ?? 'safe'
+  const catchUpDebtHrs = academic?.catchUpDebtHrs ?? 0
+  const completionRate = academic?.completionRate ?? 0
+  const examPressure = academic?.examPressure ?? 0
+  const studyVelocity = academic?.studyVelocity ?? 0
+  const emergencyMode = financial?.emergencyMode ?? false
+  const runwayDays = financial?.runwayDays ?? 0
+  const healthScore = financial?.healthScore ?? 100
+  const burnoutScore = wellness?.burnoutScore ?? 0
+  const moodAvg = wellness?.moodAvg ?? 0
+  const moodTrend = wellness?.moodTrend ?? 'unknown'
+  const sleepDebt = wellness?.sleepDebt ?? 0
+  const procrastIndex = schedule?.procrastIndex ?? 0
+  const todayTaskCount = schedule?.todayTaskCount ?? 0
+
+  if (riskLevel === 'critical' || riskLevel === 'warning') {
+    contextLines.push(`Academic risk: ${riskLevel} (${catchUpDebtHrs}h of overdue work, ${completionRate}% completion rate)`)
   } else {
-    contextLines.push(`Academic: on track — ${academic.completionRate}% completion rate`)
+    contextLines.push(`Academic: on track — ${completionRate}% completion rate`)
   }
 
-  if (academic.examPressure >= 65) {
-    contextLines.push(`Exam pressure: HIGH (${academic.examPressure}/100) — exam coming up`)
+  if (examPressure >= 65) {
+    contextLines.push(`Exam pressure: HIGH (${examPressure}/100) — exam coming up`)
   }
 
-  if (academic.studyVelocity > 0) {
-    contextLines.push(`Study velocity: ${academic.studyVelocity.toFixed(1)} hours/day average (last 7 days)`)
+  if (studyVelocity > 0) {
+    contextLines.push(`Study velocity: ${studyVelocity.toFixed(1)} hours/day average (last 7 days)`)
   }
 
-  if (financial.emergencyMode) {
-    contextLines.push(`Financial: EMERGENCY — ${financial.runwayDays} days of money left`)
-  } else if (financial.healthScore < 50) {
-    contextLines.push(`Financial: budget health ${financial.healthScore}/100 — spending too fast`)
+  if (emergencyMode) {
+    contextLines.push(`Financial: EMERGENCY — ${runwayDays} days of money left`)
+  } else if (healthScore < 50) {
+    contextLines.push(`Financial: budget health ${healthScore}/100 — spending too fast`)
   } else {
-    contextLines.push(`Financial: budget healthy at ${financial.healthScore}/100, ${financial.runwayDays} days runway`)
+    contextLines.push(`Financial: budget healthy at ${healthScore}/100, ${runwayDays} days runway`)
   }
 
-  contextLines.push(`Wellness: burnout ${wellness.burnoutScore}/100, mood ${wellness.moodAvg > 0 ? `${wellness.moodAvg.toFixed(1)}/5 (${wellness.moodTrend})` : 'unknown'}, sleep debt ${wellness.sleepDebt.toFixed(0)}h`)
+  contextLines.push(`Wellness: burnout ${burnoutScore}/100, mood ${moodAvg > 0 ? `${moodAvg.toFixed(1)}/5 (${moodTrend})` : 'unknown'}, sleep debt ${sleepDebt.toFixed(0)}h`)
 
-  if (schedule.procrastIndex > 50) {
-    contextLines.push(`Schedule: ${schedule.procrastIndex}% of due tasks are overdue — procrastination pattern detected`)
+  if (procrastIndex > 50) {
+    contextLines.push(`Schedule: ${procrastIndex}% of due tasks are overdue — procrastination pattern detected`)
   }
 
-  if (schedule.todayTaskCount > 0) {
-    contextLines.push(`Today: ${schedule.todayTaskCount} task${schedule.todayTaskCount > 1 ? 's' : ''} due`)
+  if (todayTaskCount > 0) {
+    contextLines.push(`Today: ${todayTaskCount} task${todayTaskCount > 1 ? 's' : ''} due`)
   }
 
   const prompt = `You are Nova, the caring AI companion built into VarsityOS for South African students.
@@ -137,11 +152,11 @@ Rules:
     return NextResponse.json({
       headline: `${firstName}, here is your day.`,
       bullets: [
-        academic.riskLevel !== 'safe' ? `${academic.catchUpDebtHrs}h of catch-up work — tackle the oldest task first` : `${academic.completionRate}% on track — keep the momentum`,
-        financial.emergencyMode ? `Budget emergency: ${financial.runwayDays} days left — switch to survival mode` : `Budget healthy — ${financial.runwayDays} days runway`,
-        wellness.burnoutScore > 60 ? 'Burnout building — block 30min rest today, no exceptions' : 'Wellness looking okay — check in with how you feel',
+        riskLevel !== 'safe' ? `${catchUpDebtHrs}h of catch-up work — tackle the oldest task first` : `${completionRate}% on track — keep the momentum`,
+        emergencyMode ? `Budget emergency: ${runwayDays} days left — switch to survival mode` : `Budget healthy — ${runwayDays} days runway`,
+        burnoutScore > 60 ? 'Burnout building — block 30min rest today, no exceptions' : 'Wellness looking okay — check in with how you feel',
       ],
-      focus: academic.riskLevel !== 'safe' ? 'Clear one overdue task before anything else' : 'Start today\'s highest-priority task',
+      focus: riskLevel !== 'safe' ? 'Clear one overdue task before anything else' : 'Start today\'s highest-priority task',
       focusRoute: '/study',
     })
   }

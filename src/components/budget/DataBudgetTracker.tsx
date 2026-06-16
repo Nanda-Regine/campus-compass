@@ -49,7 +49,7 @@ export default function DataBudgetTracker({ userId }: Props) {
         .select('*')
         .eq('user_id', userId)
         .eq('month_year', monthYear)
-        .single()
+        .maybeSingle()
       setBudget(data ?? null)
       setLoading(false)
     }

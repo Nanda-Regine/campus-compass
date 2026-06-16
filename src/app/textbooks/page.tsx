@@ -8,7 +8,7 @@ export const metadata = { title: 'Textbook Marketplace — VarsityOS' }
 export default async function TextbooksPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   const { data: profile } = await supabase
     .from('profiles').select('university').eq('id', user.id).single()

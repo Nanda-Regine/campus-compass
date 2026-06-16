@@ -238,7 +238,7 @@ export default function GraduationAudit() {
         .select('id, module_code, module_name, credits, year_taken, grade, status')
         .eq('user_id', user.id)
         .order('year_taken').order('module_code'),
-      supabase.from('degree_config').select('*').eq('user_id', user.id).single(),
+      supabase.from('degree_config').select('*').eq('user_id', user.id).maybeSingle(),
     ])
 
     const dbMods = (modsRes.data ?? []) as {

@@ -20,7 +20,7 @@ export async function GET() {
     return NextResponse.json({ contracts: data ?? [] })
   } catch (e) {
     console.error('[contracts GET]', e)
-    return NextResponse.json({ contracts: [] })
+    return NextResponse.json({ error: 'Failed to load contracts' }, { status: 500 })
   }
 }
 

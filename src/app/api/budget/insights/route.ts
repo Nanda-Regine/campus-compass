@@ -37,9 +37,9 @@ export async function GET(_request: NextRequest) {
       { data: incomeEntries },
       { data: workedShifts },
     ] = await Promise.all([
-      supabase.from('budgets').select('*').eq('user_id', user.id).single(),
+      supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
       supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end),
-      supabase.from('profiles').select('funding_type, university, year_of_study, ai_language').eq('id', user.id).single(),
+      supabase.from('profiles').select('funding_type, university, year_of_study, ai_language').eq('id', user.id).maybeSingle(),
       supabase.from('income_entries').select('source_type,amount').eq('user_id', user.id).gte('received_date', start),
       supabase.from('work_shifts').select('earnings').eq('student_id', user.id).eq('status', 'worked').gte('shift_date', start).lte('shift_date', end),
     ])

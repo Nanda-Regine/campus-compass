@@ -5,7 +5,7 @@ export async function incrementStreak(supabase: SupabaseClient, userId: string):
     .from('profiles')
     .select('streak_count, last_activity_date')
     .eq('id', userId)
-    .single()
+    .maybeSingle()
 
   if (!profile) return null
 

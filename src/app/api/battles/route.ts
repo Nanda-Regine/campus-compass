@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       .from('user_xp_state')
       .select('total_xp')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     const challengerXpStart = xpRow?.total_xp ?? 0
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         .from('study_battles')
         .select('id')
         .eq('battle_code', code)
-        .single()
+        .maybeSingle()
       if (!existing) break
       code = genCode()
     }

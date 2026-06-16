@@ -268,7 +268,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
       const res = await fetch('/api/study-pods/join', { signal: AbortSignal.timeout(10000) })
       const { profile: p } = await res.json()
       setProfile(p ?? null)
-    } catch { /* timeout or network error */ }
+    } catch { setProfile(null) }
   }, [])
 
   const loadConnections = useCallback(async () => {

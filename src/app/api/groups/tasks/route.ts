@@ -14,13 +14,13 @@ async function verifyTaskAccess(
     .from('group_tasks')
     .select('assignment_id')
     .eq('id', taskId)
-    .single()
+    .maybeSingle()
 
   if (!task) return false
 
   const [{ data: member }, { data: creator }] = await Promise.all([
-    supabase.from('group_members').select('id').eq('assignment_id', task.assignment_id).eq('user_id', userId).single(),
-    supabase.from('group_assignments').select('id').eq('id', task.assignment_id).eq('created_by', userId).single(),
+    supabase.from('group_members').select('id').eq('assignment_id', task.assignment_id).eq('user_id', userId).maybeSingle(),
+    supabase.from('group_assignments').select('id').eq('id', task.assignment_id).eq('created_by', userId).maybeSingle(),
   ])
 
   return !!(member || creator)
@@ -44,14 +44,14 @@ export async function POST(request: NextRequest) {
       .select('id')
       .eq('assignment_id', assignment_id)
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     const { data: creator } = await supabase
       .from('group_assignments')
       .select('id')
       .eq('id', assignment_id)
       .eq('created_by', user.id)
-      .single()
+      .maybeSingle()
 
     if (!member && !creator) {
       return NextResponse.json({ error: 'Not a member of this assignment' }, { status: 403 })
