@@ -48,15 +48,26 @@ interface DisputeRow {
 }
 
 // ─── Tab config ────────────────────────────────────────────────
-type Tab = 'overview' | 'members' | 'ledger' | 'payouts' | 'disputes' | 'learn'
+type Tab = 'overview' | 'members' | 'ledger' | 'payouts' | 'disputes' | 'board' | 'learn'
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'overview',  label: 'Overview',  icon: '📊' },
   { id: 'members',   label: 'Members',   icon: '👥' },
   { id: 'ledger',    label: 'Ledger',    icon: '📒' },
   { id: 'payouts',   label: 'Payouts',   icon: '💵' },
   { id: 'disputes',  label: 'Disputes',  icon: '⚠️' },
+  { id: 'board',     label: 'Board',     icon: '📋' },
   { id: 'learn',     label: 'Learn',     icon: '🎓' },
 ]
+
+interface StokvelMessage {
+  id: string
+  group_id: string
+  user_id: string
+  content: string
+  is_decision: boolean
+  is_pinned: boolean
+  created_at: string
+}
 
 // ─── Loading skeleton ─────────────────────────────────────────
 function Skeleton() {
@@ -85,6 +96,11 @@ export default function StokvelOS() {
   const [disputes, setDisputes]             = useState<DisputeRow[]>([])
   const [loading, setLoading]               = useState(true)
   const [tab, setTab]                       = useState<Tab>('overview')
+  const [boardMessages, setBoardMessages]   = useState<StokvelMessage[]>([])
+  const [boardText, setBoardText]           = useState('')
+  const [boardIsDecision, setBoardIsDecision] = useState(false)
+  const [sendingBoard, setSendingBoard]     = useState(false)
+  const [loadingBoard, setLoadingBoard]     = useState(false)
   const [setupForm, setSetupForm]           = useState({ name: 'My Stokvel', contribution: '500' })
   const [creatingGroup, setCreatingGroup]   = useState(false)
 
@@ -148,6 +164,39 @@ export default function StokvelOS() {
   }, [userId, supabase])
 
   useEffect(() => { loadData() }, [loadData])
+
+  // ─── Board (notice board) ────────────────────────────────────
+  const loadBoardMessages = async (groupId: string) => {
+    setLoadingBoard(true)
+    try {
+      const res = await fetch(`/api/stokvel/messages?group_id=${groupId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setBoardMessages(data.messages || [])
+      }
+    } catch { /* non-critical */ }
+    setLoadingBoard(false)
+  }
+
+  const sendBoardMessage = async (groupId: string) => {
+    if (!boardText.trim() || sendingBoard) return
+    setSendingBoard(true)
+    const text = boardText.trim()
+    setBoardText('')
+    try {
+      const res = await fetch('/api/stokvel/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ group_id: groupId, content: text, is_decision: boardIsDecision }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setBoardMessages(prev => [...prev, data.message])
+        setBoardIsDecision(false)
+      }
+    } catch { toast.error('Failed to post to board') }
+    setSendingBoard(false)
+  }
 
   // ─── Create group ────────────────────────────────────────────
   const handleCreateGroup = async () => {
@@ -245,7 +294,7 @@ export default function StokvelOS() {
 
       <div style={{ display: 'flex', gap: 0, overflowX: 'auto', borderBottom: '1px solid var(--border-subtle)' }}>
         {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={{ flexShrink: 0, padding: '8px 10px', background: 'none', border: 'none', borderBottom: tab === t.id ? '2px solid var(--teal)' : '2px solid transparent', color: tab === t.id ? 'var(--teal)' : 'var(--text-tertiary)', fontSize: '0.67rem', fontFamily: 'var(--font-mono)', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap' }}>
+          <button key={t.id} onClick={() => { setTab(t.id); if (t.id === 'board') void loadBoardMessages(group.id) }} style={{ flexShrink: 0, padding: '8px 10px', background: 'none', border: 'none', borderBottom: tab === t.id ? '2px solid var(--teal)' : '2px solid transparent', color: tab === t.id ? 'var(--teal)' : 'var(--text-tertiary)', fontSize: '0.67rem', fontFamily: 'var(--font-mono)', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap' }}>
             {t.icon} {t.label}
           </button>
         ))}
@@ -281,6 +330,53 @@ export default function StokvelOS() {
       {tab === 'ledger'   && <LedgerTab   groupId={group.id} supabase={supabase} members={members}  contributions={contributions} setContributions={setContributions} contributionAmount={group.contribution_amount} />}
       {tab === 'payouts'  && <PayoutsTab  groupId={group.id} supabase={supabase} members={members}  setMembers={setMembers} contributionAmount={group.contribution_amount} />}
       {tab === 'disputes' && <DisputesTab groupId={group.id} supabase={supabase} disputes={disputes} setDisputes={setDisputes} />}
+      {tab === 'board' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ padding: '10px 14px', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 10, fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            📋 Group notice board — post updates, flag issues, log decisions. Mark important posts as 📌 Decision.
+          </div>
+          {loadingBoard ? (
+            <div style={{ textAlign: 'center', fontSize: '0.65rem', color: 'var(--text-muted)', padding: '20px 0' }}>Loading…</div>
+          ) : boardMessages.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '28px 0', fontSize: '0.72rem', color: 'var(--text-muted)' }}>No posts yet. Share an update with your group.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {boardMessages.map(msg => (
+                <div key={msg.id} style={{
+                  padding: '10px 14px', borderRadius: 10,
+                  background: msg.is_decision ? 'rgba(245,158,11,0.07)' : 'var(--bg-surface)',
+                  border: `1px solid ${msg.is_decision ? 'rgba(245,158,11,0.25)' : 'var(--border-subtle)'}`,
+                  marginLeft: msg.user_id === userId ? 20 : 0,
+                  marginRight: msg.user_id === userId ? 0 : 20,
+                }}>
+                  {msg.is_decision && <div style={{ fontSize: '0.55rem', color: 'var(--gold)', fontFamily: 'var(--font-mono)', fontWeight: 700, marginBottom: 4 }}>📌 DECISION</div>}
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{msg.content}</div>
+                  <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                    {msg.user_id === userId ? 'You' : 'Member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 12 }}>
+            <textarea value={boardText} onChange={e => setBoardText(e.target.value)}
+              placeholder="Post an update, question, or decision to the group…"
+              rows={2} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.78rem', resize: 'none', fontFamily: 'var(--font-body)', lineHeight: 1.5 }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                <input type="checkbox" checked={boardIsDecision} onChange={e => setBoardIsDecision(e.target.checked)} style={{ width: 13, height: 13 }} />
+                <span style={{ fontSize: '0.62rem', color: 'var(--gold)' }}>📌 Mark as decision</span>
+              </label>
+              <button
+                onClick={() => void sendBoardMessage(group.id)}
+                disabled={!boardText.trim() || sendingBoard}
+                style={{ padding: '7px 14px', background: 'rgba(13,148,136,0.12)', border: '1px solid rgba(13,148,136,0.25)', borderRadius: 8, color: 'var(--teal)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: !boardText.trim() || sendingBoard ? 'not-allowed' : 'pointer', opacity: !boardText.trim() || sendingBoard ? 0.4 : 1 }}>
+                {sendingBoard ? 'Posting…' : 'Post →'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {tab === 'learn'    && <LearnTab />}
     </div>
   )

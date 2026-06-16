@@ -267,20 +267,32 @@ export default function EntrepreneurOS() {
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Build while you study</div>
         <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>Idea validation · Side hustle tracker · SA funding · Business model · Legal path</div>
       </div>
-      <div style={{display:'flex',gap:0,overflowX:'auto',borderBottom:'1px solid var(--border-subtle)'}}>
-        {TABS.map(t=>(
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{flexShrink:0,padding:'8px 11px',background:'none',border:'none',borderBottom:tab===t.id?'2px solid var(--gold)':'2px solid transparent',color:tab===t.id?'var(--gold)':'var(--text-tertiary)',fontSize:'0.67rem',fontFamily:'var(--font-mono)',fontWeight:tab===t.id?700:400,cursor:'pointer',marginBottom:-1,whiteSpace:'nowrap'}}>
-            {t.icon} {t.label}
-          </button>
-        ))}
-      </div>
-      <div>
-        {tab==='validate'&&<IdeaValidatorTab/>}
-        {tab==='hustle'  &&<SideHustleTab/>}
-        {tab==='funding' &&<FundingTab/>}
-        {tab==='bmc'     &&<BMCTab/>}
-        {tab==='journal' &&<JournalTab/>}
-        {tab==='legal'   &&<LegalTab/>}
+      <div style={{display:'flex',gap:0,background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:14,overflow:'hidden'}}>
+        {/* Side nav rail */}
+        <div style={{width:54,flexShrink:0,display:'flex',flexDirection:'column',borderRight:'1px solid var(--border-subtle)',background:'var(--bg-base)'}}>
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{
+              display:'flex',flexDirection:'column',alignItems:'center',gap:3,
+              padding:'10px 4px',background:'none',border:'none',
+              borderLeft:tab===t.id?'2px solid var(--gold)':'2px solid transparent',
+              color:tab===t.id?'var(--gold)':'var(--text-muted)',
+              fontSize:'0.52rem',fontFamily:'var(--font-mono)',cursor:'pointer',
+              width:'100%',transition:'color 0.15s',
+            }}>
+              <span style={{fontSize:'1rem'}}>{t.icon}</span>
+              <span style={{lineHeight:1.2,textAlign:'center'}}>{t.label.split(' ')[0]}</span>
+            </button>
+          ))}
+        </div>
+        {/* Content area */}
+        <div style={{flex:1,minWidth:0,padding:'14px 16px',overflowY:'auto'}}>
+          {tab==='validate'&&<IdeaValidatorTab/>}
+          {tab==='hustle'  &&<SideHustleTab/>}
+          {tab==='funding' &&<FundingTab/>}
+          {tab==='bmc'     &&<BMCTab/>}
+          {tab==='journal' &&<JournalTab/>}
+          {tab==='legal'   &&<LegalTab/>}
+        </div>
       </div>
     </div>
   )

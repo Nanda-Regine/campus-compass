@@ -38,7 +38,17 @@ interface GroupAssignment {
 }
 
 type View = 'list' | 'detail'
-type DetailTab = 'overview' | 'tasks' | 'members' | 'tips'
+type DetailTab = 'overview' | 'tasks' | 'members' | 'discussion' | 'tips'
+
+interface GroupMessage {
+  id: string
+  assignment_id: string
+  user_id: string
+  content: string
+  is_decision: boolean
+  is_pinned: boolean
+  created_at: string
+}
 
 const MEMBER_ROLES = ['Leader', 'Researcher', 'Writer', 'Designer', 'Presenter', 'Reviewer'] as const
 type MemberRole = typeof MEMBER_ROLES[number]
@@ -82,6 +92,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
   const [flaggedMember, setFlaggedMember] = useState<string | null>(null)
 
+  // Discussion board state
+  const [messages, setMessages] = useState<GroupMessage[]>([])
+  const [msgText, setMsgText] = useState('')
+  const [msgIsDecision, setMsgIsDecision] = useState(false)
+  const [sendingMsg, setSendingMsg] = useState(false)
+  const [loadingMsgs, setLoadingMsgs] = useState(false)
+
   // New assignment form state
   const [newTitle, setNewTitle] = useState('')
   const [newSubject, setNewSubject] = useState('')
@@ -94,6 +111,38 @@ export default function GroupsClient({ userId }: { userId: string }) {
   const [taskAssigneeEmail, setTaskAssigneeEmail] = useState('')
   const [taskDueDate, setTaskDueDate] = useState('')
   const [addingTask, setAddingTask] = useState(false)
+
+  const loadMessages = useCallback(async (assignmentId: string) => {
+    setLoadingMsgs(true)
+    try {
+      const res = await fetch(`/api/groups/messages?assignment_id=${assignmentId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setMessages(data.messages || [])
+      }
+    } catch { /* non-critical */ }
+    setLoadingMsgs(false)
+  }, [])
+
+  const sendMessage = async (assignmentId: string) => {
+    if (!msgText.trim() || sendingMsg) return
+    setSendingMsg(true)
+    const text = msgText.trim()
+    setMsgText('')
+    try {
+      const res = await fetch('/api/groups/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assignment_id: assignmentId, content: text, is_decision: msgIsDecision }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setMessages(prev => [...prev, data.message])
+        setMsgIsDecision(false)
+      }
+    } catch { toast.error('Failed to send message') }
+    setSendingMsg(false)
+  }
 
   const load = useCallback(async () => {
     try {
@@ -323,6 +372,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
       { id: 'overview', label: 'Overview' },
       { id: 'tasks', label: `Tasks (${selected.group_tasks.length})` },
       { id: 'members', label: `Team (${joinedMembers.length})` },
+      { id: 'discussion', label: `Board (${messages.length})` },
       { id: 'tips', label: 'Playbook' },
     ]
 
@@ -358,7 +408,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {/* Tab bar */}
           <div className="flex gap-1 mt-3 overflow-x-auto">
             {DETAIL_TABS.map(t => (
-              <button key={t.id} onClick={() => setDetailTab(t.id)} className={cn(
+              <button key={t.id} onClick={() => { setDetailTab(t.id); if (t.id === 'discussion') void loadMessages(selected.id) }} className={cn(
                 'flex-shrink-0 font-mono text-[0.6rem] px-3 py-1.5 rounded-lg transition-all border',
                 detailTab === t.id
                   ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
@@ -648,6 +698,90 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 </div>
               )}
             </>
+          )}
+
+          {/* ── Discussion board tab ── */}
+          {detailTab === 'discussion' && (
+            <div className="flex flex-col gap-3">
+              <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
+                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">
+                  Group notice board — log decisions, share updates, flag blockers. Mark important posts as 📌 Decisions.
+                </p>
+              </div>
+
+              {/* Slacking detection banner */}
+              {(() => {
+                const now = new Date()
+                const inactive = joinedMembers.filter(m => {
+                  const tasks = selected.group_tasks.filter(t => t.assigned_to_email === m.email)
+                  const overdue = tasks.filter(t => t.due_date && new Date(t.due_date) < now && !t.done)
+                  return overdue.length >= 2
+                })
+                if (!inactive.length) return null
+                return (
+                  <div className="bg-red-500/8 border border-red-500/20 rounded-xl px-3 py-2.5">
+                    <p className="font-mono text-[0.6rem] text-red-400 font-bold mb-1">⚠ Team members falling behind</p>
+                    {inactive.map(m => (
+                      <p key={m.id} className="font-mono text-[0.58rem] text-red-300/70">{m.display_name || m.email} has 2+ overdue tasks — consider a check-in.</p>
+                    ))}
+                  </div>
+                )
+              })()}
+
+              {/* Messages */}
+              {loadingMsgs ? (
+                <div className="font-mono text-[0.62rem] text-white/30 text-center py-6">Loading board…</div>
+              ) : messages.length === 0 ? (
+                <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
+                  <div className="text-2xl mb-2">💬</div>
+                  <p className="font-mono text-[0.62rem] text-white/30">No posts yet. Be the first to post an update or decision.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {messages.map(msg => (
+                    <div key={msg.id} className={cn(
+                      'rounded-xl px-3 py-2.5 border',
+                      msg.is_decision
+                        ? 'bg-amber-500/8 border-amber-500/20'
+                        : 'bg-white/3 border-white/7',
+                      msg.user_id === userId ? 'ml-6' : 'mr-6',
+                    )}>
+                      {msg.is_decision && (
+                        <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 DECISION</p>
+                      )}
+                      <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
+                      <p className="font-mono text-[0.52rem] text-white/25 mt-1">
+                        {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Send message */}
+              <div className="bg-white/3 border border-white/7 rounded-xl p-3 space-y-2">
+                <textarea
+                  value={msgText}
+                  onChange={e => setMsgText(e.target.value)}
+                  placeholder="Post an update, question, or decision…"
+                  rows={2}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[0.78rem] text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body resize-none"
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input type="checkbox" checked={msgIsDecision} onChange={e => setMsgIsDecision(e.target.checked)} className="w-3 h-3" />
+                    <span className="font-mono text-[0.58rem] text-amber-400">📌 Mark as decision</span>
+                  </label>
+                  <button
+                    onClick={() => void sendMessage(selected.id)}
+                    disabled={!msgText.trim() || sendingMsg}
+                    className="font-mono text-[0.62rem] px-3 py-1.5 bg-teal-600/15 text-teal-400 border border-teal-600/20 rounded-lg disabled:opacity-40 hover:bg-teal-600/25 transition-all"
+                  >
+                    {sendingMsg ? 'Sending…' : 'Post →'}
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* ── Playbook / Tips tab ── */}

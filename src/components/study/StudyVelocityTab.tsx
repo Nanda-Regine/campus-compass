@@ -28,6 +28,7 @@ interface ModuleVelocity {
   daysUntilExam: number | null
   requiredPerDay: number | null
   velocityRatio: number | null // actual / required; null = no exam set
+  rescueMode: boolean          // true when raw required > 8h/day (impossible to cover all material)
   risk: 'on_track' | 'watch' | 'behind' | 'critical' | 'no_exam'
 }
 
@@ -121,9 +122,16 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
         ? Math.max(1, Math.ceil((new Date(nextExam.exam_date).getTime() - now.getTime()) / 86400000))
         : null
 
-      const requiredPerDay = daysUntilExam !== null
+      const rawRequiredPerDay = daysUntilExam !== null
         ? remainingHours / daysUntilExam
         : null
+
+      // Cap at 8h/day max — more than this is physically impossible; show rescue mode instead
+      const MAX_DAILY = 8
+      const requiredPerDay = rawRequiredPerDay !== null
+        ? Math.min(rawRequiredPerDay, MAX_DAILY)
+        : null
+      const rescueMode = rawRequiredPerDay !== null && rawRequiredPerDay > MAX_DAILY
 
       const velocityRatio = requiredPerDay !== null && requiredPerDay > 0
         ? avgHoursPerDay / requiredPerDay
@@ -131,7 +139,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
 
       return {
         module: mod, totalHours, last7Hours, avgHoursPerDay,
-        requiredHours, remainingHours, daysUntilExam, requiredPerDay, velocityRatio,
+        requiredHours, remainingHours, daysUntilExam, requiredPerDay, velocityRatio, rescueMode,
         risk: calcRisk(velocityRatio),
       }
     })
@@ -351,7 +359,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
                 {[
                   { label: 'Avg/day', value: `${v.avgHoursPerDay.toFixed(1)}h` },
-                  { label: 'Need/day', value: v.requiredPerDay !== null ? `${v.requiredPerDay.toFixed(1)}h` : '—' },
+                  { label: 'Need/day', value: v.requiredPerDay !== null ? `${v.requiredPerDay.toFixed(1)}h${v.rescueMode ? '+' : ''}` : '—' },
                   { label: 'Remaining', value: `${v.remainingHours.toFixed(0)}h` },
                 ].map(s => (
                   <div key={s.label} style={{ background: 'var(--bg-base)', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
@@ -364,12 +372,18 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
               {/* Advice line */}
               {v.risk === 'critical' && v.requiredPerDay !== null && (
                 <div style={{ marginTop: 10, padding: '7px 10px', borderRadius: 8, background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', fontSize: '0.68rem', color: '#f87171' }}>
-                  You need <strong>{v.requiredPerDay.toFixed(1)} hrs/day</strong> but are averaging <strong>{v.avgHoursPerDay.toFixed(1)} hrs/day</strong>. Schedule 2× daily sessions now.
+                  {v.rescueMode
+                    ? <><strong>Rescue mode:</strong> Not enough time to cover everything. Triage now — do only past-paper topics, make 1-page summary notes, ask a tutor for the most-tested sections.</>
+                    : <>You need <strong>{v.requiredPerDay.toFixed(1)} hrs/day</strong> but are averaging <strong>{v.avgHoursPerDay.toFixed(1)} hrs/day</strong>. Schedule 2× daily sessions now.</>
+                  }
                 </div>
               )}
               {v.risk === 'behind' && v.requiredPerDay !== null && (
                 <div style={{ marginTop: 10, padding: '7px 10px', borderRadius: 8, background: 'rgba(249,115,22,0.07)', border: '1px solid rgba(249,115,22,0.2)', fontSize: '0.68rem', color: '#f97316' }}>
-                  Increase from {v.avgHoursPerDay.toFixed(1)} to {v.requiredPerDay.toFixed(1)} hrs/day to finish on time.
+                  {v.rescueMode
+                    ? <><strong>Rescue mode:</strong> Focus on highest-weighted topics only. 8h/day max — log your sessions to track real progress.</>
+                    : <>Increase from {v.avgHoursPerDay.toFixed(1)} to {v.requiredPerDay.toFixed(1)} hrs/day to finish on time.</>
+                  }
                 </div>
               )}
               {v.risk === 'no_exam' && (
@@ -401,11 +415,17 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
       {/* Sleep-study balance warning */}
       {(() => {
         const totalRequired = velocity.reduce((s, v) => s + (v.requiredPerDay ?? 0), 0)
-        if (totalRequired > 4) return (
+        const hasRescue = velocity.some(v => v.rescueMode)
+        if (totalRequired > 6) return (
           <div style={{ padding: '12px 14px', borderRadius: 12, background: 'rgba(251,113,133,0.07)', border: '1px solid rgba(251,113,133,0.2)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fb7185', marginBottom: 4 }}>⚠️ Pace risk: {totalRequired.toFixed(1)}h/day required across all modules</div>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fb7185', marginBottom: 4 }}>
+              {hasRescue ? '🚨 Rescue mode — triage your study plan' : `⚠️ Heavy load: ${totalRequired.toFixed(1)}h/day across all modules`}
+            </div>
             <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              Sustained studying at {totalRequired.toFixed(1)}h/day is unsustainable. Research shows cognitive performance declines sharply after 4 hours of focused work per day. Prioritise: (1) Drop non-assessed content, (2) Focus on past-paper question patterns, (3) Sleep 7h minimum — sleep consolidates memory more effectively than an extra study hour.
+              {hasRescue
+                ? 'One or more modules cannot be covered fully before the exam. Switch to rescue mode: (1) Only study past-paper topics, (2) Make 1-page cheat sheets, (3) Book a tutor for the highest-weighted sections, (4) Sleep 7h — memory consolidation beats grinding.'
+                : `${totalRequired.toFixed(1)}h/day is a heavy load. Prioritise: (1) Drop non-assessed content, (2) Focus on past-paper patterns, (3) Sleep 7h minimum — sleep consolidates memory more than an extra study hour.`
+              }
             </div>
           </div>
         )

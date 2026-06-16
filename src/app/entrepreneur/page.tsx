@@ -4,7 +4,7 @@ import EntrepreneurOS from '@/components/entrepreneur/EntrepreneurOS'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export default async function EntrepreneurPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
