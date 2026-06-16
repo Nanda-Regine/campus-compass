@@ -106,6 +106,7 @@ export interface NovaContext {
   wellness: NovaWellnessContext
   crisisFlags: string[]
   patternInsights: string[]    // correlation insights from 30-day behavioural data
+  upcomingCampusEvents: Array<{ title: string; event_type: string; venue: string | null; event_date: string; institution: string }>
   fetchedAt: number
 }
 
@@ -161,6 +162,9 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   // 48h back for safety incidents
   const safety48hAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString()
 
+  // 72h ahead for campus events
+  const events72hAhead = new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString()
+
   // Start of current month for budget
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
@@ -179,6 +183,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     nsScoreRes,
     cycleRes,
     safetyIncidentsRes,
+    campusEventsRes,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -264,6 +269,15 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .from('safety_incidents')
       .select('id,severity,institution')
       .gte('created_at', safety48hAgo),
+    // Campus events in next 72h
+    supabase
+      .from('campus_events')
+      .select('title,event_type,venue,event_date,duration_minutes,institution')
+      .eq('is_cancelled', false)
+      .gte('event_date', now.toISOString())
+      .lte('event_date', events72hAhead)
+      .order('event_date', { ascending: true })
+      .limit(5),
   ])
 
   // ── Profile ──────────────────────────────────────────────────────────────
@@ -438,6 +452,12 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     recentSafetyIncidents,
   }
 
+  // Campus events (filter to user's institution)
+  const allEvents = (campusEventsRes.data || []) as Array<{ title: string; event_type: string; venue: string | null; event_date: string; institution: string }>
+  const upcomingCampusEvents = allEvents.filter(ev =>
+    !rawProfile?.university || ev.institution === rawProfile.university
+  ).slice(0, 4)
+
   // ── Pattern insights (computed from already-fetched study sessions) ─────────
   const patternInsights: string[] = []
 
@@ -486,6 +506,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     wellness,
     crisisFlags,
     patternInsights,
+    upcomingCampusEvents,
     fetchedAt: Date.now(),
   }
 
@@ -551,6 +572,15 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? `⚠️ Campus safety: ${w.recentSafetyIncidents} incident${w.recentSafetyIncidents > 1 ? 's' : ''} reported in the last 48h. Be aware if they mention campus safety or walking at night.`
     : ''
 
+  const eventsNote = ctx.upcomingCampusEvents.length > 0
+    ? `Upcoming campus events (next 72h): ${ctx.upcomingCampusEvents.map(e => {
+        const d = new Date(e.event_date)
+        const timeStr = d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })
+        const dayStr = d.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })
+        return `"${e.title}" (${e.event_type}) — ${dayStr} at ${timeStr}${e.venue ? ` @ ${e.venue}` : ''}`
+      }).join('; ')}.`
+    : ''
+
   const challengesNote = p.biggest_challenges?.length
     ? `Self-reported challenges: ${p.biggest_challenges.join(', ')}.`
     : ''
@@ -599,6 +629,7 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 - ${regulationNote}${nsNote ? ' ' + nsNote : ''}
 ${cycleNote ? `- ${cycleNote}` : ''}
 ${safetyNote ? `- ${safetyNote}` : ''}
+${eventsNote ? `- ${eventsNote}` : ''}
 ${patternsNote}
 ${crisisNote}
 **Instructions:**
