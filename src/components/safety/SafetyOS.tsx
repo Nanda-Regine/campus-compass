@@ -97,7 +97,7 @@ const DEFENCE_TIPS = [
 
 const LEVEL_ORDER = ['Awareness', 'Beginner', 'Intermediate', 'Critical']
 
-// Small reactive banner — reads localStorage at render time
+// Small reactive banner — reads localStorage cache at render time
 function ContactsEmptyWarning() {
   const [empty, setEmpty] = useState(true)
   useEffect(() => {
@@ -105,6 +105,10 @@ function ContactsEmptyWarning() {
       const c = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]')
       setEmpty(c.length === 0)
     } catch { /* ignore */ }
+    // Also check Supabase asynchronously
+    fetch('/api/safety/contacts').then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.contacts?.length) setEmpty(false)
+    }).catch(() => {})
   }, [])
   if (!empty) return null
   return (
@@ -533,35 +537,81 @@ function DefenceTab() {
 // ─── Contacts Tab ─────────────────────────────────────────────
 
 interface EmergencyContact {
-  id:       number
+  id:       string
   name:     string
-  number:   string
+  number:   string  // maps to `phone` in Supabase
   relation: string
 }
 
+// Write to localStorage cache so SOS can read contacts offline
+function cacheContacts(contacts: EmergencyContact[]) {
+  try { localStorage.setItem('varsityos-emergency-contacts', JSON.stringify(contacts)) } catch { /* ignore */ }
+}
+
 function ContactsTab() {
-  const [contacts, setContacts] = useState<EmergencyContact[]>(() => {
-    if (typeof window === 'undefined') return []
-    try { return JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') } catch { return [] }
-  })
+  const [contacts, setContacts] = useState<EmergencyContact[]>([])
+  const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', number: '', relation: '' })
   const [adding, setAdding] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  const save = (updated: EmergencyContact[]) => {
-    setContacts(updated)
-    localStorage.setItem('varsityos-emergency-contacts', JSON.stringify(updated))
-  }
+  // Load from Supabase on mount; fall back to localStorage cache while loading
+  useEffect(() => {
+    // Show cached contacts immediately so the UI isn't blank
+    try {
+      const cached = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') as EmergencyContact[]
+      if (cached.length > 0) setContacts(cached)
+    } catch { /* ignore */ }
 
-  const addContact = () => {
+    fetch('/api/safety/contacts')
+      .then(r => r.ok ? r.json() : null)
+      .then((d: { contacts: { id: string; name: string; phone: string; relation: string | null }[] } | null) => {
+        if (!d) return
+        const mapped: EmergencyContact[] = d.contacts.map(c => ({
+          id: c.id,
+          name: c.name,
+          number: c.phone,
+          relation: c.relation ?? '',
+        }))
+        setContacts(mapped)
+        cacheContacts(mapped)
+      })
+      .catch(() => { /* keep showing cached */ })
+      .finally(() => setLoading(false))
+  }, [])
+
+  const addContact = async () => {
     if (!form.name || !form.number) return
-    const next = [...contacts, { id: Date.now(), ...form }]
-    save(next)
-    setForm({ name: '', number: '', relation: '' })
-    setAdding(false)
+    setSaving(true)
+    try {
+      const res = await fetch('/api/safety/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, phone: form.number, relation: form.relation }),
+      })
+      if (res.ok) {
+        const d = await res.json() as { contact: { id: string; name: string; phone: string; relation: string | null } }
+        const newContact: EmergencyContact = {
+          id: d.contact.id, name: d.contact.name,
+          number: d.contact.phone, relation: d.contact.relation ?? '',
+        }
+        const updated = [...contacts, newContact]
+        setContacts(updated)
+        cacheContacts(updated)
+        setForm({ name: '', number: '', relation: '' })
+        setAdding(false)
+      }
+    } catch { /* network error — ignore */ }
+    setSaving(false)
   }
 
-  const removeContact = (id: number) => {
-    save(contacts.filter(c => c.id !== id))
+  const removeContact = async (id: string) => {
+    const updated = contacts.filter(c => c.id !== id)
+    setContacts(updated)
+    cacheContacts(updated)
+    try {
+      await fetch(`/api/safety/contacts?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+    } catch { /* best effort */ }
   }
 
   return (
@@ -572,10 +622,14 @@ function ContactsTab() {
         background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
         borderRadius: 10,
       }}>
-        These contacts receive an automatic alert when you trigger SOS or miss a Walk Me Home check-in. Stored locally on your device.
+        These contacts receive an automatic alert when you trigger SOS or miss a Walk Me Home check-in. Synced to your account — available across devices.
       </div>
 
-      {contacts.length === 0 && !adding ? (
+      {loading && contacts.length === 0 ? (
+        <div style={{ padding: '24px', textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          Loading contacts…
+        </div>
+      ) : contacts.length === 0 && !adding ? (
         <div style={{
           padding: '28px 20px', textAlign: 'center',
           background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)',
@@ -607,7 +661,7 @@ function ContactsTab() {
                   borderRadius: 6, color: 'var(--emerald, #34D399)',
                   fontSize: '0.65rem', textDecoration: 'none',
                 }}>Call</a>
-                <button onClick={() => removeContact(c.id)} style={{
+                <button onClick={() => void removeContact(c.id)} style={{
                   padding: '5px 10px',
                   background: 'transparent', border: '1px solid var(--border-subtle)',
                   borderRadius: 6, color: 'var(--text-muted)',
@@ -647,12 +701,13 @@ function ContactsTab() {
             ))}
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={addContact} style={{
+            <button onClick={() => void addContact()} disabled={saving} style={{
               flex: 1, padding: '10px 0',
               background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.35)',
               borderRadius: 8, color: 'var(--emerald, #34D399)',
-              fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer',
-            }}>Save contact</button>
+              fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+              cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
+            }}>{saving ? 'Saving…' : 'Save contact'}</button>
             <button onClick={() => setAdding(false)} style={{
               padding: '10px 16px',
               background: 'transparent', border: '1px solid var(--border-subtle)',
