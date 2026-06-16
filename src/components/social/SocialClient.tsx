@@ -1,15 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { Rss, Users, Handshake, Heart } from 'lucide-react'
+import { Rss, Users, Handshake, Heart, BookOpen } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
 const CampusFeed            = dynamic(() => import('./CampusFeed'),  { ssr: false })
 const StudyTwins            = dynamic(() => import('./StudyTwins'),  { ssr: false })
 const AccountabilityPartner = dynamic(() => import('@/components/community/AccountabilityPartner'), { ssr: false })
 const MutualAidBoard        = dynamic(() => import('@/components/community/MutualAidBoard'), { ssr: false })
+const WisdomArchive         = dynamic(() => import('@/components/community/WisdomArchive'), { ssr: false })
 
-type Tab = 'feed' | 'twins' | 'partners' | 'aid'
+type Tab = 'feed' | 'twins' | 'partners' | 'aid' | 'wisdom'
 
 interface Props {
   userId: string
@@ -19,10 +20,11 @@ interface Props {
 }
 
 const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; accent: string }[] = [
-  { id: 'feed',     label: 'Feed',          icon: <Rss size={15} />,       accent: '#4ecf9e' },
-  { id: 'twins',    label: 'Study Twins',   icon: <Users size={15} />,     accent: '#9B6FFF' },
-  { id: 'partners', label: 'Accountability',icon: <Handshake size={15} />, accent: '#f59e0b' },
-  { id: 'aid',      label: 'Mutual Aid',    icon: <Heart size={15} />,     accent: '#34d399' },
+  { id: 'feed',     label: 'Feed',     icon: <Rss size={14} />,       accent: '#4ecf9e' },
+  { id: 'twins',    label: 'Twins',    icon: <Users size={14} />,     accent: '#9B6FFF' },
+  { id: 'partners', label: 'Partners', icon: <Handshake size={14} />, accent: '#f59e0b' },
+  { id: 'aid',      label: 'Aid',      icon: <Heart size={14} />,     accent: '#34d399' },
+  { id: 'wisdom',   label: 'Wisdom',   icon: <BookOpen size={14} />,  accent: '#60a5fa' },
 ]
 
 export default function SocialClient({ userId, userInstitution, initialOptIn, initialWhatsapp }: Props) {
@@ -88,6 +90,8 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
 
       {tab === 'aid' ? (
         <MutualAidBoard userId={userId} university={userInstitution} />
+      ) : tab === 'wisdom' ? (
+        <WisdomArchive userId={userId} university={userInstitution} />
       ) : (
         <div style={{ padding: '16px 16px 0' }}>
           {tab === 'feed' && (
