@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
-import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car, Search } from 'lucide-react'
+import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car, Search, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+
+const SmartCommute = dynamic(() => import('./SmartCommute'), { ssr: false })
 
 // Mapbox map loaded client-side only (accesses window/document)
 const MapboxRoutesMap = dynamic(
@@ -109,6 +111,7 @@ const TABS = [
   { key: 'my-routes',  label: 'My Routes',      icon: MapPin },
   { key: 'lift-club',  label: 'Lift Club',      icon: Users },
   { key: 'tips',       label: 'Transport Tips', icon: Lightbulb },
+  { key: 'commute',    label: 'Commute',         icon: Clock },
 ] as const
 type TabKey = typeof TABS[number]['key']
 
@@ -667,6 +670,9 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             ))}
           </div>
         )}
+
+        {/* ── Commute Planner ────────────────────────────────── */}
+        {tab === 'commute' && <SmartCommute userId={userId} />}
 
         {/* ── Transport Tips ─────────────────────────────────── */}
         {tab === 'tips' && (
