@@ -67,6 +67,7 @@ interface IncomeEntry {
   amount: number
   received_date: string
   is_recurring: boolean
+  nsfas_disbursement_id?: string | null
 }
 
 interface SavingsGoal {
@@ -195,12 +196,22 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
   }, [activeTab])
 
   const loadWalletData = async () => {
-    const { data: goals } = await supabase
-      .from('savings_goals').select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
-      .eq('user_id', initialData.userId)
-      .eq('is_completed', false)
-      .order('created_at', { ascending: true })
+    const [{ data: goals }, { data: income }] = await Promise.all([
+      supabase
+        .from('savings_goals')
+        .select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
+        .eq('user_id', initialData.userId)
+        .eq('is_completed', false)
+        .order('created_at', { ascending: true }),
+      supabase
+        .from('income_entries')
+        .select('id,source_type,label,amount,received_date,is_recurring,nsfas_disbursement_id')
+        .eq('user_id', initialData.userId)
+        .order('received_date', { ascending: false })
+        .limit(100),
+    ])
     setSavingsGoals((goals ?? []) as SavingsGoal[])
+    if (income) setIncomeEntries(income as IncomeEntry[])
     setWalletLoaded(true)
   }
 
@@ -218,7 +229,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         amount: parseFloat(incomeAmount),
         received_date: incomeDate,
         month_year: incomeDate.slice(0, 7),
-      }).select('id,source_type,label,amount,received_date,is_recurring').single()
+      }).select('id,source_type,label,amount,received_date,is_recurring,nsfas_disbursement_id').single()
       if (error) throw error
       setIncomeEntries(prev => [data as IncomeEntry, ...prev])
       setIncomeLabel(''); setIncomeAmount(''); setShowIncomeForm(false)
@@ -825,14 +836,18 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="space-y-2">
                 {incomeEntries.map(entry => {
                   const icons: Record<string, string> = { nsfas:'🏛️', bursary:'📜', part_time:'💼', pocket_money:'💵', family:'👨‍👩‍👧', scholarship:'🎓', gift:'🎁', side_hustle:'⚡', other:'💳' }
+                  const isSynced = !!entry.nsfas_disbursement_id
                   return (
-                    <div key={entry.id} className="flex items-center gap-3 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl px-4 py-3">
+                    <div key={entry.id} className="flex items-center gap-3 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl px-4 py-3" style={isSynced ? { borderColor: 'rgba(234,179,8,0.2)' } : {}}>
                       <div className="w-9 h-9 bg-teal-600/15 rounded-xl flex items-center justify-center text-lg flex-shrink-0">
                         {icons[entry.source_type] || '💳'}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-body text-sm text-white truncate">{entry.label}</div>
-                        <div className="font-mono text-[0.58rem] text-white/30">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[0.58rem] text-white/30">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
+                          {isSynced && <span className="font-mono text-[0.52rem] text-amber-400/70 bg-amber-400/8 border border-amber-400/15 px-1.5 py-0.5 rounded-full">🔗 NSFAS</span>}
+                        </div>
                       </div>
                       <div className="font-display font-bold text-sm text-teal-400">+{fmt.currencyShort(entry.amount)}</div>
                     </div>

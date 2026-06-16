@@ -16,7 +16,17 @@ import {
   type DisbursementStatus, type AppealStatus, type AppealType,
   type DocumentType, type DocumentStatus,
 } from '@/lib/db/nsfas'
+import { createClient } from '@/lib/supabase/client'
 import { signals } from '@/store/signals'
+
+const TYPE_LABELS: Record<string, string> = {
+  living: 'Living Allowance',
+  accommodation: 'Accommodation',
+  books: 'Books & Stationery',
+  transport: 'Transport',
+  meal: 'Meal Allowance',
+  other: 'Other',
+}
 
 // ─── Sub-tab config ───────────────────────────────────────────
 
@@ -261,10 +271,30 @@ function DisbursementsTab({ disbursements, onUpdate }: {
   const handleConfirmReceived = async () => {
     if (!form) return
     setMarkingId(form.id)
-    await updateDisbursementStatus(form.id, 'received', parseFloat(form.actual) || undefined, form.actualDate)
+    const disbursement = disbursements.find(d => d.id === form.id)
+    const actualAmount = parseFloat(form.actual) || disbursement?.expected_amount || 0
+    const actualDate   = form.actualDate || new Date().toISOString().split('T')[0]
+
+    await updateDisbursementStatus(form.id, 'received', actualAmount || undefined, actualDate)
+
+    // Auto-sync payment to the Finance wallet as an income entry
+    if (disbursement) {
+      const supabase = createClient()
+      await supabase.from('income_entries').upsert({
+        user_id:               disbursement.user_id,
+        source_type:           'nsfas',
+        label:                 `NSFAS ${TYPE_LABELS[disbursement.type] ?? disbursement.type} — ${disbursement.period_label}`,
+        amount:                actualAmount,
+        received_date:         actualDate,
+        month_year:            actualDate.slice(0, 7),
+        is_recurring:          false,
+        nsfas_disbursement_id: disbursement.id,
+      }, { onConflict: 'nsfas_disbursement_id', ignoreDuplicates: false })
+    }
+
     signals.emit({
       type: 'expense_logged',
-      payload: { amount: parseFloat(form.actual), category: 'accommodation', remainingBudget: 0 },
+      payload: { amount: actualAmount, category: 'nsfas_income', remainingBudget: 0 },
     })
     setForm(null)
     onUpdate()
