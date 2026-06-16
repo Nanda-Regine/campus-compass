@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Rss, Users, Handshake, Heart, BookOpen, Calendar } from 'lucide-react'
+import { Rss, Users, Handshake, Heart, BookOpen, Calendar, Sparkles } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
 const CampusFeed            = dynamic(() => import('./CampusFeed'),          { ssr: false })
@@ -10,8 +10,9 @@ const AccountabilityPartner = dynamic(() => import('@/components/community/Accou
 const MutualAidBoard        = dynamic(() => import('@/components/community/MutualAidBoard'), { ssr: false })
 const WisdomArchive         = dynamic(() => import('@/components/community/WisdomArchive'), { ssr: false })
 const CampusEvents          = dynamic(() => import('./CampusEvents'),         { ssr: false })
+const SocietiesTab          = dynamic(() => import('./SocietiesTab'),         { ssr: false })
 
-type Tab = 'feed' | 'twins' | 'partners' | 'aid' | 'wisdom' | 'events'
+type Tab = 'feed' | 'twins' | 'partners' | 'aid' | 'wisdom' | 'events' | 'societies'
 
 interface Props {
   userId: string
@@ -23,6 +24,7 @@ interface Props {
 const TAB_CONFIG: { id: Tab; label: string; icon: React.ReactNode; accent: string }[] = [
   { id: 'feed',     label: 'Feed',     icon: <Rss size={14} />,       accent: '#4ecf9e' },
   { id: 'events',   label: 'Events',   icon: <Calendar size={14} />,  accent: '#f59e0b' },
+  { id: 'societies',label: 'Clubs',    icon: <Sparkles size={14} />,  accent: '#7090D0' },
   { id: 'twins',    label: 'Twins',    icon: <Users size={14} />,     accent: '#9B6FFF' },
   { id: 'partners', label: 'Partners', icon: <Handshake size={14} />, accent: '#f59e0b' },
   { id: 'aid',      label: 'Aid',      icon: <Heart size={14} />,     accent: '#34d399' },
@@ -121,6 +123,9 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
             )}
             {tab === 'events' && (
               <CampusEvents userId={userId} institution={userInstitution} />
+            )}
+            {tab === 'societies' && (
+              <SocietiesTab userId={userId} userInstitution={userInstitution} />
             )}
             {tab === 'twins' && (
               <StudyTwins
