@@ -19,7 +19,7 @@ export async function GET() {
   // Get student's profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('university, degree, year_of_study, streak_count')
+    .select('university, degree, year_of_study, streak_count, total_xp')
     .eq('id', user.id)
     .single()
 
@@ -34,7 +34,7 @@ export async function GET() {
   // Get cohort peers (same degree + year + university, excluding self)
   const { data: peers } = await admin
     .from('profiles')
-    .select('id, streak_count')
+    .select('id, streak_count, total_xp')
     .eq('university', profile.university)
     .eq('degree', profile.degree)
     .eq('year_of_study', profile.year_of_study)
@@ -46,6 +46,11 @@ export async function GET() {
   if (cohortSize < 5) {
     return NextResponse.json({ insufficient: true, reason: 'cohort_too_small', cohortSize })
   }
+
+  // ── XP percentile ─────────────────────────────────────────────
+  const myXP = (profile.total_xp as number) ?? 0
+  const peerXPs = (peers ?? []).map(p => (p.total_xp as number) ?? 0)
+  const xpPercentile = computePercentile(myXP, peerXPs)
 
   // ── Streak percentile ─────────────────────────────────────────
   const myStreak = (profile.streak_count as number) ?? 0
@@ -117,22 +122,39 @@ export async function GET() {
     ? computePercentile(myCompletion, peerCompletions)
     : null
 
+  const activeMetricPercentiles = [
+    xpPercentile,
+    streakPercentile,
+    studyPercentile,
+    ...(completionPercentile !== null ? [completionPercentile] : []),
+  ]
+  const overallPercentile = Math.round(
+    activeMetricPercentiles.reduce((a, b) => a + b, 0) / activeMetricPercentiles.length
+  )
+
   return NextResponse.json({
     cohortSize,
     cohortLabel: `${profile.degree} · Year ${profile.year_of_study}`,
     university: profile.university,
+    overallPercentile,
     metrics: {
+      xp: {
+        myValue:    myXP,
+        percentile: xpPercentile,
+        label:      'VarsityOS XP',
+        unit:       ' XP',
+      },
       streak: {
         myValue:    myStreak,
         percentile: streakPercentile,
         label:      'Study streak',
-        unit:       'days',
+        unit:       ' days',
       },
       studyVelocity: {
         myValue:    Math.round(myStudyMins / 60 * 10) / 10,
         percentile: studyPercentile,
         label:      'Study hours (7 days)',
-        unit:       'hrs',
+        unit:       ' hrs',
       },
       ...(completionPercentile !== null ? {
         taskCompletion: {
