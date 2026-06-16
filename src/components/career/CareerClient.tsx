@@ -7,9 +7,10 @@ import { dispatchXP } from '@/lib/xp-engine'
 import { loadCVProfile, saveCVProfile } from '@/lib/db/cv'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 
-const AlumniMentorNetwork = dynamic(() => import('./AlumniMentorNetwork'), { ssr: false })
-const LinkedInBootcamp    = dynamic(() => import('./LinkedInBootcamp'),    { ssr: false })
-const GraduateOutcomes    = dynamic(() => import('./GraduateOutcomes'),    { ssr: false })
+const AlumniMentorNetwork    = dynamic(() => import('./AlumniMentorNetwork'),    { ssr: false })
+const LinkedInBootcamp       = dynamic(() => import('./LinkedInBootcamp'),       { ssr: false })
+const GraduateOutcomes       = dynamic(() => import('./GraduateOutcomes'),       { ssr: false })
+const JobApplicationTracker  = dynamic(() => import('./JobApplicationTracker'),  { ssr: false })
 
 /* ── Types ─────────────────────────────────────────────────── */
 interface Props {
@@ -1172,13 +1173,14 @@ function JobsTab() {
 ══════════════════════════════════════════════════════════════ */
 
 const TABS = [
-  { id: 'cv',        label: 'CV Builder',    icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)' },
+  { id: 'cv',        label: 'CV Builder',    icon: '📄', accent: '#4ecf9e', glow: 'rgba(78,207,158,0.2)'  },
   { id: 'interview', label: 'Mock Interview', icon: '🎤', accent: '#7090d0', glow: 'rgba(112,144,208,0.2)' },
   { id: 'skills',    label: 'Skills Gap',    icon: '🎯', accent: '#c084fc', glow: 'rgba(192,132,252,0.2)' },
-  { id: 'jobs',      label: 'SA Jobs',       icon: '💼', accent: '#4A9EF5', glow: 'rgba(74,158,245,0.2)' },
-  { id: 'alumni',    label: 'Mentors',       icon: '🎓', accent: '#6366f1', glow: 'rgba(99,102,241,0.2)' },
+  { id: 'jobs',      label: 'SA Jobs',       icon: '💼', accent: '#4A9EF5', glow: 'rgba(74,158,245,0.2)'  },
+  { id: 'tracker',   label: 'Applications',  icon: '📋', accent: '#f59e0b', glow: 'rgba(245,158,11,0.2)'  },
+  { id: 'alumni',    label: 'Mentors',       icon: '🎓', accent: '#6366f1', glow: 'rgba(99,102,241,0.2)'  },
   { id: 'linkedin',  label: 'LinkedIn',      icon: '🔗', accent: '#818cf8', glow: 'rgba(129,140,248,0.2)' },
-  { id: 'outcomes',  label: 'Outcomes',      icon: '📊', accent: '#34d399', glow: 'rgba(52,211,153,0.2)' },
+  { id: 'outcomes',  label: 'Outcomes',      icon: '📊', accent: '#34d399', glow: 'rgba(52,211,153,0.2)'  },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -1250,6 +1252,7 @@ export default function CareerClient({ userId, profile, modules }: Props) {
           {activeTab === 'interview' && <MockInterviewer       profile={profile} modules={modules} />}
           {activeTab === 'skills'    && <SkillsGap             modules={modules} />}
           {activeTab === 'jobs'      && <JobsTab />}
+          {activeTab === 'tracker'   && <JobApplicationTracker userId={userId} />}
           {activeTab === 'alumni'    && <AlumniMentorNetwork   userId={userId} university={profile.university} />}
           {activeTab === 'linkedin'  && <LinkedInBootcamp />}
           {activeTab === 'outcomes'  && <GraduateOutcomes />}
