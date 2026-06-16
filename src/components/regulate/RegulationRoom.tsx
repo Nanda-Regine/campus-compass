@@ -7,9 +7,11 @@ import { signals } from '@/store/signals'
 import BreathingExercise from './BreathingExercise'
 import ExamWeekProtocol from './ExamWeekProtocol'
 import NSScore from './NSScore'
+import dynamic from 'next/dynamic'
+const WellbeingJournal = dynamic(() => import('./WellbeingJournal'), { ssr: false })
 import type { Exam } from '@/types'
 
-type TabId = 'breathe' | 'release' | 'vagal' | 'eye' | 'exam' | 'history'
+type TabId = 'breathe' | 'release' | 'vagal' | 'eye' | 'exam' | 'history' | 'journal'
 
 type BreathProtocol = 'box' | 'physiological_sigh' | '478'
 
@@ -26,6 +28,7 @@ const TABS: TabConfig[] = [
   { id: 'eye',     label: 'Eye Reset',  icon: '👁️' },
   { id: 'exam',    label: 'Exam Prep',  icon: '🎯' },
   { id: 'history', label: 'History',    icon: '📊' },
+  { id: 'journal', label: 'Journal',    icon: '🌙' },
 ]
 
 interface RegSession {
@@ -594,6 +597,9 @@ export default function RegulationRoom({ userId, exams }: Props) {
           )}
           {activeTab === 'history' && (
             <HistoryTab userId={userId} />
+          )}
+          {activeTab === 'journal' && (
+            <WellbeingJournal userId={userId} />
           )}
         </div>
       </div>
