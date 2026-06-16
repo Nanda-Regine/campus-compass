@@ -611,6 +611,24 @@ export default function NovaPage() {
     setPendingImage(null)
   }
 
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const imageItem = Array.from(e.clipboardData.items).find(item => item.type.startsWith('image/'))
+    if (!imageItem) return
+    e.preventDefault()
+    const file = imageItem.getAsFile()
+    if (!file) return
+    setImageCompressing(true)
+    try {
+      const compressed = await compressImage(file)
+      if (pendingImage) URL.revokeObjectURL(pendingImage.previewUrl)
+      setPendingImage(compressed)
+    } catch {
+      toast.error('Could not load pasted image')
+    } finally {
+      setImageCompressing(false)
+    }
+  }
+
   const sendMessage = async (messageText?: string) => {
     const text = (messageText || input).trim()
     if ((!text && !pendingImage) || loading) return
@@ -1131,7 +1149,6 @@ export default function NovaPage() {
         ref={imageInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         className="hidden"
         onChange={handleImageSelect}
       />
@@ -1260,7 +1277,8 @@ export default function NovaPage() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={sr.isListening ? 'Listening…' : 'Talk to Nova…'}
+                placeholder={sr.isListening ? 'Listening…' : pendingImage ? 'Add a question about your image…' : 'Talk to Nova…'}
+                onPaste={handlePaste}
                 rows={1}
                 maxLength={2000}
                 className={cn(

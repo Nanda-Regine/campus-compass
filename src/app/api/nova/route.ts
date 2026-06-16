@@ -589,7 +589,7 @@ export async function POST(request: NextRequest) {
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
+      max_tokens: imageData ? 2048 : 1024,
       system: systemBlocks,
       messages,
     })
