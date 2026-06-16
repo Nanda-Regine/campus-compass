@@ -13,7 +13,7 @@ const MapboxRoutesMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div style={{ height: 300, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ height: 360, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading map…</span>
       </div>
     ),
@@ -120,6 +120,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
   const [routes, setRoutes] = useState<SavedRoute[]>(initialRoutes)
   const [liftPosts, setLiftPosts] = useState<LiftPost[]>([])
   const [liftLoaded, setLiftLoaded] = useState(false)
+  const [liftMapView, setLiftMapView] = useState(false)
 
   // Add route form state
   const [addingRoute, setAddingRoute] = useState(false)
@@ -422,10 +423,10 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {routes.length > 0 && (
               <div>
                 <p className="font-mono text-[0.58rem] text-white/25 uppercase tracking-wider mb-2 px-1">
-                  📍 Teal = departure · Orange = destination
+                  📍 Tap markers for details · Teal = departure · Orange = destination
                 </p>
                 {MAPBOX_TOKEN ? (
-                  <MapboxRoutesMap routes={routes} token={MAPBOX_TOKEN} />
+                  <MapboxRoutesMap routes={routes} token={MAPBOX_TOKEN} height={380} />
                 ) : (
                   <div
                     className="rounded-2xl flex flex-col items-center justify-center gap-2 py-8"
@@ -536,10 +537,31 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
         {tab === 'lift-club' && (
           <div className="space-y-3">
             <div className="card-base p-4">
-              <p className="font-mono text-[0.6rem] text-white/35 leading-relaxed">
-                Find or offer a lift with fellow students at your university. Always meet in a public place and share your trip with someone you trust.
-              </p>
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <p className="font-mono text-[0.6rem] text-white/35 leading-relaxed flex-1">
+                  Find or offer a lift with fellow students. Always meet in a public place and share your trip with someone you trust.
+                </p>
+                {MAPBOX_TOKEN && liftLoaded && liftPosts.length > 0 && (
+                  <button
+                    onClick={() => setLiftMapView(v => !v)}
+                    className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[0.6rem] transition-all"
+                    style={{ background: liftMapView ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${liftMapView ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.1)'}`, color: liftMapView ? '#38bdf8' : 'rgba(255,255,255,0.45)' }}
+                  >
+                    🗺 {liftMapView ? 'Hide map' : 'Show map'}
+                  </button>
+                )}
+              </div>
             </div>
+
+            {/* Lift club map — shows all active lift posts as 🚗 pins */}
+            {liftMapView && MAPBOX_TOKEN && (
+              <div>
+                <p className="font-mono text-[0.58rem] text-white/25 uppercase tracking-wider mb-2 px-1">
+                  🚗 = pickup point · tap for details & WhatsApp link
+                </p>
+                <MapboxRoutesMap liftPosts={liftPosts} token={MAPBOX_TOKEN} height={380} />
+              </div>
+            )}
 
             <button
               onClick={() => setAddingLift(v => !v)}
