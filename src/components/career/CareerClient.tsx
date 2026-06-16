@@ -875,62 +875,131 @@ interface AdzunaJob {
   created: string
 }
 
+const QUICK_FILTERS = [
+  { label: '🎓 Graduate', q: 'graduate programme' },
+  { label: '📋 Internship', q: 'internship' },
+  { label: '🏆 Learnership', q: 'learnership' },
+  { label: '⏰ Part-time', q: 'part time' },
+  { label: '🌍 Remote', q: 'remote work from home' },
+  { label: '💻 Tech', q: 'software developer engineer' },
+] as const
+
+const NSFAS_ANNUAL_THRESHOLD = 79_080 // NSFAS means-test ceiling (2025)
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ').replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+    .replace(/\s{2,}/g, ' ').trim()
+}
+
+function timeAgoJob(iso: string): string {
+  const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
+  if (m < 60) return `${m}m ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h}h ago`
+  const d = Math.floor(h / 24)
+  return d === 1 ? 'yesterday' : `${d}d ago`
+}
+
+function fmtSalary(min?: number, max?: number): string | null {
+  if (!min && !max) return null
+  const lo = min ? `R${Math.round(min / 1000)}k` : ''
+  const hi = max ? `R${Math.round(max / 1000)}k` : ''
+  return lo && hi ? `${lo} – ${hi} p/a` : (lo || hi) + ' p/a'
+}
+
 function JobsTab() {
-  const [query, setQuery]     = useState('')
-  const [location, setLoc]    = useState('')
-  const [jobs, setJobs]       = useState<AdzunaJob[]>([])
-  const [count, setCount]     = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [query, setQuery]       = useState('')
+  const [location, setLoc]      = useState('')
+  const [jobs, setJobs]         = useState<AdzunaJob[]>([])
+  const [count, setCount]       = useState(0)
+  const [page, setPage]         = useState(1)
+  const [hasMore, setHasMore]   = useState(false)
+  const [loading, setLoading]   = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError]       = useState('')
   const [unconfigured, setUnconfigured] = useState(false)
   const [searched, setSearched] = useState(false)
+  const [activeFilter, setActiveFilter] = useState<string | null>(null)
 
-  async function search(e?: React.FormEvent) {
-    e?.preventDefault()
-    setLoading(true)
+  // Auto-load on mount with broad SA student query
+  useEffect(() => {
+    void doSearch('graduate internship learnership', '', 1, false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function doSearch(q: string, loc: string, pg: number, append: boolean) {
+    append ? setLoadingMore(true) : setLoading(true)
     setError('')
     try {
-      const params = new URLSearchParams({ q: query, location })
+      const params = new URLSearchParams({ q, location: loc, page: String(pg) })
       const res = await fetch(`/api/career/jobs?${params}`)
       if (!res.ok) { setError('Failed to load jobs. Try again.'); return }
       const data = await res.json() as { results: AdzunaJob[]; count: number; unconfigured?: boolean }
       if (data.unconfigured) { setUnconfigured(true); return }
-      setJobs(data.results ?? [])
+      const results = data.results ?? []
+      setJobs(prev => append ? [...prev, ...results] : results)
       setCount(data.count ?? 0)
+      setPage(pg)
+      setHasMore(results.length === 12 && pg < 5)
       setSearched(true)
     } catch {
       setError('Network error — check your connection.')
     } finally {
-      setLoading(false)
+      append ? setLoadingMore(false) : setLoading(false)
     }
+  }
+
+  function handleSearch(e?: React.FormEvent) {
+    e?.preventDefault()
+    setActiveFilter(null)
+    setPage(1)
+    void doSearch(query, location, 1, false)
+  }
+
+  function applyFilter(f: typeof QUICK_FILTERS[number]) {
+    setActiveFilter(f.label)
+    setQuery(f.q)
+    setPage(1)
+    void doSearch(f.q, location, 1, false)
+  }
+
+  function loadMore() {
+    void doSearch(query || 'graduate internship learnership', location, page + 1, true)
   }
 
   if (unconfigured) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px 0' }}>
+      <div style={{ textAlign: 'center', padding: '48px 16px' }}>
         <div style={{ fontSize: 36 }}>🔧</div>
         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginTop: 12 }}>
           Job search not configured
         </p>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 6, maxWidth: 260, margin: '6px auto 0' }}>
-          Add ADZUNA_APP_ID and ADZUNA_APP_KEY to your environment variables to enable SA job listings.
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)', marginTop: 6, maxWidth: 280, margin: '8px auto 0', lineHeight: 1.6 }}>
+          Get a free API key at <strong style={{ color: '#4A9EF5' }}>developer.adzuna.com</strong> and add
+          <code style={{ background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: 4 }}>ADZUNA_APP_ID</code> and
+          <code style={{ background: 'rgba(255,255,255,0.06)', padding: '1px 5px', borderRadius: 4 }}>ADZUNA_APP_KEY</code> to Vercel.
         </p>
       </div>
     )
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
       {/* Search bar */}
-      <form onSubmit={search} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Job title, skill, or keyword…"
           style={{
-            padding: '10px 14px', borderRadius: 10, border: '0.5px solid rgba(74,158,245,0.3)',
+            padding: '10px 14px', borderRadius: 10,
+            border: '0.5px solid rgba(74,158,245,0.3)',
             background: 'rgba(74,158,245,0.05)', color: 'var(--text-primary)',
-            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none',
+            fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none', width: '100%', boxSizing: 'border-box',
           }}
         />
         <div style={{ display: 'flex', gap: 8 }}>
@@ -939,26 +1008,48 @@ function JobsTab() {
             onChange={e => setLoc(e.target.value)}
             placeholder="City (e.g. Cape Town, Johannesburg)"
             style={{
-              flex: 1, padding: '10px 14px', borderRadius: 10, border: '0.5px solid rgba(74,158,245,0.3)',
+              flex: 1, padding: '10px 14px', borderRadius: 10,
+              border: '0.5px solid rgba(74,158,245,0.3)',
               background: 'rgba(74,158,245,0.05)', color: 'var(--text-primary)',
-              fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none',
+              fontFamily: 'var(--font-mono)', fontSize: '0.75rem', outline: 'none', minWidth: 0,
             }}
           />
           <button
             type="submit"
             disabled={loading}
             style={{
-              padding: '10px 18px', borderRadius: 10, border: 'none', cursor: loading ? 'default' : 'pointer',
+              padding: '10px 18px', borderRadius: 10, border: 'none',
+              cursor: loading ? 'default' : 'pointer',
               background: loading ? 'rgba(74,158,245,0.15)' : '#4A9EF5',
               color: loading ? 'rgba(255,255,255,0.4)' : '#0a1628',
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem',
-              flexShrink: 0,
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', flexShrink: 0,
             }}
           >
             {loading ? '…' : 'Search'}
           </button>
         </div>
       </form>
+
+      {/* Quick filter chips */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {QUICK_FILTERS.map(f => (
+          <button
+            key={f.label}
+            onClick={() => applyFilter(f)}
+            disabled={loading}
+            style={{
+              padding: '5px 12px', borderRadius: 20, cursor: 'pointer',
+              background: activeFilter === f.label ? '#4A9EF5' : 'rgba(74,158,245,0.08)',
+              color: activeFilter === f.label ? '#0a1628' : '#4A9EF5',
+              fontFamily: 'var(--font-mono)', fontSize: '0.62rem', fontWeight: 600,
+              border: `0.5px solid ${activeFilter === f.label ? '#4A9EF5' : 'rgba(74,158,245,0.2)'}`,
+              transition: 'all 0.15s',
+            }}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
       {error && (
         <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(255,107,107,0.08)', border: '0.5px solid rgba(255,107,107,0.2)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#ff6b6b' }}>
@@ -968,60 +1059,105 @@ function JobsTab() {
 
       {searched && !loading && (
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)' }}>
-          {count.toLocaleString()} jobs found in South Africa
+          {count.toLocaleString()} jobs in South Africa · showing {jobs.length}
         </div>
       )}
 
-      {!searched && !loading && (
-        <div style={{ textAlign: 'center', padding: '36px 0' }}>
-          <div style={{ fontSize: 36 }}>💼</div>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 10 }}>
-            Search thousands of SA graduate jobs, internships, and part-time roles
-          </p>
+      {loading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[1,2,3].map(i => (
+            <div key={i} style={{ borderRadius: 14, padding: '14px 16px', background: 'rgba(74,158,245,0.03)', border: '0.5px solid rgba(74,158,245,0.1)', height: 88, animation: 'pulse 1.5s infinite' }} />
+          ))}
         </div>
       )}
 
-      {jobs.map(job => (
-        <a
-          key={job.id}
-          href={job.redirect_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ textDecoration: 'none' }}
-        >
-          <div style={{
-            borderRadius: 14, padding: '14px 16px',
-            background: 'rgba(74,158,245,0.04)',
-            border: '0.5px solid rgba(74,158,245,0.15)',
-            transition: 'border-color 0.15s',
-          }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: 4 }}>
-              {job.title}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4A9EF5' }}>
-                {job.company.display_name}
-              </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text-tertiary)' }}>
-                📍 {job.location.display_name}
-              </span>
-              {(job.salary_min || job.salary_max) && (
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#4ecf9e' }}>
-                  R{job.salary_min ? Math.round(job.salary_min / 1000) + 'k' : '?'}
-                  {job.salary_max ? ` – R${Math.round(job.salary_max / 1000)}k` : '+'}
+      {!loading && jobs.map(job => {
+        const salary = fmtSalary(job.salary_min, job.salary_max)
+        const nsfasRisk = !!(job.salary_min && job.salary_min > NSFAS_ANNUAL_THRESHOLD)
+        const description = stripHtml(job.description).slice(0, 220)
+
+        return (
+          <a
+            key={job.id}
+            href={job.redirect_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', display: 'block' }}
+          >
+            <div style={{
+              borderRadius: 14, padding: '14px 16px',
+              background: 'rgba(74,158,245,0.04)',
+              border: '0.5px solid rgba(74,158,245,0.15)',
+              transition: 'border-color 0.15s, background 0.15s',
+            }}
+              onMouseEnter={e => {
+                ;(e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(74,158,245,0.4)'
+                ;(e.currentTarget as HTMLDivElement).style.background = 'rgba(74,158,245,0.08)'
+              }}
+              onMouseLeave={e => {
+                ;(e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(74,158,245,0.15)'
+                ;(e.currentTarget as HTMLDivElement).style.background = 'rgba(74,158,245,0.04)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 4 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                  {job.title}
+                </div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', flexShrink: 0, marginTop: 2 }}>
+                  {timeAgoJob(job.created)}
                 </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4A9EF5', fontWeight: 600 }}>
+                  {job.company.display_name}
+                </span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text-tertiary)' }}>
+                  📍 {job.location.display_name}
+                </span>
+                {salary && (
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#4ecf9e', fontWeight: 600 }}>
+                    {salary}
+                  </span>
+                )}
+              </div>
+
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-secondary)',
+                lineHeight: 1.55,
+                display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+              }}>
+                {description}
+              </div>
+
+              {nsfasRisk && (
+                <div style={{ marginTop: 8, padding: '4px 10px', borderRadius: 6, background: 'rgba(251,191,36,0.08)', border: '0.5px solid rgba(251,191,36,0.2)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <span style={{ fontSize: '0.6rem' }}>⚠️</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#fbbf24', lineHeight: 1.4 }}>
+                    Salary may exceed NSFAS means threshold — confirm with financial aid office
+                  </span>
+                </div>
               )}
             </div>
-            <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-secondary)',
-              lineHeight: 1.5,
-              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
-            }}>
-              {job.description.replace(/<[^>]*>/g, '').slice(0, 200)}
-            </div>
-          </div>
-        </a>
-      ))}
+          </a>
+        )
+      })}
+
+      {/* Load more */}
+      {hasMore && !loading && (
+        <button
+          onClick={loadMore}
+          disabled={loadingMore}
+          style={{
+            padding: '11px', borderRadius: 10, border: '0.5px solid rgba(74,158,245,0.3)',
+            background: 'rgba(74,158,245,0.06)', color: '#4A9EF5',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem',
+            cursor: loadingMore ? 'default' : 'pointer', opacity: loadingMore ? 0.6 : 1,
+          }}
+        >
+          {loadingMore ? 'Loading…' : 'Load 12 more jobs'}
+        </button>
+      )}
     </div>
   )
 }
