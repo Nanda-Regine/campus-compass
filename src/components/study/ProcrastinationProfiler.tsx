@@ -390,6 +390,11 @@ export default function ProcrastinationProfiler() {
     localStorage.setItem(LS_KEY, JSON.stringify(p))
     setProfile(p)
     dispatchXP('profiler_completed')
+    fetch('/api/profile/procrastination-type', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ procrastination_type: type }),
+    }).catch(() => {})
   }
 
   if (!mounted) return null

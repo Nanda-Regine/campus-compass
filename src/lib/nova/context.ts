@@ -37,6 +37,7 @@ export interface NovaProfile {
   preferred_language: string
   ai_language: string
   streak_count: number
+  procrastination_type: string | null
 }
 
 export interface NovaBudgetContext {
@@ -181,7 +182,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   ] = await Promise.all([
     supabase
       .from('profiles')
-      .select('id,name,full_name,email,university,faculty,degree,degree_name,year_of_study,funding_type,nsfas_monthly_amount,accommodation_type,dietary_preferences,languages,study_style,biggest_challenges,emergency_contact_name,emergency_contact_number,plan,nova_messages_used,nova_messages_limit,preferred_language,ai_language,streak_count')
+      .select('id,name,full_name,email,university,faculty,degree,degree_name,year_of_study,funding_type,nsfas_monthly_amount,accommodation_type,dietary_preferences,languages,study_style,biggest_challenges,emergency_contact_name,emergency_contact_number,plan,nova_messages_used,nova_messages_limit,preferred_language,ai_language,streak_count,procrastination_type')
       .eq('id', userId)
       .maybeSingle(),
     supabase
@@ -292,6 +293,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     preferred_language: rawProfile?.preferred_language || 'en',
     ai_language: rawProfile?.ai_language || 'English',
     streak_count: rawProfile?.streak_count ?? 0,
+    procrastination_type: rawProfile?.procrastination_type || null,
   }
 
   // ── Budget ───────────────────────────────────────────────────────────────
@@ -553,6 +555,10 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? `Self-reported challenges: ${p.biggest_challenges.join(', ')}.`
     : ''
 
+  const procrastinationNote = p.procrastination_type
+    ? `Procrastination style: ${p.procrastination_type} — tailor study/productivity advice to this type.`
+    : ''
+
   const langInstruction = (p.ai_language && p.ai_language !== 'English')
     ? `\n- **Language:** Respond in ${p.ai_language}. You may code-switch naturally. Keep technical terms and app names in English.`
     : ''
@@ -573,7 +579,7 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 - Name: ${firstName} | University: ${uni} | Year: ${p.year_of_study || 'unknown'} | Faculty: ${p.faculty || 'unknown'}
 - Degree: ${p.degree_name || p.degree || 'unknown'} | Funding: ${p.funding_type?.toUpperCase() || 'unknown'}${p.nsfas_monthly_amount ? ` (R${p.nsfas_monthly_amount}/mo)` : ''}
 - Accommodation: ${p.accommodation_type || 'unknown'} | Study style: ${p.study_style || 'not specified'}
-- Streak: ${p.streak_count} days${challengesNote ? `\n- ${challengesNote}` : ''}${langInstruction}
+- Streak: ${p.streak_count} days${challengesNote ? `\n- ${challengesNote}` : ''}${procrastinationNote ? `\n- ${procrastinationNote}` : ''}${langInstruction}
 
 **Finances:**
 - ${budgetNote}
