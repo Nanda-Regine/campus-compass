@@ -4,10 +4,14 @@ import { useEffect, useState } from 'react'
 import { WifiOff, RefreshCw, BookOpen, Wallet, Zap } from 'lucide-react'
 
 const CACHED_PAGES = [
-  { href: '/dashboard', icon: '🏠', label: 'Dashboard',    desc: 'Daily brief + tasks' },
-  { href: '/study',     icon: '📚', label: 'Study',        desc: 'Tasks & timetable' },
-  { href: '/budget',    icon: '💳', label: 'Budget',       desc: 'Expenses & NSFAS' },
-  { href: '/growth',    icon: '🎯', label: 'Goals',        desc: 'Daily 3 & sprints' },
+  { href: '/dashboard',  icon: '🏠', label: 'Dashboard',  desc: 'Daily brief + tasks' },
+  { href: '/study',      icon: '📚', label: 'Study',      desc: 'Tasks, exams & timetable' },
+  { href: '/budget',     icon: '💳', label: 'Budget',     desc: 'Expenses & NSFAS' },
+  { href: '/nova',       icon: '✦',  label: 'Nova AI',    desc: 'Chat history cached' },
+  { href: '/health',     icon: '🏥', label: 'Health',     desc: 'Wellness & sleep log' },
+  { href: '/career',     icon: '🚀', label: 'Career',     desc: 'CV & job tracker' },
+  { href: '/notes',      icon: '📝', label: 'Notes',      desc: 'Lecture notes offline' },
+  { href: '/profile',    icon: '👤', label: 'Profile',    desc: 'Your OS settings' },
 ]
 
 export default function OfflinePage() {

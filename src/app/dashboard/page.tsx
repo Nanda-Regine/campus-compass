@@ -34,22 +34,26 @@ export default async function DashboardPage() {
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .not('status', 'eq', 'done')
-      .order('due_date', { ascending: true, nullsFirst: false }),
+      .order('due_date', { ascending: true, nullsFirst: false })
+      .limit(50),
     supabase
       .from('exams')
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
       .gte('exam_date', new Date().toISOString().split('T')[0])
-      .order('exam_date', { ascending: true }),
+      .order('exam_date', { ascending: true })
+      .limit(20),
     supabase
       .from('modules')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: true }),
+      .order('created_at', { ascending: true })
+      .limit(100),
     supabase
       .from('timetable_slots')
       .select('*, module:modules(id,module_name,color)')
-      .eq('user_id', user.id),
+      .eq('user_id', user.id)
+      .limit(200),
     supabase
       .from('expenses')
       .select('*')

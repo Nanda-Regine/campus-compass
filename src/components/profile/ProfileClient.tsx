@@ -364,9 +364,12 @@ export default function ProfileClient() {
 
   useEffect(() => {
     fetch('/api/profile', { signal: AbortSignal.timeout(10000) })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then(data => {
-        if (data.error) return
+        if (data.error) throw new Error(data.error)
         const p: ProfileData = data.profile
         setProfile(p)
         setStats(data.stats)
@@ -386,7 +389,10 @@ export default function ProfileClient() {
         setLivingSituation(p.living_situation ?? '')
         setAiLanguage(p.ai_language ?? 'English')
       })
-      .catch(() => toast.error('Could not load profile'))
+      .catch((err) => {
+        console.error('[ProfileClient] load:', err)
+        toast.error('Could not load profile — please refresh')
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -735,7 +741,7 @@ export default function ProfileClient() {
               aria-selected={activeSection === tab.id}
               onClick={() => setActiveSection(tab.id)}
               className={cn(
-                'flex-1 py-2.5 rounded-xl font-display font-bold text-xs transition-all flex items-center justify-center gap-1.5',
+                'flex-1 py-2.5 rounded-xl font-display font-bold text-[0.6rem] sm:text-xs transition-all flex items-center justify-center gap-1 overflow-hidden',
                 activeSection === tab.id
                   ? 'text-white'
                   : 'text-white/35 hover:text-white/55'
@@ -745,8 +751,8 @@ export default function ProfileClient() {
                 boxShadow: '0 1px 12px rgba(13,148,136,0.12)',
               } : {}}
             >
-              <span className="text-sm">{tab.icon}</span>
-              <span>{tab.label}</span>
+              <span className="text-sm leading-none shrink-0">{tab.icon}</span>
+              <span className="truncate">{tab.label}</span>
             </button>
           ))}
         </div>

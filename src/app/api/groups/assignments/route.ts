@@ -17,6 +17,7 @@ export async function GET() {
       .select('*, group_members(id, user_id, email, display_name, role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date)')
       .eq('created_by', user.id)
       .order('created_at', { ascending: false })
+      .limit(50)
 
     // Assignments user joined as member
     const { data: memberRows } = await supabase
@@ -34,6 +35,7 @@ export async function GET() {
         .select('*, group_members(id, user_id, email, display_name, role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date)')
         .in('id', memberAssignmentIds)
         .order('created_at', { ascending: false })
+        .limit(50)
       joined = data || []
     }
 

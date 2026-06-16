@@ -23,6 +23,10 @@ export async function GET() {
         .gte('started_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
     ])
 
+    if (!profile) {
+      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
     const p = profile as Record<string, unknown> | null
     const novaMessagesUsed = (p?.nova_messages_used as number) ?? 0
     const plan = (p?.plan as string) ?? 'free'
@@ -66,7 +70,7 @@ export async function PATCH(request: NextRequest) {
 
     // Whitelist editable fields — never allow plan, nova_messages etc.
     const allowed = [
-      'full_name', 'name', 'emoji', 'university', 'degree', 'year_of_study', 'student_number',
+      'full_name', 'name', 'bio', 'emoji', 'university', 'degree', 'year_of_study', 'student_number',
       'funding_type', 'phone', 'preferred_language', 'notifications_enabled',
       'avatar_url', 'onboarding_complete',
       'faculty', 'dietary_pref', 'living_situation', 'ai_language',

@@ -12,6 +12,7 @@ export async function GET(req: Request) {
     .from('walking_routes')
     .select('id, name, description, distance_km, duration_mins, difficulty, institution, waypoints, times_logged, created_at')
     .order('times_logged', { ascending: false })
+    .limit(50)
   if (institution) query = query.eq('institution', institution)
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

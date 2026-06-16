@@ -31,21 +31,25 @@ export default async function StudyPage({ searchParams }: { searchParams: { tab?
       .from('modules')
       .select('*')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: true }),
+      .order('created_at', { ascending: true })
+      .limit(100),
     supabase
       .from('tasks')
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(300),
     supabase
       .from('timetable_slots')
       .select('*, module:modules(id,module_name,color)')
-      .eq('user_id', user.id),
+      .eq('user_id', user.id)
+      .limit(200),
     supabase
       .from('exams')
       .select('*, module:modules(id,module_name,color)')
       .eq('user_id', user.id)
-      .order('exam_date', { ascending: true }),
+      .order('exam_date', { ascending: true })
+      .limit(100),
     supabase
       .from('work_shifts')
       .select('*, job:part_time_jobs(id,employer_name,role_title,hourly_rate)')

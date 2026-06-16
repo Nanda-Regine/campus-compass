@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     if (from) query = query.gte('shift_date', from)
     if (to)   query = query.lte('shift_date', to)
 
-    const { data, error } = await query
+    const { data, error } = await query.limit(500)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ shifts: data })
   } catch (error) {

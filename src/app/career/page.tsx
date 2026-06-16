@@ -13,7 +13,7 @@ export default async function CareerPage() {
 
   const [{ data: profile }, { data: modules }] = await Promise.all([
     supabase.from('profiles').select('full_name,university,year_of_study,faculty,funding_type').eq('id', user.id).single(),
-    supabase.from('modules').select('id,module_name,color').eq('user_id', user.id),
+    supabase.from('modules').select('id,module_name,color').eq('user_id', user.id).limit(100),
   ])
 
   return (

@@ -21,7 +21,7 @@ export default async function MealsPage() {
     { data: budget },
   ] = await Promise.all([
     supabase.from('meal_plans').select('*').eq('user_id', user.id).eq('week_start', weekStartStr),
-    supabase.from('grocery_items').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+    supabase.from('grocery_items').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(200),
     supabase.from('profiles').select('dietary_pref, living_situation, is_premium, subscription_tier').eq('id', user.id).single(),
     supabase.from('budgets').select('food_budget').eq('user_id', user.id).maybeSingle(),
   ])

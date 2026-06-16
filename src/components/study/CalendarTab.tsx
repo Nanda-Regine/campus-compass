@@ -589,13 +589,16 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
         </div>
       )}
 
+      {/* Horizontally scrollable week grid — ensures readability on small phones */}
+      <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
+      <div style={{ minWidth: 480 }}>
+
       {/* Day header row */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: `${LABEL_W}px repeat(7, 1fr)`,
         gap: 0,
         background: 'var(--bg-surface)',
-        border: '1px solid var(--border-subtle)',
         borderRadius: '12px 12px 0 0',
         overflow: 'hidden',
       }}>
@@ -647,8 +650,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
       {/* Time grid */}
       <div style={{
         background: 'var(--bg-surface)',
-        border: '1px solid var(--border-subtle)',
-        borderTop: 'none', borderRadius: '0 0 12px 12px',
+        borderTop: '1px solid var(--border-subtle)',
         overflow: 'hidden',
       }}>
         <div style={{
@@ -787,6 +789,9 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
             )
           })}
         </div>
+      </div>
+      {/* close minWidth + scroll wrapper */}
+      </div>
       </div>
 
       {/* Legend */}

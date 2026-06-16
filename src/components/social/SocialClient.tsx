@@ -63,21 +63,21 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 style={{
-                  flex: 1, padding: '10px 8px 10px',
-                  border: 'none',
+                  flex: 1, minWidth: 0, padding: '10px 6px 10px',
+                  border: 'none', overflow: 'hidden',
                   background: isActive ? `${t.accent}0c` : 'transparent',
                   color: isActive ? t.accent : 'rgba(255,255,255,0.35)',
                   fontFamily: 'var(--font-display)',
                   fontWeight: isActive ? 700 : 400,
-                  fontSize: '0.8rem',
+                  fontSize: '0.72rem',
                   cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
                   transition: 'all 0.2s ease',
                   borderBottom: isActive ? `2px solid ${t.accent}` : '2px solid transparent',
                 }}
               >
-                {t.icon}
-                {t.label}
+                <span style={{ flexShrink: 0, display: 'flex' }}>{t.icon}</span>
+                <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{t.label}</span>
               </button>
             )
           })}

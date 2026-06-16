@@ -28,6 +28,7 @@ export async function GET() {
     .select('*')
     .eq('student_id', user.id)
     .order('created_at', { ascending: false })
+    .limit(50)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ jobs: data })

@@ -49,7 +49,7 @@ export default function TopBar({ title, action, variant = 'dark', className }: T
         </button>
 
         <h1 className={cn(
-          'font-display font-bold text-base',
+          'font-display font-bold text-base truncate max-w-[180px] sm:max-w-xs',
           isLight ? 'text-[#0f2420]' : 'text-white'
         )}>
           {title}

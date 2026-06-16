@@ -16,6 +16,7 @@ export default async function MovementPage() {
     .is('deleted_at', null)
     .order('is_default', { ascending: false })
     .order('created_at', { ascending: false })
+    .limit(50)
 
   return <MovementOS initialRoutes={savedRoutes ?? []} userId={user.id} />
 }
