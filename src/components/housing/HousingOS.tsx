@@ -472,6 +472,41 @@ function SettleChecklist({ storeKey, title, items }: { storeKey: string; title: 
   )
 }
 
+interface AlumniLetter { id: string; display_name: string | null; course: string | null; grad_year: number | null; letter: string }
+
+function AlumniLetters() {
+  const [letters, setLetters] = useState<AlumniLetter[]>([])
+  const [loaded, setLoaded] = useState(false)
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/alumni/bridge?letters=1')
+      .then(r => r.json())
+      .then(d => { if (active) { setLetters(d.letters || []); setLoaded(true) } })
+      .catch(() => { if (active) setLoaded(true) })
+    return () => { active = false }
+  }, [])
+
+  if (!loaded || letters.length === 0) return null
+  const l = letters[idx % letters.length]
+  const who = l.display_name || 'An alum'
+  const meta = [l.course, l.grad_year].filter(Boolean).join(' · ')
+
+  return (
+    <div style={{ ...card, background: 'rgba(168,85,247,0.06)', borderColor: 'rgba(168,85,247,0.25)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-primary)' }}>💌 From those who walked before you</span>
+        {letters.length > 1 && (
+          <button onClick={() => setIdx(i => i + 1)} style={{ fontSize: '0.66rem', fontFamily: 'var(--font-mono)', color: ACCENT, background: 'none', border: 'none', cursor: 'pointer' }}>another →</button>
+        )}
+      </div>
+      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>{l.letter}</div>
+      <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 8 }}>— {who}{meta ? `, ${meta}` : ''}</div>
+    </div>
+  )
+}
+
 function SettleTab() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -510,6 +545,9 @@ function SettleTab() {
           You are not doing this alone. Your people back home are still your people — and the friends, neighbours and classmates here are becoming new ones. <strong style={{ color: 'var(--text-primary)' }}>Umuntu ngumuntu ngabantu.</strong>
         </div>
       </div>
+
+      {/* Letters left by alumni who were once exactly here */}
+      <AlumniLetters />
 
       {/* When it's more than homesickness */}
       <div style={{ ...card, borderColor: 'rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.05)' }}>

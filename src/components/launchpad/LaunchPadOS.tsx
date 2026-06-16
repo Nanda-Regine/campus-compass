@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 
 const ACCENT = '#6366F1'
 
-type Tab = 'leap' | 'exit' | 'salary' | 'plan'
+type Tab = 'leap' | 'exit' | 'salary' | 'plan' | 'giveback'
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'leap', label: 'The Leap', icon: '🚀' },
   { id: 'exit', label: 'Exit Checklist', icon: '✅' },
   { id: 'salary', label: 'First Salary', icon: '💼' },
   { id: 'plan', label: '90-Day Plan', icon: '🧭' },
+  { id: 'giveback', label: 'Give Back', icon: '🤲' },
 ]
 
 const card: React.CSSProperties = {
@@ -279,8 +280,147 @@ function PlanTab() {
   )
 }
 
+/* ───────────── Give Back (the Ubuntu bridge) ───────────── */
+const PLEDGE_OPTIONS: { key: string; icon: string; label: string; desc: string; link?: { href: string; label: string } }[] = [
+  { key: 'wisdom', icon: '💬', label: 'Share what you learned', desc: 'Post the tips you wish someone had told you in first year.', link: { href: '/wisdom', label: 'Open Wisdom Archive' } },
+  { key: 'mentor', icon: '🧑🏾‍🏫', label: 'Mentor a student', desc: 'Be the person a junior can ask the scary questions.', link: { href: '/mentors', label: 'Open Mentor Network' } },
+  { key: 'refer', icon: '📣', label: 'Pass on opportunities', desc: 'Share jobs, bursaries and internships you hear about.' },
+  { key: 'donate', icon: '🎒', label: 'Support a starter pack', desc: 'Chip in to the SRC / donation drives for first-gen students.' },
+  { key: 'stay', icon: '🔗', label: 'Stay in the circle', desc: 'Keep your details so the cohort can find and back each other.' },
+]
+
+interface BridgeRecord {
+  pledges: string[]
+  letter: string | null
+  display_name: string | null
+  course: string | null
+  grad_year: number | null
+  is_public: boolean
+}
+
+function GiveBackTab() {
+  const [rec, setRec] = useState<BridgeRecord | null>(null)
+  const [memberCount, setMemberCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const [pledges, setPledges] = useState<string[]>([])
+  const [letter, setLetter] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [course, setCourse] = useState('')
+  const [gradYear, setGradYear] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/alumni/bridge')
+      const data = await res.json()
+      setMemberCount(data.memberCount || 0)
+      if (data.record) {
+        const r: BridgeRecord = data.record
+        setRec(r)
+        setPledges(r.pledges || [])
+        setLetter(r.letter || '')
+        setDisplayName(r.display_name || '')
+        setCourse(r.course || '')
+        setGradYear(r.grad_year ? String(r.grad_year) : '')
+        setIsPublic(r.is_public)
+      }
+    } catch { setError('Could not load') }
+    finally { setLoading(false) }
+  }, [])
+
+  useEffect(() => { void load() }, [load])
+
+  const togglePledge = (k: string) =>
+    setPledges(p => p.includes(k) ? p.filter(x => x !== k) : [...p, k])
+
+  async function save() {
+    setSaving(true); setError(null); setSaved(false)
+    try {
+      const res = await fetch('/api/alumni/bridge', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pledges, letter, display_name: displayName, course, grad_year: gradYear, is_public: isPublic }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Save failed')
+      setRec(data.record)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+    } catch (e) { setError(e instanceof Error ? e.message : 'Save failed') }
+    finally { setSaving(false) }
+  }
+
+  if (loading) return <div style={{ ...card, textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Loading…</div>
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ ...card, background: 'rgba(168,85,247,0.06)', borderColor: 'rgba(168,85,247,0.25)' }}>
+        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>You made it because others held the ladder</div>
+        <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          Someone shared notes, gave a lift, explained NSFAS, or just told you it gets better. Now you can be that for the next one. <strong style={{ color: 'var(--text-primary)' }}>Umuntu ngumuntu ngabantu</strong> — a person is a person through other people.
+        </div>
+        {rec && (
+          <div style={{ marginTop: 10, fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: ACCENT }}>
+            🤲 {memberCount} {memberCount === 1 ? 'alum has' : 'alumni have'} joined the bridge
+          </div>
+        )}
+      </div>
+
+      {/* Pledges */}
+      <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginLeft: 2 }}>How do you want to give back?</div>
+      {PLEDGE_OPTIONS.map(opt => {
+        const on = pledges.includes(opt.key)
+        return (
+          <div key={opt.key} style={{ ...card, padding: '12px 14px', borderColor: on ? `${ACCENT}50` : 'var(--border-subtle)', background: on ? `${ACCENT}0d` : 'var(--bg-surface)' }}>
+            <button onClick={() => togglePledge(opt.key)} style={{ display: 'flex', alignItems: 'flex-start', gap: 11, width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+              <div style={{ width: 19, height: 19, borderRadius: 6, border: `1.5px solid ${on ? ACCENT : 'var(--border-default)'}`, background: on ? ACCENT : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1, color: '#fff', fontSize: '0.72rem', fontWeight: 900 }}>{on ? '✓' : ''}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>{opt.icon} {opt.label}</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 2, lineHeight: 1.45 }}>{opt.desc}</div>
+              </div>
+            </button>
+            {on && opt.link && (
+              <Link href={opt.link.href} style={{ display: 'inline-block', marginTop: 8, marginLeft: 30, fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: ACCENT, textDecoration: 'none' }}>{opt.link.label} →</Link>
+            )}
+          </div>
+        )
+      })}
+
+      {/* Letter to a first-year */}
+      <div style={{ ...card }}>
+        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>✍🏾 A letter to a first-year</div>
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 10 }}>
+          Write a few honest lines to someone just starting out — what you wish you&apos;d known, or just that they&apos;ll be okay. Incoming students read these when they&apos;re settling in.
+        </div>
+        <textarea value={letter} onChange={e => setLetter(e.target.value)} rows={4} maxLength={1000}
+          placeholder="Dear first-year, the thing nobody tells you is…"
+          style={{ ...input, fontSize: '0.82rem', resize: 'none', fontFamily: 'var(--font-body)', lineHeight: 1.55 }} />
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="Sign as (or leave blank)" style={{ ...input, flex: 1, fontSize: '0.78rem' }} />
+          <input value={course} onChange={e => setCourse(e.target.value)} placeholder="Course" style={{ ...input, width: 110, fontSize: '0.78rem' }} />
+          <input value={gradYear} onChange={e => setGradYear(e.target.value)} placeholder="Year" inputMode="numeric" style={{ ...input, width: 64, fontSize: '0.78rem' }} />
+        </div>
+        <button onClick={() => setIsPublic(v => !v)} style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+          <div style={{ width: 17, height: 17, borderRadius: 5, border: `1.5px solid ${isPublic ? ACCENT : 'var(--border-default)'}`, background: isPublic ? ACCENT : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '0.66rem', fontWeight: 900 }}>{isPublic ? '✓' : ''}</div>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Share my letter with first-years</span>
+        </button>
+      </div>
+
+      {error && <div style={{ fontSize: '0.72rem', color: 'var(--danger, #ef4444)' }}>{error}</div>}
+      <button onClick={save} disabled={saving} style={{
+        padding: '12px 0', background: ACCENT, border: 'none', borderRadius: 12, color: '#fff',
+        fontSize: '0.82rem', fontWeight: 700, fontFamily: 'var(--font-mono)', cursor: 'pointer',
+      }}>{saving ? 'Saving…' : saved ? '✓ Thank you — you’re on the bridge' : rec ? 'Update my pledge' : 'Join the bridge'}</button>
+    </div>
+  )
+}
+
 /* ───────────── Shell ───────────── */
-const VALID: Tab[] = ['leap', 'exit', 'salary', 'plan']
+const VALID: Tab[] = ['leap', 'exit', 'salary', 'plan', 'giveback']
 export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}) {
   const [tab, setTab] = useState<Tab>(initialTab && VALID.includes(initialTab as Tab) ? initialTab as Tab : 'leap')
   return (
@@ -310,6 +450,7 @@ export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}
           {tab === 'exit' && <ExitTab />}
           {tab === 'salary' && <SalaryTab />}
           {tab === 'plan' && <PlanTab />}
+          {tab === 'giveback' && <GiveBackTab />}
         </div>
       </div>
     </div>
