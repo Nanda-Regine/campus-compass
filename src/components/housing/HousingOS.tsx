@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 
 interface Payment { id: string; amount: number; date: string; note?: string }
 
@@ -22,10 +23,12 @@ interface Place {
   rent_payments: Payment[]
 }
 
-type Tab = 'place' | 'split' | 'checklist'
+type Tab = 'place' | 'settle' | 'admin' | 'split' | 'checklist'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'place', label: 'My Place', icon: '🏠' },
+  { id: 'settle', label: 'Settling In', icon: '🌱' },
+  { id: 'admin', label: 'Life Admin', icon: '🧰' },
   { id: 'split', label: 'Split', icon: '🧮' },
   { id: 'checklist', label: 'Before You Sign', icon: '📋' },
 ]
@@ -418,6 +421,253 @@ function ChecklistTab() {
   )
 }
 
+/* ───────────────────────── Settling In ───────────────────────── */
+const FIRST_48 = [
+  'Tell someone at home you arrived safely',
+  'Find the nearest shop / spaza, ATM and clinic',
+  'Buy electricity — find your prepaid meter and a vendor (see Life Admin)',
+  'Stock the basics: water, bread, a meal, toilet paper, soap, airtime / data',
+  'Find the water shut-off tap and the DB board (trip switch) for your place',
+  'Save key numbers: landlord, campus security, a neighbour, a close friend',
+  'Check every door and window locks before your first night',
+]
+const FIRST_MONTH = [
+  'Set a monthly budget — your money now has to last the whole month',
+  'Cook at least one proper meal for yourself',
+  'Do a full load of laundry (sooner than you think you need to)',
+  'Build a daily rhythm: sleep, eat, study, rest — structure steadies you',
+  'Introduce yourself to one neighbour and one person in class',
+  'Find your campus clinic and counselling office before you need them',
+  'Say yes to one social thing, even when you would rather hide',
+]
+
+function SettleChecklist({ storeKey, title, items }: { storeKey: string; title: string; items: string[] }) {
+  const [checked, setChecked] = useState<Record<number, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem(storeKey) || '{}') } catch { return {} }
+  })
+  const toggle = (i: number) => {
+    const next = { ...checked, [i]: !checked[i] }
+    setChecked(next)
+    try { localStorage.setItem(storeKey, JSON.stringify(next)) } catch { /* ignore */ }
+  }
+  const done = items.filter((_, i) => checked[i]).length
+  return (
+    <div style={{ ...card, padding: '12px 14px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>{title}</span>
+        <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: ACCENT }}>{done}/{items.length}</span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        {items.map((item, i) => (
+          <button key={i} onClick={() => toggle(i)} style={{
+            display: 'flex', alignItems: 'flex-start', gap: 9, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+          }}>
+            <div style={{ width: 17, height: 17, borderRadius: 5, border: `1.5px solid ${checked[i] ? ACCENT : 'var(--border-default)'}`, background: checked[i] ? ACCENT : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1, color: '#04181c', fontSize: '0.66rem', fontWeight: 900 }}>{checked[i] ? '✓' : ''}</div>
+            <span style={{ fontSize: '0.75rem', color: checked[i] ? 'var(--text-muted)' : 'var(--text-secondary)', lineHeight: 1.45, textDecoration: checked[i] ? 'line-through' : 'none' }}>{item}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SettleTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ ...card, background: `${ACCENT}0d`, borderColor: `${ACCENT}40` }}>
+        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>You&apos;ve got this — even if it doesn&apos;t feel like it yet</div>
+        <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          Living away from home for the first time is one of the biggest changes you&apos;ll ever make. Feeling unsure, homesick or overwhelmed isn&apos;t weakness — almost everyone feels it, and it does ease. Take it one small step at a time. Here&apos;s how to land softly.
+        </div>
+      </div>
+
+      <SettleChecklist storeKey="varsityos-housing-first48" title="🚪 Your first 48 hours" items={FIRST_48} />
+      <SettleChecklist storeKey="varsityos-housing-firstmonth" title="📅 Your first month" items={FIRST_MONTH} />
+
+      {/* Homesickness */}
+      <div style={{ ...card }}>
+        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>💛 Homesickness is normal</div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          It often hits hardest in the first few weeks and after the excitement fades — then slowly settles as the new place starts to feel like yours. What helps:
+        </div>
+        <ul style={{ margin: '8px 0 0', paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {[
+            'Call home on a rhythm (e.g. every second evening) rather than every hour — it helps you settle here.',
+            "Bring or keep something from home: a photo, a blanket, a recipe, your gran's voice note.",
+            'Build small daily routines — they make a strange place feel safe.',
+            'Eat properly and sleep enough. Low food and low sleep make everything feel worse.',
+            'Say yes to one social thing a week, even a small one. Connection is the cure for loneliness.',
+          ].map((t, i) => (
+            <li key={i} style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{t}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Ubuntu line */}
+      <div style={{ ...card, textAlign: 'center', background: 'rgba(168,85,247,0.06)', borderColor: 'rgba(168,85,247,0.25)' }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic' }}>
+          You are not doing this alone. Your people back home are still your people — and the friends, neighbours and classmates here are becoming new ones. <strong style={{ color: 'var(--text-primary)' }}>Umuntu ngumuntu ngabantu.</strong>
+        </div>
+      </div>
+
+      {/* When it's more than homesickness */}
+      <div style={{ ...card, borderColor: 'rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.05)' }}>
+        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>🚩 When it&apos;s more than settling in</div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          If for two weeks or more you feel hopeless, can&apos;t get out of bed, stop eating, cry most days, can&apos;t face class — or you ever think about hurting yourself — that is <strong style={{ color: 'var(--text-primary)' }}>not weakness and not just adjusting</strong>. Please reach out. It helps, and you deserve support.
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
+          <a href="tel:0800456789" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 9, textDecoration: 'none' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>SADAG — free, 24/7</span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>0800 456 789</span>
+          </a>
+          <Link href="/regulate" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 9, textDecoration: 'none' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>Write it out in your private journal</span>
+            <span style={{ fontSize: '0.74rem', color: ACCENT }}>Open →</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ───────────────────────── Life Admin ───────────────────────── */
+const GUIDES: { icon: string; title: string; points: string[]; link?: { href: string; label: string } }[] = [
+  {
+    icon: '🔌', title: 'Prepaid electricity',
+    points: [
+      "Most student places run on a prepaid meter — no token loaded means no lights. It won't warn you politely; it just cuts.",
+      'Buy tokens from your banking app, an ATM, most supermarkets and spazas, or a vendor USSD line on your phone.',
+      'You get a 20-digit number. Punch it into the meter keypad and press enter — units load straight away.',
+      'Always keep a small buffer loaded. Running out at 11pm in winter is miserable and sometimes unsafe.',
+      "Load shedding is different — that's a scheduled cut, not your meter. Check the load-shedding widget on your dashboard.",
+    ],
+  },
+  {
+    icon: '🚰', title: 'Water & plumbing',
+    points: [
+      'Know where your main tap (stopcock) is so you can shut the water if a pipe bursts or a toilet overflows.',
+      "No water at all? It's usually a municipal cut or an unpaid bill — ask the landlord or neighbours before panicking.",
+      'A slow drain usually clears with boiling water or a cheap plunger before you need to call anyone.',
+      'Keep a few bottles filled for cuts — they often come with little warning.',
+    ],
+  },
+  {
+    icon: '🧺', title: 'Laundry without stress',
+    points: [
+      'Separate lights from darks, and keep anything new and red away from everything (it bleeds).',
+      'No machine? Hand-wash in a basin with a little washing powder, rinse well, wring out, hang to dry.',
+      "Don't let it pile up — a weekly wash beats a mountain, and damp clothes go mouldy and smell.",
+      "Dry outside if you can; indoors, hang near an open window so your room doesn't get damp.",
+    ],
+  },
+  {
+    icon: '🧹', title: 'Keeping your space liveable',
+    points: [
+      'A tidy space genuinely lifts your mood and helps you study — mess and low mood feed each other.',
+      'A simple rhythm: dishes daily, bin out before it smells, floors and surfaces weekly, bathroom weekly.',
+      'Store food covered and sealed — open food brings cockroaches, ants and mice fast.',
+      '15 minutes a day beats a dreaded three-hour clean once a month.',
+    ],
+  },
+  {
+    icon: '🍳', title: 'Eating when broke & tired',
+    points: [
+      "You don't need to be a chef. Rotate three easy meals: eggs and bread, pap with soup or veg, rice or pasta with a tin of fish or beans.",
+      'Cook once, eat twice — make extra and keep leftovers covered in the fridge (eat within 2–3 days).',
+      'Smell and look before eating leftovers; when in doubt, throw it out. Food poisoning alone is rough.',
+      'Full meal plans, grocery lists and cheap recipes live in Meals OS.',
+    ],
+    link: { href: '/meals', label: 'Open Meals OS' },
+  },
+  {
+    icon: '🤒', title: 'Being sick on your own',
+    points: [
+      'Keep a tiny kit: paracetamol, rehydrate sachets, plasters, and a thermometer if you can.',
+      "Rest, fluids and time fix most things. Tell someone you're sick so a person knows to check on you.",
+      "Go to the campus clinic for a fever that won't break, a wound, or anything that scares you.",
+      'Emergency — struggling to breathe, chest pain, heavy bleeding, fainting: call 10177 or get to a hospital.',
+    ],
+    link: { href: '/health', label: 'Open Health' },
+  },
+  {
+    icon: '💸', title: 'Making money last a month',
+    points: [
+      "The trick: take your money for the month, subtract rent and transport, then divide what's left by the number of weeks.",
+      'Needs before wants — food, transport and electricity come before takeaways and going out.',
+      "Don't lend money you can't afford to lose, even to friends. \"Next week\" often doesn't come.",
+      'Track it so the end of the month never ambushes you.',
+    ],
+    link: { href: '/budget', label: 'Open Budget OS' },
+  },
+  {
+    icon: '🔐', title: 'Staying safe somewhere new',
+    points: [
+      'Lock up every single time, even for a quick shop run. Most break-ins are opportunistic.',
+      "Don't broadcast that you live alone or are new in town — not online, not to strangers.",
+      'Learn your routes in daylight first, and trust your gut: if a place or person feels wrong, leave.',
+      "Save campus security and use Safe Walk when you're heading home after dark.",
+    ],
+    link: { href: '/safety', label: 'Open Safety' },
+  },
+]
+
+const NUMBERS: [string, string][] = [
+  ['Ambulance / medical', '10177'],
+  ['Police (national)', '10111'],
+  ['All emergencies (from a cell)', '112'],
+  ['SADAG mental health, 24/7', '0800456789'],
+  ['GBV Command Centre', '0800428428'],
+]
+
+function LifeAdminTab() {
+  const [open, setOpen] = useState<number | null>(0)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ ...card, background: `${ACCENT}0d`, borderColor: `${ACCENT}40`, fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+        🧰 The stuff nobody sits you down and teaches — until you&apos;re standing in the dark wondering why the lights went off. No shame in not knowing yet. Tap each one.
+      </div>
+
+      {GUIDES.map((g, i) => (
+        <div key={i} style={{ ...card, padding: 0, overflow: 'hidden' }}>
+          <button onClick={() => setOpen(open === i ? null : i)} style={{
+            display: 'flex', alignItems: 'center', gap: 11, width: '100%', padding: '13px 15px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+          }}>
+            <span style={{ fontSize: '1.1rem', flexShrink: 0 }}>{g.icon}</span>
+            <span style={{ flex: 1, fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{g.title}</span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+          </button>
+          {open === i && (
+            <div style={{ padding: '0 15px 14px' }}>
+              <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {g.points.map((p, j) => (
+                  <li key={j} style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{p}</li>
+                ))}
+              </ul>
+              {g.link && (
+                <Link href={g.link.href} style={{ display: 'inline-block', marginTop: 10, fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: ACCENT, textDecoration: 'none' }}>
+                  {g.link.label} →
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Important numbers */}
+      <div style={{ ...card, padding: '12px 0' }}>
+        <div style={{ fontSize: '0.66rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.06em', padding: '0 15px 8px' }}>SAVE THESE NUMBERS NOW</div>
+        {NUMBERS.map(([label, num]) => (
+          <a key={num} href={`tel:${num}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '9px 15px', borderTop: '1px solid var(--border-subtle)', textDecoration: 'none' }}>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>{label}</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, fontFamily: 'var(--font-mono)', color: ACCENT }}>{num.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ───────────────────────── Shell ───────────────────────── */
 export default function HousingOS() {
   const [tab, setTab] = useState<Tab>('place')
@@ -445,6 +695,8 @@ export default function HousingOS() {
         </div>
         <div style={{ flex: 1, minWidth: 0, padding: '14px 16px' }}>
           {tab === 'place' && <MyPlaceTab />}
+          {tab === 'settle' && <SettleTab />}
+          {tab === 'admin' && <LifeAdminTab />}
           {tab === 'split' && <SplitTab />}
           {tab === 'checklist' && <ChecklistTab />}
         </div>
