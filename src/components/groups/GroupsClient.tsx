@@ -12,6 +12,7 @@ interface GroupMember {
   email: string
   display_name: string | null
   role: 'leader' | 'member'
+  member_role: string | null
   status: 'invited' | 'joined'
 }
 
@@ -37,9 +38,6 @@ interface GroupAssignment {
   group_tasks: GroupTask[]
 }
 
-type View = 'list' | 'detail'
-type DetailTab = 'overview' | 'tasks' | 'members' | 'discussion' | 'tips'
-
 interface GroupMessage {
   id: string
   assignment_id: string
@@ -50,78 +48,138 @@ interface GroupMessage {
   created_at: string
 }
 
+interface GroupMeeting {
+  id: string
+  created_by: string
+  title: string
+  meeting_at: string
+  duration_min: number
+  location: string | null
+  link: string | null
+  agenda: string | null
+  created_at: string
+}
+
+type View = 'list' | 'detail'
+type DetailTab = 'overview' | 'tasks' | 'members' | 'discussion' | 'meetings' | 'tips'
+
 const MEMBER_ROLES = ['Leader', 'Researcher', 'Writer', 'Designer', 'Presenter', 'Reviewer'] as const
 type MemberRole = typeof MEMBER_ROLES[number]
 
 const ROLE_COLORS: Record<MemberRole, string> = {
-  Leader: 'text-amber-400 bg-amber-500/15 border-amber-500/20',
+  Leader:     'text-amber-400 bg-amber-500/15 border-amber-500/20',
   Researcher: 'text-sky-400 bg-sky-500/15 border-sky-500/20',
-  Writer: 'text-teal-400 bg-teal-500/15 border-teal-500/20',
-  Designer: 'text-rose-400 bg-rose-500/15 border-rose-500/20',
-  Presenter: 'text-indigo-400 bg-indigo-500/15 border-indigo-500/20',
-  Reviewer: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/20',
-}
-
-const ROLES_KEY = 'varsityos-group-roles'
-
-function loadRoles(): Record<string, MemberRole> {
-  if (typeof window === 'undefined') return {}
-  try { return JSON.parse(localStorage.getItem(ROLES_KEY) ?? '{}') }
-  catch { return {} }
-}
-
-function saveRoles(r: Record<string, MemberRole>) {
-  if (typeof window !== 'undefined') localStorage.setItem(ROLES_KEY, JSON.stringify(r))
+  Writer:     'text-teal-400 bg-teal-500/15 border-teal-500/20',
+  Designer:   'text-rose-400 bg-rose-500/15 border-rose-500/20',
+  Presenter:  'text-indigo-400 bg-indigo-500/15 border-indigo-500/20',
+  Reviewer:   'text-emerald-400 bg-emerald-500/15 border-emerald-500/20',
 }
 
 export default function GroupsClient({ userId }: { userId: string }) {
   const router = useRouter()
   const supabase = createClient()
-  const [assignments, setAssignments] = useState<GroupAssignment[]>([])
-  const [loading, setLoading] = useState(true)
-  const [view, setView] = useState<View>('list')
-  const [selected, setSelected] = useState<GroupAssignment | null>(null)
-  const [showNewForm, setShowNewForm] = useState(false)
-  const [showAddTask, setShowAddTask] = useState(false)
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
-  const [detailTab, setDetailTab] = useState<DetailTab>('overview')
-  const [memberRoles, setMemberRoles] = useState<Record<string, MemberRole>>(loadRoles)
-  const [submitting, setSubmitting] = useState(false)
-  const [submitLink, setSubmitLink] = useState('')
+
+  const [assignments, setAssignments]   = useState<GroupAssignment[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [view, setView]                 = useState<View>('list')
+  const [selected, setSelected]         = useState<GroupAssignment | null>(null)
+  const [showNewForm, setShowNewForm]   = useState(false)
+  const [showAddTask, setShowAddTask]   = useState(false)
+  const [inviteUrl, setInviteUrl]       = useState<string | null>(null)
+  const [copied, setCopied]             = useState(false)
+  const [detailTab, setDetailTab]       = useState<DetailTab>('overview')
+  const [submitting, setSubmitting]     = useState(false)
+  const [submitLink, setSubmitLink]     = useState('')
   const [showSubmitForm, setShowSubmitForm] = useState(false)
-  const [flaggedMember, setFlaggedMember] = useState<string | null>(null)
 
-  // Discussion board state
-  const [messages, setMessages] = useState<GroupMessage[]>([])
-  const [msgText, setMsgText] = useState('')
+  // Discussion state
+  const [messages, setMessages]         = useState<GroupMessage[]>([])
+  const [msgText, setMsgText]           = useState('')
   const [msgIsDecision, setMsgIsDecision] = useState(false)
-  const [sendingMsg, setSendingMsg] = useState(false)
-  const [loadingMsgs, setLoadingMsgs] = useState(false)
+  const [sendingMsg, setSendingMsg]     = useState(false)
+  const [loadingMsgs, setLoadingMsgs]   = useState(false)
 
-  // New assignment form state
-  const [newTitle, setNewTitle] = useState('')
-  const [newSubject, setNewSubject] = useState('')
-  const [newDueDate, setNewDueDate] = useState('')
-  const [newDesc, setNewDesc] = useState('')
-  const [creating, setCreating] = useState(false)
+  // Meetings state
+  const [meetings, setMeetings]         = useState<GroupMeeting[]>([])
+  const [loadingMeetings, setLoadingMeetings] = useState(false)
+  const [showMeetingForm, setShowMeetingForm] = useState(false)
+  const [meetingTitle, setMeetingTitle] = useState('')
+  const [meetingAt, setMeetingAt]       = useState('')
+  const [meetingDuration, setMeetingDuration] = useState(60)
+  const [meetingLocation, setMeetingLocation] = useState('')
+  const [meetingLink, setMeetingLink]   = useState('')
+  const [meetingAgenda, setMeetingAgenda] = useState('')
+  const [creatingMeeting, setCreatingMeeting] = useState(false)
 
-  // New task form state
-  const [taskTitle, setTaskTitle] = useState('')
+  // Task reassignment
+  const [reassignTaskId, setReassignTaskId] = useState<string | null>(null)
+
+  // New assignment form
+  const [newTitle, setNewTitle]         = useState('')
+  const [newSubject, setNewSubject]     = useState('')
+  const [newDueDate, setNewDueDate]     = useState('')
+  const [newDesc, setNewDesc]           = useState('')
+  const [creating, setCreating]         = useState(false)
+
+  // New task form
+  const [taskTitle, setTaskTitle]       = useState('')
   const [taskAssigneeEmail, setTaskAssigneeEmail] = useState('')
-  const [taskDueDate, setTaskDueDate] = useState('')
-  const [addingTask, setAddingTask] = useState(false)
+  const [taskDueDate, setTaskDueDate]   = useState('')
+  const [addingTask, setAddingTask]     = useState(false)
+
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch('/api/groups/assignments')
+      if (!res.ok) {
+        if (res.status === 401) router.push('/auth/login')
+        return
+      }
+      const data = await res.json()
+      const list: GroupAssignment[] = data.assignments || []
+      setAssignments(list)
+      // Keep selected in sync
+      setSelected(prev => prev ? (list.find(a => a.id === prev.id) ?? prev) : prev)
+    } catch (err) {
+      console.error('[GroupsClient] load:', err)
+      toast.error('Failed to load group assignments')
+    } finally {
+      setLoading(false)
+    }
+  }, [router])
+
+  useEffect(() => { load() }, [load])
+
+  useEffect(() => {
+    const tasksChannel = supabase
+      .channel('group-tasks-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'group_tasks' }, () => load())
+      .subscribe()
+    const membersChannel = supabase
+      .channel('group-members-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'group_members' }, () => load())
+      .subscribe()
+    return () => {
+      supabase.removeChannel(tasksChannel)
+      supabase.removeChannel(membersChannel)
+    }
+  }, [supabase, load])
 
   const loadMessages = useCallback(async (assignmentId: string) => {
     setLoadingMsgs(true)
     try {
       const res = await fetch(`/api/groups/messages?assignment_id=${assignmentId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setMessages(data.messages || [])
-      }
+      if (res.ok) setMessages((await res.json()).messages || [])
     } catch { /* non-critical */ }
     setLoadingMsgs(false)
+  }, [])
+
+  const loadMeetings = useCallback(async (assignmentId: string) => {
+    setLoadingMeetings(true)
+    try {
+      const res = await fetch(`/api/groups/meetings?assignment_id=${assignmentId}`)
+      if (res.ok) setMeetings((await res.json()).meetings || [])
+    } catch { /* non-critical */ }
+    setLoadingMeetings(false)
   }, [])
 
   const sendMessage = async (assignmentId: string) => {
@@ -135,71 +193,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assignment_id: assignmentId, content: text, is_decision: msgIsDecision }),
       })
-      if (res.ok) {
-        const data = await res.json()
-        setMessages(prev => [...prev, data.message])
-        setMsgIsDecision(false)
-      }
+      if (res.ok) { const d = await res.json(); setMessages(prev => [...prev, d.message]); setMsgIsDecision(false) }
     } catch { toast.error('Failed to send message') }
     setSendingMsg(false)
   }
-
-  const load = useCallback(async () => {
-    try {
-      const res = await fetch('/api/groups/assignments')
-      if (!res.ok) {
-        if (res.status === 401) router.push('/auth/login')
-        return
-      }
-      const data = await res.json()
-      setAssignments(data.assignments || [])
-    } catch (err) {
-      console.error('[GroupsClient] load:', err)
-      toast.error('Failed to load group assignments')
-    } finally {
-      setLoading(false)
-    }
-  }, [router])
-
-  useEffect(() => { load() }, [load])
-
-  // ── Realtime: refresh when group_tasks or group_members change ──
-  useEffect(() => {
-    const tasksChannel = supabase
-      .channel('group-tasks-realtime')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'group_tasks',
-      }, () => {
-        load()
-      })
-      .subscribe()
-
-    // Refresh assignments when a new member joins (invite accepted)
-    const membersChannel = supabase
-      .channel('group-members-realtime')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'group_members',
-      }, () => {
-        load()
-      })
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'group_members',
-      }, () => {
-        load()
-      })
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(tasksChannel)
-      supabase.removeChannel(membersChannel)
-    }
-  }, [supabase, load])
 
   const createAssignment = async () => {
     if (!newTitle.trim()) return
@@ -213,28 +210,22 @@ export default function GroupsClient({ userId }: { userId: string }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       toast.success('Group assignment created!')
-      setShowNewForm(false)
-      setNewTitle(''); setNewSubject(''); setNewDueDate(''); setNewDesc('')
+      setShowNewForm(false); setNewTitle(''); setNewSubject(''); setNewDueDate(''); setNewDesc('')
       await load()
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create')
-    } finally {
-      setCreating(false)
-    }
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to create') }
+    finally { setCreating(false) }
   }
 
   const addTask = async () => {
     if (!taskTitle.trim() || !selected) return
     setAddingTask(true)
     try {
-      // Find member by email to get user_id
       const member = selected.group_members.find(m => m.email === taskAssigneeEmail)
       const res = await fetch('/api/groups/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          assignment_id: selected.id,
-          title: taskTitle,
+          assignment_id: selected.id, title: taskTitle,
           due_date: taskDueDate || null,
           assigned_to: member?.user_id || null,
           assigned_to_email: taskAssigneeEmail || null,
@@ -242,55 +233,54 @@ export default function GroupsClient({ userId }: { userId: string }) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      toast.success('Task added!')
-      setShowAddTask(false)
-      setTaskTitle(''); setTaskAssigneeEmail(''); setTaskDueDate('')
+      toast.success('Task added!'); setShowAddTask(false); setTaskTitle(''); setTaskAssigneeEmail(''); setTaskDueDate('')
       await load()
-      // Refresh selected
-      const updated = assignments.find(a => a.id === selected.id)
-      if (updated) setSelected(updated)
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to add task')
-    } finally {
-      setAddingTask(false)
-    }
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to add task') }
+    finally { setAddingTask(false) }
   }
 
   const toggleTask = async (taskId: string, done: boolean) => {
     await fetch('/api/groups/tasks', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: taskId, done }),
     })
     await load()
-    if (selected) {
-      setSelected(prev => prev ? {
-        ...prev,
-        group_tasks: prev.group_tasks.map(t => t.id === taskId ? { ...t, done } : t)
-      } : prev)
-    }
+  }
+
+  const reassignTask = async (taskId: string, email: string) => {
+    const member = selected?.group_members.find(m => m.email === email)
+    await fetch('/api/groups/tasks', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: taskId, assigned_to: member?.user_id || null, assigned_to_email: email || null }),
+    })
+    setReassignTaskId(null)
+    await load()
+    toast.success('Task reassigned')
+  }
+
+  const deleteTask = async (taskId: string) => {
+    if (!confirm('Delete this task?')) return
+    await fetch(`/api/groups/tasks?id=${taskId}`, { method: 'DELETE' })
+    await load()
+    toast.success('Task deleted')
   }
 
   const generateInvite = async (assignmentId: string) => {
     try {
       const res = await fetch('/api/groups/invite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assignment_id: assignmentId }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setInviteUrl(data.inviteUrl)
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to generate invite')
-    }
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to generate invite') }
   }
 
   const copyInvite = () => {
     if (!inviteUrl) return
     navigator.clipboard.writeText(inviteUrl)
-    setCopied(true)
-    toast.success('Invite link copied! Share via WhatsApp')
+    setCopied(true); toast.success('Invite link copied! Share via WhatsApp')
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -299,61 +289,103 @@ export default function GroupsClient({ userId }: { userId: string }) {
     setSubmitting(true)
     try {
       const res = await fetch('/api/groups/assignments', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: selected.id, status: 'submitted', submission_link: submitLink || null }),
       })
       if (!res.ok) throw new Error('Failed to submit')
       toast.success('Assignment marked as submitted!')
       setShowSubmitForm(false)
       await load()
-      setSelected(prev => prev ? { ...prev, status: 'submitted' } : prev)
-    } catch {
-      toast.error('Could not update submission status')
-    } finally {
-      setSubmitting(false)
-    }
+    } catch { toast.error('Could not update submission status') }
+    finally { setSubmitting(false) }
   }
 
-  const assignRole = (memberId: string, role: MemberRole) => {
-    setMemberRoles(prev => {
-      const next = { ...prev, [memberId]: role }
-      saveRoles(next)
-      return next
-    })
+  const assignRole = async (memberId: string, role: MemberRole) => {
+    // Optimistic update in selected
+    setSelected(prev => prev ? {
+      ...prev,
+      group_members: prev.group_members.map(m => m.id === memberId ? { ...m, member_role: role } : m),
+    } : prev)
+    try {
+      const res = await fetch('/api/groups/members', {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ member_id: memberId, member_role: role }),
+      })
+      if (!res.ok) throw new Error('Failed to save role')
+      await load()
+    } catch { toast.error('Could not save role — try again') }
+  }
+
+  const removeMember = async (memberId: string, memberName: string) => {
+    if (!confirm(`Remove ${memberName} from this group?`)) return
+    try {
+      const res = await fetch(`/api/groups/members?member_id=${memberId}`, { method: 'DELETE' })
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error) }
+      toast.success(`${memberName} removed`)
+      await load()
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to remove member') }
+  }
+
+  const createMeeting = async () => {
+    if (!meetingTitle.trim() || !meetingAt || !selected) return
+    setCreatingMeeting(true)
+    try {
+      const res = await fetch('/api/groups/meetings', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assignment_id: selected.id,
+          title: meetingTitle,
+          meeting_at: meetingAt,
+          duration_min: meetingDuration,
+          location: meetingLocation || null,
+          link: meetingLink || null,
+          agenda: meetingAgenda || null,
+        }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      toast.success('Meeting scheduled!')
+      setShowMeetingForm(false)
+      setMeetingTitle(''); setMeetingAt(''); setMeetingLocation(''); setMeetingLink(''); setMeetingAgenda('')
+      await loadMeetings(selected.id)
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to schedule meeting') }
+    finally { setCreatingMeeting(false) }
+  }
+
+  const deleteMeeting = async (meetingId: string) => {
+    if (!confirm('Delete this meeting?')) return
+    await fetch(`/api/groups/meetings?id=${meetingId}`, { method: 'DELETE' })
+    if (selected) await loadMeetings(selected.id)
+    toast.success('Meeting removed')
   }
 
   const daysUntil = (date: string) => {
     const d = Math.ceil((new Date(date).getTime() - Date.now()) / 86400000)
-    if (d < 0) return { label: `${Math.abs(d)}d overdue`, color: 'text-red-400' }
-    if (d === 0) return { label: 'Due today', color: 'text-amber-400' }
-    if (d <= 3) return { label: `${d}d left`, color: 'text-amber-400' }
+    if (d < 0)  return { label: `${Math.abs(d)}d overdue`, color: 'text-red-400' }
+    if (d === 0) return { label: 'Due today',               color: 'text-amber-400' }
+    if (d <= 3) return { label: `${d}d left`,              color: 'text-amber-400' }
     return { label: `${d}d left`, color: 'text-teal-400' }
   }
 
   const getProgress = (a: GroupAssignment) => {
     const total = a.group_tasks.length
-    const done = a.group_tasks.filter(t => t.done).length
+    const done  = a.group_tasks.filter(t => t.done).length
     return total === 0 ? 0 : Math.round((done / total) * 100)
   }
 
   if (loading) {
     return (
       <div className="space-y-3 p-4">
-        {[1, 2, 3].map(i => (
-          <div key={i} className="h-20 rounded-2xl bg-white/5 animate-pulse" />
-        ))}
+        {[1, 2, 3].map(i => <div key={i} className="h-20 rounded-2xl bg-white/5 animate-pulse" />)}
       </div>
     )
   }
 
-  // ── Detail view ──────────────────────────────────────────────────────────
+  // ── Detail view ─────────────────────────────────────────────────────────────
   if (view === 'detail' && selected) {
-    const progress = getProgress(selected)
-    const isLeader = selected.created_by === userId
+    const progress     = getProgress(selected)
+    const isLeader     = selected.created_by === userId
     const joinedMembers = selected.group_members.filter(m => m.status === 'joined')
 
-    // Contribution heatmap: tasks done per member email
     const contribs: Record<string, { assigned: number; done: number }> = {}
     joinedMembers.forEach(m => { contribs[m.email] = { assigned: 0, done: 0 } })
     selected.group_tasks.forEach(t => {
@@ -363,17 +395,17 @@ export default function GroupsClient({ userId }: { userId: string }) {
       }
     })
 
-    // Free-rider detection: joined member with 0 assigned tasks (and >0 tasks exist)
     const freeRiders = selected.group_tasks.length > 0
       ? joinedMembers.filter(m => (contribs[m.email]?.assigned ?? 0) === 0)
       : []
 
     const DETAIL_TABS: { id: DetailTab; label: string }[] = [
-      { id: 'overview', label: 'Overview' },
-      { id: 'tasks', label: `Tasks (${selected.group_tasks.length})` },
-      { id: 'members', label: `Team (${joinedMembers.length})` },
-      { id: 'discussion', label: `Board (${messages.length})` },
-      { id: 'tips', label: 'Playbook' },
+      { id: 'overview',    label: 'Overview' },
+      { id: 'tasks',       label: `Tasks (${selected.group_tasks.length})` },
+      { id: 'members',     label: `Team (${joinedMembers.length})` },
+      { id: 'discussion',  label: `Board (${messages.length})` },
+      { id: 'meetings',    label: `Meetings (${meetings.length})` },
+      { id: 'tips',        label: 'Playbook' },
     ]
 
     return (
@@ -381,7 +413,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
         {/* Header */}
         <div className="px-4 pt-4 pb-3 border-b border-white/7">
           <button
-            onClick={() => { setView('list'); setInviteUrl(null); setDetailTab('overview') }}
+            onClick={() => { setView('list'); setInviteUrl(null); setDetailTab('overview'); setMeetings([]); setMessages([]) }}
             className="font-mono text-[0.62rem] text-white/35 hover:text-white/60 mb-2 flex items-center gap-1 transition-colors"
           >
             ← All groups
@@ -392,7 +424,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               {selected.subject && <p className="font-mono text-[0.62rem] text-teal-400 mt-0.5">{selected.subject}</p>}
             </div>
             <span className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
-              selected.status === 'active' ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
+              selected.status === 'active'    ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
               : selected.status === 'submitted' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20'
               : 'bg-green-500/15 text-green-400 border-green-500/20'
             )}>
@@ -406,18 +438,18 @@ export default function GroupsClient({ userId }: { userId: string }) {
           )}
 
           {/* Tab bar */}
-          <div className="flex gap-1 mt-3 overflow-x-auto">
+          <div className="flex gap-1 mt-3 overflow-x-auto no-scrollbar">
             {DETAIL_TABS.map(t => (
-              <button key={t.id} onClick={() => { setDetailTab(t.id); if (t.id === 'discussion') void loadMessages(selected.id) }} className={cn(
+              <button key={t.id} onClick={() => {
+                setDetailTab(t.id)
+                if (t.id === 'discussion') void loadMessages(selected.id)
+                if (t.id === 'meetings')   void loadMeetings(selected.id)
+              }} className={cn(
                 'flex-shrink-0 font-mono text-[0.6rem] px-3 py-1.5 rounded-lg transition-all border',
-                detailTab === t.id
-                  ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
-                  : 'bg-transparent text-white/35 border-white/7 hover:text-white/60',
+                detailTab === t.id ? 'bg-teal-600/15 text-teal-400 border-teal-600/20' : 'bg-transparent text-white/35 border-white/7 hover:text-white/60',
               )}>
                 {t.label}
-                {t.id === 'members' && freeRiders.length > 0 && (
-                  <span className="ml-1 text-red-400">⚠</span>
-                )}
+                {t.id === 'members' && freeRiders.length > 0 && <span className="ml-1 text-red-400">⚠</span>}
               </button>
             ))}
           </div>
@@ -428,7 +460,6 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {/* ── Overview tab ── */}
           {detailTab === 'overview' && (
             <>
-              {/* Progress bar */}
               <div>
                 <div className="flex justify-between mb-1.5">
                   <span className="font-mono text-[0.6rem] text-white/40">Progress</span>
@@ -437,13 +468,9 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <div className="h-2.5 rounded-full bg-white/8 overflow-hidden">
                   <div className={cn('h-full rounded-full transition-all duration-500', progress === 100 ? 'bg-green-500' : progress > 60 ? 'bg-teal-500' : 'bg-amber-500')} style={{ width: `${progress}%` }} />
                 </div>
-                <div className="flex justify-between mt-1">
-                  <span className="font-mono text-[0.53rem] text-white/25">{progress}% complete</span>
-                  {progress === 100 && <span className="font-mono text-[0.53rem] text-green-400">All tasks done ✓</span>}
-                </div>
+                <p className="font-mono text-[0.53rem] text-white/25 mt-1">{progress}% complete</p>
               </div>
 
-              {/* Deadline warning */}
               {selected.due_date && (() => {
                 const d = Math.ceil((new Date(selected.due_date).getTime() - Date.now()) / 86400000)
                 if (d <= 3 && d >= 0 && selected.status === 'active') return (
@@ -461,20 +488,18 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 return null
               })()}
 
-              {/* Free-rider alert */}
               {freeRiders.length > 0 && (
                 <div className="bg-red-500/6 border border-red-500/15 rounded-xl px-3 py-2.5">
-                  <p className="font-mono text-[0.62rem] text-red-400 font-bold mb-1">⚠️ Free-rider alert</p>
-                  <p className="font-mono text-[0.58rem] text-white/40">{freeRiders.map(m => m.display_name || m.email).join(', ')} {freeRiders.length === 1 ? 'has' : 'have'} no tasks assigned yet. Go to the Team tab to assign tasks.</p>
+                  <p className="font-mono text-[0.62rem] text-red-400 font-bold mb-1">⚠️ No tasks assigned to: {freeRiders.map(m => m.display_name || m.email).join(', ')}</p>
+                  <p className="font-mono text-[0.58rem] text-white/40">Go to the Team tab → assign tasks or remove inactive members.</p>
                 </div>
               )}
 
-              {/* Quick stats */}
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { label: 'Members', value: joinedMembers.length },
+                  { label: 'Members',    value: joinedMembers.length },
                   { label: 'Tasks done', value: `${selected.group_tasks.filter(t => t.done).length}/${selected.group_tasks.length}` },
-                  { label: 'Status', value: selected.status },
+                  { label: 'Status',     value: selected.status },
                 ].map(s => (
                   <div key={s.label} className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5 text-center">
                     <div className="font-display font-black text-white text-sm">{s.value}</div>
@@ -483,14 +508,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 ))}
               </div>
 
-              {/* Description */}
               {selected.description && (
                 <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
                   <p className="font-mono text-[0.58rem] text-white/40 leading-relaxed">{selected.description}</p>
                 </div>
               )}
 
-              {/* Submission workflow */}
               {selected.status === 'active' && isLeader && progress >= 80 && (
                 <div>
                   {!showSubmitForm ? (
@@ -500,7 +523,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   ) : (
                     <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2.5">
                       <p className="font-mono text-[0.62rem] text-white/50">Submission link or reference (optional)</p>
-                      <input value={submitLink} onChange={e => setSubmitLink(e.target.value)} placeholder="e.g. Google Drive link, submission portal ref" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-amber-500 font-body" />
+                      <input value={submitLink} onChange={e => setSubmitLink(e.target.value)} placeholder="e.g. Google Drive link" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-amber-500 font-body" />
                       <div className="flex gap-2">
                         <button onClick={submitAssignment} disabled={submitting} className="flex-1 font-display font-bold text-sm bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
                           {submitting ? 'Submitting…' : 'Confirm Submitted'}
@@ -512,7 +535,6 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 </div>
               )}
 
-              {/* Invite link */}
               {isLeader && (
                 <div>
                   <button onClick={() => generateInvite(selected.id)} className="w-full font-mono text-[0.65rem] text-teal-400 hover:text-teal-300 border border-teal-600/20 bg-teal-600/8 py-2 rounded-xl transition-all">
@@ -547,7 +569,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   <select value={taskAssigneeEmail} onChange={e => setTaskAssigneeEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body">
                     <option value="">Assign to… (optional)</option>
                     {joinedMembers.map(m => (
-                      <option key={m.email} value={m.email}>{m.display_name || m.email}{memberRoles[m.id] ? ` · ${memberRoles[m.id]}` : ''}</option>
+                      <option key={m.email} value={m.email}>{m.display_name || m.email}{m.member_role ? ` · ${m.member_role}` : ''}</option>
                     ))}
                   </select>
                   <input type="date" value={taskDueDate} onChange={e => setTaskDueDate(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
@@ -563,27 +585,50 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <p className="font-mono text-[0.65rem] text-white/25 text-center py-6">No tasks yet — add the first one above</p>
               ) : (
                 <div className="space-y-2">
-                  {/* Pending tasks */}
                   <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide">To do</p>
                   {selected.group_tasks.filter(t => !t.done).map(t => {
                     const assignee = joinedMembers.find(m => m.email === t.assigned_to_email)
+                    const isReassigning = reassignTaskId === t.id
                     return (
-                      <div key={t.id} className="flex items-start gap-3 bg-white/3 border border-white/10 rounded-xl px-3 py-2.5">
-                        <button onClick={() => toggleTask(t.id, true)} className="mt-0.5 w-5 h-5 rounded-md border-2 border-white/20 hover:border-teal-500 flex-shrink-0 transition-all" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-body text-white">{t.title}</p>
-                          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            {t.assigned_to_email ? (
-                              <span className="font-mono text-[0.55rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
-                            ) : (
-                              <span className="font-mono text-[0.55rem] text-red-400/60">⚠ Unassigned</span>
-                            )}
-                            {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
+                      <div key={t.id} className="bg-white/3 border border-white/10 rounded-xl px-3 py-2.5 space-y-2">
+                        <div className="flex items-start gap-3">
+                          <button onClick={() => toggleTask(t.id, true)} className="mt-0.5 w-5 h-5 rounded-md border-2 border-white/20 hover:border-teal-500 flex-shrink-0 transition-all" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-body text-white">{t.title}</p>
+                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                              {t.assigned_to_email ? (
+                                <span className="font-mono text-[0.55rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
+                              ) : (
+                                <span className="font-mono text-[0.55rem] text-red-400/60">⚠ Unassigned</span>
+                              )}
+                              {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
+                            </div>
+                          </div>
+                          <div className="flex gap-1 flex-shrink-0">
+                            <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/35 hover:text-teal-400 hover:border-teal-600/30 transition-all">
+                              reassign
+                            </button>
+                            <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-red-400 hover:border-red-500/30 transition-all">
+                              ✕
+                            </button>
                           </div>
                         </div>
+                        {isReassigning && (
+                          <select
+                            defaultValue={t.assigned_to_email ?? ''}
+                            onChange={e => reassignTask(t.id, e.target.value)}
+                            className="w-full bg-white/5 border border-teal-600/30 rounded-lg px-2 py-1.5 text-xs text-white/70 outline-none font-body"
+                          >
+                            <option value="">Unassigned</option>
+                            {joinedMembers.map(m => (
+                              <option key={m.email} value={m.email}>{m.display_name || m.email}</option>
+                            ))}
+                          </select>
+                        )}
                       </div>
                     )
                   })}
+
                   {selected.group_tasks.some(t => t.done) && (
                     <>
                       <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide mt-3">Done</p>
@@ -608,25 +653,26 @@ export default function GroupsClient({ userId }: { userId: string }) {
             </>
           )}
 
-          {/* ── Members / Accountability tab ── */}
+          {/* ── Members / Team Dynamics tab ── */}
           {detailTab === 'members' && (
             <>
               <p className="font-mono text-[0.58rem] text-white/35 leading-relaxed">
-                Contribution heatmap — who&apos;s doing the work. Assign roles so everyone knows their lane. Flag a team conflict to the leader.
+                Assign roles so everyone knows their lane. Track who&apos;s doing the work. Leaders can remove inactive members.
               </p>
 
-              {/* Invite */}
               {isLeader && (
-                <button onClick={() => generateInvite(selected.id)} className="w-full font-mono text-[0.62rem] text-teal-400 border border-teal-600/20 bg-teal-600/8 py-2 rounded-xl transition-all">
-                  + Invite member (WhatsApp link)
-                </button>
-              )}
-              {inviteUrl && (
-                <div className="bg-teal-600/10 border border-teal-600/20 rounded-xl p-3">
-                  <p className="font-mono text-[0.6rem] text-teal-300 break-all mb-2">{inviteUrl}</p>
-                  <button onClick={copyInvite} className="font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border bg-white/5 text-white/60 border-white/10">
-                    {copied ? '✓ Copied!' : 'Copy link'}
+                <div>
+                  <button onClick={() => generateInvite(selected.id)} className="w-full font-mono text-[0.62rem] text-teal-400 border border-teal-600/20 bg-teal-600/8 py-2 rounded-xl transition-all">
+                    + Invite member (WhatsApp link)
                   </button>
+                  {inviteUrl && (
+                    <div className="mt-2 bg-teal-600/10 border border-teal-600/20 rounded-xl p-3">
+                      <p className="font-mono text-[0.6rem] text-teal-300 break-all mb-2">{inviteUrl}</p>
+                      <button onClick={copyInvite} className="font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border bg-white/5 text-white/60 border-white/10">
+                        {copied ? '✓ Copied!' : 'Copy link'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -635,57 +681,57 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   const stats = contribs[m.email] ?? { assigned: 0, done: 0 }
                   const isFreeRider = selected.group_tasks.length > 0 && stats.assigned === 0
                   const pct = stats.assigned > 0 ? Math.round((stats.done / stats.assigned) * 100) : 0
-                  const role = memberRoles[m.id] as MemberRole | undefined
-                  const isFlagged = flaggedMember === m.id
+                  const mRole = m.member_role as MemberRole | null | undefined
+                  const isSelf = m.user_id === userId
 
                   return (
                     <div key={m.id} className={cn('bg-white/3 border rounded-2xl p-3 space-y-2.5 transition-all', isFreeRider ? 'border-red-500/20 bg-red-500/3' : 'border-white/7')}>
                       <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
-                            {m.role === 'leader' && <span className="font-mono text-[0.5rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">leader</span>}
-                            {role && <span className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[role])}>{role}</span>}
+                            {isSelf && <span className="font-mono text-[0.48rem] bg-white/8 text-white/40 px-1 py-0.5 rounded">you</span>}
+                            {m.role === 'leader' && <span className="font-mono text-[0.5rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">owner</span>}
+                            {mRole && <span className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[mRole])}>{mRole}</span>}
                             {isFreeRider && <span className="font-mono text-[0.5rem] bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-md border border-red-500/20">⚠ no tasks</span>}
                           </div>
                           <p className="font-mono text-[0.53rem] text-white/30 mt-0.5 truncate">{m.email}</p>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                          <div className="font-display font-black text-white text-sm">{pct}%</div>
-                          <div className="font-mono text-[0.5rem] text-white/30">{stats.done}/{stats.assigned} done</div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="text-right">
+                            <div className="font-display font-black text-white text-sm">{pct}%</div>
+                            <div className="font-mono text-[0.5rem] text-white/30">{stats.done}/{stats.assigned}</div>
+                          </div>
+                          {isLeader && !isSelf && (
+                            <button
+                              onClick={() => removeMember(m.id, m.display_name || m.email)}
+                              className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            >
+                              Remove
+                            </button>
+                          )}
                         </div>
                       </div>
 
-                      {/* Contribution bar */}
                       <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
                         <div className={cn('h-full rounded-full transition-all', pct >= 80 ? 'bg-teal-500' : pct >= 40 ? 'bg-amber-500' : isFreeRider ? 'bg-red-500' : 'bg-white/20')} style={{ width: `${pct}%` }} />
                       </div>
 
-                      {/* Role selector */}
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-[0.54rem] text-white/30">Role:</span>
                         <div className="flex gap-1 flex-wrap">
                           {MEMBER_ROLES.map(r => (
-                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border transition-all', role === r ? ROLE_COLORS[r] : 'text-white/25 border-white/8 hover:text-white/50')}>
+                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/25 border-white/8 hover:text-white/50')}>
                               {r}
                             </button>
                           ))}
                         </div>
                       </div>
-
-                      {/* Flag button */}
-                      {m.user_id !== userId && !isFlagged && (
-                        <button onClick={() => { setFlaggedMember(m.id); toast.success(`${m.display_name || m.email} flagged — notify your leader.`) }} className="font-mono text-[0.55rem] text-red-400/60 hover:text-red-400 transition-colors">
-                          ⚑ Flag a concern to leader
-                        </button>
-                      )}
-                      {isFlagged && <p className="font-mono text-[0.53rem] text-red-400/50">Concern flagged — speak to your leader or lecturer if unresolved.</p>}
                     </div>
                   )
                 })}
               </div>
 
-              {/* Pending invites */}
               {selected.group_members.some(m => m.status === 'invited') && (
                 <div>
                   <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide mb-2">Pending invites</p>
@@ -709,7 +755,6 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 </p>
               </div>
 
-              {/* Slacking detection banner */}
               {(() => {
                 const now = new Date()
                 const inactive = joinedMembers.filter(m => {
@@ -722,33 +767,28 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   <div className="bg-red-500/8 border border-red-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.6rem] text-red-400 font-bold mb-1">⚠ Team members falling behind</p>
                     {inactive.map(m => (
-                      <p key={m.id} className="font-mono text-[0.58rem] text-red-300/70">{m.display_name || m.email} has 2+ overdue tasks — consider a check-in.</p>
+                      <p key={m.id} className="font-mono text-[0.58rem] text-red-300/70">{m.display_name || m.email} has 2+ overdue tasks.</p>
                     ))}
                   </div>
                 )
               })()}
 
-              {/* Messages */}
               {loadingMsgs ? (
                 <div className="font-mono text-[0.62rem] text-white/30 text-center py-6">Loading board…</div>
               ) : messages.length === 0 ? (
                 <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
                   <div className="text-2xl mb-2">💬</div>
-                  <p className="font-mono text-[0.62rem] text-white/30">No posts yet. Be the first to post an update or decision.</p>
+                  <p className="font-mono text-[0.62rem] text-white/30">No posts yet. Be the first to post.</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
                   {messages.map(msg => (
                     <div key={msg.id} className={cn(
                       'rounded-xl px-3 py-2.5 border',
-                      msg.is_decision
-                        ? 'bg-amber-500/8 border-amber-500/20'
-                        : 'bg-white/3 border-white/7',
+                      msg.is_decision ? 'bg-amber-500/8 border-amber-500/20' : 'bg-white/3 border-white/7',
                       msg.user_id === userId ? 'ml-6' : 'mr-6',
                     )}>
-                      {msg.is_decision && (
-                        <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 DECISION</p>
-                      )}
+                      {msg.is_decision && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 DECISION</p>}
                       <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
                       <p className="font-mono text-[0.52rem] text-white/25 mt-1">
                         {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
@@ -758,13 +798,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 </div>
               )}
 
-              {/* Send message */}
               <div className="bg-white/3 border border-white/7 rounded-xl p-3 space-y-2">
                 <textarea
-                  value={msgText}
-                  onChange={e => setMsgText(e.target.value)}
-                  placeholder="Post an update, question, or decision…"
-                  rows={2}
+                  value={msgText} onChange={e => setMsgText(e.target.value)}
+                  placeholder="Post an update, question, or decision…" rows={2}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[0.78rem] text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body resize-none"
                 />
                 <div className="flex items-center justify-between gap-2">
@@ -772,11 +809,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     <input type="checkbox" checked={msgIsDecision} onChange={e => setMsgIsDecision(e.target.checked)} className="w-3 h-3" />
                     <span className="font-mono text-[0.58rem] text-amber-400">📌 Mark as decision</span>
                   </label>
-                  <button
-                    onClick={() => void sendMessage(selected.id)}
-                    disabled={!msgText.trim() || sendingMsg}
-                    className="font-mono text-[0.62rem] px-3 py-1.5 bg-teal-600/15 text-teal-400 border border-teal-600/20 rounded-lg disabled:opacity-40 hover:bg-teal-600/25 transition-all"
-                  >
+                  <button onClick={() => void sendMessage(selected.id)} disabled={!msgText.trim() || sendingMsg}
+                    className="font-mono text-[0.62rem] px-3 py-1.5 bg-teal-600/15 text-teal-400 border border-teal-600/20 rounded-lg disabled:opacity-40 hover:bg-teal-600/25 transition-all">
                     {sendingMsg ? 'Sending…' : 'Post →'}
                   </button>
                 </div>
@@ -784,43 +818,101 @@ export default function GroupsClient({ userId }: { userId: string }) {
             </div>
           )}
 
-          {/* ── Playbook / Tips tab ── */}
+          {/* ── Meetings tab ── */}
+          {detailTab === 'meetings' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[0.6rem] text-white/40">Schedule and manage group meetings</p>
+                </div>
+                <button onClick={() => setShowMeetingForm(!showMeetingForm)} className="font-mono text-[0.62rem] text-teal-400 hover:text-teal-300 transition-colors">
+                  {showMeetingForm ? '✕ Cancel' : '+ Schedule meeting'}
+                </button>
+              </div>
+
+              {showMeetingForm && (
+                <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2">
+                  <input value={meetingTitle} onChange={e => setMeetingTitle(e.target.value)} placeholder="Meeting title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Date & time *</label>
+                      <input type="datetime-local" value={meetingAt} onChange={e => setMeetingAt(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white/70 outline-none focus:border-teal-600 font-body" />
+                    </div>
+                    <div>
+                      <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Duration (min)</label>
+                      <input type="number" value={meetingDuration} onChange={e => setMeetingDuration(Number(e.target.value))} min={15} max={480} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
+                    </div>
+                  </div>
+                  <input value={meetingLocation} onChange={e => setMeetingLocation(e.target.value)} placeholder="Location (e.g. Library Room 3, Wits)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
+                  <input value={meetingLink} onChange={e => setMeetingLink(e.target.value)} placeholder="Virtual link (Google Meet, Zoom…)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
+                  <textarea value={meetingAgenda} onChange={e => setMeetingAgenda(e.target.value)} placeholder="Agenda (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 resize-none font-body" />
+                  <button onClick={createMeeting} disabled={creatingMeeting || !meetingTitle.trim() || !meetingAt} className="w-full font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
+                    {creatingMeeting ? 'Scheduling…' : 'Schedule Meeting'}
+                  </button>
+                </div>
+              )}
+
+              {loadingMeetings ? (
+                <div className="font-mono text-[0.62rem] text-white/30 text-center py-6">Loading meetings…</div>
+              ) : meetings.length === 0 ? (
+                <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
+                  <div className="text-2xl mb-2">📅</div>
+                  <p className="font-mono text-[0.62rem] text-white/30">No meetings scheduled yet.</p>
+                  <p className="font-mono text-[0.58rem] text-white/20 mt-1">Schedule your first sync above.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {meetings.map(meeting => {
+                    const dt  = new Date(meeting.meeting_at)
+                    const isPast = dt < new Date()
+                    return (
+                      <div key={meeting.id} className={cn('bg-white/3 border rounded-2xl p-3 space-y-2', isPast ? 'border-white/5 opacity-60' : 'border-teal-600/20')}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-display font-bold text-white text-sm">{meeting.title}</p>
+                            <p className={cn('font-mono text-[0.6rem] mt-0.5', isPast ? 'text-white/30' : 'text-teal-400')}>
+                              {dt.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })} · {dt.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })} · {meeting.duration_min} min
+                            </p>
+                          </div>
+                          {meeting.created_by === userId && (
+                            <button onClick={() => deleteMeeting(meeting.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 transition-all flex-shrink-0">
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                        {meeting.location && <p className="font-mono text-[0.58rem] text-white/40">📍 {meeting.location}</p>}
+                        {meeting.link && (
+                          <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="font-mono text-[0.58rem] text-sky-400 hover:text-sky-300 transition-colors">
+                            🔗 Join virtual meeting →
+                          </a>
+                        )}
+                        {meeting.agenda && (
+                          <div className="bg-white/3 border border-white/7 rounded-lg px-2.5 py-2">
+                            <p className="font-mono text-[0.53rem] text-white/25 mb-1">AGENDA</p>
+                            <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed whitespace-pre-wrap">{meeting.agenda}</p>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Playbook tab ── */}
           {detailTab === 'tips' && (
             <>
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">Best practices from research and famous books — applied to student group work.</p>
+                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">Best practices from research and books — applied to SA student group work.</p>
               </div>
               {[
-                {
-                  book: 'Getting Things Done — David Allen',
-                  color: '#38BDF8',
-                  tip: 'Capture everything into a shared task list before your first meeting. No idea left in someone\'s head. Every action has an owner and a due date. If it doesn\'t have an owner, it won\'t happen.',
-                },
-                {
-                  book: 'Atomic Habits — James Clear',
-                  color: 'var(--teal)',
-                  tip: '2-minute rule: if a task takes under 2 minutes, do it now. Group work stalls on tiny "I\'ll do it later" tasks. Assign micro-tasks with specific due times — "send me the intro draft by Tuesday 6pm", not "soon".',
-                },
-                {
-                  book: 'The Five Dysfunctions of a Team — Patrick Lencioni',
-                  color: '#a78bfa',
-                  tip: 'The most common group work failures in order: (1) Absence of trust — people don\'t admit when they\'re stuck. (2) Fear of conflict — real disagreements avoided until deadline. (3) Lack of commitment — "I\'ll try" instead of "I will". Fix: weekly 5-minute check-in before submission week.',
-                },
-                {
-                  book: 'Deep Work — Cal Newport',
-                  color: '#6366F1',
-                  tip: 'Split the work into solo deep-work blocks first, then collaborative review sessions. Writing and researching are individual tasks — reviewing and editing are collaborative. Don\'t do deep work in a group setting.',
-                },
-                {
-                  book: 'Crucial Conversations — Patterson et al.',
-                  color: '#f59e0b',
-                  tip: 'When someone is not pulling their weight: address it privately and specifically ("I noticed you haven\'t submitted the literature review section — is there something blocking you?") rather than calling them out in the group chat. Humiliation creates resentment, not productivity.',
-                },
-                {
-                  book: 'Group work research — SA universities',
-                  color: '#fb7185',
-                  tip: 'Common group assignment failures at South African universities: (1) Starting the writing in the last 48h. (2) Formatting and merging 5 different Word documents in the final hour. Fix: use Google Docs or Notion from day 1 — one document, all editing simultaneously.',
-                },
+                { book: 'Getting Things Done — David Allen', color: '#38BDF8', tip: 'Capture everything into a shared task list before your first meeting. Every action needs an owner and a due date. If it has no owner, it will not happen.' },
+                { book: 'Atomic Habits — James Clear', color: 'var(--teal)', tip: '2-minute rule: if a task takes under 2 minutes, do it now. Assign micro-tasks with specific due times — "intro draft by Tuesday 6pm", not "soon".' },
+                { book: 'The Five Dysfunctions of a Team — Lencioni', color: '#a78bfa', tip: '5 common failures: (1) Absence of trust. (2) Fear of conflict. (3) Lack of commitment. (4) Avoidance of accountability. (5) Inattention to results. Fix: weekly 5-minute check-in before submission week.' },
+                { book: 'Deep Work — Cal Newport', color: '#6366F1', tip: 'Split into solo deep-work blocks, then collaborative review sessions. Writing and research are individual tasks. Don\'t do deep work in a group setting.' },
+                { book: 'Crucial Conversations — Patterson et al.', color: '#f59e0b', tip: 'Address poor performance privately: "I noticed you haven\'t submitted the literature review — is something blocking you?" Calling someone out publicly creates resentment, not productivity.' },
+                { book: 'SA university group work research', color: '#fb7185', tip: 'Common failures: (1) Starting writing in the last 48h. (2) Merging 5 Word documents in the final hour. Fix: use Google Docs from day 1 — one document, everyone editing simultaneously.' },
               ].map(t => (
                 <div key={t.book} className="bg-white/3 border border-white/7 rounded-xl p-3" style={{ borderLeft: `3px solid ${t.color}` }}>
                   <p className="font-mono text-[0.55rem] mb-2" style={{ color: t.color }}>{t.book}</p>
@@ -834,106 +926,61 @@ export default function GroupsClient({ userId }: { userId: string }) {
     )
   }
 
-  // ── List view ────────────────────────────────────────────────────────────
+  // ── List view ────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>
           <h1 className="font-display font-black text-white text-xl">Group Work</h1>
-          <p className="font-mono text-[0.62rem] text-white/35 mt-0.5">Collaborate on assignments with your classmates</p>
+          <p className="font-mono text-[0.62rem] text-white/35 mt-0.5">Manage assignments, roles & team dynamics</p>
         </div>
-        <button
-          onClick={() => setShowNewForm(!showNewForm)}
-          className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2 rounded-xl transition-all"
-        >
+        <button onClick={() => setShowNewForm(!showNewForm)} className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2 rounded-xl transition-all">
           + New
         </button>
       </div>
 
-      {/* Assignment list + new form (both inside scroll container so mobile button stays reachable) */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-6 space-y-3">
         {showNewForm && (
-          <div className="mb-1 bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3 animate-fade-in">
+          <div className="mb-1 bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3">
             <h3 className="font-display font-bold text-white text-sm">New Group Assignment</h3>
-            <input
-              value={newTitle}
-              onChange={e => setNewTitle(e.target.value)}
-              placeholder="Assignment title *"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
-            />
-            <input
-              value={newSubject}
-              onChange={e => setNewSubject(e.target.value)}
-              placeholder="Subject / Module (e.g. Marketing 201)"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body"
-            />
-            <textarea
-              value={newDesc}
-              onChange={e => setNewDesc(e.target.value)}
-              placeholder="Description (optional)"
-              rows={2}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 resize-none font-body"
-            />
+            <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Assignment title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
+            <input value={newSubject} onChange={e => setNewSubject(e.target.value)} placeholder="Subject / Module (e.g. Marketing 201)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
+            <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Description (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 resize-none font-body" />
             <div>
               <label className="font-mono text-[0.6rem] text-white/40 mb-1 block">Due date</label>
-              <input
-                type="date"
-                value={newDueDate}
-                onChange={e => setNewDueDate(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none focus:border-teal-600 font-body"
-              />
+              <input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={createAssignment}
-                disabled={creating || !newTitle.trim()}
-                className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2.5 rounded-xl transition-all"
-              >
+              <button onClick={createAssignment} disabled={creating || !newTitle.trim()} className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2.5 rounded-xl transition-all">
                 {creating ? 'Creating…' : 'Create Group'}
               </button>
-              <button
-                onClick={() => setShowNewForm(false)}
-                className="px-4 font-mono text-sm text-white/40 hover:text-white/70 border border-white/10 rounded-xl transition-all"
-              >
-                Cancel
-              </button>
+              <button onClick={() => setShowNewForm(false)} className="px-4 font-mono text-sm text-white/40 hover:text-white/70 border border-white/10 rounded-xl transition-all">Cancel</button>
             </div>
           </div>
         )}
+
         {assignments.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-4xl mb-3">👥</div>
             <h3 className="font-display font-bold text-white text-sm">No group assignments yet</h3>
-            <p className="font-mono text-[0.6rem] text-white/30 mt-1">
-              Create a group assignment and invite your classmates.
-            </p>
-            <button
-              onClick={() => setShowNewForm(true)}
-              className="mt-4 bg-teal-600 hover:bg-teal-500 text-white font-display font-bold text-sm px-4 py-2 rounded-xl transition-all"
-            >
+            <p className="font-mono text-[0.6rem] text-white/30 mt-1">Create one and invite your classmates.</p>
+            <button onClick={() => setShowNewForm(true)} className="mt-4 bg-teal-600 hover:bg-teal-500 text-white font-display font-bold text-sm px-4 py-2 rounded-xl transition-all">
               Create assignment
             </button>
           </div>
         ) : (
           assignments.map(a => {
-            const progress = getProgress(a)
+            const progress    = getProgress(a)
             const memberCount = a.group_members.filter(m => m.status === 'joined').length
             return (
-              <button
-                key={a.id}
-                onClick={() => { setSelected(a); setView('detail') }}
-                className="w-full text-left bg-[var(--bg-surface)] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all group"
-              >
+              <button key={a.id} onClick={() => { setSelected(a); setView('detail') }} className="w-full text-left bg-[var(--bg-surface)] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all group">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
-                    <h3 className="font-display font-bold text-white text-sm group-hover:text-teal-300 transition-colors">
-                      {a.title}
-                    </h3>
+                    <h3 className="font-display font-bold text-white text-sm group-hover:text-teal-300 transition-colors">{a.title}</h3>
                     {a.subject && <p className="font-mono text-[0.6rem] text-teal-400/70 mt-0.5">{a.subject}</p>}
                   </div>
                   <div className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
-                    a.status === 'active' ? 'bg-teal-600/10 text-teal-400 border-teal-600/15'
+                    a.status === 'active'    ? 'bg-teal-600/10 text-teal-400 border-teal-600/15'
                     : a.status === 'submitted' ? 'bg-amber-500/10 text-amber-400 border-amber-500/15'
                     : 'bg-green-500/10 text-green-400 border-green-500/15'
                   )}>
@@ -941,32 +988,18 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   </div>
                 </div>
 
-                {/* Progress bar */}
                 {a.group_tasks.length > 0 && (
                   <div className="mb-2">
                     <div className="h-1 rounded-full bg-white/10 overflow-hidden">
-                      <div
-                        className={cn('h-full rounded-full transition-all',
-                          progress === 100 ? 'bg-green-500' : 'bg-teal-500'
-                        )}
-                        style={{ width: `${progress}%` }}
-                      />
+                      <div className={cn('h-full rounded-full transition-all', progress === 100 ? 'bg-green-500' : 'bg-teal-500')} style={{ width: `${progress}%` }} />
                     </div>
                   </div>
                 )}
 
                 <div className="flex items-center gap-3 font-mono text-[0.58rem] text-white/35">
                   <span>👥 {memberCount} member{memberCount !== 1 ? 's' : ''}</span>
-                  {a.group_tasks.length > 0 && (
-                    <span>
-                      ✓ {a.group_tasks.filter(t => t.done).length}/{a.group_tasks.length} tasks
-                    </span>
-                  )}
-                  {a.due_date && (
-                    <span className={daysUntil(a.due_date).color}>
-                      {daysUntil(a.due_date).label}
-                    </span>
-                  )}
+                  {a.group_tasks.length > 0 && <span>✓ {a.group_tasks.filter(t => t.done).length}/{a.group_tasks.length} tasks</span>}
+                  {a.due_date && <span className={daysUntil(a.due_date).color}>{daysUntil(a.due_date).label}</span>}
                 </div>
               </button>
             )
