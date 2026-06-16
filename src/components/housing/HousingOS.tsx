@@ -23,10 +23,11 @@ interface Place {
   rent_payments: Payment[]
 }
 
-type Tab = 'place' | 'settle' | 'admin' | 'split' | 'checklist'
+type Tab = 'place' | 'kit' | 'settle' | 'admin' | 'split' | 'checklist'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'place', label: 'My Place', icon: '🏠' },
+  { id: 'kit', label: 'Starter Kit', icon: '🎒' },
   { id: 'settle', label: 'Settling In', icon: '🌱' },
   { id: 'admin', label: 'Life Admin', icon: '🧰' },
   { id: 'split', label: 'Split', icon: '🧮' },
@@ -668,9 +669,232 @@ function LifeAdminTab() {
   )
 }
 
+/* ───────────────────────── First-Year Starter Kit ───────────────────────── */
+type Pri = 'essential' | 'recommended' | 'optional'
+interface KitItem { name: string; est: number; pri: Pri; tip?: string }
+interface KitCat { icon: string; title: string; note?: string; items: KitItem[] }
+
+const KIT: KitCat[] = [
+  {
+    icon: '🛏️', title: 'Bedding & sleep',
+    items: [
+      { name: 'Single duvet + inner', est: 280, pri: 'essential', tip: 'Pep / Mr Price Home are cheapest' },
+      { name: 'Fitted sheets ×2', est: 150, pri: 'essential' },
+      { name: 'Pillow + 2 pillowcases', est: 120, pri: 'essential' },
+      { name: 'Warm blanket', est: 150, pri: 'essential', tip: 'Winter res rooms get cold' },
+      { name: 'Bath towels ×2', est: 120, pri: 'essential' },
+    ],
+  },
+  {
+    icon: '🍳', title: 'Kitchen & eating',
+    note: 'Check what your res / digs already provides first — don’t double-buy.',
+    items: [
+      { name: '2-plate stove', est: 350, pri: 'essential', tip: 'Only if not provided' },
+      { name: 'Pot + frying pan', est: 200, pri: 'essential' },
+      { name: 'Plate, bowl, mug, glass', est: 90, pri: 'essential' },
+      { name: 'Knife, fork, spoon set', est: 60, pri: 'essential' },
+      { name: 'Sharp knife + cutting board', est: 80, pri: 'recommended' },
+      { name: 'Kettle', est: 200, pri: 'essential' },
+      { name: 'Food containers (leftovers)', est: 60, pri: 'recommended' },
+      { name: 'Can opener', est: 25, pri: 'recommended' },
+      { name: 'Dish cloth + scourer', est: 30, pri: 'essential' },
+    ],
+  },
+  {
+    icon: '🧼', title: 'Bathroom & toiletries',
+    items: [
+      { name: 'Toothbrush + toothpaste', est: 45, pri: 'essential' },
+      { name: 'Soap / body wash + shampoo', est: 80, pri: 'essential' },
+      { name: 'Toilet paper (multipack)', est: 60, pri: 'essential' },
+      { name: 'Deodorant', est: 35, pri: 'essential' },
+      { name: 'Sanitary products', est: 60, pri: 'essential', tip: 'If needed' },
+      { name: 'Basic first-aid (plasters, paracetamol, rehydrate)', est: 90, pri: 'recommended' },
+    ],
+  },
+  {
+    icon: '🧹', title: 'Cleaning',
+    note: 'Split the big stuff with a roommate — you don’t each need a broom.',
+    items: [
+      { name: 'All-purpose cleaner', est: 40, pri: 'essential' },
+      { name: 'Dishwashing liquid', est: 30, pri: 'essential' },
+      { name: 'Washing powder', est: 60, pri: 'essential' },
+      { name: 'Broom + dustpan', est: 70, pri: 'recommended', tip: 'Share with roommate' },
+      { name: 'Bin + bin bags', est: 60, pri: 'recommended' },
+    ],
+  },
+  {
+    icon: '🔌', title: 'Study & tech',
+    items: [
+      { name: 'Notebooks + pens', est: 90, pri: 'essential' },
+      { name: 'Backpack', est: 200, pri: 'essential' },
+      { name: 'Charger + multiplug / extension', est: 120, pri: 'essential', tip: 'Lifesaver during load shedding' },
+      { name: 'Power bank', est: 250, pri: 'recommended', tip: 'Charge phone when power is out' },
+      { name: 'Laptop / tablet', est: 0, pri: 'recommended', tip: 'Ask about NSFAS device or a campus loan scheme' },
+      { name: 'Desk lamp', est: 100, pri: 'optional' },
+    ],
+  },
+  {
+    icon: '🍲', title: 'First grocery shop (starter pantry)',
+    note: 'Roughly a week of basics to land with so you’re never stuck with nothing.',
+    items: [
+      { name: 'Maize meal (pap)', est: 40, pri: 'essential' },
+      { name: 'Rice / pasta', est: 40, pri: 'essential' },
+      { name: 'Bread', est: 20, pri: 'essential' },
+      { name: 'Eggs (½ dozen+)', est: 40, pri: 'essential' },
+      { name: 'Tinned fish / beans ×3', est: 60, pri: 'essential' },
+      { name: 'Cooking oil', est: 45, pri: 'essential' },
+      { name: 'Salt + a spice (e.g. Aromat)', est: 40, pri: 'recommended' },
+      { name: 'Tea / coffee + sugar', est: 80, pri: 'recommended' },
+      { name: 'Long-life milk', est: 20, pri: 'recommended' },
+      { name: 'Onions, potatoes, tomatoes', est: 60, pri: 'essential' },
+    ],
+  },
+]
+
+// Documents to bring — not money, a separate "sort this" checklist
+const KIT_DOCS = [
+  'Certified copy of your ID',
+  'Proof of registration / acceptance letter',
+  'NSFAS or bursary confirmation',
+  'Bank card + banking app set up',
+  'Proof of residence / signed lease',
+  'A few passport photos',
+  'Emergency contacts written on paper (in case your phone dies)',
+]
+
+const PRI_META: Record<Pri, { label: string; color: string }> = {
+  essential: { label: 'Need', color: '#ef4444' },
+  recommended: { label: 'Soon', color: '#f59e0b' },
+  optional: { label: 'Nice', color: 'var(--text-muted)' },
+}
+
+function KitTab() {
+  const [have, setHave] = useState<Record<string, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem('varsityos-starter-kit') || '{}') } catch { return {} }
+  })
+  const [essentialsOnly, setEssentialsOnly] = useState(false)
+
+  const toggle = (key: string) => {
+    const next = { ...have, [key]: !have[key] }
+    setHave(next)
+    try { localStorage.setItem('varsityos-starter-kit', JSON.stringify(next)) } catch { /* ignore */ }
+  }
+
+  // Totals from cost items still needed (not yet ticked as "have")
+  let stillAll = 0, stillEssential = 0, fullTotal = 0
+  for (let ci = 0; ci < KIT.length; ci++) {
+    for (let ii = 0; ii < KIT[ci].items.length; ii++) {
+      const it = KIT[ci].items[ii]
+      fullTotal += it.est
+      if (!have[`${ci}-${ii}`]) {
+        stillAll += it.est
+        if (it.pri === 'essential') stillEssential += it.est
+      }
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ ...card, background: `${ACCENT}0d`, borderColor: `${ACCENT}40`, fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+        🎒 Everything you actually need to move into res or digs, with rough rand prices. Tick what you already have or have bought — the total updates so you can budget the rest. Buy cheap (Pep, Shoprite, Mr Price Home, second-hand) and share big items with a roommate.
+      </div>
+
+      {/* Live totals */}
+      <div style={{ ...card, display: 'flex', gap: 10 }}>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: '#ef4444' }}>{fmtR(stillEssential)}</div>
+          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>ESSENTIALS LEFT</div>
+        </div>
+        <div style={{ width: 1, background: 'var(--border-subtle)' }} />
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: ACCENT }}>{fmtR(stillAll)}</div>
+          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>EVERYTHING LEFT</div>
+        </div>
+        <div style={{ width: 1, background: 'var(--border-subtle)' }} />
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{fmtR(fullTotal)}</div>
+          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>FULL KIT</div>
+        </div>
+      </div>
+
+      <button onClick={() => setEssentialsOnly(v => !v)} style={{
+        alignSelf: 'flex-start', padding: '6px 12px', background: essentialsOnly ? `${ACCENT}1a` : 'transparent',
+        border: `1px solid ${essentialsOnly ? `${ACCENT}40` : 'var(--border-subtle)'}`, borderRadius: 100,
+        color: essentialsOnly ? ACCENT : 'var(--text-tertiary)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', cursor: 'pointer',
+      }}>
+        {essentialsOnly ? '● Essentials only' : '○ Show essentials only'}
+      </button>
+
+      {KIT.map((cat, ci) => {
+        const items = cat.items.map((it, ii) => ({ it, ii })).filter(({ it }) => !essentialsOnly || it.pri === 'essential')
+        if (items.length === 0) return null
+        return (
+          <div key={ci} style={{ ...card, padding: '12px 0' }}>
+            <div style={{ padding: '0 15px 8px' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{cat.icon} {cat.title}</div>
+              {cat.note && <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: 3, lineHeight: 1.4 }}>{cat.note}</div>}
+            </div>
+            {items.map(({ it, ii }) => {
+              const key = `${ci}-${ii}`
+              const got = !!have[key]
+              return (
+                <button key={key} onClick={() => toggle(key)} style={{
+                  display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 15px',
+                  background: 'none', border: 'none', borderTop: '1px solid var(--border-subtle)', cursor: 'pointer', textAlign: 'left',
+                }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 5, border: `1.5px solid ${got ? ACCENT : 'var(--border-default)'}`, background: got ? ACCENT : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#04181c', fontSize: '0.7rem', fontWeight: 900 }}>{got ? '✓' : ''}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.78rem', color: got ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: got ? 'line-through' : 'none' }}>{it.name}</div>
+                    {it.tip && <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>{it.tip}</div>}
+                  </div>
+                  {it.pri === 'essential' && !got && (
+                    <span style={{ fontSize: '0.5rem', fontFamily: 'var(--font-mono)', color: PRI_META.essential.color, border: `1px solid ${PRI_META.essential.color}40`, borderRadius: 100, padding: '1px 6px', flexShrink: 0 }}>NEED</span>
+                  )}
+                  <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: got ? 'var(--text-muted)' : 'var(--text-secondary)', flexShrink: 0 }}>
+                    {it.est > 0 ? fmtR(it.est) : '—'}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        )
+      })}
+
+      {/* Documents to bring */}
+      <div style={{ ...card, padding: '12px 0' }}>
+        <div style={{ padding: '0 15px 8px' }}>
+          <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>📄 Documents to bring</div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: 3 }}>Not things to buy — things to sort before you leave home.</div>
+        </div>
+        {KIT_DOCS.map((doc, i) => {
+          const key = `doc-${i}`
+          const got = !!have[key]
+          return (
+            <button key={key} onClick={() => toggle(key)} style={{
+              display: 'flex', alignItems: 'flex-start', gap: 10, width: '100%', padding: '9px 15px',
+              background: 'none', border: 'none', borderTop: '1px solid var(--border-subtle)', cursor: 'pointer', textAlign: 'left',
+            }}>
+              <div style={{ width: 18, height: 18, borderRadius: 5, border: `1.5px solid ${got ? ACCENT : 'var(--border-default)'}`, background: got ? ACCENT : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1, color: '#04181c', fontSize: '0.7rem', fontWeight: 900 }}>{got ? '✓' : ''}</div>
+              <span style={{ fontSize: '0.78rem', color: got ? 'var(--text-muted)' : 'var(--text-secondary)', lineHeight: 1.45, textDecoration: got ? 'line-through' : 'none' }}>{doc}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div style={{ ...card, fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+        💡 <strong style={{ color: 'var(--text-primary)' }}>On a tight budget?</strong> Start with essentials only, buy the rest over your first month, and check campus second-hand groups, donation drives and the SRC — many run starter packs for first-gen and NSFAS students. You can also split kitchen and cleaning gear with a roommate. Prices are rough guides, not exact.
+      </div>
+    </div>
+  )
+}
+
 /* ───────────────────────── Shell ───────────────────────── */
-export default function HousingOS() {
-  const [tab, setTab] = useState<Tab>('place')
+const VALID_TABS: Tab[] = ['place', 'kit', 'settle', 'admin', 'split', 'checklist']
+
+export default function HousingOS({ initialTab }: { initialTab?: string } = {}) {
+  const [tab, setTab] = useState<Tab>(
+    initialTab && VALID_TABS.includes(initialTab as Tab) ? initialTab as Tab : 'place'
+  )
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: `1px solid ${ACCENT}40`, borderRadius: 16, padding: '16px 18px' }}>
@@ -695,6 +919,7 @@ export default function HousingOS() {
         </div>
         <div style={{ flex: 1, minWidth: 0, padding: '14px 16px' }}>
           {tab === 'place' && <MyPlaceTab />}
+          {tab === 'kit' && <KitTab />}
           {tab === 'settle' && <SettleTab />}
           {tab === 'admin' && <LifeAdminTab />}
           {tab === 'split' && <SplitTab />}

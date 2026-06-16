@@ -6,7 +6,7 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Housing OS · VarsityOS' }
 
-export default async function HousingPage() {
+export default async function HousingPage({ searchParams }: { searchParams: { tab?: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
@@ -16,7 +16,7 @@ export default async function HousingPage() {
       <AmbientImage zone="movement" opacity={0.32} blurPx={18} saturation={1.2} />
       <TopBar title="Housing" />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
-        <HousingOS />
+        <HousingOS initialTab={searchParams?.tab} />
       </div>
     </div>
   )

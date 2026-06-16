@@ -28,6 +28,7 @@ import DailyBrief from '@/components/orchestration/DailyBrief'
 import SundayPlanning from '@/components/orchestration/SundayPlanning'
 import WeatherWidget from '@/components/dashboard/WeatherWidget'
 import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
+import FirstYearStarter from '@/components/dashboard/FirstYearStarter'
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
@@ -1467,6 +1468,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
           {/* Push notification opt-in — shows once for new users */}
           <NotificationPrompt />
+
+          {/* First-year onboarding nudge → Housing OS starter kit / settling in */}
+          <FirstYearStarter yearOfStudy={p?.year_of_study} firstName={firstName} />
 
           {/* Orchestration — intervention banner (urgency 1-4) */}
           <div style={{ marginBottom: 12 }}>
