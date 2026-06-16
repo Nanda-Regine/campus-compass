@@ -14,7 +14,7 @@ type OutcomesDB = Record<string, Record<string, OutcomeData>>
 
 /* ── Data ───────────────────────────────────────────────────── */
 const OUTCOMES_DATA: OutcomesDB = {
-  'UCT': {
+  'University of Cape Town (UCT)': {
     'BCom (Accounting)': {
       employment_rate: 92,
       median_salary: 24000,
@@ -114,7 +114,59 @@ const OUTCOMES_DATA: OutcomesDB = {
   },
 }
 
-const INSTITUTION_LIST = Object.keys(OUTCOMES_DATA)
+/* National estimates by broad degree field — used for any institution without
+   curated, institution-specific data. Indicative SA averages, clearly labelled. */
+const NATIONAL_OUTCOMES: Record<string, OutcomeData> = {
+  'Accounting (BCom / BAcc)':        { employment_rate: 88, median_salary: 22000, top_employers: ['PwC', 'Deloitte', 'KPMG', 'EY'], months_to_job: 4 },
+  'Finance / Economics':             { employment_rate: 85, median_salary: 21000, top_employers: ['ABSA', 'FNB', 'Standard Bank', 'Investec'], months_to_job: 4 },
+  'Computer Science / IT':           { employment_rate: 91, median_salary: 26000, top_employers: ['Amazon', 'Capitec', 'BBD', 'Entelect'], months_to_job: 3 },
+  'Engineering':                     { employment_rate: 86, median_salary: 26000, top_employers: ['Eskom', 'Sasol', 'WSP', 'Aurecon'], months_to_job: 4 },
+  'Law (LLB)':                       { employment_rate: 80, median_salary: 18000, top_employers: ['ENSafrica', 'Webber Wentzel', 'Cliffe Dekker'], months_to_job: 6 },
+  'Medicine (MBChB)':                { employment_rate: 98, median_salary: 34000, top_employers: ['Dept of Health', 'NHLS', 'Netcare'], months_to_job: 1 },
+  'Nursing':                         { employment_rate: 95, median_salary: 20000, top_employers: ['Netcare', 'Life Healthcare', 'Dept of Health'], months_to_job: 2 },
+  'Pharmacy':                        { employment_rate: 94, median_salary: 28000, top_employers: ['Clicks', 'Dis-Chem', 'Netcare'], months_to_job: 2 },
+  'Education / Teaching':            { employment_rate: 90, median_salary: 19000, top_employers: ['Dept of Basic Education', 'Public & private schools'], months_to_job: 3 },
+  'Psychology':                      { employment_rate: 70, median_salary: 17000, top_employers: ['Private practice', 'NGOs', 'HR departments'], months_to_job: 6 },
+  'Social Work':                     { employment_rate: 78, median_salary: 17000, top_employers: ['Dept of Social Development', 'NGOs'], months_to_job: 5 },
+  'Natural Sciences (BSc)':          { employment_rate: 75, median_salary: 20000, top_employers: ['CSIR', 'Sasol', 'Research institutes'], months_to_job: 6 },
+  'Business / Management':           { employment_rate: 76, median_salary: 18000, top_employers: ['Retail groups', 'Banks', 'Consultancies'], months_to_job: 5 },
+  'Marketing / Communications':      { employment_rate: 74, median_salary: 17000, top_employers: ['Ad agencies', 'Retail', 'Media houses'], months_to_job: 5 },
+  'Humanities (BA)':                 { employment_rate: 68, median_salary: 16000, top_employers: ['NGOs', 'Govt departments', 'Media'], months_to_job: 7 },
+  'Architecture / Built Environment':{ employment_rate: 80, median_salary: 22000, top_employers: ['Architecture firms', 'Property developers'], months_to_job: 5 },
+  'Agriculture':                     { employment_rate: 78, median_salary: 19000, top_employers: ['Agribusiness', 'Dept of Agriculture'], months_to_job: 5 },
+  'Hospitality / Tourism':           { employment_rate: 72, median_salary: 15000, top_employers: ['Hotel groups', 'Tour operators'], months_to_job: 5 },
+}
+const NATIONAL_DEGREES = Object.keys(NATIONAL_OUTCOMES)
+
+/* All 26 SA public universities (curated-data institutions appear first). */
+const INSTITUTION_LIST = [
+  'University of Cape Town (UCT)',
+  'University of the Witwatersrand (Wits)',
+  'Stellenbosch University (SU)',
+  'University of Pretoria (UP)',
+  'University of Johannesburg (UJ)',
+  'University of KwaZulu-Natal (UKZN)',
+  'North-West University (NWU)',
+  'University of the Free State (UFS)',
+  'Rhodes University (RU)',
+  'University of the Western Cape (UWC)',
+  'Nelson Mandela University (NMU)',
+  'University of South Africa (UNISA)',
+  'University of Limpopo (UL)',
+  'University of Venda (Univen)',
+  'University of Fort Hare (UFH)',
+  'University of Zululand (UNIZULU)',
+  'Walter Sisulu University (WSU)',
+  'Sol Plaatje University (SPU)',
+  'University of Mpumalanga (UMP)',
+  'Sefako Makgatho Health Sciences University (SMU)',
+  'Tshwane University of Technology (TUT)',
+  'Cape Peninsula University of Technology (CPUT)',
+  'Durban University of Technology (DUT)',
+  'Central University of Technology (CUT)',
+  'Vaal University of Technology (VUT)',
+  'Mangosuthu University of Technology (MUT)',
+]
 
 /* ── Salary calculator helpers ──────────────────────────────── */
 function calcSavings(monthlySalary: number, savingRate: number, years: number): number {
@@ -181,8 +233,14 @@ export default function GraduateOutcomes() {
   const [savingRate, setSavingRate] = useState<number>(15)
   const [years, setYears] = useState<number>(3)
 
-  const availableDegrees = selectedInstitution ? Object.keys(OUTCOMES_DATA[selectedInstitution] ?? {}) : []
-  const outcomeData = selectedInstitution && selectedDegree ? OUTCOMES_DATA[selectedInstitution]?.[selectedDegree] : null
+  const hasCurated = !!selectedInstitution && !!OUTCOMES_DATA[selectedInstitution]
+  const availableDegrees = !selectedInstitution
+    ? []
+    : hasCurated ? Object.keys(OUTCOMES_DATA[selectedInstitution]) : NATIONAL_DEGREES
+  const outcomeData = selectedInstitution && selectedDegree
+    ? (hasCurated ? OUTCOMES_DATA[selectedInstitution]?.[selectedDegree] : NATIONAL_OUTCOMES[selectedDegree])
+    : null
+  const isEstimate = !hasCurated
 
   const handleInstitutionChange = (inst: string) => {
     setSelectedInstitution(inst)
@@ -260,8 +318,15 @@ export default function GraduateOutcomes() {
             borderRadius: 16,
             padding: '18px 16px',
           }}>
-            <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 14, fontWeight: 600 }}>
-              Graduate Outcomes
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', fontWeight: 600 }}>
+                Graduate Outcomes
+              </div>
+              {isEstimate && (
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.04em', padding: '3px 8px', borderRadius: 9999, background: 'rgba(245,158,11,0.12)', border: '0.5px solid rgba(245,158,11,0.3)', color: '#f59e0b' }}>
+                  NATIONAL ESTIMATE
+                </span>
+              )}
             </div>
 
             {/* Top row: gauge + key metrics */}
@@ -431,7 +496,10 @@ export default function GraduateOutcomes() {
 
           {/* Disclaimer */}
           <p style={{ fontSize: 10, color: '#9ca3af', lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
-            Data is indicative only based on publicly available SA graduate market surveys (2023-2024). Individual outcomes vary significantly based on academic performance, experience, and economic conditions. Employment rates and salaries are approximations.
+            {isEstimate
+              ? 'National estimate by degree field — institution-specific data for this university is coming. '
+              : ''}
+            Data is indicative only, based on publicly available SA graduate market surveys (2023-2024). Individual outcomes vary significantly with academic performance, experience, and economic conditions.
           </p>
         </>
       )}

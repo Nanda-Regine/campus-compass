@@ -33,7 +33,23 @@ export async function GET(request: NextRequest) {
     supabase.from('alumni_bridge').select('id', { count: 'exact', head: true }),
   ])
 
-  return NextResponse.json({ record: mine ?? null, memberCount: count ?? 0 })
+  // Reactions to your own letter (thanks count + any replies)
+  let thanks = 0
+  let replies: { message: string; created_at: string }[] = []
+  if (mine?.id) {
+    const { data: reacts } = await supabase
+      .from('alumni_letter_reactions')
+      .select('kind, message, created_at')
+      .eq('bridge_id', mine.id)
+      .order('created_at', { ascending: false })
+      .limit(50)
+    if (reacts) {
+      thanks = reacts.filter(r => r.kind === 'thank').length
+      replies = reacts.filter(r => r.kind === 'reply' && r.message).map(r => ({ message: r.message as string, created_at: r.created_at }))
+    }
+  }
+
+  return NextResponse.json({ record: mine ?? null, memberCount: count ?? 0, thanks, replies })
 }
 
 // POST /api/alumni/bridge → create/update your pledge + letter

@@ -34,87 +34,108 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
   const active = TAB_CONFIG.find(t => t.id === tab)!
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex' }}>
 
-      {/* Page header */}
+      {/* Vertical side rail */}
       <div style={{
-        padding: '16px 16px 0',
-        background: `linear-gradient(180deg, ${active.accent}08 0%, transparent 100%)`,
-        borderBottom: '0.5px solid var(--border-subtle)',
-        marginBottom: 0,
-        transition: 'background 0.3s ease',
+        width: 64, flexShrink: 0,
+        position: 'sticky', top: 57,
+        height: 'calc(100vh - 57px)',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        borderRight: '0.5px solid var(--border-subtle)',
+        background: 'rgba(0,0,0,0.15)',
+        display: 'flex', flexDirection: 'column',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: `${active.accent}18`, border: `1px solid ${active.accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: active.accent }}>
+        {TAB_CONFIG.map(t => {
+          const isActive = tab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              title={t.label}
+              style={{
+                width: '100%', minHeight: 64,
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 5,
+                background: isActive ? `${t.accent}14` : 'transparent',
+                border: 'none',
+                borderLeft: `2px solid ${isActive ? t.accent : 'transparent'}`,
+                color: isActive ? t.accent : 'rgba(255,255,255,0.4)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                padding: '6px 2px',
+              }}
+            >
+              <span style={{ flexShrink: 0, display: 'flex', opacity: isActive ? 1 : 0.6 }}>{t.icon}</span>
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.46rem',
+                letterSpacing: '0.04em',
+                fontWeight: isActive ? 700 : 400,
+                lineHeight: 1,
+                textTransform: 'uppercase',
+              }}>
+                {t.label}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Content column */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+
+        {/* Compact header */}
+        <div style={{
+          padding: '14px 16px',
+          background: `linear-gradient(180deg, ${active.accent}0c 0%, transparent 100%)`,
+          borderBottom: '0.5px solid var(--border-subtle)',
+          display: 'flex', alignItems: 'center', gap: 10,
+          transition: 'background 0.3s ease',
+        }}>
+          <div style={{ width: 30, height: 30, borderRadius: 9, background: `${active.accent}18`, border: `1px solid ${active.accent}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: active.accent, flexShrink: 0 }}>
             {active.icon}
           </div>
-          <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
-              Social
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              {active.label}
             </div>
             {userInstitution && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {userInstitution}
               </div>
             )}
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div style={{ display: 'flex', gap: 0 }}>
-          {TAB_CONFIG.map(t => {
-            const isActive = tab === t.id
-            return (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                style={{
-                  flex: 1, minWidth: 0, padding: '10px 6px 10px',
-                  border: 'none', overflow: 'hidden',
-                  background: isActive ? `${t.accent}0c` : 'transparent',
-                  color: isActive ? t.accent : 'rgba(255,255,255,0.35)',
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: isActive ? 700 : 400,
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
-                  transition: 'all 0.2s ease',
-                  borderBottom: isActive ? `2px solid ${t.accent}` : '2px solid transparent',
-                }}
-              >
-                <span style={{ flexShrink: 0, display: 'flex' }}>{t.icon}</span>
-                <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{t.label}</span>
-              </button>
-            )
-          })}
-        </div>
+        {/* Tab content */}
+        {tab === 'aid' ? (
+          <MutualAidBoard userId={userId} university={userInstitution} />
+        ) : tab === 'wisdom' ? (
+          <WisdomArchive userId={userId} university={userInstitution} />
+        ) : (
+          <div style={{ padding: '16px 16px 0' }}>
+            {tab === 'feed' && (
+              <CampusFeed institution={userInstitution} />
+            )}
+            {tab === 'events' && (
+              <CampusEvents userId={userId} institution={userInstitution} />
+            )}
+            {tab === 'twins' && (
+              <StudyTwins
+                userId={userId}
+                userInstitution={userInstitution}
+                initialOptIn={initialOptIn}
+                initialWhatsapp={initialWhatsapp}
+              />
+            )}
+            {tab === 'partners' && (
+              <AccountabilityPartner userId={userId} />
+            )}
+          </div>
+        )}
       </div>
-
-      {tab === 'aid' ? (
-        <MutualAidBoard userId={userId} university={userInstitution} />
-      ) : tab === 'wisdom' ? (
-        <WisdomArchive userId={userId} university={userInstitution} />
-      ) : (
-        <div style={{ padding: '16px 16px 0' }}>
-          {tab === 'feed' && (
-            <CampusFeed institution={userInstitution} />
-          )}
-          {tab === 'events' && (
-            <CampusEvents userId={userId} institution={userInstitution} />
-          )}
-          {tab === 'twins' && (
-            <StudyTwins
-              userId={userId}
-              userInstitution={userInstitution}
-              initialOptIn={initialOptIn}
-              initialWhatsapp={initialWhatsapp}
-            />
-          )}
-          {tab === 'partners' && (
-            <AccountabilityPartner userId={userId} />
-          )}
-        </div>
-      )}
     </div>
   )
 }

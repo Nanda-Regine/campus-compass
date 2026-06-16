@@ -478,6 +478,11 @@ function AlumniLetters() {
   const [letters, setLetters] = useState<AlumniLetter[]>([])
   const [loaded, setLoaded] = useState(false)
   const [idx, setIdx] = useState(0)
+  const [thanked, setThanked] = useState<Record<string, boolean>>({})
+  const [replyOpen, setReplyOpen] = useState(false)
+  const [replyText, setReplyText] = useState('')
+  const [replySent, setReplySent] = useState<Record<string, boolean>>({})
+  const [busy, setBusy] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -493,16 +498,64 @@ function AlumniLetters() {
   const who = l.display_name || 'An alum'
   const meta = [l.course, l.grad_year].filter(Boolean).join(' · ')
 
+  async function react(kind: 'thank' | 'reply') {
+    setBusy(true)
+    try {
+      const res = await fetch('/api/alumni/bridge/react', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bridge_id: l.id, kind, message: kind === 'reply' ? replyText : undefined }),
+      })
+      if (res.ok) {
+        if (kind === 'thank') setThanked(t => ({ ...t, [l.id]: true }))
+        else { setReplySent(s => ({ ...s, [l.id]: true })); setReplyOpen(false); setReplyText('') }
+      }
+    } finally { setBusy(false) }
+  }
+
+  function next() {
+    setIdx(i => i + 1); setReplyOpen(false); setReplyText('')
+  }
+
   return (
     <div style={{ ...card, background: 'rgba(168,85,247,0.06)', borderColor: 'rgba(168,85,247,0.25)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-primary)' }}>💌 From those who walked before you</span>
         {letters.length > 1 && (
-          <button onClick={() => setIdx(i => i + 1)} style={{ fontSize: '0.66rem', fontFamily: 'var(--font-mono)', color: ACCENT, background: 'none', border: 'none', cursor: 'pointer' }}>another →</button>
+          <button onClick={next} style={{ fontSize: '0.66rem', fontFamily: 'var(--font-mono)', color: ACCENT, background: 'none', border: 'none', cursor: 'pointer' }}>another →</button>
         )}
       </div>
       <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.6, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>{l.letter}</div>
       <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', marginTop: 8 }}>— {who}{meta ? `, ${meta}` : ''}</div>
+
+      {/* Thank / reply */}
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <button onClick={() => react('thank')} disabled={busy || thanked[l.id]} style={{
+          flex: 1, padding: '8px 0', borderRadius: 9, cursor: thanked[l.id] ? 'default' : 'pointer',
+          border: `1px solid ${thanked[l.id] ? 'rgba(168,85,247,0.4)' : 'var(--border-default)'}`,
+          background: thanked[l.id] ? 'rgba(168,85,247,0.12)' : 'var(--bg-base)',
+          color: thanked[l.id] ? '#c4b5fd' : 'var(--text-secondary)', fontSize: '0.72rem', fontWeight: 600,
+        }}>{thanked[l.id] ? '💛 Thank you sent' : '🙏 Say thanks'}</button>
+        {!replySent[l.id] && (
+          <button onClick={() => setReplyOpen(o => !o)} disabled={busy} style={{
+            flex: 1, padding: '8px 0', borderRadius: 9, cursor: 'pointer', border: '1px solid var(--border-default)',
+            background: 'var(--bg-base)', color: 'var(--text-secondary)', fontSize: '0.72rem', fontWeight: 600,
+          }}>✍🏾 Reply</button>
+        )}
+        {replySent[l.id] && (
+          <div style={{ flex: 1, padding: '8px 0', textAlign: 'center', fontSize: '0.72rem', color: 'var(--text-muted)' }}>Reply sent ✓</div>
+        )}
+      </div>
+      {replyOpen && !replySent[l.id] && (
+        <div style={{ marginTop: 8 }}>
+          <textarea value={replyText} onChange={e => setReplyText(e.target.value)} rows={2} maxLength={500}
+            placeholder="Send them a line back — it means more than you know."
+            style={{ width: '100%', padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.78rem', resize: 'none', fontFamily: 'var(--font-body)', lineHeight: 1.5 }} />
+          <button onClick={() => react('reply')} disabled={busy || !replyText.trim()} style={{
+            marginTop: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: ACCENT, color: '#04181c',
+            fontSize: '0.74rem', fontWeight: 700, fontFamily: 'var(--font-mono)', cursor: replyText.trim() ? 'pointer' : 'default', opacity: replyText.trim() ? 1 : 0.5,
+          }}>Send reply</button>
+        </div>
+      )}
     </div>
   )
 }

@@ -52,6 +52,7 @@ function detectMode(year: string): Mode | null {
 
 export default function FirstYearStarter({ yearOfStudy, firstName }: Props) {
   const [mode, setMode] = useState<Mode | null>(null)
+  const [hasLetter, setHasLetter] = useState(false)
 
   useEffect(() => {
     const yr = yearOfStudy == null ? '' : String(yearOfStudy).trim().toLowerCase()
@@ -59,7 +60,14 @@ export default function FirstYearStarter({ yearOfStudy, firstName }: Props) {
     if (!m) return
     let dismissed = false
     try { dismissed = localStorage.getItem(CONFIG[m].dismissKey) === '1' } catch { /* ignore */ }
-    if (!dismissed) setMode(m)
+    if (dismissed) return
+    setMode(m)
+    if (m === 'first') {
+      fetch('/api/alumni/bridge?letters=1')
+        .then(r => r.json())
+        .then(d => setHasLetter((d.letters || []).length > 0))
+        .catch(() => {})
+    }
   }, [yearOfStudy])
 
   if (!mode) return null
@@ -82,6 +90,17 @@ export default function FirstYearStarter({ yearOfStudy, firstName }: Props) {
       <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.accent, marginBottom: 4, fontFamily: 'var(--font-mono)' }}>{c.kicker}</div>
       <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{c.title(firstName)}</div>
       <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.55, marginTop: 4, marginBottom: 12 }}>{c.blurb}</div>
+
+      {mode === 'first' && hasLetter && (
+        <Link href="/housing?tab=settle" style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', marginBottom: 10,
+          background: 'rgba(168,85,247,0.1)', border: '0.5px solid rgba(168,85,247,0.3)', borderRadius: 10, textDecoration: 'none',
+        }}>
+          <span style={{ fontSize: 16 }}>💌</span>
+          <span style={{ fontSize: 12.5, color: 'var(--text-secondary)', flex: 1 }}>An alum left a note for you — someone who was once right where you are.</span>
+          <span style={{ fontSize: 11, color: '#c4b5fd', fontFamily: 'var(--font-mono)' }}>Read →</span>
+        </Link>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 8 }}>
         {c.links.map(l => (

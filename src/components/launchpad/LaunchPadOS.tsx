@@ -301,6 +301,8 @@ interface BridgeRecord {
 function GiveBackTab() {
   const [rec, setRec] = useState<BridgeRecord | null>(null)
   const [memberCount, setMemberCount] = useState(0)
+  const [thanks, setThanks] = useState(0)
+  const [replies, setReplies] = useState<{ message: string; created_at: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -319,6 +321,8 @@ function GiveBackTab() {
       const res = await fetch('/api/alumni/bridge')
       const data = await res.json()
       setMemberCount(data.memberCount || 0)
+      setThanks(data.thanks || 0)
+      setReplies(data.replies || [])
       if (data.record) {
         const r: BridgeRecord = data.record
         setRec(r)
@@ -369,6 +373,26 @@ function GiveBackTab() {
           </div>
         )}
       </div>
+
+      {/* Love coming back */}
+      {rec && (thanks > 0 || replies.length > 0) && (
+        <div style={{ ...card, borderColor: 'rgba(168,85,247,0.3)' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
+            💛 Your letter landed
+          </div>
+          {thanks > 0 && (
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginBottom: replies.length ? 10 : 0 }}>
+              {thanks} {thanks === 1 ? 'first-year' : 'first-years'} said thank you.
+            </div>
+          )}
+          {replies.map((r, i) => (
+            <div key={i} style={{ background: 'var(--bg-base)', border: '1px solid var(--border-subtle)', borderRadius: 9, padding: '9px 11px', marginTop: 6 }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>{r.message}</div>
+              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginTop: 4 }}>— a first-year you helped</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Pledges */}
       <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginLeft: 2 }}>How do you want to give back?</div>
