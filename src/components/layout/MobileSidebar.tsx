@@ -7,7 +7,7 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils, Briefcase,
   Users, UserCircle, Heart, Dumbbell, Moon, Shield,
   MapPin, MessageCircle, Award, Building2, X,
-  GraduationCap, Globe, Flame,
+  GraduationCap, Globe, Flame, Rocket,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 
@@ -48,6 +48,7 @@ const SECTIONS: Section[] = [
     items: [
       { href: '/career',         icon: Briefcase, label: 'Career OS', accent: '#5B9CF5', emoji: '💼' },
       { href: '/dashboard/work', icon: Building2, label: 'Work',      accent: '#D4A84B', emoji: '🏢' },
+      { href: '/launchpad',      icon: Rocket,    label: 'Launch Pad', accent: '#6366F1', emoji: '🚀' },
     ],
   },
   {
@@ -63,7 +64,7 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/career', '/bursaries',
   '/notes', '/social', '/tutoring', '/health', '/sleep', '/fitness',
-  '/safety', '/movement', '/civic', '/regulate', '/housing',
+  '/safety', '/movement', '/civic', '/regulate', '/housing', '/launchpad',
 ]
 
 const STYLE_ID = 'varsityos-mobile-sidebar'

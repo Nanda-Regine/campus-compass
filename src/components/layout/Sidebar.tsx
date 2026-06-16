@@ -5,7 +5,7 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils,
   Briefcase, Users, UserCircle, Wifi, WifiOff,
   Heart, Dumbbell, Moon, Shield, MapPin, MessageCircle,
-  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon,
+  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon, Rocket,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -51,6 +51,7 @@ const SECTIONS: Section[] = [
     items: [
       { href: '/career',         icon: Briefcase, label: 'Career', accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.14)' },
       { href: '/dashboard/work', icon: Building2, label: 'Work',   accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.14)'  },
+      { href: '/launchpad',      icon: Rocket,   label: 'Launch Pad', accent: '#6366F1', accentDim: 'rgba(99,102,241,0.14)' },
     ],
   },
   {
@@ -66,7 +67,7 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/upgrade', '/career',
   '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
-  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing',
+  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing', '/launchpad',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220
