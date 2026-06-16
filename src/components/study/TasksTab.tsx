@@ -122,8 +122,14 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: task.title, description: task.description }),
       })
-      const data = await res.json()
-      decompDispatch({ type: 'done', taskId: task.id, steps: data.steps ?? [] })
+      const data = await res.json() as { steps?: { id: string; title: string; minutes: number }[] }
+      const steps = Array.isArray(data.steps) && data.steps.length > 0 ? data.steps : null
+      if (!res.ok || !steps) {
+        decompDispatch({ type: 'close', taskId: task.id })
+        toast.error('Could not break down task — try again')
+        return
+      }
+      decompDispatch({ type: 'done', taskId: task.id, steps })
     } catch {
       decompDispatch({ type: 'close', taskId: task.id })
       toast.error('Could not break down task — check your connection')

@@ -1,19 +1,21 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { callGroq, groqUnconfiguredResponse, GroqMissingKeyError } from '@/lib/groq'
+import { callGroq, GroqMissingKeyError } from '@/lib/groq'
 
 export const dynamic = 'force-dynamic'
 
 interface DecompStep { id: string; title: string; minutes: number }
 
 export async function POST(req: Request) {
+  let taskTitle = 'this task'
   try {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { title, description } = await req.json()
+    const { title, description } = await req.json() as { title?: string; description?: string }
     if (!title?.trim()) return NextResponse.json({ error: 'title required' }, { status: 400 })
+    taskTitle = title.trim()
 
     const context = description?.trim() ? ` Additional context: ${description.trim()}` : ''
 
@@ -48,9 +50,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ steps: steps.length ? steps : fallbackSteps(title) })
   } catch (e) {
-    if (e instanceof GroqMissingKeyError) return groqUnconfiguredResponse()
-    console.error('[tasks/decompose]', e)
-    return NextResponse.json({ steps: [] }, { status: 500 })
+    if (!(e instanceof GroqMissingKeyError)) console.error('[tasks/decompose]', e)
+    // Always return fallback steps — feature should work even without Groq key
+    return NextResponse.json({ steps: fallbackSteps(taskTitle) })
   }
 }
 
