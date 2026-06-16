@@ -97,6 +97,12 @@ export default function GuardianAccess() {
     }
   }
 
+  const shareWhatsApp = (token: string, label: string) => {
+    const url = guardianUrl(token)
+    const text = encodeURIComponent(`Hi! You can follow my university progress on VarsityOS:\n${url}\n\nNo login needed — just open the link.`)
+    window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer')
+  }
+
   const isExpired = (expiresAt: string) => new Date(expiresAt).getTime() < Date.now()
   const daysUntilExpiry = (expiresAt: string) =>
     Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86_400_000)
@@ -202,25 +208,37 @@ export default function GuardianAccess() {
                   </button>
                 </div>
                 {!expired && (
-                  <div style={{ display: 'flex', gap: 6 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{
-                      flex: 1, background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
+                      background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
                       borderRadius: 8, padding: '6px 10px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)',
                       fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {guardianUrl(t.token)}
                     </div>
-                    <button
-                      onClick={() => copyLink(t.token)}
-                      style={{
-                        padding: '6px 12px', borderRadius: 8, fontSize: '0.68rem', fontWeight: 600,
-                        background: copied === t.token ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
-                        color: copied === t.token ? '#4ecf9e' : 'rgba(255,255,255,0.5)',
-                        border: '1px solid var(--border-subtle)', cursor: 'pointer', flexShrink: 0,
-                      }}
-                    >
-                      {copied === t.token ? '✓ Copied' : 'Copy'}
-                    </button>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        onClick={() => copyLink(t.token)}
+                        style={{
+                          flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: '0.68rem', fontWeight: 600,
+                          background: copied === t.token ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
+                          color: copied === t.token ? '#4ecf9e' : 'rgba(255,255,255,0.5)',
+                          border: '1px solid var(--border-subtle)', cursor: 'pointer',
+                        }}
+                      >
+                        {copied === t.token ? '✓ Copied' : 'Copy link'}
+                      </button>
+                      <button
+                        onClick={() => shareWhatsApp(t.token, t.label)}
+                        style={{
+                          flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: '0.68rem', fontWeight: 600,
+                          background: 'rgba(37,211,102,0.12)', color: '#25d366',
+                          border: '1px solid rgba(37,211,102,0.25)', cursor: 'pointer',
+                        }}
+                      >
+                        Share on WhatsApp
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

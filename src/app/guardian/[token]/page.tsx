@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 interface GuardianData {
   guardianLabel: string
   firstName: string
+  emoji: string
   university: string | null
   yearOfStudy: string | null
   streakDays: number
@@ -85,7 +86,7 @@ export default async function GuardianPage({ params }: { params: { token: string
         {/* Student hero */}
         <div style={{ background: 'rgba(78,207,158,0.06)', border: '1px solid rgba(78,207,158,0.15)', borderRadius: 20, padding: '24px 20px', marginBottom: 20, textAlign: 'center' }}>
           <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #0d2b24, #1a4a3a)', border: '2px solid rgba(78,207,158,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.5rem' }}>
-            🎓
+            {data.emoji}
           </div>
           <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#fff', marginBottom: 4 }}>{data.firstName}</div>
           {data.university && (

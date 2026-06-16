@@ -37,7 +37,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   // 2. Parallel fetch — only safe fields, no financial amounts
   const [profileRes, examsRes, sessionsRes, tasksRes, budgetRes, expensesRes, streakRes] =
     await Promise.all([
-      admin.from('profiles').select('name, full_name, university, year_of_study, streak_count').eq('id', studentId).single(),
+      admin.from('profiles').select('name, full_name, university, year_of_study, streak_count, emoji').eq('id', studentId).single(),
       admin.from('exams').select('exam_name, exam_date, module:modules(module_name)').eq('user_id', studentId).gte('exam_date', todayStr).lte('exam_date', exam14Ahead).order('exam_date', { ascending: true }).limit(5),
       admin.from('study_sessions').select('duration_minutes').eq('user_id', studentId).gte('started_at', `${week7Ago}T00:00:00`),
       admin.from('tasks').select('status, due_date').eq('user_id', studentId).neq('status', 'done'),
@@ -85,6 +85,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
   return NextResponse.json({
     guardianLabel: tokenRow.label as string,
     firstName,
+    emoji: (profile?.emoji as string | null) ?? '🎓',
     university: profile?.university ?? null,
     yearOfStudy: profile?.year_of_study ?? null,
     streakDays,
