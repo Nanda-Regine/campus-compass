@@ -11,6 +11,8 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 import NutritionTab from './NutritionTab'
 import RecipesTab from './RecipesTab'
 import KitchenGuide from './KitchenGuide'
+import dynamic from 'next/dynamic'
+const FoodSpendTracker = dynamic(() => import('./FoodSpendTracker'), { ssr: false })
 
 const GROCERY_CATS = [
   { id: 'protein', icon: '🥩', label: 'Protein', color: '#FB7185', tip: 'eggs, tuna, lentils, chicken, beans' },
@@ -33,7 +35,7 @@ interface MealsClientProps {
   }
 }
 
-type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes' | 'nutrition' | 'kitchen'
+type TabId = 'ai_plan' | 'weekly' | 'grocery' | 'recipes' | 'nutrition' | 'kitchen' | 'spend'
 
 const TABS = [
   { id: 'ai_plan'   as TabId, label: 'AI Planner', icon: '🤖' },
@@ -42,6 +44,7 @@ const TABS = [
   { id: 'recipes'   as TabId, label: 'Recipes',    icon: '👨‍🍳' },
   { id: 'nutrition' as TabId, label: 'Nutrition',  icon: '🥗' },
   { id: 'kitchen'   as TabId, label: 'Kitchen 101',icon: '🫙' },
+  { id: 'spend'     as TabId, label: 'Food Spend', icon: '💰' },
 ]
 
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -282,6 +285,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
     recipes:   '#e8834a',
     nutrition: '#FB7185',
     kitchen:   '#a78bfa',
+    spend:     '#34d399',
   }
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
@@ -789,6 +793,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
         {/* ─── Kitchen 101 Tab ─── */}
         {activeTab === 'kitchen' && <KitchenGuide />}
+        {activeTab === 'spend'   && <FoodSpendTracker userId={initialData.userId} foodBudget={initialData.foodBudget} />}
           </div>
         </div>
       </div>
