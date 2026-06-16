@@ -23,12 +23,12 @@ interface MutualAidRequest {
   user_id: string
   title: string
   description: string
-  type: AidType
+  request_type: AidType
   category: AidCategory
   institution: string | null
   is_anonymous: boolean
   is_fulfilled: boolean
-  expires_at: string | null
+  expiry_date: string | null
   created_at: string
 }
 
@@ -74,7 +74,7 @@ function AidCard({
   onFulfill: (id: string) => void
 }) {
   const cfg = CATEGORY_CONFIG[item.category]
-  const isOffer = item.type === 'offer'
+  const isOffer = item.request_type === 'offer'
 
   return (
     <div
@@ -153,9 +153,9 @@ function AidCard({
             <span style={{ color: '#6b7280', fontSize: '11px' }}>{item.institution}</span>
           )}
           <span style={{ color: '#4b5563', fontSize: '11px' }}>{timeAgo(item.created_at)}</span>
-          {item.expires_at && !item.is_fulfilled && (
+          {item.expiry_date && !item.is_fulfilled && (
             <span style={{ color: '#6b7280', fontSize: '11px' }}>
-              Expires {new Date(item.expires_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
+              Expires {new Date(item.expiry_date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
             </span>
           )}
         </div>
@@ -250,15 +250,14 @@ export default function MutualAidBoard({
     setSubmitError(null)
     try {
       const payload: Record<string, unknown> = {
-        title: postForm.title.trim(),
-        description: postForm.description.trim(),
-        type: postForm.type,
-        category: postForm.category,
+        title:        postForm.title.trim(),
+        description:  postForm.description.trim(),
+        request_type: postForm.type,
+        category:     postForm.category,
         is_anonymous: postForm.is_anonymous,
-        institution: university ?? null,
-        is_fulfilled: false,
+        institution:  university ?? null,
       }
-      if (postForm.expires_at) payload.expires_at = postForm.expires_at
+      if (postForm.expires_at) payload.expiry_date = postForm.expires_at
 
       const res = await fetch('/api/community/mutual-aid', {
         method: 'POST',
