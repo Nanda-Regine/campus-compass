@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-15 (Phases 1–13 ✅ complete — Open APIs + Client Intelligence shipped; live on Vercel)
+> Last updated: 2026-06-16 (Phase 18 ✅ complete — Accountability Partner, ICS import, Nova vision, Push notifications, Adzuna SA jobs; live on Vercel)
 
 ---
 
@@ -1135,8 +1135,19 @@ Next migration number: **000021**
 | `20260614000022_custom_calendar_events.sql` | ✅ Run | Custom calendar events |
 | `20260614000023_guardian_access_tokens.sql` | ✅ Run | guardian_access_tokens; 90-day expiry; max 5 per student; admin client for public guardian page |
 | `20260615000001_varsityos_amplification.sql` | ✅ Run | Amplification sprint: 15 tables — regulation_sessions, nervous_system_scores, past_papers, cycle_tracking, safe_walk_sessions, data_budget, health_conditions, wisdom_posts, wisdom_votes, mutual_aid_requests, study_accountability, walking_routes, user_values, safety_incidents, side_hustle_entries — all with RLS |
+| `20260615000002_commitment_contracts.sql` | ✅ Run | Commitment contracts table with RLS |
+| `20260615000003_procrastination_journal.sql` | ✅ Run | Procrastination profiler journal entries |
+| `20260615000004_community_challenges.sql` | ✅ Run | Community challenges + participant join table |
+| `20260615000005_profile_personalization.sql` | ✅ Run | Profile personalization columns (avatar, theme, pronouns) |
+| `20260616000001_institution_international_support.sql` | ✅ Run | International student support columns on profiles |
+| `20260616000002_lms_integrations.sql` | ✅ Run | LMS integration tokens and webhook state |
+| `20260616000003_discussion_boards_and_emergency_contacts.sql` | ✅ Run | Group + stokvel discussion threads; emergency contacts with Supabase insert/delete |
+| `20260616000004_assignment_messages_stokvel_board.sql` | ✅ Run | Assignment DMs and stokvel discussion board |
+| `20260616000005_income_entries_nsfas_link.sql` | ✅ Run | Income entries linked to NSFAS disbursement reference |
+| `20260616000006_study_accountability_fix.sql` | ✅ Run | `streak_days`, `updated_at` trigger, `university` column on study_accountability; full RLS |
+| `20260616000007_timetable_slots_label.sql` | ✅ Run | `label` column on timetable_slots (ICS import subject name) |
 
-Next migration number: **000025**
+Next migration number: **000036**
 
 ---
 
@@ -1229,7 +1240,188 @@ Four zero-API-key integrations. No new paid dependencies.
 
 ---
 
-## The Student We Build For
+## Phase 14 — Bug Sweep ✅ (2026-06-15)
+
+21 bugs fixed across Phase 12 + 13 builds. All TypeScript clean.
+
+| Bug | Fix |
+|---|---|
+| Burnout trend always shows "stable" | Fixed trend direction logic — compares latest vs earliest score in window, not adjacent pairs |
+| Grade cache ratchet — grade never drops | Removed `Math.max` guard; cache now overwrites with latest DB value on every fetch |
+| Signal handler leak | `useEffect` cleanup now calls `signals.off()` for all registered handlers |
+| NSScore formula mismatch | Unified 60/40 blend between raw burnout proxy and nervous system session score |
+| Upsert error unguarded in amplification routes | All upserts wrapped in try/catch; errors return 500 with structured JSON |
+| WMO weather code gap (codes 80–82 missing) | Added shower codes to WMO decoder map |
+| Timezone bug in exam filter | All exam date comparisons normalised to SAST (`Africa/Johannesburg`) before comparison |
+| Missing `TabErrorBoundary` labels on 8 tabs | All tabs now have named `label=` prop so errors show the correct tab name |
+
+---
+
+## Phase 15 — Security & Correctness Sprint ✅ (2026-06-15)
+
+23 security and correctness fixes. Commit: `f3109f3`.
+
+**Root cause discovered:** Dashboard loading failures traced to webpack file-watcher corruption caused by OneDrive syncing the `.next/` cache — fixed by adding `.next/` to OneDrive exclusions.
+
+| Category | Fix |
+|---|---|
+| Mass-assignment | All API routes now whitelist accepted body fields; extra keys ignored |
+| Unauthenticated GETs | 6 API routes missing auth guard now check session before any DB query |
+| `setInterval` leak | All polling intervals (`usePushNotifications`, weather widget) clear on unmount |
+| WhatsApp HMAC bypass | Signature verification uses `timingSafeEqual` — prevents timing attacks on the webhook |
+| PayFast UUID validation | ITN webhook rejects any `m_payment_id` that is not a valid UUID |
+| PayFast NaN amounts | Amount fields validated with `Number.isFinite()` before processing |
+| PayFast sensitive logging | Removed `console.log` of full ITN payload; logs only `m_payment_id` + status |
+
+---
+
+## Phase 16 — QA Hardening ✅ (2026-06-15)
+
+Profile, pagination, and mobile fixes. All TypeScript clean.
+
+### Profile load/save
+- Null profile on first login no longer returns 404 — server component returns empty profile shape; client creates on first save
+- Bio update allowlisted: only `bio`, `university`, `year_of_study`, `faculty`, `major`, `funding_type`, `avatar_url`, `theme`, `pronouns` accepted
+- Fetch error from profile API now shows user-facing toast instead of blank page
+
+### Pagination limits
+- 10 list pages capped at 50 items max (previously unbounded)
+- 5 API routes now enforce `limit = Math.min(requested, 100)` to prevent scraping
+
+### Mobile responsiveness
+- Vertical side rails stable on iOS Safari (safe-area-inset applied to bottom padding)
+- Tab content areas no longer clip on screens narrower than 375px
+- `ICSImportButton` preview table horizontally scrollable on mobile
+
+### Offline
+- `CACHED_PAGES` expanded from 6 → 14 routes — timetable, meals, safety, movement, career, growth all pre-cached on install
+
+---
+
+## Phase 17 — Social OS + Hustle Layer ✅ (2026-06-16)
+
+80+ bugs fixed across 3 commits. New rooms wired to Supabase and to Nova context.
+
+### What shipped
+
+#### Safety Reports → Supabase
+`SafetyClient.tsx` incident report form now inserts to `safety_incidents` table. Map overlay fetches and pins recent incidents. Incidents feed into Nova context via Phase 12's `safetyNote`.
+
+#### Group + Stokvel Discussion Boards
+Migration `000031` (discussion_boards_and_emergency_contacts): `discussion_threads` + `discussion_posts` tables with RLS.
+- Group rooms show threaded discussion board: create thread, reply, delete own posts
+- Stokvel board: same component re-used with `board_type='stokvel'`
+- Nova can reference recent group discussion topics in advice
+
+#### Hustle Side Nav
+`HustleClient.tsx` — new side rail with 5 tabs: Ideas, Journal, Funding, Invoices, Income. Side Hustle entries wired to `side_hustle_entries` table. Income tracked separately from main budget.
+
+#### Study Velocity Rescue Mode
+When `studyVelocity < 0.3 hrs/day` for 3+ consecutive days AND exam pressure ≥ 50:
+- New rule `study_velocity_critical` (urgency 4) fires
+- CatchUpPlanner auto-opens with Nova pre-populated with rescue prompt
+- Rescue mode badge shown in StudyVelocityTab
+
+#### Emergency Contacts → Supabase
+SOS contacts previously hardcoded. Now read from and written to `emergency_contacts` table. Three-contact limit enforced at DB level via CHECK constraint.
+
+### Migrations
+| File | Number | Description |
+|---|---|---|
+| `20260616000003_discussion_boards_and_emergency_contacts.sql` | 000031 | Discussion threads + emergency contacts with RLS |
+| `20260616000004_assignment_messages_stokvel_board.sql` | 000032 | Assignment DMs + stokvel board |
+| `20260616000005_income_entries_nsfas_link.sql` | 000033 | Income entries linked to NSFAS reference |
+
+---
+
+## Phase 18 — Polish, Live APIs & Push Activation ✅ (2026-06-16)
+
+Five features that were scaffolded but non-functional made fully live.
+
+### 18A — Accountability Partner (Fix)
+
+`src/components/community/AccountabilityPartner.tsx` — complete rewrite (~450 lines).
+
+**What was broken:** university field missing from insert + filter, partner names showed raw UUIDs, streak never incremented, RLS blocked all reads.
+
+**What shipped:**
+- University auto-loaded from `profiles` on mount; passed to insert and to the open-goals filter so users only see goals from their own institution
+- Partner names batch-fetched: `.from('profiles').select('id, name').in('id', requesterIds)` — single query for all visible goals
+- Streak logic: `streak_days` column + `updated_at` trigger (migration 000034). Days computed from consecutive check-in dates; resets to 0 on missed day
+- Accept guard: `.is('partner_id', null)` on UPDATE prevents two users accepting simultaneously (race condition)
+- Three tabs: Find (open goals from same university), Active (your current partnership), History (completed/expired)
+
+Migration `20260616000006_study_accountability_fix.sql` (000034): adds `streak_days`, `updated_at` trigger, `university`; enables RLS with correct policies.
+
+### 18B — ICS Timetable Import (Fix)
+
+**What was broken:** all imported slots showed "Class" (no subject name); re-importing created duplicates; no way to clear old timetable before import.
+
+**What shipped:**
+- Migration `20260616000007_timetable_slots_label.sql` (000035): adds `label text` column to `timetable_slots`
+- `src/types/index.ts`: `label: string | null` added to `TimetableEntry` interface
+- `src/app/api/timetable/import-ics/route.ts`: sets `label: summary || null` on every slot; accepts `replace?: boolean` in request body; when `replace=true`, deletes all existing slots for the user before inserting
+- `src/components/study/ICSImportButton.tsx`: "Replace existing timetable" checkbox (red border when checked), warning banner on preview step, confirm button shows `Replace & import N entries` vs `Import N entries`
+- `src/components/study/TimetableTab.tsx`: grid label shows `module_name ?? entry.label ?? 'Class'` — ICS subject name surfaces when no module is matched
+
+### 18C — Nova Multi-Modal (Fix)
+
+**What was broken:** `capture="environment"` on the file input locked iOS users to camera only (no gallery access); `max_tokens: 1024` truncated image answers; no paste-from-clipboard support.
+
+**What shipped:**
+- `src/app/nova/page.tsx`: removed `capture="environment"` → mobile users see camera + gallery chooser
+- Added `handlePaste` on the textarea — detects image items in clipboard, compresses and sets as pending image (same `compressImage` pipeline as camera capture)
+- Textarea placeholder switches to `'Add a question about your image…'` when image is pending
+- `src/app/api/nova/route.ts`: `max_tokens: imageData ? 2048 : 1024` — vision answers no longer truncated
+
+### 18D — Push Notifications (Activation)
+
+**What was blocking:** the entire push notification system (service worker, `usePushNotifications` hook, `/api/push/subscribe` + `/api/push/notify` + `/api/push/state-alert` routes, Inngest cron functions) was fully built but had no VAPID keys — every subscription call threw a 500.
+
+**What shipped:**
+- Generated VAPID key pair via `npx web-push generate-vapid-keys`
+- Added `NEXT_PUBLIC_VAPID_PUBLIC_KEY` + `VAPID_PRIVATE_KEY` to `.env.local` and Vercel environment variables
+- Push notifications now fully live: streak nudge (21:00 SAST), Sunday planner reminder, rules engine state-alerts (urgency ≥ 4)
+
+No code changes — keys only.
+
+### 18E — Adzuna SA Jobs (Upgrade)
+
+`src/components/career/CareerClient.tsx` — `JobsTab` upgraded from blank empty state to a live, filterable job feed.
+
+**What was broken:** auto-load on mount missing; raw HTML in descriptions; no filters; no pagination; no NSFAS income warning; no posted date.
+
+**What shipped:**
+```typescript
+const QUICK_FILTERS = [
+  { label: '🎓 Graduate',   q: 'graduate programme' },
+  { label: '📋 Internship', q: 'internship' },
+  { label: '🏆 Learnership',q: 'learnership' },
+  { label: '⏰ Part-time',  q: 'part time' },
+  { label: '🌍 Remote',     q: 'remote work from home' },
+  { label: '💻 Tech',       q: 'software developer engineer' },
+] as const
+```
+- Auto-loads `graduate internship learnership` on mount
+- `stripHtml()` helper decodes HTML entities + strips tags from Adzuna descriptions
+- `timeAgoJob()` shows "2h ago", "3d ago" relative dates
+- `fmtSalary()` formats `salary_min/max` as "R300k – R400k p/a"
+- **NSFAS warning badge**: ⚠️ shown when `salary_min > 79_080` (NSFAS annual allowance threshold) — warns student that accepting could affect bursary
+- Pagination: "Load 12 more" button; `doSearch(q, loc, page, append=true)` merges results; 5-page cap
+- Six filter chips with active state; tapping a chip reruns search with that query
+
+### Commits this sprint (Phase 18)
+```
+[accountability-partner]  fix: university filter, profile names, streak RLS on study_accountability
+[ics-import]             fix: label column, replace option for ICS timetable import
+[nova-vision]            fix: remove capture=environment, add paste handler, double vision token limit
+[push-notifications]     chore: activate push notifications with generated VAPID keys
+[adzuna-jobs]            feat: auto-load, quick filters, pagination, NSFAS warning on JobsTab
+```
+
+---
+
+
 
 Every feature decision is tested against Nomvula:
 
