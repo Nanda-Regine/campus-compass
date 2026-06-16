@@ -108,6 +108,7 @@ export interface TimetableEntry {
   end_time: string | null
   venue: string | null
   slot_type: string | null
+  label: string | null
   created_at: string
   // Joined
   module?: Module

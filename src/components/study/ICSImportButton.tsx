@@ -15,6 +15,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
   const [mode, setMode]         = useState<'url' | 'file'>('url')
   const [url, setUrl]           = useState('')
   const [icsText, setIcsText]   = useState('')
+  const [replace, setReplace]   = useState(false)
   const [step, setStep]         = useState<'input' | 'preview' | 'done'>('input')
   const [preview, setPreview]   = useState<PreviewData | null>(null)
   const [loading, setLoading]   = useState(false)
@@ -23,7 +24,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
 
   const reset = () => {
     setStep('input'); setPreview(null); setError('')
-    setUrl(''); setIcsText(''); setMode('url')
+    setUrl(''); setIcsText(''); setMode('url'); setReplace(false)
   }
   const close = () => { setOpen(false); reset() }
 
@@ -42,7 +43,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
       const res  = await fetch('/api/timetable/import-ics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...body, confirm: false }),
+        body: JSON.stringify({ ...body, confirm: false, replace }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Failed to parse'); return }
@@ -63,7 +64,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
       const res  = await fetch('/api/timetable/import-ics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...body, confirm: true }),
+        body: JSON.stringify({ ...body, confirm: true, replace }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Import failed'); return }
@@ -187,6 +188,29 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
                     </div>
                   )}
 
+                  {/* Replace toggle */}
+                  <label style={{
+                    display: 'flex', alignItems: 'center', gap: 10, marginTop: 14,
+                    padding: '10px 12px', borderRadius: 9, cursor: 'pointer',
+                    background: replace ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${replace ? 'rgba(239,68,68,0.25)' : 'rgba(255,255,255,0.07)'}`,
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={replace}
+                      onChange={e => setReplace(e.target.checked)}
+                      style={{ width: 14, height: 14, accentColor: '#ef4444', cursor: 'pointer' }}
+                    />
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: replace ? '#f87171' : 'var(--text-secondary)' }}>
+                        Replace existing timetable
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>
+                        Deletes all current slots before importing. Use when re-importing your calendar.
+                      </div>
+                    </div>
+                  </label>
+
                   {error && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 10 }}>{error}</p>}
 
                   <button
@@ -194,7 +218,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
                     disabled={loading || (mode === 'url' ? !url.trim() : !icsText)}
                     style={{
                       ...primaryBtnStyle,
-                      marginTop: 16,
+                      marginTop: 14,
                       opacity: loading || (mode === 'url' ? !url.trim() : !icsText) ? 0.5 : 1,
                       cursor: loading ? 'wait' : 'pointer',
                     }}
@@ -238,6 +262,16 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
                     </p>
                   )}
 
+                  {replace && (
+                    <div style={{
+                      padding: '8px 12px', borderRadius: 8, marginBottom: 12,
+                      background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+                      fontSize: 11, color: '#f87171',
+                    }}>
+                      ⚠ Your existing timetable slots will be deleted before importing.
+                    </div>
+                  )}
+
                   {error && <p style={{ fontSize: 12, color: '#ef4444', marginBottom: 10 }}>{error}</p>}
 
                   <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
@@ -247,9 +281,16 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
                     <button
                       onClick={confirmImport}
                       disabled={loading}
-                      style={{ ...primaryBtnStyle, flex: 1, opacity: loading ? 0.7 : 1, cursor: loading ? 'wait' : 'pointer' }}
+                      style={{
+                        ...primaryBtnStyle, flex: 1,
+                        opacity: loading ? 0.7 : 1,
+                        cursor: loading ? 'wait' : 'pointer',
+                        ...(replace ? { border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', background: 'rgba(239,68,68,0.1)' } : {}),
+                      }}
                     >
-                      {loading ? 'Importing…' : `Import ${preview.slotCount + preview.examCount} entries`}
+                      {loading ? 'Importing…' : replace
+                        ? `Replace & import ${preview.slotCount + preview.examCount} entries`
+                        : `Import ${preview.slotCount + preview.examCount} entries`}
                     </button>
                   </div>
                 </>

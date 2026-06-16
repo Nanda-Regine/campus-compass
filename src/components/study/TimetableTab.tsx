@@ -413,7 +413,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                           color: col.text, lineHeight: 1.25,
                           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                         }}>
-                          {mod?.module_name?.split(' ').slice(0, 3).join(' ') ?? 'Class'}
+                          {mod?.module_name?.split(' ').slice(0, 3).join(' ') ?? entry.label ?? 'Class'}
                         </div>
                         {entry.venue && height > 40 && (
                           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5, color: col.text, opacity: 0.55, marginTop: 1 }}>

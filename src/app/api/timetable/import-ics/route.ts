@@ -116,7 +116,7 @@ function slotType(summary: string): string {
 interface SlotRow {
   user_id: string; module_id: null; day_of_week: number; day_of_week_text: string
   start_time: string; end_time: string; venue: string | null
-  slot_type: string; is_recurring: boolean
+  slot_type: string; is_recurring: boolean; label: string | null
 }
 
 interface ExamRow {
@@ -179,6 +179,8 @@ function parseICS(icsText: string, userId: string): ParseResult {
     const byweekday = ev.rrule?.options?.byweekday
     const rawDays   = Array.isArray(byweekday) ? byweekday as Array<string | number> : []
 
+    const slotLabel = summary || null
+
     if (rawDays.length > 0) {
       for (const raw of rawDays) {
         const day = byDayToDB(raw)
@@ -188,6 +190,7 @@ function parseICS(icsText: string, userId: string): ParseResult {
           day_of_week: day.db, day_of_week_text: day.text,
           start_time: startTime, end_time: endTime,
           venue: location, slot_type: slotType(summary), is_recurring: true,
+          label: slotLabel,
         })
       }
     } else {
@@ -197,6 +200,7 @@ function parseICS(icsText: string, userId: string): ParseResult {
         day_of_week: day.db, day_of_week_text: day.text,
         start_time: startTime, end_time: endTime,
         venue: location, slot_type: slotType(summary), is_recurring: false,
+        label: slotLabel,
       })
     }
   }
@@ -236,8 +240,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Request body too large (max 2 MB)' }, { status: 413 })
     }
 
-    const body = await req.json() as { url?: string; icsText?: string; confirm?: boolean }
-    const { url, icsText: rawText, confirm = false } = body
+    const body = await req.json() as { url?: string; icsText?: string; confirm?: boolean; replace?: boolean }
+    const { url, icsText: rawText, confirm = false, replace = false } = body
 
     if (!url && !rawText) {
       return NextResponse.json({ error: 'Provide a url or icsText' }, { status: 400 })
@@ -313,7 +317,11 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Confirm — batch upsert both tables
+    // Confirm — optionally clear existing slots first, then batch insert
+    if (replace) {
+      await supabase.from('timetable_slots').delete().eq('user_id', user.id)
+    }
+
     const errors: string[] = []
     let slotsCreated = 0
     let examsCreated = 0
