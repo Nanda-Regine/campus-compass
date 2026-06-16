@@ -32,6 +32,7 @@ import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import InsightsCard from '@/components/dashboard/InsightsCard'
+import WeeklyReport from '@/components/dashboard/WeeklyReport'
 import DomainPulse from '@/components/dashboard/DomainPulse'
 import CohortCard from '@/components/dashboard/CohortCard'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
@@ -1549,6 +1550,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* Orchestration — daily brief */}
               <TabErrorBoundary label="Daily Brief">
                 <DailyBrief />
+              </TabErrorBoundary>
+
+              {/* Weekly review — 7-day stats + Nova reflection */}
+              <TabErrorBoundary label="Weekly Report">
+                <WeeklyReport />
               </TabErrorBoundary>
 
               {/* Cross-domain correlation insights — 30-day pattern analysis */}
