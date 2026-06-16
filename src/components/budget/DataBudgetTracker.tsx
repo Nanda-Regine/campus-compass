@@ -63,7 +63,7 @@ export default function DataBudgetTracker({ userId }: Props) {
       .from('data_budget')
       .upsert({ user_id: userId, month_year: monthYear, data_budget_mb: mb, data_used_mb: 0, wifi_sessions: 0 }, { onConflict: 'user_id,month_year' })
       .select()
-      .single()
+      .maybeSingle()
     if (!error && data) setBudget(data)
     setSaving(false)
   }
@@ -76,7 +76,7 @@ export default function DataBudgetTracker({ userId }: Props) {
       .update({ data_used_mb: newUsed })
       .eq('id', budget.id)
       .select()
-      .single()
+      .maybeSingle()
     if (data) setBudget(data)
     setShowAddModal(false)
     setAddAmount(100)
@@ -89,7 +89,7 @@ export default function DataBudgetTracker({ userId }: Props) {
       .update({ wifi_sessions: budget.wifi_sessions + 1 })
       .eq('id', budget.id)
       .select()
-      .single()
+      .maybeSingle()
     if (data) setBudget(data)
   }
 

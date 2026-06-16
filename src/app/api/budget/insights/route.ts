@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .select('name, university, year_of_study, faculty, funding_type, ai_language')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     const appealLang = profile?.ai_language || 'English'
     const appealLangNote = appealLang !== 'English' ? `\nWrite the letter in ${appealLang}.` : ''

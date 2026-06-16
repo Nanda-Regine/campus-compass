@@ -398,7 +398,7 @@ export default function WisdomArchive({
         .from('wisdom_posts')
         .select('upvotes')
         .eq('id', postId)
-        .single()
+        .maybeSingle()
       if (current) {
         await supabase
           .from('wisdom_posts')

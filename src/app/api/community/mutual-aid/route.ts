@@ -30,12 +30,23 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = await req.json()
-  // Explicit allowlist prevents mass-assignment of privileged columns (status, is_fulfilled, etc.)
-  const { title, description, type, category, institution, is_urgent, contact_info } = body as Record<string, unknown>
+  const body = await req.json() as Record<string, unknown>
+  const { title, description, type, category, institution, is_urgent, contact_info } = body
+  if (!title || typeof title !== 'string' || !title.trim()) return NextResponse.json({ error: 'title required' }, { status: 400 })
+  if (!type || typeof type !== 'string') return NextResponse.json({ error: 'type required' }, { status: 400 })
+  if (!category || typeof category !== 'string') return NextResponse.json({ error: 'category required' }, { status: 400 })
   const { data, error } = await supabase
     .from('mutual_aid_requests')
-    .insert({ title, description, type, category, institution, is_urgent, contact_info, user_id: user.id })
+    .insert({
+      title: String(title).slice(0, 200),
+      description: typeof description === 'string' ? description.slice(0, 2000) : null,
+      type: String(type).slice(0, 50),
+      category: String(category).slice(0, 50),
+      institution: typeof institution === 'string' ? institution.slice(0, 100) : null,
+      is_urgent: typeof is_urgent === 'boolean' ? is_urgent : false,
+      contact_info: typeof contact_info === 'string' ? contact_info.slice(0, 200) : null,
+      user_id: user.id,
+    })
     .select()
     .single()
 

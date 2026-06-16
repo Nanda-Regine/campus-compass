@@ -27,7 +27,7 @@ export default async function DashboardPage() {
     { data: incomeEntries },
     { data: workedShifts },
   ] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
     supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
     supabase
       .from('tasks')

@@ -117,9 +117,9 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
     supabase.from('budgets').select('*').eq('user_id', userId).maybeSingle(),
-    supabase.from('tasks').select('*, module:modules(module_name)').eq('user_id', userId).neq('status', 'done').order('due_date', { ascending: true }),
-    supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }),
-    supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true),
+    supabase.from('tasks').select('*, module:modules(module_name)').eq('user_id', userId).neq('status', 'done').order('due_date', { ascending: true }).limit(100),
+    supabase.from('exams').select('*, module:modules(module_name)').eq('user_id', userId).gte('exam_date', today).order('exam_date', { ascending: true }).limit(30),
+    supabase.from('modules').select('module_name').eq('user_id', userId).eq('is_active', true).limit(30),
     supabase.from('expenses').select('amount').eq('user_id', userId).gte('expense_date', start).lte('expense_date', end),
     // ── New Sprint 7/8A intelligence tables ──────────────────────
     supabase.from('wellness_checkins').select('date, score, sleep, stress, social, energy, motivation').eq('user_id', userId).order('date', { ascending: false }).limit(7),

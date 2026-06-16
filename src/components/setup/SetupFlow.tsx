@@ -117,8 +117,9 @@ export default function SetupFlow() {
 
   // Auto-detect university from email domain on mount + load saved progress
   useEffect(() => {
+    let mounted = true
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
+      if (!mounted || !user) return
       userIdRef.current = user.id
 
       // Restore saved progress
@@ -155,6 +156,7 @@ export default function SetupFlow() {
         setUniversity(prev => prev || detected)
       }
     })
+    return () => { mounted = false }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
