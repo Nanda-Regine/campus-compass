@@ -20,6 +20,9 @@ import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
 import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
 import FinancialLiteracy101 from '@/components/finance/FinancialLiteracy101'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
+import dynamic from 'next/dynamic'
+
+const StokvelCircle = dynamic(() => import('@/components/budget/StokvelCircle'), { ssr: false })
 
 const supabase = createClient()
 
@@ -47,7 +50,7 @@ interface BudgetClientProps {
   }
 }
 
-type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit' | 'literacy'
+type TabId = 'overview' | 'expenses' | 'nsfas' | 'wallet' | 'ai_coach' | 'appeal' | 'credit' | 'literacy' | 'stokvel'
 
 const TABS = [
   { id: 'overview' as TabId,  label: 'Overview',  icon: '📊' },
@@ -58,6 +61,7 @@ const TABS = [
   { id: 'appeal' as TabId,    label: 'Appeal',    icon: '📝' },
   { id: 'credit' as TabId,    label: 'Credit',    icon: '📈' },
   { id: 'literacy' as TabId,  label: 'Money 101', icon: '🎓' },
+  { id: 'stokvel' as TabId,   label: 'Stokvel',   icon: '🫱🏾‍🫲🏽' },
 ]
 
 interface IncomeEntry {
@@ -1286,6 +1290,11 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         {/* ─── Financial Literacy 101 Tab ─── */}
         {activeTab === 'literacy' && (
           <FinancialLiteracy101 />
+        )}
+
+        {/* ─── Stokvel Savings Circle ─── */}
+        {activeTab === 'stokvel' && (
+          <StokvelCircle userId={initialData.userId} />
         )}
 
         </TabErrorBoundary>
