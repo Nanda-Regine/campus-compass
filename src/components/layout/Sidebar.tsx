@@ -5,7 +5,7 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils,
   Briefcase, Users, UserCircle, Wifi, WifiOff,
   Heart, Dumbbell, Moon, Shield, MapPin, MessageCircle,
-  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2,
+  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -37,6 +37,7 @@ const SECTIONS: Section[] = [
     id: 'life', label: 'LIFE',
     items: [
       { href: '/meals',    icon: Utensils, label: 'Meals',    accent: '#E87040', accentDim: 'rgba(232,112,64,0.14)'   },
+      { href: '/housing',  icon: HomeIcon, label: 'Housing',  accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
       { href: '/health',   icon: Heart,    label: 'Health',   accent: '#FB7185', accentDim: 'rgba(251,113,133,0.14)'  },
       { href: '/fitness',  icon: Dumbbell, label: 'Fitness',  accent: '#34D399', accentDim: 'rgba(52,211,153,0.14)'   },
       { href: '/sleep',    icon: Moon,     label: 'Sleep',    accent: '#818CF8', accentDim: 'rgba(129,140,248,0.14)'  },
@@ -65,7 +66,7 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/upgrade', '/career',
   '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
-  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms',
+  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220

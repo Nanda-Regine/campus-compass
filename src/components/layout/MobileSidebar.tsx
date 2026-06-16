@@ -35,6 +35,7 @@ const SECTIONS: Section[] = [
     id: 'life', label: 'Life',
     items: [
       { href: '/meals',    icon: Utensils, label: 'Meals',    accent: '#E87040', emoji: '🍲' },
+      { href: '/housing',  icon: Home,     label: 'Housing',  accent: '#06B6D4', emoji: '🏠' },
       { href: '/health',   icon: Heart,    label: 'Health',   accent: '#FB7185', emoji: '🏥' },
       { href: '/fitness',  icon: Dumbbell, label: 'Fitness',  accent: '#34D399', emoji: '💪' },
       { href: '/sleep',    icon: Moon,     label: 'Sleep',    accent: '#818CF8', emoji: '🌙' },
@@ -62,7 +63,7 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/career', '/bursaries',
   '/notes', '/social', '/tutoring', '/health', '/sleep', '/fitness',
-  '/safety', '/movement', '/civic', '/regulate',
+  '/safety', '/movement', '/civic', '/regulate', '/housing',
 ]
 
 const STYLE_ID = 'varsityos-mobile-sidebar'
