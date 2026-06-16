@@ -17,7 +17,7 @@ export default async function ReferralPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('referral_code, referral_credits, name')
+    .select('referral_code, name')
     .eq('id', user.id)
     .single()
 
@@ -28,6 +28,7 @@ export default async function ReferralPage() {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za'
   const referralUrl = `${appUrl}/auth/signup?ref=${profile?.referral_code}`
+  const REFERRER_XP = 250
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
@@ -37,7 +38,7 @@ export default async function ReferralPage() {
           referralCode={profile?.referral_code ?? ''}
           referralUrl={referralUrl}
           referralCount={referralCount ?? 0}
-          creditsEarned={profile?.referral_credits ?? 0}
+          xpEarned={(referralCount ?? 0) * REFERRER_XP}
           name={profile?.name ?? 'Student'}
         />
       </div>

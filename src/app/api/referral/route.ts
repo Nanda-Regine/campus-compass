@@ -13,7 +13,7 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('referral_code, referral_credits, name')
+      .select('referral_code, name')
       .eq('id', user.id)
       .single()
 
@@ -25,12 +25,15 @@ export async function GET() {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://varsityos.co.za'
     const referralUrl = `${appUrl}/auth/signup?ref=${profile?.referral_code}`
 
+    const REFERRER_XP = 250
+    const count = referralCount || 0
+
     return NextResponse.json({
       referralCode: profile?.referral_code,
       referralUrl,
-      referralCount: referralCount || 0,
-      creditsEarned: profile?.referral_credits || 0,
-      // Each referral gives 50 credits to referrer, so pending = (count * 50) - creditsEarned could indicate reversals
+      referralCount: count,
+      xpEarned: count * REFERRER_XP,
+      xpPerReferral: REFERRER_XP,
     })
   } catch (error) {
     console.error('Referral GET error:', error)
@@ -55,13 +58,16 @@ export async function POST(request: NextRequest) {
 
     if (result.error) throw result.error
 
-    const data = result.data as { error?: string; success?: boolean; referrer_bonus?: number; referred_bonus?: number }
+    const data = result.data as { error?: string; success?: boolean; referrer_xp?: number; referred_xp?: number }
     if (data?.error) return NextResponse.json({ error: data.error }, { status: 400 })
 
+    const referredXp = data?.referred_xp || 100
+    const referrerXp = data?.referrer_xp || 250
     return NextResponse.json({
       success: true,
-      bonusMessages: data?.referred_bonus || 10,
-      message: `You got ${data?.referred_bonus || 10} bonus Nova messages! Your friend got a reward too.`,
+      referredXp,
+      referrerXp,
+      message: `🎉 +${referredXp} XP unlocked! Your friend earned ${referrerXp} XP too.`,
     })
   } catch (error) {
     console.error('Referral POST error:', error)

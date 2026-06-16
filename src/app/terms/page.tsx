@@ -92,9 +92,9 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">6. Referral Program</h2>
             <ul className="list-disc list-inside text-white/55 space-y-1.5">
-              <li>Referral credits are bonus Nova messages, not cash or real premium status</li>
-              <li>Credits are awarded only when a referred user successfully creates and verifies an account</li>
-              <li>Each user may only benefit from one referral credit (as a referred user)</li>
+              <li>Referral rewards are XP (experience points) that climb your level and unlock badges — not cash or real premium status</li>
+              <li>XP is awarded only when a referred user successfully creates and verifies an account (referrer +250 XP, new user +100 XP)</li>
+              <li>Each user may only benefit from one referral (as a referred user)</li>
               <li>We reserve the right to reverse referral credits if abuse or fraud is detected</li>
               <li>Referral credits have no monetary value and cannot be transferred or redeemed for cash</li>
               <li>We may modify or discontinue the referral program at any time with reasonable notice</li>

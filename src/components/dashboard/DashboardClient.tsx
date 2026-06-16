@@ -1144,7 +1144,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     localStorage.removeItem('pending_ref')
     fetch('/api/referral', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: pendingRef }) })
       .then(r => r.json())
-      .then(d => { if (d.success) import('react-hot-toast').then(({ default: toast }) => { toast.success(`Referral applied! +${d.bonusMessages} Nova messages.`) }) })
+      .then(d => { if (d.success) import('react-hot-toast').then(({ default: toast }) => { toast.success(`🎉 Referral applied! +${d.referredXp ?? 100} XP unlocked.`) }) })
       .catch(() => {})
     return () => ctrl.abort()
   }, [])

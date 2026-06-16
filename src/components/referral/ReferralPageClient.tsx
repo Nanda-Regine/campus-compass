@@ -9,9 +9,11 @@ interface Props {
   referralCode: string
   referralUrl: string
   referralCount: number
-  creditsEarned: number
+  xpEarned: number
   name: string
 }
+
+const XP_PER_REFERRAL = 250
 
 const HOW_IT_WORKS = [
   {
@@ -28,20 +30,20 @@ const HOW_IT_WORKS = [
   },
   {
     step: '03',
-    icon: '🎁',
-    title: 'Both get rewarded',
-    desc: 'You get +50 bonus Nova messages. Your friend gets +10 to kick things off.',
+    icon: '⚡',
+    title: 'Both level up',
+    desc: 'You bank +250 XP for every friend who joins. They get a +100 XP head-start. XP climbs your level and unlocks badges.',
   },
 ]
 
 const MILESTONES = [
-  { count: 1,  reward: '+50 Nova msgs',  icon: '⭐' },
-  { count: 3,  reward: '+150 Nova msgs', icon: '🌟' },
-  { count: 5,  reward: '+250 Nova msgs + shoutout', icon: '🏆' },
-  { count: 10, reward: '1 month Premium', icon: '👑' },
+  { count: 1,  reward: '+250 XP',                   icon: '⭐' },
+  { count: 3,  reward: '750 XP total + 🤝 badge',   icon: '🌟' },
+  { count: 5,  reward: '1,250 XP + campus shoutout', icon: '🏆' },
+  { count: 10, reward: '2,500 XP + 1 month Premium', icon: '👑' },
 ]
 
-export default function ReferralPageClient({ referralCode, referralUrl, referralCount, creditsEarned, name }: Props) {
+export default function ReferralPageClient({ referralCode, referralUrl, referralCount, xpEarned, name }: Props) {
   const [copied, setCopied] = useState(false)
 
   const copyLink = () => {
@@ -53,7 +55,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
 
   const shareWhatsApp = () => {
     const text = encodeURIComponent(
-      `Hey! I use VarsityOS to manage my varsity life — study planner, budget tracker, NSFAS help and an AI companion called Nova 🎓\n\nSign up free with my link and we both get bonus Nova messages:\n${referralUrl}`
+      `Hey! I use VarsityOS to manage my varsity life — study planner, budget tracker, NSFAS help and an AI companion called Nova 🎓\n\nSign up free with my link and you get +100 XP to start (I get 250 too 😏):\n${referralUrl}`
     )
     window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener')
   }
@@ -81,10 +83,10 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
           <p className="font-mono text-[0.65rem] text-white/40">
             {referralCount === 1 ? 'friend joined' : 'friends joined'} with your link
           </p>
-          {creditsEarned > 0 && (
+          {xpEarned > 0 && (
             <div className="mt-4 inline-flex items-center gap-2 bg-teal-600/15 border border-teal-600/20 rounded-full px-4 py-1.5">
-              <span className="text-sm">🎉</span>
-              <span className="font-mono text-[0.65rem] text-teal-300 font-bold">{creditsEarned} bonus messages earned</span>
+              <span className="text-sm">⚡</span>
+              <span className="font-mono text-[0.65rem] text-teal-300 font-bold">{xpEarned.toLocaleString()} XP earned from referrals</span>
             </div>
           )}
         </div>
@@ -223,8 +225,8 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
 
         {/* Fine print */}
         <p className="font-mono text-[0.55rem] text-white/20 text-center pb-2">
-          Bonus Nova messages are added to your monthly free limit. They do not carry over between months.
-          10-referral Premium reward is reviewed manually within 48 hours.
+          XP is permanent — it climbs your level and unlocks badges, and never expires.
+          The 10-referral Premium reward is reviewed manually within 48 hours.
         </p>
       </div>
     </div>
