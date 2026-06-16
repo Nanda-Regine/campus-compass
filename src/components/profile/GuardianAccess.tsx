@@ -25,6 +25,7 @@ export default function GuardianAccess() {
   const [showForm, setShowForm]   = useState(false)
   const [revoking, setRevoking]   = useState<string | null>(null)
   const [copied, setCopied]       = useState<string | null>(null)
+  const [showExplainer, setShowExplainer] = useState(false)
 
   const loadTokens = useCallback(async () => {
     setLoading(true)
@@ -109,7 +110,7 @@ export default function GuardianAccess() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <div>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>Guardian Access</div>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: 2 }}>
@@ -129,6 +130,38 @@ export default function GuardianAccess() {
           </button>
         )}
       </div>
+
+      {/* What does my guardian see? */}
+      <button
+        onClick={() => setShowExplainer(v => !v)}
+        style={{
+          width: '100%', textAlign: 'left', background: 'rgba(78,207,158,0.04)',
+          border: '1px solid rgba(78,207,158,0.12)', borderRadius: 10, padding: '8px 12px',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: 12,
+        }}
+      >
+        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>What does my guardian see?</span>
+        <span style={{ fontSize: '0.65rem', color: '#4ecf9e', transform: showExplainer ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+      </button>
+
+      {showExplainer && (
+        <div style={{ background: 'rgba(78,207,158,0.05)', border: '1px solid rgba(78,207,158,0.12)', borderRadius: 12, padding: '12px 14px', marginBottom: 12 }}>
+          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+            Your guardian sees a <strong style={{ color: 'rgba(255,255,255,0.8)' }}>read-only summary</strong> with:
+            <ul style={{ margin: '8px 0 0 14px', padding: 0, listStyle: 'disc' }}>
+              <li>Study streak (consecutive days)</li>
+              <li>Hours studied this week</li>
+              <li>Academic status (on track / needs attention / action required)</li>
+              <li>Budget health (managing well / watch spending / tight) — <em>no rand amounts</em></li>
+              <li>Upcoming exams in the next 14 days</li>
+            </ul>
+            <div style={{ marginTop: 8, padding: '6px 10px', background: 'rgba(78,207,158,0.08)', borderRadius: 8, fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
+              🔒 Your guardian can never see your grades, expenses, messages, or any personal details.
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create form */}
       {showForm && (

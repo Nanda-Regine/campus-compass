@@ -111,6 +111,10 @@ export default function SetupFlow() {
   const [tvetLevel, setTvetLevel] = useState('')
   const [tvetProgram, setTvetProgram] = useState('')
 
+  // Student status (citizenship / visa type)
+  const [studentStatus, setStudentStatus] = useState<'sa_citizen'|'permanent_resident'|'sadc_citizen'|'international'>('sa_citizen')
+  const [countryOfOrigin, setCountryOfOrigin] = useState('')
+
   // Auto-detect university from email domain on mount + load saved progress
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -203,6 +207,17 @@ export default function SetupFlow() {
   const isTVET = university.includes('TVET')
   const tvetPrograms = tvetLevel.startsWith('NCV') ? TVET_NCV_PROGRAMS : TVET_N_PROGRAMS
 
+  const institutionType: 'university' | 'tvet' | 'private' | 'unisa' =
+    isTVET ? 'tvet'
+    : university.includes('UNISA') ? 'unisa'
+    : ['Varsity College','Rosebank College','MSC College','Pearson','Boston','MANCOSA','Monash','Regenesys','Da Vinci','AFDA','Vega','AAA School','Stadio','Richfield','Regent','Lyceum','Damelin','Eduvos'].some(p => university.includes(p)) ? 'private'
+    : 'university'
+
+  // Filter NSFAS from funding options for international students
+  const availableFunding = FUNDING_OPTIONS.filter(f =>
+    !(studentStatus === 'international' && f.key === 'nsfas')
+  )
+
   const totalSteps = 6
 
   const goNext = () => setStep(s => Math.min(s + 1, totalSteps - 1))
@@ -268,6 +283,10 @@ export default function SetupFlow() {
         dietary_preferences: diet !== 'No restrictions' ? [diet] : [],
         dietary_pref: diet,
         living_situation: living || null,
+        institution_type: institutionType,
+        student_status: studentStatus,
+        country_of_origin: countryOfOrigin.trim() || null,
+        tvet_qualification: isTVET ? (tvetLevel.startsWith('NCV') ? 'ncv' : 'nated') : null,
         onboarding_complete: true,
         onboarding_completed: true,
       }
@@ -518,8 +537,41 @@ export default function SetupFlow() {
               <p className="text-sm text-white/50 mb-5">We&apos;ll help you track every rand.</p>
 
               <div className="space-y-4">
+                {/* Student status — determines funding options */}
                 <div className="space-y-2">
-                  {FUNDING_OPTIONS.map(f => (
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-1">Student status</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([
+                      { key: 'sa_citizen',          label: '🇿🇦 SA Citizen' },
+                      { key: 'permanent_resident',  label: '🏠 Permanent Resident' },
+                      { key: 'sadc_citizen',        label: '🌍 SADC Citizen' },
+                      { key: 'international',       label: '✈️ International Student' },
+                    ] as const).map(s => (
+                      <button
+                        key={s.key}
+                        type="button"
+                        onClick={() => { setStudentStatus(s.key); if (s.key !== 'international') setCountryOfOrigin('') }}
+                        className={cn(
+                          'px-3 py-2.5 rounded-xl border text-left text-xs font-display font-bold transition-all',
+                          studentStatus === s.key
+                            ? 'bg-sky-500/15 border-sky-500/50 text-sky-300'
+                            : 'bg-white/3 border-white/8 text-white/60 hover:bg-white/8'
+                        )}
+                      >{s.label}</button>
+                    ))}
+                  </div>
+                  {studentStatus === 'international' && (
+                    <input
+                      value={countryOfOrigin}
+                      onChange={e => setCountryOfOrigin(e.target.value)}
+                      placeholder="Country of origin (e.g. Zimbabwe, Nigeria, Kenya)"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-sky-500/50 focus:outline-none mt-1"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  {availableFunding.map(f => (
                     <button
                       key={f.key}
                       type="button"
@@ -542,10 +594,17 @@ export default function SetupFlow() {
 
                 {funding === 'nsfas' && (
                   <div className="space-y-3 p-4 bg-teal-900/20 border border-teal-600/20 rounded-xl">
-                    <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-wide">NSFAS Allowances</div>
-                    <Input label="Monthly Living Allowance (R)" type="number" placeholder="e.g. 1500" value={nsfasLiving} onChange={e => setNsfasLiving(e.target.value)} />
-                    <Input label="Accommodation Allowance (R)" type="number" placeholder="e.g. 2200" value={nsfasAccom}  onChange={e => setNsfasAccom(e.target.value)} />
-                    <Input label="Books & Stationery (R)"      type="number" placeholder="e.g. 300"  value={nsfasBooks}  onChange={e => setNsfasBooks(e.target.value)} />
+                    <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-wide">
+                      {isTVET ? 'TVET NSFAS Allowances' : 'NSFAS Allowances'}
+                    </div>
+                    {isTVET && (
+                      <p className="font-mono text-[0.58rem] text-teal-300/70 leading-relaxed">
+                        TVET NSFAS: R1,625/month living · R2,400–R5,000/month accommodation · R455/month books (R5,460/year)
+                      </p>
+                    )}
+                    <Input label="Monthly Living Allowance (R)" type="number" placeholder={isTVET ? '1625' : 'e.g. 1500'} value={nsfasLiving} onChange={e => setNsfasLiving(e.target.value)} />
+                    <Input label="Accommodation Allowance (R)" type="number" placeholder={isTVET ? '2400' : 'e.g. 2200'} value={nsfasAccom}  onChange={e => setNsfasAccom(e.target.value)} />
+                    <Input label="Books & Stationery (R/month)" type="number" placeholder={isTVET ? '455' : 'e.g. 300'}   value={nsfasBooks}  onChange={e => setNsfasBooks(e.target.value)} />
                   </div>
                 )}
 

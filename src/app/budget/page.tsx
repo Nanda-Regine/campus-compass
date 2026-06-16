@@ -22,7 +22,7 @@ export default async function BudgetPage({ searchParams }: { searchParams: { tab
   ] = await Promise.all([
     supabase.from('budgets').select('*').eq('user_id', user.id).maybeSingle(),
     supabase.from('expenses').select('*').eq('user_id', user.id).gte('expense_date', start).lte('expense_date', end).order('expense_date', { ascending: false }).limit(500),
-    supabase.from('profiles').select('name, funding_type, university, year_of_study, is_premium, subscription_tier').eq('id', user.id).single(),
+    supabase.from('profiles').select('name, funding_type, university, year_of_study, is_premium, subscription_tier, institution_type, student_status').eq('id', user.id).single(),
     supabase.from('income_entries').select('id,source_type,label,amount,received_date,is_recurring').eq('user_id', user.id).gte('received_date', start).order('received_date', { ascending: false }).limit(50),
     supabase
       .from('work_shifts')

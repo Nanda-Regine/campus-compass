@@ -75,6 +75,8 @@ export async function PATCH(request: NextRequest) {
       'avatar_url', 'onboarding_complete',
       'faculty', 'dietary_pref', 'living_situation', 'ai_language',
       'province', 'monthly_allowance', 'study_schedule', 'is_first_gen', 'commute_type',
+      'student_status', 'country_of_origin', 'study_permit_expiry',
+      'institution_type', 'tvet_qualification',
     ]
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {

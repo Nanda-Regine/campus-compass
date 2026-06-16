@@ -37,7 +37,7 @@ interface BudgetClientProps {
   initialData: {
     budget: Budget | null
     expenses: Expense[]
-    profile: { name: string; funding_type: string | null; university: string | null; year_of_study: string | null; is_premium: boolean } | null
+    profile: { name: string; funding_type: string | null; university: string | null; year_of_study: string | null; is_premium: boolean; institution_type: string | null; student_status: string | null } | null
     isPremium: boolean
     userId: string
     incomeEntries: IncomeEntry[]
@@ -1033,7 +1033,56 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
 
         {/* ─── NSFAS Tracker OS ─── */}
         {activeTab === 'nsfas' && (
-          <NsfasTrackerOS budget={budget} userId={initialData.userId} fundingType={initialData.profile?.funding_type} />
+          <>
+            {initialData.profile?.institution_type === 'tvet' && (
+              <div style={{
+                background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.25)',
+                borderRadius: 16, padding: '14px 16px', marginBottom: 16,
+                position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #6366f1, transparent)' }} />
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', paddingTop: 4 }}>
+                  <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>🎓</span>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#a5b4fc', marginBottom: 4 }}>TVET College NSFAS Allowances</div>
+                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
+                      As a TVET student, your NSFAS allowances differ from university rates:
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                      {[
+                        { label: 'Living allowance', value: 'R1,625/month' },
+                        { label: 'Accommodation (day)', value: 'R2,400/month' },
+                        { label: 'Accommodation (res)', value: 'Up to R5,000/month' },
+                        { label: 'Books & stationery', value: 'R5,460/year' },
+                        { label: 'Transport', value: 'R455/month' },
+                      ].map(item => (
+                        <div key={item.label} style={{
+                          padding: '5px 10px', background: 'rgba(99,102,241,0.1)',
+                          border: '1px solid rgba(99,102,241,0.2)', borderRadius: 8,
+                        }}>
+                          <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', marginBottom: 1 }}>{item.label}</div>
+                          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#a5b4fc' }}>{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: 8 }}>
+                      Amounts set by NSFAS for 2024/25. Contact your college financial aid office for confirmation.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {initialData.profile?.student_status === 'international' && (
+              <div style={{
+                background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+                borderRadius: 14, padding: '12px 14px', marginBottom: 16,
+                fontSize: '0.75rem', color: '#fca5a5', lineHeight: 1.6,
+              }}>
+                ⚠️ International students are <strong>not eligible for NSFAS</strong>. Visit the <strong>International Student Hub</strong> in your profile for alternative funding options.
+              </div>
+            )}
+            <NsfasTrackerOS budget={budget} userId={initialData.userId} fundingType={initialData.profile?.funding_type} />
+          </>
         )}
 
         {/* ─── AI Coach Tab ─── */}

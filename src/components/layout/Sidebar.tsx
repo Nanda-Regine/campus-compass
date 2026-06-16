@@ -5,7 +5,7 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils,
   Briefcase, Users, UserCircle, Wifi, WifiOff,
   Heart, Dumbbell, Moon, Shield, MapPin, MessageCircle,
-  Award, Building2, ChevronLeft, ChevronRight,
+  Award, Building2, ChevronLeft, ChevronRight, Globe2,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -40,7 +40,8 @@ const SECTIONS: Section[] = [
       { href: '/fitness',  icon: Dumbbell, label: 'Fitness',  accent: '#34D399', accentDim: 'rgba(52,211,153,0.14)'   },
       { href: '/sleep',    icon: Moon,     label: 'Sleep',    accent: '#818CF8', accentDim: 'rgba(129,140,248,0.14)'  },
       { href: '/safety',   icon: Shield,   label: 'Safety',   accent: '#10B981', accentDim: 'rgba(16,185,129,0.14)'   },
-      { href: '/movement', icon: MapPin,   label: 'Movement', accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
+      { href: '/movement',      icon: MapPin,   label: 'Movement',  accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
+      { href: '/international', icon: Globe2,   label: 'Intl Hub',  accent: '#38BDF8', accentDim: 'rgba(56,189,248,0.14)'  },
     ],
   },
   {
@@ -63,7 +64,7 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/upgrade', '/career',
   '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
-  '/fitness', '/safety', '/movement', '/civic', '/regulate',
+  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220
