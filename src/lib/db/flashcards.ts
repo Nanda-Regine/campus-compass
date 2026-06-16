@@ -8,6 +8,7 @@
 //   flashcard_cards  — id, deck_id, user_id, front, back,
 //                       interval_days (→ scheduled_days), ease_factor (→ difficulty),
 //                       repetitions (→ reps), next_review (→ due), last_review,
+//                       stability, lapses, state,
 //                       created_at, updated_at
 //
 // DB columns keep their original names; FSRS field names live in-app only.
@@ -23,14 +24,14 @@ export interface Card {
   front:          string
   back:           string
   due:            string        // ISO date YYYY-MM-DD  (← next_review)
-  stability:      number        // estimated from interval_days on load
+  stability:      number        //                      (← stability)
   difficulty:     number        // FSRS difficulty 1–10 (← ease_factor)
   elapsed_days:   number        // always 0 on DB load; computed live by FSRS
   scheduled_days: number        // interval in days     (← interval_days)
   reps:           number        // review count         (← repetitions)
-  lapses:         number        // always 0 on DB load; not stored
+  lapses:         number        //                      (← lapses)
   learning_steps: number        // position in learning step sequence; not stored in DB
-  state:          0 | 1 | 2 | 3 // New/Learning/Review/Relearning
+  state:          0 | 1 | 2 | 3 // New/Learning/Review/Relearning (← state)
   last_review:    string | null //                      (← last_review)
 }
 
@@ -68,6 +69,9 @@ interface CardRow {
   repetitions:   number
   next_review:   string
   last_review:   string | null
+  stability:     number
+  lapses:        number
+  state:         number
   created_at:    string
   updated_at:    string
 }
@@ -75,21 +79,20 @@ interface CardRow {
 // ── Mappers ───────────────────────────────────────────────────────────────────
 
 function cardFromRow(row: CardRow): Card {
-  const reps = row.repetitions ?? 0
   return {
     id:             row.id,
     front:          row.front,
     back:           row.back,
     due:            row.next_review,
-    stability:      Math.max(1, (row.interval_days ?? 0) * 0.5),
-    difficulty:     row.ease_factor ?? 5.0,
+    stability:      row.stability      ?? Math.max(1, (row.interval_days ?? 0) * 0.5),
+    difficulty:     row.ease_factor    ?? 5.0,
     elapsed_days:   0,
-    scheduled_days: row.interval_days ?? 0,
-    reps,
-    lapses:         0,
+    scheduled_days: row.interval_days  ?? 0,
+    reps:           row.repetitions    ?? 0,
+    lapses:         row.lapses         ?? 0,
     learning_steps: 0,
-    state:          reps === 0 ? 0 : 2,
-    last_review:    row.last_review ?? null,
+    state:          (row.state ?? (row.repetitions === 0 ? 0 : 2)) as 0 | 1 | 2 | 3,
+    last_review:    row.last_review    ?? null,
   }
 }
 
@@ -211,6 +214,9 @@ export async function saveDeckToDB(deck: Deck): Promise<void> {
         repetitions:   card.reps,
         next_review:   card.due,
         last_review:   card.last_review ?? null,
+        stability:     card.stability,
+        lapses:        card.lapses,
+        state:         card.state,
         updated_at:    now,
       }))
 
@@ -307,6 +313,9 @@ export async function updateCardInDB(card: Card, deckId: string): Promise<void> 
         repetitions:   card.reps,
         next_review:   card.due,
         last_review:   card.last_review ?? null,
+        stability:     card.stability,
+        lapses:        card.lapses,
+        state:         card.state,
         updated_at:    new Date().toISOString(),
       })
       .eq('id', card.id)
