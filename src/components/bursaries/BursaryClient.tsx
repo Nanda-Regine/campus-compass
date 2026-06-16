@@ -7,6 +7,9 @@ import { Search, ChevronDown, ChevronUp, ExternalLink, Bookmark, BookmarkCheck }
 import { BURSARIES, filterBursaries, type Bursary, type BursaryBasisFilter } from '@/lib/bursary-data'
 import { loadSavedBursaries, saveBursary, unsaveBursary } from '@/lib/db/saved-bursaries'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import dynamic from 'next/dynamic'
+
+const BursaryTracker = dynamic(() => import('./BursaryTracker'), { ssr: false })
 
 // ── Basis filter options ──────────────────────────────────────────────────────
 
@@ -228,7 +231,10 @@ const chip: CSSProperties = {
 
 // ── Main client component ────────────────────────────────────────────────────
 
+type PageTab = 'find' | 'tracker'
+
 export default function BursaryClient() {
+  const [pageTab,   setPageTab]   = useState<PageTab>('find')
   const [query,     setQuery]     = useState('')
   const [field,     setField]     = useState('')
   const [basis,     setBasis]     = useState<BursaryBasisFilter>('all')
@@ -277,6 +283,27 @@ export default function BursaryClient() {
 
       <div className="max-w-2xl mx-auto px-4 py-4 space-y-4">
 
+        {/* Tab switcher */}
+        <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(255,255,255,0.06)', marginBottom: 4 }}>
+          {([['find','🔍 Find Bursaries'], ['tracker','📋 My Applications']] as [PageTab, string][]).map(([id, label]) => (
+            <button key={id} onClick={() => setPageTab(id)}
+              style={{
+                flex: 1, padding: '10px 8px', border: 'none', background: 'transparent', cursor: 'pointer',
+                fontFamily: 'var(--font-display)', fontWeight: pageTab === id ? 700 : 400,
+                fontSize: '0.72rem',
+                color: pageTab === id ? '#c084fc' : 'rgba(255,255,255,0.35)',
+                borderBottom: pageTab === id ? '2px solid #c084fc' : '2px solid transparent',
+                transition: 'all 0.2s ease',
+              }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Applications tracker */}
+        {pageTab === 'tracker' && <BursaryTracker />}
+
+        {pageTab === 'find' && <>
         {/* Nova prompt banner */}
         <Link
           href="/nova?prompt=I%20want%20to%20find%20a%20bursary.%20Based%20on%20my%20profile%2C%20what%20bursaries%20should%20I%20apply%20for%3F%20Give%20me%20a%20step-by-step%20application%20plan."
@@ -412,6 +439,7 @@ export default function BursaryClient() {
             Also check your university&apos;s financial aid office directly.
           </p>
         </div>
+        </>}
       </div>
     </div>
   )

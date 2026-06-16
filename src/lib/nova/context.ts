@@ -107,6 +107,7 @@ export interface NovaContext {
   crisisFlags: string[]
   patternInsights: string[]    // correlation insights from 30-day behavioural data
   upcomingCampusEvents: Array<{ title: string; event_type: string; venue: string | null; event_date: string; institution: string }>
+  upcomingBursaryDeadlines: Array<{ bursary_name: string; deadline: string; status: string; amount_rands: number | null }>
   fetchedAt: number
 }
 
@@ -165,6 +166,9 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   // 72h ahead for campus events
   const events72hAhead = new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString()
 
+  // 21 days ahead for bursary deadlines
+  const bursary21dAhead = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
   // Start of current month for budget
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0]
@@ -184,6 +188,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     cycleRes,
     safetyIncidentsRes,
     campusEventsRes,
+    bursaryDeadlinesRes,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -277,6 +282,17 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .gte('event_date', now.toISOString())
       .lte('event_date', events72hAhead)
       .order('event_date', { ascending: true })
+      .limit(5),
+    // Bursary application deadlines in next 21 days
+    supabase
+      .from('bursary_applications')
+      .select('bursary_name,deadline,status,amount_rands')
+      .eq('user_id', userId)
+      .not('status', 'in', '("accepted","rejected")')
+      .not('deadline', 'is', null)
+      .gte('deadline', today)
+      .lte('deadline', bursary21dAhead)
+      .order('deadline', { ascending: true })
       .limit(5),
   ])
 
@@ -458,6 +474,9 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     !rawProfile?.university || ev.institution === rawProfile.university
   ).slice(0, 4)
 
+  // Bursary deadlines
+  const upcomingBursaryDeadlines = (bursaryDeadlinesRes.data || []) as Array<{ bursary_name: string; deadline: string; status: string; amount_rands: number | null }>
+
   // ── Pattern insights (computed from already-fetched study sessions) ─────────
   const patternInsights: string[] = []
 
@@ -507,6 +526,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
     crisisFlags,
     patternInsights,
     upcomingCampusEvents,
+    upcomingBursaryDeadlines,
     fetchedAt: Date.now(),
   }
 
@@ -572,6 +592,15 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
     ? `⚠️ Campus safety: ${w.recentSafetyIncidents} incident${w.recentSafetyIncidents > 1 ? 's' : ''} reported in the last 48h. Be aware if they mention campus safety or walking at night.`
     : ''
 
+  const bursaryNote = ctx.upcomingBursaryDeadlines.length > 0
+    ? `Bursary deadlines in next 21 days: ${ctx.upcomingBursaryDeadlines.map(b => {
+        const daysLeft = Math.ceil((new Date(b.deadline).getTime() - Date.now()) / 86400000)
+        const urgency  = daysLeft <= 3 ? ' ⚠️ URGENT' : daysLeft <= 7 ? ' (this week)' : ''
+        const amt      = b.amount_rands ? ` R${b.amount_rands.toLocaleString()}` : ''
+        return `"${b.bursary_name}"${amt} — ${daysLeft}d left [${b.status}]${urgency}`
+      }).join('; ')}.`
+    : ''
+
   const eventsNote = ctx.upcomingCampusEvents.length > 0
     ? `Upcoming campus events (next 72h): ${ctx.upcomingCampusEvents.map(e => {
         const d = new Date(e.event_date)
@@ -630,6 +659,7 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
 ${cycleNote ? `- ${cycleNote}` : ''}
 ${safetyNote ? `- ${safetyNote}` : ''}
 ${eventsNote ? `- ${eventsNote}` : ''}
+${bursaryNote ? `- ${bursaryNote}` : ''}
 ${patternsNote}
 ${crisisNote}
 **Instructions:**
