@@ -1,8 +1,8 @@
 'use client'
 
 // ─── Study Velocity Tracker ───────────────────────────────────────────────────
-// Shows actual study hours per module vs the required pace to be exam-ready.
-// Velocity ≥ 1.0 = on track. < 0.7 = falling behind. < 0.4 = critical.
+// Shows this week's logged study hours per module vs a sustainable weekly target.
+// Pace = weeklyHours / targetPerWeek. ≥ 1.0 = on track, < 0.7 behind, < 0.4 critical.
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -21,19 +21,24 @@ interface StudySession {
 interface ModuleVelocity {
   module: Module
   totalHours: number
-  last7Hours: number
+  weeklyHours: number     // logged in the last 7 days
   avgHoursPerDay: number
-  requiredHours: number
-  remainingHours: number
+  targetPerWeek: number   // sustainable independent-study target for this module
+  termBudget: number      // target spread across the term (for the "banked so far" bar)
   daysUntilExam: number | null
-  requiredPerDay: number | null
-  velocityRatio: number | null // actual / required; null = no exam set
-  rescueMode: boolean          // true when raw required > 8h/day (impossible to cover all material)
+  velocityRatio: number | null // weeklyHours / targetPerWeek; ≥ 1.0 = on pace
   risk: 'on_track' | 'watch' | 'behind' | 'critical' | 'no_exam'
 }
 
-const HOURS_PER_CREDIT_STANDARD = 10 // NQF SA standard
-const HOURS_PER_CREDIT_HARD    = 13 // user-flagged hard module multiplier
+// Independent self-study target measured in hours per credit per WEEK — NOT the NQF total
+// notional hours (which cover the whole module: lectures, assignments, reading and exam prep
+// across the entire term). Comparing a semester's notional hours against "days until the next
+// exam" made every normal student read as critically behind. A steady weekly target is fair
+// regardless of account age and never demands an impossible 8h/day.
+// ~0.3 h/credit/week ≈ a 16-credit module wanting ~5h of revision a week, sustained.
+const WEEKLY_HOURS_PER_CREDIT_STANDARD = 0.3
+const WEEKLY_HOURS_PER_CREDIT_HARD     = 0.45
+const TERM_WEEKS = 14 // spreads the weekly target into a term budget for the coverage bar
 
 function calcRisk(ratio: number | null): ModuleVelocity['risk'] {
   if (ratio === null) return 'no_exam'
@@ -105,14 +110,14 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
     const computed: ModuleVelocity[] = modules.map(mod => {
       const modSessions = sessions.filter(s => s.module_id === mod.id)
       const totalHours  = modSessions.reduce((acc, s) => acc + (s.duration_minutes ?? 0), 0) / 60
-      const last7Hours  = modSessions
+      const weeklyHours = modSessions
         .filter(s => s.started_at >= week7Ago)
         .reduce((acc, s) => acc + (s.duration_minutes ?? 0), 0) / 60
-      const avgHoursPerDay = last7Hours / 7
+      const avgHoursPerDay = weeklyHours / 7
 
-      const hpc = hardMods.has(mod.id) ? HOURS_PER_CREDIT_HARD : HOURS_PER_CREDIT_STANDARD
-      const requiredHours = (mod.credits || 4) * hpc
-      const remainingHours = Math.max(0, requiredHours - totalHours)
+      const hpcWeek = hardMods.has(mod.id) ? WEEKLY_HOURS_PER_CREDIT_HARD : WEEKLY_HOURS_PER_CREDIT_STANDARD
+      const targetPerWeek = (mod.credits || 4) * hpcWeek
+      const termBudget = targetPerWeek * TERM_WEEKS
 
       const nextExam = exams
         .filter(e => e.module_id === mod.id || e.module?.id === mod.id)
@@ -122,24 +127,13 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
         ? Math.max(1, Math.ceil((new Date(nextExam.exam_date).getTime() - now.getTime()) / 86400000))
         : null
 
-      const rawRequiredPerDay = daysUntilExam !== null
-        ? remainingHours / daysUntilExam
-        : null
-
-      // Cap at 8h/day max — more than this is physically impossible; show rescue mode instead
-      const MAX_DAILY = 8
-      const requiredPerDay = rawRequiredPerDay !== null
-        ? Math.min(rawRequiredPerDay, MAX_DAILY)
-        : null
-      const rescueMode = rawRequiredPerDay !== null && rawRequiredPerDay > MAX_DAILY
-
-      const velocityRatio = requiredPerDay !== null && requiredPerDay > 0
-        ? avgHoursPerDay / requiredPerDay
-        : requiredPerDay === 0 ? null : null
+      // Pace = this week's logged hours vs the weekly target. Account-age fair: a brand-new
+      // student is simply measured against one week's target, not a whole semester's workload.
+      const velocityRatio = targetPerWeek > 0 ? weeklyHours / targetPerWeek : null
 
       return {
-        module: mod, totalHours, last7Hours, avgHoursPerDay,
-        requiredHours, remainingHours, daysUntilExam, requiredPerDay, velocityRatio, rescueMode,
+        module: mod, totalHours, weeklyHours, avgHoursPerDay,
+        targetPerWeek, termBudget, daysUntilExam, velocityRatio,
         risk: calcRisk(velocityRatio),
       }
     })
@@ -187,7 +181,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
     </div>
   )
 
-  const totalHoursWeek  = velocity.reduce((a, v) => a + v.last7Hours, 0)
+  const totalHoursWeek  = velocity.reduce((a, v) => a + v.weeklyHours, 0)
   const criticalCount   = velocity.filter(v => v.risk === 'critical' || v.risk === 'behind').length
 
   return (
@@ -293,7 +287,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
       {velocity.map(v => {
         const meta  = RISK_META[v.risk]
         const pct   = v.velocityRatio !== null ? Math.min(v.velocityRatio, 1) : null
-        const totPct = Math.min((v.totalHours / v.requiredHours) * 100, 100)
+        const totPct = v.termBudget > 0 ? Math.min((v.totalHours / v.termBudget) * 100, 100) : 0
 
         return (
           <div key={v.module.id} style={{
@@ -358,9 +352,9 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
               {/* Stats row */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
                 {[
-                  { label: 'Avg/day', value: `${v.avgHoursPerDay.toFixed(1)}h` },
-                  { label: 'Need/day', value: v.requiredPerDay !== null ? `${v.requiredPerDay.toFixed(1)}h${v.rescueMode ? '+' : ''}` : '—' },
-                  { label: 'Remaining', value: `${v.remainingHours.toFixed(0)}h` },
+                  { label: 'This week', value: `${v.weeklyHours.toFixed(1)}h` },
+                  { label: 'Target/wk', value: `${v.targetPerWeek.toFixed(1)}h` },
+                  { label: 'Banked', value: `${v.totalHours.toFixed(0)}h` },
                 ].map(s => (
                   <div key={s.label} style={{ background: 'var(--bg-base)', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>{s.value}</div>
@@ -370,25 +364,20 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
               </div>
 
               {/* Advice line */}
-              {v.risk === 'critical' && v.requiredPerDay !== null && (
+              {v.risk === 'critical' && (
                 <div style={{ marginTop: 10, padding: '7px 10px', borderRadius: 8, background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', fontSize: '0.68rem', color: '#f87171' }}>
-                  {v.rescueMode
-                    ? <><strong>Rescue mode:</strong> Not enough time to cover everything. Triage now — do only past-paper topics, make 1-page summary notes, ask a tutor for the most-tested sections.</>
-                    : <>You need <strong>{v.requiredPerDay.toFixed(1)} hrs/day</strong> but are averaging <strong>{v.avgHoursPerDay.toFixed(1)} hrs/day</strong>. Schedule 2× daily sessions now.</>
-                  }
+                  Only <strong>{v.weeklyHours.toFixed(1)}h</strong> this week against a <strong>{v.targetPerWeek.toFixed(1)}h/wk</strong> target. Block two or three short sessions this week to get back on pace.
+                  {v.daysUntilExam !== null && v.daysUntilExam <= 14 && <> Exam in {v.daysUntilExam}d — prioritise past-paper topics.</>}
                 </div>
               )}
-              {v.risk === 'behind' && v.requiredPerDay !== null && (
+              {v.risk === 'behind' && (
                 <div style={{ marginTop: 10, padding: '7px 10px', borderRadius: 8, background: 'rgba(249,115,22,0.07)', border: '1px solid rgba(249,115,22,0.2)', fontSize: '0.68rem', color: '#f97316' }}>
-                  {v.rescueMode
-                    ? <><strong>Rescue mode:</strong> Focus on highest-weighted topics only. 8h/day max — log your sessions to track real progress.</>
-                    : <>Increase from {v.avgHoursPerDay.toFixed(1)} to {v.requiredPerDay.toFixed(1)} hrs/day to finish on time.</>
-                  }
+                  Up your pace from <strong>{v.weeklyHours.toFixed(1)}h</strong> to <strong>{v.targetPerWeek.toFixed(1)}h</strong> this week to stay on track.
                 </div>
               )}
               {v.risk === 'no_exam' && (
                 <div style={{ marginTop: 10, fontSize: '0.65rem', color: 'var(--text-muted)' }}>
-                  Add an exam date to see required pace.
+                  Set this module&apos;s credits to see a weekly study target.
                 </div>
               )}
 
@@ -404,7 +393,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
                     outline: `0.5px solid ${hardMods.has(v.module.id) ? '#f9731630' : 'var(--border-subtle)'}`,
                   }}
                 >
-                  {hardMods.has(v.module.id) ? '🔥 Hard module (13h/credit)' : '○ Mark as hard module (13h/credit)'}
+                  {hardMods.has(v.module.id) ? '🔥 Hard module (higher weekly target)' : '○ Mark as hard module (higher weekly target)'}
                 </button>
               </div>
             </div>
@@ -412,20 +401,16 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
         )
       })}
 
-      {/* Sleep-study balance warning */}
+      {/* Weekly load warning */}
       {(() => {
-        const totalRequired = velocity.reduce((s, v) => s + (v.requiredPerDay ?? 0), 0)
-        const hasRescue = velocity.some(v => v.rescueMode)
-        if (totalRequired > 6) return (
+        const totalWeeklyTarget = velocity.reduce((s, v) => s + v.targetPerWeek, 0)
+        if (totalWeeklyTarget > 25) return (
           <div style={{ padding: '12px 14px', borderRadius: 12, background: 'rgba(251,113,133,0.07)', border: '1px solid rgba(251,113,133,0.2)' }}>
             <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fb7185', marginBottom: 4 }}>
-              {hasRescue ? '🚨 Rescue mode — triage your study plan' : `⚠️ Heavy load: ${totalRequired.toFixed(1)}h/day across all modules`}
+              ⚠️ Heavy load: ~{totalWeeklyTarget.toFixed(0)}h/week of self-study across all modules
             </div>
             <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              {hasRescue
-                ? 'One or more modules cannot be covered fully before the exam. Switch to rescue mode: (1) Only study past-paper topics, (2) Make 1-page cheat sheets, (3) Book a tutor for the highest-weighted sections, (4) Sleep 7h — memory consolidation beats grinding.'
-                : `${totalRequired.toFixed(1)}h/day is a heavy load. Prioritise: (1) Drop non-assessed content, (2) Focus on past-paper patterns, (3) Sleep 7h minimum — sleep consolidates memory more than an extra study hour.`
-              }
+              On top of lectures, that&apos;s a big week. Protect it: (1) Spread sessions across the week rather than cramming, (2) Focus on past-paper patterns over re-reading, (3) Sleep 7h minimum — sleep consolidates memory more than an extra study hour.
             </div>
           </div>
         )
@@ -456,7 +441,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
 
       {/* Footer note */}
       <div style={{ textAlign: 'center', fontSize: '0.62rem', color: 'var(--text-muted)', paddingBottom: 8 }}>
-        Standard: {HOURS_PER_CREDIT_STANDARD}h per credit · Hard mode: {HOURS_PER_CREDIT_HARD}h per credit (NQF notional hours). Toggle difficulty per module above.
+        Weekly self-study target: {WEEKLY_HOURS_PER_CREDIT_STANDARD}h per credit (standard) · {WEEKLY_HOURS_PER_CREDIT_HARD}h per credit (hard mode). Pace = this week&apos;s logged hours vs that target. Toggle difficulty per module above.
       </div>
     </div>
   )
