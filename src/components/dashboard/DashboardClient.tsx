@@ -1093,6 +1093,35 @@ function ModulePillList({ tasks, totalBudget, remaining, profile, mealPlanExists
 }
 
 /* ── main component ─────────────────────────────────────── */
+// Labelled divider that gives Column 1 a scannable information hierarchy.
+function SectionHeader({ label }: { label: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+      <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap' }}>{label}</span>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,255,255,0.08), transparent)' }} />
+    </div>
+  )
+}
+
+// Progressive disclosure for power-user clusters so they don't dominate the main scroll.
+function CollapsibleSection({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: open ? 16 : 0 }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '11px 14px', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+      >
+        <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono,monospace', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', fontWeight: 700 }}>{label}</span>
+        {hint && <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>{hint}</span>}
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(255,255,255,0.4)', transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>▶</span>
+      </button>
+      {open && children}
+    </div>
+  )
+}
+
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const store = useAppStore()
   const [novaInsights, setNovaInsights] = useState<NovaInsight[]>([])
@@ -1519,12 +1548,11 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             {/* Column 1 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-              {/* Just Start — zero-friction focus launcher */}
+              {/* ── Act now: focal point ── */}
               <TabErrorBoundary label="Just Start">
                 <JustStartButton tasks={allTasks} />
               </TabErrorBoundary>
 
-              {/* OS Command Hero — mode-adaptive, replaces bland DayModeBanner + NovaBanner */}
               <OSCommandHero
                 timetable={initialData.timetable}
                 tasks={allTasks}
@@ -1536,7 +1564,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 checkinMessage={novaCheckin}
               />
 
-              {/* Priority command strip — what matters right now */}
               <PriorityCommandStrip
                 tasks={allTasks}
                 exams={allExams}
@@ -1544,12 +1571,20 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 remaining={remaining}
               />
 
+              {/* Quick-access bento tiles (mobile) — surfaced near the top for fast nav */}
+              <div className="md:hidden">
+                <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} />
+              </div>
+
+              {/* ── Check-in: how you're doing ── */}
+              <SectionHeader label="Check-in" />
+
               <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 16px' }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
                 <MoodCheckin userId={p.id} />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
                 <TabErrorBoundary><BurnoutRadar userId={p.id} /></TabErrorBoundary>
                 <TabErrorBoundary>
                   <MoneyHealthScore
@@ -1561,80 +1596,61 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 </TabErrorBoundary>
               </div>
 
-              {/* Orchestration — daily brief */}
-              <TabErrorBoundary label="Daily Brief">
-                <DailyBrief />
-              </TabErrorBoundary>
+              {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
+              <PrescriptionReminderCard />
 
-              {/* Weekly review — 7-day stats + Nova reflection */}
-              <TabErrorBoundary label="Weekly Report">
-                <WeeklyReport />
-              </TabErrorBoundary>
+              {/* ── Plan & track ── */}
+              <SectionHeader label="Plan & track" />
 
-              {/* Cross-domain correlation insights — 30-day pattern analysis */}
-              <TabErrorBoundary label="Insights">
-                <InsightsCard />
-              </TabErrorBoundary>
-
-              {/* Cohort comparison — anonymous peer benchmarking */}
-              <TabErrorBoundary label="Cohort">
-                <CohortCard />
-              </TabErrorBoundary>
-
-              {/* Task calendar: day / week toggle */}
               <TaskCalendarStrip tasks={allTasks} />
-
-              {/* Weekly planning ritual */}
               <SundayPlanning />
-
-              {/* Weather + outfit intelligence */}
               <WeatherWidget />
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
+
+              {/* ── Momentum: gamification ── */}
+              <SectionHeader label="Momentum" />
 
               <LevelCard />
               <StreakWidget />
               <DailyChallenges />
 
-              {/* Commitment Contracts — stake XP on task completion */}
-              <TabErrorBoundary label="Commitment Contracts">
-                <CommitmentContracts />
+              {/* ── Focus tools: power-user cluster, collapsed by default ── */}
+              <CollapsibleSection label="Focus tools" hint="6 anti-procrastination tools">
+                <TabErrorBoundary label="Commitment Contracts">
+                  <CommitmentContracts />
+                </TabErrorBoundary>
+                <TabErrorBoundary label="Implementation Intentions">
+                  <ImplementationIntentions tasks={allTasks} />
+                </TabErrorBoundary>
+                <TabErrorBoundary label="Reward Unlock">
+                  <RewardUnlock />
+                </TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Journal">
+                  <ProcrastinationJournal />
+                </TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Profiler">
+                  <ProcrastinationProfiler />
+                </TabErrorBoundary>
+                <TabErrorBoundary label="Accountability Partner">
+                  <AccountabilityPartner tasks={allTasks} />
+                </TabErrorBoundary>
+              </CollapsibleSection>
+
+              {/* ── Insights: analytics & reflection ── */}
+              <SectionHeader label="Insights" />
+
+              <TabErrorBoundary label="Daily Brief">
+                <DailyBrief />
               </TabErrorBoundary>
-
-              {/* Implementation Intentions — schedule when + where */}
-              <TabErrorBoundary label="Implementation Intentions">
-                <ImplementationIntentions tasks={allTasks} />
+              <TabErrorBoundary label="Weekly Report">
+                <WeeklyReport />
               </TabErrorBoundary>
-
-              {/* Reward Unlock — temptation bundling */}
-              <TabErrorBoundary label="Reward Unlock">
-                <RewardUnlock />
+              <TabErrorBoundary label="Insights">
+                <InsightsCard />
               </TabErrorBoundary>
-
-              {/* Procrastination Journal — reflect & rewire */}
-              <TabErrorBoundary label="Procrastination Journal">
-                <ProcrastinationJournal />
+              <TabErrorBoundary label="Cohort">
+                <CohortCard />
               </TabErrorBoundary>
-
-              {/* Procrastination Profiler — identify your type */}
-              <TabErrorBoundary label="Procrastination Profiler">
-                <ProcrastinationProfiler />
-              </TabErrorBoundary>
-
-              {/* Accountability Partner — go public with your commitment */}
-              <TabErrorBoundary label="Accountability Partner">
-                <AccountabilityPartner tasks={allTasks} />
-              </TabErrorBoundary>
-
-              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
-
-              {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
-              <PrescriptionReminderCard />
-
-              {/* Quick-access bento tiles (mobile) */}
-              <div className="md:hidden">
-                <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} />
-              </div>
-
-              {/* Domain Pulse — 9 life domains ranked by urgency score */}
               <TabErrorBoundary label="Domain Pulse">
                 <DomainPulse
                   overdueTasks={domainOverdue}
