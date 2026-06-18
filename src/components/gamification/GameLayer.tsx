@@ -17,6 +17,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { Badge, Level } from '@/lib/xp-engine'
+import dynamic from 'next/dynamic'
+const CompoundDayBurst = dynamic(() => import('./CompoundDayBurst'), { ssr: false })
+const MysteryBox = dynamic(() => import('./MysteryBox'), { ssr: false })
 
 // ── Keyframes (injected once) ─────────────────────────────────────────────────
 
@@ -385,6 +388,8 @@ export default function GameLayer() {
       {activeBadge && (
         <BadgeUnlockModal badge={activeBadge} onDismiss={dismissBadge} />
       )}
+      <CompoundDayBurst />
+      <MysteryBox />
     </>
   )
 }

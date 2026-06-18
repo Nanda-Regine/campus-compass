@@ -99,7 +99,14 @@ export default function DailyChallenges() {
 
   // Trigger celebration animation when all 3 complete
   useEffect(() => {
-    if (done === 3 && prevDone < 3) setJustCompleted(true)
+    if (done === 3 && prevDone < 3) {
+      setJustCompleted(true)
+      const todayKey = `varsityos_mb_ready_${new Date().toISOString().split('T')[0]}`
+      if (!localStorage.getItem(todayKey)) {
+        localStorage.setItem(todayKey, '1')
+        window.dispatchEvent(new CustomEvent('varsityos:mystery_box_ready'))
+      }
+    }
     setPrevDone(done)
   }, [done, prevDone])
 

@@ -67,6 +67,11 @@ const StudyTipsCard            = dynamic(() => import('@/components/dashboard/ca
 const CoachSummaryCard         = dynamic(() => import('@/components/dashboard/cards/CoachSummaryCard'), { ssr: false })
 const ExamCountdownCard        = dynamic(() => import('@/components/dashboard/cards/ExamCountdownCard'), { ssr: false })
 const BudgetRingCard           = dynamic(() => import('@/components/dashboard/cards/BudgetRingCard'), { ssr: false })
+const DomainFlames             = dynamic(() => import('@/components/gamification/DomainFlames'), { ssr: false })
+const ArchetypeCard            = dynamic(() => import('@/components/gamification/ArchetypeCard'), { ssr: false })
+const PendingXP                = dynamic(() => import('@/components/gamification/PendingXP'), { ssr: false })
+const ChapterBanner            = dynamic(() => import('@/components/gamification/ChapterBanner'), { ssr: false })
+const PodActivityFeed          = dynamic(() => import('@/components/gamification/PodActivityFeed'), { ssr: false })
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -588,9 +593,14 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* ── Momentum: gamification (rebalanced from main column) ── */}
               <SectionHeader label="Momentum" />
+              <PendingXP />
+              <DomainFlames />
               <LevelCard />
               <StreakWidget />
               <DailyChallenges />
+              <ChapterBanner />
+              <ArchetypeCard />
+              <PodActivityFeed />
 
               {/* Below-fold col-3 cluster — deferred until scrolled near */}
               <Deferred gap={14} dataSaver={dataSaver} label="momentum & money cards">

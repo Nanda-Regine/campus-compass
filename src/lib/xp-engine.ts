@@ -55,6 +55,10 @@ export type XPEventName =
   // Community Challenges
   | 'battle_won'
   | 'battle_participated'
+  | 'compound_day'
+  | 'mystery_box_opened'
+  | 'domain_streak_7'
+  | 'domain_streak_30'
 
 export const XP_VALUES: Record<XPEventName, number> = {
   task_complete:            15,
@@ -102,6 +106,10 @@ export const XP_VALUES: Record<XPEventName, number> = {
   // Community Challenges
   battle_won:              100,
   battle_participated:      25,
+  compound_day:            200,
+  mystery_box_opened:        0,   // value varies; set dynamically
+  domain_streak_7:          75,
+  domain_streak_30:        200,
 }
 
 // Max fires per day per event (undefined = unlimited).
@@ -130,6 +138,8 @@ const MAX_DAILY_FIRES: Partial<Record<XPEventName, number>> = {
   // Community Challenges
   battle_won:             1,
   battle_participated:    2,
+  compound_day:           1,
+  mystery_box_opened:     1,
 }
 
 /* ── Level System ───────────────────────────────────────────────────────────*/
@@ -385,7 +395,192 @@ export const BADGES: Badge[] = [
     description: 'Complete 5 commitment contracts — you are the most reliable person you know',
     check: s => (s.eventCounts['contract_completed'] ?? 0) >= 5,
   },
+  // ── Compound Days ────────────────────────────────────────────────────────────
+  {
+    id: 'compound_first', name: 'Compound Starter', emoji: '🌐', color: '#4ecf9e',
+    description: 'Your first Compound Day — 3 domains in a single day. Ubuntu in action.',
+    check: s => (s.eventCounts['compound_day'] ?? 0) >= 1,
+  },
+  {
+    id: 'compound_7', name: 'Compound Week', emoji: '💫', color: '#38BDF8',
+    description: '7 Compound Days — you are genuinely well-rounded. Remarkable.',
+    check: s => (s.eventCounts['compound_day'] ?? 0) >= 7,
+  },
+  {
+    id: 'compound_30', name: 'Ubuntu Scholar', emoji: '🌍', color: '#f472b6',
+    description: '30 Compound Days — you tend to all areas of your life. This is rare.',
+    check: s => (s.eventCounts['compound_day'] ?? 0) >= 30,
+  },
+  // ── Mystery Box ──────────────────────────────────────────────────────────────
+  {
+    id: 'mystery_opener', name: 'Box Opener', emoji: '🎁', color: '#a78bfa',
+    description: 'Open your first mystery box — complete all 3 daily challenges.',
+    check: s => (s.eventCounts['mystery_box_opened'] ?? 0) >= 1,
+  },
+  {
+    id: 'mystery_7', name: 'Lucky Week', emoji: '🎰', color: '#c9a84c',
+    description: 'Open the mystery box 7 times. Consistency creates its own luck.',
+    check: s => (s.eventCounts['mystery_box_opened'] ?? 0) >= 7,
+  },
 ]
+
+/* ── Domain System ──────────────────────────────────────────────────────────*/
+
+export type DomainKey = 'academic' | 'money' | 'life' | 'career' | 'community'
+
+export const DOMAIN_META: Record<DomainKey, { label: string; emoji: string; color: string; darkColor: string }> = {
+  academic:  { label: 'Academic',   emoji: '📚', color: '#38BDF8', darkColor: 'rgba(56,189,248,0.15)' },
+  money:     { label: 'Money',      emoji: '💰', color: '#4ecf9e', darkColor: 'rgba(78,207,158,0.15)' },
+  life:      { label: 'Life',       emoji: '🌿', color: '#a78bfa', darkColor: 'rgba(167,139,250,0.15)' },
+  career:    { label: 'Career',     emoji: '🚀', color: '#f59e0b', darkColor: 'rgba(245,158,11,0.15)' },
+  community: { label: 'Community',  emoji: '🤝', color: '#f472b6', darkColor: 'rgba(244,114,182,0.15)' },
+}
+
+export const DOMAIN_EVENTS: Partial<Record<XPEventName, DomainKey>> = {
+  task_complete:           'academic',
+  all_tasks_done:          'academic',
+  pomodoro_session:        'academic',
+  flashcard_review:        'academic',
+  past_paper_attempted:    'academic',
+  contract_completed:      'academic',
+  intention_set:           'academic',
+  body_double_joined:      'academic',
+  profiler_completed:      'academic',
+  budget_entry:            'money',
+  income_logged:           'money',
+  savings_goal_hit:        'money',
+  financial_health_check:  'money',
+  wellness_checkin:        'life',
+  habit_checkin:           'life',
+  habit_streak_7:          'life',
+  habit_streak_30:         'life',
+  habit_streak_100:        'life',
+  meal_planned:            'life',
+  weekly_meal_plan:        'life',
+  journal_entry:           'life',
+  recovery_initiated:      'life',
+  skills_gap_viewed:       'career',
+  cv_skill_added:          'career',
+  mock_interview_complete: 'career',
+  bursary_viewed:          'career',
+  shift_logged:            'career',
+  side_hustle_logged:      'career',
+  note_shared:             'community',
+  note_saved:              'community',
+  battle_won:              'community',
+  battle_participated:     'community',
+  accountability_shared:   'community',
+}
+
+export function getDomainsHitToday(): Set<DomainKey> {
+  if (typeof window === 'undefined') return new Set()
+  const today = dateStr()
+  const state = loadXPState()
+  const todayEvents = state.dailyEventLog[today] ?? []
+  const domains = new Set<DomainKey>()
+  for (const ev of todayEvents) {
+    const domain = DOMAIN_EVENTS[ev as XPEventName]
+    if (domain) domains.add(domain)
+  }
+  return domains
+}
+
+export function getDomainDomainsCount(): number {
+  return getDomainsHitToday().size
+}
+
+export function getPendingXP(): number {
+  const hit = getDomainsHitToday().size
+  if (hit === 0) return 220
+  if (hit === 1) return 180
+  if (hit === 2) return 130
+  if (hit === 3) return 80
+  return 40
+}
+
+/* ── Archetype System ───────────────────────────────────────────────────────*/
+
+export const ARCHETYPES = [
+  { id: 'ubuntu_graduate', name: 'Ubuntu Graduate',    emoji: '🌍', description: 'You tend to all areas of life. Ubuntu — I am because we are.',   condition: (d: Record<DomainKey, number>) => Object.values(d).every(v => v > 0) },
+  { id: 'scholar_builder', name: 'Scholar-Builder',    emoji: '🏗️', description: 'You combine academic excellence with career ambition.',            condition: (d: Record<DomainKey, number>) => d.academic > 2 && d.career > 2 },
+  { id: 'scholar_saver',   name: 'Scholar-Saver',      emoji: '💎', description: 'You study hard and watch your rands. Financial discipline is real.', condition: (d: Record<DomainKey, number>) => d.academic > 2 && d.money > 2 },
+  { id: 'social_scholar',  name: 'Social Scholar',     emoji: '🤝', description: 'You learn in community and give back. Ubuntu learner.',            condition: (d: Record<DomainKey, number>) => d.academic > 2 && d.community > 2 },
+  { id: 'hustler',         name: 'The Hustler',        emoji: '⚡', description: 'Career-focused and always moving. Your future is being built now.',  condition: (d: Record<DomainKey, number>) => d.career > 3 },
+  { id: 'money_wise',      name: 'Money-Wise',         emoji: '💰', description: 'Financial awareness is your superpower. Many students skip this.',  condition: (d: Record<DomainKey, number>) => d.money > 3 },
+  { id: 'community_heart', name: 'Community Heart',    emoji: '💛', description: 'You show up for others. Leadership grows from here.',              condition: (d: Record<DomainKey, number>) => d.community > 3 },
+  { id: 'life_first',      name: 'Life-First',         emoji: '🌿', description: 'You prioritise your wellbeing. This is harder than it looks.',     condition: (d: Record<DomainKey, number>) => d.life > 3 },
+  { id: 'well_rounded',    name: 'Well-Rounded',       emoji: '🎯', description: 'Balance across 3+ areas. You are building a whole person.',        condition: (d: Record<DomainKey, number>) => Object.values(d).filter(v => v > 1).length >= 3 },
+  { id: 'grinder',         name: 'The Grinder',        emoji: '🔥', description: 'You show up. Every day. That is everything.',                      condition: (d: Record<DomainKey, number>) => d.academic > 4 },
+  { id: 'explorer',        name: 'Explorer',           emoji: '🧭', description: 'You are still finding your rhythm. Keep going — it clicks.',       condition: () => true },
+]
+
+export function calculateArchetype(state: XPState): typeof ARCHETYPES[number] {
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const domainCounts: Record<DomainKey, number> = { academic: 0, money: 0, life: 0, career: 0, community: 0 }
+  for (const [date, events] of Object.entries(state.dailyEventLog)) {
+    if (new Date(date) < sevenDaysAgo) continue
+    for (const ev of events) {
+      const domain = DOMAIN_EVENTS[ev as XPEventName]
+      if (domain) domainCounts[domain]++
+    }
+  }
+  for (const archetype of ARCHETYPES) {
+    if (archetype.condition(domainCounts)) return archetype
+  }
+  return ARCHETYPES[ARCHETYPES.length - 1]
+}
+
+/* ── Mystery Box Loot Table ─────────────────────────────────────────────────*/
+
+export type MysteryRewardType = 'xp_small' | 'xp_medium' | 'xp_large' | 'multiplier' | 'shield' | 'badge_fragment'
+
+export const MYSTERY_LOOT_TABLE: { type: MysteryRewardType; weight: number; label: string; emoji: string; xp: number; description: string }[] = [
+  { type: 'xp_small',      weight: 35, label: 'XP Boost',        emoji: '✨', xp: 50,  description: '+50 XP dropped from the box!' },
+  { type: 'xp_medium',     weight: 25, label: 'Big XP Haul',     emoji: '💫', xp: 150, description: '+150 XP — a generous box today!' },
+  { type: 'xp_large',      weight: 10, label: 'Jackpot!',        emoji: '🎰', xp: 500, description: '+500 XP — JACKPOT! Today is your day.' },
+  { type: 'multiplier',    weight: 15, label: '2× Multiplier',   emoji: '⚡', xp: 0,   description: '2× XP on everything for 1 hour!' },
+  { type: 'shield',        weight: 10, label: 'Domain Shield',   emoji: '🛡️', xp: 0,   description: 'A shield for one of your domain streaks!' },
+  { type: 'badge_fragment',weight: 5,  label: 'Rare Fragment',   emoji: '💎', xp: 100, description: 'A rare badge fragment! Collect 3 to unlock the Ubuntu Badge.' },
+]
+
+export function rollMysteryBox(): typeof MYSTERY_LOOT_TABLE[number] {
+  const totalWeight = MYSTERY_LOOT_TABLE.reduce((s, r) => s + r.weight, 0)
+  const roll = Math.random() * totalWeight
+  let cumulative = 0
+  for (const reward of MYSTERY_LOOT_TABLE) {
+    cumulative += reward.weight
+    if (roll <= cumulative) return reward
+  }
+  return MYSTERY_LOOT_TABLE[0]
+}
+
+/* ── Compound Day Detection ─────────────────────────────────────────────────*/
+
+export function checkAndFireCompoundDay(): void {
+  if (typeof window === 'undefined') return
+  const today = dateStr()
+  const state = loadXPState()
+  const todayLog = state.dailyEventLog[today] ?? []
+
+  // Already fired compound_day today
+  if (todayLog.includes('compound_day')) return
+
+  // Need 3+ domains hit
+  const domainsHit = getDomainsHitToday()
+  if (domainsHit.size < 3) return
+
+  const xp = XP_VALUES['compound_day']
+  state.totalXP += xp
+  state.dailyEventLog[today] = [...todayLog, 'compound_day']
+  state.eventCounts['compound_day'] = (state.eventCounts['compound_day'] ?? 0) + 1
+  state.recentGains.push({ xp, label: '🔥 Compound Day!', ts: Date.now() })
+  saveXPState(state)
+  saveXPStateToDB(state).catch(() => {})
+
+  window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName: 'compound_day', xp } }))
+  window.dispatchEvent(new CustomEvent('varsityos:compound_day', { detail: { domainsHit: Array.from(domainsHit), xp } }))
+}
 
 /* ── Daily Challenges ───────────────────────────────────────────────────────*/
 
@@ -561,6 +756,8 @@ export function dispatchXP(eventName: XPEventName, labelOverride?: string) {
   // Background DB sync — fire and forget
   saveXPStateToDB(state).catch(() => {})
   saveDailyChallengesDB(today, completion.completed).catch(() => {})
+  // Check if compound day threshold reached
+  checkAndFireCompoundDay()
 }
 
 export function completeDailyChallenge(challengeId: string, challengeTitle: string) {
@@ -728,4 +925,8 @@ const EVENT_LABELS: Partial<Record<XPEventName, string>> = {
   // Community Challenges
   battle_won:               '🏆 Battle won!',
   battle_participated:      '⚔️ Battle completed',
+  compound_day:             '🔥 Compound Day! All domains active!',
+  mystery_box_opened:       '🎁 Mystery box opened!',
+  domain_streak_7:          '7-day domain streak!',
+  domain_streak_30:         '30-day domain streak! Legendary.',
 }
