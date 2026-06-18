@@ -147,6 +147,31 @@ export async function POST(request: NextRequest) {
       afterUuid.startsWith('nova_unlimited') ? 'nova_unlimited'
       : 'scholar'
 
+    // The signature only proves PayFast sent the ITN, not that the correct amount was paid,
+    // and the tier is derived from the client-influenced m_payment_id. Without this check a
+    // user could complete a R1 (or R0) payment and still be granted a premium tier.
+    const TIER_PRICES: Record<typeof tier, number> = { scholar: 29, nova_unlimited: 89 }
+    const expectedPrice = TIER_PRICES[tier]
+    const paidAmount = safeAmount(data.amount_gross)
+    const amountOk = paidAmount >= expectedPrice - 0.01 // allow only sub-cent rounding
+
+    // Idempotency: PayFast retries ITNs, and a valid one can be replayed. If we've already
+    // recorded a successful payment for this pf_payment_id, acknowledge and stop — otherwise
+    // each retry re-runs the upgrade and writes duplicate payment_logs rows.
+    if (data.pf_payment_id && (data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT')) {
+      const { data: prior } = await supabase
+        .from('payment_logs')
+        .select('id')
+        .eq('payfast_payment_id', data.pf_payment_id)
+        .eq('status', data.payment_status)
+        .limit(1)
+        .maybeSingle()
+      if (prior) {
+        console.log('[PayFast ITN] Duplicate ITN ignored', { pf_payment_id: data.pf_payment_id })
+        return new NextResponse('OK', { status: 200 })
+      }
+    }
+
     // Always log — non-fatal
     try {
       await supabase.from('payment_logs').insert({
@@ -159,7 +184,19 @@ export async function POST(request: NextRequest) {
       })
     } catch { /* non-fatal */ }
 
-    if ((data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT') && userId) {
+    if ((data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT') && userId && !amountOk) {
+      console.error('[PayFast ITN] Amount mismatch — refusing upgrade', { userId, tier, expectedPrice, paidAmount })
+      try {
+        await supabase.from('payment_logs').insert({
+          payfast_payment_id: data.pf_payment_id ?? null,
+          amount: paidAmount,
+          status: 'REJECTED_AMOUNT',
+          item_name: data.item_name ?? null,
+          raw_data: { ...data, expected_price: expectedPrice, tier },
+          user_id: userId,
+        })
+      } catch { /* non-fatal */ }
+    } else if ((data.payment_status === 'COMPLETE' || data.payment_status === 'SUBSCR_PAYMENT') && userId && amountOk) {
       const novaLimit = tier === 'nova_unlimited' ? 9999 : 150 // scholar
 
       const { error: updateError } = await supabase

@@ -52,17 +52,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Institution is not yet active on VarsityOS' }, { status: 403 })
     }
 
-    // Link student to institution
+    // Claim a seat FIRST, atomically. Compare-and-swap: only increment if uses_count is still
+    // what we read. Under concurrent joins this matches 0 rows for all but one caller, so a
+    // capped invite can never admit more students than its limit (the old read-then-write let
+    // many concurrent joins all pass the `full` check and overshoot).
+    const { data: claimed } = await admin
+      .from('institution_invites')
+      .update({ uses_count: invite.uses_count + 1 })
+      .eq('id', invite.id)
+      .eq('uses_count', invite.uses_count)
+      .select('id')
+      .maybeSingle()
+
+    if (!claimed && invite.uses_limit != null) {
+      // Someone else claimed the seat between our read and write — make them retry.
+      return NextResponse.json({ error: 'This invite link is busy — please try again.' }, { status: 409 })
+    }
+
+    // Link student to institution only after the seat is secured.
     await admin
       .from('profiles')
       .update({ institution_id: invite.institution_id })
       .eq('id', user.id)
-
-    // Increment uses_count
-    await admin
-      .from('institution_invites')
-      .update({ uses_count: invite.uses_count + 1 })
-      .eq('id', invite.id)
 
     return NextResponse.json({ joined: true, institution: { id: inst.id, name: inst.name } })
   } catch (err) {
