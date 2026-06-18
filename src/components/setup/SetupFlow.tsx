@@ -337,7 +337,7 @@ export default function SetupFlow() {
           start_time: '09:00',
           venue: null,
           duration_minutes: null,
-          exam_type: 'exam',
+          exam_type: 'final', // CHECK constraint only allows test/mid_year/final/supplementary/assignment_deadline — 'exam' silently failed
           notes: null,
         })
       }

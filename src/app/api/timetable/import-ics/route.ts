@@ -59,16 +59,16 @@ function assertPublicUrl(raw: string): URL {
 // ─── Day mappings ─────────────────────────────────────────────────────────────
 
 // node-ical byweekday may be: string 'MO', prefixed '+1MO', or rrule integer (0=Mon…6=Sun)
-// Our DB: Mon=1 … Sat=6, Sun=7
+// Our DB: Mon=1 … Sat=6, Sun=0 (matches JS getDay(); day_of_week CHECK is 0..6, so 7 would fail to insert)
 const STR_TO_DB: Record<string, number> = {
-  MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6, SU: 7,
+  MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6, SU: 0,
 }
 const STR_TO_TEXT: Record<string, string> = {
   MO: 'Monday', TU: 'Tuesday', WE: 'Wednesday', TH: 'Thursday',
   FR: 'Friday', SA: 'Saturday', SU: 'Sunday',
 }
-// rrule integers: 0=Mon … 6=Sun  →  DB 1-7
-const RRULE_INT_TO_DB   = [1, 2, 3, 4, 5, 6, 7]
+// rrule integers: 0=Mon … 6=Sun  →  DB (Sun→0)
+const RRULE_INT_TO_DB   = [1, 2, 3, 4, 5, 6, 0]
 const RRULE_INT_TO_TEXT = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
 function byDayToDB(raw: string | number): { db: number; text: string } | null {
@@ -79,14 +79,15 @@ function byDayToDB(raw: string | number): { db: number; text: string } | null {
   // String: 'MO', '+1MO', '-1SU', etc.
   const s = String(raw)
   const match = s.match(/([A-Z]{2})$/)
-  if (!match || !STR_TO_DB[match[1]]) return null
+  // Use a presence check, not truthiness — SU now maps to 0, which is falsy.
+  if (!match || STR_TO_DB[match[1]] === undefined) return null
   return { db: STR_TO_DB[match[1]], text: STR_TO_TEXT[match[1]] }
 }
 
 function jsDateToDB(d: Date): { db: number; text: string } {
   const js = d.getDay() // 0=Sun
   return js === 0
-    ? { db: 7, text: 'Sunday' }
+    ? { db: 0, text: 'Sunday' }
     : { db: js, text: RRULE_INT_TO_TEXT[js - 1] }
 }
 

@@ -76,7 +76,8 @@ function detectStudyWindows(entries: TimetableEntry[]): StudySlot[] {
 // ─── Types ────────────────────────────────────────────────────────────────────
 const DAY_TO_INT: Record<DayOfWeek, number> = {
   Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4,
-  Friday: 5, Saturday: 6, Sunday: 7,
+  // 0=Sunday (matches JS getDay()); the day_of_week CHECK constraint is 0..6, so 7 silently failed to insert.
+  Friday: 5, Saturday: 6, Sunday: 0,
 }
 
 const TIME_OPTIONS = HOURS_RANGE.map(h => {
