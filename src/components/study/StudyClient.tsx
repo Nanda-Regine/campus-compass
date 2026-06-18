@@ -4,28 +4,38 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import PullToRefresh from '@/components/ui/PullToRefresh'
-import TasksTab from '@/components/study/TasksTab'
-import TimetableTab from '@/components/study/TimetableTab'
-import ExamsTab from '@/components/study/ExamsTab'
-import ModulesTab from '@/components/study/ModulesTab'
+import dynamic from 'next/dynamic'
 import { type Module, type Task, type TimetableEntry, type Exam } from '@/types'
-import PomodoroTimer from '@/components/study/PomodoroTimer'
-import GradesTab from '@/components/study/GradesTab'
-import FlashcardsTab from '@/components/study/FlashcardsTab'
-import WellnessTab from '@/components/study/WellnessTab'
-import HabitBuilder from '@/components/habits/HabitBuilder'
-import GraduationAudit from '@/components/study/GraduationAudit'
-import AttendanceTab from '@/components/study/AttendanceTab'
-import CalendarTab from '@/components/study/CalendarTab'
-import StudyVelocityTab from '@/components/study/StudyVelocityTab'
+import TasksTab from '@/components/study/TasksTab'                     // default tab — static, no flash
 import { AmbientImage } from '@/components/ui/AmbientImage'
-import StudyPodsTab from '@/components/study/StudyPodsTab'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
-import PastPaperVault from '@/components/study/PastPaperVault'
-import SmartGradeForecaster from '@/components/study/SmartGradeForecaster'
-import StudyContextEngine from '@/components/study/StudyContextEngine'
-import ModuleOrbitMap from '@/components/study/ModuleOrbitMap'
-import StudyKitGenerator from '@/components/study/StudyKitGenerator'
+import StudyContextEngine from '@/components/study/StudyContextEngine' // always rendered above the tabs
+
+// The Study planner has ~18 tabs but shows one at a time. Code-split every non-default tab so
+// only the active tab's JS loads on demand — the heavy ones (ModuleOrbitMap pulls in React Flow,
+// StudyKitGenerator/AI, CalendarTab, FlashcardsTab) no longer ship in every visit's bundle.
+const TabLoading = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', padding: 48 }}>
+    <div style={{ width: 22, height: 22, border: '2px solid var(--border-subtle)', borderTopColor: 'var(--teal)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+  </div>
+)
+const TimetableTab        = dynamic(() => import('@/components/study/TimetableTab'), { ssr: false, loading: () => <TabLoading /> })
+const ExamsTab            = dynamic(() => import('@/components/study/ExamsTab'), { ssr: false, loading: () => <TabLoading /> })
+const ModulesTab          = dynamic(() => import('@/components/study/ModulesTab'), { ssr: false, loading: () => <TabLoading /> })
+const PomodoroTimer       = dynamic(() => import('@/components/study/PomodoroTimer'), { ssr: false, loading: () => <TabLoading /> })
+const GradesTab           = dynamic(() => import('@/components/study/GradesTab'), { ssr: false, loading: () => <TabLoading /> })
+const FlashcardsTab       = dynamic(() => import('@/components/study/FlashcardsTab'), { ssr: false, loading: () => <TabLoading /> })
+const WellnessTab         = dynamic(() => import('@/components/study/WellnessTab'), { ssr: false, loading: () => <TabLoading /> })
+const HabitBuilder        = dynamic(() => import('@/components/habits/HabitBuilder'), { ssr: false, loading: () => <TabLoading /> })
+const GraduationAudit     = dynamic(() => import('@/components/study/GraduationAudit'), { ssr: false, loading: () => <TabLoading /> })
+const AttendanceTab       = dynamic(() => import('@/components/study/AttendanceTab'), { ssr: false, loading: () => <TabLoading /> })
+const CalendarTab         = dynamic(() => import('@/components/study/CalendarTab'), { ssr: false, loading: () => <TabLoading /> })
+const StudyVelocityTab    = dynamic(() => import('@/components/study/StudyVelocityTab'), { ssr: false, loading: () => <TabLoading /> })
+const StudyPodsTab        = dynamic(() => import('@/components/study/StudyPodsTab'), { ssr: false, loading: () => <TabLoading /> })
+const PastPaperVault      = dynamic(() => import('@/components/study/PastPaperVault'), { ssr: false, loading: () => <TabLoading /> })
+const SmartGradeForecaster = dynamic(() => import('@/components/study/SmartGradeForecaster'), { ssr: false, loading: () => <TabLoading /> })
+const ModuleOrbitMap      = dynamic(() => import('@/components/study/ModuleOrbitMap'), { ssr: false, loading: () => <TabLoading /> })
+const StudyKitGenerator   = dynamic(() => import('@/components/study/StudyKitGenerator'), { ssr: false, loading: () => <TabLoading /> })
 import Link from 'next/link'
 
 interface StudyClientProps {
