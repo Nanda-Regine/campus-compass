@@ -22,6 +22,7 @@ interface Props {
   broadcasts: Broadcast[]
   readIds: string[]
   university: string
+  isSrcMember: boolean
 }
 
 type Tab = 'inbox' | 'send'
@@ -64,7 +65,7 @@ const PRIORITY_EMOJI: Record<string, string> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, readIds, university }: Props) {
+export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, readIds, university, isSrcMember }: Props) {
   const [tab, setTab] = useState<Tab>('inbox')
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>(initialBroadcasts)
   const [readSet, setReadSet] = useState<Set<string>>(new Set(readIds))
@@ -176,13 +177,15 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
           badge={unreadCount > 0 ? unreadCount : undefined}
           accent="#38bdf8"
         />
-        <TabBtn
-          active={tab === 'send'}
-          onClick={() => setTab('send')}
-          icon={<Send size={14} />}
-          label="Send Broadcast"
-          accent="#38bdf8"
-        />
+        {isSrcMember && (
+          <TabBtn
+            active={tab === 'send'}
+            onClick={() => setTab('send')}
+            icon={<Send size={14} />}
+            label="Send Broadcast"
+            accent="#38bdf8"
+          />
+        )}
       </div>
 
       {/* ── Inbox tab ── */}

@@ -34,6 +34,13 @@ export default async function BroadcastsPage() {
 
   const readIds = (reads ?? []).map((r: { broadcast_id: string }) => r.broadcast_id)
 
+  const { data: srcMember } = await supabase
+    .from('src_members')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('is_active', true)
+    .maybeSingle()
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
       <TopBar title="Broadcasts" />
@@ -43,6 +50,7 @@ export default async function BroadcastsPage() {
           broadcasts={broadcasts ?? []}
           readIds={readIds}
           university={university}
+          isSrcMember={!!srcMember}
         />
       </div>
     </div>

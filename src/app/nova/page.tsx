@@ -12,7 +12,6 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
-import { useNovaVoice } from '@/components/nova/NovaVoice'
 import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 
 // Code-split the heavy/conditional chunks off the initial load:
@@ -354,8 +353,6 @@ export default function NovaPage() {
   const newResponseRef = useRef(false)   // true only for live Nova replies, not history loads
   const sr    = useSpeechRecognition()
   const synth = useSpeechSynthesis()
-  const novaVoice = useNovaVoice()
-  const { cancelSpeech: novaVoiceCancelSpeech, speak: novaVoiceSpeak } = novaVoice
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -532,8 +529,6 @@ export default function NovaPage() {
     newResponseRef.current = false
     const last = messages[messages.length - 1]
     if (!last || last.role !== 'assistant') return
-    // If voiceEnabled (same as voiceMode), also fire the NovaVoice hook's speak
-    if (voiceEnabled) novaVoiceSpeak(last.content)
     speakMsg(last.content, last.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages])
@@ -594,10 +589,10 @@ export default function NovaPage() {
       const next = !prev
       setVoiceEnabled(next)
       try { localStorage.setItem('nova-voice-mode', String(next)) } catch { /* ignore */ }
-      if (!next) { audioRef.current?.pause(); audioRef.current = null; synth.stop(); novaVoiceCancelSpeech(); setSpeakingMsgId(null) }
+      if (!next) { audioRef.current?.pause(); audioRef.current = null; synth.stop(); setSpeakingMsgId(null) }
       return next
     })
-  }, [synth, novaVoiceCancelSpeech])
+  }, [synth])
 
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
