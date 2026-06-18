@@ -1400,6 +1400,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const isPremium   = p?.is_premium || ['scholar', 'nova_unlimited'].includes(p?.subscription_tier ?? '')
   const firstName   = p?.full_name?.split(' ')[0] ?? 'Student'
 
+  // Real income/savings signals for the Money Health widget (previously hardcoded
+  // to nsfasStatus="ok"/savingsRate=0, so its Income bar was always full and Savings empty).
+  const incomeStatus: 'ok' | 'delayed' | 'partial' | 'none' =
+    p?.funding_type === 'nsfas'
+      ? (store.nsfasDelayed ? 'delayed' : 'ok')
+      : (totalIncome > 0 ? 'ok' : 'none')
+  const savingsRate = totalBudget > 0
+    ? Math.max(0, Math.min(100, (remaining / totalBudget) * 100))
+    : 0
+
   // Mode-driven design tokens — everything derives from this
   const mode  = getDayMode(currentHour)
   const theme = DASH_THEME[mode]
@@ -1545,8 +1555,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   <MoneyHealthScore
                     budget={b}
                     monthlyExpenses={monthSpent}
-                    nsfasStatus="ok"
-                    savingsRate={0}
+                    nsfasStatus={incomeStatus}
+                    savingsRate={savingsRate}
                   />
                 </TabErrorBoundary>
               </div>
