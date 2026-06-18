@@ -31,6 +31,7 @@ interface Message {
   body: string
   read_at: string | null
   created_at: string
+  marketplace_listings?: { title: string } | null
 }
 
 interface Thread {
@@ -719,11 +720,12 @@ function MessagesTab({ userId }: { userId: string }) {
 
   const threads = Array.from(threadMap.entries()).map(([listing_id, msgs]) => {
     const sorted = [...msgs].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-    const other = sorted.find(m => m.sender_id !== userId || m.recipient_id !== userId)
-    const otherParty = other
-      ? (other.sender_id === userId ? other.recipient_id : other.sender_id)
+    const first = sorted[0]
+    const otherParty = first
+      ? (first.sender_id === userId ? first.recipient_id : first.sender_id)
       : 'unknown'
-    return { listing_id, messages: sorted, otherParty }
+    const listing_title = first?.marketplace_listings?.title ?? 'Listing'
+    return { listing_id, listing_title, messages: sorted, otherParty }
   })
 
   async function sendReply(listingId: string, recipientId: string) {
@@ -798,7 +800,7 @@ function MessagesTab({ userId }: { userId: string }) {
             >
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Listing thread
+                  {thread.listing_title}
                   {unread > 0 && (
                     <span style={{ marginLeft: 8, background: ACCENT, color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: '0.55rem', fontWeight: 700 }}>
                       {unread} new

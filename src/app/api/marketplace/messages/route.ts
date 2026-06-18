@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('marketplace_messages')
-    .select('*')
+    .select('*, marketplace_listings(title)')
     .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
     .order('created_at', { ascending: false })
     .limit(50)
