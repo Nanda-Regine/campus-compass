@@ -191,7 +191,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
           </div>
 
           {/* Live status chips */}
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             {overdueCount > 0 && (
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 4,

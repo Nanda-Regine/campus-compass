@@ -407,7 +407,7 @@ export default function SetupFlow() {
                 />
                 <div>
                   <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Pick your avatar</div>
-                  <div className="grid grid-cols-8 gap-1.5">
+                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                     {EMOJIS.map(e => (
                       <button
                         key={e}

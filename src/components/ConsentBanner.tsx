@@ -84,7 +84,7 @@ export default function ConsentBanner() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
             onClick={() => handleChoice('all')}
             style={{

@@ -42,10 +42,12 @@ export default function UpgradePromptModal({
         background: 'var(--bg-surface, #0f1a19)',
         border: `1px solid ${accent}30`,
         borderRadius: 20, overflow: 'hidden',
+        maxHeight: 'calc(100dvh - 48px)',
+        display: 'flex', flexDirection: 'column',
       }}>
-        <div style={{ height: 3, background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+        <div style={{ height: 3, flexShrink: 0, background: `linear-gradient(90deg, ${accent}, transparent)` }} />
 
-        <div style={{ padding: '24px 22px 22px' }}>
+        <div style={{ padding: '24px 22px 22px', overflowY: 'auto', flex: 1 }}>
           <div style={{
             width: 48, height: 48, borderRadius: 14,
             background: `${accent}18`, border: `1px solid ${accent}30`,

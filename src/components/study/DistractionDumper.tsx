@@ -66,7 +66,7 @@ function ReviewModal({ items, onClear }: { items: Distraction[]; onClear: () => 
           Review each — act on it, schedule it, or let it go.
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 20 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 20, maxHeight: 'calc(100dvh - 280px)', overflowY: 'auto' }}>
           {items.map(item => {
             const done = processed.includes(item.id)
             return (

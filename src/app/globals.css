@@ -114,6 +114,11 @@
   --sidebar-w: 220px;
 }
 
+/* On mobile the sidebar is hidden so its width contribution is zero */
+@media (max-width: 767px) {
+  :root { --sidebar-w: 0px; }
+}
+
 :root,
 [data-theme="dark"],
 html:not(.light) {
