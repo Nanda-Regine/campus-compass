@@ -12,7 +12,7 @@ import {
 } from '@/types'
 import { getDaysUntil, calcTotalBudget } from '@/lib/utils'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
-import { getDataSaverEnabled } from '@/lib/dataSaver'
+import { getDataSaverEnabled, onDataSaverChange } from '@/lib/dataSaver'
 import { getDayMode } from '@/components/dashboard/DayModeBanner'
 import { DASH_THEME, MODE_LABEL, getGreeting, getWeekBadge, toISODate } from '@/components/dashboard/dashboardHelpers'
 import { SectionHeader, CollapsibleSection, Deferred } from '@/components/dashboard/layout'
@@ -101,6 +101,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [todayStudyMins, setTodayStudyMins] = useState(0)
   const [lastSleepHours, setLastSleepHours] = useState<number | null>(null)
   const [weekWorkouts, setWeekWorkouts] = useState(0)
+  // Data Saver — gates the ambient imagery and the enhancement fetches/widgets below.
+  // Starts false for SSR safety, then reads the real preference on mount and stays in sync.
+  const [dataSaver, setDataSaver] = useState(false)
+  useEffect(() => {
+    setDataSaver(getDataSaverEnabled())
+    return onDataSaverChange(setDataSaver)
+  }, [])
 
   // Guardian: auto-spawn todos from timetable, deadlines, and domain state
   useAutoTodoSpawner()
@@ -151,6 +158,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       const cached = sessionStorage.getItem(key)
       if (cached) { setNovaInsights(JSON.parse(cached)); return }
     } catch { /* ignore */ }
+    if (getDataSaverEnabled()) return // Data Saver: skip the proactive-insights network call
     fetch('/api/insights').then(r => r.ok ? r.json() : null).then(d => {
       if (d) {
         setNovaInsights(d.insights ?? [])
@@ -163,7 +171,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   useEffect(() => {
     let mounted = true
     const fetchLiveData = async () => {
-      if (!navigator.onLine) return
+      // Data Saver: skip the ~9 enhancement queries; the dashboard still works on SSR data.
+      if (!navigator.onLine || getDataSaverEnabled()) return
       try {
         const { createClient } = await import('@/lib/supabase/client')
         const supabase = createClient()
@@ -401,7 +410,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   return (
     <>
-      {/* Full-page ambient image — fixed so it persists as user scrolls */}
+      {/* Full-page ambient image + blurred orbs — decorative only. Skipped in Data Saver mode:
+          it avoids an image download and the GPU cost of large blur radii, which is the main
+          source of scroll jank on low-end Android. */}
+      {!dataSaver && (
       <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
         <AmbientImage zone="dashboard" opacity={0.30} blurPx={25} saturation={1.0}
           overlayColor="rgba(5,4,12,0.0)" />
@@ -422,13 +434,14 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           filter: 'blur(50px)',
         }} />
       </div>
+      )}
 
-      <div className="page-enter min-h-screen" style={{ background: 'rgba(5,4,12,0.62)' }}>
+      <div className="page-enter min-h-screen" style={{ background: dataSaver ? '#05040c' : 'rgba(5,4,12,0.62)' }}>
 
         <PullToRefresh onRefresh={handleRefresh} />
 
         {/* Topbar with mode indicator */}
-        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: 'rgba(10,11,16,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: dataSaver ? 'rgba(10,11,16,0.98)' : 'rgba(10,11,16,0.92)', backdropFilter: dataSaver ? undefined : 'blur(20px)', WebkitBackdropFilter: dataSaver ? undefined : 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
             <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em' }}>
               {getGreeting()}, {firstName}
@@ -583,7 +596,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* ── Life balance ── */}
               <SectionHeader label="Life balance" />
 
-              <Deferred minHeight={160}>
+              <Deferred minHeight={160} dataSaver={dataSaver} label="life balance">
               <TabErrorBoundary label="Domain Pulse">
                 <DomainPulse
                   overdueTasks={domainOverdue}
@@ -616,7 +629,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </TabErrorBoundary>
 
               {/* Below-fold col-2 cluster — deferred until scrolled near */}
-              <Deferred gap={14}>
+              <Deferred gap={14} dataSaver={dataSaver} label="insights & study cards">
               {/* Body Double Mode — Supabase Realtime study presence */}
               <TabErrorBoundary label="Body Double Mode">
                 <BodyDoubleMode />
@@ -651,7 +664,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <DailyChallenges />
 
               {/* Below-fold col-3 cluster — deferred until scrolled near */}
-              <Deferred gap={14}>
+              <Deferred gap={14} dataSaver={dataSaver} label="momentum & money cards">
               {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
               <TabErrorBoundary label="Focus Momentum Score">
                 <FocusMomentumScore />

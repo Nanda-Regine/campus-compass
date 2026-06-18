@@ -15,10 +15,13 @@ export function SectionHeader({ label }: { label: string }) {
 // Defers mounting (and the network/CPU cost) of below-the-fold widget clusters until they
 // scroll near the viewport — a cheaper first paint on low-end phones. Renders a flex column so
 // wrapped widgets keep their spacing, and mounts immediately if the cluster is already in view.
-export function Deferred({ children, gap = 14, minHeight = 200 }: { children: React.ReactNode; gap?: number; minHeight?: number }) {
+// In Data Saver mode it does NOT auto-load: it shows a tap-to-load stub so the dynamic chunks
+// and their network calls only happen when the student explicitly asks for them.
+export function Deferred({ children, gap = 14, minHeight = 200, dataSaver = false, label = 'this section' }: { children: React.ReactNode; gap?: number; minHeight?: number; dataSaver?: boolean; label?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [show, setShow] = useState(false)
   useEffect(() => {
+    if (dataSaver) return // Data Saver: wait for an explicit tap, never auto-load
     const el = ref.current
     if (!el || typeof IntersectionObserver === 'undefined') { setShow(true); return }
     const io = new IntersectionObserver(entries => {
@@ -26,7 +29,17 @@ export function Deferred({ children, gap = 14, minHeight = 200 }: { children: Re
     }, { rootMargin: '300px' })
     io.observe(el)
     return () => io.disconnect()
-  }, [])
+  }, [dataSaver])
+  if (dataSaver && !show) {
+    return (
+      <button
+        onClick={() => setShow(true)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--bg-surface)', border: '1px dashed var(--border-subtle)', borderRadius: 12, padding: 14, cursor: 'pointer', width: '100%', color: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+      >
+        📡 Data Saver on — tap to load {label}
+      </button>
+    )
+  }
   return (
     <div ref={ref} style={{ display: 'flex', flexDirection: 'column', gap, minHeight: show ? undefined : minHeight }}>
       {show ? children : null}
