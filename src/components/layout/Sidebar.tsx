@@ -6,7 +6,7 @@ import {
   Briefcase, Users, UserCircle, Wifi, WifiOff,
   Heart, Dumbbell, Moon, Shield, MapPin, MessageCircle,
   Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon, Rocket, Bell,
-  ShoppingBag, Megaphone,
+  ShoppingBag, Megaphone, GraduationCap, FileText, Coins, Brain, Layers, Landmark,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -29,31 +29,40 @@ const SECTIONS: Section[] = [
   {
     id: 'academic', label: 'ACADEMIC',
     items: [
-      { href: '/study',    icon: BookOpen, label: 'Study',     accent: '#A855F7', accentDim: 'rgba(168,85,247,0.14)' },
-      { href: '/budget',   icon: Wallet,   label: 'Budget',    accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.14)'  },
-      { href: '/bursaries', icon: Award,  label: 'Bursaries', accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.14)'  },
-      { href: '/lms',       icon: Link2,  label: 'LMS Sync',  accent: '#6366f1', accentDim: 'rgba(99,102,241,0.14)'   },
+      { href: '/study',     icon: BookOpen,  label: 'Study',     accent: '#A855F7', accentDim: 'rgba(168,85,247,0.14)' },
+      { href: '/notes',     icon: FileText,  label: 'Notes',     accent: '#4ecf9e', accentDim: 'rgba(78,207,158,0.14)'  },
+      { href: '/bursaries', icon: Award,     label: 'Bursaries', accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.14)'  },
+      { href: '/lms',       icon: Link2,     label: 'LMS Sync',  accent: '#6366f1', accentDim: 'rgba(99,102,241,0.14)'  },
+    ],
+  },
+  {
+    id: 'money', label: 'MONEY',
+    items: [
+      { href: '/budget',  icon: Wallet, label: 'Budget',  accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.14)'  },
+      { href: '/stokvel', icon: Coins,  label: 'Stokvel', accent: '#f59e0b', accentDim: 'rgba(245,158,11,0.14)'  },
     ],
   },
   {
     id: 'life', label: 'LIFE',
     items: [
-      { href: '/meals',    icon: Utensils, label: 'Meals',    accent: '#E87040', accentDim: 'rgba(232,112,64,0.14)'   },
-      { href: '/housing',  icon: HomeIcon, label: 'Housing',  accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
-      { href: '/health',   icon: Heart,    label: 'Health',   accent: '#FB7185', accentDim: 'rgba(251,113,133,0.14)'  },
-      { href: '/fitness',  icon: Dumbbell, label: 'Fitness',  accent: '#34D399', accentDim: 'rgba(52,211,153,0.14)'   },
-      { href: '/sleep',    icon: Moon,     label: 'Sleep',    accent: '#818CF8', accentDim: 'rgba(129,140,248,0.14)'  },
-      { href: '/safety',   icon: Shield,   label: 'Safety',   accent: '#10B981', accentDim: 'rgba(16,185,129,0.14)'   },
-      { href: '/movement',      icon: MapPin,   label: 'Movement',  accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
-      { href: '/international', icon: Globe2,   label: 'Intl Hub',  accent: '#38BDF8', accentDim: 'rgba(56,189,248,0.14)'  },
+      { href: '/meals',         icon: Utensils, label: 'Meals',    accent: '#E87040', accentDim: 'rgba(232,112,64,0.14)'   },
+      { href: '/housing',       icon: HomeIcon, label: 'Housing',  accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
+      { href: '/health',        icon: Heart,    label: 'Health',   accent: '#FB7185', accentDim: 'rgba(251,113,133,0.14)'  },
+      { href: '/fitness',       icon: Dumbbell, label: 'Fitness',  accent: '#34D399', accentDim: 'rgba(52,211,153,0.14)'   },
+      { href: '/sleep',         icon: Moon,     label: 'Sleep',    accent: '#818CF8', accentDim: 'rgba(129,140,248,0.14)'  },
+      { href: '/regulate',      icon: Brain,    label: 'Regulate', accent: '#c084fc', accentDim: 'rgba(192,132,252,0.14)'  },
+      { href: '/safety',        icon: Shield,   label: 'Safety',   accent: '#10B981', accentDim: 'rgba(16,185,129,0.14)'   },
+      { href: '/movement',      icon: MapPin,   label: 'Movement', accent: '#06B6D4', accentDim: 'rgba(6,182,212,0.14)'    },
+      { href: '/international', icon: Globe2,   label: 'Intl Hub', accent: '#38BDF8', accentDim: 'rgba(56,189,248,0.14)'  },
     ],
   },
   {
     id: 'career', label: 'CAREER',
     items: [
-      { href: '/career',         icon: Briefcase, label: 'Career', accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.14)' },
-      { href: '/dashboard/work', icon: Building2, label: 'Work',   accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.14)'  },
-      { href: '/launchpad',      icon: Rocket,   label: 'Launch Pad', accent: '#6366F1', accentDim: 'rgba(99,102,241,0.14)' },
+      { href: '/career',         icon: Briefcase,    label: 'Career',     accent: '#5B9CF5', accentDim: 'rgba(91,156,245,0.14)'  },
+      { href: '/skills',         icon: Layers,       label: 'Skills',     accent: '#38BDF8', accentDim: 'rgba(56,189,248,0.14)'  },
+      { href: '/dashboard/work', icon: Building2,    label: 'Work',       accent: '#D4A84B', accentDim: 'rgba(212,168,75,0.14)'  },
+      { href: '/launchpad',      icon: Rocket,       label: 'Launch Pad', accent: '#6366F1', accentDim: 'rgba(99,102,241,0.14)'  },
     ],
   },
   {
@@ -63,6 +72,7 @@ const SECTIONS: Section[] = [
       { href: '/social',           icon: MessageCircle, label: 'Social',      accent: '#7090D0', accentDim: 'rgba(112,144,208,0.14)' },
       { href: '/marketplace',      icon: ShoppingBag,   label: 'Marketplace', accent: '#f59e0b', accentDim: 'rgba(245,158,11,0.14)'  },
       { href: '/tutoring',         icon: GraduationCap, label: 'Tutoring',    accent: '#4ecf9e', accentDim: 'rgba(78,207,158,0.14)'  },
+      { href: '/civic',            icon: Landmark,      label: 'Civic',       accent: '#38BDF8', accentDim: 'rgba(56,189,248,0.14)'  },
       { href: '/src',              icon: Megaphone,     label: 'SRC',         accent: '#8b5cf6', accentDim: 'rgba(139,92,246,0.14)'  },
     ],
   },
@@ -73,7 +83,7 @@ const APP_PREFIXES = [
   '/campus-life', '/referral', '/streak', '/upgrade', '/career',
   '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
   '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing', '/launchpad', '/broadcasts',
-  '/marketplace', '/src',
+  '/marketplace', '/src', '/stokvel', '/skills', '/tour',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220

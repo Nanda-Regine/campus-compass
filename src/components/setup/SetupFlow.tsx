@@ -179,6 +179,7 @@ export default function SetupFlow() {
   const [icsImported,  setIcsImported]  = useState(false)
   const [nextExamName, setNextExamName] = useState('')
   const [nextExamDate, setNextExamDate] = useState('')
+  const [preferredLang, setPreferredLang] = useState('en')
 
   // Save progress to localStorage on every change
   useEffect(() => {
@@ -291,6 +292,7 @@ export default function SetupFlow() {
         tvet_qualification: isTVET ? (tvetLevel.startsWith('NCV') ? 'ncv' : 'nated') : null,
         onboarding_complete: true,
         onboarding_completed: true,
+        preferred_language: preferredLang,
       }
 
       const { data: profile, error: profileError } = await supabase
@@ -348,7 +350,7 @@ export default function SetupFlow() {
       try { localStorage.removeItem(`setup_progress_${user.id}`) } catch { /* ok */ }
       try { localStorage.setItem('varsityos-new-user', name || 'Student') } catch { /* ok */ }
       toast.success('All set! Welcome to VarsityOS 🎉')
-      router.push('/dashboard')
+      router.push('/tour')
       router.refresh()
     } catch (err) {
       console.error(err)
@@ -838,6 +840,21 @@ export default function SetupFlow() {
               <p className="text-sm text-white/50 mb-5">
                 Get exam reminders and wellness nudges — even when the app is closed.
               </p>
+
+              {/* Language of training */}
+              <div className="mb-5">
+                <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Train me in</div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {([['en','English'],['zu','isiZulu'],['xh','isiXhosa'],['af','Afrikaans'],['st','Sesotho'],['tn','Setswana']] as [string,string][]).map(([code, name]) => (
+                    <button key={code} type="button" onClick={() => setPreferredLang(code)} className={cn(
+                      'py-1.5 px-2 rounded-lg text-[0.62rem] font-mono transition-all border',
+                      preferredLang === code
+                        ? 'bg-teal-600/20 border-teal-500 text-teal-300'
+                        : 'bg-white/4 border-white/8 text-white/40 hover:text-white/60'
+                    )}>{name}</button>
+                  ))}
+                </div>
+              </div>
 
               <div className="space-y-4">
                 <ExamPushBanner />

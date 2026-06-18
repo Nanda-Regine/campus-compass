@@ -35,7 +35,8 @@ async function generateBlurbs(
   const context = candidates.map((c, i) =>
     `[${i}] ${c.full_name}, Year ${c.year_of_study ?? '?'}, ${c.study_style} learner` +
     (c.bio ? `, "${c.bio}"` : '') +
-    `. Shared modules: ${c.sharedModules.join(', ')}.`
+    `. Shared modules: ${c.sharedModules.join(', ')}.` +
+    (c.preferred_times.length ? ` Prefers: ${c.preferred_times.join(', ')}.` : '')
   ).join('\n')
 
   const response = await anthropic.messages.create({
@@ -135,8 +136,8 @@ export async function GET() {
 
     const candidateIds = podProfiles.map(p => p.user_id)
 
-    // 5. Batch-fetch candidate profiles and modules
-    const [profilesRes, modulesRes] = await Promise.all([
+    // 5. Batch-fetch candidate profiles, modules, and timetable slots for schedule scoring
+    const [profilesRes, modulesRes, myTimetableRes, candidateTimetableRes] = await Promise.all([
       admin.from('profiles')
         .select('id, full_name, university, year_of_study, avatar_url')
         .in('id', candidateIds)
@@ -145,6 +146,14 @@ export async function GET() {
         .select('user_id, module_code, module_name')
         .in('user_id', candidateIds)
         .in('module_code', myCodes),
+      admin.from('timetable_slots')
+        .select('day_of_week, start_time')
+        .eq('user_id', user.id)
+        .eq('is_recurring', true),
+      admin.from('timetable_slots')
+        .select('user_id, day_of_week, start_time')
+        .in('user_id', candidateIds)
+        .eq('is_recurring', true),
     ])
 
     const profileMap = Object.fromEntries(
@@ -156,7 +165,15 @@ export async function GET() {
       modulesByUser[m.user_id].push(m.module_code)
     }
 
-    // 6. Score and rank
+    const mySlots = (myTimetableRes.data ?? []).map(s => `${s.day_of_week}:${s.start_time}`)
+    const mySlotSet = new Set(mySlots)
+    const candidateSlotsByUser: Record<string, string[]> = {}
+    for (const s of candidateTimetableRes.data ?? []) {
+      if (!candidateSlotsByUser[s.user_id]) candidateSlotsByUser[s.user_id] = []
+      candidateSlotsByUser[s.user_id].push(`${s.day_of_week}:${s.start_time}`)
+    }
+
+    // 6. Score and rank (shared modules + year proximity + preferred-time overlap + shared class slots)
     const candidates: CandidateProfile[] = podProfiles
       .map(pp => {
         const p = profileMap[pp.user_id]
@@ -166,7 +183,14 @@ export async function GET() {
         const yearDiff = myProfile.year_of_study && p.year_of_study
           ? Math.abs(Number(myProfile.year_of_study) - Number(p.year_of_study))
           : 3
-        const score = shared.length * 10 + (yearDiff === 0 ? 5 : yearDiff === 1 ? 3 : 0)
+        const preferredTimesMatch = (myPodProfile.preferred_times ?? [])
+          .filter((t: string) => (pp.preferred_times ?? []).includes(t)).length
+        const sharedSlotCount = (candidateSlotsByUser[pp.user_id] ?? [])
+          .filter(slot => mySlotSet.has(slot)).length
+        const score = shared.length * 10
+          + (yearDiff === 0 ? 5 : yearDiff === 1 ? 3 : 0)
+          + preferredTimesMatch * 2
+          + Math.min(sharedSlotCount * 2, 10)
         return {
           user_id:         pp.user_id,
           full_name:       p.full_name ?? 'Student',

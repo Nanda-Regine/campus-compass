@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useAppStore } from '@/store'
-import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -242,10 +240,6 @@ function Chip({ label }: { label: string }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function StudyPodsTab({ userId }: { userId: string }) {
-  const appProfile = useAppStore(s => s.profile)
-  const isPremium  = appProfile?.is_premium || ['scholar', 'nova_unlimited'].includes(appProfile?.subscription_tier ?? '')
-  const { show: showUpgrade, modal: upgradeModal } = useUpgradePrompt()
-
   const [profile, setProfile]       = useState<PodProfile | null | 'loading'>('loading')
   const [view, setView]             = useState<'matches' | 'pods'>('matches')
   const [matches, setMatches]       = useState<Match[] | null>(null)
@@ -425,40 +419,17 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
           }}
         />
 
-        {!isPremium && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px',
-            background: 'rgba(56,189,248,0.05)', border: '1px solid rgba(56,189,248,0.2)',
-            borderRadius: 9, marginBottom: 12, fontSize: 11, color: 'rgba(255,255,255,0.5)',
-          }}>
-            <span>⭐</span>
-            <span>Study Pods is a <strong style={{ color: '#38BDF8' }}>Nova Scholar</strong> feature — R29/month</span>
-          </div>
-        )}
-
         <button
-          onClick={() => {
-            if (!isPremium) {
-              showUpgrade(
-                'Study Pods',
-                'Nova matches you with students sharing your modules, study style, and schedule. Find your study crew and start building together.',
-              )
-              return
-            }
-            handleJoin()
-          }}
+          onClick={() => { handleJoin() }}
           disabled={joining}
           style={{
             width: '100%', padding: '12px', borderRadius: 10, fontWeight: 700, fontSize: 13,
-            background: isPremium
-              ? 'linear-gradient(135deg, rgba(56,189,248,0.22), rgba(56,189,248,0.1))'
-              : 'rgba(255,255,255,0.04)',
-            border: isPremium ? '1px solid rgba(56,189,248,0.4)' : '1px solid rgba(255,255,255,0.08)',
-            color: isPremium ? '#38BDF8' : 'rgba(255,255,255,0.3)',
+            background: 'linear-gradient(135deg, rgba(56,189,248,0.22), rgba(56,189,248,0.1))',
+            border: '1px solid rgba(56,189,248,0.4)',
+            color: '#38BDF8',
             cursor: joining ? 'wait' : 'pointer', opacity: joining ? 0.7 : 1,
           }}
-        >{joining ? 'Finding your matches…' : isPremium ? 'Find my study partners' : '⭐ Upgrade to find study partners'}</button>
-        {upgradeModal}
+        >{joining ? 'Finding your matches…' : 'Find my study partners'}</button>
       </div>
     </div>
   )
