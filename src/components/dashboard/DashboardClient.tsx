@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useAppStore } from '@/store'
 import { signals } from '@/store/signals'
@@ -1103,6 +1103,28 @@ function SectionHeader({ label }: { label: string }) {
   )
 }
 
+// Defers mounting (and the network/CPU cost) of below-the-fold widget clusters until they
+// scroll near the viewport — a cheaper first paint on low-end phones. Renders a flex column so
+// wrapped widgets keep their spacing, and mounts immediately if the cluster is already in view.
+function Deferred({ children, gap = 14, minHeight = 200 }: { children: React.ReactNode; gap?: number; minHeight?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === 'undefined') { setShow(true); return }
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { setShow(true); io.disconnect() }
+    }, { rootMargin: '300px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <div ref={ref} style={{ display: 'flex', flexDirection: 'column', gap, minHeight: show ? undefined : minHeight }}>
+      {show ? children : null}
+    </div>
+  )
+}
+
 // Progressive disclosure for power-user clusters so they don't dominate the main scroll.
 function CollapsibleSection({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
@@ -1632,6 +1654,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {/* ── Life balance ── */}
               <SectionHeader label="Life balance" />
 
+              <Deferred minHeight={160}>
               <TabErrorBoundary label="Domain Pulse">
                 <DomainPulse
                   overdueTasks={domainOverdue}
@@ -1653,6 +1676,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                   hour={currentHour}
                 />
               </TabErrorBoundary>
+              </Deferred>
             </div>
 
             {/* Column 2 */}
@@ -1662,6 +1686,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <DeadlineTelescope exams={allExams} />
               </TabErrorBoundary>
 
+              {/* Below-fold col-2 cluster — deferred until scrolled near */}
+              <Deferred gap={14}>
               {/* Body Double Mode — Supabase Realtime study presence */}
               <TabErrorBoundary label="Body Double Mode">
                 <BodyDoubleMode />
@@ -1684,6 +1710,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <TabErrorBoundary label="Cohort">
                 <CohortCard />
               </TabErrorBoundary>
+              </Deferred>
             </div>
 
             {/* Column 3 */}
@@ -1694,6 +1721,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <StreakWidget />
               <DailyChallenges />
 
+              {/* Below-fold col-3 cluster — deferred until scrolled near */}
+              <Deferred gap={14}>
               {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
               <TabErrorBoundary label="Focus Momentum Score">
                 <FocusMomentumScore />
@@ -1721,6 +1750,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               )}
               <LoadSheddingWidget />
               <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
+              </Deferred>
             </div>
 
           </div>
