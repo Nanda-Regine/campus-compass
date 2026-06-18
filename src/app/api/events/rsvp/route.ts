@@ -4,45 +4,41 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// POST /api/events/rsvp  { event_id, status }
+// POST /api/events/rsvp  { event_id }
 export async function POST(request: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { event_id, status = 'going' } = await request.json()
+  const { event_id } = await request.json()
   if (!event_id) return NextResponse.json({ error: 'event_id required' }, { status: 400 })
-  if (!['going','maybe'].includes(String(status)))
-    return NextResponse.json({ error: 'status must be going or maybe' }, { status: 400 })
 
-  // Verify event exists and isn't cancelled
+  // Verify event exists
   const { data: event } = await supabase
     .from('campus_events')
-    .select('id, max_attendees')
+    .select('id, rsvp_count')
     .eq('id', event_id)
-    .eq('is_cancelled', false)
     .maybeSingle()
   if (!event) return NextResponse.json({ error: 'Event not found' }, { status: 404 })
 
-  // Check capacity if max_attendees is set
-  if (event.max_attendees) {
-    const { count } = await supabase
-      .from('event_rsvps')
-      .select('id', { count: 'exact', head: true })
-      .eq('event_id', event_id)
-      .eq('status', 'going')
-    if ((count ?? 0) >= event.max_attendees)
-      return NextResponse.json({ error: 'Event is full' }, { status: 409 })
-  }
-
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('event_rsvps')
-    .upsert({ event_id, user_id: user.id, status }, { onConflict: 'event_id,user_id' })
-    .select()
-    .single()
+    .upsert({ event_id, user_id: user.id }, { onConflict: 'user_id,event_id' })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ rsvp: data })
+
+  // Recompute rsvp_count from the actual rows and store it on the event
+  const { count } = await supabase
+    .from('event_rsvps')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_id', event_id)
+
+  await supabase
+    .from('campus_events')
+    .update({ rsvp_count: count ?? 0 })
+    .eq('id', event_id)
+
+  return NextResponse.json({ ok: true, rsvp_count: count ?? 0 })
 }
 
 // DELETE /api/events/rsvp?event_id=xxx
@@ -55,5 +51,17 @@ export async function DELETE(request: NextRequest) {
   if (!event_id) return NextResponse.json({ error: 'event_id required' }, { status: 400 })
 
   await supabase.from('event_rsvps').delete().eq('event_id', event_id).eq('user_id', user.id)
-  return NextResponse.json({ ok: true })
+
+  // Keep rsvp_count in sync after removal
+  const { count } = await supabase
+    .from('event_rsvps')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_id', event_id)
+
+  await supabase
+    .from('campus_events')
+    .update({ rsvp_count: count ?? 0 })
+    .eq('id', event_id)
+
+  return NextResponse.json({ ok: true, rsvp_count: count ?? 0 })
 }

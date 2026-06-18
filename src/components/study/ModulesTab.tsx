@@ -101,12 +101,15 @@ function ModuleTools({
       payload: { moduleId, attended, moduleCode: moduleName },
     })
 
-    if (attended) {
-      setSyncing(true)
-      supabase.from('attendance_records')
-        .upsert({ user_id: userId, module_id: moduleId, class_date: today, attended: true })
-        .then(() => setSyncing(false))
-    }
+    // Sync to Supabase using the live schema (date/status). The present/absent
+    // toggle maps onto the status enum so this UI stays consistent with AttendanceTab.
+    setSyncing(true)
+    supabase.from('attendance_records')
+      .upsert(
+        { user_id: userId, module_id: moduleId, date: today, status: attended ? 'present' : 'absent' },
+        { onConflict: 'user_id,module_id,date' }
+      )
+      .then(() => setSyncing(false))
   }
 
   // ── Will I Pass state ──

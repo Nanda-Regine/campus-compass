@@ -106,7 +106,7 @@ export interface NovaContext {
   wellness: NovaWellnessContext
   crisisFlags: string[]
   patternInsights: string[]    // correlation insights from 30-day behavioural data
-  upcomingCampusEvents: Array<{ title: string; event_type: string; venue: string | null; event_date: string; institution: string }>
+  upcomingCampusEvents: Array<{ title: string; category: string; venue: string | null; event_date: string; event_time: string | null; institution: string }>
   upcomingBursaryDeadlines: Array<{ bursary_name: string; deadline: string; status: string; amount_rands: number | null }>
   fetchedAt: number
 }
@@ -163,8 +163,8 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   // 48h back for safety incidents
   const safety48hAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString()
 
-  // 72h ahead for campus events
-  const events72hAhead = new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString()
+  // 72h ahead for campus events (event_date is a DATE column → compare as 'YYYY-MM-DD')
+  const events72hAheadDate = new Date(now.getTime() + 72 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   // 21 days ahead for bursary deadlines
   const bursary21dAhead = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -232,13 +232,13 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .order('updated_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // Mood logs — graceful: table may not exist in all environments
+    // Mood check-ins (last 7 days)
     supabase
-      .from('mood_logs')
-      .select('score,logged_at')
+      .from('mood_checkins')
+      .select('mood_score,date')
       .eq('user_id', userId)
-      .gte('logged_at', sessionStart)
-      .order('logged_at', { ascending: true }),
+      .gte('date', week7AgoDate)
+      .order('date', { ascending: true }),
     // Worked shifts this week for burnout context
     supabase
       .from('work_shifts')
@@ -274,13 +274,12 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
       .from('safety_incidents')
       .select('id,severity,institution')
       .gte('created_at', safety48hAgo),
-    // Campus events in next 72h
+    // Campus events in next 72h (event_date is a DATE column)
     supabase
       .from('campus_events')
-      .select('title,event_type,venue,event_date,duration_minutes,institution')
-      .eq('is_cancelled', false)
-      .gte('event_date', now.toISOString())
-      .lte('event_date', events72hAhead)
+      .select('title,category,venue,event_date,event_time,institution')
+      .gte('event_date', today)
+      .lte('event_date', events72hAheadDate)
       .order('event_date', { ascending: true })
       .limit(5),
     // Bursary application deadlines in next 21 days
@@ -403,11 +402,11 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   }))
 
   // ── Wellness context ─────────────────────────────────────────────────────
-  const rawMoodLogs = (moodLogsRes.data || []) as Array<{ score: number; logged_at: string }>
+  const rawMoodLogs = (moodLogsRes.data || []) as Array<{ mood_score: number; date: string }>
   let moodAvg: number | null = null
   let moodTrend: NovaWellnessContext['moodTrend'] = 'unknown'
   if (rawMoodLogs.length >= 3) {
-    const scores = rawMoodLogs.map(m => m.score)
+    const scores = rawMoodLogs.map(m => m.mood_score)
     moodAvg = scores.reduce((s, v) => s + v, 0) / scores.length
     const mid = Math.ceil(scores.length / 2)
     const avgFirst = scores.slice(0, mid).reduce((s, v) => s + v, 0) / mid
@@ -469,7 +468,7 @@ export async function buildNovaContext(userId: string): Promise<NovaContext> {
   }
 
   // Campus events (filter to user's institution)
-  const allEvents = (campusEventsRes.data || []) as Array<{ title: string; event_type: string; venue: string | null; event_date: string; institution: string }>
+  const allEvents = (campusEventsRes.data || []) as Array<{ title: string; category: string; venue: string | null; event_date: string; event_time: string | null; institution: string }>
   const upcomingCampusEvents = allEvents.filter(ev =>
     !rawProfile?.university || ev.institution === rawProfile.university
   ).slice(0, 4)
@@ -604,9 +603,9 @@ export function formatNovaContext(ctx: NovaContext, usageGuidance = ''): string 
   const eventsNote = ctx.upcomingCampusEvents.length > 0
     ? `Upcoming campus events (next 72h): ${ctx.upcomingCampusEvents.map(e => {
         const d = new Date(e.event_date)
-        const timeStr = d.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })
         const dayStr = d.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })
-        return `"${e.title}" (${e.event_type}) — ${dayStr} at ${timeStr}${e.venue ? ` @ ${e.venue}` : ''}`
+        const timePart = e.event_time ? ` at ${e.event_time}` : ''
+        return `"${e.title}" (${e.category}) — ${dayStr}${timePart}${e.venue ? ` @ ${e.venue}` : ''}`
       }).join('; ')}.`
     : ''
 

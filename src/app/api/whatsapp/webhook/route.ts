@@ -276,7 +276,7 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
 
     const { data: sessions } = await supabaseAdmin
       .from('study_sessions')
-      .select('module_name, duration_minutes, started_at')
+      .select('duration_minutes, started_at, modules(module_name)')
       .eq('user_id', userId)
       .gte('started_at', `${todayStr}T00:00:00`)
       .lte('started_at', `${todayStr}T23:59:59`)
@@ -288,9 +288,12 @@ The student's name is ${firstName} and they study at ${profile.university ?? 'a 
     }
 
     const totalMins = sessions.reduce((s: number, x: { duration_minutes: number }) => s + (x.duration_minutes ?? 0), 0)
-    const lines = sessions.map((s: { module_name: string; duration_minutes: number }) =>
-      `• ${s.module_name} — ${s.duration_minutes ?? 0} min`
-    ).join('\n')
+    const lines = sessions.map((s: { duration_minutes: number; modules: unknown }) => {
+      const mod = Array.isArray(s.modules)
+        ? (s.modules[0] as { module_name?: string } | undefined)?.module_name
+        : (s.modules as { module_name?: string } | null)?.module_name
+      return `• ${mod ?? 'Study'} — ${s.duration_minutes ?? 0} min`
+    }).join('\n')
 
     await reply(`📋 Today's study sessions:\n\n${lines}\n\nTotal: ${totalMins} minutes. Keep going! 🔥`)
     return NextResponse.json({ status: 'ok' })

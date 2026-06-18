@@ -237,7 +237,7 @@ export const studyGapAlert = inngest.createFunction(
         .select('user_id')
         .in('user_id', Object.keys(byUser))
         .lt('due_date', todayStr)
-        .eq('completed', false)
+        .neq('status', 'done')
 
       const overdueSet = new Set((overdue ?? []).map((t: { user_id: string }) => t.user_id))
       return Object.entries(byUser)

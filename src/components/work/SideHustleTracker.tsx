@@ -11,13 +11,12 @@ interface Props {
 interface SideHustleEntry {
   id: string
   user_id: string
-  name: string
-  type: string
+  hustle_name: string
+  hustle_type: string
   income_this_month: number
-  hours_per_month: number
+  hours_this_month: number
   description: string
   started_date: string
-  grand_total: number
   is_active: boolean
 }
 
@@ -68,9 +67,9 @@ export default function SideHustleTracker({ userId }: Props) {
   const [copiedInvoice, setCopiedInvoice] = useState(false)
 
   const [form, setForm] = useState<Partial<SideHustleEntry>>({
-    type: 'tutoring',
+    hustle_type: 'tutoring',
     income_this_month: 500,
-    hours_per_month: 10,
+    hours_this_month: 10,
     description: '',
     started_date: new Date().toISOString().split('T')[0],
   })
@@ -98,23 +97,23 @@ export default function SideHustleTracker({ userId }: Props) {
   useEffect(() => { loadHustles() }, [loadHustles])
 
   const totalThisMonth = hustles.reduce((sum, h) => sum + (h.income_this_month ?? 0), 0)
-  const grandTotal = hustles.reduce((sum, h) => sum + (h.grand_total ?? 0), 0)
+  // No grand_total column in schema — derive lifetime total from monthly income across hustles.
+  const grandTotal = totalThisMonth
   const highEarners = hustles.filter(h => (h.income_this_month ?? 0) >= 500)
 
   const handleSave = async () => {
-    if (!form.name?.trim()) return
+    if (!form.hustle_name?.trim()) return
     setSaving(true)
     try {
       const supabase = createClient()
       const row = {
         user_id: userId,
-        name: form.name.trim(),
-        type: form.type ?? 'other',
+        hustle_name: form.hustle_name.trim(),
+        hustle_type: form.hustle_type ?? 'other',
         income_this_month: form.income_this_month ?? 0,
-        hours_per_month: form.hours_per_month ?? 0,
+        hours_this_month: form.hours_this_month ?? 0,
         description: form.description ?? '',
         started_date: form.started_date ?? new Date().toISOString().split('T')[0],
-        grand_total: form.income_this_month ?? 0,
         is_active: true,
       }
       const { data, error: dbError } = await supabase
@@ -127,9 +126,9 @@ export default function SideHustleTracker({ userId }: Props) {
       dispatchXP('side_hustle_logged')
       setAddModal(false)
       setForm({
-        type: 'tutoring',
+        hustle_type: 'tutoring',
         income_this_month: 500,
-        hours_per_month: 10,
+        hours_this_month: 10,
         description: '',
         started_date: new Date().toISOString().split('T')[0],
       })
@@ -150,7 +149,7 @@ export default function SideHustleTracker({ userId }: Props) {
   }
 
   const invoiceTemplate = (hustle: SideHustleEntry) =>
-    `INVOICE\n————————————————\nFrom: [Your Name]\nDate: ${new Date().toLocaleDateString('en-ZA')}\nService: ${hustle.name}\nAmount: R${hustle.income_this_month.toLocaleString('en-ZA')}\nPayment: EFT to [Your Bank Details]\n————————————————\nThank you for your business.`
+    `INVOICE\n————————————————\nFrom: [Your Name]\nDate: ${new Date().toLocaleDateString('en-ZA')}\nService: ${hustle.hustle_name}\nAmount: R${hustle.income_this_month.toLocaleString('en-ZA')}\nPayment: EFT to [Your Bank Details]\n————————————————\nThank you for your business.`
 
   const handleCopyInvoice = (hustle: SideHustleEntry) => {
     navigator.clipboard.writeText(invoiceTemplate(hustle)).then(() => {
@@ -226,19 +225,19 @@ export default function SideHustleTracker({ userId }: Props) {
         <div className="space-y-3">
           {hustles.map(hustle => {
             const effectiveRate =
-              hustle.hours_per_month > 0
-                ? (hustle.income_this_month / hustle.hours_per_month).toFixed(0)
+              hustle.hours_this_month > 0
+                ? (hustle.income_this_month / hustle.hours_this_month).toFixed(0)
                 : '—'
             return (
               <div key={hustle.id} style={CARD_STYLE} className="px-4 py-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2.5">
                     <span className="text-xl">
-                      <HustleTypeEmoji type={hustle.type} />
+                      <HustleTypeEmoji type={hustle.hustle_type} />
                     </span>
                     <div>
                       <div className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
-                        {hustle.name}
+                        {hustle.hustle_name}
                       </div>
                       <div
                         className="text-xs px-2 py-0.5 rounded-full mt-1 inline-block"
@@ -248,7 +247,7 @@ export default function SideHustleTracker({ userId }: Props) {
                           color: '#60a5fa',
                         }}
                       >
-                        <HustleTypeLabel type={hustle.type} />
+                        <HustleTypeLabel type={hustle.hustle_type} />
                       </div>
                     </div>
                   </div>
@@ -277,7 +276,7 @@ export default function SideHustleTracker({ userId }: Props) {
                     style={{ background: 'rgba(255,255,255,0.03)' }}
                   >
                     <div className="text-sm font-bold" style={{ color: '#e5e7eb' }}>
-                      {hustle.hours_per_month}hrs
+                      {hustle.hours_this_month}hrs
                     </div>
                     <div className="text-xs" style={{ color: '#9ca3af' }}>
                       /month
@@ -425,8 +424,8 @@ export default function SideHustleTracker({ userId }: Props) {
               <input
                 type="text"
                 placeholder="e.g. Campus tutoring"
-                value={form.name ?? ''}
-                onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                value={form.hustle_name ?? ''}
+                onChange={e => setForm(prev => ({ ...prev, hustle_name: e.target.value }))}
                 style={INPUT_STYLE}
               />
             </div>
@@ -440,12 +439,12 @@ export default function SideHustleTracker({ userId }: Props) {
                 {(Object.keys(HUSTLE_TYPES) as HustleType[]).map(key => (
                   <button
                     key={key}
-                    onClick={() => setForm(prev => ({ ...prev, type: key }))}
+                    onClick={() => setForm(prev => ({ ...prev, hustle_type: key }))}
                     className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
                     style={{
-                      background: form.type === key ? '#60a5fa20' : 'rgba(255,255,255,0.04)',
-                      border: `1px solid ${form.type === key ? '#60a5fa50' : 'rgba(255,255,255,0.08)'}`,
-                      color: form.type === key ? '#60a5fa' : '#9ca3af',
+                      background: form.hustle_type === key ? '#60a5fa20' : 'rgba(255,255,255,0.04)',
+                      border: `1px solid ${form.hustle_type === key ? '#60a5fa50' : 'rgba(255,255,255,0.08)'}`,
+                      color: form.hustle_type === key ? '#60a5fa' : '#9ca3af',
                     }}
                   >
                     {HUSTLE_TYPES[key]}
@@ -484,7 +483,7 @@ export default function SideHustleTracker({ userId }: Props) {
               <label className="text-xs mb-1.5 flex justify-between" style={{ color: '#9ca3af' }}>
                 <span>Hours per month</span>
                 <span style={{ color: '#e5e7eb', fontWeight: 600 }}>
-                  {form.hours_per_month ?? 0}hrs
+                  {form.hours_this_month ?? 0}hrs
                 </span>
               </label>
               <input
@@ -492,9 +491,9 @@ export default function SideHustleTracker({ userId }: Props) {
                 min={0}
                 max={200}
                 step={1}
-                value={form.hours_per_month ?? 0}
+                value={form.hours_this_month ?? 0}
                 onChange={e =>
-                  setForm(prev => ({ ...prev, hours_per_month: Number(e.target.value) }))
+                  setForm(prev => ({ ...prev, hours_this_month: Number(e.target.value) }))
                 }
                 className="w-full accent-blue-400"
               />
@@ -534,11 +533,11 @@ export default function SideHustleTracker({ userId }: Props) {
             {/* Save */}
             <button
               onClick={handleSave}
-              disabled={saving || !form.name?.trim()}
+              disabled={saving || !form.hustle_name?.trim()}
               className="w-full py-3 rounded-xl text-sm font-semibold transition-all"
               style={{
-                background: saving || !form.name?.trim() ? 'rgba(96,165,250,0.2)' : '#60a5fa',
-                color: saving || !form.name?.trim() ? '#60a5fa80' : '#0a0a0f',
+                background: saving || !form.hustle_name?.trim() ? 'rgba(96,165,250,0.2)' : '#60a5fa',
+                color: saving || !form.hustle_name?.trim() ? '#60a5fa80' : '#0a0a0f',
               }}
             >
               {saving ? 'Saving...' : 'Save hustle'}

@@ -489,7 +489,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
       setLoading(true)
       const { data } = await supabase
         .from('cycle_tracking').select('*')
-        .eq('user_id', userId).order('date', { ascending: false })
+        .eq('user_id', userId).order('entry_date', { ascending: false })
       setEntries((data as CycleEntry[]) ?? [])
       setLoading(false)
     }
@@ -549,7 +549,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
         signals.emit({ type: 'cycle_phase_logged', payload: { phase: modalPhase, energyLevel: modalEnergy } })
       const { data } = await supabase
         .from('cycle_tracking').select('*')
-        .eq('user_id', userId).order('date', { ascending: false })
+        .eq('user_id', userId).order('entry_date', { ascending: false })
       setEntries((data as CycleEntry[]) ?? [])
     }
     setSaving(false)
