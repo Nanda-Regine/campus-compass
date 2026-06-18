@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import dynamic from 'next/dynamic'
 import TopBar from '@/components/layout/TopBar'
-import ReferralWidget from '@/components/referral/ReferralWidget'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { SA_LANGUAGES } from '@/types'
@@ -13,11 +13,15 @@ import InstitutionPicker from '@/components/profile/InstitutionPicker'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
-import BadgesPanel from '@/components/gamification/BadgesPanel'
-import VarsityScore from '@/components/gamification/VarsityScore'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { getStoredLocale, type AppLocale } from '@/lib/i18n/IntlProvider'
-import GuardianAccess from '@/components/profile/GuardianAccess'
+
+// Section-specific components — code-split so they only load when their section is opened.
+// InstitutionPicker stays static (it's in the default "profile" section).
+const ReferralWidget = dynamic(() => import('@/components/referral/ReferralWidget'), { ssr: false })
+const BadgesPanel = dynamic(() => import('@/components/gamification/BadgesPanel'), { ssr: false })
+const VarsityScore = dynamic(() => import('@/components/gamification/VarsityScore'), { ssr: false })
+const LanguageSwitcher = dynamic(() => import('@/components/LanguageSwitcher'), { ssr: false })
+const GuardianAccess = dynamic(() => import('@/components/profile/GuardianAccess'), { ssr: false })
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
