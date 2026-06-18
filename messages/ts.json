@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Khezi ya Mina",
+    "study": "Ku Landza Swituto",
+    "budget": "Bajete",
+    "meals": "Swakudya",
+    "nova": "Nova AI",
+    "profile": "Phrofayile ya Mina",
+    "work": "Ntirho",
+    "campusLife": "Vutomi bya Khampasi",
+    "groups": "Svigwama swa Dyondzo",
+    "referral": "Swirhandziwa",
+    "career": "Ntirho wa Masiku ya Emahlweni",
+    "bursaries": "Pfuneto ya Dyondzo",
+    "notes": "Manotisi",
+    "social": "Hikurhangasela na Dyondzo",
+    "tutoring": "Dyondzo ya Vanghana",
+    "more": "Ku engeteleka"
+  },
+  "dayMode": {
+    "wake":      "Pfuka",
+    "commute":   "Mbyameto",
+    "class":     "Tifundziso",
+    "study":     "Dyondza",
+    "windDown":  "Tsakama",
+    "sleep":     "Lala",
+    "greeting":  "Xewani {name}!",
+    "keepGoing": "Tshika — u nga koti! 🔥",
+    "noClass":   "Ku hava tifundziso sweswi.",
+    "upNext":    "Leswi landzelaka",
+    "inClass":   "Eka tifundziso"
+  },
+  "common": {
+    "loading":       "Yi lulamisa...",
+    "saving":        "Yi hlayisa...",
+    "save":          "Hlayisa",
+    "cancel":        "Khansela",
+    "delete":        "Susa",
+    "confirm":       "Tiyisa",
+    "close":         "Pfala",
+    "submit":        "Rhuma",
+    "share":         "Avelana",
+    "search":        "Lava",
+    "back":          "Endzhaku",
+    "viewAll":       "Vona hinkwaswo",
+    "noResults":     "Ku hava swipimelo",
+    "error":         "Ku na swin'wana leswi nga tirhangiki",
+    "unauthorized":  "Ndza kombela u nghena ku tshika"
+  },
+  "tutoring": {
+    "findTutors":    "Kuma Vafundzisi",
+    "mySessions":    "Tifambiso Ta Mina",
+    "becomeTutor":   "Va Mufundzisi",
+    "editProfile":   "Hlela Phrofayile",
+    "bookSession":   "Buka Tifambiso",
+    "verified":      "Ku Tiyisiwa",
+    "pendingReview": "Yi Ringetela Hlayo",
+    "ratePerHour":   "R{rate}/hora"
+  },
+  "feed": {
+    "post":       "Rhuma",
+    "reply":      "Hlamula",
+    "report":     "Bika",
+    "categories": {
+      "general":    "Hinkwaswo",
+      "opportunity":"Ndhawu",
+      "academic":   "Dyondzo",
+      "campus":     "Khampasi",
+      "sell_swap":  "Xavisa/Hundzulula"
+    }
+  },
+  "notes": {
+    "title":      "Xithomu xa Manotisi",
+    "browse":     "Kambela",
+    "saved":      "Ku Hlayisiwa",
+    "myNotes":    "Manotisi ya Mina",
+    "newest":     "Matswa",
+    "mostSaved":  "Ku Hlayisiwa Kakhulu",
+    "mostViewed": "Ku Vonakala Kakhulu"
+  },
+  "nova": {
+    "greeting":   "Xewani {name}, u ehleketa yini?",
+    "placeholder":"Vutisa swin'wana…",
+    "send":       "Rhuma"
+  }
+}

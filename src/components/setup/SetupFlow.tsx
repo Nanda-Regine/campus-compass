@@ -844,8 +844,8 @@ export default function SetupFlow() {
               {/* Language of training */}
               <div className="mb-5">
                 <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Train me in</div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {([['en','English'],['zu','isiZulu'],['xh','isiXhosa'],['af','Afrikaans'],['st','Sesotho'],['tn','Setswana']] as [string,string][]).map(([code, name]) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                  {([['en','English'],['zu','isiZulu'],['xh','isiXhosa'],['af','Afrikaans'],['nso','Sepedi'],['st','Sesotho'],['tn','Setswana'],['ts','Xitsonga'],['ss','siSwati'],['ve','Tshivenda'],['nr','isiNdebele']] as [string,string][]).map(([code, name]) => (
                     <button key={code} type="button" onClick={() => setPreferredLang(code)} className={cn(
                       'py-1.5 px-2 rounded-lg text-[0.62rem] font-mono transition-all border',
                       preferredLang === code

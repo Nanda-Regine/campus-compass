@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Ikhasi Lam",
+    "study": "Ukulandelela Ukufunda",
+    "budget": "Isabelomali",
+    "meals": "Ukutya",
+    "nova": "Nova AI",
+    "profile": "Iphrofayila Yam",
+    "work": "Umsebenzi",
+    "campusLife": "Ubomi Basekhampasini",
+    "groups": "Amaqela Okufunda",
+    "referral": "Izaziso",
+    "career": "Umsebenzi Wekamva",
+    "bursaries": "Isipho Semfundo",
+    "notes": "Amanothi",
+    "social": "Inkcubeko neZifundo",
+    "tutoring": "Ukufundisana",
+    "more": "Nangaphezulu"
+  },
+  "dayMode": {
+    "wake":      "Vuka",
+    "commute":   "Uhambo",
+    "class":     "Isifundo",
+    "study":     "Funda",
+    "windDown":  "Kuphumla",
+    "sleep":     "Lala",
+    "greeting":  "Molo {name}!",
+    "keepGoing": "Qhubeka — unakho! 🔥",
+    "noClass":   "Akukho zifundo ngoku.",
+    "upNext":    "Okulandelayo",
+    "inClass":   "Kwisifundo"
+  },
+  "common": {
+    "loading":       "Iyalayisha...",
+    "saving":        "Igcina...",
+    "save":          "Gcina",
+    "cancel":        "Rhoxisa",
+    "delete":        "Cima",
+    "confirm":       "Qinisekisa",
+    "close":         "Vala",
+    "submit":        "Thumela",
+    "share":         "Yabelana",
+    "search":        "Khangela",
+    "back":          "Emva",
+    "viewAll":       "Bona konke",
+    "noResults":     "Akukho miphumo",
+    "error":         "Kukho into engahambanga kakuhle",
+    "unauthorized":  "Nceda ungene ukuqhubeka"
+  },
+  "tutoring": {
+    "findTutors":    "Fumana Abafundisi",
+    "mySessions":    "Iiseshini Zam",
+    "becomeTutor":   "Yiba Umfundisi",
+    "editProfile":   "Hlela Iphrofayila",
+    "bookSession":   "Bhuka Iseshini",
+    "verified":      "Kuqinisekisiwe",
+    "pendingReview": "Kulindwe ukuhlolwa",
+    "ratePerHour":   "R{rate}/iyure"
+  },
+  "feed": {
+    "post":       "Thumela",
+    "reply":      "Phendula",
+    "report":     "Bika",
+    "categories": {
+      "general":    "Ngokubanzi",
+      "opportunity":"Ithuba",
+      "academic":   "Imfundo",
+      "campus":     "Ikhampasi",
+      "sell_swap":  "Thengisa/Tshintsha"
+    }
+  },
+  "notes": {
+    "title":      "IMarike yeAmanothi",
+    "browse":     "Khangela",
+    "saved":      "Kugcinwe",
+    "myNotes":    "Amanothi Am",
+    "newest":     "Amatsha",
+    "mostSaved":  "Agciniwe Kakhulu",
+    "mostViewed": "Abonakele Kakhulu"
+  },
+  "nova": {
+    "greeting":   "Molo {name}, ucinga ntoni?",
+    "placeholder":"Buza nantoni na…",
+    "send":       "Thumela"
+  }
+}

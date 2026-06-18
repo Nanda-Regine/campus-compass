@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Letheka La Ka",
+    "study": "Ho Latela Dithuto",
+    "budget": "Bajete",
+    "meals": "Dijo",
+    "nova": "Nova AI",
+    "profile": "Profaele Ya Ka",
+    "work": "Mosebetsi",
+    "campusLife": "Bophelo ba Khampase",
+    "groups": "Maqoqa a Thuto",
+    "referral": "Dilhahlobo",
+    "career": "Mosebetsi wa Bokamoso",
+    "bursaries": "Thuso ya Thuto",
+    "notes": "Dingolwa",
+    "social": "Dikopano le Dithuto",
+    "tutoring": "Thuto ya Bahlokomeli",
+    "more": "Ho feta"
+  },
+  "dayMode": {
+    "wake":      "Tsohang",
+    "commute":   "Leeto",
+    "class":     "Lesedi",
+    "study":     "Ithuta",
+    "windDown":  "Phomola",
+    "sleep":     "Robala",
+    "greeting":  "Dumela {name}!",
+    "keepGoing": "Tswela pele — o kgona! 🔥",
+    "noClass":   "Ha ho na lesedi hona jwale.",
+    "upNext":    "E tlang",
+    "inClass":   "Leseding"
+  },
+  "common": {
+    "loading":       "E a kenya...",
+    "saving":        "E a boloka...",
+    "save":          "Boloka",
+    "cancel":        "Hana",
+    "delete":        "Hlakola",
+    "confirm":       "Tiisa",
+    "close":         "Tswalela",
+    "submit":        "Romela",
+    "share":         "Arolelana",
+    "search":        "Batlisa",
+    "back":          "Morao",
+    "viewAll":       "Bona tsohle",
+    "noResults":     "Ha ho sephetho se fumanweng",
+    "error":         "Ho na le ntho e sa sebetseng hantle",
+    "unauthorized":  "Ke kopa o kene ho tswela pele"
+  },
+  "tutoring": {
+    "findTutors":    "Fumana Barupisi",
+    "mySessions":    "Diphuputso Tsa Ka",
+    "becomeTutor":   "Eba Morupisi",
+    "editProfile":   "Hlophisa Profaele",
+    "bookSession":   "Buka Phuputso",
+    "verified":      "Ho Tiiswa",
+    "pendingReview": "Ho Emetse Hlahlobo",
+    "ratePerHour":   "R{rate}/hora"
+  },
+  "feed": {
+    "post":       "Romela",
+    "reply":      "Araba",
+    "report":     "Lefa",
+    "categories": {
+      "general":    "Kakaretso",
+      "opportunity":"Monyetla",
+      "academic":   "Thuto",
+      "campus":     "Khampase",
+      "sell_swap":  "Rekisa/Pheella"
+    }
+  },
+  "notes": {
+    "title":      "Mmereki wa Dingolwa",
+    "browse":     "Sheba",
+    "saved":      "Ho Bolokwa",
+    "myNotes":    "Dingolwa Tsa Ka",
+    "newest":     "Ditjha",
+    "mostSaved":  "Ho Bolokwa Haholo",
+    "mostViewed": "Ho Bonwa Haholo"
+  },
+  "nova": {
+    "greeting":   "Dumela {name}, o nahana eng?",
+    "placeholder":"Botsa sengwe le sengwe…",
+    "send":       "Romela"
+  }
+}

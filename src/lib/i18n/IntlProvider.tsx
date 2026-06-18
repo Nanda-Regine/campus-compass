@@ -7,15 +7,27 @@ import { useAppStore } from '@/store'
 import en from '../../../messages/en.json'
 import zu from '../../../messages/zu.json'
 import af from '../../../messages/af.json'
+import xh from '../../../messages/xh.json'
+import st from '../../../messages/st.json'
+import tn from '../../../messages/tn.json'
+import nso from '../../../messages/nso.json'
+import ts from '../../../messages/ts.json'
+import ss from '../../../messages/ss.json'
+import ve from '../../../messages/ve.json'
+import nr from '../../../messages/nr.json'
 
-const MESSAGES = { en, zu, af } as const
+const MESSAGES = { en, zu, af, xh, st, tn, nso, ts, ss, ve, nr } as const
 export type AppLocale = keyof typeof MESSAGES
 
 const LOCALE_KEY = 'varsityos-locale'
+const SUPPORTED = ['en', 'zu', 'xh', 'af', 'st', 'tn', 'nso', 'ts', 'ss', 've', 'nr'] as const satisfies readonly AppLocale[]
 
 export function getStoredLocale(): AppLocale {
   if (typeof window === 'undefined') return 'en'
-  try { return (localStorage.getItem(LOCALE_KEY) as AppLocale) ?? 'en' } catch { return 'en' }
+  try {
+    const stored = localStorage.getItem(LOCALE_KEY)
+    return stored && (SUPPORTED as readonly string[]).includes(stored) ? (stored as AppLocale) : 'en'
+  } catch { return 'en' }
 }
 
 export function setStoredLocale(locale: AppLocale) {

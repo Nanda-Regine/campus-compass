@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Khophi ya Nne",
+    "study": "U Sedzulusa Zwithu zwa Ndidimelo",
+    "budget": "Bajete",
+    "meals": "Zwakudya",
+    "nova": "Nova AI",
+    "profile": "Phrofaili Yanga",
+    "work": "Mushumo",
+    "campusLife": "Vhutshilo ha Khampuse",
+    "groups": "Madzangano a Ndidimelo",
+    "referral": "Zwi Tanganedzwaho",
+    "career": "Mushumo wa Zwiambaho",
+    "bursaries": "Thuso ya Ndidimelo",
+    "notes": "Manotisi",
+    "social": "Madzangano na Ndidimelo",
+    "tutoring": "Ndidimelo ya Vhahura",
+    "more": "Fhasi"
+  },
+  "dayMode": {
+    "wake":      "Pfura",
+    "commute":   "Mbya",
+    "class":     "Kiliasi",
+    "study":     "Guda",
+    "windDown":  "Fhosa",
+    "sleep":     "Lala",
+    "greeting":  "Ndaa {name}!",
+    "keepGoing": "Bvisela phanḓa — ni kona! 🔥",
+    "noClass":   "A huna kiliasi zwino.",
+    "upNext":    "Zwithu zwine zwa tevhela",
+    "inClass":   "Kiliasini"
+  },
+  "common": {
+    "loading":       "I khou dzhia...",
+    "saving":        "I khou boloka...",
+    "save":          "Boloka",
+    "cancel":        "Fhungudza",
+    "delete":        "Dzima",
+    "confirm":       "Tiisa",
+    "close":         "Vhala",
+    "submit":        "Romela",
+    "share":         "Alelana",
+    "search":        "Lavhelesa",
+    "back":          "Tshikoloma",
+    "viewAll":       "Vhona zwothe",
+    "noResults":     "A huna mvelelo dzi wanalaho",
+    "error":         "Hu na zwithu zwo khakhaho",
+    "unauthorized":  "Ndi humbela u dzhena u tshimbila"
+  },
+  "tutoring": {
+    "findTutors":    "Wana Vhaṱuṱuwedzi",
+    "mySessions":    "Mishumo Yanga",
+    "becomeTutor":   "Vha Muṱuṱuwedzi",
+    "editProfile":   "Shandukisa Phrofaili",
+    "bookSession":   "Buka Mushumo",
+    "verified":      "Zwo Tiiswa",
+    "pendingReview": "I Lindela Hlayo",
+    "ratePerHour":   "R{rate}/hora"
+  },
+  "feed": {
+    "post":       "Romela",
+    "reply":      "Fhindula",
+    "report":     "Divhadza",
+    "categories": {
+      "general":    "Zwothe",
+      "opportunity":"Tshikhala",
+      "academic":   "Ndidimelo",
+      "campus":     "Khampuse",
+      "sell_swap":  "Thengisa/Shandukisa"
+    }
+  },
+  "notes": {
+    "title":      "Nḓowelo ya Manotisi",
+    "browse":     "Ṱavha",
+    "saved":      "Zwo Bolokwa",
+    "myNotes":    "Manotisi Anga",
+    "newest":     "Matswa",
+    "mostSaved":  "Zwo Bolokiwa Khaḓo",
+    "mostViewed": "Zwo Vhonwa Khaḓo"
+  },
+  "nova": {
+    "greeting":   "Ndaa {name}, ni humbula nganei?",
+    "placeholder":"Vhudzisa zwithu zwothe…",
+    "send":       "Romela"
+  }
+}

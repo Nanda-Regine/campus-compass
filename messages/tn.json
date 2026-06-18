@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "dashboard": "Letlhare la Me",
+    "study": "Go Latela Dithuto",
+    "budget": "Bajete",
+    "meals": "Dijo",
+    "nova": "Nova AI",
+    "profile": "Profaele ya Me",
+    "work": "Tiro",
+    "campusLife": "Botshelo jwa Khamphase",
+    "groups": "Maqoqo a Thuto",
+    "referral": "Dikgopotso",
+    "career": "Mosomo wa Isago",
+    "bursaries": "Thuso ya Thuto",
+    "notes": "Dingwaologanyane",
+    "social": "Dikopanyo le Dithuto",
+    "tutoring": "Thuto ya Dipeele",
+    "more": "Go feta"
+  },
+  "dayMode": {
+    "wake":      "Tsogela",
+    "commute":   "Leeto",
+    "class":     "Thuto",
+    "study":     "Ithuta",
+    "windDown":  "Ikhutse",
+    "sleep":     "Robala",
+    "greeting":  "Dumela {name}!",
+    "keepGoing": "Tswelela — o kgona! 🔥",
+    "noClass":   "Ga go na thuto jaanong.",
+    "upNext":    "E e latelang",
+    "inClass":   "Mo thutweng"
+  },
+  "common": {
+    "loading":       "E a loada...",
+    "saving":        "E a boloka...",
+    "save":          "Boloka",
+    "cancel":        "Khansela",
+    "delete":        "Phimola",
+    "confirm":       "Tiisa",
+    "close":         "Tswala",
+    "submit":        "Romela",
+    "share":         "Abelana",
+    "search":        "Batlisa",
+    "back":          "Morago",
+    "viewAll":       "Bona tsotlhe",
+    "noResults":     "Go se na diphetho tse fitlhelwang",
+    "error":         "Go na le sengwe se sa sebetsang",
+    "unauthorized":  "Ke kopa o tsene go tswelela"
+  },
+  "tutoring": {
+    "findTutors":    "Batlha Barutisi",
+    "mySessions":    "Dikereke Tsa Me",
+    "becomeTutor":   "Nna Morutisi",
+    "editProfile":   "Fetola Profaele",
+    "bookSession":   "Buka Kereke",
+    "verified":      "Go Netefadiwa",
+    "pendingReview": "E e Emetse Tlhatlhobo",
+    "ratePerHour":   "R{rate}/ura"
+  },
+  "feed": {
+    "post":       "Rometsa",
+    "reply":      "Araba",
+    "report":     "Begela",
+    "categories": {
+      "general":    "Kakaretso",
+      "opportunity":"Tšhono",
+      "academic":   "Thuto",
+      "campus":     "Khamphase",
+      "sell_swap":  "Rekisa/Fetola"
+    }
+  },
+  "notes": {
+    "title":      "Mmireki wa Dingwaologanyane",
+    "browse":     "Leba",
+    "saved":      "Go Bolokwa",
+    "myNotes":    "Dingwaologanyane Tsa Me",
+    "newest":     "Ditjha",
+    "mostSaved":  "Go Bolokiwa Thata",
+    "mostViewed": "Go Bonwa Thata"
+  },
+  "nova": {
+    "greeting":   "Dumela {name}, o akanya eng?",
+    "placeholder":"Botsa sengwe le sengwe…",
+    "send":       "Rometsa"
+  }
+}
