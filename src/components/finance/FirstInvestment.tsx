@@ -41,7 +41,7 @@ const STEPS: Step[] = [
     icon: '📊',
     title: 'Understand Compound Interest',
     subtitle: 'Use the calculator below to see your growth',
-    body: 'Compound interest means your returns earn returns. The earlier you start, the more powerful it becomes. Even R50/month at 10% p.a. becomes R9,600 after 10 years — you only put in R6,000. The market did the rest.',
+    body: 'Compound interest means your returns earn returns. The earlier you start, the more powerful it becomes. Even R50/month at 10% p.a. grows to about R10,300 after 10 years — you only put in R6,000. The market did the rest.',
     tag: 'Step 4 of 5',
   },
   {
@@ -197,7 +197,7 @@ function NomvulaStory() {
         After <strong style={{ color: '#fff' }}>3 years</strong>:{' '}
         <strong style={{ color: '#22c55e' }}>R2,100</strong>.
         After <strong style={{ color: '#fff' }}>10 years</strong>:{' '}
-        <strong style={{ color: '#22c55e' }}>R9,600</strong>.
+        <strong style={{ color: '#22c55e' }}>R10,300</strong>.
         She contributed only R6,000 — compound interest added the rest.
         At 30, she has a deposit for postgrad or a car. She also teaches her younger sibling: ubuntu in action.
       </p>

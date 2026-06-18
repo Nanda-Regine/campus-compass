@@ -281,7 +281,16 @@ export default function StokvelOS() {
   // ─── Main app ─────────────────────────────────────────────────
   const totalFund = members.length * group.contribution_amount
   const paidThisMonth = contributions.filter(c => c.paid).length
-  const currentPayoutMember = members.find(m => m.payout_month === new Date().getMonth() + 1)
+  // payout_month is a 1..N rotation TURN, not a calendar month. Matching it against the
+  // current calendar month named the wrong recipient (or nobody) unless the circle happened
+  // to start in January. Derive the active turn from whole months elapsed since the group was
+  // created, wrapping by member count, so the rotation is correct whenever the circle started.
+  const cycleLength = members.length
+  const stokvelStart = new Date(group.created_at)
+  const monthsElapsed = (new Date().getFullYear() - stokvelStart.getFullYear()) * 12
+    + (new Date().getMonth() - stokvelStart.getMonth())
+  const currentTurn = cycleLength > 0 ? ((monthsElapsed % cycleLength) + cycleLength) % cycleLength + 1 : 1
+  const currentPayoutMember = members.find(m => m.payout_month === currentTurn)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -602,7 +611,6 @@ function PayoutsTab({
   setMembers: React.Dispatch<React.SetStateAction<MemberRow[]>>
   contributionAmount: number
 }) {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const sorted = [...members].sort((a, b) => a.payout_month - b.payout_month)
   const potAmount = members.length * contributionAmount
 
@@ -632,7 +640,7 @@ function PayoutsTab({
         <div key={m.id} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '11px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>{m.name}</div>
-            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 1 }}>Month {m.payout_month} — {months[(m.payout_month - 1) % 12]}</div>
+            <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 1 }}>Turn {m.payout_month} of {members.length}</div>
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
             <button onClick={() => updatePayoutMonth(m.id, m.payout_month - 1)} style={{ width: 24, height: 24, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-secondary)', fontSize: '0.75rem', cursor: 'pointer' }}>−</button>
@@ -666,7 +674,7 @@ function DisputesTab({
     try {
       const { data, error } = await supabase
         .from('stokvel_disputes')
-        .insert({ group_id: groupId, description: form.description.trim(), reported_by: form.reportedBy.trim() || null, resolved: false })
+        .insert({ group_id: groupId, description: form.description.trim(), reported_by: form.reportedBy.trim() || 'Anonymous', resolved: false })
         .select()
         .single()
       if (error) throw error
