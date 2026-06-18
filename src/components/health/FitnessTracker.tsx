@@ -53,11 +53,16 @@ const TIPS = [
 type Tab = 'log' | 'sports' | 'tips'
 
 // ─── Streak calculator ────────────────────────────────────────
+// Uses SAST calendar dates (toISOString() is UTC and rolls over at 02:00 SAST,
+// dropping yesterday's log overnight) and keeps a streak alive if the most recent
+// workout was yesterday but today isn't logged yet.
+const sastDay = (d: Date) => d.toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' })
 function calcStreak(logs: WorkoutLog[]): number {
   const dates = new Set(logs.map(l => l.date))
   let streak = 0
   const check = new Date()
-  while (dates.has(check.toISOString().split('T')[0])) {
+  if (!dates.has(sastDay(check))) check.setDate(check.getDate() - 1) // allow "yesterday" to keep it alive
+  while (dates.has(sastDay(check))) {
     streak++
     check.setDate(check.getDate() - 1)
   }
@@ -228,7 +233,7 @@ export default function FitnessTracker() {
 
   // ─── Derived stats ────────────────────────────────────────────
   const streak    = calcStreak(logs)
-  const thisWeek  = logs.filter(l => { const d = new Date(l.date); const diff = (Date.now() - d.getTime()) / 86400000; return diff < 7 })
+  const thisWeek  = logs.filter(l => { const d = new Date(l.date); const diff = (Date.now() - d.getTime()) / 86400000; return diff >= 0 && diff < 7 })
   const totalMins = thisWeek.reduce((a, b) => a + b.duration, 0)
 
   // ─── Render ───────────────────────────────────────────────────

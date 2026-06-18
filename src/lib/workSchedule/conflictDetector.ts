@@ -2,12 +2,19 @@ import { type WorkConflict } from '@/types'
 
 // ─── Time helpers ─────────────────────────────────────────────
 
+// Returns minutes-since-midnight, or NaN for malformed/out-of-range input
+// ("", "TBA", "25:00"). Callers must treat NaN as "unknown time", not "no conflict".
 function parseTime(timeStr: string): number {
+  if (!timeStr) return NaN
   const [h, m] = timeStr.split(':').map(Number)
+  if (!Number.isFinite(h) || !Number.isFinite(m)) return NaN
+  if (h < 0 || h > 23 || m < 0 || m > 59) return NaN
   return h * 60 + m
 }
 
 function timesOverlap(startA: number, endA: number, startB: number, endB: number): boolean {
+  // Unparseable times must not silently report "no overlap" — surface as no-data upstream.
+  if ([startA, endA, startB, endB].some(n => !Number.isFinite(n))) return false
   return startA < endB && endA > startB
 }
 
@@ -96,11 +103,15 @@ export function detectShiftConflicts(
   const shiftDate = new Date(shift.shift_date)
   const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][shiftDate.getDay()]
   const shiftStart = parseTime(shift.start_time)
-  const shiftEnd   = parseTime(shift.end_time)
-  const shiftHours = (shiftEnd - shiftStart) / 60
+  const shiftEndRaw = parseTime(shift.end_time)
+  const validShiftTimes = Number.isFinite(shiftStart) && Number.isFinite(shiftEndRaw)
+  // Shifts crossing midnight (e.g. 22:00–02:00) have end <= start; unwrap by +24h so
+  // duration is positive and the same-day evening portion still overlaps correctly.
+  const shiftEnd = validShiftTimes && shiftEndRaw <= shiftStart ? shiftEndRaw + 1440 : shiftEndRaw
+  const shiftHours = validShiftTimes ? (shiftEnd - shiftStart) / 60 : (shift.duration_hours ?? 0)
 
   // 1. Check timetable overlaps on shift day
-  const dayLectures = timetable.filter(t => t.day_of_week_text === dayName)
+  const dayLectures = validShiftTimes ? timetable.filter(t => t.day_of_week_text === dayName) : []
   for (const lecture of dayLectures) {
     if (!lecture.end_time) continue
     const lectureStart = parseTime(lecture.start_time)
@@ -130,7 +141,8 @@ export function detectShiftConflicts(
 
   // 3. Check if shift is within 3 days before an exam
   const threeDaysAfterStr = toDateStr(addDays(shiftDate, 3))
-  const nearbyExams = exams.filter(e => e.exam_date > shiftDateStr && e.exam_date <= threeDaysAfterStr)
+  // Include the exam day itself (>=): working the morning of an exam is the most dangerous case.
+  const nearbyExams = exams.filter(e => e.exam_date >= shiftDateStr && e.exam_date <= threeDaysAfterStr)
   for (const exam of nearbyExams) {
     conflicts.push({
       type: 'exam_proximity',

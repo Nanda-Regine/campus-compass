@@ -164,7 +164,9 @@ function saveHabitsLocal(habits: Habit[]) {
   if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(habits))
 }
 
-const today = () => new Date().toISOString().split('T')[0]
+// SAST calendar date — toISOString() is UTC and rolls over at 02:00 SAST, which would
+// mis-attribute a late-night check-in to the next day and break "checked in today" logic.
+const today = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' })
 
 function calcStreak(habit: Habit, wasCheckedIn: boolean): number {
   const last = habit.lastCheckedIn

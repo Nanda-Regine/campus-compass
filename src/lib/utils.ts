@@ -3,7 +3,7 @@
 // ============================================================
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { format, formatDistance, isPast, differenceInDays, startOfMonth, endOfMonth } from 'date-fns'
+import { format, formatDistance, isPast, differenceInCalendarDays, startOfMonth, endOfMonth } from 'date-fns'
 
 // ─── Tailwind class helper ────────────────────────────────────
 export function cn(...inputs: ClassValue[]) {
@@ -46,7 +46,13 @@ export function getGreeting(): string {
 }
 
 export function getDaysUntil(date: string | Date): number {
-  return differenceInDays(new Date(date), new Date())
+  // Date-only strings ("2026-06-20") parse as UTC midnight, which is 02:00 SAST —
+  // differencing on raw ms then truncating reports the day BEFORE an exam as "0 / today".
+  // Parse date-only values as LOCAL midnight and compare whole calendar days instead.
+  const target = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ? new Date(`${date}T00:00:00`)
+    : new Date(date)
+  return differenceInCalendarDays(target, new Date())
 }
 
 export function isOverdue(date: string | Date): boolean {

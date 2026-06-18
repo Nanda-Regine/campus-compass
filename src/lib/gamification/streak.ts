@@ -9,8 +9,12 @@ export async function incrementStreak(supabase: SupabaseClient, userId: string):
 
   if (!profile) return null
 
-  const today     = new Date().toISOString().split('T')[0]
-  const yesterday = new Date(Date.now() - 86_400_000).toISOString().split('T')[0]
+  // Use SAST calendar dates (UTC+2), not UTC. toISOString() rolls the day over at
+  // 22:00 SAST, which breaks/skips streaks for students studying late at night.
+  const sastDate = (ms: number) =>
+    new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' })
+  const today     = sastDate(Date.now())
+  const yesterday = sastDate(Date.now() - 86_400_000)
   const lastActivity = profile.last_activity_date as string | null
 
   if (lastActivity === today) return profile.streak_count as number // already done today
