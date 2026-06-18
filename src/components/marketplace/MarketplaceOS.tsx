@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ShoppingBag, Plus, Package, MessageSquare, Search, ChevronDown, ChevronUp, Send, X } from 'lucide-react'
+import { ShoppingBag, Plus, Package, MessageSquare, Search, ChevronDown, ChevronUp, Send, X, HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -20,6 +20,7 @@ interface Listing {
   contact_whatsapp: string | null
   image_urls: string[]
   status: string
+  listing_type: 'sale' | 'lost' | 'found'
   created_at: string
 }
 
@@ -50,12 +51,14 @@ interface Props {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-type Tab = 'browse' | 'sell' | 'my-listings' | 'messages'
+type Tab = 'browse' | 'sell' | 'lost-found' | 'my-listings' | 'messages'
 type Category = 'textbooks' | 'electronics' | 'clothing' | 'furniture' | 'food' | 'transport' | 'other'
 type Condition = 'new' | 'like_new' | 'good' | 'fair'
 
 const ACCENT = '#f59e0b'
 const ACCENT_DIM = 'rgba(245,158,11,0.14)'
+const LOST_ACCENT = '#ef4444'
+const FOUND_ACCENT = '#34d399'
 
 const CATEGORY_META: Record<Category, { emoji: string; label: string }> = {
   textbooks:   { emoji: '📚', label: 'Textbooks' },
@@ -78,10 +81,11 @@ const CATEGORIES = Object.keys(CATEGORY_META) as Category[]
 const CONDITIONS = Object.keys(CONDITION_LABELS) as Condition[]
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'browse',      label: 'Browse',   icon: <ShoppingBag size={14} /> },
-  { id: 'sell',        label: 'Sell',     icon: <Plus size={14} /> },
-  { id: 'my-listings', label: 'Mine',     icon: <Package size={14} /> },
-  { id: 'messages',    label: 'Messages', icon: <MessageSquare size={14} /> },
+  { id: 'browse',      label: 'Browse',     icon: <ShoppingBag size={14} /> },
+  { id: 'sell',        label: 'Sell',       icon: <Plus size={14} /> },
+  { id: 'lost-found',  label: 'Lost+Found', icon: <HelpCircle size={14} /> },
+  { id: 'my-listings', label: 'Mine',       icon: <Package size={14} /> },
+  { id: 'messages',    label: 'Messages',   icon: <MessageSquare size={14} /> },
 ]
 
 function timeAgo(iso: string): string {
@@ -113,6 +117,20 @@ function PriceBadge({ listing }: { listing: Listing }) {
       letterSpacing: '0.03em',
     }}>
       {text}
+    </span>
+  )
+}
+
+function TypeBadge({ type }: { type: 'lost' | 'found' }) {
+  const color = type === 'lost' ? LOST_ACCENT : FOUND_ACCENT
+  const label = type === 'lost' ? 'LOST' : 'FOUND'
+  return (
+    <span style={{
+      fontFamily: 'var(--font-mono)', fontSize: '0.72rem', fontWeight: 700,
+      color, background: `${color}18`, border: `1px solid ${color}40`,
+      borderRadius: 6, padding: '2px 8px', letterSpacing: '0.03em',
+    }}>
+      {label}
     </span>
   )
 }
@@ -189,7 +207,10 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
             </div>
           )}
         </div>
-        <PriceBadge listing={listing} />
+        {listing.listing_type === 'lost' || listing.listing_type === 'found'
+          ? <TypeBadge type={listing.listing_type} />
+          : <PriceBadge listing={listing} />
+        }
       </div>
 
       {/* Tags row */}
@@ -262,7 +283,8 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
               textDecoration: 'none',
             }}
           >
-            <span style={{ fontSize: '0.85rem' }}>💬</span> WhatsApp
+            <span style={{ fontSize: '0.85rem' }}>💬</span>
+            {listing.listing_type === 'found' ? 'I lost this!' : listing.listing_type === 'lost' ? 'I found it!' : 'WhatsApp'}
           </a>
         )}
         {showActions && listing.status === 'active' && onMarkSold && (
@@ -280,7 +302,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
               cursor: 'pointer',
             }}
           >
-            Mark Sold
+            {listing.listing_type === 'sale' ? 'Mark Sold' : 'Mark Resolved'}
           </button>
         )}
         {showActions && onDelete && listing.status !== 'deleted' && (
@@ -317,7 +339,7 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
   const fetch = useCallback(async () => {
     setLoading(true)
     try {
-      let url = `/api/marketplace?`
+      let url = `/api/marketplace?type=sale&`
       if (catFilter !== 'all') url += `category=${catFilter}&`
       if (search.trim()) url += `search=${encodeURIComponent(search.trim())}`
       const res = await window.fetch(url)
@@ -453,6 +475,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
           condition: condition || null,
           pickup_location: pickupLocation.trim() || null,
           contact_whatsapp: contactWhatsapp.trim() || null,
+          listing_type: 'sale',
         }),
       })
       const json = await res.json() as { data?: Listing; error?: string }
@@ -896,6 +919,227 @@ function MessagesTab({ userId }: { userId: string }) {
   )
 }
 
+// ─── Lost & Found Tab ─────────────────────────────────────────────────────────
+
+function LostFoundTab({ userId: _userId, university: _university }: { userId: string; university: string }) {
+  const [items, setItems] = useState<Listing[]>([])
+  const [loading, setLoading] = useState(true)
+  const [typeFilter, setTypeFilter] = useState<'all' | 'lost' | 'found'>('all')
+  const [showForm, setShowForm] = useState(false)
+  const [reportType, setReportType] = useState<'lost' | 'found'>('lost')
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [location, setLocation] = useState('')
+  const [contactWhatsapp, setContactWhatsapp] = useState('')
+  const [category, setCategory] = useState<Category>('other')
+  const [saving, setSaving] = useState(false)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [lostRes, foundRes] = await Promise.all([
+        window.fetch('/api/marketplace?type=lost'),
+        window.fetch('/api/marketplace?type=found'),
+      ])
+      const [lostJson, foundJson] = await Promise.all([
+        lostRes.json() as Promise<{ data: Listing[] }>,
+        foundRes.json() as Promise<{ data: Listing[] }>,
+      ])
+      setItems([...(lostJson.data ?? []), ...(foundJson.data ?? [])])
+    } catch {
+      toast.error('Could not load lost & found')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { void load() }, [load])
+
+  const filtered = typeFilter === 'all' ? items : items.filter(i => i.listing_type === typeFilter)
+  const sorted = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+  async function handleReport(e: React.FormEvent) {
+    e.preventDefault()
+    if (title.trim().length < 3) { toast.error('Title must be at least 3 characters'); return }
+    if (!contactWhatsapp.trim()) { toast.error('WhatsApp contact is required'); return }
+    setSaving(true)
+    try {
+      const res = await window.fetch('/api/marketplace', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim() || null,
+          category,
+          pickup_location: location.trim() || null,
+          contact_whatsapp: contactWhatsapp.trim(),
+          listing_type: reportType,
+          is_free: true,
+          price_rands: null,
+        }),
+      })
+      const json = await res.json() as { data?: Listing; error?: string }
+      if (!res.ok) throw new Error(json.error ?? 'Failed')
+      toast.success(reportType === 'lost' ? '📢 Lost item reported!' : '🙌 Found item reported!')
+      setTitle(''); setDescription(''); setLocation(''); setContactWhatsapp(''); setCategory('other')
+      setShowForm(false)
+      await load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '10px 12px',
+    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: 10, color: 'var(--text-primary)',
+    fontFamily: 'var(--font-body)', fontSize: '0.85rem',
+    outline: 'none', boxSizing: 'border-box',
+  }
+
+  const labelStyle: React.CSSProperties = {
+    fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 600,
+    color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
+    letterSpacing: '0.08em', marginBottom: 6, display: 'block',
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {/* Filter + Report button row */}
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 6, flex: 1, overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {(['all', 'lost', 'found'] as const).map(f => {
+            const active = typeFilter === f
+            const color = f === 'lost' ? LOST_ACCENT : f === 'found' ? FOUND_ACCENT : 'rgba(255,255,255,0.6)'
+            const label = f === 'all' ? 'All' : f === 'lost' ? '🔴 Lost' : '🟢 Found'
+            return (
+              <button key={f} onClick={() => setTypeFilter(f)} style={{
+                flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+                fontWeight: active ? 700 : 400,
+                color: active ? (f === 'all' ? ACCENT : color) : 'rgba(255,255,255,0.4)',
+                background: active ? (f === 'all' ? ACCENT_DIM : `${color}18`) : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${active ? (f === 'all' ? ACCENT + '50' : color + '50') : 'rgba(255,255,255,0.08)'}`,
+                borderRadius: 20, padding: '5px 11px', cursor: 'pointer', whiteSpace: 'nowrap',
+              }}>
+                {label}
+              </button>
+            )
+          })}
+        </div>
+        <button
+          onClick={() => setShowForm(v => !v)}
+          style={{
+            flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700,
+            color: ACCENT, background: ACCENT_DIM, border: `1px solid ${ACCENT}40`,
+            borderRadius: 20, padding: '5px 12px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 4,
+          }}
+        >
+          {showForm ? <X size={12} /> : <Plus size={12} />}
+          Report
+        </button>
+      </div>
+
+      {/* Report form */}
+      {showForm && (
+        <div style={{ background: 'rgba(245,158,11,0.04)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 14, padding: 16 }}>
+          {/* Lost / Found toggle */}
+          <div style={{ display: 'flex', gap: 0, background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: 3, marginBottom: 16 }}>
+            {(['lost', 'found'] as const).map(t => {
+              const active = reportType === t
+              const color = t === 'lost' ? LOST_ACCENT : FOUND_ACCENT
+              return (
+                <button key={t} onClick={() => setReportType(t)} style={{
+                  flex: 1, padding: '8px 0',
+                  background: active ? `${color}20` : 'transparent',
+                  border: `1px solid ${active ? color + '50' : 'transparent'}`,
+                  borderRadius: 8, color: active ? color : 'rgba(255,255,255,0.4)',
+                  fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 700,
+                  cursor: 'pointer', transition: 'all 0.15s ease',
+                }}>
+                  {t === 'lost' ? '😢 I Lost Something' : '🙌 I Found Something'}
+                </button>
+              )
+            })}
+          </div>
+
+          <form onSubmit={handleReport} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <label style={labelStyle}>{reportType === 'lost' ? 'What did you lose? *' : 'What did you find? *'}</label>
+              <input
+                value={title} onChange={e => setTitle(e.target.value)}
+                placeholder={reportType === 'lost' ? 'e.g. Black Laptop Bag' : 'e.g. Student Card'}
+                maxLength={120} required style={inputStyle}
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>More detail</label>
+              <textarea
+                value={description} onChange={e => setDescription(e.target.value)}
+                placeholder={reportType === 'lost' ? 'Colour, brand, what was inside...' : 'Where and when you found it...'}
+                maxLength={500} rows={2} style={{ ...inputStyle, resize: 'vertical', minHeight: 60 }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{reportType === 'lost' ? 'Last seen at' : 'Found at'}</label>
+                <input value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Library Level 3" maxLength={200} style={inputStyle} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>Category</label>
+                <select value={category} onChange={e => setCategory(e.target.value as Category)} style={{ ...inputStyle, appearance: 'none' }}>
+                  {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_META[c].emoji} {CATEGORY_META[c].label}</option>)}
+                </select>
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>WhatsApp Contact *</label>
+              <input value={contactWhatsapp} onChange={e => setContactWhatsapp(e.target.value)} placeholder="+27 82 000 0000" maxLength={20} required style={inputStyle} />
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button type="button" onClick={() => setShowForm(false)} style={{ flex: 1, padding: '10px 0', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button type="submit" disabled={saving || title.trim().length < 3} style={{
+                flex: 2, padding: '10px 0', border: 'none', borderRadius: 10, color: '#fff',
+                fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700,
+                cursor: saving ? 'not-allowed' : 'pointer',
+                opacity: title.trim().length < 3 ? 0.5 : 1,
+                background: saving ? 'rgba(245,158,11,0.2)' : reportType === 'lost'
+                  ? 'linear-gradient(135deg, #7f1d1d, #991b1b)'
+                  : 'linear-gradient(135deg, #064e3b, #065f46)',
+              }}>
+                {saving ? 'Posting...' : reportType === 'lost' ? '📢 Report Lost' : '🙌 Report Found'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Feed */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.28)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>Loading...</div>
+      ) : sorted.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🔍</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)' }}>
+            Nothing here yet
+          </div>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', marginTop: 6 }}>
+            Lost something on campus? Report it — someone might return it.
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {sorted.map(item => <ListingCard key={item.id} listing={item} />)}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function MarketplaceOS({ userId, initialListings, myListings: initialMyListings, university }: Props) {
@@ -906,8 +1150,8 @@ export default function MarketplaceOS({ userId, initialListings, myListings: ini
 
   function handleNewListing(l: Listing) {
     setMyListings(prev => [l, ...prev])
-    setBrowseListings(prev => [l, ...prev])
-    setTab('my-listings')
+    if (l.listing_type === 'sale') setBrowseListings(prev => [l, ...prev])
+    setTab(l.listing_type === 'sale' ? 'my-listings' : 'lost-found')
   }
 
   return (
@@ -999,6 +1243,9 @@ export default function MarketplaceOS({ userId, initialListings, myListings: ini
           )}
           {tab === 'sell' && (
             <SellTab onCreated={handleNewListing} />
+          )}
+          {tab === 'lost-found' && (
+            <LostFoundTab userId={userId} university={university} />
           )}
           {tab === 'my-listings' && (
             <MyListingsTab initialMyListings={myListings} />

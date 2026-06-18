@@ -7,6 +7,9 @@ type Category = typeof VALID_CATEGORIES[number]
 const VALID_CONDITIONS = ['new', 'like_new', 'good', 'fair'] as const
 type Condition = typeof VALID_CONDITIONS[number]
 
+const VALID_TYPES = ['sale', 'lost', 'found'] as const
+type ListingType = typeof VALID_TYPES[number]
+
 // GET /api/marketplace
 // Returns active listings for the authenticated user's university.
 // Optional query params: ?category= and ?search=
@@ -26,6 +29,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const category = searchParams.get('category') ?? ''
   const search = searchParams.get('search') ?? ''
+  const type = searchParams.get('type') ?? ''
 
   let query = supabase
     .from('marketplace_listings')
@@ -34,6 +38,10 @@ export async function GET(req: NextRequest) {
     .eq('status', 'active')
     .order('created_at', { ascending: false })
     .limit(40)
+
+  if (type && (VALID_TYPES as readonly string[]).includes(type)) {
+    query = query.eq('listing_type', type as ListingType)
+  }
 
   if (category && (VALID_CATEGORIES as readonly string[]).includes(category)) {
     query = query.eq('category', category as Category)
@@ -85,6 +93,12 @@ export async function POST(req: NextRequest) {
   }
   const category = categoryRaw as Category
 
+  const typeRaw = typeof body.listing_type === 'string' ? body.listing_type : 'sale'
+  if (!(VALID_TYPES as readonly string[]).includes(typeRaw)) {
+    return NextResponse.json({ error: `listing_type must be one of: ${VALID_TYPES.join(', ')}` }, { status: 400 })
+  }
+  const listing_type = typeRaw as ListingType
+
   const conditionRaw = typeof body.condition === 'string' ? body.condition : null
   const condition: Condition | null = conditionRaw && (VALID_CONDITIONS as readonly string[]).includes(conditionRaw)
     ? conditionRaw as Condition
@@ -120,6 +134,7 @@ export async function POST(req: NextRequest) {
       contact_whatsapp,
       image_urls: [],
       status: 'active',
+      listing_type,
     })
     .select()
     .single()

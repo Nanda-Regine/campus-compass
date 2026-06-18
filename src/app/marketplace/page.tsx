@@ -24,6 +24,7 @@ export default async function MarketplacePage() {
       .select('*')
       .eq('university', university)
       .eq('status', 'active')
+      .eq('listing_type', 'sale')
       .order('created_at', { ascending: false })
       .limit(20),
     supabase
