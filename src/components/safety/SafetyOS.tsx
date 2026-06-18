@@ -735,6 +735,8 @@ function ContactsTab() {
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>{f.label}</div>
                 <input
                   type={f.key === 'number' ? 'tel' : 'text'}
+                  aria-label={f.label.replace(' *', '')}
+                  autoComplete={f.key === 'number' ? 'tel' : undefined}
                   placeholder={f.placeholder}
                   value={form[f.key as keyof typeof form]}
                   onChange={e => setForm(v => ({ ...v, [f.key]: e.target.value }))}
@@ -881,6 +883,7 @@ function ReportTab() {
         <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>Location on campus (optional)</div>
         <input
           type="text"
+          aria-label="Location on campus (optional)"
           placeholder="e.g. Library parking lot, Res block C"
           value={form.location}
           onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
@@ -895,6 +898,7 @@ function ReportTab() {
       <div>
         <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>What happened? *</div>
         <textarea
+          aria-label="What happened?"
           placeholder="Describe the incident as clearly as possible..."
           value={form.description}
           onChange={e => setForm(f => ({ ...f, description: e.target.value }))}

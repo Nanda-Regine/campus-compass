@@ -264,6 +264,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>R</span>
                 <input
                   type="number"
+                  inputMode="decimal"
                   value={customAmt}
                   onChange={e => setCustomAmt(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCustom()}

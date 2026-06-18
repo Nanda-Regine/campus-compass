@@ -602,7 +602,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 </div>
                 <div>
                   <label className={lbl}>WhatsApp contact (optional)</label>
-                  <input className={formField} placeholder="+27 82 000 0000" value={liftForm.contact_whatsapp} onChange={e => setLiftForm(p => ({ ...p, contact_whatsapp: e.target.value }))} />
+                  <input type="tel" inputMode="tel" className={formField} placeholder="+27 82 000 0000" value={liftForm.contact_whatsapp} onChange={e => setLiftForm(p => ({ ...p, contact_whatsapp: e.target.value }))} />
                 </div>
                 <div className="flex gap-2 pt-1">
                   <button onClick={() => setAddingLift(false)} className="flex-1 py-2.5 rounded-xl font-mono text-sm border border-white/10 text-white/40 hover:text-white transition-all">Cancel</button>

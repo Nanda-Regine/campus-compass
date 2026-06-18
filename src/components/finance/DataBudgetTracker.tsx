@@ -176,6 +176,8 @@ export default function DataBudgetTracker() {
                   {editingId === cat.id ? (
                     <input
                       type="number"
+                      inputMode="numeric"
+                      aria-label="Data used in megabytes"
                       value={cat.usedMB}
                       min={0}
                       autoFocus

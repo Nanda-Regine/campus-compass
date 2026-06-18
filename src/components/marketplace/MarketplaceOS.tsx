@@ -520,6 +520,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>Title *</label>
         <input
+          aria-label="Title"
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="What are you selling?"
@@ -532,6 +533,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>Description</label>
         <textarea
+          aria-label="Description"
           value={description}
           onChange={e => setDescription(e.target.value)}
           placeholder="Describe the item..."
@@ -546,6 +548,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <input
             type="number"
+            inputMode="decimal"
             min={0}
             step={0.01}
             value={isFree ? '' : priceStr}
@@ -569,6 +572,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>Category *</label>
         <select
+          aria-label="Category"
           value={category}
           onChange={e => setCategory(e.target.value as Category)}
           required
@@ -583,6 +587,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>Condition</label>
         <select
+          aria-label="Condition"
           value={condition}
           onChange={e => setCondition(e.target.value as Condition | '')}
           style={{ ...inputStyle, appearance: 'none' }}
@@ -597,6 +602,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>Pickup Location</label>
         <input
+          aria-label="Pickup Location"
           value={pickupLocation}
           onChange={e => setPickupLocation(e.target.value)}
           placeholder="e.g. Bremner Building, Main Campus"
@@ -608,6 +614,8 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
       <div>
         <label style={labelStyle}>WhatsApp Number</label>
         <input
+          type="tel"
+          inputMode="tel"
           value={contactWhatsapp}
           onChange={e => setContactWhatsapp(e.target.value)}
           placeholder="+27 82 000 0000"
@@ -1096,7 +1104,7 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
             </div>
             <div>
               <label style={labelStyle}>WhatsApp Contact *</label>
-              <input value={contactWhatsapp} onChange={e => setContactWhatsapp(e.target.value)} placeholder="+27 82 000 0000" maxLength={20} required style={inputStyle} />
+              <input type="tel" inputMode="tel" value={contactWhatsapp} onChange={e => setContactWhatsapp(e.target.value)} placeholder="+27 82 000 0000" maxLength={20} required style={inputStyle} />
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button type="button" onClick={() => setShowForm(false)} style={{ flex: 1, padding: '10px 0', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', cursor: 'pointer' }}>

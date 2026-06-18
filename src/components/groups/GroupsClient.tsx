@@ -840,7 +840,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     </div>
                     <div>
                       <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Duration (min)</label>
-                      <input type="number" value={meetingDuration} onChange={e => setMeetingDuration(Number(e.target.value))} min={15} max={480} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
+                      <input type="number" inputMode="numeric" value={meetingDuration} onChange={e => setMeetingDuration(Number(e.target.value))} min={15} max={480} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
                     </div>
                   </div>
                   <input value={meetingLocation} onChange={e => setMeetingLocation(e.target.value)} placeholder="Location (e.g. Library Room 3, Wits)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />

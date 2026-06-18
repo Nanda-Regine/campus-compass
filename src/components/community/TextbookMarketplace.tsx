@@ -577,7 +577,7 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
       {form.listing_type === 'sell' && (
         <div>
           <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>Price (R)</div>
-          <input type="number" value={form.price} onChange={e => f('price', e.target.value)} placeholder="150" style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
+          <input type="number" inputMode="decimal" aria-label="Price in rands" value={form.price} onChange={e => f('price', e.target.value)} placeholder="150" style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
         </div>
       )}
       <div>

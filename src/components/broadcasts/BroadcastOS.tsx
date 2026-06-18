@@ -242,6 +242,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                 TITLE *
               </label>
               <input
+                aria-label="Title"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="e.g. Library closure on Friday"
@@ -264,6 +265,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                 MESSAGE *
               </label>
               <textarea
+                aria-label="Message"
                 value={body}
                 onChange={e => setBody(e.target.value)}
                 placeholder="Full announcement text (min 10 characters)..."
@@ -293,6 +295,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                   PRIORITY
                 </label>
                 <select
+                  aria-label="Priority"
                   value={priority}
                   onChange={e => setPriority(e.target.value as 'normal' | 'important' | 'urgent')}
                   style={{
@@ -316,6 +319,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                   EXPIRES AT (OPTIONAL)
                 </label>
                 <input
+                  aria-label="Expires at (optional)"
                   type="datetime-local"
                   value={expiresAt}
                   onChange={e => setExpiresAt(e.target.value)}
@@ -335,6 +339,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
 
             <button
               type="submit"
+              aria-busy={sending}
               disabled={sending || !title.trim() || body.trim().length < 10}
               style={{
                 marginTop: 4, padding: '12px 0',

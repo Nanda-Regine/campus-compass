@@ -265,7 +265,7 @@ export default function StokvelOS() {
         </div>
         <div>
           <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>Monthly contribution per member (R)</div>
-          <input type="number" value={setupForm.contribution} onChange={e => setSetupForm(v => ({ ...v, contribution: e.target.value }))} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
+          <input type="number" inputMode="decimal" aria-label="Monthly contribution per member in rands" value={setupForm.contribution} onChange={e => setSetupForm(v => ({ ...v, contribution: e.target.value }))} style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
         </div>
         <button
           onClick={handleCreateGroup}
@@ -476,7 +476,7 @@ function MembersTab({
           <input value={editForm.phone} onChange={e => setEditForm(v => ({ ...v, phone: e.target.value }))} placeholder="Phone" style={{ padding: '8px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }} />
           <div>
             <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginBottom: 3 }}>Payout month</div>
-            <input type="number" min={1} value={editForm.payout_month} onChange={e => setEditForm(v => ({ ...v, payout_month: parseInt(e.target.value) || 1 }))} style={{ width: 80, padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
+            <input type="number" inputMode="numeric" aria-label="Payout month number" min={1} value={editForm.payout_month} onChange={e => setEditForm(v => ({ ...v, payout_month: parseInt(e.target.value) || 1 }))} style={{ width: 80, padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => saveEdit(m.id)} style={{ flex: 1, padding: '9px 0', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 8, color: 'var(--teal)', fontSize: '0.73rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Save</button>

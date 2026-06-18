@@ -109,9 +109,9 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {subjects.map((s, i) => (
                 <div key={i} style={{ display: 'flex', gap: 6 }}>
-                  <input style={{ ...inputStyle, flex: 1 }} value={s} onChange={e => updateSubject(i, e.target.value)} placeholder="e.g. MATH1014, Statistics, Economics" maxLength={60} />
+                  <input aria-label={`Subject ${i + 1}`} style={{ ...inputStyle, flex: 1 }} value={s} onChange={e => updateSubject(i, e.target.value)} placeholder="e.g. MATH1014, Statistics, Economics" maxLength={60} />
                   {subjects.length > 1 && (
-                    <button type="button" onClick={() => removeSubject(i)} style={{ background: 'rgba(239,68,68,0.1)', border: '0.5px solid rgba(239,68,68,0.2)', borderRadius: 8, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', flexShrink: 0 }}>
+                    <button type="button" aria-label="Remove subject" onClick={() => removeSubject(i)} style={{ background: 'rgba(239,68,68,0.1)', border: '0.5px solid rgba(239,68,68,0.2)', borderRadius: 8, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', flexShrink: 0 }}>
                       <Minus size={13} />
                     </button>
                   )}
@@ -123,20 +123,20 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
           {/* Rate */}
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Hourly Rate (ZAR)</label>
-            <input style={inputStyle} type="number" min="20" max="500" value={rate} onChange={e => setRate(e.target.value)} />
+            <input aria-label="Hourly rate (ZAR)" inputMode="decimal" style={inputStyle} type="number" min="20" max="500" value={rate} onChange={e => setRate(e.target.value)} />
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>Typical range: R50–R200/hr for peer tutors</div>
           </div>
 
           {/* Bio */}
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>About you</label>
-            <textarea style={{ ...inputStyle, resize: 'none', height: 80 }} value={bio} onChange={e => setBio(e.target.value)} placeholder="Your experience, teaching style, qualifications..." maxLength={400} />
+            <textarea aria-label="About you" style={{ ...inputStyle, resize: 'none', height: 80 }} value={bio} onChange={e => setBio(e.target.value)} placeholder="Your experience, teaching style, qualifications..." maxLength={400} />
           </div>
 
           {/* Availability */}
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>When are you available?</label>
-            <input style={inputStyle} value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings, Saturday mornings" maxLength={200} />
+            <input aria-label="When are you available?" style={inputStyle} value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings, Saturday mornings" maxLength={200} />
           </div>
 
           {/* Available toggle */}
@@ -145,7 +145,7 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)' }}>Taking new students</div>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Toggle off during exams</div>
             </div>
-            <button type="button" onClick={() => setIsAvailable(v => !v)} style={{ padding: '5px 12px', borderRadius: 20, border: '0.5px solid', borderColor: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.15)', background: isAvailable ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)', color: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button type="button" role="switch" aria-checked={isAvailable} onClick={() => setIsAvailable(v => !v)} style={{ padding: '5px 12px', borderRadius: 20, border: '0.5px solid', borderColor: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.15)', background: isAvailable ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)', color: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
               {isAvailable ? 'Available' : 'Unavailable'}
             </button>
           </div>

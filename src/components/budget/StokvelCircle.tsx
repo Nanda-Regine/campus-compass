@@ -316,7 +316,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Contribution amount (R) *</label>
-              <input type="number" value={newAmount} onChange={e => setNewAmount(e.target.value)} placeholder="e.g. 200" min={10} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
+              <input type="number" inputMode="decimal" value={newAmount} onChange={e => setNewAmount(e.target.value)} placeholder="e.g. 200" min={10} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
               <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Frequency</label>
@@ -333,7 +333,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
             <div className="space-y-2">
               {memberRows.map((r, i) => (
                 <div key={i} className="grid grid-cols-2 gap-2">
-                  <input value={r.email} onChange={e => { const next = [...memberRows]; next[i] = { ...next[i], email: e.target.value }; setMemberRows(next) }} placeholder={`Email ${i+1}`} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/20 outline-none focus:border-emerald-500 font-body" />
+                  <input type="email" value={r.email} onChange={e => { const next = [...memberRows]; next[i] = { ...next[i], email: e.target.value }; setMemberRows(next) }} placeholder={`Email ${i+1}`} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/20 outline-none focus:border-emerald-500 font-body" />
                   <input value={r.name} onChange={e => { const next = [...memberRows]; next[i] = { ...next[i], name: e.target.value }; setMemberRows(next) }} placeholder="Name (optional)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/20 outline-none focus:border-emerald-500 font-body" />
                 </div>
               ))}

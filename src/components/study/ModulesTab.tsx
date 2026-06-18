@@ -465,6 +465,8 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                   <button
                     key={c}
                     type="button"
+                    aria-label={`Select ${COLOUR_LABELS[c]} theme`}
+                    aria-pressed={selected}
                     onClick={() => setValue('colour', c)}
                     className={cn(
                       'flex items-center gap-2 px-3 py-2 rounded-xl border transition-all text-xs',

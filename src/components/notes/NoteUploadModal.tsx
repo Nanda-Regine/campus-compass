@@ -116,12 +116,12 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
 
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Title *</label>
-            <input style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Calculus Chapter 3 Summary" maxLength={120} required />
+            <input aria-label="Title" style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Calculus Chapter 3 Summary" maxLength={120} required />
           </div>
 
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Module Code *</label>
-            <input style={inputStyle} value={moduleCode} onChange={e => setModuleCode(e.target.value.toUpperCase())} placeholder="e.g. MATH1014" maxLength={20} required />
+            <input aria-label="Module code" style={inputStyle} value={moduleCode} onChange={e => setModuleCode(e.target.value.toUpperCase())} placeholder="e.g. MATH1014" maxLength={20} required />
           </div>
 
           <div>
@@ -129,7 +129,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
               <Link2 size={10} style={{ display: 'inline', marginRight: 4 }} />
               Google Drive / OneDrive / Dropbox link *
             </label>
-            <input style={inputStyle} type="url" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://drive.google.com/..." required />
+            <input aria-label="Google Drive / OneDrive / Dropbox link" inputMode="url" style={inputStyle} type="url" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://drive.google.com/..." required />
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>
               Share the link with "Anyone with link can view" access
             </div>
@@ -138,6 +138,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Description</label>
             <textarea
+              aria-label="Description"
               style={{ ...inputStyle, resize: 'none', height: 72 }}
               value={description} onChange={e => setDescription(e.target.value)}
               placeholder="What's covered? Any tips?" maxLength={500}
@@ -146,7 +147,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
 
           <div>
             <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Tags (comma-separated)</label>
-            <input style={inputStyle} value={tags} onChange={e => setTags(e.target.value)} placeholder="exam prep, chapter 3, formulas" />
+            <input aria-label="Tags (comma-separated)" style={inputStyle} value={tags} onChange={e => setTags(e.target.value)} placeholder="exam prep, chapter 3, formulas" />
           </div>
 
           <button

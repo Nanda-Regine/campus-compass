@@ -250,7 +250,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Amount (R)</label>
-                  <input type="number" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
+                  <input type="number" inputMode="decimal" aria-label="Receipt total amount in rands" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
                 <div>
                   <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Date</label>

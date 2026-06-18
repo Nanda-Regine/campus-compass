@@ -618,6 +618,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
+                    inputMode="decimal"
+                    aria-label="Expense amount in rands"
                     className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={amount}
@@ -794,6 +796,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
+                    inputMode="decimal"
+                    aria-label="Income amount in rands"
                     className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={incomeAmount}
@@ -940,6 +944,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="grid grid-cols-2 gap-3">
                   <input
                     type="number"
+                    inputMode="decimal"
+                    aria-label="Savings goal target amount in rands"
                     className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
                     placeholder="Target amount (R)"
                     value={goalTarget}

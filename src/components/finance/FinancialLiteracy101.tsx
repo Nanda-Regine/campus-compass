@@ -78,6 +78,8 @@ function CurrencyConverter() {
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700 }}>R</span>
         <input
           type="number"
+          inputMode="decimal"
+          aria-label="Amount in rands"
           value={zarAmount}
           onChange={e => setZarAmount(e.target.value)}
           min="0"

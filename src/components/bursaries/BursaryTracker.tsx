@@ -322,7 +322,7 @@ export default function BursaryTracker() {
           <div className="grid grid-cols-2 gap-2">
             <input value={fOrg} onChange={e => setFOrg(e.target.value)} placeholder="Organisation (optional)"
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
-            <input type="number" value={fAmount} onChange={e => setFAmount(e.target.value)} placeholder="Amount (R)"
+            <input type="number" inputMode="decimal" aria-label="Bursary amount in rands" value={fAmount} onChange={e => setFAmount(e.target.value)} placeholder="Amount (R)"
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
             <div>
               <label className="font-mono text-[0.52rem] text-white/30 mb-1 block">Deadline</label>

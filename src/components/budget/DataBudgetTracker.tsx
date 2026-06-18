@@ -240,6 +240,8 @@ export default function DataBudgetTracker({ userId }: Props) {
           <div className="flex gap-2">
             <input
               type="number" min={1} max={10240}
+              inputMode="numeric"
+              aria-label="Data amount in megabytes"
               value={addAmount}
               onChange={e => setAddAmount(Number(e.target.value))}
               className="flex-1 px-3 py-1.5 rounded-lg text-sm bg-transparent outline-none"

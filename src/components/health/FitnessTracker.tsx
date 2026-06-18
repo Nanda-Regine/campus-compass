@@ -301,7 +301,7 @@ export default function FitnessTracker() {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: 3 }}>Duration (min)</div>
-                  <input type="number" value={form.duration} onChange={e => setForm(v => ({ ...v, duration: e.target.value }))} style={{ width: '100%', padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
+                  <input type="number" inputMode="numeric" aria-label="Duration in minutes" value={form.duration} onChange={e => setForm(v => ({ ...v, duration: e.target.value }))} style={{ width: '100%', padding: '8px 10px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'var(--font-mono)' }} />
                 </div>
               </div>
               {/* Notes */}

@@ -213,6 +213,8 @@ export default function MoneyHealthCalculator({
             </label>
             <input
               type="number"
+              inputMode="decimal"
+              aria-label={label}
               min={min}
               max={max}
               value={inputs[key as keyof typeof inputs]}

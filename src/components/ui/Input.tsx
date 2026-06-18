@@ -22,6 +22,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   ...props
 }, ref) => {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
+  const errorId = error ? `${inputId}-error` : undefined
+  const hintId  = hint && !error ? `${inputId}-hint` : undefined
 
   return (
     <div className="w-full">
@@ -35,13 +37,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none" aria-hidden="true">
             {icon}
           </div>
         )}
         <input
           ref={ref}
           id={inputId}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={errorId ?? hintId}
           className={cn(
             'w-full px-3.5 py-2.5 rounded-xl text-base text-white',
             'bg-[var(--bg-base)] border transition-all duration-150',
@@ -63,10 +67,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         )}
       </div>
       {error && (
-        <p className="mt-1 font-mono text-[0.6rem] text-red-400">{error}</p>
+        <p id={errorId} role="alert" className="mt-1 font-mono text-[0.6rem] text-red-400">{error}</p>
       )}
       {hint && !error && (
-        <p className="mt-1 font-mono text-[0.6rem] text-white/30">{hint}</p>
+        <p id={hintId} className="mt-1 font-mono text-[0.6rem] text-white/30">{hint}</p>
       )}
     </div>
   )

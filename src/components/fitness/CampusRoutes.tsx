@@ -515,6 +515,7 @@ export default function CampusRoutes({ userId, university }: Props) {
                 <input
                   required
                   type="number"
+                  inputMode="decimal"
                   min="0.1"
                   step="0.1"
                   value={submitForm.distance_km}
@@ -528,6 +529,7 @@ export default function CampusRoutes({ userId, university }: Props) {
                 <input
                   required
                   type="number"
+                  inputMode="numeric"
                   min="1"
                   value={submitForm.duration_minutes}
                   onChange={e => setSubmitForm(prev => ({ ...prev, duration_minutes: e.target.value }))}
