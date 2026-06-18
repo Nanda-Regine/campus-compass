@@ -51,8 +51,8 @@ function calcScore(dims: Record<DimKey, number>): number {
   const positive = (['sleep', 'social', 'energy', 'motivation'] as const)
     .map(k => dims[k])
   const avgPositive = positive.reduce((a, b) => a + b, 0) / positive.length
-  // Positive dims: 1=worst(80 burnout), 5=best(0 burnout) → linear
-  const posScore = ((5 - avgPositive) / 4) * 80
+  // Positive dims: 1=worst(100 burnout), 5=best(0 burnout) → linear
+  const posScore = ((5 - avgPositive) / 4) * 100
   // Stress: 1=relaxed(0 burnout), 5=overwhelmed(100 burnout)
   const stressScore = ((dims.stress - 1) / 4) * 100
   // Weighted: 60% positive dims, 40% stress
@@ -438,6 +438,9 @@ export default function WellnessTab() {
     setCheckins(updated)
     setTodayCheckin(entry)
     setSaved(true)
+    // Cache latest burnout score for the synchronous VarsityScore wellness pillar,
+    // which can't read the async Supabase check-ins.
+    try { localStorage.setItem('varsityos_last_burnout', String(score)) } catch { /* quota */ }
     dispatchXP('wellness_checkin')
 
     // Emit burnout signal so rules engine and dashboard react

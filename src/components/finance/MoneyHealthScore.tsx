@@ -33,7 +33,13 @@ function computeScore(
   essentialSpend: number,
   discretionarySpend: number
 ): { total: number; pillars: Pillar[] } {
-  const emergencyFundScore = clamp((savingsAmount / (monthlyIncome * 0.5)) * 100, 0, 100);
+  // Guard every income-denominated divisor: a student can legitimately enter 0 income,
+  // and x/0 yields Infinity/NaN that clamp() cannot fix (Math.min(100, NaN) === NaN),
+  // which would render the whole gauge as "NaN".
+  const emergencyTarget = monthlyIncome * 0.5;
+  const emergencyFundScore = emergencyTarget > 0
+    ? clamp((savingsAmount / emergencyTarget) * 100, 0, 100)
+    : (savingsAmount > 0 ? 100 : 0);
 
   const totalSpend = essentialSpend + discretionarySpend;
   const spendingRatio = monthlyIncome > 0 ? totalSpend / monthlyIncome : 1;
@@ -41,7 +47,9 @@ function computeScore(
 
   const foodBudget = essentialSpend * 0.35;
   const foodTarget = monthlyIncome * 0.15;
-  const foodScore = clamp((foodBudget / foodTarget) * 100, 0, 100);
+  const foodScore = foodTarget > 0
+    ? clamp((foodBudget / foodTarget) * 100, 0, 100)
+    : 0;
 
   const dataBudget = discretionarySpend * 0.2;
   const dataTarget = 150;

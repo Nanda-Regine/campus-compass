@@ -88,8 +88,8 @@ export default function SmartGradeForecaster({ modules }: Props) {
   const colourTokens = MODULE_COLOURS[moduleColour] ?? MODULE_COLOURS.teal
 
   const { needed, projected } = computeForecast(currentMark, remainingWeight, targetGrade)
-  const clampedNeeded = needed !== null ? clamp(needed, 0, 200) : null
-  const displayNeeded = needed !== null ? Math.round(needed) : null
+  // Floor at 0: a negative "needed" means the target is already secured — never show "-35%".
+  const displayNeeded = needed !== null ? Math.max(0, Math.round(needed)) : null
   const feas = feasibility(needed)
   const feasConfig = FEASIBILITY_CONFIG[feas]
 

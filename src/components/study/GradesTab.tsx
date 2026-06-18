@@ -49,9 +49,10 @@ function markToGrade(pct: number): { letter: string; points: number; label: stri
 }
 
 function gradeColour(pct: number): string {
-  if (pct >= 75) return '#4ecf9e'
-  if (pct >= 60) return '#c9a84c'
-  if (pct >= 50) return '#7090d0'
+  if (pct >= 75) return '#4ecf9e'  // Distinction
+  if (pct >= 70) return '#a3e4cc'  // Merit — was missing, so 70–74 wrongly showed the Credit colour
+  if (pct >= 60) return '#c9a84c'  // Credit
+  if (pct >= 50) return '#7090d0'  // Pass
   return '#ff6b6b'
 }
 
@@ -357,9 +358,7 @@ function GradeCalcCard({
                     {result.earned.toFixed(1)}%
                   </div>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
-                    {result.feasible
-                      ? `All assessments done · You ${result.feasible ? 'passed' : 'did not pass'} (${markToGrade(result.earned).label})`
-                      : `All marks entered · ${markToGrade(result.earned).label}`}
+                    {`All marks entered · You ${result.earned >= 50 ? 'passed' : 'did not pass'} (${markToGrade(result.earned).label})`}
                   </div>
                 </>
               ) : needed !== null && needed > 100 ? (

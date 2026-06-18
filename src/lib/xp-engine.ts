@@ -667,13 +667,12 @@ export function getVarsityScore(): VarsityScoreBreakdown {
   // Wellness (0-300): check-in count + last burnout score
   const checkinScore = Math.min(150, (state.eventCounts['wellness_checkin'] ?? 0) * 10)
   let burnoutBonus = 0
-  try {
-    const checkins = JSON.parse(localStorage.getItem('varsityos_wellness_checkins') ?? '[]')
-    if (checkins.length > 0) {
-      const last = checkins[checkins.length - 1]
-      burnoutBonus = Math.round((1 - last.score / 100) * 150)
-    }
-  } catch { /* silent */ }
+  // Wellness check-ins persist to Supabase; the save path mirrors the latest burnout
+  // score into this key so the score stays synchronous. (Lower burnout → higher bonus.)
+  const lastBurnout = Number(localStorage.getItem('varsityos_last_burnout'))
+  if (Number.isFinite(lastBurnout) && lastBurnout >= 0) {
+    burnoutBonus = Math.round((1 - lastBurnout / 100) * 150)
+  }
   const wellness = Math.min(300, checkinScore + burnoutBonus)
 
   // Career (0-200): interview + skills gap + CV skills

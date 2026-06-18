@@ -25,7 +25,7 @@ function getBand(score: number): RiskBand {
 
 function calcScore(c: CheckIn): number {
   const avgPositive = (c.sleep + c.social + c.energy + c.motivation) / 4
-  const posScore = ((5 - avgPositive) / 4) * 80
+  const posScore = ((5 - avgPositive) / 4) * 100
   const stressScore = ((c.stress - 1) / 4) * 100
   return Math.round(posScore * 0.6 + stressScore * 0.4)
 }
