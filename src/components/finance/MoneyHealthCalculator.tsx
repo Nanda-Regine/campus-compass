@@ -140,7 +140,7 @@ function PillarBar({ pillar }: { pillar: Pillar }) {
   );
 }
 
-export default function MoneyHealthScore({
+export default function MoneyHealthCalculator({
   savingsAmount,
   monthlyIncome,
   essentialSpend,

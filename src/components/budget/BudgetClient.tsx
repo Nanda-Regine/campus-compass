@@ -19,7 +19,8 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
 import CreditScoreEducation from '@/components/finance/CreditScoreEducation'
 import FinancialLiteracy101 from '@/components/finance/FinancialLiteracy101'
-import MoneyHealthScore from '@/components/finance/MoneyHealthScore'
+import MoneyHealthCalculator from '@/components/finance/MoneyHealthCalculator'
+import FirstInvestment from '@/components/finance/FirstInvestment'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 import dynamic from 'next/dynamic'
 
@@ -1295,7 +1296,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         {/* ─── Financial Literacy 101 Tab ─── */}
         {activeTab === 'literacy' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <MoneyHealthScore />
+            <MoneyHealthCalculator />
+            <FirstInvestment />
             <FinancialLiteracy101 />
           </div>
         )}
