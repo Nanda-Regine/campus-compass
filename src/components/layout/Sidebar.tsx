@@ -62,6 +62,7 @@ const SECTIONS: Section[] = [
       { href: '/dashboard/groups', icon: Users,         label: 'Groups',      accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.14)'   },
       { href: '/social',           icon: MessageCircle, label: 'Social',      accent: '#7090D0', accentDim: 'rgba(112,144,208,0.14)' },
       { href: '/marketplace',      icon: ShoppingBag,   label: 'Marketplace', accent: '#f59e0b', accentDim: 'rgba(245,158,11,0.14)'  },
+      { href: '/tutoring',         icon: GraduationCap, label: 'Tutoring',    accent: '#4ecf9e', accentDim: 'rgba(78,207,158,0.14)'  },
       { href: '/src',              icon: Megaphone,     label: 'SRC',         accent: '#8b5cf6', accentDim: 'rgba(139,92,246,0.14)'  },
     ],
   },
