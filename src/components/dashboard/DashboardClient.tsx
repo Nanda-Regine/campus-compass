@@ -85,22 +85,33 @@ interface DashboardClientProps {
     shiftEarnings: number
     shiftHoursThisWeek: number
     subscription: Subscription | null
+    // Enhancement data folded into SSR (formerly fetched client-side on mount)
+    mealPlanExists: boolean
+    shiftsThisWeek: number
+    activeGroups: number
+    nsfasDelayed: boolean
+    weekWorkouts: number
+    todayStudyMins: number
+    lastSleepHours: number | null
+    studyVelocity7d: number
+    sleepDebt: number
   }
 }
 
 export default function DashboardClient({ initialData }: DashboardClientProps) {
   const store = useAppStore()
   const [novaInsights, setNovaInsights] = useState<NovaInsight[]>([])
-  const [mealPlanExists, setMealPlanExists] = useState(false)
-  const [shiftsThisWeek, setShiftsThisWeek] = useState(0)
-  const [activeGroups, setActiveGroups] = useState(0)
+  // Seeded from SSR initialData — no client fetch needed on mount.
+  const [mealPlanExists] = useState(initialData.mealPlanExists)
+  const [shiftsThisWeek] = useState(initialData.shiftsThisWeek)
+  const [activeGroups] = useState(initialData.activeGroups)
   const [novaCheckin, setNovaCheckin] = useState<string | null>(null)
   const [streakDays, setStreakDays] = useState(0)
   const [streakTodayDone, setStreakTodayDone] = useState(false)
   const [currentHour, setCurrentHour] = useState(() => new Date().getHours())
-  const [todayStudyMins, setTodayStudyMins] = useState(0)
-  const [lastSleepHours, setLastSleepHours] = useState<number | null>(null)
-  const [weekWorkouts, setWeekWorkouts] = useState(0)
+  const [todayStudyMins] = useState(initialData.todayStudyMins)
+  const [lastSleepHours] = useState<number | null>(initialData.lastSleepHours)
+  const [weekWorkouts] = useState(initialData.weekWorkouts)
   // Data Saver — gates the ambient imagery and the enhancement fetches/widgets below.
   // Starts false for SSR safety, then reads the real preference on mount and stays in sync.
   const [dataSaver, setDataSaver] = useState(false)
@@ -122,6 +133,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     store.setTimetable(initialData.timetable)
     store.setExpenses(initialData.recentExpenses)
     if (initialData.subscription) store.setSubscription(initialData.subscription)
+    // Seed orchestration signals from SSR (formerly written by the client-side live-data effect)
+    store.setNsfasDelayed(initialData.nsfasDelayed)
+    store.setStudyVelocity7d(initialData.studyVelocity7d)
+    store.setSleepDebt(initialData.sleepDebt)
     // Seed work-hours cache so the orchestration layer can factor it into burnout
     if (initialData.shiftHoursThisWeek > 0) {
       const now = new Date()
@@ -165,92 +180,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         try { sessionStorage.setItem(key, JSON.stringify(d.insights ?? [])) } catch { /* quota */ }
       }
     }).catch(() => {})
-  }, [])
-
-  // 4. Parallel client-side fetch: meals, shifts, groups
-  useEffect(() => {
-    let mounted = true
-    const fetchLiveData = async () => {
-      // Data Saver: skip the ~9 enhancement queries; the dashboard still works on SSR data.
-      if (!navigator.onLine || getDataSaverEnabled()) return
-      try {
-        const { createClient } = await import('@/lib/supabase/client')
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
-        const now = new Date()
-        const jsDay = now.getDay()
-        const weekStart = new Date(now); weekStart.setDate(now.getDate() - jsDay + (jsDay === 0 ? -6 : 1)); weekStart.setHours(0,0,0,0)
-        const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
-        const todayStr = now.toISOString().split('T')[0]
-        const sevenDays = new Date(now); sevenDays.setDate(now.getDate() + 7)
-        const [mealsRes, shiftsRes, groupsRes, nsfasRes] = await Promise.allSettled([
-          supabase.from('meal_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('week_start', weekStart.toISOString().split('T')[0]).lte('week_start', weekEnd.toISOString().split('T')[0]),
-          supabase.from('work_shifts').select('id', { count: 'exact', head: true }).eq('student_id', user.id).gte('shift_date', todayStr).lte('shift_date', sevenDays.toISOString().split('T')[0]),
-          supabase.from('group_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-          // NSFAS delayed: any expected disbursement whose expected_date has passed
-          supabase.from('nsfas_disbursements').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'expected').lt('expected_date', todayStr),
-        ])
-        if (mealsRes.status === 'fulfilled') { if (mounted) setMealPlanExists((mealsRes.value.count ?? 0) > 0) }
-        if (shiftsRes.status === 'fulfilled') { if (mounted) setShiftsThisWeek(shiftsRes.value.count ?? 0) }
-        if (groupsRes.status === 'fulfilled') { if (mounted) setActiveGroups(groupsRes.value.count ?? 0) }
-        // Always write nsfasDelayed so a resolved payment clears the flag
-        if (nsfasRes.status === 'fulfilled') { if (mounted) store.setNsfasDelayed((nsfasRes.value.count ?? 0) > 0) }
-        const week7Ago = new Date(now.getTime() - 7 * 86_400_000).toISOString().split('T')[0]
-        const [studyRes, sleepRes, workoutRes, study7Res, sleep7Res] = await Promise.allSettled([
-          supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${todayStr}T00:00:00`),
-          supabase.from('sleep_logs').select('bedtime,wake_time').eq('user_id', user.id).order('sleep_date', { ascending: false }).limit(1),
-          supabase.from('workout_logs').select('id', { count: 'exact', head: true }).eq('user_id', user.id).gte('date', weekStart.toISOString().split('T')[0]).is('deleted_at', null),
-          // 7-day study sessions for velocity
-          supabase.from('study_sessions').select('duration_minutes').eq('user_id', user.id).gte('started_at', `${week7Ago}T00:00:00`),
-          // 7-day sleep logs for debt
-          supabase.from('sleep_logs').select('bedtime,wake_time,sleep_date').eq('user_id', user.id).gte('sleep_date', week7Ago).order('sleep_date', { ascending: false }),
-        ])
-        if (studyRes.status === 'fulfilled') {
-          const rows = studyRes.value.data as Array<{ duration_minutes: number }> | null
-          if (rows && mounted) setTodayStudyMins(rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0))
-        }
-        if (sleepRes.status === 'fulfilled') {
-          const row = (sleepRes.value.data as Array<{ bedtime: string | null; wake_time: string | null }> | null)?.[0]
-          if (row?.bedtime && row?.wake_time) {
-            const [bh, bm] = row.bedtime.split(':').map(Number)
-            const [wh, wm] = row.wake_time.split(':').map(Number)
-            let hrs = (wh + wm / 60) - (bh + bm / 60)
-            if (hrs < 0) hrs += 24
-            if (mounted) setLastSleepHours(parseFloat(hrs.toFixed(1)))
-          }
-        }
-        if (workoutRes.status === 'fulfilled') { if (mounted) setWeekWorkouts(workoutRes.value.count ?? 0) }
-
-        // Study velocity: avg hours/day over last 7 days
-        if (study7Res.status === 'fulfilled') {
-          const rows = study7Res.value.data as Array<{ duration_minutes: number }> | null
-          if (rows && rows.length > 0) {
-            const totalMins = rows.reduce((s, r) => s + (r.duration_minutes ?? 0), 0)
-            if (mounted) store.setStudyVelocity7d(parseFloat((totalMins / (7 * 60)).toFixed(2)))
-          }
-        }
-
-        // Sleep debt: sum of max(0, 7h - actual) over logged days
-        if (sleep7Res.status === 'fulfilled') {
-          const rows = sleep7Res.value.data as Array<{ bedtime: string | null; wake_time: string | null }> | null
-          if (rows && rows.length > 0) {
-            let debt = 0
-            for (const row of rows) {
-              if (!row.bedtime || !row.wake_time) continue
-              const [bh, bm] = row.bedtime.split(':').map(Number)
-              const [wh, wm] = row.wake_time.split(':').map(Number)
-              let hrs = (wh + wm / 60) - (bh + bm / 60)
-              if (hrs < 0) hrs += 24
-              debt += Math.max(0, 7 - hrs)
-            }
-            if (mounted) store.setSleepDebt(parseFloat(debt.toFixed(1)))
-          }
-        }
-      } catch { /* silent */ }
-    }
-    fetchLiveData()
-    return () => { mounted = false }
   }, [])
 
   // 5. Nova check-in — localStorage cached per day; skipped in Data Saver mode
