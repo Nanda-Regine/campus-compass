@@ -9,17 +9,20 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const SmartCommute = dynamic(() => import('./SmartCommute'), { ssr: false })
 
-// Mapbox map loaded client-side only (accesses window/document)
+const mapLoadingFallback = (
+  <div style={{ height: 360, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading map…</span>
+  </div>
+)
+
+// Mapbox maps loaded client-side only (access window/document)
 const MapboxRoutesMap = dynamic(
   () => import('./MapboxRoutesMap').then(m => m.MapboxRoutesMap),
-  {
-    ssr: false,
-    loading: () => (
-      <div style={{ height: 360, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading map…</span>
-      </div>
-    ),
-  }
+  { ssr: false, loading: () => mapLoadingFallback }
+)
+const MapboxDirectionsMap = dynamic(
+  () => import('./MapboxDirectionsMap').then(m => m.MapboxDirectionsMap),
+  { ssr: false, loading: () => mapLoadingFallback }
 )
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -59,7 +62,6 @@ interface Props {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const GM_KEY      = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
 const TRANSPORT_ICONS: Record<TransportType, string> = {
@@ -77,24 +79,14 @@ const SA_FARE_RANGES: Record<TransportType, string> = {
   uber: 'R40–R200+', lift_club: 'Split with driver', campus_shuttle: 'Free or R5', minibus: 'R150–R400',
 }
 
-// Google Maps Embed API mode parameter
-function gmMode(t: TransportType): string {
-  if (t === 'walk') return 'walking'
-  if (t === 'bus' || t === 'campus_shuttle') return 'transit'
-  return 'driving'
+// Maps TransportType to a Mapbox Directions profile
+function mapboxProfile(t: TransportType): 'driving' | 'walking' {
+  return t === 'walk' ? 'walking' : 'driving'
 }
 
-// Build Google Maps Embed URL (directions mode)
-function gmEmbedUrl(from: string, to: string, mode: TransportType): string {
-  const base = 'https://www.google.com/maps/embed/v1/directions'
-  const params = new URLSearchParams({
-    key: GM_KEY ?? '',
-    origin: from + ', South Africa',
-    destination: to + ', South Africa',
-    mode: gmMode(mode),
-    avoid: 'tolls',
-  })
-  return `${base}?${params.toString()}`
+// Build Google Maps full-screen URL (used as external link)
+function gmDirectionsUrl(from: string, to: string): string {
+  return `https://www.google.com/maps/dir/${encodeURIComponent(from + ', South Africa')}/${encodeURIComponent(to + ', South Africa')}`
 }
 
 const TRANSPORT_TIPS = [
@@ -339,7 +331,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
               </button>
             </div>
 
-            {/* Google Maps Embed — shows after user searches */}
+            {/* Mapbox interactive directions map — shows after user searches */}
             {dirQuery && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
@@ -347,26 +339,23 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     {TRANSPORT_ICONS[dirQuery.mode]} {TRANSPORT_LABELS[dirQuery.mode]} · {SA_FARE_RANGES[dirQuery.mode]}
                   </span>
                   <a
-                    href={`https://www.google.com/maps/dir/${encodeURIComponent(dirQuery.from + ', South Africa')}/${encodeURIComponent(dirQuery.to + ', South Africa')}`}
+                    href={gmDirectionsUrl(dirQuery.from, dirQuery.to)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-mono text-[0.62rem] text-sky-400 hover:text-sky-300 transition-colors"
                   >
-                    Open full screen →
+                    Open in Google Maps →
                   </a>
                 </div>
 
-                {GM_KEY ? (
-                  <iframe
+                {MAPBOX_TOKEN ? (
+                  <MapboxDirectionsMap
                     key={`${dirQuery.from}|${dirQuery.to}|${dirQuery.mode}`}
-                    src={gmEmbedUrl(dirQuery.from, dirQuery.to, dirQuery.mode)}
-                    width="100%"
-                    height="360"
-                    style={{ border: 0, borderRadius: 16, display: 'block' }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Google Maps directions"
+                    from={dirQuery.from}
+                    to={dirQuery.to}
+                    profile={mapboxProfile(dirQuery.mode)}
+                    token={MAPBOX_TOKEN}
+                    height={380}
                   />
                 ) : (
                   <div
@@ -375,10 +364,10 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   >
                     <MapPin size={28} className="text-white/20" />
                     <p className="font-mono text-[0.65rem] text-white/30 text-center max-w-[200px] leading-relaxed">
-                      Add <code className="text-sky-400">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> to your .env.local to enable the embedded map
+                      Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to your .env.local to enable the map
                     </p>
                     <a
-                      href={`https://www.google.com/maps/dir/${encodeURIComponent(dirQuery.from + ', South Africa')}/${encodeURIComponent(dirQuery.to + ', South Africa')}`}
+                      href={gmDirectionsUrl(dirQuery.from, dirQuery.to)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-mono text-xs text-sky-400 hover:text-sky-300 transition-colors underline"

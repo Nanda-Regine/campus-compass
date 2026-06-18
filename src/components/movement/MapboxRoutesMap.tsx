@@ -31,13 +31,32 @@ interface Props {
 
 async function geocodeZA(address: string, token: string): Promise<[number, number] | null> {
   try {
+    const q = /south africa/i.test(address) ? address : `${address}, South Africa`
     const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json` +
-      `?access_token=${token}&country=ZA&limit=1&types=address,place,poi`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(q)}.json` +
+      `?access_token=${token}&country=ZA&limit=1&types=address,place,poi,district,region`
     )
     const d = await res.json() as { features?: { center: [number, number] }[] }
     const c = d.features?.[0]?.center
     return c ? [c[0], c[1]] : null
+  } catch { return null }
+}
+
+async function fetchRouteGeometry(
+  from: [number, number],
+  to: [number, number],
+  token: string,
+): Promise<{ type: 'LineString'; coordinates: [number, number][] } | null> {
+  try {
+    const coords = `${from[0]},${from[1]};${to[0]},${to[1]}`
+    const res = await fetch(
+      `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}` +
+      `?geometries=geojson&overview=full&steps=false&access_token=${token}`
+    )
+    const d = await res.json() as {
+      routes?: { geometry: { type: 'LineString'; coordinates: [number, number][] } }[]
+    }
+    return d.routes?.[0]?.geometry ?? null
   } catch { return null }
 }
 
@@ -150,19 +169,40 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
           pinCount++
         }
 
-        // Dashed connector line
+        // Road route via Directions API (falls back to dashed line if unavailable)
         if (fromC && toC) {
           const srcId = `rl-${route.id}`
           if (!map.getSource(srcId)) {
+            const geom = await fetchRouteGeometry(fromC, toC, token)
+            if (destroyed) return
+            if (geom) {
+              geom.coordinates.forEach(c => bounds.extend(c))
+            }
             map.addSource(srcId, {
               type: 'geojson',
-              data: { type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: [fromC, toC] } },
+              data: {
+                type: 'Feature', properties: {},
+                geometry: geom ?? { type: 'LineString', coordinates: [fromC, toC] },
+              },
+            })
+            map.addLayer({
+              id: `${srcId}-outline`,
+              type: 'line',
+              source: srcId,
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: { 'line-color': '#0a4a3c', 'line-width': 6, 'line-opacity': 0.75 },
             })
             map.addLayer({
               id: srcId,
               type: 'line',
               source: srcId,
-              paint: { 'line-color': '#0d9488', 'line-width': 2, 'line-opacity': 0.45, 'line-dasharray': [3, 3] },
+              layout: { 'line-cap': 'round', 'line-join': 'round' },
+              paint: {
+                'line-color': '#0d9488',
+                'line-width': geom ? 3.5 : 2,
+                'line-opacity': geom ? 0.85 : 0.45,
+                ...(!geom ? { 'line-dasharray': [3, 3] } : {}),
+              },
             })
           }
         }
