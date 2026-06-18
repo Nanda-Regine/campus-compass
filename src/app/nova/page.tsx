@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import TopBar from '@/components/layout/TopBar'
-import NovaCapabilitiesMenu from '@/components/nova/NovaCapabilitiesMenu'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
@@ -11,8 +11,14 @@ import { trackEvent } from '@/lib/analytics'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
-import NovaMarkdown from '@/components/nova/NovaMarkdown'
 import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
+
+// Code-split the heavy/conditional chunks off the initial load:
+// - NovaMarkdown pulls in react-markdown + remark-gfm (~100 kB); it only renders once messages
+//   exist, and its chunk downloads in parallel with the async history fetch (so no real flash).
+// - NovaCapabilitiesMenu only renders when the capabilities panel is opened.
+const NovaMarkdown = dynamic(() => import('@/components/nova/NovaMarkdown'), { ssr: false, loading: () => null })
+const NovaCapabilitiesMenu = dynamic(() => import('@/components/nova/NovaCapabilitiesMenu'), { ssr: false })
 
 interface Resource {
   title: string
