@@ -1607,13 +1607,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <WeatherWidget />
               <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
 
-              {/* ── Momentum: gamification ── */}
-              <SectionHeader label="Momentum" />
-
-              <LevelCard />
-              <StreakWidget />
-              <DailyChallenges />
-
               {/* ── Focus tools: power-user cluster, collapsed by default ── */}
               <CollapsibleSection label="Focus tools" hint="6 anti-procrastination tools">
                 <TabErrorBoundary label="Commitment Contracts">
@@ -1636,21 +1629,9 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 </TabErrorBoundary>
               </CollapsibleSection>
 
-              {/* ── Insights: analytics & reflection ── */}
-              <SectionHeader label="Insights" />
+              {/* ── Life balance ── */}
+              <SectionHeader label="Life balance" />
 
-              <TabErrorBoundary label="Daily Brief">
-                <DailyBrief />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Weekly Report">
-                <WeeklyReport />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Insights">
-                <InsightsCard />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Cohort">
-                <CohortCard />
-              </TabErrorBoundary>
               <TabErrorBoundary label="Domain Pulse">
                 <DomainPulse
                   overdueTasks={domainOverdue}
@@ -1688,10 +1669,31 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
               {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
               <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
+
+              {/* ── Insights: analytics & reflection (rebalanced from main column) ── */}
+              <SectionHeader label="Insights" />
+              <TabErrorBoundary label="Daily Brief">
+                <DailyBrief />
+              </TabErrorBoundary>
+              <TabErrorBoundary label="Weekly Report">
+                <WeeklyReport />
+              </TabErrorBoundary>
+              <TabErrorBoundary label="Insights">
+                <InsightsCard />
+              </TabErrorBoundary>
+              <TabErrorBoundary label="Cohort">
+                <CohortCard />
+              </TabErrorBoundary>
             </div>
 
             {/* Column 3 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* ── Momentum: gamification (rebalanced from main column) ── */}
+              <SectionHeader label="Momentum" />
+              <LevelCard />
+              <StreakWidget />
+              <DailyChallenges />
+
               {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
               <TabErrorBoundary label="Focus Momentum Score">
                 <FocusMomentumScore />
