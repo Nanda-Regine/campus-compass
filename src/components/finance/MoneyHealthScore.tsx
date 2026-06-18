@@ -7,8 +7,17 @@ interface MoneyHealthScoreProps {
   monthlyIncome?: number;
   essentialSpend?: number;
   discretionarySpend?: number;
+  foodSpend?: number;       // actual monthly food spend (R)
+  dataSpend?: number;       // actual monthly airtime/data spend (R)
   compact?: boolean;
 }
+
+// Grounded SA reference points (not fabricated ratios). "Adequate" = enough to be food-secure
+// / connected for study; spending at or above it scores 100, below it flags insecurity risk.
+// FOOD: ~R1,500/mo is in line with the NSFAS living/meal allowance for a student.
+// DATA: ~R150/mo buys a study-capable bundle (slides, some video; many edu sites are zero-rated).
+const FOOD_ADEQUATE_MONTHLY = 1500;
+const DATA_ADEQUATE_MONTHLY = 150;
 
 interface Pillar {
   label: string;
@@ -31,7 +40,9 @@ function computeScore(
   savingsAmount: number,
   monthlyIncome: number,
   essentialSpend: number,
-  discretionarySpend: number
+  discretionarySpend: number,
+  foodSpend: number,
+  dataSpend: number
 ): { total: number; pillars: Pillar[] } {
   // Guard every income-denominated divisor: a student can legitimately enter 0 income,
   // and x/0 yields Infinity/NaN that clamp() cannot fix (Math.min(100, NaN) === NaN),
@@ -45,15 +56,11 @@ function computeScore(
   const spendingRatio = monthlyIncome > 0 ? totalSpend / monthlyIncome : 1;
   const spendingScore = clamp((1 - spendingRatio) * 200, 0, 100);
 
-  const foodBudget = essentialSpend * 0.35;
-  const foodTarget = monthlyIncome * 0.15;
-  const foodScore = foodTarget > 0
-    ? clamp((foodBudget / foodTarget) * 100, 0, 100)
-    : 0;
-
-  const dataBudget = discretionarySpend * 0.2;
-  const dataTarget = 150;
-  const dataScore = clamp((dataBudget / dataTarget) * 100, 0, 100);
+  // Food security & connectivity use the student's ACTUAL food/data spend against grounded SA
+  // adequacy targets — not a fabricated fraction of "essentials". Adequacy is capped at 100, so
+  // spending more than enough isn't rewarded, and spending too little (insecurity) scores low.
+  const foodScore = clamp((foodSpend / FOOD_ADEQUATE_MONTHLY) * 100, 0, 100);
+  const dataScore = clamp((dataSpend / DATA_ADEQUATE_MONTHLY) * 100, 0, 100);
 
   const pillars: Pillar[] = [
     { label: 'Emergency Fund', score: Math.round(emergencyFundScore), weight: 0.3 },
@@ -73,8 +80,8 @@ function getInsight(pillars: Pillar[]): string {
   const lowest = [...pillars].sort((a, b) => a.score - b.score)[0];
   if (lowest.label === 'Emergency Fund') return 'Start with R50/month in a Capitec savings pocket — even small buffers reduce crisis risk.';
   if (lowest.label === 'Spending Ratio') return 'Your spending exceeds income. Track one week of purchases to find cuts.';
-  if (lowest.label === 'Food Security') return 'Check if your institution offers a food bursary or ubuntu fund meals.';
-  return 'Reduce data use: download lecture slides on Wi-Fi and use WhatsApp audio instead of video.';
+  if (lowest.label === 'Food Security') return 'Your food budget is tight — check if your institution offers a food bursary or ubuntu fund meals.';
+  return 'Limited data can block studying. Use campus Wi-Fi for downloads, lean on zero-rated education sites, and look for student data deals.';
 }
 
 function CircularGauge({ score, color, compact }: { score: number; color: string; compact: boolean }) {
@@ -138,6 +145,8 @@ export default function MoneyHealthScore({
   monthlyIncome,
   essentialSpend,
   discretionarySpend,
+  foodSpend,
+  dataSpend,
   compact = false,
 }: MoneyHealthScoreProps) {
   const hasData =
@@ -152,13 +161,19 @@ export default function MoneyHealthScore({
     income: monthlyIncome ?? 3500,
     essential: essentialSpend ?? 2000,
     discretionary: discretionarySpend ?? 800,
+    // Unknown food/data spend defaults to the adequacy target (neutral) rather than 0,
+    // so a not-yet-filled field doesn't falsely flag food insecurity.
+    food: foodSpend ?? FOOD_ADEQUATE_MONTHLY,
+    data: dataSpend ?? DATA_ADEQUATE_MONTHLY,
   });
 
   const { total, pillars } = computeScore(
     inputs.savings,
     inputs.income,
     inputs.essential,
-    inputs.discretionary
+    inputs.discretionary,
+    inputs.food,
+    inputs.data
   );
   const zone = getZone(total);
   const insight = getInsight(pillars);
@@ -189,6 +204,8 @@ export default function MoneyHealthScore({
           { key: 'savings', label: 'Savings / emergency fund (R)', min: 0, max: 50000 },
           { key: 'essential', label: 'Essential spend (R)', min: 0, max: 15000 },
           { key: 'discretionary', label: 'Discretionary spend (R)', min: 0, max: 10000 },
+          { key: 'food', label: 'Food / groceries (R/month)', min: 0, max: 10000 },
+          { key: 'data', label: 'Airtime / data (R/month)', min: 0, max: 5000 },
         ].map(({ key, label, min, max }) => (
           <div key={key} style={{ marginBottom: '12px' }}>
             <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', display: 'block', marginBottom: '4px' }}>
