@@ -9,8 +9,10 @@ import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { trackEvent } from '@/lib/analytics'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition'
 import { useSpeechSynthesis } from '@/hooks/useSpeechSynthesis'
+import { useNovaVoice } from '@/components/nova/NovaVoice'
 import { useUpgradePrompt } from '@/components/ui/UpgradePromptModal'
 
 // Code-split the heavy/conditional chunks off the initial load:
@@ -346,11 +348,14 @@ export default function NovaPage() {
 
   // ── Voice I/O ──────────────────────────────────────────────────────────────
   const [voiceMode, setVoiceMode]       = useState(false)
+  const [voiceEnabled, setVoiceEnabled] = useState(false)
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const newResponseRef = useRef(false)   // true only for live Nova replies, not history loads
   const sr    = useSpeechRecognition()
   const synth = useSpeechSynthesis()
+  const novaVoice = useNovaVoice()
+  const { cancelSpeech: novaVoiceCancelSpeech, speak: novaVoiceSpeak } = novaVoice
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -503,7 +508,11 @@ export default function NovaPage() {
 
   // Load voice mode preference
   useEffect(() => {
-    try { setVoiceMode(localStorage.getItem('nova-voice-mode') === 'true') } catch { /* ignore */ }
+    try {
+      const saved = localStorage.getItem('nova-voice-mode') === 'true'
+      setVoiceMode(saved)
+      setVoiceEnabled(saved)
+    } catch { /* ignore */ }
   }, [])
 
   // Mirror live transcript into the textarea while listening
@@ -523,6 +532,8 @@ export default function NovaPage() {
     newResponseRef.current = false
     const last = messages[messages.length - 1]
     if (!last || last.role !== 'assistant') return
+    // If voiceEnabled (same as voiceMode), also fire the NovaVoice hook's speak
+    if (voiceEnabled) novaVoiceSpeak(last.content)
     speakMsg(last.content, last.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages])
@@ -581,11 +592,12 @@ export default function NovaPage() {
   const toggleVoiceMode = useCallback(() => {
     setVoiceMode(prev => {
       const next = !prev
+      setVoiceEnabled(next)
       try { localStorage.setItem('nova-voice-mode', String(next)) } catch { /* ignore */ }
-      if (!next) { audioRef.current?.pause(); audioRef.current = null; synth.stop(); setSpeakingMsgId(null) }
+      if (!next) { audioRef.current?.pause(); audioRef.current = null; synth.stop(); novaVoiceCancelSpeech(); setSpeakingMsgId(null) }
       return next
     })
-  }, [synth])
+  }, [synth, novaVoiceCancelSpeech])
 
   const deleteConversation = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -883,6 +895,14 @@ export default function NovaPage() {
             >
               ✦ Menu
             </button>
+
+            {/* Voice badge — shown when voiceEnabled */}
+            {voiceEnabled && (
+              <span className="font-mono text-[0.55rem] bg-sky-500/15 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Volume2 size={9} />
+                Voice
+              </span>
+            )}
 
             {isUnlimited && (
               <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
@@ -1248,14 +1268,14 @@ export default function NovaPage() {
               <button
                 onClick={handleMicClick}
                 className={cn(
-                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all border',
+                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all border',
                   sr.isListening
-                    ? 'bg-red-500/20 border-red-500/50 animate-pulse'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                    ? 'bg-sky-500/20 border-sky-500/50 text-sky-400 animate-pulse'
+                    : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white/70'
                 )}
                 aria-label={sr.isListening ? 'Stop listening' : 'Speak to Nova'}
               >
-                {sr.isListening ? '🔴' : '🎙'}
+                {sr.isListening ? <MicOff size={18} /> : <Mic size={18} />}
               </button>
             )}
 
@@ -1303,20 +1323,20 @@ export default function NovaPage() {
               />
             </div>
 
-            {/* Auto-read toggle — only when TTS is available */}
+            {/* Auto-read / voice toggle — only when TTS is available */}
             {synth.isSupported && (
               <button
                 onClick={toggleVoiceMode}
                 title={voiceMode ? 'Auto-read on — click to turn off' : 'Auto-read off — click to enable'}
                 className={cn(
-                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-base transition-all border',
+                  'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all border',
                   voiceMode
-                    ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
+                    ? 'bg-sky-500/20 border-sky-500/40 text-sky-400'
                     : 'bg-white/5 border-white/10 hover:bg-white/10 text-white/40'
                 )}
                 aria-label="Toggle auto-read"
               >
-                🔊
+                {voiceEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
               </button>
             )}
 

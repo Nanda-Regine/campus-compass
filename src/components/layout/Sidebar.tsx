@@ -5,7 +5,8 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils,
   Briefcase, Users, UserCircle, Wifi, WifiOff,
   Heart, Dumbbell, Moon, Shield, MapPin, MessageCircle,
-  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon, Rocket,
+  Award, Building2, ChevronLeft, ChevronRight, Globe2, Link2, Home as HomeIcon, Rocket, Bell,
+  ShoppingBag, Megaphone,
 } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
@@ -20,8 +21,9 @@ const SECTIONS: Section[] = [
   {
     id: 'core', label: 'CORE',
     items: [
-      { href: '/dashboard', icon: Home,     label: 'Dashboard', accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.14)' },
-      { href: '/nova',      icon: Sparkles, label: 'Nova AI',   accent: '#A855F7', accentDim: 'rgba(168,85,247,0.18)', isNova: true },
+      { href: '/dashboard',  icon: Home,     label: 'Dashboard',  accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.14)' },
+      { href: '/nova',       icon: Sparkles, label: 'Nova AI',    accent: '#A855F7', accentDim: 'rgba(168,85,247,0.18)', isNova: true },
+      { href: '/broadcasts', icon: Bell,     label: 'Broadcasts', accent: '#38bdf8', accentDim: 'rgba(56,189,248,0.14)' },
     ],
   },
   {
@@ -57,8 +59,10 @@ const SECTIONS: Section[] = [
   {
     id: 'community', label: 'COMMUNITY',
     items: [
-      { href: '/dashboard/groups', icon: Users,         label: 'Groups', accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.14)'   },
-      { href: '/social',           icon: MessageCircle, label: 'Social', accent: '#7090D0', accentDim: 'rgba(112,144,208,0.14)' },
+      { href: '/dashboard/groups', icon: Users,         label: 'Groups',      accent: '#00CFA0', accentDim: 'rgba(0,207,160,0.14)'   },
+      { href: '/social',           icon: MessageCircle, label: 'Social',      accent: '#7090D0', accentDim: 'rgba(112,144,208,0.14)' },
+      { href: '/marketplace',      icon: ShoppingBag,   label: 'Marketplace', accent: '#f59e0b', accentDim: 'rgba(245,158,11,0.14)'  },
+      { href: '/src',              icon: Megaphone,     label: 'SRC',         accent: '#8b5cf6', accentDim: 'rgba(139,92,246,0.14)'  },
     ],
   },
 ]
@@ -67,7 +71,8 @@ const APP_PREFIXES = [
   '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
   '/campus-life', '/referral', '/streak', '/upgrade', '/career',
   '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
-  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing', '/launchpad',
+  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing', '/launchpad', '/broadcasts',
+  '/marketplace', '/src',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220
