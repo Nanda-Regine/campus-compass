@@ -3,7 +3,7 @@
 > *"Umuntu ngumuntu ngabantu — I am because we are"*
 >
 > Built by **Nanda Regine** · Mirembe Muse Pty Ltd
-> Last updated: 2026-06-16 (Phase 18 ✅ complete — Accountability Partner, ICS import, Nova vision, Push notifications, Adzuna SA jobs; live on Vercel)
+> Last updated: 2026-06-19 (Phase 21 ✅ complete — Full dopamine-architecture gamification system: Domain Flames, Compound Day, Mystery Box, Archetype, Pending XP, Chapters, Pod Feed; migration 000046; commit 936c3d7)
 
 ---
 
@@ -1421,7 +1421,130 @@ const QUICK_FILTERS = [
 
 ---
 
+## Phase 19–20 — Life Arc, Presence & Multilingual Onboarding ✅ (2026-06-17)
 
+### 19A — Student Lifecycle Arc
+Housing OS (`/housing`), Launch Pad OS (`/launchpad`), Alumni Bridge (Ubuntu loop). Year-aware dashboard nudge. Referrals → XP. 26 SA university outcomes. Social side rail + Clubs + Focus rooms. Migrations through 000039.
+
+### 19B — Campus Presence ("Who's Around Now")
+Migration 000041: `presence` table with RLS. `/api/presence` upsert + read. Social OS "Around" tab shows students currently on campus — warm, not surveillance. Heartbeat every 60s.
+
+### 20A — Study Pods + Sidebar Restructure
+Study Pods free tier (removed Nova Scholar paywall). Timetable-aware matching: shared slots +2, preferred_times string overlap +2, modules ×10. Sidebar restructure: MONEY section, 6 previously unreachable pages surfaced.
+
+### 20B — Multilingual Onboarding Tour
+SetupFlow language picker (EN/ZU/XH/AF/ST/TN). `/tour` with `TourWizard.tsx` — 6 domains × 6 languages = 36 localised screens. Ubuntu philosophy woven through every domain intro. Redirects to dashboard after completion.
+
+---
+
+## Phase 21 — Dopamine-Architecture Gamification System ✅ (2026-06-19)
+
+### The Design Question
+
+The brief was deceptively simple: *"make the gamification dopamine-hitting, addictive, and fun — the deep meaning is habit building for all domains of life so students grow into well-functioning, stable, hard-working adults."*
+
+This required resolving a genuine tension: **addictive mechanics vs. compassionate design for burned-out, resource-constrained students**. The resolution was to borrow the mechanics of dopamine loops but redirect them toward habits that compound over a student's life — not toward the app itself.
+
+### The Psychology Stack
+
+Every mechanic maps to a peer-reviewed framework:
+
+| Mechanic | Framework | Why it works |
+|---|---|---|
+| Domain Flames with Shields | Kahneman loss aversion + Compassion | Shields mean a missed day costs one of two weekly tokens, not a streak reset. Students keep streaks without anxiety spirals. |
+| Compound Day | Csikszentmihalyi Flow + Ubuntu | Being in multiple life domains in one day IS flow. The burst overlay is a cultural moment, not a score. |
+| Mystery Box | Skinner variable ratio reinforcement | Unpredictable reward schedules produce the strongest response rates. But all outcomes are *positive* (no punishment). |
+| Archetype System | Atomic Habits identity layer | James Clear: "Every action is a vote for who you want to become." The archetype card names who the student *is this week*, making identity the habit carrier. |
+| Pending XP | Kahneman pre-ownership (endowment effect) | "220 XP waiting tonight" creates ownership of unearned XP. Missing it feels like a loss — loss aversion without negative framing. |
+| Semester Chapters | Hengchen Dai Fresh Start Effect | Students are more likely to start habits after temporal landmarks. Each semester chapter is a fresh start at scale. |
+| Pod Activity Feed | Ryan & Deci Self-Determination Theory (Relatedness) | Seeing a pod member's compound day is Ubuntu in action — motivation through connection, not competition. |
+
+### Architecture Decisions
+
+**1. Domain-agnostic event mapping** — Rather than hard-coding which screens increment which streak, we built `DOMAIN_EVENTS` as a lookup table in `xp-engine.ts`. Any future feature that dispatches an existing XP event automatically increments the right domain streak with zero code changes.
+
+**2. Auto-detection in dispatchXP** — `checkAndFireCompoundDay()` is appended to the end of `dispatchXP()`. This means compound day detection is a consequence of the existing XP system, not a parallel one. No feature needs to know about compound days to trigger them.
+
+**3. Variable-ratio without randomness in build** — `rollMysteryBox()` uses `Math.random()` at claim time (client-side, user-triggered), not at build or seed time. This is correct: the unpredictability is the point, and it belongs in the UX layer, not the data layer.
+
+**4. Shields are real data** — `domain_streaks JSONB` in `profiles` stores `{ streak, last_date, shields, best }` per domain. Shields are decremented in the API route, not client-side, so they can't be gamed via localStorage manipulation.
+
+**5. Archetype is calculated, not polled** — `calculateArchetype(state)` runs client-side from `localStorage` XP state (fast, no network) and then persists to `profiles.archetype` in the background. The UI is instant; the DB is eventually consistent.
+
+**6. Chapter XP tracks within-semester progress** — `user_chapter_xp` accumulates XP earned during a chapter. This gives every semester a "final score" that students can look back on — a Personal Record for each academic period.
+
+### What We Intentionally Left Out
+
+- **Leaderboards** — Ubuntu philosophy rejects zero-sum competition. Pod feed shows peers' wins, not ranks.
+- **Daily streaks with punishment** — Global streak exists in `StreakWidget` (pre-existing). Domain Flames are *separate* and use shields. Two systems, different emotional contracts.
+- **Loot box monetisation** — Mystery box is earned by completing challenges, never purchased. The reward schedule is addictive by design but the content is always positive and free.
+- **Push notification pressure** — Notifications are opt-in (existing system). Pending XP motivates via the app surface, not interruptions.
+
+### Schema (Migration 000046)
+
+```sql
+-- Profiles additions
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS domain_streaks JSONB DEFAULT '{"academic":{"streak":0,...}}',
+  ADD COLUMN IF NOT EXISTS archetype TEXT DEFAULT 'Explorer',
+  ADD COLUMN IF NOT EXISTS archetype_updated_at DATE,
+  ADD COLUMN IF NOT EXISTS pending_xp_shown INTEGER DEFAULT 200;
+
+-- New tables
+CREATE TABLE compound_days (user_id, day_date, domains_hit TEXT[], xp_bonus, UNIQUE(user_id, day_date));
+CREATE TABLE mystery_box_claims (user_id, claimed_date, reward_type, reward_value JSONB, xp_awarded, UNIQUE(user_id, claimed_date));
+CREATE TABLE semester_chapters (name, slug, emoji, start_date, end_date, is_active);
+CREATE TABLE user_chapter_xp (user_id, chapter_id, xp, UNIQUE(user_id, chapter_id));
+```
+
+Seeded chapters: Semester 1 · 2026 (done), **Winter Sprint · 2026 (active)**, Semester 2 · 2026 (upcoming).
+
+### Engine Additions (xp-engine.ts, +201 lines)
+
+New XP events: `compound_day` (+200 XP, 1/day cap), `mystery_box_opened`, `domain_streak_7` (+75), `domain_streak_30` (+200).
+
+New badges: `compound_first`, `compound_7`, `compound_30`, `mystery_opener`, `mystery_7`.
+
+New functions:
+- `getDomainsHitToday()` → `Set<DomainKey>` — reads today's `dailyEventLog` and maps events → domains
+- `calculateArchetype(state)` → runs 11 archetype conditions against last-7-days domain event counts
+- `getPendingXP()` → rough estimate of earnable XP remaining today (220 → 40 as domains fill)
+- `rollMysteryBox()` → weighted random from 5-outcome loot table
+- `checkAndFireCompoundDay()` → auto-called inside `dispatchXP()`; fires `varsityos:compound_day` event once per day when domains ≥ 3
+
+### Components Built
+
+| Component | Trigger | Psychology |
+|---|---|---|
+| `DomainFlames.tsx` | Dashboard, live on `varsityos:xp` | 5 flame cards; flame intensity (💤→🕯️→🔥→💎→👑) grows with streak |
+| `CompoundDayBurst.tsx` | `varsityos:compound_day` event | Full-screen overlay; rings, domain icons, +200 XP badge; 5-second auto-dismiss |
+| `MysteryBox.tsx` | `varsityos:mystery_box_ready` after 3 challenges | Bouncing box → shake → open → reveal; 5 loot outcomes |
+| `ArchetypeCard.tsx` | Dashboard, live on `varsityos:xp` | Shows weekly identity; persists to DB in background |
+| `PendingXP.tsx` | Dashboard, live on `varsityos:xp` | Hides when ≥ 40 XP pending left; shows "Ubuntu Day Complete" at 5/5 domains |
+| `ChapterBanner.tsx` | Dashboard, API call on mount | Progress bar through chapter; days remaining; chapter XP |
+| `PodActivityFeed.tsx` | Dashboard, API call on mount | Pod members' compound days; domain emoji chips; time-ago |
+
+### API Routes
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/gamification/domain-streak` | GET/POST | Read streaks or increment/shield/reset a domain |
+| `/api/gamification/compound-day` | GET/POST | Record compound day; triggers domain streak increments |
+| `/api/gamification/mystery-box` | GET/POST | Check if claimed today; persist loot claim |
+| `/api/gamification/chapter` | GET | Current chapter + user XP + all chapters |
+| `/api/gamification/pod-feed` | GET | Compound day feed from pod members (via admin client) |
+| `/api/gamification/archetype` | GET/POST | Read/update archetype identity |
+
+### Commit
+
+```
+936c3d7  feat(gamification): Phase 21 — dopamine-architecture habit system
+         17 files changed, 1189 insertions(+), 1 deletion(-)
+```
+
+**Next migration:** `000047`
+
+---
 
 Every feature decision is tested against Nomvula:
 
