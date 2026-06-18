@@ -16,52 +16,57 @@ import { getDataSaverEnabled } from '@/lib/dataSaver'
 import { getDayMode } from '@/components/dashboard/DayModeBanner'
 import { DASH_THEME, MODE_LABEL, getGreeting, getWeekBadge, toISODate } from '@/components/dashboard/dashboardHelpers'
 import { SectionHeader, CollapsibleSection, Deferred } from '@/components/dashboard/layout'
-import LoadSheddingWidget from '@/components/dashboard/LoadSheddingWidget'
+import dynamic from 'next/dynamic'
 import LevelCard from '@/components/gamification/LevelCard'
 import DailyChallenges from '@/components/gamification/DailyChallenges'
 import StreakWidget from '@/components/gamification/StreakWidget'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import InterventionBanner from '@/components/orchestration/InterventionBanner'
 import InterventionModal from '@/components/orchestration/InterventionModal'
-import DailyBrief from '@/components/orchestration/DailyBrief'
 import SundayPlanning from '@/components/orchestration/SundayPlanning'
 import WeatherWidget from '@/components/dashboard/WeatherWidget'
 import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
 import FirstYearStarter from '@/components/dashboard/FirstYearStarter'
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner'
 import TaskCalendarStrip from '@/components/dashboard/TaskCalendarStrip'
-import InsightsCard from '@/components/dashboard/InsightsCard'
-import WeeklyReport from '@/components/dashboard/WeeklyReport'
-import DomainPulse from '@/components/dashboard/DomainPulse'
-import CohortCard from '@/components/dashboard/CohortCard'
 import TabErrorBoundary from '@/components/ui/TabErrorBoundary'
 import BurnoutRadar from '@/components/regulate/BurnoutRadar'
 import MoneyHealthScore from '@/components/budget/MoneyHealthScore'
-import FinancialStressLink from '@/components/finance/FinancialStressLink'
-import SassaSrdGuide from '@/components/finance/SassaSrdGuide'
 import ProcrastinationAlarm from '@/components/dashboard/ProcrastinationAlarm'
 import JustStartButton from '@/components/study/JustStartButton'
 import DeadlineTelescope from '@/components/study/DeadlineTelescope'
-import CommitmentContracts from '@/components/study/CommitmentContracts'
-import ImplementationIntentions from '@/components/study/ImplementationIntentions'
-import BodyDoubleMode from '@/components/study/BodyDoubleMode'
-import ProcrastinationJournal from '@/components/study/ProcrastinationJournal'
-import RewardUnlock from '@/components/gamification/RewardUnlock'
-import FocusMomentumScore from '@/components/dashboard/FocusMomentumScore'
-import ProcrastinationProfiler from '@/components/study/ProcrastinationProfiler'
-import AccountabilityPartner from '@/components/study/AccountabilityPartner'
 import AntiSpiralRecovery from '@/components/study/AntiSpiralRecovery'
-import CommunityChallengesHub from '@/components/community/CommunityChallengesHub'
-import StudyTipsCard from '@/components/dashboard/cards/StudyTipsCard'
-import CoachSummaryCard from '@/components/dashboard/cards/CoachSummaryCard'
 import OSCommandHero from '@/components/dashboard/cards/OSCommandHero'
 import PriorityCommandStrip from '@/components/dashboard/cards/PriorityCommandStrip'
 import StatCardsRow from '@/components/dashboard/cards/StatCardsRow'
 import FeatureGrid from '@/components/dashboard/cards/FeatureGrid'
-import ExamCountdownCard from '@/components/dashboard/cards/ExamCountdownCard'
-import BudgetRingCard from '@/components/dashboard/cards/BudgetRingCard'
 import UpgradeBar from '@/components/dashboard/cards/UpgradeBar'
 import PrescriptionReminderCard from '@/components/dashboard/cards/PrescriptionReminderCard'
+
+// Code-split below-the-fold widgets: each one only mounts inside a <Deferred> (on scroll)
+// or inside the collapsed "Focus tools" section, so ssr:false keeps their JS out of the
+// initial bundle with no visual flash — a real first-paint win on low-end / prepaid Android.
+const LoadSheddingWidget       = dynamic(() => import('@/components/dashboard/LoadSheddingWidget'), { ssr: false })
+const DailyBrief               = dynamic(() => import('@/components/orchestration/DailyBrief'), { ssr: false })
+const InsightsCard             = dynamic(() => import('@/components/dashboard/InsightsCard'), { ssr: false })
+const WeeklyReport             = dynamic(() => import('@/components/dashboard/WeeklyReport'), { ssr: false })
+const DomainPulse              = dynamic(() => import('@/components/dashboard/DomainPulse'), { ssr: false })
+const CohortCard               = dynamic(() => import('@/components/dashboard/CohortCard'), { ssr: false })
+const FinancialStressLink      = dynamic(() => import('@/components/finance/FinancialStressLink'), { ssr: false })
+const SassaSrdGuide            = dynamic(() => import('@/components/finance/SassaSrdGuide'), { ssr: false })
+const CommitmentContracts      = dynamic(() => import('@/components/study/CommitmentContracts'), { ssr: false })
+const ImplementationIntentions = dynamic(() => import('@/components/study/ImplementationIntentions'), { ssr: false })
+const BodyDoubleMode           = dynamic(() => import('@/components/study/BodyDoubleMode'), { ssr: false })
+const ProcrastinationJournal   = dynamic(() => import('@/components/study/ProcrastinationJournal'), { ssr: false })
+const RewardUnlock             = dynamic(() => import('@/components/gamification/RewardUnlock'), { ssr: false })
+const FocusMomentumScore       = dynamic(() => import('@/components/dashboard/FocusMomentumScore'), { ssr: false })
+const ProcrastinationProfiler  = dynamic(() => import('@/components/study/ProcrastinationProfiler'), { ssr: false })
+const AccountabilityPartner    = dynamic(() => import('@/components/study/AccountabilityPartner'), { ssr: false })
+const CommunityChallengesHub   = dynamic(() => import('@/components/community/CommunityChallengesHub'), { ssr: false })
+const StudyTipsCard            = dynamic(() => import('@/components/dashboard/cards/StudyTipsCard'), { ssr: false })
+const CoachSummaryCard         = dynamic(() => import('@/components/dashboard/cards/CoachSummaryCard'), { ssr: false })
+const ExamCountdownCard        = dynamic(() => import('@/components/dashboard/cards/ExamCountdownCard'), { ssr: false })
+const BudgetRingCard           = dynamic(() => import('@/components/dashboard/cards/BudgetRingCard'), { ssr: false })
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
