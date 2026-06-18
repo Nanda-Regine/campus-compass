@@ -290,19 +290,29 @@ function WalkMeHomeTab() {
   const [active, setActive] = useState(false)
   const [duration, setDuration] = useState(15)
   const [elapsed, setElapsed] = useState(0)
+  const [overdue, setOverdue] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startedAtRef = useRef<number>(0)
+  const alertedRef = useRef(false)
 
+  // Wall-clock based: setInterval is throttled/suspended when the screen locks on
+  // low-end Android, so a tick-counter undercounts. Recompute elapsed from real time.
   const startWalk = () => {
-    setActive(true)
+    startedAtRef.current = Date.now()
+    alertedRef.current = false
+    setOverdue(false)
     setElapsed(0)
+    setActive(true)
+    if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(() => {
-      setElapsed(prev => prev + 1)
-    }, 60000) // tick every minute
+      setElapsed(Math.floor((Date.now() - startedAtRef.current) / 60000))
+    }, 1000)
   }
 
   const cancelWalk = () => {
     setActive(false)
     setElapsed(0)
+    setOverdue(false)
     if (timerRef.current) clearInterval(timerRef.current)
   }
 
@@ -310,10 +320,37 @@ function WalkMeHomeTab() {
     cancelWalk()
   }
 
+  // Actually notify emergency contacts when the timer runs out without a safe check-in.
+  const triggerOverdueAlert = () => {
+    if (alertedRef.current) return
+    alertedRef.current = true
+    let contacts: { number: string }[] = []
+    try { contacts = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') } catch { contacts = [] }
+    const fire = (locationText: string) => {
+      const msg = `🆘 Walk-home overdue — I haven't checked in safe.\n${locationText}\nPlease check on me or call 10111.`
+      const encoded = encodeURIComponent(msg)
+      contacts.forEach((c, i) => {
+        const clean = c.number.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
+        setTimeout(() => window.open(`https://wa.me/${clean}?text=${encoded}`, '_blank'), i * 900)
+      })
+    }
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => fire(`📍 Last location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`),
+        () => fire('📍 Location unavailable — please contact me urgently'),
+        { timeout: 6000, enableHighAccuracy: false }
+      )
+    } else {
+      fire('📍 Location unavailable — please contact me urgently')
+    }
+  }
+
   useEffect(() => {
     if (elapsed >= duration && active) {
-      // Trigger overdue alert
-      cancelWalk()
+      triggerOverdueAlert()
+      setOverdue(true)
+      setActive(false)
+      if (timerRef.current) clearInterval(timerRef.current)
     }
   }, [elapsed, duration, active]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -333,6 +370,16 @@ function WalkMeHomeTab() {
         <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 16 }}>
           Tell us how long your walk should take. If you don't check in as safe when the timer ends, your emergency contacts get an automatic alert.
         </div>
+
+        {overdue && !active && (
+          <div style={{
+            background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)',
+            borderRadius: 10, padding: '10px 12px', marginBottom: 14,
+            fontSize: '0.74rem', color: 'var(--danger, #f87171)', lineHeight: 1.5,
+          }}>
+            ⏰ Timer ran out — your emergency contacts have been alerted. Tap a WhatsApp window to send, or call 10111.
+          </div>
+        )}
 
         {!active ? (
           <>
