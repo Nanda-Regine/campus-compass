@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import toast from 'react-hot-toast'
 import { useAppStore } from '@/store'
 import { loadGratitudeEntries } from '@/components/orchestration/GratitudePrompt'
 import { createClient } from '@/lib/supabase/client'
@@ -422,14 +423,28 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
       notes:      draft.notes.trim() || null,
     }
     const { data, error } = await supabase.from('calendar_events').insert(row).select().single()
-    if (!error && data) setEvents(prev => [...prev, data as CalendarEvent])
+    if (error || !data) {
+      // Don't pretend it saved: keep the modal open and tell the user.
+      toast.error('Could not save event — check your connection and try again.')
+      setSaving(false)
+      return
+    }
+    setEvents(prev => [...prev, data as CalendarEvent])
     setSaving(false)
     setShowModal(false)
   }
 
   const deleteEvent = async (id: string) => {
+    const removed = events.find(e => e.id === id)
+    if (!removed) return
+    if (!window.confirm(`Delete "${removed.title}"? This can't be undone.`)) return
     setEvents(prev => prev.filter(e => e.id !== id))
-    await supabase.from('calendar_events').delete().eq('id', id)
+    const { error } = await supabase.from('calendar_events').delete().eq('id', id)
+    if (error) {
+      // Roll back the optimistic removal so the user doesn't lose an event on a failed delete.
+      setEvents(prev => [...prev, removed])
+      toast.error('Could not delete event — please try again.')
+    }
   }
 
   const monday = addDays(getMondayOf(new Date()), weekOffset * 7)
