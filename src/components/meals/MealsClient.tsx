@@ -8,10 +8,12 @@ import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
 import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
-import NutritionTab from './NutritionTab'
-import RecipesTab from './RecipesTab'
-import KitchenGuide from './KitchenGuide'
 import dynamic from 'next/dynamic'
+// Tabs render one at a time — code-split the per-tab components (RecipesTab is ~757 lines)
+// so each only loads when its tab is opened.
+const NutritionTab = dynamic(() => import('./NutritionTab'), { ssr: false })
+const RecipesTab = dynamic(() => import('./RecipesTab'), { ssr: false })
+const KitchenGuide = dynamic(() => import('./KitchenGuide'), { ssr: false })
 const FoodSpendTracker = dynamic(() => import('./FoodSpendTracker'), { ssr: false })
 
 const GROCERY_CATS = [
