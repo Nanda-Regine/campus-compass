@@ -409,8 +409,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
         {/* Vertical tab rail */}
         <div style={{
           width: 60, flexShrink: 0,
-          position: 'sticky', top: 57,
-          height: 'calc(100vh - 57px)',
+          position: 'sticky', top: 73,
+          height: 'calc(100vh - 73px)',
           overflowY: 'auto',
           scrollbarWidth: 'none',
           borderRight: '0.5px solid rgba(255,255,255,0.06)',

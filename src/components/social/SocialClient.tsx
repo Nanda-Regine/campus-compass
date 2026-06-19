@@ -45,8 +45,8 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
       {/* Vertical side rail */}
       <div style={{
         width: 64, flexShrink: 0,
-        position: 'sticky', top: 57,
-        height: 'calc(100vh - 57px)',
+        position: 'sticky', top: 73,
+        height: 'calc(100vh - 73px)',
         overflowY: 'auto',
         scrollbarWidth: 'none',
         borderRight: '0.5px solid var(--border-subtle)',

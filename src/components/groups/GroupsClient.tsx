@@ -502,9 +502,9 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
         {/* Side rail */}
         <div style={{
-          position: 'sticky' as const, top: 57, zIndex: 1,
+          position: 'sticky' as const, top: 73, zIndex: 1,
           width: 64, flexShrink: 0,
-          height: 'calc(100vh - 57px)',
+          height: 'calc(100vh - 73px)',
           overflowY: 'auto', scrollbarWidth: 'none',
           borderRight: '0.5px solid rgba(255,255,255,0.07)',
           background: 'rgba(0,0,0,0.18)',

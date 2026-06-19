@@ -750,7 +750,7 @@ export default function SetupFlow() {
                 {!isTVET && (
                   <div className="pt-3 border-t border-white/8 space-y-3">
                     <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wide">Next exam (optional)</div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Input
                         placeholder="e.g. Mathematics 201"
                         value={nextExamName}
@@ -760,7 +760,7 @@ export default function SetupFlow() {
                         type="date"
                         value={nextExamDate}
                         onChange={e => setNextExamDate(e.target.value)}
-                        className="flex-shrink-0 w-36 bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-3 text-sm text-white outline-none transition-all"
+                        className="w-full sm:w-36 sm:flex-shrink-0 bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-3 text-sm text-white outline-none transition-all"
                       />
                     </div>
                     {nextExamName && nextExamDate && (

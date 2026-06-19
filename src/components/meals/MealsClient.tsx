@@ -296,9 +296,9 @@ export default function MealsClient({ initialData }: MealsClientProps) {
       <TopBar title="Meal Prep" />
 
       {/* Main layout: vertical tab rail + content */}
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 57px)' }}>
+      <div style={{ display: 'flex', minHeight: 'calc(100vh - 73px)' }}>
         {/* Vertical tab rail */}
-        <div style={{ width: 64, flexShrink: 0, position: 'sticky', top: 57, height: 'calc(100vh - 57px)', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)', zIndex: 10, overflowY: 'auto', scrollbarWidth: 'none' }}>
+        <div style={{ width: 64, flexShrink: 0, position: 'sticky', top: 73, height: 'calc(100vh - 73px)', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)', zIndex: 10, overflowY: 'auto', scrollbarWidth: 'none' }}>
           {TABS.map(tab => {
             const tabAccent = TAB_ACCENTS[tab.id]
             const active = activeTab === tab.id

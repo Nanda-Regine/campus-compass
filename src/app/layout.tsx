@@ -386,7 +386,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-ZA" suppressHydrationWarning>
       <head>
         {/* Initialize sidebar CSS var before paint to avoid layout flash */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var c=localStorage.getItem('varsityos_sidebar_collapsed');document.documentElement.style.setProperty('--sidebar-w',c==='true'?'56px':'220px');}catch(e){}})();` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var p=window.location.pathname,a=['/dashboard','/study','/budget','/meals','/nova','/profile','/campus-life','/referral','/streak','/upgrade','/career','/bursaries','/notes','/social','/tutoring','/health','/sleep','/fitness','/safety','/movement','/civic','/regulate','/international','/lms','/housing','/launchpad','/broadcasts','/marketplace','/src','/stokvel','/skills','/tour','/groups','/jobs','/mentors','/growth','/entrepreneur','/wisdom','/reader','/discounts','/feedback','/security','/admin'],s=a.some(function(x){return p===x||p.startsWith(x+'/')});if(!s){document.documentElement.style.setProperty('--sidebar-w','0px');return;}var c=localStorage.getItem('varsityos_sidebar_collapsed');document.documentElement.style.setProperty('--sidebar-w',c==='true'?'56px':'220px');}catch(e){}})();` }} />
 
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="32x32" />
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="48x48" />

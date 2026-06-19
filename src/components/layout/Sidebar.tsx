@@ -99,12 +99,19 @@ export function Sidebar() {
   const show = APP_PREFIXES.some(p => pathname.startsWith(p))
 
   useEffect(() => {
+    if (!show) {
+      document.documentElement.style.setProperty('--sidebar-w', '0px')
+      setMounted(true)
+      return
+    }
     const saved = localStorage.getItem('varsityos_sidebar_collapsed')
     const init  = saved === 'true'
     setCollapsed(init)
     document.documentElement.style.setProperty('--sidebar-w', init ? `${SIDEBAR_COLLAPSED_W}px` : `${SIDEBAR_EXPANDED_W}px`)
     setMounted(true)
+  }, [show])
 
+  useEffect(() => {
     setOnline(navigator.onLine)
     const on  = () => setOnline(true)
     const off = () => setOnline(false)

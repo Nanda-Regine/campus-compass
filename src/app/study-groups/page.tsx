@@ -11,9 +11,9 @@ export default async function StudyGroupsPage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: 'var(--bg-base)' }}>
+    <div className="flex flex-col min-h-screen" style={{ background: 'var(--bg-base)' }}>
       <TopBar title="Group Assignments" />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <GroupsClient userId={user.id} />
       </div>
     </div>

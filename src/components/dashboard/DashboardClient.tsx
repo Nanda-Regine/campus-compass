@@ -430,13 +430,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           padding: '0 20px', height: 60,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
         }}>
-          <div>
-            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.94)', letterSpacing: '-0.01em' }}>
+          <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.94)', letterSpacing: '-0.01em', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {getGreeting()}, {firstName}
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
-              <span className="status-live" style={{ width: 5, height: 5, borderRadius: '50%', background: theme.accent, display: 'inline-block' }} />
-              <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: theme.accent, letterSpacing: '0.06em' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2, overflow: 'hidden' }}>
+              <span className="status-live" style={{ width: 5, height: 5, borderRadius: '50%', background: theme.accent, display: 'inline-block', flexShrink: 0 }} />
+              <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: theme.accent, letterSpacing: '0.06em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {MODE_LABEL[mode].label}{p?.university ? ` · ${p.university}` : ''}
               </span>
             </div>
@@ -477,7 +477,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 4 }}>Nova</div>
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65 }}>{insight.content}</div>
               </div>
-              <button onClick={() => dismissInsight(insight.id)} aria-label="Dismiss" style={{ color: 'rgba(255,255,255,0.25)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, flexShrink: 0, padding: '2px 4px' }}>✕</button>
+              <button onClick={() => dismissInsight(insight.id)} aria-label="Dismiss" style={{ color: 'rgba(255,255,255,0.25)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, flexShrink: 0, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
             </div>
           ))}
 

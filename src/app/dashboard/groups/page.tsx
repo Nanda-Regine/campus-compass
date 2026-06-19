@@ -10,10 +10,10 @@ export default async function GroupsPage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div className="flex flex-col min-h-screen" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'clip' }}>
       <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
       <TopBar title="Group Assignments" />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <GroupsClient userId={user.id} />
       </div>
     </div>

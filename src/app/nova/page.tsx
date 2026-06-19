@@ -226,7 +226,7 @@ function NovaDailyBrief({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: cards.length >= 4 ? '1fr 1fr' : cards.length === 3 ? '1fr 1fr' : cards.length === 2 ? '1fr 1fr' : '1fr',
+            gridTemplateColumns: cards.length >= 2 ? '1fr 1fr' : '1fr',
             gap: 8, width: '100%', maxWidth: 340, marginBottom: 20,
           }}
         >

@@ -263,15 +263,15 @@ export default function LandingPage() {
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/demo" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors hidden sm:block" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <Link href="/demo" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors hidden sm:block min-h-[44px] flex items-center" style={{ color: 'rgba(255,255,255,0.55)' }}>
               See demo
             </Link>
-            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-2 rounded-lg transition-colors" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors min-h-[44px] flex items-center" style={{ color: 'rgba(255,255,255,0.55)' }}>
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="font-display text-xs font-bold px-4 py-2 rounded-lg transition-all hover:opacity-90"
+              className="font-display text-xs font-bold px-4 py-3 rounded-lg transition-all hover:opacity-90 min-h-[44px] flex items-center"
               style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 2px 12px rgba(168,85,247,0.35)' }}
             >
               Get started free
@@ -974,7 +974,7 @@ export default function LandingPage() {
               </p>
               <Link
                 href="/auth/signup"
-                className="inline-block font-display font-bold text-base px-10 py-4 rounded-xl transition-all hover:-translate-y-0.5"
+                className="block w-full sm:inline-block sm:w-auto font-display font-bold text-base px-10 py-4 rounded-xl transition-all hover:-translate-y-0.5"
                 style={{ background: 'linear-gradient(135deg, #3b82f6, #0d9488)', color: '#fff', boxShadow: '0 4px 32px rgba(59,130,246,0.45)' }}
               >
                 Create your free account
@@ -1034,7 +1034,7 @@ export default function LandingPage() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-[0.6rem] transition-colors hover:text-white/60"
+                  className="font-mono text-[0.6rem] transition-colors hover:text-white/60 min-h-[44px] flex items-center"
                   style={{ color: 'rgba(255,255,255,0.25)' }}
                 >
                   {link.label}

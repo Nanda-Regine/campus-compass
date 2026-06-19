@@ -25,7 +25,7 @@ export default async function SocialPage() {
     .single()
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflowX: 'clip' }}>
       <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
       <TopBar title="Social" />
       <SocialClient
