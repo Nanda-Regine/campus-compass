@@ -281,8 +281,8 @@ export default function LandingPage() {
         </div>
 
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
-        <section className="relative px-6 pt-20 pb-16 lg:pt-28 lg:pb-24 max-w-7xl mx-auto overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
-          {/* Ambient hero image — cinematic Afrofuturist layer */}
+        <section className="relative pt-20 pb-16 lg:pt-28 lg:pb-24 overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
+          {/* Ambient spans full viewport width, not constrained by max-w-7xl */}
           <AmbientImage zone="onboarding" opacity={0.38} blurPx={4} saturation={1.4}
             overlayColor="linear-gradient(180deg,rgba(5,4,12,0.10) 0%,rgba(5,4,12,0.04) 100%)" />
           {/* Afrofuturist nebula glow */}
@@ -292,8 +292,8 @@ export default function LandingPage() {
             <div style={{ position: 'absolute', top: '80px', left: '-60px', width: 'min(400px, 110vw)', height: '300px', background: 'radial-gradient(ellipse, rgba(212,168,75,0.12) 0%, transparent 65%)', filter: 'blur(40px)' }} />
           </div>
 
-          {/* Desktop: 2-col (text left, preview right). Mobile: single col centered */}
-          <div className="relative grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Content constrained to max-w-7xl, desktop: 2-col */}
+          <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left: text */}
             <div className="text-center lg:text-left">
