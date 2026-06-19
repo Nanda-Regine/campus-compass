@@ -498,7 +498,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
     return (
       <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
-        <AmbientImage zone="study" opacity={0.22} blurPx={22} saturation={1.2} overlayColor="rgba(5,4,12,0.70)" />
+        <AmbientImage zone="study" opacity={0.55} blurPx={4} saturation={1.4} overlayColor="transparent" />
 
         {/* Side rail */}
         <div style={{
@@ -1260,7 +1260,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
   // ── List view ────────────────────────────────────────────────────────────────
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)' }}>
-      <AmbientImage zone="study" opacity={0.22} blurPx={12} saturation={1.05} overlayColor="rgba(5,4,12,0.80)" />
+      <AmbientImage zone="study" opacity={0.55} blurPx={4} saturation={1.4} overlayColor="transparent" />
       <div className="flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>

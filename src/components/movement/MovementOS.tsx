@@ -233,12 +233,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
 
   return (
     <>
-      {/* Full-page ambient art — fixed so it persists as user scrolls */}
-      <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <AmbientImage zone="movement" opacity={0.28} blurPx={20} saturation={1.1}
-          overlayColor="rgba(5,4,12,0.0)" />
-      </div>
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 1 }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="movement" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       {/* Header */}
       <div className="px-5 pt-12 pb-6" style={{ background: 'linear-gradient(135deg, #0f4c75 0%, #0d3a5e 100%)' }}>
         <div className="flex items-center gap-3 mb-1">
