@@ -1253,7 +1253,6 @@ export default function GroupsClient({ userId }: { userId: string }) {
           )}
         </div>
         </div>
-        </div>
       </div>
     )
   }
