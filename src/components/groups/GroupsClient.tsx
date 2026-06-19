@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface GroupMember {
   id: string
@@ -496,52 +497,92 @@ export default function GroupsClient({ userId }: { userId: string }) {
     ]
 
     return (
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-white/7">
+      <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
+        <AmbientImage zone="study" opacity={0.10} blurPx={26} saturation={1.1} overlayColor="rgba(5,4,12,0.76)" />
+
+        {/* Side rail */}
+        <div style={{
+          position: 'sticky' as const, top: 57, zIndex: 1,
+          width: 64, flexShrink: 0,
+          height: 'calc(100vh - 57px)',
+          overflowY: 'auto', scrollbarWidth: 'none',
+          borderRight: '0.5px solid rgba(255,255,255,0.07)',
+          background: 'rgba(0,0,0,0.18)',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          {/* Back button */}
           <button
             onClick={() => { setView('list'); setInviteUrl(null); setDetailTab('overview'); setMeetings([]); setMessages([]) }}
-            className="font-mono text-[0.62rem] text-white/35 hover:text-white/60 mb-2 flex items-center gap-1 transition-colors"
+            style={{
+              width: '100%', minHeight: 52,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3,
+              background: 'transparent', border: 'none', borderBottom: '0.5px solid rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.3)', cursor: 'pointer', padding: '6px 2px',
+            }}
           >
-            ← All groups
+            <span style={{ fontSize: '0.9rem' }}>←</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Back</span>
           </button>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="font-display font-bold text-white text-base leading-tight truncate">{selected.title}</h2>
-              {selected.subject && <p className="font-mono text-[0.62rem] text-teal-400 mt-0.5">{selected.subject}</p>}
-            </div>
-            <span className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
-              selected.status === 'active'    ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
-              : selected.status === 'submitted' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20'
-              : 'bg-green-500/15 text-green-400 border-green-500/20'
-            )}>
-              {selected.status}
-            </span>
-          </div>
-          {selected.due_date && (
-            <p className={cn('font-mono text-[0.58rem] mt-1.5', daysUntil(selected.due_date).color)}>
-              Due {new Date(selected.due_date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · {daysUntil(selected.due_date).label}
-            </p>
-          )}
-
-          {/* Tab bar */}
-          <div className="flex gap-1 mt-3 overflow-x-auto no-scrollbar">
-            {DETAIL_TABS.map(t => (
-              <button key={t.id} onClick={() => {
-                setDetailTab(t.id)
-                if (t.id === 'discussion' || t.id === 'noticeboard' || t.id === 'conflicts') void loadMessages(selected.id)
-                if (t.id === 'meetings') void loadMeetings(selected.id)
-              }} className={cn(
-                'flex-shrink-0 font-mono text-[0.6rem] px-3 py-1.5 rounded-lg transition-all border flex items-center gap-1',
-                detailTab === t.id ? 'bg-teal-600/15 text-teal-400 border-teal-600/20' : 'bg-transparent text-white/35 border-white/7 hover:text-white/60',
-              )}>
-                {t.label}
-                {t.id === 'members' && freeRiders.length > 0 && <span className="text-red-400">⚠</span>}
-                {t.badge && <span className={cn('text-[0.55rem] px-1 rounded', t.id === 'conflicts' ? 'text-amber-400' : 'text-teal-400 bg-teal-600/15')}>{t.badge}</span>}
+          {DETAIL_TABS.map(t => {
+            const isActive = detailTab === t.id
+            const ICONS: Record<string, string> = { overview: '📋', tasks: '✓', members: '👥', noticeboard: '📌', conflicts: '⚡', discussion: '💬', meetings: '📅', tips: '📚' }
+            return (
+              <button
+                key={t.id}
+                onClick={() => {
+                  setDetailTab(t.id)
+                  if (t.id === 'discussion' || t.id === 'noticeboard' || t.id === 'conflicts') void loadMessages(selected.id)
+                  if (t.id === 'meetings') void loadMeetings(selected.id)
+                }}
+                style={{
+                  width: '100%', minHeight: 60,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
+                  background: isActive ? 'rgba(52,211,153,0.12)' : 'transparent',
+                  border: 'none', borderLeft: `2px solid ${isActive ? 'var(--teal)' : 'transparent'}`,
+                  color: isActive ? 'var(--teal)' : 'rgba(255,255,255,0.35)',
+                  cursor: 'pointer', transition: 'all 0.15s', padding: '4px 2px', position: 'relative',
+                }}
+              >
+                <span style={{ fontSize: '1rem', opacity: isActive ? 1 : 0.65 }}>{ICONS[t.id] ?? '·'}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.03em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+                  {t.label.split(' ')[0].replace(/\(.*\)/, '').trim()}
+                </span>
+                {t.badge && (
+                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.5rem', background: t.id === 'conflicts' ? '#f59e0b' : 'var(--teal)', color: '#000', borderRadius: 10, padding: '1px 4px', fontWeight: 700 }}>
+                    {t.badge}
+                  </span>
+                )}
+                {t.id === 'members' && freeRiders.length > 0 && (
+                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.5rem', color: '#f87171' }}>⚠</span>
+                )}
               </button>
-            ))}
-          </div>
+            )
+          })}
         </div>
+
+        {/* Content column */}
+        <div style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* Header */}
+          <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid rgba(255,255,255,0.07)', background: 'rgba(0,0,0,0.15)' }}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="font-display font-bold text-white text-base leading-tight truncate">{selected.title}</h2>
+                {selected.subject && <p className="font-mono text-[0.62rem] text-teal-400 mt-0.5">{selected.subject}</p>}
+              </div>
+              <span className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
+                selected.status === 'active'    ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
+                : selected.status === 'submitted' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20'
+                : 'bg-green-500/15 text-green-400 border-green-500/20'
+              )}>
+                {selected.status}
+              </span>
+            </div>
+            {selected.due_date && (
+              <p className={cn('font-mono text-[0.58rem] mt-1.5', daysUntil(selected.due_date).color)}>
+                Due {new Date(selected.due_date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · {daysUntil(selected.due_date).label}
+              </p>
+            )}
+          </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
@@ -1211,13 +1252,17 @@ export default function GroupsClient({ userId }: { userId: string }) {
             </>
           )}
         </div>
+        </div>
+        </div>
       </div>
     )
   }
 
   // ── List view ────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-full">
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)' }}>
+      <AmbientImage zone="study" opacity={0.08} blurPx={30} saturation={1.05} overlayColor="rgba(5,4,12,0.80)" />
+      <div className="flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>
           <h1 className="font-display font-black text-white text-xl">Group Assignment OS</h1>
@@ -1294,6 +1339,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
             )
           })
         )}
+      </div>
       </div>
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { ShoppingBag, Plus, Package, MessageSquare, Search, ChevronDown, ChevronUp, Send, X, HelpCircle } from 'lucide-react'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 import toast from 'react-hot-toast'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -1163,7 +1164,8 @@ export default function MarketplaceOS({ userId, initialListings, myListings: ini
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex' }}>
+      <AmbientImage zone="community" opacity={0.10} blurPx={28} saturation={1.1} overlayColor="rgba(5,4,12,0.75)" />
 
       {/* Vertical side rail */}
       <div style={{

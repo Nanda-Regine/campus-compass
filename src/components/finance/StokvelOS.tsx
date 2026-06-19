@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ─── DB row types ──────────────────────────────────────────────
 interface GroupRow {
@@ -249,10 +250,16 @@ export default function StokvelOS() {
   }
 
   // ─── Setup screen ────────────────────────────────────────────
-  if (loading) return <Skeleton />
+  if (loading) return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', padding: '24px 16px' }}>
+      <Skeleton />
+    </div>
+  )
 
   if (!group) return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', padding: '24px 16px 96px' }}>
+      <AmbientImage zone="community" opacity={0.10} blurPx={28} saturation={1.1} overlayColor="rgba(5,4,12,0.76)" />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
@@ -275,6 +282,7 @@ export default function StokvelOS() {
           {creatingGroup ? 'Creating…' : 'Create stokvel →'}
         </button>
       </div>
+      </div>
     </div>
   )
 
@@ -293,21 +301,55 @@ export default function StokvelOS() {
   const currentPayoutMember = members.find(m => m.payout_month === currentTurn)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{group.name}</div>
-        <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>{members.length} members · R{group.contribution_amount}/month each · R{totalFund.toLocaleString('en-ZA')} monthly pot</div>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
+      <AmbientImage zone="community" opacity={0.10} blurPx={28} saturation={1.15} overlayColor="rgba(5,4,12,0.74)" />
+
+      {/* Side rail */}
+      <div style={{
+        position: 'sticky' as const, top: 57, zIndex: 1,
+        width: 64, flexShrink: 0,
+        height: 'calc(100vh - 57px)',
+        overflowY: 'auto', scrollbarWidth: 'none',
+        borderRight: '0.5px solid var(--border-subtle)',
+        background: 'rgba(0,0,0,0.18)',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {TABS.map(t => {
+          const isActive = tab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => { setTab(t.id); if (t.id === 'board') void loadBoardMessages(group.id) }}
+              title={t.label}
+              style={{
+                width: '100%', minHeight: 64,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5,
+                background: isActive ? 'rgba(52,211,153,0.12)' : 'transparent',
+                border: 'none', borderLeft: `2px solid ${isActive ? 'var(--teal)' : 'transparent'}`,
+                color: isActive ? 'var(--teal)' : 'rgba(255,255,255,0.38)',
+                cursor: 'pointer', transition: 'all 0.15s ease', padding: '6px 2px',
+              }}
+            >
+              <span style={{ fontSize: '1.05rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+                {t.label.split(' ')[0]}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
-      <div style={{ display: 'flex', gap: 0, overflowX: 'auto', borderBottom: '1px solid var(--border-subtle)' }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => { setTab(t.id); if (t.id === 'board') void loadBoardMessages(group.id) }} style={{ flexShrink: 0, padding: '8px 10px', background: 'none', border: 'none', borderBottom: tab === t.id ? '2px solid var(--teal)' : '2px solid transparent', color: tab === t.id ? 'var(--teal)' : 'var(--text-tertiary)', fontSize: '0.67rem', fontFamily: 'var(--font-mono)', fontWeight: tab === t.id ? 700 : 400, cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap' }}>
-            {t.icon} {t.label}
-          </button>
-        ))}
-      </div>
+      {/* Content column */}
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
+          <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>STOKVEL OS</div>
+          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>{group.name}</div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 2 }}>{members.length} members · R{group.contribution_amount}/mo · R{totalFund.toLocaleString('en-ZA')} pot</div>
+        </div>
+
+        {/* Tab content */}
+        <div style={{ flex: 1, padding: '14px 16px 96px', overflowY: 'auto' }}>
 
       {tab === 'overview' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -387,6 +429,8 @@ export default function StokvelOS() {
         </div>
       )}
       {tab === 'learn'    && <LearnTab />}
+        </div>
+      </div>
     </div>
   )
 }

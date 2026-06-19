@@ -8,6 +8,7 @@ import BreathingExercise from './BreathingExercise'
 import ExamWeekProtocol from './ExamWeekProtocol'
 import NSScore from './NSScore'
 import dynamic from 'next/dynamic'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 const WellbeingJournal = dynamic(() => import('./WellbeingJournal'), { ssr: false })
 import type { Exam } from '@/types'
 
@@ -550,57 +551,69 @@ export default function RegulationRoom({ userId, exams }: Props) {
     saveSession(userId, type, seconds).catch(() => {})
   }
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb' }}>
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px 120px' }}>
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#e5e7eb', marginBottom: 4 }}>Regulation Room</h1>
-          <p style={{ color: '#9ca3af', fontSize: 14 }}>Calm your nervous system. Breathe, release, regulate.</p>
-        </div>
+  const ACCENT = '#a78bfa'
 
-        <div style={{ marginBottom: 24 }}>
+  return (
+    <div style={{ position: 'relative', minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', display: 'flex' }}>
+      <AmbientImage zone="wellness" opacity={0.13} blurPx={24} saturation={1.1} overlayColor="rgba(5,4,10,0.78)" />
+
+      {/* Side rail */}
+      <div style={{
+        position: 'sticky' as const, top: 57, zIndex: 1,
+        width: 64, flexShrink: 0,
+        height: 'calc(100vh - 57px)',
+        overflowY: 'auto', scrollbarWidth: 'none',
+        borderRight: '0.5px solid rgba(255,255,255,0.08)',
+        background: 'rgba(10,10,15,0.35)',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {TABS.map(t => {
+          const isActive = activeTab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                width: '100%', minHeight: 64,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5,
+                background: isActive ? 'rgba(167,139,250,0.14)' : 'transparent',
+                border: 'none', borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
+                color: isActive ? ACCENT : 'rgba(255,255,255,0.35)',
+                cursor: 'pointer', transition: 'all 0.15s ease', padding: '6px 2px',
+              }}
+            >
+              <span style={{ fontSize: '1.1rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+                {t.label.split(' ')[0]}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Content column */}
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{
+          padding: '16px 16px 12px',
+          borderBottom: '0.5px solid rgba(255,255,255,0.08)',
+          background: 'rgba(10,10,15,0.3)',
+        }}>
+          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>
+            REGULATION ROOM
+          </div>
           <NSScore userId={userId} />
         </div>
 
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, marginBottom: 24, scrollbarWidth: 'none' }}>
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                flexShrink: 0, padding: '8px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none',
-                background: activeTab === tab.id ? '#a78bfa' : 'rgba(255,255,255,0.05)',
-                color: activeTab === tab.id ? '#fff' : '#9ca3af',
-                transition: 'all 0.2s',
-              }}
-            >
-              {tab.icon} {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div>
-          {activeTab === 'breathe' && (
-            <BreatheTab userId={userId} onBreathingStart={setBreathingProtocol} />
-          )}
-          {activeTab === 'release' && (
-            <ReleaseTab userId={userId} onTimerDone={handleTimerDone} />
-          )}
-          {activeTab === 'vagal' && (
-            <VagalTab userId={userId} onTimerDone={handleTimerDone} />
-          )}
-          {activeTab === 'eye' && (
-            <EyeTab userId={userId} onTimerDone={handleTimerDone} />
-          )}
-          {activeTab === 'exam' && (
-            <ExamWeekProtocol exams={exams} userId={userId} />
-          )}
-          {activeTab === 'history' && (
-            <HistoryTab userId={userId} />
-          )}
-          {activeTab === 'journal' && (
-            <WellbeingJournal userId={userId} />
-          )}
+        {/* Tab content */}
+        <div style={{ flex: 1, padding: '16px 16px 120px', overflowY: 'auto' }}>
+          {activeTab === 'breathe' && <BreatheTab userId={userId} onBreathingStart={setBreathingProtocol} />}
+          {activeTab === 'release' && <ReleaseTab userId={userId} onTimerDone={handleTimerDone} />}
+          {activeTab === 'vagal' && <VagalTab userId={userId} onTimerDone={handleTimerDone} />}
+          {activeTab === 'eye' && <EyeTab userId={userId} onTimerDone={handleTimerDone} />}
+          {activeTab === 'exam' && <ExamWeekProtocol exams={exams} userId={userId} />}
+          {activeTab === 'history' && <HistoryTab userId={userId} />}
+          {activeTab === 'journal' && <WellbeingJournal userId={userId} />}
         </div>
       </div>
 

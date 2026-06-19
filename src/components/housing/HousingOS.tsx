@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface Payment { id: string; amount: number; date: string; note?: string }
 
@@ -987,15 +988,19 @@ export default function HousingOS({ initialTab }: { initialTab?: string } = {}) 
     initialTab && VALID_TABS.includes(initialTab as Tab) ? initialTab as Tab : 'place'
   )
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: `1px solid ${ACCENT}40`, borderRadius: 16, padding: '16px 18px' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+      <AmbientImage zone="onboarding" opacity={0.11} blurPx={26} saturation={1.1} overlayColor="rgba(5,4,12,0.76)" />
+
+      {/* Page header */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '16px 18px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>HOUSING OS</div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Your place, sorted</div>
-        <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>Rent tracking · split bills fairly · know your rights before you sign</div>
+        <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>HOUSING OS</div>
+        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>Your place, sorted</div>
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 2 }}>Rent tracking · split bills · know your rights</div>
       </div>
 
-      <div style={{ display: 'flex', gap: 0, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flex: 1 }}>
+      <div style={{ display: 'flex', gap: 0, flex: 1, overflow: 'hidden' }}>
         <div style={{ width: 58, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)' }}>
           {TABS.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
@@ -1008,7 +1013,7 @@ export default function HousingOS({ initialTab }: { initialTab?: string } = {}) 
             </button>
           ))}
         </div>
-        <div style={{ flex: 1, minWidth: 0, padding: '14px 16px' }}>
+        <div style={{ flex: 1, minWidth: 0, padding: '14px 16px 96px', overflowY: 'auto' }}>
           {tab === 'place' && <MyPlaceTab />}
           {tab === 'kit' && <KitTab />}
           {tab === 'settle' && <SettleTab />}
@@ -1016,6 +1021,7 @@ export default function HousingOS({ initialTab }: { initialTab?: string } = {}) 
           {tab === 'split' && <SplitTab />}
           {tab === 'checklist' && <ChecklistTab />}
         </div>
+      </div>
       </div>
     </div>
   )

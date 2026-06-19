@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const ACCENT = '#6366F1'
 
@@ -447,29 +448,51 @@ function GiveBackTab() {
 const VALID: Tab[] = ['leap', 'exit', 'salary', 'plan', 'giveback']
 export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}) {
   const [tab, setTab] = useState<Tab>(initialTab && VALID.includes(initialTab as Tab) ? initialTab as Tab : 'leap')
+  const activeT = TABS.find(t => t.id === tab)!
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: `1px solid ${ACCENT}40`, borderRadius: 16, padding: '16px 18px' }}>
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>LAUNCH PAD</div>
-        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Ready for life after varsity</div>
-        <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>The leap · exit admin · your first salary · the first 90 days</div>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
+      <AmbientImage zone="entrepreneurship" opacity={0.12} blurPx={26} saturation={1.15} overlayColor="rgba(5,4,12,0.76)" />
+
+      {/* Side rail */}
+      <div style={{
+        position: 'sticky' as const, top: 57, zIndex: 1,
+        width: 64, flexShrink: 0,
+        height: 'calc(100vh - 57px)',
+        overflowY: 'auto', scrollbarWidth: 'none',
+        borderRight: '0.5px solid var(--border-subtle)',
+        background: 'rgba(0,0,0,0.18)',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {TABS.map(t => {
+          const isActive = tab === t.id
+          return (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              width: '100%', minHeight: 64,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
+              background: isActive ? `${ACCENT}18` : 'transparent',
+              border: 'none', borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
+              color: isActive ? ACCENT : 'rgba(255,255,255,0.35)',
+              cursor: 'pointer', transition: 'all 0.15s', padding: '6px 2px',
+            }}>
+              <span style={{ fontSize: '1.05rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+                {t.label.split(' ')[0]}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
-      <div style={{ display: 'flex', gap: 0, background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, overflow: 'hidden' }}>
-        <div style={{ width: 58, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--border-subtle)', background: 'var(--bg-base)' }}>
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '12px 4px', background: 'none', border: 'none',
-              borderLeft: tab === t.id ? `2px solid ${ACCENT}` : '2px solid transparent',
-              color: tab === t.id ? ACCENT : 'var(--text-muted)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', width: '100%',
-            }}>
-              <span style={{ fontSize: '1.05rem' }}>{t.icon}</span>
-              <span style={{ lineHeight: 1.2, textAlign: 'center' }}>{t.label.split(' ')[0]}</span>
-            </button>
-          ))}
+      {/* Content column */}
+      <div style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
+          <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>LAUNCH PAD — {activeT.label}</div>
+          <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>Ready for life after varsity</div>
+          <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 2 }}>The leap · exit admin · first salary · 90 days</div>
         </div>
-        <div style={{ flex: 1, minWidth: 0, padding: '14px 16px' }}>
+        <div style={{ flex: 1, padding: '14px 16px 96px', overflowY: 'auto' }}>
           {tab === 'leap' && <LeapTab />}
           {tab === 'exit' && <ExitTab />}
           {tab === 'salary' && <SalaryTab />}

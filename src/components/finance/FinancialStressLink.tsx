@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface Props {
   stressLevel: 'low' | 'medium' | 'high';
 }
@@ -54,8 +56,6 @@ const CONFIG: Record<Props['stressLevel'], StressConfig> = {
   },
 };
 
-const SADAG_TEL = 'tel:0800456789';
-
 export default function FinancialStressLink({ stressLevel }: Props) {
   const cfg = CONFIG[stressLevel];
 
@@ -99,42 +99,27 @@ export default function FinancialStressLink({ stressLevel }: Props) {
           </p>
 
           {cfg.showHotline && (
-            <div
+            <Link
+              href="/regulate"
               style={{
-                background: 'rgba(239,68,68,0.1)',
-                border: '1px solid rgba(239,68,68,0.25)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
                 borderRadius: '8px',
-                padding: '8px 12px',
-                marginBottom: '12px',
+                background: cfg.bg,
+                border: `1px solid ${cfg.borderColor}`,
+                color: cfg.accent,
+                fontSize: '12px',
+                fontWeight: 600,
+                textDecoration: 'none',
+                cursor: 'pointer',
               }}
             >
-              <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.65)', lineHeight: '1.5' }}>
-                Financial stress affects your grades. Getting help is a strength, not a weakness.
-                You are not alone — your institution has seen this before.
-              </p>
-            </div>
+              <span>🧘</span>
+              Stress tools — Regulation Room →
+            </Link>
           )}
-
-          <a
-            href={SADAG_TEL}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              background: cfg.bg,
-              border: `1px solid ${cfg.borderColor}`,
-              color: cfg.accent,
-              fontSize: '12px',
-              fontWeight: 600,
-              textDecoration: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <span>💬</span>
-            Talk to someone — SADAG 0800 456 789
-          </a>
         </div>
       </div>
     </div>
