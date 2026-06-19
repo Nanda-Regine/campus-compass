@@ -251,10 +251,10 @@ export default function LandingPage() {
       <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#05040C' }}>
 
         {/* ── 1. NAVBAR ──────────────────────────────────────────────────────── */}
+        <div className="sticky top-0 z-50 w-full" style={{ borderBottom: '1px solid rgba(59,130,246,0.12)', backdropFilter: 'blur(20px)', background: 'rgba(6,12,24,0.92)' }}>
         <nav
-          className="sticky top-0 z-50 flex items-center justify-between px-5 py-3.5 max-w-6xl mx-auto"
+          className="flex items-center justify-between px-6 py-3.5 max-w-7xl mx-auto"
           aria-label="Main navigation"
-          style={{ borderBottom: '1px solid rgba(59,130,246,0.12)', backdropFilter: 'blur(20px)', background: 'rgba(6,12,24,0.92)' }}
         >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 12px rgba(168,85,247,0.4)', background: 'rgba(168,85,247,0.12)' }}>
@@ -278,9 +278,10 @@ export default function LandingPage() {
             </Link>
           </div>
         </nav>
+        </div>
 
         {/* ── 2. HERO ────────────────────────────────────────────────────────── */}
-        <section className="relative px-5 pt-20 pb-16 max-w-6xl mx-auto text-center overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
+        <section className="relative px-6 pt-20 pb-16 lg:pt-28 lg:pb-24 max-w-7xl mx-auto overflow-hidden" style={{ transform: 'translateZ(0)' }} aria-labelledby="hero-heading">
           {/* Ambient hero image — cinematic Afrofuturist layer */}
           <AmbientImage zone="onboarding" opacity={0.38} blurPx={4} saturation={1.4}
             overlayColor="linear-gradient(180deg,rgba(5,4,12,0.10) 0%,rgba(5,4,12,0.04) 100%)" />
@@ -291,48 +292,112 @@ export default function LandingPage() {
             <div style={{ position: 'absolute', top: '80px', left: '-60px', width: 'min(400px, 110vw)', height: '300px', background: 'radial-gradient(ellipse, rgba(212,168,75,0.12) 0%, transparent 65%)', filter: 'blur(40px)' }} />
           </div>
 
-          <div className="relative">
-            <div
-              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs mb-7"
-              style={{ background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.30)', color: '#c084fc' }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#A855F7' }} aria-hidden="true" />
-              Student Operating System · 9 life domains
+          {/* Desktop: 2-col (text left, preview right). Mobile: single col centered */}
+          <div className="relative grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            {/* Left: text */}
+            <div className="text-center lg:text-left">
+              <div
+                className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs mb-7"
+                style={{ background: 'rgba(168,85,247,0.12)', border: '1px solid rgba(168,85,247,0.30)', color: '#c084fc' }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#A855F7' }} aria-hidden="true" />
+                Student Operating System · 9 life domains
+              </div>
+
+              <h1 id="hero-heading" className="font-display font-black text-white leading-[1.05] mb-5" style={{ fontSize: 'clamp(2.4rem, 5vw, 4.2rem)' }}>
+                Your varsity life,{' '}
+                <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0, #D4A84B)' }}>
+                  finally under control.
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                Mind, body, money, safety, fitness, community, and career — all 9 life domains, one app, built for SA. Budget & NSFAS tracking, Safety OS with SOS alerts, Stokvel savings circles, Fitness tracker, Nova AI, and 30+ more tools. Works at every SA university and TVET college. Offline ready.
+              </p>
+
+              <div className="flex items-center justify-center lg:justify-start gap-3 flex-wrap mb-5">
+                <Link
+                  href="/auth/signup"
+                  className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
+                  style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 4px 24px rgba(168,85,247,0.45)' }}
+                >
+                  Start for free — no card needed
+                </Link>
+                <Link
+                  href="/demo"
+                  className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10"
+                  style={{ border: '1px solid rgba(13,148,136,0.4)', color: '#5eead4' }}
+                >
+                  ▶ See interactive demo
+                </Link>
+              </div>
+              <p className="font-mono text-xs text-center lg:text-left" style={{ color: 'rgba(255,255,255,0.3)' }}>Free forever · Works offline · Install on your phone</p>
             </div>
 
-            <h1 id="hero-heading" className="font-display font-black text-white leading-[1.05] mb-5" style={{ fontSize: 'clamp(2.4rem, 7vw, 4.5rem)' }}>
-              Your varsity life,{' '}
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0, #D4A84B)' }}>
-                finally under control.
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
-              Mind, body, money, safety, fitness, community, and career — all 9 life domains, one app, built for SA. Budget & NSFAS tracking, Safety OS with SOS alerts, Stokvel savings circles, Fitness tracker, Nova AI, and 30+ more tools. Works at every SA university and TVET college. Offline ready. No app store needed.
-            </p>
-
-            <div className="flex items-center justify-center gap-3 flex-wrap mb-5">
-              <Link
-                href="/auth/signup"
-                className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-2xl"
-                style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 4px 24px rgba(168,85,247,0.45)' }}
-              >
-                Start for free — no card needed
-              </Link>
-              <Link
-                href="/demo"
-                className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10"
-                style={{ border: '1px solid rgba(13,148,136,0.4)', color: '#5eead4' }}
-              >
-                ▶ See interactive demo
-              </Link>
+            {/* Right: mini app preview (desktop only) */}
+            <div className="hidden lg:block">
+              <div className="rounded-3xl p-5 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #080f1c, #071018)', border: '1px solid rgba(59,130,246,0.18)' }}>
+                <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(circle at top right, rgba(59,130,246,0.14), transparent 60%)' }} />
+                <div className="space-y-3">
+                  {/* Budget card */}
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.18)' }}>
+                    <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-2" style={{ color: '#93c5fd' }}>Budget · This Month</p>
+                    <div className="space-y-2">
+                      {[
+                        { label: 'NSFAS food', amount: 'R890', pct: 72, colour: '#3b82f6' },
+                        { label: 'Transport', amount: 'R340', pct: 45, colour: '#e07858' },
+                      ].map(item => (
+                        <div key={item.label}>
+                          <div className="flex justify-between mb-1">
+                            <span className="font-display text-xs text-white/70">{item.label}</span>
+                            <span className="font-mono text-xs font-bold" style={{ color: item.colour }}>{item.amount}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                            <div className="h-1.5 rounded-full" style={{ width: `${item.pct}%`, background: item.colour }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Nova chat */}
+                  <div className="rounded-2xl p-4" style={{ background: 'rgba(13,148,136,0.08)', border: '1px solid rgba(13,148,136,0.2)' }}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }}>✦</div>
+                      <p className="font-display font-bold text-xs text-white">Nova</p>
+                      <span className="font-mono text-[0.6rem] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.2)', color: '#5eead4', border: '1px solid rgba(13,148,136,0.3)' }}>AI companion</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                        <p className="font-display text-xs text-white/75">stressed about exams 😔</p>
+                      </div>
+                      <div className="rounded-xl rounded-tr-sm px-3 py-2" style={{ background: 'rgba(13,148,136,0.15)', border: '1px solid rgba(13,148,136,0.25)' }}>
+                        <p className="font-display text-xs leading-relaxed" style={{ color: '#5eead4' }}>Let&apos;s start with tonight — what&apos;s keeping you awake?</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Streak + safety row */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl p-3" style={{ background: 'rgba(224,120,88,0.1)', border: '1px solid rgba(224,120,88,0.25)' }}>
+                      <span className="text-lg">🔥</span>
+                      <p className="font-display font-bold text-white text-xs mt-1">12 day streak</p>
+                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Keep it going</p>
+                    </div>
+                    <div className="rounded-2xl p-3" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                      <span className="text-lg">🛡️</span>
+                      <p className="font-display font-bold text-white text-xs mt-1">Walk Me Home</p>
+                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: '#6ee7b7' }}>Active · 12 min left</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>Free forever · Works offline · Install on your phone</p>
+
           </div>
         </section>
 
         {/* ── 3. SOCIAL PROOF ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-12 max-w-6xl mx-auto" aria-label="Social proof">
+        <section className="px-5 pb-12 max-w-7xl mx-auto" aria-label="Social proof">
           {/* Stat bar */}
           <div
             className="grid grid-cols-2 sm:grid-cols-4 rounded-2xl overflow-hidden mb-6"
@@ -387,7 +452,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 4. PROBLEM ─────────────────────────────────────────────────────── */}
-        <section className="px-5 py-20 max-w-6xl mx-auto" aria-labelledby="problem-heading">
+        <section className="px-5 py-20 max-w-7xl mx-auto" aria-labelledby="problem-heading">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
               <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#fb923c' }}>Sound familiar?</p>
@@ -417,7 +482,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 5. SOLUTION ────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="solution-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="solution-heading">
           <div className="text-center mb-8">
             <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#5eead4' }}>Enter VarsityOS</p>
             <h2 id="solution-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
@@ -508,7 +573,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 6. FEATURES ────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="features-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="features-heading">
           <div className="text-center mb-10">
             <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#A855F7' }}>30+ tools across 9 life domains</p>
             <h2 id="features-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
@@ -545,7 +610,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Nova spotlight ─────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="nova-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="nova-heading">
           <div
             className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
             style={{ background: 'linear-gradient(135deg, #060f1a, #071814)', border: '1px solid rgba(13,148,136,0.25)', transform: 'translateZ(0)' }}
@@ -625,7 +690,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Safety OS spotlight ────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="safety-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="safety-heading">
           <div
             className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
             style={{ background: 'linear-gradient(135deg, #030d0a, #041208)', border: '1px solid rgba(16,185,129,0.25)', transform: 'translateZ(0)' }}
@@ -704,7 +769,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 7. HOW IT WORKS ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="how-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="how-heading">
           <div className="text-center mb-10">
             <h2 id="how-heading" className="font-display font-black text-3xl text-white">Up and running in 3 minutes.</h2>
             <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>No app store. No credit card. Just sign up.</p>
@@ -749,7 +814,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 8. PRICING ─────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="pricing-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="pricing-heading">
           <div className="text-center mb-10">
             <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Start free. Upgrade only when you need more Nova.</p>
@@ -820,7 +885,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 9. TESTIMONIALS ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-6xl mx-auto" aria-labelledby="testimonials-heading">
+        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="testimonials-heading">
           <div className="text-center mb-10">
             <h2 id="testimonials-heading" className="font-display font-black text-3xl text-white">What students are saying</h2>
           </div>
@@ -890,7 +955,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 11. FINAL CTA ──────────────────────────────────────────────────── */}
-        <section className="px-5 pb-24 max-w-6xl mx-auto">
+        <section className="px-5 pb-24 max-w-7xl mx-auto">
           <div
             className="rounded-3xl px-8 py-16 text-center relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #06112a 0%, #071c1a 60%, #060c18 100%)', border: '1px solid rgba(59,130,246,0.2)', transform: 'translateZ(0)' }}
@@ -932,7 +997,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── 12. FOOTER ─────────────────────────────────────────────────────── */}
-        <footer className="px-5 py-8 max-w-6xl mx-auto" style={{ borderTop: '1px solid rgba(59,130,246,0.1)' }}>
+        <footer className="px-5 py-8 max-w-7xl mx-auto" style={{ borderTop: '1px solid rgba(59,130,246,0.1)' }}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 8px rgba(13,148,136,0.3)' }}>
