@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const response = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 400,
-      system: `You are Nova, VarsityOS's AI companion for SA university students. Generate exactly 3 financial coaching insights based on the student's budget data. Each insight must have one of these tags: 'Watch out', 'Money tip', 'Goal progress', 'Well done'. Return JSON only (no markdown): { "insights": [{ "tag": string, "text": string }] }. Keep each insight under 18 words. Be specific, practical, and encouraging for SA students managing tight budgets.`,
+      system: `You are Nova, VarsityOS's AI companion for SA university students. Generate exactly 3 financial coaching insights based on the student's budget data. Each insight must have one of these tags: 'Watch out', 'Money tip', 'Goal progress', 'Well done'. Return JSON only (no markdown): { "insights": [{ "tag": string, "text": string }] }. Keep each insight under 18 words. Be specific, practical, and encouraging for SA students managing tight budgets. IMPORTANT: Only give financial/budgeting advice. Never reference mental health organisations, crisis lines, or phone numbers (e.g. SADAG, Lifeline, etc.) — those belong in the wellness section, not here.`,
       messages: [{ role: 'user', content: `Budget: R${totalBudget}, Spent: R${amountSpent} (${percentUsed}%), Top categories: ${topCategories}, Days remaining: ${daysRemaining}, Savings goals: ${savingsGoals}` }],
     })
 

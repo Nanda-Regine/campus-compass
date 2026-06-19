@@ -39,7 +39,6 @@ import AntiSpiralRecovery from '@/components/study/AntiSpiralRecovery'
 import OSCommandHero from '@/components/dashboard/cards/OSCommandHero'
 import PriorityCommandStrip from '@/components/dashboard/cards/PriorityCommandStrip'
 import StatCardsRow from '@/components/dashboard/cards/StatCardsRow'
-import FeatureGrid from '@/components/dashboard/cards/FeatureGrid'
 import UpgradeBar from '@/components/dashboard/cards/UpgradeBar'
 import PrescriptionReminderCard from '@/components/dashboard/cards/PrescriptionReminderCard'
 
@@ -473,17 +472,20 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 checkinMessage={novaCheckin}
               />
 
+              {/* Nova's take: budget coaching — replaces repetitive nav tiles */}
+              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
+
+              {/* 30-day patterns: directly below Nova check-in */}
+              <TabErrorBoundary label="Insights">
+                <InsightsCard />
+              </TabErrorBoundary>
+
               <PriorityCommandStrip
                 tasks={allTasks}
                 exams={allExams}
                 totalBudget={totalBudget}
                 remaining={remaining}
               />
-
-              {/* Quick-access bento tiles (mobile) — surfaced near the top for fast nav */}
-              <div className="md:hidden">
-                <FeatureGrid tasks={allTasks} expenses={recentExp} totalBudget={totalBudget} remaining={remaining} modules={allMods} subscription={sub as Subscription | null} profile={p} mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek} activeGroups={activeGroups} streakDays={streakDays} />
-              </div>
 
               {/* ── Check-in: how you're doing ── */}
               <SectionHeader label="Check-in" />
@@ -583,16 +585,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
               <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
 
-              {/* ── Insights: analytics & reflection (rebalanced from main column) ── */}
+              {/* ── Insights: analytics & reflection ── */}
               <SectionHeader label="Insights" />
               <TabErrorBoundary label="Daily Brief">
                 <DailyBrief />
               </TabErrorBoundary>
               <TabErrorBoundary label="Weekly Report">
                 <WeeklyReport />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Insights">
-                <InsightsCard />
               </TabErrorBoundary>
               <TabErrorBoundary label="Cohort">
                 <CohortCard />
@@ -641,7 +640,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
                 <TabErrorBoundary><SassaSrdGuide /></TabErrorBoundary>
               )}
               <LoadSheddingWidget />
-              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
               </Deferred>
             </div>
 
