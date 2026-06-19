@@ -353,19 +353,39 @@ export default function HabitBuilder() {
     const refreshHabits = (raw: Habit[]) =>
       raw.map(h => ({ ...h, completedToday: h.lastCheckedIn === today() }))
 
+    // Merge remote and local habit arrays. For each habit, keep whichever copy
+    // has the more recent lastCheckedIn (string comparison works for YYYY-MM-DD).
+    // This prevents stale Supabase data from overwriting a fresh local check-in.
+    const mergeHabits = (remote: Habit[], local: Habit[]): Habit[] => {
+      if (!local.length) return remote
+      const localMap = new Map(local.map(h => [h.id, h]))
+      const merged = remote.map(h => {
+        const lh = localMap.get(h.id)
+        if (!lh) return h
+        const remoteDate = h.lastCheckedIn ?? ''
+        const localDate  = lh.lastCheckedIn ?? ''
+        if (localDate > remoteDate) return lh
+        if (localDate === remoteDate && lh.streakDays > h.streakDays) return lh
+        return h
+      })
+      // Add any local-only habits not in remote
+      local.forEach(lh => { if (!remote.find(r => r.id === lh.id)) merged.push(lh) })
+      return merged
+    }
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
-        // No auth — use localStorage only
         setHabits(refreshHabits(loadHabitsLocal()))
         return
       }
       supabase.from('user_habits_state').select('habits').eq('user_id', user.id).single()
         .then(({ data }) => {
+          const local = loadHabitsLocal()
           if (data?.habits && Array.isArray(data.habits) && data.habits.length > 0) {
-            setHabits(refreshHabits(data.habits as Habit[]))
-            saveHabitsLocal(data.habits as Habit[])
+            const merged = mergeHabits(data.habits as Habit[], local)
+            setHabits(refreshHabits(merged))
+            saveHabitsLocal(merged)
           } else {
-            const local = loadHabitsLocal()
             setHabits(refreshHabits(local))
             if (local.length > 0) {
               supabase.from('user_habits_state').upsert({ user_id: user.id, habits: local, updated_at: new Date().toISOString() }).then(() => {})
@@ -380,11 +400,14 @@ export default function HabitBuilder() {
     setHabits(updated)
     saveHabitsLocal(updated)
     if (saveTimer.current) clearTimeout(saveTimer.current)
+    // Debounce rapid toggles but don't wait longer than 400ms so navigation
+    // away from the page doesn't silently lose the streak update.
     saveTimer.current = setTimeout(() => {
       supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) supabase.from('user_habits_state').upsert({ user_id: user.id, habits: updated, updated_at: new Date().toISOString() }).then(() => {})
+        if (user) supabase.from('user_habits_state').upsert({ user_id: user.id, habits: updated, updated_at: new Date().toISOString() })
+          .then(({ error }) => { if (error) console.error('[habits] sync failed:', error.message) })
       })
-    }, 1000)
+    }, 400)
   }
 
   const [milestone, setMilestone] = useState<{ name: string; streak: number } | null>(null)
