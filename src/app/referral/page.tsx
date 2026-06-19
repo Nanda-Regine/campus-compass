@@ -32,7 +32,7 @@ export default async function ReferralPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
-      <AmbientImage zone="dashboard" opacity={0.32} blurPx={20} saturation={1.1} />
+      <AmbientImage zone="dashboard" opacity={0.40} blurPx={8} saturation={1.1} />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <ReferralPageClient
           referralCode={profile?.referral_code ?? ''}

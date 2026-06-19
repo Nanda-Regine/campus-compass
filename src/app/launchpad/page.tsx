@@ -13,7 +13,7 @@ export default async function LaunchPadPage({ searchParams }: { searchParams: { 
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
-      <AmbientImage zone="habits" opacity={0.32} blurPx={18} saturation={1.2} />
+      <AmbientImage zone="habits" opacity={0.40} blurPx={8} saturation={1.2} />
       <TopBar title="Launch Pad" />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
         <LaunchPadOS initialTab={searchParams?.tab} />

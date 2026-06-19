@@ -555,7 +555,7 @@ export default function RegulationRoom({ userId, exams }: Props) {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', display: 'flex' }}>
-      <AmbientImage zone="wellness" opacity={0.13} blurPx={24} saturation={1.1} overlayColor="rgba(5,4,10,0.78)" />
+      <AmbientImage zone="wellness" opacity={0.22} blurPx={10} saturation={1.1} overlayColor="rgba(5,4,10,0.78)" />
 
       {/* Side rail */}
       <div style={{

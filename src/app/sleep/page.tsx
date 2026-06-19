@@ -25,7 +25,7 @@ export default async function SleepPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
-      <AmbientImage zone="wellness" opacity={0.35} blurPx={18} saturation={1.2} />
+      <AmbientImage zone="wellness" opacity={0.42} blurPx={8} saturation={1.2} />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <TopBar title="Sleep Science" />
         <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 100px' }}>

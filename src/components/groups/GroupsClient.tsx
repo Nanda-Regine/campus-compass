@@ -1260,7 +1260,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
   // ── List view ────────────────────────────────────────────────────────────────
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)' }}>
-      <AmbientImage zone="study" opacity={0.08} blurPx={30} saturation={1.05} overlayColor="rgba(5,4,12,0.80)" />
+      <AmbientImage zone="study" opacity={0.22} blurPx={12} saturation={1.05} overlayColor="rgba(5,4,12,0.80)" />
       <div className="flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>

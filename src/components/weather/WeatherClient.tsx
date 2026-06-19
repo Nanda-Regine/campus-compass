@@ -186,7 +186,7 @@ export default function WeatherClient() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
-      <AmbientImage src="/images/ambient/movement.jpg" opacity={0.25} />
+      <AmbientImage src="/images/ambient/movement.jpg" opacity={0.35} />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '80px 16px 100px' }}>
 

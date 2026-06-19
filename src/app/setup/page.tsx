@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function SetupPage() {
   return (
     <div style={{ position: 'relative', minHeight: '100dvh' }}>
-      <AmbientImage zone="onboarding" opacity={0.30} blurPx={22} saturation={1.1} />
+      <AmbientImage zone="onboarding" opacity={0.30} blurPx={10} saturation={1.1} />
       <SetupFlow />
     </div>
   )

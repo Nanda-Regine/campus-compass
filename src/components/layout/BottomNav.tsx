@@ -131,15 +131,49 @@ function getActiveRoom(pathname: string): string | null {
   return null
 }
 
+// ── Room activity rings (7-day rolling window) ────────────────────────────────
+
+function loadRoomActivity(): Record<string, number> {
+  try {
+    const data: Record<string, string[]> = JSON.parse(localStorage.getItem('varsityos_room_visits') ?? '{}')
+    const last7 = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(); d.setDate(d.getDate() - i)
+      return d.toLocaleDateString('en-CA')
+    })
+    const result: Record<string, number> = {}
+    for (const room of ROOMS) {
+      const visits = new Set<string>(data[room.id] ?? [])
+      result[room.id] = last7.filter(d => visits.has(d)).length / 7
+    }
+    return result
+  } catch { return {} }
+}
+
+function recordRoomVisit(roomId: string): void {
+  try {
+    const data: Record<string, string[]> = JSON.parse(localStorage.getItem('varsityos_room_visits') ?? '{}')
+    const today = new Date().toLocaleDateString('en-CA')
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30)
+    const visits = (data[roomId] ?? []).filter((d: string) => new Date(d) > cutoff)
+    if (!visits.includes(today)) visits.push(today)
+    data[roomId] = visits
+    localStorage.setItem('varsityos_room_visits', JSON.stringify(data))
+  } catch {}
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function BottomNav() {
   const pathname = usePathname()
   const [openSheet, setOpenSheet] = useState<string | null>(null)
   const [streakCount, setStreakCount] = useState(0)
+  const [roomActivity, setRoomActivity] = useState<Record<string, number>>({})
 
   const show = ALL_ROUTES.some(p => pathname === p || pathname.startsWith(p + '/'))
   const activeRoomId = getActiveRoom(pathname)
+
+  // Load activity ring data on mount
+  useEffect(() => { setRoomActivity(loadRoomActivity()) }, [])
 
   // Close sheet on navigation
   useEffect(() => { setOpenSheet(null) }, [pathname])
@@ -164,6 +198,11 @@ export function BottomNav() {
 
   // Always open sheet on first tap — users pick the exact section from there
   const handleRoomTap = (room: RoomDef) => {
+    recordRoomVisit(room.id)
+    setRoomActivity(prev => {
+      const current = prev[room.id] ?? 0
+      return { ...prev, [room.id]: Math.max(current, 1 / 7) }
+    })
     setOpenSheet(prev => prev === room.id ? null : room.id)
     trackEvent('feature_opened', { feature: room.label.toLowerCase(), path: room.primaryHref, source: 'bottom_nav' })
   }
@@ -321,6 +360,34 @@ export function BottomNav() {
                   fontSize: room.id === 'home' ? 17 : 18,
                   position: 'relative',
                 }}>
+                  {/* Activity ring — fills based on days active in last 7 */}
+                  {(roomActivity[room.id] ?? 0) > 0 && (() => {
+                    const fill = roomActivity[room.id] ?? 0
+                    const r = 20
+                    const circ = 2 * Math.PI * r
+                    return (
+                      <svg
+                        width={48} height={48}
+                        aria-hidden="true"
+                        style={{
+                          position: 'absolute', top: '50%', left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          pointerEvents: 'none', overflow: 'visible',
+                        }}
+                      >
+                        {/* Track */}
+                        <circle cx={24} cy={24} r={r} fill="none"
+                          stroke={`${room.color}20`} strokeWidth={2.5} />
+                        {/* Fill arc */}
+                        <circle cx={24} cy={24} r={r} fill="none"
+                          stroke={room.color} strokeWidth={2.5} strokeLinecap="round"
+                          strokeDasharray={`${fill * circ} ${circ}`}
+                          transform="rotate(-90 24 24)"
+                          style={{ transition: 'stroke-dasharray 0.7s ease', filter: fill >= 1 ? `drop-shadow(0 0 3px ${room.color})` : 'none' }}
+                        />
+                      </svg>
+                    )
+                  })()}
                   {room.icon}
                   {/* Streak badge on Home */}
                   {room.id === 'home' && streakCount > 0 && (

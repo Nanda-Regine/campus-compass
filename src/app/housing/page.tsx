@@ -13,7 +13,7 @@ export default async function HousingPage({ searchParams }: { searchParams: { ta
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
-      <AmbientImage zone="movement" opacity={0.32} blurPx={18} saturation={1.2} />
+      <AmbientImage zone="movement" opacity={0.40} blurPx={8} saturation={1.2} />
       <TopBar title="Housing" />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
         <HousingOS initialTab={searchParams?.tab} />
