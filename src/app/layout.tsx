@@ -527,8 +527,8 @@ a.appendChild(r);
           <OfflineIndicator />
           <ConsentBanner />
           {/* md+: sidebar offset (CSS var --sidebar-w set by Sidebar.tsx); mobile: 60px for bottom nav */}
-          <div className="md:ml-[var(--sidebar-w)] pb-[60px] md:pb-0"
-            style={{ transition: 'margin-left 0.28s cubic-bezier(0.4,0,0.2,1)' }}>
+          <div className="pb-[60px] md:pb-0"
+            style={{ marginLeft: 'var(--sidebar-w)', transition: 'margin-left 0.28s cubic-bezier(0.4,0,0.2,1)' }}>
             <PageTransition>{children}</PageTransition>
           </div>
           <GlobalFAB />
