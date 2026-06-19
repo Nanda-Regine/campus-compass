@@ -150,7 +150,8 @@ function computeDomains(p: DomainPulseProps): ScoredDomain[] {
 
   // ── Static low-urgency domains (no live data yet) ─────────────
   const movementU = p.weekWorkouts === 0 ? 16 : 5
-  const communityU = p.activeGroups === 0 ? 13 : 5
+  // 22 = watch threshold → "Monitor" badge; 5 = safe when active
+  const communityU = p.activeGroups === 0 ? 22 : 5
   const workU = p.shiftsThisWeek > 0 ? 10 : 4
 
   const domains: ScoredDomain[] = [
@@ -171,9 +172,9 @@ function computeDomains(p: DomainPulseProps): ScoredDomain[] {
     },
     {
       name: 'Safety', emoji: '🛡️', color: '#10B981',
-      urgency: 5, health: 'safe',
-      headline: 'Know your rights', subline: 'Legal + campus safety guides',
-      actionLabel: 'View guides', actionHref: '/safety',
+      urgency: 8, health: 'watch' as Health,
+      headline: 'Not set up yet', subline: 'Add emergency contacts & read your rights',
+      actionLabel: 'Set up safety', actionHref: '/safety',
     },
     {
       name: 'Movement', emoji: '🚌', color: '#38BDF8',
@@ -184,9 +185,9 @@ function computeDomains(p: DomainPulseProps): ScoredDomain[] {
     },
     {
       name: 'Growth', emoji: '📈', color: '#818CF8',
-      urgency: 8, health: 'safe',
-      headline: 'Skills & goals', subline: 'Track your personal growth',
-      actionLabel: 'View growth', actionHref: '/growth',
+      urgency: 8, health: 'watch' as Health,
+      headline: 'Nothing tracked yet', subline: 'Log skills, goals & milestones',
+      actionLabel: 'Start growing', actionHref: '/growth',
     },
     {
       name: 'Community', emoji: '🌍', color: '#A855F7',
