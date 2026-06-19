@@ -498,7 +498,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-display font-bold text-white text-sm">{r.label}</span>
-                      {r.is_default && <span className="font-mono text-[0.52rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded-full">DEFAULT</span>}
+                      {r.is_default && <span className="font-mono text-[0.65rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded-full">DEFAULT</span>}
                     </div>
                     <div className="font-mono text-[0.62rem] text-white/40 mt-0.5 truncate">
                       {r.from_address} → {r.to_address}

@@ -184,14 +184,14 @@ export default function BursaryTracker() {
               )}
             </div>
             <button onClick={() => deleteApp(selected.id)}
-              className="font-mono text-[0.5rem] text-white/20 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5">
+              className="font-mono text-[0.65rem] text-white/20 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5">
               Delete
             </button>
           </div>
 
           <div className="grid grid-cols-3 gap-2 mb-3">
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.5rem] text-white/25 mb-1">DEADLINE</div>
+              <div className="font-mono text-[0.65rem] text-white/25 mb-1">DEADLINE</div>
               <div className="font-mono text-[0.62rem] font-bold" style={{ color: dl.color }}>{dl.text}</div>
               {selected.deadline && (
                 <div className="font-mono text-[0.48rem] text-white/20 mt-0.5">
@@ -200,20 +200,20 @@ export default function BursaryTracker() {
               )}
             </div>
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.5rem] text-white/25 mb-1">AMOUNT</div>
+              <div className="font-mono text-[0.65rem] text-white/25 mb-1">AMOUNT</div>
               <div className="font-display font-black text-white text-sm">
                 {selected.amount_rands ? `R${selected.amount_rands.toLocaleString()}` : '—'}
               </div>
             </div>
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.5rem] text-white/25 mb-1">DOCS</div>
+              <div className="font-mono text-[0.65rem] text-white/25 mb-1">DOCS</div>
               <div className="font-display font-black text-white text-sm">{docsDone}/{docsTotal}</div>
             </div>
           </div>
 
           {/* Status selector */}
           <div>
-            <div className="font-mono text-[0.52rem] text-white/25 mb-1.5">STATUS</div>
+            <div className="font-mono text-[0.65rem] text-white/25 mb-1.5">STATUS</div>
             <div className="flex flex-wrap gap-1">
               {STATUS_ORDER.map(s => {
                 const sm = STATUS_META[s]
@@ -279,19 +279,19 @@ export default function BursaryTracker() {
         <div className="grid grid-cols-3 gap-2">
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-white text-lg leading-none">{apps.length}</div>
-            <div className="font-mono text-[0.5rem] text-white/30 mt-1">applications</div>
+            <div className="font-mono text-[0.65rem] text-white/30 mt-1">applications</div>
           </div>
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-amber-400 text-base leading-none">
               {totalPot > 0 ? `R${(totalPot / 1000).toFixed(0)}k` : '—'}
             </div>
-            <div className="font-mono text-[0.5rem] text-white/30 mt-1">potential</div>
+            <div className="font-mono text-[0.65rem] text-white/30 mt-1">potential</div>
           </div>
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-emerald-400 text-base leading-none">
               {wonAmount > 0 ? `R${(wonAmount / 1000).toFixed(0)}k` : accepted.length > 0 ? accepted.length : '—'}
             </div>
-            <div className="font-mono text-[0.5rem] text-white/30 mt-1">{accepted.length > 0 ? 'won' : 'accepted'}</div>
+            <div className="font-mono text-[0.65rem] text-white/30 mt-1">{accepted.length > 0 ? 'won' : 'accepted'}</div>
           </div>
         </div>
       )}
@@ -325,12 +325,12 @@ export default function BursaryTracker() {
             <input type="number" inputMode="decimal" aria-label="Bursary amount in rands" value={fAmount} onChange={e => setFAmount(e.target.value)} placeholder="Amount (R)"
               className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
             <div>
-              <label className="font-mono text-[0.52rem] text-white/30 mb-1 block">Deadline</label>
+              <label className="font-mono text-[0.65rem] text-white/30 mb-1 block">Deadline</label>
               <input type="date" value={fDeadline} onChange={e => setFDeadline(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-teal-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/30 mb-1 block">Status</label>
+              <label className="font-mono text-[0.65rem] text-white/30 mb-1 block">Status</label>
               <select value={fStatus} onChange={e => setFStatus(e.target.value as AppStatus)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-500 font-body">
                 {STATUS_ORDER.map(s => (
@@ -387,7 +387,7 @@ export default function BursaryTracker() {
                         {meta.emoji} {meta.label}
                       </span>
                       {a.docs_checklist.length > 0 && (
-                        <span className="font-mono text-[0.5rem] text-white/25">
+                        <span className="font-mono text-[0.65rem] text-white/25">
                           {docsDone}/{a.docs_checklist.length} docs
                         </span>
                       )}

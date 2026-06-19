@@ -108,7 +108,7 @@ export default async function UpgradePage() {
         >
           <div style={{
             position: 'absolute', top: 10, right: 10,
-            fontFamily: 'var(--font-mono)', fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+            fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.1em',
             padding: '2px 8px', borderRadius: 'var(--radius-pill)',
             background: 'var(--teal-dim)', color: 'var(--teal)', border: '0.5px solid var(--teal-border)',
           }}>Works offline</div>
@@ -165,7 +165,7 @@ export default async function UpgradePage() {
               {tier.badge && (
                 <div style={{
                   position: 'absolute', top: 0, right: 0,
-                  fontFamily: 'var(--font-mono)', fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+                  fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.1em',
                   padding: '4px 12px',
                   borderRadius: '0 var(--radius-xl) 0 var(--radius-md)',
                   background: tier.colour,

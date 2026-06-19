@@ -154,15 +154,15 @@ export default function StokvelCircle({ userId }: { userId: string }) {
           <div className="grid grid-cols-3 gap-2 mt-3">
             <div className="text-center">
               <div className="font-display font-black text-emerald-400 text-base">R{selected.contribution_amount.toFixed(0)}</div>
-              <div className="font-mono text-[0.5rem] text-white/30 uppercase">{FREQ_LABEL[selected.frequency]}</div>
+              <div className="font-mono text-[0.65rem] text-white/30 uppercase">{FREQ_LABEL[selected.frequency]}</div>
             </div>
             <div className="text-center">
               <div className="font-display font-black text-white text-base">{members.length}</div>
-              <div className="font-mono text-[0.5rem] text-white/30 uppercase">members</div>
+              <div className="font-mono text-[0.65rem] text-white/30 uppercase">members</div>
             </div>
             <div className="text-center">
               <div className="font-display font-black text-amber-400 text-base">R{potSize.toFixed(0)}</div>
-              <div className="font-mono text-[0.5rem] text-white/30 uppercase">pot size</div>
+              <div className="font-mono text-[0.65rem] text-white/30 uppercase">pot size</div>
             </div>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                             {isMe && <span className="font-mono text-[0.48rem] bg-white/8 text-white/35 px-1 rounded">you</span>}
                             {isRcpt && <span className="font-mono text-[0.48rem] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">receives pot</span>}
                           </div>
-                          <div className="font-mono text-[0.52rem] text-white/30 mt-0.5">
+                          <div className="font-mono text-[0.65rem] text-white/30 mt-0.5">
                             {hasPaid ? `Paid R${selected.contribution_amount.toFixed(0)}` : `Owes R${selected.contribution_amount.toFixed(0)}`}
                           </div>
                         </div>
@@ -256,7 +256,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                   <div className="flex-1 min-w-0">
                     <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
                   </div>
-                  <div className={cn('font-mono text-[0.52rem]', isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/30')}>
+                  <div className={cn('font-mono text-[0.65rem]', isCurrent ? 'text-emerald-400' : isPast ? 'text-white/20' : 'text-white/30')}>
                     {isPast ? 'received' : isCurrent ? 'this round' : `round ${roundNum}`}
                   </div>
                   <div className="font-mono text-[0.55rem] text-white/40">R{potSize.toFixed(0)}</div>
@@ -277,7 +277,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                   <div key={m.id} className="flex items-center justify-between bg-white/2 border border-white/5 rounded-xl px-3 py-2">
                     <div>
                       <span className="font-mono text-[0.62rem] text-white/50">{m.email}</span>
-                      <div className="font-mono text-[0.5rem] text-white/25">position #{m.payout_position}</div>
+                      <div className="font-mono text-[0.65rem] text-white/25">position #{m.payout_position}</div>
                     </div>
                     <button
                       onClick={() => { navigator.clipboard.writeText(link); toast.success('Invite link copied!') }}
@@ -386,11 +386,11 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border', s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-white/30 border-white/10')}>
+                  <div className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border', s.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-white/30 border-white/10')}>
                     {s.status}
                   </div>
-                  <div className="font-mono text-[0.5rem] text-white/25">Round {s.current_round}</div>
-                  {isCreator && <div className="font-mono text-[0.5rem] text-amber-400/60">organizer</div>}
+                  <div className="font-mono text-[0.65rem] text-white/25">Round {s.current_round}</div>
+                  {isCreator && <div className="font-mono text-[0.65rem] text-amber-400/60">organizer</div>}
                 </div>
               </button>
             )

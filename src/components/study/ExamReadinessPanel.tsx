@@ -111,8 +111,8 @@ function MiniBar({ label, value, color }: { label: string; value: number; color:
   return (
     <div style={{ flex: '1 1 90px', minWidth: 80 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)' }}>{label}</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color }}>{Math.round(value)}%</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>{label}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color }}>{Math.round(value)}%</span>
       </div>
       <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.07)' }}>
         <div style={{ height: '100%', width: `${Math.min(100, value)}%`, borderRadius: 2, background: color, transition: 'width 0.4s ease' }} />
@@ -274,7 +274,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
                   </span>
                   <Stars examId={exam.id} value={conf} onChange={v => handleConf(exam.id, v)} />
                   {conf === 0 && (
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'rgba(245,158,11,0.55)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(245,158,11,0.55)' }}>
                       tap to rate
                     </span>
                   )}
@@ -286,7 +286,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.3rem', color: daysColor, lineHeight: 1 }}>
                   {days}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
                   days
                 </div>
               </div>

@@ -67,7 +67,7 @@ function CurrencyConverter() {
             ZAR Currency Converter
           </div>
           {rates && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', marginTop: 1 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 1 }}>
               Live rates · {rates.date}
             </div>
           )}

@@ -120,7 +120,7 @@ export default function MoodCheckin({ userId }: Props) {
             title={mood.label}
           >
             <span className="text-2xl">{mood.emoji}</span>
-            <span className="font-mono text-[0.5rem] text-white/25">{mood.label}</span>
+            <span className="font-mono text-[0.65rem] text-white/25">{mood.label}</span>
           </button>
         ))}
       </div>

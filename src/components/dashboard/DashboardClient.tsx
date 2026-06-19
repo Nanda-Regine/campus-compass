@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useAppStore } from '@/store'
-import { signals } from '@/store/signals'
 import PullToRefresh from '@/components/ui/PullToRefresh'
 import MoodCheckin from '@/components/dashboard/MoodCheckin'
 import {
@@ -71,6 +70,43 @@ const ArchetypeCard            = dynamic(() => import('@/components/gamification
 const PendingXP                = dynamic(() => import('@/components/gamification/PendingXP'), { ssr: false })
 const ChapterBanner            = dynamic(() => import('@/components/gamification/ChapterBanner'), { ssr: false })
 const PodActivityFeed          = dynamic(() => import('@/components/gamification/PodActivityFeed'), { ssr: false })
+
+/* ── ZoneSection ─────────────────────────────────────────── */
+// Visual section wrapper used in the mobile layout. Each zone gets a unique
+// ambient image, accent colour, and thin header label that together create a
+// "magazine section" feel without requiring a full-page redesign.
+type ZoneKey = 'dashboard'|'schedule'|'wellness'|'study'|'budget'|'community'|'habits'|'body'
+function ZoneSection({
+  zone, accent, label, children, gap = 14, dataSaver = false,
+}: {
+  zone: ZoneKey; accent: string; label: string; children: React.ReactNode; gap?: number; dataSaver?: boolean
+}) {
+  return (
+    <div style={{
+      position: 'relative', borderRadius: 22, overflow: 'hidden',
+      padding: '20px 18px 22px',
+      background: `linear-gradient(160deg, ${accent}0c 0%, rgba(5,4,12,0.6) 100%)`,
+      border: `1px solid ${accent}26`,
+    }}>
+      {!dataSaver && (
+        <AmbientImage zone={zone} opacity={0.10} blurPx={26} saturation={1.2}
+          overlayColor="rgba(5,4,12,0.70)" />
+      )}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+        background: `linear-gradient(90deg,${accent} 0%,${accent}40 55%,transparent 100%)` }} />
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <span style={{
+          fontSize: 9, fontFamily: 'JetBrains Mono,monospace', fontWeight: 700,
+          letterSpacing: '0.20em', textTransform: 'uppercase', color: accent,
+        }}>{label}</span>
+        <div style={{ flex: 1, height: '0.5px', background: `linear-gradient(90deg,${accent}55,transparent)` }} />
+      </div>
+      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap }}>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 /* ── types ──────────────────────────────────────────────── */
 interface NovaInsight { id: string; insight_type: string; content: string; created_at: string }
@@ -352,16 +388,16 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const domainOverdue   = allTasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayISOStr).length
   const domainExamDays  = allExams.length > 0 ? getDaysUntil(allExams[0].exam_date) : null
 
+  const stressLevel = monthSpent / (b?.monthly_budget || 1) < 0.5 ? 'low'
+    : monthSpent / (b?.monthly_budget || 1) < 0.85 ? 'medium' : 'high'
+
   return (
     <>
-      {/* Full-page ambient image + blurred orbs — decorative only. Skipped in Data Saver mode:
-          it avoids an image download and the GPU cost of large blur radii, which is the main
-          source of scroll jank on low-end Android. */}
+      {/* Full-page ambient image + blurred orbs */}
       {!dataSaver && (
       <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <AmbientImage zone="dashboard" opacity={0.30} blurPx={25} saturation={1.0}
+        <AmbientImage zone="dashboard" opacity={0.28} blurPx={30} saturation={0.9}
           overlayColor="rgba(5,4,12,0.0)" />
-        {/* Mode-driven orbs float above the ambient image */}
         <div className="orb-float" style={{
           position: 'absolute', top: '-6%', left: '-10%', width: 620, height: 620, borderRadius: '50%',
           background: `radial-gradient(circle, ${theme.orb1} 0%, transparent 70%)`,
@@ -384,16 +420,24 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
         <PullToRefresh onRefresh={handleRefresh} />
 
-        {/* Topbar with mode indicator */}
-        <div style={{ position: 'sticky', top: 0, zIndex: 30, background: dataSaver ? 'rgba(10,11,16,0.98)' : 'rgba(10,11,16,0.92)', backdropFilter: dataSaver ? undefined : 'blur(20px)', WebkitBackdropFilter: dataSaver ? undefined : 'blur(20px)', borderBottom: '0.5px solid rgba(255,255,255,0.05)', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        {/* ── Topbar ─────────────────────────────────────────────── */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 30,
+          background: dataSaver ? 'rgba(10,11,16,0.98)' : 'rgba(10,11,16,0.92)',
+          backdropFilter: dataSaver ? undefined : 'blur(20px)',
+          WebkitBackdropFilter: dataSaver ? undefined : 'blur(20px)',
+          borderBottom: '0.5px solid rgba(255,255,255,0.05)',
+          padding: '0 20px', height: 60,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+        }}>
           <div>
-            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em' }}>
+            <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: 'rgba(255,255,255,0.94)', letterSpacing: '-0.01em' }}>
               {getGreeting()}, {firstName}
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
               <span className="status-live" style={{ width: 5, height: 5, borderRadius: '50%', background: theme.accent, display: 'inline-block' }} />
               <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono,monospace', color: theme.accent, letterSpacing: '0.06em' }}>
-                {MODE_LABEL[mode].label} mode{p?.university ? ` · ${p.university}` : ''}
+                {MODE_LABEL[mode].label}{p?.university ? ` · ${p.university}` : ''}
               </span>
             </div>
           </div>
@@ -402,206 +446,247 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
         </div>
 
-        {/* Mode accent line below topbar */}
+        {/* Mode accent line */}
         <div style={{
           position: 'sticky', top: 60, zIndex: 29, height: 1,
           background: `linear-gradient(90deg, ${theme.accent}70 0%, ${theme.accent}25 50%, transparent 100%)`,
         }} />
 
-        <div style={{ padding: '20px 24px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ padding: '16px 16px', maxWidth: 1600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
-          {/* Welcome banner — shows once after onboarding completes */}
+          {/* One-time banners — appear before everything */}
           <WelcomeBanner />
-
-          {/* Push notification opt-in — shows once for new users */}
           <NotificationPrompt />
-
-          {/* First-year onboarding nudge → Housing OS starter kit / settling in */}
           <FirstYearStarter yearOfStudy={p?.year_of_study} firstName={firstName} />
 
-          {/* Orchestration — intervention banner (urgency 1-4) */}
           <div style={{ marginBottom: 12 }}>
-            <TabErrorBoundary label="Intervention Banner">
-              <InterventionBanner />
-            </TabErrorBoundary>
+            <TabErrorBoundary label="Intervention Banner"><InterventionBanner /></TabErrorBoundary>
           </div>
 
           {/* Nova proactive insights */}
           {novaInsights.map(insight => (
-            <div key={insight.id} className="dash-card-in" style={{ display: 'flex', alignItems: 'flex-start', gap: 12, background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 12 }}>
+            <div key={insight.id} className="dash-card-in" style={{
+              display: 'flex', alignItems: 'flex-start', gap: 12,
+              background: 'rgba(155,111,212,0.08)', border: '0.5px solid rgba(155,111,212,0.2)',
+              borderRadius: 14, padding: '14px 16px', marginBottom: 10,
+            }}>
               <span style={{ fontSize: 20, flexShrink: 0 }}>
                 {{ study_nudge: '📚', budget_warning: '💰', stress_alert: '💙' }[insight.insight_type] ?? '🌟'}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9b6fd4', marginBottom: 4 }}>Nova</div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{insight.content}</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65 }}>{insight.content}</div>
               </div>
-              <button onClick={() => dismissInsight(insight.id)} aria-label="Dismiss" style={{ color: 'rgba(255,255,255,0.25)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, flexShrink: 0, padding: 0 }}>✕</button>
+              <button onClick={() => dismissInsight(insight.id)} aria-label="Dismiss" style={{ color: 'rgba(255,255,255,0.25)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, flexShrink: 0, padding: '2px 4px' }}>✕</button>
             </div>
           ))}
 
-          {/* Anti-Spiral Recovery — full recovery protocol when 2+ idle days or 4+ overdue */}
           <TabErrorBoundary label="Anti-Spiral Recovery">
             <AntiSpiralRecovery tasks={allTasks} />
           </TabErrorBoundary>
-
-          {/* Procrastination Alarm — shows only when severity > safe */}
           <TabErrorBoundary label="Procrastination Alarm">
             <ProcrastinationAlarm tasks={allTasks} exams={allExams} />
           </TabErrorBoundary>
 
-          {/* 3-column bento grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
+          {/* ═══════════════════════════════════════════════════════
+              MOBILE LAYOUT  (< lg — single column, zone sections)
+          ═══════════════════════════════════════════════════════ */}
+          <div className="flex flex-col gap-3 lg:hidden">
 
-            {/* Column 1 — hero + check-in + life balance; appears first everywhere */}
-            <div className="order-1 lg:order-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-              {/* ── Act now: focal point ── */}
+            {/* ① COMMAND ZONE — OSCommandHero + act-now strip */}
+            <ZoneSection dataSaver={dataSaver} zone="dashboard" accent={theme.accent} label="Command">
               <TabErrorBoundary label="Just Start">
                 <JustStartButton tasks={allTasks} />
               </TabErrorBoundary>
-
               <OSCommandHero
-                timetable={initialData.timetable}
-                tasks={allTasks}
-                exams={allExams}
-                hour={currentHour}
-                firstName={firstName}
-                profile={p}
-                subscription={sub}
-                checkinMessage={novaCheckin}
+                timetable={initialData.timetable} tasks={allTasks} exams={allExams}
+                hour={currentHour} firstName={firstName} profile={p}
+                subscription={sub} checkinMessage={novaCheckin}
               />
+              <PriorityCommandStrip tasks={allTasks} exams={allExams} totalBudget={totalBudget} remaining={remaining} />
+            </ZoneSection>
 
-              {/* Nova's take: budget coaching — replaces repetitive nav tiles */}
-              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
+            {/* ② TODAY ZONE — stats + calendar + weather */}
+            <ZoneSection dataSaver={dataSaver} zone="schedule" accent="#4ecf9e" label="Today">
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams}
+                streakDays={streakDays} streakTodayDone={streakTodayDone}
+                todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
+              <TaskCalendarStrip tasks={allTasks} />
+              <SundayPlanning />
+              <WeatherWidget />
+            </ZoneSection>
 
-              {/* 30-day patterns: directly below Nova check-in */}
+            {/* ③ WELLBEING ZONE — mood + burnout + money health */}
+            <ZoneSection dataSaver={dataSaver} zone="wellness" accent="#f59e0b" label="Wellbeing">
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '14px 16px' }}>
+                <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: 12, fontWeight: 600 }}>How are you feeling?</div>
+                <MoodCheckin userId={p.id} />
+              </div>
+              <TabErrorBoundary><BurnoutRadar userId={p.id} /></TabErrorBoundary>
+              <TabErrorBoundary>
+                <MoneyHealthScore budget={b} monthlyExpenses={monthSpent} nsfasStatus={incomeStatus} savingsRate={savingsRate} />
+              </TabErrorBoundary>
+              <PrescriptionReminderCard />
+            </ZoneSection>
+
+            {/* ④ STUDY + INSIGHTS ZONE */}
+            <ZoneSection dataSaver={dataSaver} zone="study" accent="#7090d0" label="Study & Insights">
               <TabErrorBoundary label="Insights">
                 <InsightsCard />
               </TabErrorBoundary>
+              <TabErrorBoundary label="Deadline Telescope">
+                <DeadlineTelescope exams={allExams} />
+              </TabErrorBoundary>
+              <Deferred gap={14} dataSaver={dataSaver} label="study cards">
+                <TabErrorBoundary label="Body Double Mode"><BodyDoubleMode /></TabErrorBoundary>
+                {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
+                <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
+                <SectionHeader label="Analytics" />
+                <TabErrorBoundary label="Daily Brief"><DailyBrief /></TabErrorBoundary>
+                <TabErrorBoundary label="Weekly Report"><WeeklyReport /></TabErrorBoundary>
+                <TabErrorBoundary label="Cohort"><CohortCard /></TabErrorBoundary>
+              </Deferred>
+              <CollapsibleSection label="Focus tools" hint="6 anti-procrastination tools">
+                <TabErrorBoundary label="Commitment Contracts"><CommitmentContracts /></TabErrorBoundary>
+                <TabErrorBoundary label="Implementation Intentions"><ImplementationIntentions tasks={allTasks} /></TabErrorBoundary>
+                <TabErrorBoundary label="Reward Unlock"><RewardUnlock /></TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Journal"><ProcrastinationJournal /></TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Profiler"><ProcrastinationProfiler /></TabErrorBoundary>
+                <TabErrorBoundary label="Accountability Partner"><AccountabilityPartner tasks={allTasks} /></TabErrorBoundary>
+              </CollapsibleSection>
+            </ZoneSection>
 
-              <PriorityCommandStrip
-                tasks={allTasks}
-                exams={allExams}
-                totalBudget={totalBudget}
-                remaining={remaining}
+            {/* ⑤ MONEY ZONE */}
+            <ZoneSection dataSaver={dataSaver} zone="budget" accent="#c9a84c" label="Money">
+              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
+              <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+              <Deferred gap={14} dataSaver={dataSaver} label="money details">
+                {monthSpent > 0 && (
+                  <TabErrorBoundary>
+                    <FinancialStressLink stressLevel={stressLevel} />
+                  </TabErrorBoundary>
+                )}
+                {(p.funding_type === 'nsfas' || p.funding_type === 'other' || !p.funding_type) && (
+                  <TabErrorBoundary><SassaSrdGuide /></TabErrorBoundary>
+                )}
+              </Deferred>
+            </ZoneSection>
+
+            {/* ⑥ MOMENTUM ZONE — collapsed by default on mobile */}
+            <ZoneSection dataSaver={dataSaver} zone="community" accent="#9b6fd4" label="Momentum">
+              <CollapsibleSection label="⚡ XP · Streaks · Challenges" hint="tap to expand">
+                <PendingXP />
+                <DomainFlames />
+                <LevelCard />
+                <StreakWidget />
+                <DailyChallenges />
+                <ChapterBanner />
+                <ArchetypeCard />
+                <PodActivityFeed />
+                <Deferred gap={14} dataSaver={dataSaver} label="community & focus momentum">
+                  <TabErrorBoundary label="Focus Momentum Score"><FocusMomentumScore /></TabErrorBoundary>
+                  <TabErrorBoundary label="Community Challenges"><CommunityChallengesHub /></TabErrorBoundary>
+                </Deferred>
+              </CollapsibleSection>
+            </ZoneSection>
+
+            {/* ⑦ LIFE BALANCE ZONE — deferred */}
+            <ZoneSection dataSaver={dataSaver} zone="habits" accent="#84cc16" label="Life Balance">
+              <Deferred minHeight={120} dataSaver={dataSaver} label="life balance">
+                <TabErrorBoundary label="Domain Pulse">
+                  <DomainPulse
+                    overdueTasks={domainOverdue} nextExamDays={domainExamDays}
+                    streakDays={streakDays} streakTodayDone={streakTodayDone}
+                    todayStudyMins={todayStudyMins} studyVelocity={store.studyVelocity7d}
+                    lastSleepHours={lastSleepHours} sleepDebt={store.sleepDebt}
+                    weekWorkouts={weekWorkouts} totalBudget={totalBudget} remaining={remaining}
+                    shiftEarnings={shiftEarnings} nsfasDelayed={store.nsfasDelayed}
+                    mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek}
+                    activeGroups={activeGroups} hour={currentHour}
+                  />
+                </TabErrorBoundary>
+                <LoadSheddingWidget />
+              </Deferred>
+            </ZoneSection>
+
+          </div>
+
+          {/* ═══════════════════════════════════════════════════════
+              DESKTOP LAYOUT  (lg+ — 3-column bento grid)
+          ═══════════════════════════════════════════════════════ */}
+          <div className="hidden lg:grid lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
+
+            {/* Column 1 — hero + check-in + plan */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <TabErrorBoundary label="Just Start"><JustStartButton tasks={allTasks} /></TabErrorBoundary>
+              <OSCommandHero
+                timetable={initialData.timetable} tasks={allTasks} exams={allExams}
+                hour={currentHour} firstName={firstName} profile={p}
+                subscription={sub} checkinMessage={novaCheckin}
               />
-
-              {/* ── Check-in: how you're doing ── */}
+              <CoachSummaryCard userId={p.id} totalBudget={totalBudget} amountSpent={monthSpent} expenses={recentExp} />
+              <TabErrorBoundary label="Insights"><InsightsCard /></TabErrorBoundary>
+              <PriorityCommandStrip tasks={allTasks} exams={allExams} totalBudget={totalBudget} remaining={remaining} />
               <SectionHeader label="Check-in" />
-
               <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 16px' }}>
                 <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>How are you feeling?</div>
                 <MoodCheckin userId={p.id} />
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
                 <TabErrorBoundary><BurnoutRadar userId={p.id} /></TabErrorBoundary>
                 <TabErrorBoundary>
-                  <MoneyHealthScore
-                    budget={b}
-                    monthlyExpenses={monthSpent}
-                    nsfasStatus={incomeStatus}
-                    savingsRate={savingsRate}
-                  />
+                  <MoneyHealthScore budget={b} monthlyExpenses={monthSpent} nsfasStatus={incomeStatus} savingsRate={savingsRate} />
                 </TabErrorBoundary>
               </div>
-
-              {/* Prescription medication reminders — surfaces overdue/tomorrow refills */}
               <PrescriptionReminderCard />
-
-              {/* ── Plan & track ── */}
               <SectionHeader label="Plan & track" />
-
               <TaskCalendarStrip tasks={allTasks} />
               <SundayPlanning />
               <WeatherWidget />
-              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams} streakDays={streakDays} streakTodayDone={streakTodayDone} todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
-
-              {/* ── Focus tools: power-user cluster, collapsed by default ── */}
+              <StatCardsRow remaining={remaining} totalBudget={totalBudget} tasks={allTasks} exams={allExams}
+                streakDays={streakDays} streakTodayDone={streakTodayDone}
+                todayStudyMins={todayStudyMins} lastSleepHours={lastSleepHours} weekWorkouts={weekWorkouts} />
               <CollapsibleSection label="Focus tools" hint="6 anti-procrastination tools">
-                <TabErrorBoundary label="Commitment Contracts">
-                  <CommitmentContracts />
-                </TabErrorBoundary>
-                <TabErrorBoundary label="Implementation Intentions">
-                  <ImplementationIntentions tasks={allTasks} />
-                </TabErrorBoundary>
-                <TabErrorBoundary label="Reward Unlock">
-                  <RewardUnlock />
-                </TabErrorBoundary>
-                <TabErrorBoundary label="Procrastination Journal">
-                  <ProcrastinationJournal />
-                </TabErrorBoundary>
-                <TabErrorBoundary label="Procrastination Profiler">
-                  <ProcrastinationProfiler />
-                </TabErrorBoundary>
-                <TabErrorBoundary label="Accountability Partner">
-                  <AccountabilityPartner tasks={allTasks} />
-                </TabErrorBoundary>
+                <TabErrorBoundary label="Commitment Contracts"><CommitmentContracts /></TabErrorBoundary>
+                <TabErrorBoundary label="Implementation Intentions"><ImplementationIntentions tasks={allTasks} /></TabErrorBoundary>
+                <TabErrorBoundary label="Reward Unlock"><RewardUnlock /></TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Journal"><ProcrastinationJournal /></TabErrorBoundary>
+                <TabErrorBoundary label="Procrastination Profiler"><ProcrastinationProfiler /></TabErrorBoundary>
+                <TabErrorBoundary label="Accountability Partner"><AccountabilityPartner tasks={allTasks} /></TabErrorBoundary>
               </CollapsibleSection>
-
-              {/* ── Life balance ── */}
               <SectionHeader label="Life balance" />
-
               <Deferred minHeight={160} dataSaver={dataSaver} label="life balance">
-              <TabErrorBoundary label="Domain Pulse">
-                <DomainPulse
-                  overdueTasks={domainOverdue}
-                  nextExamDays={domainExamDays}
-                  streakDays={streakDays}
-                  streakTodayDone={streakTodayDone}
-                  todayStudyMins={todayStudyMins}
-                  studyVelocity={store.studyVelocity7d}
-                  lastSleepHours={lastSleepHours}
-                  sleepDebt={store.sleepDebt}
-                  weekWorkouts={weekWorkouts}
-                  totalBudget={totalBudget}
-                  remaining={remaining}
-                  shiftEarnings={shiftEarnings}
-                  nsfasDelayed={store.nsfasDelayed}
-                  mealPlanExists={mealPlanExists}
-                  shiftsThisWeek={shiftsThisWeek}
-                  activeGroups={activeGroups}
-                  hour={currentHour}
-                />
-              </TabErrorBoundary>
+                <TabErrorBoundary label="Domain Pulse">
+                  <DomainPulse
+                    overdueTasks={domainOverdue} nextExamDays={domainExamDays}
+                    streakDays={streakDays} streakTodayDone={streakTodayDone}
+                    todayStudyMins={todayStudyMins} studyVelocity={store.studyVelocity7d}
+                    lastSleepHours={lastSleepHours} sleepDebt={store.sleepDebt}
+                    weekWorkouts={weekWorkouts} totalBudget={totalBudget} remaining={remaining}
+                    shiftEarnings={shiftEarnings} nsfasDelayed={store.nsfasDelayed}
+                    mealPlanExists={mealPlanExists} shiftsThisWeek={shiftsThisWeek}
+                    activeGroups={activeGroups} hour={currentHour}
+                  />
+                </TabErrorBoundary>
               </Deferred>
             </div>
 
-            {/* Column 2 — insights + study cards; order-3 on mobile (below gamification) */}
-            <div className="order-3 lg:order-2" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Deadline Telescope — shows when exam < 21 days */}
-              <TabErrorBoundary label="Deadline Telescope">
-                <DeadlineTelescope exams={allExams} />
-              </TabErrorBoundary>
-
-              {/* Below-fold col-2 cluster — deferred until scrolled near */}
+            {/* Column 2 — insights + study */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <TabErrorBoundary label="Deadline Telescope"><DeadlineTelescope exams={allExams} /></TabErrorBoundary>
               <Deferred gap={14} dataSaver={dataSaver} label="insights & study cards">
-              {/* Body Double Mode — Supabase Realtime study presence */}
-              <TabErrorBoundary label="Body Double Mode">
-                <BodyDoubleMode />
-              </TabErrorBoundary>
-
-              {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
-              <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
-
-              {/* ── Insights: analytics & reflection ── */}
-              <SectionHeader label="Insights" />
-              <TabErrorBoundary label="Daily Brief">
-                <DailyBrief />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Weekly Report">
-                <WeeklyReport />
-              </TabErrorBoundary>
-              <TabErrorBoundary label="Cohort">
-                <CohortCard />
-              </TabErrorBoundary>
+                <TabErrorBoundary label="Body Double Mode"><BodyDoubleMode /></TabErrorBoundary>
+                {allExams.length > 0 && <ExamCountdownCard exams={allExams} />}
+                <StudyTipsCard exam={allExams[0] ?? null} profile={p} />
+                <SectionHeader label="Insights" />
+                <TabErrorBoundary label="Daily Brief"><DailyBrief /></TabErrorBoundary>
+                <TabErrorBoundary label="Weekly Report"><WeeklyReport /></TabErrorBoundary>
+                <TabErrorBoundary label="Cohort"><CohortCard /></TabErrorBoundary>
               </Deferred>
             </div>
 
-            {/* Column 3 — gamification momentum; order-2 on mobile so it appears before insights */}
-            <div className="order-2 lg:order-3" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* ── Momentum: gamification (rebalanced from main column) ── */}
+            {/* Column 3 — gamification momentum */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <SectionHeader label="Momentum" />
               <PendingXP />
               <DomainFlames />
@@ -611,35 +696,19 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               <ChapterBanner />
               <ArchetypeCard />
               <PodActivityFeed />
-
-              {/* Below-fold col-3 cluster — deferred until scrolled near */}
               <Deferred gap={14} dataSaver={dataSaver} label="momentum & money cards">
-              {/* Focus Momentum Score — daily 0-100 score with 7-day sparkline */}
-              <TabErrorBoundary label="Focus Momentum Score">
-                <FocusMomentumScore />
-              </TabErrorBoundary>
-
-              {/* Community Challenges — leaderboard, battles, weekly bounty */}
-              <TabErrorBoundary label="Community Challenges">
-                <CommunityChallengesHub />
-              </TabErrorBoundary>
-
-              <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
-              {monthSpent > 0 && (
-                <TabErrorBoundary>
-                  <FinancialStressLink
-                    stressLevel={
-                      monthSpent / (b?.monthly_budget || 1) < 0.5 ? 'low'
-                      : monthSpent / (b?.monthly_budget || 1) < 0.85 ? 'medium'
-                      : 'high'
-                    }
-                  />
-                </TabErrorBoundary>
-              )}
-              {(p.funding_type === 'nsfas' || p.funding_type === 'other' || !p.funding_type) && (
-                <TabErrorBoundary><SassaSrdGuide /></TabErrorBoundary>
-              )}
-              <LoadSheddingWidget />
+                <TabErrorBoundary label="Focus Momentum Score"><FocusMomentumScore /></TabErrorBoundary>
+                <TabErrorBoundary label="Community Challenges"><CommunityChallengesHub /></TabErrorBoundary>
+                <BudgetRingCard monthSpent={monthSpent} totalBudget={totalBudget} expenses={recentExp} />
+                {monthSpent > 0 && (
+                  <TabErrorBoundary>
+                    <FinancialStressLink stressLevel={stressLevel} />
+                  </TabErrorBoundary>
+                )}
+                {(p.funding_type === 'nsfas' || p.funding_type === 'other' || !p.funding_type) && (
+                  <TabErrorBoundary><SassaSrdGuide /></TabErrorBoundary>
+                )}
+                <LoadSheddingWidget />
               </Deferred>
             </div>
 
@@ -649,10 +718,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
         </div>
       </div>
 
-      {/* Orchestration — crisis modal (urgency 5, modal variant) */}
-      <TabErrorBoundary label="Intervention Modal">
-        <InterventionModal />
-      </TabErrorBoundary>
+      <TabErrorBoundary label="Intervention Modal"><InterventionModal /></TabErrorBoundary>
     </>
   )
 }

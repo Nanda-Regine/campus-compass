@@ -98,7 +98,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 Notes Marketplace
               </div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
                 {userInstitution ?? 'All institutions'} · free to access
               </div>
             </div>

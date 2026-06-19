@@ -181,7 +181,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-mono text-[0.52rem] text-white/25">{step.step}</span>
+                    <span className="font-mono text-[0.65rem] text-white/25">{step.step}</span>
                     <p className="font-display font-bold text-white text-sm">{step.title}</p>
                   </div>
                   <p className="font-mono text-[0.62rem] text-white/45 leading-relaxed">{step.desc}</p>

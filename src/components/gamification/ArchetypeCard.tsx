@@ -83,7 +83,7 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
       <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.55, margin: 0 }}>
         {archetype.description}
       </p>
-      <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.18)' }}>
+      <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.18)' }}>
         Updates weekly based on where you spend your energy
       </div>
     </div>

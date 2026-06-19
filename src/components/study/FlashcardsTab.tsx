@@ -354,10 +354,10 @@ function DeckListScreen({
                   <div style={{ height: '100%', width: total > 0 ? `${(mastered / total) * 100}%` : '0%', background: deck.color, borderRadius: 2, transition: 'width 0.4s ease' }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>
                     {mastered}/{total} mastered
                   </span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>
                     {total} cards
                   </span>
                 </div>
@@ -531,7 +531,7 @@ function DeckEditorScreen({
                 </div>
               ) : (
                 <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', minWidth: 16 }}>{i+1}.</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', minWidth: 16 }}>{i+1}.</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: 3 }}>
                       {c.front}
@@ -540,7 +540,7 @@ function DeckEditorScreen({
                       {c.back}
                     </div>
                     {c.reps > 0 && (
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: accentColor, marginTop: 4 }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: accentColor, marginTop: 4 }}>
                         {c.reps}× reviewed · due {c.due}
                       </div>
                     )}
@@ -739,7 +739,7 @@ function StudyScreen({
                 color, transition: 'all 0.15s', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
               }}>
                 {label}
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: `${color}90`, fontWeight: 400 }}>{sub}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: `${color}90`, fontWeight: 400 }}>{sub}</span>
               </button>
             ))}
           </div>

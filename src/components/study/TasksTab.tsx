@@ -544,7 +544,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                               <div className={cn('font-sans text-xs leading-snug', stepDone ? 'line-through text-white/30' : 'text-white/80')}>
                                 {step.title}
                               </div>
-                              <div className="font-mono text-[0.5rem] text-white/25 mt-0.5">{step.minutes} min</div>
+                              <div className="font-mono text-[0.65rem] text-white/25 mt-0.5">{step.minutes} min</div>
                             </div>
                           </button>
                         )

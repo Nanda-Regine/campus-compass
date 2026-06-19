@@ -199,7 +199,7 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
       {/* Day labels */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
         {['M','T','W','T','F','S','S'].map((d, i) => (
-          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.46rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>{d}</div>
+          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>{d}</div>
         ))}
       </div>
       {/* Week rows */}

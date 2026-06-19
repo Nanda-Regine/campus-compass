@@ -860,7 +860,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                         <div className="font-body text-sm text-white truncate">{entry.label}</div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-[0.58rem] text-white/30">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
-                          {isSynced && <span className="font-mono text-[0.52rem] text-amber-400/70 bg-amber-400/8 border border-amber-400/15 px-1.5 py-0.5 rounded-full">🔗 NSFAS</span>}
+                          {isSynced && <span className="font-mono text-[0.65rem] text-amber-400/70 bg-amber-400/8 border border-amber-400/15 px-1.5 py-0.5 rounded-full">🔗 NSFAS</span>}
                         </div>
                       </div>
                       <div className="font-display font-bold text-sm text-teal-400">+{fmt.currencyShort(entry.amount)}</div>
@@ -893,7 +893,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="rounded-2xl p-4 flex items-center gap-4" style={{ background: `${scoreColor}0C`, border: `0.5px solid ${scoreColor}30` }}>
                   <div className="text-center flex-shrink-0">
                     <div className="font-display font-black text-2xl" style={{ color: scoreColor }}>{score}</div>
-                    <div className="font-mono text-[0.5rem] text-white/30 mt-0.5">Savings Score</div>
+                    <div className="font-mono text-[0.65rem] text-white/30 mt-0.5">Savings Score</div>
                   </div>
                   <div>
                     <div className="font-display font-bold text-white text-xs">{savingsGoals.length} active goal{savingsGoals.length !== 1 ? 's' : ''}</div>
@@ -1041,7 +1041,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                           const milestoneBadges: Record<number, string> = { 25: '¼', 50: '½', 75: '¾', 100: '✓' }
                           return (
                             <div key={m} className="flex items-center gap-0.5">
-                              <span className="font-mono text-[0.5rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
+                              <span className="font-mono text-[0.65rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
                                 ◆
                               </span>
                               <span className="font-mono text-[0.45rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>

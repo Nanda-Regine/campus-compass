@@ -241,7 +241,7 @@ function HabitCard({ habit, pack, onToggle, onRemove }: {
           }}>
             {habit.streakDays}
           </div>
-          <div style={{ fontSize: '0.52rem', color: 'var(--text-muted)' }}>day streak</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>day streak</div>
         </div>
 
         <button

@@ -462,7 +462,7 @@ export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '12px 4px', background: 'none', border: 'none',
               borderLeft: tab === t.id ? `2px solid ${ACCENT}` : '2px solid transparent',
-              color: tab === t.id ? ACCENT : 'var(--text-muted)', fontSize: '0.5rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', width: '100%',
+              color: tab === t.id ? ACCENT : 'var(--text-muted)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', width: '100%',
             }}>
               <span style={{ fontSize: '1.05rem' }}>{t.icon}</span>
               <span style={{ lineHeight: 1.2, textAlign: 'center' }}>{t.label.split(' ')[0]}</span>

@@ -359,7 +359,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                           {mod.module_name}
                         </span>
                         {mod.module_code && (
-                          <span className="font-mono text-[0.52rem] px-1.5 py-0.5 rounded border"
+                          <span className="font-mono text-[0.65rem] px-1.5 py-0.5 rounded border"
                             style={{ color: col.dot, borderColor: col.dot + '40', background: col.dot + '10' }}>
                             {mod.module_code}
                           </span>
@@ -409,7 +409,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                         <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
                           style={{ background: col.dot + '15', border: `0.5px solid ${col.dot}30` }}>
                           <span className="text-[0.55rem]">✓</span>
-                          <span className="font-mono text-[0.52rem] font-bold" style={{ color: col.dot }}>
+                          <span className="font-mono text-[0.65rem] font-bold" style={{ color: col.dot }}>
                             {taskCnt} task{taskCnt !== 1 ? 's' : ''}
                           </span>
                         </div>
@@ -418,7 +418,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                         <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
                           style={{ background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.25)' }}>
                           <span className="text-[0.55rem]">◉</span>
-                          <span className="font-mono text-[0.52rem] font-bold text-amber-400">
+                          <span className="font-mono text-[0.65rem] font-bold text-amber-400">
                             {examCnt} exam{examCnt !== 1 ? 's' : ''}
                           </span>
                         </div>

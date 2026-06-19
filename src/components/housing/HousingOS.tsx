@@ -939,7 +939,7 @@ function KitTab() {
                     {it.tip && <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: 1 }}>{it.tip}</div>}
                   </div>
                   {it.pri === 'essential' && !got && (
-                    <span style={{ fontSize: '0.5rem', fontFamily: 'var(--font-mono)', color: PRI_META.essential.color, border: `1px solid ${PRI_META.essential.color}40`, borderRadius: 100, padding: '1px 6px', flexShrink: 0 }}>NEED</span>
+                    <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: PRI_META.essential.color, border: `1px solid ${PRI_META.essential.color}40`, borderRadius: 100, padding: '1px 6px', flexShrink: 0 }}>NEED</span>
                   )}
                   <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: got ? 'var(--text-muted)' : 'var(--text-secondary)', flexShrink: 0 }}>
                     {it.est > 0 ? fmtR(it.est) : '—'}
@@ -1001,7 +1001,7 @@ export default function HousingOS({ initialTab }: { initialTab?: string } = {}) 
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '12px 4px', background: 'none', border: 'none',
               borderLeft: tab === t.id ? `2px solid ${ACCENT}` : '2px solid transparent',
-              color: tab === t.id ? ACCENT : 'var(--text-muted)', fontSize: '0.5rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', width: '100%',
+              color: tab === t.id ? ACCENT : 'var(--text-muted)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', cursor: 'pointer', width: '100%',
             }}>
               <span style={{ fontSize: '1.05rem' }}>{t.icon}</span>
               <span style={{ lineHeight: 1.2, textAlign: 'center' }}>{t.label.split(' ')[0]}</span>

@@ -230,13 +230,19 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
     (e.expense_date && e.expense_date.startsWith(monthYear))
   )
   const spentThisMonth = thisMonthExpenses.reduce((s, e) => s + (e.amount ?? 0), 0)
-  // Total available = base budget (NSFAS/bursary/allowance) + actual income (manual entries + shift earnings)
-  const totalAvailable = budget.monthly_budget + additionalIncome
+  // Mirror calcTotalBudget: base allowance + NSFAS sub-fields + external income
+  const nsfasTotal     = budget.nsfas_enabled
+    ? (budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)
+    : 0
+  const totalAvailable = budget.monthly_budget + nsfasTotal + additionalIncome
   const remaining      = Math.max(0, totalAvailable - spentThisMonth)
-  const dailyBurn      = dayOfMonth > 0 ? spentThisMonth / dayOfMonth : 0
+  const daysLeft       = daysInMonth - dayOfMonth
+  // Use days elapsed (max 1) so day-1 spending doesn't produce a 0-day runway
+  const daysElapsed    = Math.max(1, dayOfMonth)
+  const dailyBurn      = spentThisMonth / daysElapsed
   const runwayDays     = dailyBurn > 0
-    ? Math.floor(remaining / dailyBurn)
-    : (daysInMonth - dayOfMonth)
+    ? Math.min(daysLeft, Math.floor(remaining / dailyBurn))
+    : daysLeft
 
   // Health score: actual spend % vs expected % of month elapsed
   const expectedPct = dayOfMonth / daysInMonth

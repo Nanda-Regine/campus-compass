@@ -240,7 +240,7 @@ export default function StudyKitGenerator({ modules }: Props) {
                 <div className="font-mono text-[0.55rem] text-white/35 tracking-widest">
                   FLASHCARDS ({kit.flashcards.length})
                 </div>
-                <span className="font-mono text-[0.52rem] text-white/25">tap to flip</span>
+                <span className="font-mono text-[0.65rem] text-white/25">tap to flip</span>
               </div>
               <div className="space-y-2">
                 {kit.flashcards.map((c, i) => (
@@ -254,7 +254,7 @@ export default function StudyKitGenerator({ modules }: Props) {
                         : 'bg-white/3 border-white/8 hover:border-white/15'
                     )}
                   >
-                    <div className="font-mono text-[0.5rem] mb-1" style={{ color: flipped[i] ? '#c084fc' : 'rgba(255,255,255,0.25)' }}>
+                    <div className="font-mono text-[0.65rem] mb-1" style={{ color: flipped[i] ? '#c084fc' : 'rgba(255,255,255,0.25)' }}>
                       {flipped[i] ? 'BACK (answer)' : 'FRONT (question)'}
                     </div>
                     <div className="font-body text-xs text-white leading-relaxed">
@@ -309,7 +309,7 @@ export default function StudyKitGenerator({ modules }: Props) {
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="font-mono text-[0.55rem] text-white/35 tracking-widest">QUIZ</div>
-                <span className="font-mono text-[0.52rem] text-white/25">
+                <span className="font-mono text-[0.65rem] text-white/25">
                   {quizIdx + 1}/{kit.quiz.length}
                 </span>
               </div>
@@ -355,7 +355,7 @@ export default function StudyKitGenerator({ modules }: Props) {
 
                     {isRevealedQ && (
                       <div className="bg-white/3 border border-white/8 rounded-xl px-3 py-2">
-                        <span className="font-mono text-[0.5rem] text-white/30 block mb-0.5">EXPLANATION</span>
+                        <span className="font-mono text-[0.65rem] text-white/30 block mb-0.5">EXPLANATION</span>
                         <span className="font-body text-xs text-white/60 leading-relaxed">{q.explanation}</span>
                       </div>
                     )}

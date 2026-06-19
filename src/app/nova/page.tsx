@@ -251,14 +251,14 @@ function NovaDailyBrief({
                 borderRadius: '16px 16px 0 0',
               }} />
               <div style={{ fontSize: 18, marginBottom: 6 }}>{card.icon}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'rgba(255,255,255,0.3)', marginBottom: 2, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginBottom: 2, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
                 {card.label}
               </div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: card.color, letterSpacing: '-0.01em' }}>
                 {card.value}
               </div>
               {card.prompt && (
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.46rem', color: card.color, opacity: 0.5, marginTop: 4 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: card.color, opacity: 0.5, marginTop: 4 }}>
                   Tap to ask →
                 </div>
               )}
@@ -274,7 +274,7 @@ function NovaDailyBrief({
             key={s.label}
             onClick={() => onPrompt(s.prompt)}
             style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.72rem',
               background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.1)',
               color: 'rgba(255,255,255,0.55)', borderRadius: 20,
               padding: '5px 12px', cursor: 'pointer', transition: 'all 0.15s',
@@ -288,7 +288,7 @@ function NovaDailyBrief({
       <button
         onClick={onShowCapabilities}
         style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
+          fontFamily: 'var(--font-mono)', fontSize: '0.72rem',
           background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)',
           color: '#4ecf9e', borderRadius: 12, padding: '7px 16px', cursor: 'pointer',
         }}
@@ -778,12 +778,12 @@ export default function NovaPage() {
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
               <div>
                 <div className="font-display font-bold text-white text-sm">Chat History</div>
-                <div className="font-mono text-[0.55rem] text-white/30 mt-0.5">{historyList.length} conversations</div>
+                <div className="font-mono text-[0.68rem] text-white/30 mt-0.5">{historyList.length} conversations</div>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={startNewChat}
-                  className="font-mono text-[0.6rem] px-3 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/30 text-teal-400 hover:bg-teal-600/30 transition-all"
+                  className="font-mono text-[0.72rem] px-3 py-1.5 rounded-lg bg-teal-600/20 border border-teal-500/30 text-teal-400 hover:bg-teal-600/30 transition-all"
                 >
                   + New chat
                 </button>
@@ -809,8 +809,8 @@ export default function NovaPage() {
               ) : historyList.length === 0 ? (
                 <div className="px-4 py-8 text-center">
                   <div className="text-2xl mb-2">🌟</div>
-                  <p className="font-mono text-[0.6rem] text-white/30">No conversations yet</p>
-                  <p className="font-mono text-[0.55rem] text-white/20 mt-1">Start chatting with Nova</p>
+                  <p className="font-mono text-[0.72rem] text-white/30">No conversations yet</p>
+                  <p className="font-mono text-[0.68rem] text-white/20 mt-1">Start chatting with Nova</p>
                 </div>
               ) : (
                 historyList.map(convo => {
@@ -834,16 +834,16 @@ export default function NovaPage() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 mb-0.5">
                             {convo.crisis_detected && (
-                              <span className="text-[0.5rem] bg-red-500/20 text-red-400 border border-red-500/20 px-1 rounded">SOS</span>
+                              <span className="text-[0.65rem] bg-red-500/20 text-red-400 border border-red-500/20 px-1 rounded">SOS</span>
                             )}
                             <span className="font-display font-semibold text-[0.72rem] text-white truncate">
                               {convo.title || 'Conversation'}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[0.52rem] text-white/25">{convo.message_count} msgs</span>
-                            <span className="font-mono text-[0.52rem] text-white/20">·</span>
-                            <span className="font-mono text-[0.52rem] text-white/25">{dateStr}</span>
+                            <span className="font-mono text-[0.65rem] text-white/25">{convo.message_count} msgs</span>
+                            <span className="font-mono text-[0.65rem] text-white/20">·</span>
+                            <span className="font-mono text-[0.65rem] text-white/25">{dateStr}</span>
                           </div>
                         </div>
                         <button
@@ -872,7 +872,7 @@ export default function NovaPage() {
             {/* History button */}
             <button
               onClick={openHistory}
-              className="font-mono text-[0.58rem] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-white/40 hover:text-white/70 hover:bg-white/10 transition-all"
+              className="font-mono text-[0.7rem] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-white/40 hover:text-white/70 hover:bg-white/10 transition-all"
               title="Chat history"
             >
               ☰ History
@@ -881,7 +881,7 @@ export default function NovaPage() {
             <button
               onClick={() => setShowCapabilities(!showCapabilities)}
               className={cn(
-                'font-mono text-[0.58rem] px-2.5 py-1 rounded-lg border transition-all',
+                'font-mono text-[0.7rem] px-2.5 py-1 rounded-lg border transition-all',
                 showCapabilities
                   ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
                   : 'bg-white/5 border-white/10 text-white/40 hover:text-white/70 hover:bg-white/10'
@@ -893,14 +893,14 @@ export default function NovaPage() {
 
             {/* Voice badge — shown when voiceEnabled */}
             {voiceEnabled && (
-              <span className="font-mono text-[0.55rem] bg-sky-500/15 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="font-mono text-[0.68rem] bg-sky-500/15 text-sky-400 border border-sky-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
                 <Volume2 size={9} />
                 Voice
               </span>
             )}
 
             {isUnlimited && (
-              <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
+              <span className="font-mono text-[0.68rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
                 ✦ UNLIMITED
               </span>
             )}
@@ -914,7 +914,7 @@ export default function NovaPage() {
                     style={{ width: `${usagePercent}%` }}
                   />
                 </div>
-                <span className={cn('font-mono text-[0.55rem]',
+                <span className={cn('font-mono text-[0.68rem]',
                   usagePercent > 80 ? 'text-red-400' : usagePercent > 50 ? 'text-amber-400' : 'text-white/30'
                 )}>
                   {usageLeft} left
@@ -922,7 +922,7 @@ export default function NovaPage() {
               </div>
             )}
             {isPremium && !isUnlimited && (
-              <span className="font-mono text-[0.55rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
+              <span className="font-mono text-[0.68rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
                 ⭐ {userTier === 'scholar' ? 'SCHOLAR' : 'UNLIMITED'}
               </span>
             )}
@@ -949,7 +949,7 @@ export default function NovaPage() {
               <div className="space-y-1.5">
                 {CRISIS_NUMBERS.map(c => (
                   <div key={c.name} className="flex items-center gap-2">
-                    <span className="font-mono text-[0.6rem] text-white/40 w-16">{c.type}</span>
+                    <span className="font-mono text-[0.72rem] text-white/40 w-16">{c.type}</span>
                     <span className="font-display font-bold text-white text-sm">{c.name}:</span>
                     <a
                       href={`tel:${c.number.replace(/\s/g, '')}`}
@@ -960,7 +960,7 @@ export default function NovaPage() {
                   </div>
                 ))}
               </div>
-              <p className="font-mono text-[0.58rem] text-white/30 mt-2">
+              <p className="font-mono text-[0.7rem] text-white/30 mt-2">
                 Your university counselling centre is also available — check their website for hours.
               </p>
             </div>
@@ -1047,7 +1047,7 @@ export default function NovaPage() {
                       msg.role === 'user' ? 'justify-end' : 'justify-between'
                     )}>
                       <div className={cn(
-                        'font-mono text-[0.52rem]',
+                        'font-mono text-[0.65rem]',
                         msg.role === 'user' ? 'text-teal-400/50' : 'text-white/25'
                       )}>
                         {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
@@ -1057,7 +1057,7 @@ export default function NovaPage() {
                           onClick={() => speakMsg(msg.content, msg.id)}
                           title={speakingMsgId === msg.id ? 'Stop' : 'Read aloud'}
                           className={cn(
-                            'ml-2 flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[0.6rem] transition-all',
+                            'ml-2 flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[0.72rem] transition-all',
                             speakingMsgId === msg.id
                               ? 'bg-teal-600/30 text-teal-400 border border-teal-500/40'
                               : 'bg-white/4 text-white/25 hover:bg-white/10 hover:text-white/50 border border-transparent'
@@ -1082,11 +1082,11 @@ export default function NovaPage() {
                         >
                           <span className="text-sm">{RESOURCE_ICONS[r.type] || '🔗'}</span>
                           <div className="min-w-0">
-                            <p className="font-mono text-[0.6rem] text-teal-300/80 group-hover:text-teal-300 truncate transition-colors">
+                            <p className="font-mono text-[0.72rem] text-teal-300/80 group-hover:text-teal-300 truncate transition-colors">
                               {r.title}
                             </p>
                             {r.description && (
-                              <p className="font-mono text-[0.55rem] text-white/25 truncate">{r.description}</p>
+                              <p className="font-mono text-[0.68rem] text-white/25 truncate">{r.description}</p>
                             )}
                           </div>
                           <span className="text-white/20 text-xs ml-auto flex-shrink-0">↗</span>
@@ -1140,7 +1140,7 @@ export default function NovaPage() {
                 )}
               >
                 <span className="text-xl">{mood.emoji}</span>
-                <span className="text-[0.6rem]">{mood.label}</span>
+                <span className="text-[0.72rem]">{mood.label}</span>
               </button>
             ))}
           </div>
@@ -1152,7 +1152,7 @@ export default function NovaPage() {
         <div className="px-4 pb-1 animate-fade-in">
           <div className="flex items-center gap-2 text-xs">
             <span className="font-mono text-white/30">Mood set:</span>
-            <span className="bg-teal-600/15 text-teal-400 border border-teal-600/20 px-2 py-0.5 rounded-full font-mono text-[0.6rem]">
+            <span className="bg-teal-600/15 text-teal-400 border border-teal-600/20 px-2 py-0.5 rounded-full font-mono text-[0.72rem]">
               {MOODS.find(m => m.label === selectedMood)?.emoji} {selectedMood}
             </span>
             <button
@@ -1181,7 +1181,7 @@ export default function NovaPage() {
             {imageCompressing ? (
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-lg bg-white/10 animate-pulse" />
-                <span className="font-mono text-[0.6rem] text-white/30">Compressing…</span>
+                <span className="font-mono text-[0.72rem] text-white/30">Compressing…</span>
               </div>
             ) : pendingImage && (
               <>
@@ -1191,7 +1191,7 @@ export default function NovaPage() {
                   alt="Attached"
                   className="w-10 h-10 rounded-lg object-cover border border-white/10 flex-shrink-0"
                 />
-                <span className="font-mono text-[0.6rem] text-white/50 flex-1">Image ready to send</span>
+                <span className="font-mono text-[0.72rem] text-white/50 flex-1">Image ready to send</span>
                 <button
                   onClick={clearPendingImage}
                   className="text-white/30 hover:text-red-400 text-xs transition-colors"
@@ -1209,10 +1209,10 @@ export default function NovaPage() {
       <div className="px-4 pb-6 pt-2 border-t border-white/7 bg-[var(--bg-base)]">
         {!isUnlimited && !isPremium && usageLeft <= 3 && usageLeft > 0 && (
           <div className="mb-2 flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
-            <span className="font-mono text-[0.6rem] text-amber-400">
+            <span className="font-mono text-[0.72rem] text-amber-400">
               {usageLeft} message{usageLeft === 1 ? '' : 's'} left this month
             </span>
-            <Link href="/upgrade" className="font-mono text-[0.6rem] text-amber-400 underline">
+            <Link href="/upgrade" className="font-mono text-[0.72rem] text-amber-400 underline">
               Upgrade →
             </Link>
           </div>
@@ -1221,7 +1221,7 @@ export default function NovaPage() {
         {!isUnlimited && usageLeft === 0 ? (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
             <p className="font-display font-bold text-white text-sm mb-1">Monthly limit reached</p>
-            <p className="font-mono text-[0.62rem] text-white/40 mb-3">
+            <p className="font-mono text-[0.72rem] text-white/40 mb-3">
               {userTier === 'scholar'
                 ? 'Nova Unlimited (R89/month) removes all caps — unlimited messages'
                 : 'Nova Scholar gives you 150 messages for R29/month'}
@@ -1238,7 +1238,7 @@ export default function NovaPage() {
           {!isOnline && (
             <div style={{ margin: '0 0 10px', padding: '8px 14px', borderRadius: 10, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14 }}>📴</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(245,158,11,0.9)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'rgba(245,158,11,0.9)' }}>
                 Offline — showing last session. Nova can&apos;t respond until you reconnect.
               </span>
             </div>

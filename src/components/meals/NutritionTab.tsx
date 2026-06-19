@@ -281,7 +281,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
               style={{ background: `${scoreColor}12`, borderColor: `${scoreColor}35` }}
             >
               <span className="font-mono text-[0.6rem] font-bold" style={{ color: scoreColor }}>{healthScore}</span>
-              <span className="font-mono text-[0.52rem]" style={{ color: `${scoreColor}80` }}>{scoreLabel}</span>
+              <span className="font-mono text-[0.65rem]" style={{ color: `${scoreColor}80` }}>{scoreLabel}</span>
             </div>
           )}
         </div>
@@ -400,7 +400,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                       <span className="text-base flex-shrink-0">{food.icon}</span>
                       <div className="min-w-0">
                         <div className="font-body text-[0.72rem] text-white/80 leading-tight truncate">{food.name}</div>
-                        <div className="font-mono text-[0.52rem] text-white/32 flex gap-2">
+                        <div className="font-mono text-[0.65rem] text-white/32 flex gap-2">
                           <span>{food.cal} kcal</span>
                           {food.protein > 5 && <span className="text-rose-400/60">P{Math.round(food.protein)}g</span>}
                           {'price' in food && <span className="text-emerald-400/50">~R{(food as typeof food & {price:number}).price}</span>}

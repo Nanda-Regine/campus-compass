@@ -179,7 +179,7 @@ export default function StreakPage() {
           {/* Mini milestone bar */}
           {streak && streak.streak > 0 && (
             <div className="mt-4">
-              <div className="flex justify-between font-mono text-[0.52rem] text-white/25 mb-1.5">
+              <div className="flex justify-between font-mono text-[0.65rem] text-white/25 mb-1.5">
                 {[3, 7, 14, 30].map(m => (
                   <span key={m} style={{ color: streak.streak >= m ? streakColor(streak.streak) : undefined }}>
                     {m}d {streak.streak >= m ? '✓' : ''}

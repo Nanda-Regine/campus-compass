@@ -596,7 +596,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
               >
                 <span style={{ fontSize: '1rem' }}>{p.emoji}</span>
                 <span className="font-mono text-[0.55rem]" style={{ color: active ? '#4db6ac' : 'rgba(255,255,255,0.4)' }}>{p.label}</span>
-                <span className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>{p.s.workMinutes}m</span>
+                <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>{p.s.workMinutes}m</span>
               </button>
             )
           })}

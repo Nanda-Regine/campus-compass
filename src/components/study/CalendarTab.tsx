@@ -643,7 +643,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
               </div>
               {hasExam && (
                 <div style={{
-                  fontSize: '0.5rem', color: '#f59e0b',
+                  fontSize: '0.65rem', color: '#f59e0b',
                   fontFamily: 'var(--font-mono)',
                 }}>EXAM</div>
               )}
@@ -794,7 +794,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
                       )
                     })}
                     {dayTasks.length > 4 && (
-                      <div style={{ fontSize: '0.5rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                         +{dayTasks.length - 4}
                       </div>
                     )}

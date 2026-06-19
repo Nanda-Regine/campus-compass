@@ -101,7 +101,7 @@ function DayView({ tasks, selectedDate }: { tasks: Task[]; selectedDate: string 
                   }}>
                     {isAuto && (
                       <span style={{
-                        fontSize: '0.52rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)',
+                        fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)',
                         border: '1px solid var(--teal)', borderRadius: 4,
                         padding: '1px 4px', marginRight: 5, verticalAlign: 'middle',
                       }}>AUTO</span>
@@ -109,15 +109,15 @@ function DayView({ tasks, selectedDate }: { tasks: Task[]; selectedDate: string 
                     {task.title}
                   </div>
                   {mod?.module_name && (
-                    <div style={{ fontSize: '0.63rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 1 }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                       {mod.module_name}
                     </div>
                   )}
                 </div>
                 <span style={{
-                  padding: '2px 7px', background: bg,
+                  padding: '3px 8px', background: bg,
                   border: `1px solid ${color}40`, borderRadius: 100,
-                  fontSize: '0.56rem', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.65rem', fontFamily: 'var(--font-mono)',
                   color, fontWeight: 700, flexShrink: 0,
                 }}>
                   {task.priority}
@@ -146,7 +146,7 @@ function WeekView({ tasks, onDaySelect }: { tasks: Task[]; onDaySelect: (date: s
   const weekDays = getWeekDays()
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
       {weekDays.map(day => {
         const dayTasks = tasks.filter(t => t.status !== 'done' && (t.due_date ?? '').slice(0, 10) === day.date)
         const urgentCount  = dayTasks.filter(t => t.priority === 'urgent').length
@@ -162,22 +162,22 @@ function WeekView({ tasks, onDaySelect }: { tasks: Task[]; onDaySelect: (date: s
             key={day.date}
             onClick={() => onDaySelect(day.date)}
             style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-              padding: '8px 4px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+              padding: '10px 2px',
               background: day.isToday ? 'var(--teal-dim)' : 'transparent',
               border: `1px solid ${day.isToday ? 'var(--teal)' : 'transparent'}`,
-              borderRadius: 10, cursor: 'pointer',
+              borderRadius: 10, cursor: 'pointer', minHeight: 64,
             }}
           >
             <div style={{
-              fontSize: '0.6rem', fontFamily: 'var(--font-mono)',
+              fontSize: '0.68rem', fontFamily: 'var(--font-mono)',
               color: day.isToday ? 'var(--teal)' : 'var(--text-muted)',
-              letterSpacing: '0.05em',
+              letterSpacing: '0.04em',
             }}>
               {day.label}
             </div>
             <div style={{
-              fontSize: '0.82rem', fontWeight: 700,
+              fontSize: '0.95rem', fontWeight: 700,
               color: day.isToday ? 'var(--teal)' :
                 overdue.length > 0 ? 'var(--danger)' : 'var(--text-primary)',
             }}>
@@ -193,7 +193,7 @@ function WeekView({ tasks, onDaySelect }: { tasks: Task[]; onDaySelect: (date: s
                 ))}
                 {dayTasks.length > 3 && (
                   <div style={{
-                    fontSize: '0.5rem', color: 'var(--text-muted)',
+                    fontSize: '0.65rem', color: 'var(--text-muted)',
                     fontFamily: 'var(--font-mono)', lineHeight: '5px',
                   }}>
                     +{dayTasks.length - 3}

@@ -328,11 +328,11 @@ export default function MealsClient({ initialData }: MealsClientProps) {
         <div style={{ flex: 1, minWidth: 0 }}>
           {initialData.foodBudget > 0 && (
             <div className="flex items-center gap-2 px-3 pt-2 pb-1 border-b border-white/7">
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
               {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
               )}
             </div>
           )}
@@ -754,7 +754,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                             {item.name}
                           </div>
                           {cat && (
-                            <div className="font-mono text-[0.52rem]" style={{ color: `${cat.color}70` }}>{cat.label}</div>
+                            <div className="font-mono text-[0.65rem]" style={{ color: `${cat.color}70` }}>{cat.label}</div>
                           )}
                         </div>
                         {item.price && (

@@ -76,7 +76,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
               <span style={{ flexShrink: 0, display: 'flex', opacity: isActive ? 1 : 0.6 }}>{t.icon}</span>
               <span style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.46rem',
+                fontSize: '0.6rem',
                 letterSpacing: '0.04em',
                 fontWeight: isActive ? 700 : 400,
                 lineHeight: 1,
@@ -108,7 +108,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
               {active.label}
             </div>
             {userInstitution && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {userInstitution}
               </div>
             )}

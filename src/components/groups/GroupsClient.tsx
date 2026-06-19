@@ -711,15 +711,15 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                       )}
                                       {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
                                       {prio !== 'normal' && (
-                                        <span className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border', PRIORITY_COLORS[prio])}>
+                                        <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border', PRIORITY_COLORS[prio])}>
                                           {PRIORITY_EMOJI[prio]} {prio}
                                         </span>
                                       )}
                                     </div>
                                   </div>
                                   <div className="flex gap-1 flex-shrink-0">
-                                    <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/35 hover:text-teal-400 hover:border-teal-600/30 transition-all">⇄</button>
-                                    <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-red-400 hover:border-red-500/30 transition-all">✕</button>
+                                    <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/35 hover:text-teal-400 hover:border-teal-600/30 transition-all">⇄</button>
+                                    <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-red-400 hover:border-red-500/30 transition-all">✕</button>
                                   </div>
                                 </div>
                                 {isReassigning && (
@@ -751,7 +751,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                 <div className="flex-1 min-w-0">
                                   <p className="text-sm font-body text-white/40 line-through">{t.title}</p>
                                   <div className="flex gap-2 flex-wrap">
-                                    {t.section && <span className="font-mono text-[0.5rem] text-white/20">{t.section}</span>}
+                                    {t.section && <span className="font-mono text-[0.65rem] text-white/20">{t.section}</span>}
                                     {t.assigned_to_email && <span className="font-mono text-[0.55rem] text-white/25">→ {assignee?.display_name || t.assigned_to_email}</span>}
                                   </div>
                                 </div>
@@ -803,12 +803,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <p className="font-body text-sm text-white/80 leading-relaxed flex-1">{msg.content}</p>
                         <button
                           onClick={() => pinMessage(msg.id, false)}
-                          className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-white/50 flex-shrink-0 transition-all"
+                          className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-white/50 flex-shrink-0 transition-all"
                         >
                           unpin
                         </button>
                       </div>
-                      <p className="font-mono text-[0.52rem] text-white/25 mt-2">
+                      <p className="font-mono text-[0.65rem] text-white/25 mt-2">
                         {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
@@ -907,12 +907,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           </div>
                           <button
                             onClick={() => pinMessage(msg.id, true)}
-                            className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-teal-400 flex-shrink-0"
+                            className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-teal-400 flex-shrink-0"
                           >
                             pin
                           </button>
                         </div>
-                        <p className="font-mono text-[0.52rem] text-white/25">
+                        <p className="font-mono text-[0.65rem] text-white/25">
                           Raised {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · Reply in Chat tab
                         </p>
                       </div>
@@ -961,21 +961,21 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
                             {isSelf && <span className="font-mono text-[0.48rem] bg-white/8 text-white/40 px-1 py-0.5 rounded">you</span>}
-                            {m.role === 'leader' && <span className="font-mono text-[0.5rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">owner</span>}
-                            {mRole && <span className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[mRole])}>{mRole}</span>}
-                            {isFreeRider && <span className="font-mono text-[0.5rem] bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-md border border-red-500/20">⚠ no tasks</span>}
+                            {m.role === 'leader' && <span className="font-mono text-[0.65rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">owner</span>}
+                            {mRole && <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[mRole])}>{mRole}</span>}
+                            {isFreeRider && <span className="font-mono text-[0.65rem] bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-md border border-red-500/20">⚠ no tasks</span>}
                           </div>
                           <p className="font-mono text-[0.53rem] text-white/30 mt-0.5 truncate">{m.email}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="text-right">
                             <div className="font-display font-black text-white text-sm">{pct}%</div>
-                            <div className="font-mono text-[0.5rem] text-white/30">{stats.done}/{stats.assigned}</div>
+                            <div className="font-mono text-[0.65rem] text-white/30">{stats.done}/{stats.assigned}</div>
                           </div>
                           {isLeader && !isSelf && (
                             <button
                               onClick={() => removeMember(m.id, m.display_name || m.email)}
-                              className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                              className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
                             >
                               Remove
                             </button>
@@ -991,7 +991,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <span className="font-mono text-[0.54rem] text-white/30">Role:</span>
                         <div className="flex gap-1 flex-wrap">
                           {MEMBER_ROLES.map(r => (
-                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/25 border-white/8 hover:text-white/50')}>
+                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/25 border-white/8 hover:text-white/50')}>
                               {r}
                             </button>
                           ))}
@@ -1008,7 +1008,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   {selected.group_members.filter(m => m.status === 'invited').map(m => (
                     <div key={m.id} className="flex items-center justify-between bg-white/2 border border-white/5 rounded-xl px-3 py-2 mb-1.5">
                       <span className="font-mono text-[0.62rem] text-white/40">{m.email}</span>
-                      <span className="font-mono text-[0.5rem] bg-white/5 text-white/25 px-1.5 py-0.5 rounded">awaiting</span>
+                      <span className="font-mono text-[0.65rem] bg-white/5 text-white/25 px-1.5 py-0.5 rounded">awaiting</span>
                     </div>
                   ))}
                 </div>
@@ -1060,10 +1060,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     )}>
                       <div className="flex items-start justify-between gap-1">
                         <div className="flex-1 min-w-0">
-                          {msg.is_pinned && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 PINNED</p>}
-                          {msg.is_decision && !msg.is_pinned && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">⭐ DECISION</p>}
+                          {msg.is_pinned && <p className="font-mono text-[0.65rem] text-amber-400 font-bold mb-1">📌 PINNED</p>}
+                          {msg.is_decision && !msg.is_pinned && <p className="font-mono text-[0.65rem] text-amber-400 font-bold mb-1">⭐ DECISION</p>}
                           <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
-                          <p className="font-mono text-[0.52rem] text-white/25 mt-1">
+                          <p className="font-mono text-[0.65rem] text-white/25 mt-1">
                             {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
@@ -1157,7 +1157,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                             </p>
                           </div>
                           {meeting.created_by === userId && (
-                            <button onClick={() => deleteMeeting(meeting.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 transition-all flex-shrink-0">
+                            <button onClick={() => deleteMeeting(meeting.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-red-500/20 text-red-400/60 hover:text-red-400 transition-all flex-shrink-0">
                               ✕
                             </button>
                           )}

@@ -543,7 +543,7 @@ export default function ProfileClient() {
                 ) : (
                   <button
                     onClick={() => avatarInputRef.current?.click()}
-                    className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.5rem]"
+                    className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.65rem]"
                     style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}
                     aria-label="Upload photo"
                   >
@@ -558,7 +558,7 @@ export default function ProfileClient() {
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <h1 className="font-display font-black text-white text-xl leading-tight">{profile?.name || 'Student'}</h1>
                   <span
-                    className="font-mono text-[0.5rem] uppercase tracking-widest px-2.5 py-1 rounded-full flex-shrink-0"
+                    className="font-mono text-[0.65rem] uppercase tracking-widest px-2.5 py-1 rounded-full flex-shrink-0"
                     style={{
                       background: isPremium ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.06)',
                       color: isPremium ? '#4db6ac' : 'rgba(255,255,255,0.35)',
@@ -616,11 +616,11 @@ export default function ProfileClient() {
             {/* Nova messages */}
             <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(13,148,136,0.07)', border: '1px solid rgba(13,148,136,0.18)' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #0d9488, transparent)' }} />
-              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(77,182,172,0.6)' }}>Nova</p>
+              <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(77,182,172,0.6)' }}>Nova</p>
               <p className="font-display font-black text-xl" style={{ color: '#4db6ac' }}>
                 {stats.novaLimit === null ? stats.novaMessagesUsed : `${stats.novaMessagesUsed}`}
               </p>
-              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
                 {stats.novaLimit === null ? 'unlimited' : `/ ${stats.novaLimit}`}
               </p>
               {stats.novaLimit !== null && (
@@ -640,21 +640,21 @@ export default function ProfileClient() {
             {/* Study time */}
             <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(212,168,71,0.07)', border: '1px solid rgba(212,168,71,0.18)' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d4a847, transparent)' }} />
-              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(212,168,71,0.6)' }}>Study</p>
+              <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(212,168,71,0.6)' }}>Study</p>
               <p className="font-display font-black text-xl" style={{ color: '#d4a847' }}>
                 {stats.totalStudyMinutesThisMonth >= 60
                   ? `${Math.floor(stats.totalStudyMinutesThisMonth / 60)}h`
                   : `${stats.totalStudyMinutesThisMonth}m`}
               </p>
-              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>this month</p>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>this month</p>
             </div>
 
             {/* Referrals */}
             <div className="rounded-2xl p-4 flex flex-col gap-1.5 relative overflow-hidden" style={{ background: 'rgba(217,120,84,0.07)', border: '1px solid rgba(217,120,84,0.18)' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
-              <p className="font-mono text-[0.5rem] uppercase tracking-widest" style={{ color: 'rgba(217,120,84,0.6)' }}>Refs</p>
+              <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(217,120,84,0.6)' }}>Refs</p>
               <p className="font-display font-black text-xl" style={{ color: '#d97b54' }}>{stats.referralCount}</p>
-              <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>+{stats.referralCredits} earned</p>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>+{stats.referralCredits} earned</p>
             </div>
           </div>
         )}
@@ -692,7 +692,7 @@ export default function ProfileClient() {
                     {filled.length}/{checks.length} fields
                   </div>
                   {pct < 100 && (
-                    <div className="font-mono text-[0.52rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                    <div className="font-mono text-[0.65rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
                       {missing.length} unlock{missing.length !== 1 ? 's' : ''} waiting
                     </div>
                   )}
@@ -709,7 +709,7 @@ export default function ProfileClient() {
               {filled.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {filled.map(c => (
-                    <span key={c.key} className="font-mono text-[0.5rem] px-2 py-1 rounded-full"
+                    <span key={c.key} className="font-mono text-[0.65rem] px-2 py-1 rounded-full"
                       style={{ background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.15)', color: 'rgba(78,207,158,0.7)' }}>
                       {c.emoji} {c.label}
                     </span>
@@ -719,7 +719,7 @@ export default function ProfileClient() {
 
               {/* Missing nudge */}
               {missing.length > 0 && pct < 100 && (
-                <p className="font-mono text-[0.52rem]" style={{ color: 'rgba(255,255,255,0.22)' }}>
+                <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.22)' }}>
                   Missing: {missing.slice(0, 4).map(c => c.emoji + ' ' + c.key.replace(/_/g, ' ')).join(' · ')}{missing.length > 4 ? ` + ${missing.length - 4} more` : ''}
                 </p>
               )}
@@ -778,12 +778,12 @@ export default function ProfileClient() {
                   className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none transition-all focus:ring-1 focus:ring-teal-500/40 resize-none"
                   style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
                 />
-                <p className="font-mono text-[0.52rem] text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{bio.length}/160</p>
+                <p className="font-mono text-[0.65rem] text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{bio.length}/160</p>
               </Field>
               <Field label="Institution">
                 <InstitutionPicker value={university} onChange={setUniversity} />
                 {university && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.university}
                   </p>
                 )}
@@ -802,7 +802,7 @@ export default function ProfileClient() {
               <Field label="Faculty / Department">
                 <TextInput value={faculty} onChange={setFaculty} placeholder="e.g. Science and Technology" maxLength={80} />
                 {faculty && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.faculty}
                   </p>
                 )}
@@ -810,7 +810,7 @@ export default function ProfileClient() {
               <Field label="Province where you study">
                 <SelectInput value={province} options={['', ...SA_PROVINCES].map(v => ({ value: v, label: v || 'Select province…' }))} onChange={setProvince} />
                 {province && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.province}
                   </p>
                 )}
@@ -822,7 +822,7 @@ export default function ProfileClient() {
                     {isFirstGen ? '✓ First in your family to study at university/college' : 'Are you the first in your family to study?'}
                   </div>
                   {isFirstGen && (
-                    <p className="font-mono text-[0.52rem] mt-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                    <p className="font-mono text-[0.65rem] mt-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                       🔓 {FIELD_UNLOCKS.is_first_gen}
                     </p>
                   )}
@@ -849,7 +849,7 @@ export default function ProfileClient() {
               <Field label="Living situation">
                 <SelectInput value={livingSituation} options={LIVING_OPTIONS} onChange={setLivingSituation} />
                 {livingSituation && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.living_situation}
                   </p>
                 )}
@@ -857,7 +857,7 @@ export default function ProfileClient() {
               <Field label="Monthly allowance / budget">
                 <SelectInput value={monthlyAllowance} options={[{ value: '', label: 'Select range…' }, ...ALLOWANCE_OPTIONS]} onChange={setMonthlyAllowance} />
                 {monthlyAllowance && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.monthly_allowance}
                   </p>
                 )}
@@ -865,7 +865,7 @@ export default function ProfileClient() {
               <Field label="Dietary preference">
                 <SelectInput value={dietaryPref} options={DIETARY_OPTIONS} onChange={setDietaryPref} />
                 {dietaryPref && dietaryPref !== 'No restrictions' && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.dietary_pref}
                   </p>
                 )}
@@ -873,7 +873,7 @@ export default function ProfileClient() {
               <Field label="When do you study best?">
                 <SelectInput value={studySchedule} options={[{ value: '', label: 'Select schedule…' }, ...SCHEDULE_OPTIONS]} onChange={setStudySchedule} />
                 {studySchedule && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.study_schedule}
                   </p>
                 )}
@@ -881,7 +881,7 @@ export default function ProfileClient() {
               <Field label="How do you get to campus?">
                 <SelectInput value={commuteType} options={[{ value: '', label: 'Select commute…' }, ...COMMUTE_OPTIONS]} onChange={setCommuteType} />
                 {commuteType && (
-                  <p className="font-mono text-[0.52rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
+                  <p className="font-mono text-[0.65rem] mt-1.5 px-1" style={{ color: 'rgba(78,207,158,0.5)' }}>
                     🔓 {FIELD_UNLOCKS.commute_type}
                   </p>
                 )}
@@ -1057,7 +1057,7 @@ export default function ProfileClient() {
                   <span className="text-base">🗑️</span>
                   <span>Delete my account</span>
                 </button>
-                <p className="font-mono text-[0.52rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.16)' }}>
+                <p className="font-mono text-[0.65rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.16)' }}>
                   POPIA: you may request deletion of all your data at any time
                 </p>
               </div>

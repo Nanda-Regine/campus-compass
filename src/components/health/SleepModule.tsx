@@ -388,7 +388,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                     const date = log.sleep_date.slice(5) // MM-DD
                     return (
                       <div key={log.id} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="font-mono text-[0.5rem] text-white/30">{h}h</div>
+                        <div className="font-mono text-[0.65rem] text-white/30">{h}h</div>
                         <div
                           className="w-full rounded-t-md transition-all"
                           style={{
@@ -406,15 +406,15 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 <div className="flex items-center gap-3 mt-3">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-teal-400" />
-                    <div className="font-mono text-[0.52rem] text-white/35">7h+ (goal)</div>
+                    <div className="font-mono text-[0.65rem] text-white/35">7h+ (goal)</div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-amber-400" />
-                    <div className="font-mono text-[0.52rem] text-white/35">6–7h</div>
+                    <div className="font-mono text-[0.65rem] text-white/35">6–7h</div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-rose-400" />
-                    <div className="font-mono text-[0.52rem] text-white/35">&lt;6h</div>
+                    <div className="font-mono text-[0.65rem] text-white/35">&lt;6h</div>
                   </div>
                 </div>
               </div>
@@ -494,9 +494,9 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                   />
                 </div>
                 <div className="flex justify-between mt-1.5">
-                  <div className="font-mono text-[0.52rem] text-amber-400">Lion</div>
-                  <div className="font-mono text-[0.52rem] text-teal-400">Bear</div>
-                  <div className="font-mono text-[0.52rem] text-indigo-400">Wolf</div>
+                  <div className="font-mono text-[0.65rem] text-amber-400">Lion</div>
+                  <div className="font-mono text-[0.65rem] text-teal-400">Bear</div>
+                  <div className="font-mono text-[0.65rem] text-indigo-400">Wolf</div>
                 </div>
               </div>
 

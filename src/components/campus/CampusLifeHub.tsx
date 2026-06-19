@@ -308,7 +308,7 @@ function EventsTab() {
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '1rem', color, lineHeight: 1 }}>
                   {format(parseISO(event.event_date), 'd')}
                 </div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.5rem', color: `${color}b0`, textTransform: 'uppercase' }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: `${color}b0`, textTransform: 'uppercase' }}>
                   {format(parseISO(event.event_date), 'MMM')}
                 </div>
               </div>

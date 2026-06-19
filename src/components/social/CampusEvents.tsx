@@ -172,7 +172,7 @@ export default function CampusEvents({ userId, institution }: Props) {
             What&apos;s happening
           </div>
           {institution && (
-            <div className="font-mono text-[0.52rem] text-white/30 mt-0.5">{institution}</div>
+            <div className="font-mono text-[0.65rem] text-white/30 mt-0.5">{institution}</div>
           )}
         </div>
         <button
@@ -197,7 +197,7 @@ export default function CampusEvents({ userId, institution }: Props) {
               />
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/35 mb-1 block">Type</label>
+              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Type</label>
               <select value={fType} onChange={e => setFType(e.target.value as EventType)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 outline-none focus:border-emerald-500 font-body">
                 {Object.entries(TYPE_META).map(([k, v]) => (
@@ -206,22 +206,22 @@ export default function CampusEvents({ userId, institution }: Props) {
               </select>
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/35 mb-1 block">Venue</label>
+              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Venue</label>
               <input value={fVenue} onChange={e => setFVenue(e.target.value)} placeholder="e.g. Library Room 2"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/35 mb-1 block">Date & time *</label>
+              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Date & time *</label>
               <input type="datetime-local" value={fDate} onChange={e => setFDate(e.target.value)} min={nowMin}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/35 mb-1 block">Duration (minutes)</label>
+              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Duration (minutes)</label>
               <input type="number" value={fDuration} onChange={e => setFDuration(e.target.value)} placeholder="e.g. 90" min={15}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.52rem] text-white/35 mb-1 block">Max attendees</label>
+              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Max attendees</label>
               <input type="number" value={fMax} onChange={e => setFMax(e.target.value)} placeholder="Leave blank = unlimited" min={1}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
             </div>
@@ -292,7 +292,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                   <div className="flex-1 min-w-0">
                     {/* Type chip */}
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="font-mono text-[0.52rem] px-1.5 py-0.5 rounded-full border"
+                      <span className="font-mono text-[0.65rem] px-1.5 py-0.5 rounded-full border"
                         style={{ color: meta.color, borderColor: `${meta.color}30`, background: `${meta.color}10` }}>
                         {meta.emoji} {meta.label}
                       </span>
@@ -339,7 +339,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                       {e.user_rsvped ? '✓ Going' : isFull ? 'Full' : "I'm going"}
                     </button>
                     {e.rsvp_count > 0 && (
-                      <span className="font-mono text-[0.5rem] text-white/25">{e.rsvp_count} going</span>
+                      <span className="font-mono text-[0.65rem] text-white/25">{e.rsvp_count} going</span>
                     )}
                     {isOwner && (
                       <button onClick={() => cancelEvent(e.id)}

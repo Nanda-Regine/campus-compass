@@ -176,7 +176,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
         <div style={{ padding: '18px 20px 10px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
           <div>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
               color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 3,
             }}>
               {headerTheme.label}
@@ -199,7 +199,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                 background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.22)',
               }}>
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ef4444', flexShrink: 0, boxShadow: '0 0 5px rgba(239,68,68,0.8)' }} />
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: '#ef4444', fontWeight: 700 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#ef4444', fontWeight: 700 }}>
                   {overdueCount} overdue
                 </span>
               </div>
@@ -210,7 +210,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                 padding: '3px 8px', borderRadius: 8,
                 background: 'rgba(78,207,158,0.08)', border: '1px solid rgba(78,207,158,0.2)',
               }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: '#4ecf9e', fontWeight: 700 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#4ecf9e', fontWeight: 700 }}>
                   {todayCount} due today
                 </span>
               </div>
@@ -221,7 +221,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                 padding: '3px 8px', borderRadius: 8,
                 background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',
               }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: '#f59e0b', fontWeight: 700 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#f59e0b', fontWeight: 700 }}>
                   {nextExam.module?.module_name?.slice(0, 6) ?? 'Exam'} ⟶
                 </span>
               </div>

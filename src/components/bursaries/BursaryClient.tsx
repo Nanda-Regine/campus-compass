@@ -71,7 +71,7 @@ function BursaryCard({
               {b.name}
             </div>
             <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.5rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
               color: typeColor, background: `${typeColor}15`,
               border: `0.5px solid ${typeColor}35`,
               padding: '2px 7px', borderRadius: 9999, flexShrink: 0,

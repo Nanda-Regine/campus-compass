@@ -1109,7 +1109,7 @@ function JobsTab() {
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>
                   {job.title}
                 </div>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'var(--text-tertiary)', flexShrink: 0, marginTop: 2 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', flexShrink: 0, marginTop: 2 }}>
                   {timeAgoJob(job.created)}
                 </span>
               </div>
@@ -1210,7 +1210,7 @@ export default function CareerClient({ userId, profile, modules }: Props) {
             <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
               Career OS
             </h1>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
               {profile.yearOfStudy || 'Student'} · {profile.university || 'SA University'}
             </div>
           </div>

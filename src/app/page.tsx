@@ -492,7 +492,7 @@ export default function LandingPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }}>✦</div>
                   <p className="font-display font-bold text-xs text-white">Nova</p>
-                  <span className="font-mono text-[0.5rem] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.2)', color: '#5eead4', border: '1px solid rgba(13,148,136,0.3)' }}>AI companion</span>
+                  <span className="font-mono text-[0.65rem] px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(13,148,136,0.2)', color: '#5eead4', border: '1px solid rgba(13,148,136,0.3)' }}>AI companion</span>
                 </div>
                 <div className="space-y-2">
                   <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -530,7 +530,7 @@ export default function LandingPage() {
                 <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${f.accent}80, transparent)` }} />
                 <div className="absolute top-3 right-3 flex items-center gap-1.5">
                   {f.isNew && (
-                    <span className="font-mono text-[0.5rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
+                    <span className="font-mono text-[0.65rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
                   )}
                   {f.domain && (
                     <span className="font-mono text-[0.48rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
@@ -680,7 +680,7 @@ export default function LandingPage() {
                   <div className="rounded-xl p-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)' }}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: '#6ee7b7' }}>Walk Me Home</span>
-                      <span className="font-mono text-[0.5rem] px-2 py-0.5 rounded-full" style={{ background: 'rgba(16,185,129,0.2)', color: '#6ee7b7' }}>Active</span>
+                      <span className="font-mono text-[0.65rem] px-2 py-0.5 rounded-full" style={{ background: 'rgba(16,185,129,0.2)', color: '#6ee7b7' }}>Active</span>
                     </div>
                     <p className="font-display text-xs text-white/80">Timer: <span style={{ color: '#6ee7b7', fontWeight: 700 }}>12:00</span> remaining</p>
                     <p className="font-mono text-[0.55rem] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Check-in required by 22:15 · Lethabo will be notified</p>
@@ -689,12 +689,12 @@ export default function LandingPage() {
                     <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}>
                       <p className="text-xl mb-1">🚨</p>
                       <p className="font-display font-bold text-white text-xs">SOS</p>
-                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Hold 3s to activate</p>
+                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Hold 3s to activate</p>
                     </div>
                     <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.25)' }}>
                       <p className="text-xl mb-1">⚖️</p>
                       <p className="font-display font-bold text-white text-xs">Legal Rights</p>
-                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Know your rights</p>
+                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Know your rights</p>
                     </div>
                   </div>
                 </div>
