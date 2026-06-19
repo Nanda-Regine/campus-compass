@@ -114,9 +114,16 @@
   --sidebar-w: 220px;
 }
 
-/* On mobile the sidebar is hidden so its width contribution is zero */
-@media (max-width: 767px) {
-  :root { --sidebar-w: 0px; }
+/* Sidebar offset class — only applies margin-left on desktop.
+   The inline script sets --sidebar-w via JS (overrides CSS vars),
+   so we guard with a media query on the class itself, not the var. */
+.sidebar-content-offset {
+  margin-left: 0;
+}
+@media (min-width: 768px) {
+  .sidebar-content-offset {
+    margin-left: var(--sidebar-w);
+  }
 }
 
 :root,
