@@ -16,7 +16,7 @@ export default async function LMSPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-primary)', fontFamily: 'system-ui, sans-serif', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="schedule" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="schedule" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px 80px' }}>
         <LMSConnector />
       </div>

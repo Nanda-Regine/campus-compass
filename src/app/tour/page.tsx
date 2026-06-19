@@ -20,7 +20,7 @@ export default async function TourPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="onboarding" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="onboarding" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       <TourWizard defaultLang={(profile?.preferred_language as string) ?? 'en'} />
     </div>
   )

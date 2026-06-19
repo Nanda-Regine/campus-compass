@@ -49,7 +49,7 @@ export default async function SRCPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="vibzztime" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="vibzztime" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       <TopBar title="SRC" />
       <SRCAnalyticsOS
         userId={user.id}

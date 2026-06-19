@@ -50,7 +50,7 @@ export default function OfflinePage() {
         overflowX: 'hidden',
       }}
     >
-      <AmbientImage zone="gradient-pink" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="gradient-pink" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       <div style={{ width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Icon */}

@@ -291,7 +291,7 @@ export default function MutualAidBoard({
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', position: 'relative', overflowX: 'hidden' }} className="pb-24">
-      <AmbientImage zone="design" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="design" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       {/* Ubuntu quote header */}
       <div
         style={{

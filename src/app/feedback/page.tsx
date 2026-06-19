@@ -58,7 +58,7 @@ export default function FeedbackPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="nova" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="nova" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       <TopBar title="Rate & Feedback" />
 
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 16px' }}>

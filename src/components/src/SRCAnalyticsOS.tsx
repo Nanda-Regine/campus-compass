@@ -91,7 +91,7 @@ export default function SRCAnalyticsOS({ userId, initialPosts, members, isSrcMem
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="community" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
 
       {/* Vertical tab rail */}
       <div style={{

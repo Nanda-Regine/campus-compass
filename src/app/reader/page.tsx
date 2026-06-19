@@ -306,7 +306,7 @@ export default function ReaderPage() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <AmbientImage zone="study" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="study" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
       {/* ── Top bar ── */}
       <div style={{
         flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8,
