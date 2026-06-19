@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
+import { recordRoomActivity, loadRoomActivity, XP_EVENT_TO_ROOM } from '@/lib/room-activity'
 
 // ── Room definitions ─────────────────────────────────────────────────────────
 
@@ -131,36 +131,6 @@ function getActiveRoom(pathname: string): string | null {
   return null
 }
 
-// ── Room activity rings (7-day rolling window) ────────────────────────────────
-
-function loadRoomActivity(): Record<string, number> {
-  try {
-    const data: Record<string, string[]> = JSON.parse(localStorage.getItem('varsityos_room_visits') ?? '{}')
-    const last7 = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(); d.setDate(d.getDate() - i)
-      return d.toLocaleDateString('en-CA')
-    })
-    const result: Record<string, number> = {}
-    for (const room of ROOMS) {
-      const visits = new Set<string>(data[room.id] ?? [])
-      result[room.id] = last7.filter(d => visits.has(d)).length / 7
-    }
-    return result
-  } catch { return {} }
-}
-
-function recordRoomVisit(roomId: string): void {
-  try {
-    const data: Record<string, string[]> = JSON.parse(localStorage.getItem('varsityos_room_visits') ?? '{}')
-    const today = new Date().toLocaleDateString('en-CA')
-    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30)
-    const visits = (data[roomId] ?? []).filter((d: string) => new Date(d) > cutoff)
-    if (!visits.includes(today)) visits.push(today)
-    data[roomId] = visits
-    localStorage.setItem('varsityos_room_visits', JSON.stringify(data))
-  } catch {}
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function BottomNav() {
@@ -172,8 +142,26 @@ export function BottomNav() {
   const show = ALL_ROUTES.some(p => pathname === p || pathname.startsWith(p + '/'))
   const activeRoomId = getActiveRoom(pathname)
 
-  // Load activity ring data on mount
+  // Load initial activity on mount
   useEffect(() => { setRoomActivity(loadRoomActivity()) }, [])
+
+  // Re-sync rings whenever a room action fires (page visit OR task completion)
+  useEffect(() => {
+    const handler = () => setRoomActivity(loadRoomActivity())
+    window.addEventListener('varsityos:room_activity', handler)
+    return () => window.removeEventListener('varsityos:room_activity', handler)
+  }, [])
+
+  // Map XP events → room activity so any task completion lights up the ring
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { eventName } = (e as CustomEvent<{ eventName: string; xp: number }>).detail ?? {}
+      const roomId = eventName ? XP_EVENT_TO_ROOM[eventName] : undefined
+      if (roomId) recordRoomActivity(roomId)
+    }
+    window.addEventListener('varsityos:xp', handler)
+    return () => window.removeEventListener('varsityos:xp', handler)
+  }, [])
 
   // Close sheet on navigation
   useEffect(() => { setOpenSheet(null) }, [pathname])
@@ -196,13 +184,8 @@ export function BottomNav() {
 
   const openRoom = ROOMS.find(r => r.id === openSheet) ?? null
 
-  // Always open sheet on first tap — users pick the exact section from there
   const handleRoomTap = (room: RoomDef) => {
-    recordRoomVisit(room.id)
-    setRoomActivity(prev => {
-      const current = prev[room.id] ?? 0
-      return { ...prev, [room.id]: Math.max(current, 1 / 7) }
-    })
+    recordRoomActivity(room.id)
     setOpenSheet(prev => prev === room.id ? null : room.id)
     trackEvent('feature_opened', { feature: room.label.toLowerCase(), path: room.primaryHref, source: 'bottom_nav' })
   }
@@ -237,7 +220,6 @@ export function BottomNav() {
       >
         {openRoom && (
           <>
-            {/* Sheet header — tap label to go to primary page */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <Link
                 href={openRoom.primaryHref}
@@ -261,7 +243,6 @@ export function BottomNav() {
               </button>
             </div>
 
-            {/* 4-col quick links grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               {openRoom.quickLinks.map(link => {
                 const base   = link.href.split('?')[0]
@@ -324,7 +305,8 @@ export function BottomNav() {
           {ROOMS.map(room => {
             const isActive  = activeRoomId === room.id
             const isOpen    = openSheet === room.id
-            const highlight = isActive || isOpen  // lit when on this room OR sheet is open
+            const highlight = isActive || isOpen
+            const fill      = roomActivity[room.id] ?? 0
 
             return (
               <Link
@@ -334,14 +316,16 @@ export function BottomNav() {
                   e.preventDefault()
                   handleRoomTap(room)
                 }}
-                className="flex flex-col items-center justify-center gap-0.5 flex-1 relative select-none"
+                className="flex flex-col items-center justify-center flex-1 relative select-none"
                 style={{
                   color: highlight ? room.color : 'rgba(255,255,255,0.32)',
                   textDecoration: 'none',
                   transition: 'color 0.15s',
+                  gap: 2,
+                  paddingTop: 6,
                 }}
               >
-                {/* Active indicator bar */}
+                {/* Active indicator bar at top */}
                 {highlight && (
                   <span style={{
                     position: 'absolute', top: 0, left: '20%', right: '20%',
@@ -351,7 +335,7 @@ export function BottomNav() {
                   }} />
                 )}
 
-                {/* Active room gets a subtle bg pill */}
+                {/* Icon pill */}
                 <span style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   width: 36, height: 28, borderRadius: 10,
@@ -360,34 +344,6 @@ export function BottomNav() {
                   fontSize: room.id === 'home' ? 17 : 18,
                   position: 'relative',
                 }}>
-                  {/* Activity ring — fills based on days active in last 7 */}
-                  {(roomActivity[room.id] ?? 0) > 0 && (() => {
-                    const fill = roomActivity[room.id] ?? 0
-                    const r = 20
-                    const circ = 2 * Math.PI * r
-                    return (
-                      <svg
-                        width={48} height={48}
-                        aria-hidden="true"
-                        style={{
-                          position: 'absolute', top: '50%', left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          pointerEvents: 'none', overflow: 'visible',
-                        }}
-                      >
-                        {/* Track */}
-                        <circle cx={24} cy={24} r={r} fill="none"
-                          stroke={`${room.color}20`} strokeWidth={2.5} />
-                        {/* Fill arc */}
-                        <circle cx={24} cy={24} r={r} fill="none"
-                          stroke={room.color} strokeWidth={2.5} strokeLinecap="round"
-                          strokeDasharray={`${fill * circ} ${circ}`}
-                          transform="rotate(-90 24 24)"
-                          style={{ transition: 'stroke-dasharray 0.7s ease', filter: fill >= 1 ? `drop-shadow(0 0 3px ${room.color})` : 'none' }}
-                        />
-                      </svg>
-                    )
-                  })()}
                   {room.icon}
                   {/* Streak badge on Home */}
                   {room.id === 'home' && streakCount > 0 && (
@@ -407,6 +363,29 @@ export function BottomNav() {
                       position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
                       fontSize: 7, color: room.color, lineHeight: 1,
                     }}>▲</span>
+                  )}
+                </span>
+
+                {/* ── Activity line ring ── fills left-to-right based on days active / 7 */}
+                <span style={{
+                  width: '72%',
+                  height: 3,
+                  borderRadius: 2,
+                  background: fill > 0 ? `${room.color}20` : 'transparent',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  flexShrink: 0,
+                }}>
+                  {fill > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      left: 0, top: 0, bottom: 0,
+                      width: `${Math.min(fill * 100, 100)}%`,
+                      background: room.color,
+                      borderRadius: 2,
+                      boxShadow: fill >= 1 ? `0 0 5px ${room.color}` : 'none',
+                      transition: 'width 0.7s ease',
+                    }} />
                   )}
                 </span>
 

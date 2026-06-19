@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Welcome to Nova — VarsityOS' }
@@ -32,7 +33,8 @@ export default async function UpgradeSuccessPage() {
   const name = ((profile as { full_name?: string | null } | null)?.full_name || '').split(' ')[0] || 'there'
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="nova" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TopBar title="" />
 
       <div className="max-w-sm mx-auto px-4 py-12 flex flex-col items-center text-center">

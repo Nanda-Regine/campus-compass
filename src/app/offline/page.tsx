@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { WifiOff, RefreshCw, BookOpen, Wallet, Zap } from 'lucide-react'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const CACHED_PAGES = [
   { href: '/dashboard',  icon: '🏠', label: 'Dashboard',  desc: 'Daily brief + tasks' },
@@ -45,8 +46,11 @@ export default function OfflinePage() {
         justifyContent: 'center',
         padding: '24px 20px',
         background: 'var(--bg-base)',
+        position: 'relative',
+        overflowX: 'hidden',
       }}
     >
+      <AmbientImage zone="gradient-pink" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div style={{ width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* Icon */}

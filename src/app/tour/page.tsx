@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 const TourWizard = dynamic(() => import('@/components/tour/TourWizard'), { ssr: false })
 
@@ -18,7 +19,8 @@ export default async function TourPage() {
     .single()
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="onboarding" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TourWizard defaultLang={(profile?.preferred_language as string) ?? 'en'} />
     </div>
   )

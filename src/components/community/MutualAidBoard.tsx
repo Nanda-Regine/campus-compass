@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { dispatchXP } from '@/lib/xp-engine'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type AidCategory =
@@ -289,7 +290,8 @@ export default function MutualAidBoard({
   const categories = Object.entries(CATEGORY_CONFIG) as [AidCategory, { label: string; icon: string }][]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb' }} className="pb-24">
+    <div style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', position: 'relative', overflowX: 'hidden' }} className="pb-24">
+      <AmbientImage zone="design" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       {/* Ubuntu quote header */}
       <div
         style={{

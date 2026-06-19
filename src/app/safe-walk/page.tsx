@@ -1,6 +1,7 @@
 import SafeWalk from '@/components/safety/SafeWalk'
 import GBVResponseGuide from '@/components/safety/GBVResponseGuide'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Safe Walk — VarsityOS' }
 
@@ -15,7 +16,8 @@ export default async function SafeWalkPage() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0a0a0f', paddingBottom: '80px' }}>
+    <main style={{ minHeight: '100vh', background: '#0a0a0f', paddingBottom: '80px', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="safety" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div style={{ padding: '24px 16px 8px' }}>
         <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#e5e7eb' }}>Safety</h1>
         <p style={{ fontSize: '13px', color: '#9ca3af', marginTop: '4px' }}>Campus safety tools, always available offline</p>

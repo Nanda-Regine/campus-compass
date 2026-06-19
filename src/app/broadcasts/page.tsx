@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import TopBar from '@/components/layout/TopBar'
 import BroadcastOS from '@/components/broadcasts/BroadcastOS'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'Broadcasts · VarsityOS' }
 
@@ -42,7 +43,8 @@ export default async function BroadcastsPage() {
     .maybeSingle()
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="amoled" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TopBar title="Broadcasts" />
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
         <BroadcastOS

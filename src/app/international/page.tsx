@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import InternationalStudentHub from '@/components/international/InternationalStudentHub'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata: Metadata = {
   title: 'International Student Hub — VarsityOS',
@@ -14,7 +15,8 @@ export default async function InternationalPage() {
   if (!user) redirect('/auth/login')
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-primary)', fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-primary)', fontFamily: 'system-ui, sans-serif', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="movement" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '24px 16px 80px' }}>
         <InternationalStudentHub />
       </div>

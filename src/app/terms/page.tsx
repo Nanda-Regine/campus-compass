@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] text-white/80">
+    <div className="min-h-screen bg-[var(--bg-base)] text-white/80" style={{ position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="impasto" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back

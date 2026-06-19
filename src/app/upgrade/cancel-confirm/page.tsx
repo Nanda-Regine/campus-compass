@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import TopBar from '@/components/layout/TopBar'
 import Link from 'next/link'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata: Metadata = { title: 'Payment Cancelled — VarsityOS' }
 
 export default function UpgradeCancelConfirmPage() {
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)' }}>
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="budget" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TopBar title="" />
 
       <div className="max-w-sm mx-auto px-4 py-12 flex flex-col items-center text-center">

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { dispatchXP } from '@/lib/xp-engine'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WisdomCategory =
@@ -461,9 +462,10 @@ export default function WisdomArchive({
 
   return (
     <div
-      style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb' }}
+      style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', position: 'relative', overflowX: 'hidden' }}
       className="pb-24"
     >
+      <AmbientImage zone="vibrant" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       {/* Header */}
       <div
         style={{

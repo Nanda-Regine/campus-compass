@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface Section {
   index: number
@@ -301,10 +302,11 @@ export default function ReaderPage() {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: t.bg, overflow: 'hidden', transition: 'background 0.25s' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: t.bg, overflow: 'hidden', transition: 'background 0.25s', overflowX: 'hidden' }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
+      <AmbientImage zone="study" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       {/* ── Top bar ── */}
       <div style={{
         flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8,

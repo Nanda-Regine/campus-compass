@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 type Lang = 'en' | 'zu' | 'xh' | 'af' | 'st' | 'tn' | 'nso' | 'ts' | 'ss' | 've' | 'nr'
 
@@ -315,7 +316,9 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         width: '100%', maxWidth: 440, margin: '0 auto', padding: '32px 24px',
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(148,111,255,0.18)',
         borderRadius: 20, boxShadow: '0 0 60px rgba(168,85,247,0.12)',
+        position: 'relative', overflowX: 'hidden',
       }}>
+        <AmbientImage zone="onboarding" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🌍</div>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(168,85,247,0.7)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>
@@ -359,7 +362,8 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
   const progress = ((step + 1) / totalSteps) * 100
 
   return (
-    <div style={{ width: '100%', maxWidth: 480, margin: '0 auto', padding: '0 16px' }}>
+    <div style={{ width: '100%', maxWidth: 480, margin: '0 auto', padding: '0 16px', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="onboarding" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       {/* Progress bar */}
       <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 28, overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${progress}%`, background: `linear-gradient(90deg, ${ACCENT}, ${TEAL})`, transition: 'width 400ms ease', borderRadius: 2 }} />

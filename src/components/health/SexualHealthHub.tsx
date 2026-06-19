@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 type Tab = 'hiv_prep' | 'emergency' | 'gbv' | 'stis' | 'contraception'
 
@@ -198,7 +199,8 @@ export default function SexualHealthHub({ userId }: { userId: string | null }) {
   const [activeTab, setActiveTab] = useState<Tab>('hiv_prep')
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '0 0 80px 0' }}>
+    <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '0 0 80px 0', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="wellness" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 16px' }}>
         <div style={{ padding: '28px 0 20px' }}>
           <h1 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: '6px' }}>Sexual & Reproductive Health</h1>

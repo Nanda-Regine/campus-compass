@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Megaphone, Users2, FileEdit, Info, Heart, Eye, Pin, AlertTriangle, ChevronDown } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Post {
@@ -89,7 +90,8 @@ export default function SRCAnalyticsOS({ userId, initialPosts, members, isSrcMem
   const activeTab = TAB_CONFIG.find(t => t.id === tab)!
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
 
       {/* Vertical tab rail */}
       <div style={{

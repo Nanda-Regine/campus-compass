@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 interface InviteData {
   invite: {
@@ -94,7 +95,8 @@ function JoinGroupContent() {
   const creatorName = assignment?.profiles?.full_name || 'A classmate'
 
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6" style={{ position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="community" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <div className="max-w-sm w-full text-center">
         <div className="w-16 h-16 rounded-2xl bg-teal-600/20 border border-teal-600/30 flex items-center justify-center text-3xl mx-auto mb-5">
           👥

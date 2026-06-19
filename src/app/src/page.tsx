@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TopBar from '@/components/layout/TopBar'
 import SRCAnalyticsOS from '@/components/src/SRCAnalyticsOS'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 export const metadata = { title: 'SRC · VarsityOS' }
 
@@ -47,7 +48,8 @@ export default async function SRCPage() {
   const isSrcMember = !!myMembership
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
+      <AmbientImage zone="vibzztime" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
       <TopBar title="SRC" />
       <SRCAnalyticsOS
         userId={user.id}
