@@ -10,7 +10,7 @@ const ProcrastinationProfiler = dynamic(
   { ssr: false }
 )
 
-const newFeatures = [
+const healthRooms = [
   {
     href: '/health/sexual',
     icon: '💜',
@@ -19,17 +19,10 @@ const newFeatures = [
     color: '#f472b6',
   },
   {
-    href: '/health/cycle',
-    icon: '🌸',
-    title: 'Cycle Tracker',
-    description: 'Track your cycle and sync with study planning',
-    color: '#a78bfa',
-  },
-  {
     href: '/safe-walk',
     icon: '🛡️',
     title: 'Safe Walk',
-    description: 'Walk safely with a check-in timer',
+    description: 'Walk safely with a live check-in timer',
     color: '#f87171',
   },
 ]
@@ -47,6 +40,41 @@ export default async function HealthPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative' }}>
       <AmbientImage zone="wellness" opacity={0.35} blurPx={18} saturation={1.2} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
+
+        {/* ── Featured: Cycle Tracker ── */}
+        <Link href="/health/cycle" style={{ display: 'block', textDecoration: 'none', marginBottom: 20 }}>
+          <div style={{
+            borderRadius: 20, overflow: 'hidden',
+            background: 'linear-gradient(135deg, rgba(167,139,250,0.12), rgba(244,114,182,0.07))',
+            border: '1px solid rgba(167,139,250,0.22)',
+            padding: '20px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(167,139,250,0.18)', fontSize: 26,
+              }}>🌸</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 16, marginBottom: 2 }}>Cycle Tracker</div>
+                <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 1.5 }}>
+                  Track your phase, symptoms & sync with study planning
+                </div>
+              </div>
+              <span style={{ color: '#a78bfa', fontSize: 20 }}>→</span>
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {['🩸 Period tracking', '💊 Contraception', '⚡ Phase intelligence', '📊 7-day forecast'].map(tag => (
+                <span key={tag} style={{
+                  padding: '3px 9px', borderRadius: 20, fontSize: 10,
+                  background: 'rgba(167,139,250,0.1)', color: '#a78bfa',
+                  fontFamily: '"JetBrains Mono",monospace',
+                }}>{tag}</span>
+              ))}
+            </div>
+          </div>
+        </Link>
+
         <WhenYouAreSick university={university} />
 
         {/* Mind OS — Procrastination Profiler */}
@@ -57,13 +85,13 @@ export default async function HealthPage() {
           <ProcrastinationProfiler />
         </div>
 
-        {/* New Features */}
-        <div style={{ marginTop: '32px' }}>
+        {/* More health rooms */}
+        <div style={{ marginTop: '28px' }}>
           <h2 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
-            New Features
+            More Health Rooms
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
-            {newFeatures.map((f) => (
+            {healthRooms.map((f) => (
               <Link
                 key={f.href}
                 href={f.href}
@@ -78,28 +106,16 @@ export default async function HealthPage() {
                   textDecoration: 'none',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: '24px',
-                    width: '44px',
-                    height: '44px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: `${f.color}20`,
-                    borderRadius: '12px',
-                    flexShrink: 0,
-                  }}
-                >
+                <div style={{
+                  fontSize: '24px', width: '44px', height: '44px', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: `${f.color}20`, borderRadius: '12px',
+                }}>
                   {f.icon}
                 </div>
                 <div>
-                  <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '15px' }}>
-                    {f.title}
-                  </div>
-                  <div style={{ color: '#9ca3af', fontSize: '13px', marginTop: '2px' }}>
-                    {f.description}
-                  </div>
+                  <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '15px' }}>{f.title}</div>
+                  <div style={{ color: '#9ca3af', fontSize: '13px', marginTop: '2px' }}>{f.description}</div>
                 </div>
               </Link>
             ))}

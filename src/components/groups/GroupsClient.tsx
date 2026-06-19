@@ -498,7 +498,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
     return (
       <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
-        <AmbientImage zone="study" opacity={0.10} blurPx={26} saturation={1.1} overlayColor="rgba(5,4,12,0.76)" />
+        <AmbientImage zone="study" opacity={0.22} blurPx={22} saturation={1.2} overlayColor="rgba(5,4,12,0.70)" />
 
         {/* Side rail */}
         <div style={{
@@ -1225,31 +1225,31 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
           {/* ── Playbook tab ── */}
           {detailTab === 'tips' && (
-            <>
+            <div style={{ overflowX: 'hidden', minWidth: 0 }}>
               <div className="bg-indigo-500/6 border border-indigo-500/15 rounded-xl px-3 py-2.5">
                 <p className="font-mono text-[0.58rem] text-indigo-400 font-bold mb-1">📘 Group Assignment OS vs Study Pods</p>
-                <p className="font-mono text-[0.58rem] text-white/45 leading-relaxed">
+                <p className="font-mono text-[0.58rem] text-white/45 leading-relaxed" style={{ wordBreak: 'break-word' }}>
                   <span className="text-teal-400">Groups</span> = structured assignment collaboration (tasks, roles, scope, deadlines, conflicts).
                   <span className="text-indigo-400"> Study Pods</span> = accountability groups for solo study — check-ins, compound streaks, presence.
                 </p>
               </div>
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">Survival guide from research and books — applied to SA student group assignments.</p>
+                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed" style={{ wordBreak: 'break-word' }}>Survival guide from research and books — applied to SA student group assignments.</p>
               </div>
               {[
                 { book: 'Getting Things Done — David Allen', color: '#38BDF8', tip: 'Capture everything into a shared task list before your first meeting. Every action needs an owner and a due date. If it has no owner, it will not happen.' },
                 { book: 'Atomic Habits — James Clear', color: 'var(--teal)', tip: '2-minute rule: if a task takes under 2 minutes, do it now. Assign micro-tasks with specific due times — "intro draft by Tuesday 6pm", not "soon".' },
-                { book: 'The Five Dysfunctions of a Team — Lencioni', color: '#a78bfa', tip: '5 common failures: (1) Absence of trust. (2) Fear of conflict. (3) Lack of commitment. (4) Avoidance of accountability. (5) Inattention to results. Fix: weekly 5-minute check-in before submission week.' },
+                { book: 'The Five Dysfunctions — Lencioni', color: '#a78bfa', tip: '5 common failures: (1) Absence of trust. (2) Fear of conflict. (3) Lack of commitment. (4) Avoidance of accountability. (5) Inattention to results. Fix: weekly 5-minute check-in before submission week.' },
                 { book: 'Deep Work — Cal Newport', color: '#6366F1', tip: 'Split into solo deep-work blocks, then collaborative review sessions. Writing and research are individual tasks. Don\'t do deep work in a group setting.' },
                 { book: 'Crucial Conversations — Patterson et al.', color: '#f59e0b', tip: 'Address poor performance privately: "I noticed you haven\'t submitted the literature review — is something blocking you?" Calling someone out publicly creates resentment, not productivity.' },
-                { book: 'SA university group work research', color: '#fb7185', tip: 'Common failures: (1) Starting writing in the last 48h. (2) Merging 5 Word documents in the final hour. Fix: use Google Docs from day 1 — one document, everyone editing simultaneously.' },
+                { book: 'SA university group work research', color: '#fb7185', tip: 'Common failures: (1) Starting writing in the last 48h. (2) Merging 5 Word docs in the final hour. Fix: use Google Docs from day 1 — one document, everyone editing simultaneously.' },
               ].map(t => (
-                <div key={t.book} className="bg-white/3 border border-white/7 rounded-xl p-3" style={{ borderLeft: `3px solid ${t.color}` }}>
-                  <p className="font-mono text-[0.55rem] mb-2" style={{ color: t.color }}>{t.book}</p>
-                  <p className="font-mono text-[0.65rem] text-white/55 leading-relaxed">{t.tip}</p>
+                <div key={t.book} className="bg-white/3 border border-white/7 rounded-xl p-3" style={{ borderLeft: `3px solid ${t.color}`, minWidth: 0 }}>
+                  <p className="font-mono text-[0.58rem] mb-2" style={{ color: t.color, wordBreak: 'break-word' }}>{t.book}</p>
+                  <p className="font-mono text-[0.65rem] text-white/55 leading-relaxed" style={{ wordBreak: 'break-word' }}>{t.tip}</p>
                 </div>
               ))}
-            </>
+            </div>
           )}
         </div>
         </div>

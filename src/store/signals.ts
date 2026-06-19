@@ -27,6 +27,7 @@ export type Signal =
   | { type: 'regulation_completed'; payload: { sessionType: string; durationSeconds: number } }
   | { type: 'ns_score_updated';     payload: { score: number } }
   | { type: 'cycle_phase_logged';   payload: { phase: string; energyLevel: number | null } }
+  | { type: 'contra_reminder';      payload: { kind: 'pill' | 'injection'; message?: string; daysLeft?: number; overdue?: boolean } }
   // Habits & Growth
   | { type: 'habit_completed';       payload: { habitId: string; habitName: string; streakDays: number; pack: string } }
   | { type: 'gratitude_logged';      payload: { date: string; entries: [string, string, string] } }

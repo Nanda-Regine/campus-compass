@@ -138,34 +138,118 @@ const NATIONAL_OUTCOMES: Record<string, OutcomeData> = {
 }
 const NATIONAL_DEGREES = Object.keys(NATIONAL_OUTCOMES)
 
-/* All 26 SA public universities (curated-data institutions appear first). */
-const INSTITUTION_LIST = [
-  'University of Cape Town (UCT)',
-  'University of the Witwatersrand (Wits)',
-  'Stellenbosch University (SU)',
-  'University of Pretoria (UP)',
-  'University of Johannesburg (UJ)',
-  'University of KwaZulu-Natal (UKZN)',
-  'North-West University (NWU)',
-  'University of the Free State (UFS)',
-  'Rhodes University (RU)',
-  'University of the Western Cape (UWC)',
-  'Nelson Mandela University (NMU)',
-  'University of South Africa (UNISA)',
-  'University of Limpopo (UL)',
-  'University of Venda (Univen)',
-  'University of Fort Hare (UFH)',
-  'University of Zululand (UNIZULU)',
-  'Walter Sisulu University (WSU)',
-  'Sol Plaatje University (SPU)',
-  'University of Mpumalanga (UMP)',
-  'Sefako Makgatho Health Sciences University (SMU)',
-  'Tshwane University of Technology (TUT)',
-  'Cape Peninsula University of Technology (CPUT)',
-  'Durban University of Technology (DUT)',
-  'Central University of Technology (CUT)',
-  'Vaal University of Technology (VUT)',
-  'Mangosuthu University of Technology (MUT)',
+const INSTITUTION_GROUPS: { label: string; items: string[] }[] = [
+  {
+    label: 'Traditional Universities',
+    items: [
+      'University of Cape Town (UCT)',
+      'University of the Witwatersrand (Wits)',
+      'Stellenbosch University (SU)',
+      'University of Pretoria (UP)',
+      'University of Johannesburg (UJ)',
+      'University of KwaZulu-Natal (UKZN)',
+      'North-West University (NWU)',
+      'University of the Free State (UFS)',
+      'Rhodes University (RU)',
+      'University of the Western Cape (UWC)',
+      'Nelson Mandela University (NMU)',
+      'University of South Africa (UNISA)',
+      'University of Limpopo (UL)',
+      'University of Venda (Univen)',
+      'University of Fort Hare (UFH)',
+      'University of Zululand (UNIZULU)',
+      'Walter Sisulu University (WSU)',
+      'Sol Plaatje University (SPU)',
+      'University of Mpumalanga (UMP)',
+      'Sefako Makgatho Health Sciences University (SMU)',
+    ],
+  },
+  {
+    label: 'Universities of Technology',
+    items: [
+      'Tshwane University of Technology (TUT)',
+      'Cape Peninsula University of Technology (CPUT)',
+      'Durban University of Technology (DUT)',
+      'Central University of Technology (CUT)',
+      'Vaal University of Technology (VUT)',
+      'Mangosuthu University of Technology (MUT)',
+    ],
+  },
+  {
+    label: 'TVET Colleges',
+    items: [
+      'Boland TVET College',
+      'Buffalo City TVET College',
+      'Capricorn TVET College',
+      'Central Johannesburg TVET College',
+      'Coastal KZN TVET College',
+      'College of Cape Town (CCT)',
+      'Eastcape Midlands TVET College',
+      'Ehlanzeni TVET College',
+      'Elangeni TVET College',
+      'Esayidi TVET College',
+      'False Bay TVET College',
+      'Flavius Mareka TVET College',
+      'George TVET College',
+      'Gert Sibande TVET College',
+      'Goldfields TVET College',
+      'Ikhala TVET College',
+      'Ingwe TVET College',
+      'King Hintsa TVET College',
+      'King Sabata Dalindyebo TVET College',
+      'Lephalale TVET College',
+      'Letaba TVET College',
+      'Lovedale TVET College',
+      'Majuba TVET College',
+      'Maluti TVET College',
+      'Mnambithi TVET College',
+      'Mopani South East TVET College',
+      'Motheo TVET College',
+      'Mthashana TVET College',
+      'Nkangala TVET College',
+      'Northern Cape Rural TVET College',
+      'Northern Cape Urban TVET College',
+      'Northlink TVET College',
+      'Orbit TVET College',
+      'Port Elizabeth TVET College',
+      'Sekhukhune TVET College',
+      'South Cape TVET College',
+      'South West Gauteng TVET College',
+      'Taletso TVET College',
+      'Tshwane North TVET College',
+      'Tshwane South TVET College',
+      'Umfolozi TVET College',
+      'Umgungundlovu TVET College',
+      'Vhembe TVET College',
+      'Vuselela TVET College',
+      'Waterberg TVET College',
+      'West Coast TVET College',
+      'Western TVET College',
+      'Westside TVET College',
+      'Winnie Mandela TVET College',
+    ],
+  },
+  {
+    label: 'Private Higher Education',
+    items: [
+      'AFDA (School of the Creative Economy)',
+      'Boston City Campus & Business College',
+      'Cornerstone Institute',
+      'CTI Education Group',
+      'Da Vinci Institute',
+      'Damelin',
+      'Eduvos (Pearson Institute)',
+      'IMM Graduate School',
+      'IIE Varsity College',
+      'IIE Rosebank College',
+      'IIE MSA (Management College of SA)',
+      'IIE Milpark Education',
+      'MANCOSA',
+      'Regent Business School',
+      'Richfield Graduate Institute',
+      'Stadio Higher Education',
+    ],
+  },
 ]
 
 /* ── Salary calculator helpers ──────────────────────────────── */
@@ -271,9 +355,13 @@ export default function GraduateOutcomes() {
             boxSizing: 'border-box',
           }}
         >
-          <option value="" disabled style={{ background: '#0a0a0f' }}>Choose a university…</option>
-          {INSTITUTION_LIST.map(inst => (
-            <option key={inst} value={inst} style={{ background: '#0a0a0f' }}>{inst}</option>
+          <option value="" disabled style={{ background: '#0a0a0f' }}>Choose your institution…</option>
+          {INSTITUTION_GROUPS.map(group => (
+            <optgroup key={group.label} label={group.label}>
+              {group.items.map(inst => (
+                <option key={inst} value={inst} style={{ background: '#0a0a0f' }}>{inst}</option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </div>

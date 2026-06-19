@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { signals } from '@/store/signals'
+import { AmbientImage } from '@/components/ui/AmbientImage'
 
 type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal'
 type FlowLevel  = 'none' | 'light' | 'medium' | 'heavy'
@@ -142,14 +143,31 @@ function ContraceptionTracker() {
   const [mounted,      setMounted]      = useState(false)
 
   useEffect(() => {
-    setMethod((localStorage.getItem('varsityos_contra_method') as ContraMethod) ?? 'none')
+    const storedMethod = (localStorage.getItem('varsityos_contra_method') as ContraMethod) ?? 'none'
+    const storedPillTaken = localStorage.getItem(`varsityos_pill_taken_${today}`) === 'true'
+    const storedInjDate = localStorage.getItem('varsityos_contra_injection_last') ?? ''
+
+    setMethod(storedMethod)
     setPillTime(localStorage.getItem('varsityos_contra_pill_time') ?? '08:00')
-    setPillTaken(localStorage.getItem(`varsityos_pill_taken_${today}`) === 'true')
-    setInjDate(localStorage.getItem('varsityos_contra_injection_last') ?? '')
+    setPillTaken(storedPillTaken)
+    setInjDate(storedInjDate)
     setImplantDate(localStorage.getItem('varsityos_contra_implant_placed') ?? '')
     setIudDate(localStorage.getItem('varsityos_contra_iud_placed') ?? '')
     setIudYears(parseInt(localStorage.getItem('varsityos_contra_iud_years') ?? '5'))
     setMounted(true)
+
+    // Emit dashboard alerts for contraception
+    if (storedMethod === 'pill' && !storedPillTaken) {
+      signals.emit({ type: 'contra_reminder', payload: { kind: 'pill', message: 'Pill not taken today' } })
+    }
+    if ((storedMethod === 'depo' || storedMethod === 'nur-isterate') && storedInjDate) {
+      const weeks = storedMethod === 'depo' ? 12 : 8
+      const next = addWeeks(new Date(storedInjDate), weeks)
+      const daysLeft = daysBetween(new Date(), next)
+      if (daysLeft <= 14) {
+        signals.emit({ type: 'contra_reminder', payload: { kind: 'injection', daysLeft, overdue: daysLeft <= 0 } })
+      }
+    }
   }, [today])
 
   const save = () => {
@@ -466,6 +484,17 @@ const infoValue: React.CSSProperties = {
   fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#e5e7eb',
 }
 
+function estimatePhaseFromDate(lastPeriodDateStr: string): CyclePhase {
+  const start = new Date(lastPeriodDateStr + 'T00:00:00')
+  const now = new Date(); now.setHours(0, 0, 0, 0)
+  const daysSince = Math.max(1, Math.floor((now.getTime() - start.getTime()) / 86400000) + 1)
+  const cycleDay = ((daysSince - 1) % 28) + 1
+  if (cycleDay <= 5) return 'menstrual'
+  if (cycleDay <= 14) return 'follicular'
+  if (cycleDay <= 17) return 'ovulation'
+  return 'luteal'
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function CycleTracker({ userId }: { userId: string }) {
@@ -481,6 +510,8 @@ export default function CycleTracker({ userId }: { userId: string }) {
   const [modalSymptoms, setModalSymptoms] = useState<string[]>([])
   const [modalNotes,    setModalNotes]    = useState('')
   const [saving,        setSaving]        = useState(false)
+  const [showWizard,    setShowWizard]    = useState(false)
+  const [wizardDate,    setWizardDate]    = useState('')
 
   const supabase = useMemo(() => createClient(), [])
 
@@ -558,7 +589,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ color: '#9ca3af' }}>Loading your cycle data...</div>
       </div>
     )
@@ -568,14 +599,83 @@ export default function CycleTracker({ userId }: { userId: string }) {
   const scInfo = sciencePhase ? PHASE_INFO[sciencePhase] : null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '0 0 80px' }}>
-      <div style={{ maxWidth: 640, margin: '0 auto', padding: '0 16px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', padding: '0 0 80px', position: 'relative' }}>
+      <AmbientImage zone="wellness" opacity={0.28} blurPx={20} saturation={1.3} overlayColor="rgba(10,8,20,0.65)" />
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 640, margin: '0 auto', padding: '0 16px' }}>
 
         {/* Header */}
         <div style={{ padding: '28px 0 20px' }}>
           <h1 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: 4 }}>Cycle Tracker</h1>
           <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Track your phases, symptoms, and understand your body.</p>
         </div>
+
+        {/* Phase wizard — shown when no entries logged yet */}
+        {!latestEntry && (
+          <div style={{
+            background: 'rgba(244,114,182,0.07)', border: '1px solid rgba(244,114,182,0.20)',
+            borderRadius: 16, padding: 18, marginBottom: 20,
+          }}>
+            <div style={{ color: '#f472b6', fontWeight: 700, fontSize: '0.95rem', marginBottom: 6 }}>
+              🌸 Not sure what phase you're in?
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: 14 }}>
+              No problem. Tell us when your last period started and we'll estimate your current phase so you can start immediately.
+            </p>
+            {!showWizard ? (
+              <button
+                onClick={() => setShowWizard(true)}
+                style={{
+                  padding: '9px 20px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                  background: 'rgba(244,114,182,0.18)', color: '#f472b6',
+                  fontFamily: 'DM Sans,sans-serif', fontSize: 13, fontWeight: 600,
+                }}
+              >
+                Estimate my phase →
+              </button>
+            ) : (
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                <div style={{ flex: 1, minWidth: 160 }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', marginBottom: 6, letterSpacing: '0.12em' }}>
+                    MY LAST PERIOD STARTED ON
+                  </div>
+                  <input
+                    type="date" value={wizardDate}
+                    onChange={e => setWizardDate(e.target.value)}
+                    max={today}
+                    style={{
+                      width: '100%', padding: '10px 12px', borderRadius: 10, boxSizing: 'border-box',
+                      background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(244,114,182,0.25)',
+                      color: '#e5e7eb', fontSize: 13, outline: 'none',
+                    }}
+                  />
+                </div>
+                <button
+                  disabled={!wizardDate}
+                  onClick={() => {
+                    if (!wizardDate) return
+                    const phase = estimatePhaseFromDate(wizardDate)
+                    setModalPhase(phase)
+                    setModalFlow(phase === 'menstrual' ? 'medium' : 'none')
+                    setModalEnergy(3)
+                    setModalSymptoms([])
+                    setModalNotes(`Estimated from last period date: ${wizardDate}`)
+                    setLogModal({ date: today })
+                    setShowWizard(false)
+                    setWizardDate('')
+                  }}
+                  style={{
+                    padding: '10px 20px', borderRadius: 10, border: 'none', cursor: wizardDate ? 'pointer' : 'default',
+                    background: wizardDate ? '#f472b6' : 'rgba(255,255,255,0.08)',
+                    color: wizardDate ? '#000' : 'rgba(255,255,255,0.3)',
+                    fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, flexShrink: 0,
+                  }}
+                >
+                  Calculate
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Cycle Day Panel */}
         {cycleDay !== null && (

@@ -11,7 +11,29 @@ interface StreakData {
   streak: number
   longestStreak: number
   todayDone: boolean
+  last7days: boolean[]
 }
+
+const TIERS = [
+  { name: 'Spark',   min: 1,  max: 6,   color: '#60A5FA', emoji: '✨', bg: 'rgba(96,165,250,0.08)',  glow: 'rgba(96,165,250,0.15)'  },
+  { name: 'Flame',   min: 7,  max: 13,  color: '#F97316', emoji: '🔥', bg: 'rgba(249,115,22,0.08)',  glow: 'rgba(249,115,22,0.18)'  },
+  { name: 'Blaze',   min: 14, max: 29,  color: '#F59E0B', emoji: '⚡', bg: 'rgba(245,158,11,0.08)',  glow: 'rgba(245,158,11,0.18)'  },
+  { name: 'Inferno', min: 30, max: 59,  color: '#EF4444', emoji: '💎', bg: 'rgba(239,68,68,0.08)',   glow: 'rgba(239,68,68,0.18)'   },
+  { name: 'Legend',  min: 60, max: 9999,color: '#A855F7', emoji: '🏆', bg: 'rgba(168,85,247,0.08)', glow: 'rgba(168,85,247,0.18)'  },
+]
+function getTier(s: number) { return TIERS.find(t => s >= t.min && s <= t.max) ?? null }
+
+const MILESTONES = [
+  { days: 3,   label: '3 Days',   emoji: '🌱', xp: 50   },
+  { days: 7,   label: '1 Week',   emoji: '🔥', xp: 150  },
+  { days: 14,  label: '2 Weeks',  emoji: '⚡', xp: 300  },
+  { days: 21,  label: '21 Days',  emoji: '💪', xp: 500  },
+  { days: 30,  label: '1 Month',  emoji: '💎', xp: 750  },
+  { days: 60,  label: '2 Months', emoji: '🏆', xp: 1500 },
+  { days: 100, label: '100 Days', emoji: '🌟', xp: 3000 },
+]
+
+const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 interface SavingsGoal {
   id: string
@@ -124,9 +146,6 @@ export default function StreakPage() {
     setGoals(prev => prev.filter(g => g.id !== id))
   }
 
-  const streakEmoji = (s: number) => s >= 30 ? '🏆' : s >= 14 ? '💎' : s >= 7 ? '🔥' : s >= 3 ? '⚡' : '✨'
-  const streakColor = (s: number) => s >= 7 ? '#f59e0b' : s >= 3 ? '#f97316' : '#0d9488'
-
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
       <AmbientImage zone="habits" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
@@ -134,69 +153,144 @@ export default function StreakPage() {
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-5">
 
-        {/* ── Streak card ── */}
-        <div
-          className="rounded-2xl p-5 relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(249,115,22,0.05))',
-            border: '1px solid rgba(245,158,11,0.2)',
-          }}
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5 blur-2xl"
-            style={{ background: '#f59e0b', transform: 'translate(30%, -30%)' }} />
-          <div className="font-mono text-[0.58rem] text-amber-400/60 uppercase tracking-widest mb-3">Daily Streak</div>
+        {/* ── Streak Hero ── */}
+        {loading ? (
+          <div className="skeleton h-56 rounded-3xl" />
+        ) : (() => {
+          const s = streak?.streak ?? 0
+          const tier = getTier(s)
+          const accentColor = tier?.color ?? '#4ecf9e'
+          const nextMilestone = MILESTONES.find(m => m.days > s)
+          const prevMilestone = [...MILESTONES].reverse().find(m => m.days <= s)
+          const progressPct = nextMilestone
+            ? Math.round(((s - (prevMilestone?.days ?? 0)) / (nextMilestone.days - (prevMilestone?.days ?? 0))) * 100)
+            : 100
+          const days7 = streak?.last7days ?? Array(7).fill(false)
+          const todayIdx = new Date().getDay() // 0=Sun
+          const dayLabelOffset = (todayIdx === 0 ? 6 : todayIdx - 1) // index of today in Mon-Sun
+          return (
+            <div
+              className="rounded-3xl overflow-hidden relative"
+              style={{ background: tier?.bg ?? 'rgba(78,207,158,0.06)', border: `1px solid ${accentColor}28` }}
+            >
+              {/* Glow blob */}
+              <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
+                style={{ background: tier?.glow ?? 'rgba(78,207,158,0.10)' }} />
 
-          {loading ? (
-            <div className="skeleton h-12 rounded w-1/2" />
-          ) : streak ? (
-            <div className="flex items-end justify-between">
-              <div>
-                <div className="flex items-baseline gap-2 mb-1">
-                  <span className="font-display font-black text-5xl" style={{ color: streakColor(streak.streak) }}>
-                    {streak.streak}
-                  </span>
-                  <span className="font-mono text-sm text-white/40">days</span>
-                </div>
-                <div className="font-mono text-[0.6rem] text-white/30">
-                  {streak.todayDone
-                    ? '✓ Streak protected today'
-                    : streak.streak > 0
-                    ? '⚠ Complete a task to protect your streak'
-                    : 'Complete a task to start your streak'}
-                </div>
-                {streak.longestStreak > streak.streak && (
-                  <div className="font-mono text-[0.58rem] text-white/20 mt-1">
-                    Best: {streak.longestStreak} days
+              {/* Tier badge */}
+              <div className="px-5 pt-5 pb-0 flex items-center justify-between">
+                {tier ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                    style={{ background: `${accentColor}18`, border: `1px solid ${accentColor}35` }}>
+                    <span className="text-sm">{tier.emoji}</span>
+                    <span className="font-mono text-[0.62rem] font-bold uppercase tracking-widest" style={{ color: accentColor }}>
+                      {tier.name} Tier
+                    </span>
                   </div>
+                ) : (
+                  <span className="font-mono text-[0.62rem] text-white/25 uppercase tracking-widest">Daily Streak</span>
+                )}
+                {streak?.todayDone && (
+                  <span className="font-mono text-[0.6rem] px-2 py-1 rounded-full" style={{ background: 'rgba(78,207,158,0.12)', color: '#4ecf9e' }}>
+                    ✓ Done today
+                  </span>
                 )}
               </div>
-              <div className="text-5xl">{streakEmoji(streak.streak)}</div>
-            </div>
-          ) : (
-            <p className="font-mono text-sm text-white/30">Complete tasks to start tracking your streak</p>
-          )}
 
-          {/* Mini milestone bar */}
-          {streak && streak.streak > 0 && (
-            <div className="mt-4">
-              <div className="flex justify-between font-mono text-[0.65rem] text-white/25 mb-1.5">
-                {[3, 7, 14, 30].map(m => (
-                  <span key={m} style={{ color: streak.streak >= m ? streakColor(streak.streak) : undefined }}>
-                    {m}d {streak.streak >= m ? '✓' : ''}
-                  </span>
-                ))}
+              {/* Big number */}
+              <div className="px-5 pt-3 pb-2 flex items-end gap-3">
+                <span className="font-display font-black leading-none" style={{ fontSize: 72, color: accentColor }}>{s}</span>
+                <div className="pb-3">
+                  <div className="font-mono text-sm text-white/40">day{s !== 1 ? 's' : ''}</div>
+                  {streak && streak.longestStreak > s && (
+                    <div className="font-mono text-[0.58rem] text-white/20 mt-0.5">best: {streak.longestStreak}</div>
+                  )}
+                </div>
               </div>
-              <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${Math.min(100, (streak.streak / 30) * 100)}%`,
-                    background: `linear-gradient(90deg, ${streakColor(streak.streak)}, ${streakColor(streak.streak)}88)`,
-                  }}
-                />
+
+              {/* Status line */}
+              <div className="px-5 mb-4">
+                <div className="font-mono text-[0.65rem]" style={{ color: streak?.todayDone ? '#4ecf9e' : s > 0 ? '#f59e0b' : 'rgba(255,255,255,0.3)' }}>
+                  {streak?.todayDone
+                    ? '🔒 Streak locked in — see you tomorrow'
+                    : s > 0
+                    ? '⚡ Complete a task to protect your streak'
+                    : '🌱 Complete your first task to start a streak'}
+                </div>
               </div>
+
+              {/* 7-day activity grid */}
+              <div className="px-5 pb-4">
+                <div className="font-mono text-[0.55rem] text-white/25 uppercase tracking-widest mb-2">Last 7 days</div>
+                <div className="flex gap-1.5">
+                  {days7.map((done, i) => {
+                    const labelIdx = (dayLabelOffset - 6 + i + 7) % 7
+                    const isToday = i === 6
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                        <div
+                          className="w-full aspect-square rounded-lg flex items-center justify-center text-[0.6rem]"
+                          style={{
+                            background: done ? `${accentColor}28` : 'rgba(255,255,255,0.04)',
+                            border: isToday ? `1.5px solid ${accentColor}60` : done ? `1px solid ${accentColor}30` : '1px solid rgba(255,255,255,0.06)',
+                          }}
+                        >
+                          {done ? <span style={{ color: accentColor }}>✓</span> : <span className="text-white/15">·</span>}
+                        </div>
+                        <span className="font-mono text-[0.48rem] text-white/30">{DAY_LABELS[labelIdx]?.slice(0, 2)}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Next milestone progress */}
+              {nextMilestone && (
+                <div className="px-5 pb-5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-mono text-[0.58rem] text-white/35">
+                      Next: {nextMilestone.emoji} {nextMilestone.label} (+{nextMilestone.xp} XP)
+                    </span>
+                    <span className="font-mono text-[0.55rem]" style={{ color: accentColor }}>{nextMilestone.days - s}d away</span>
+                  </div>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${accentColor}, ${accentColor}88)` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          )
+        })()}
+
+        {/* ── Milestone unlocks ── */}
+        <div>
+          <div className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest mb-3">Milestones</div>
+          <div className="grid grid-cols-4 gap-2">
+            {MILESTONES.map(m => {
+              const s = streak?.streak ?? 0
+              const unlocked = s >= m.days
+              return (
+                <div
+                  key={m.days}
+                  className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl"
+                  style={{
+                    background: unlocked ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+                    border: unlocked ? `1px solid rgba(255,255,255,0.12)` : '1px solid rgba(255,255,255,0.04)',
+                    opacity: unlocked ? 1 : 0.45,
+                  }}
+                >
+                  <span className="text-xl" style={{ filter: unlocked ? 'none' : 'grayscale(1)' }}>{m.emoji}</span>
+                  <span className="font-mono text-[0.52rem] text-white/50 text-center leading-tight">{m.label}</span>
+                  <span className="font-mono text-[0.5rem]" style={{ color: unlocked ? '#f59e0b' : 'rgba(255,255,255,0.2)' }}>
+                    {unlocked ? '✓' : `${m.days}d`}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
         {/* ── Savings Goals ── */}
