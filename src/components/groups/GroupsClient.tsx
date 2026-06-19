@@ -23,6 +23,8 @@ interface GroupTask {
   assigned_to: string | null
   assigned_to_email: string | null
   due_date: string | null
+  section: string | null
+  priority: 'low' | 'normal' | 'high' | 'critical' | null
 }
 
 interface GroupAssignment {
@@ -61,7 +63,17 @@ interface GroupMeeting {
 }
 
 type View = 'list' | 'detail'
-type DetailTab = 'overview' | 'tasks' | 'members' | 'discussion' | 'meetings' | 'tips'
+type DetailTab = 'overview' | 'tasks' | 'members' | 'noticeboard' | 'conflicts' | 'discussion' | 'meetings' | 'tips'
+
+const TASK_PRIORITIES = ['low', 'normal', 'high', 'critical'] as const
+type TaskPriority = typeof TASK_PRIORITIES[number]
+const PRIORITY_COLORS: Record<TaskPriority, string> = {
+  low:      'text-white/30 bg-white/5 border-white/10',
+  normal:   'text-white/50 bg-white/7 border-white/10',
+  high:     'text-amber-400 bg-amber-500/15 border-amber-500/20',
+  critical: 'text-red-400 bg-red-500/15 border-red-500/20',
+}
+const PRIORITY_EMOJI: Record<TaskPriority, string> = { low: '▽', normal: '◇', high: '▲', critical: '🔴' }
 
 const MEMBER_ROLES = ['Leader', 'Researcher', 'Writer', 'Designer', 'Presenter', 'Reviewer'] as const
 type MemberRole = typeof MEMBER_ROLES[number]
@@ -121,11 +133,24 @@ export default function GroupsClient({ userId }: { userId: string }) {
   const [newDesc, setNewDesc]           = useState('')
   const [creating, setCreating]         = useState(false)
 
-  // New task form
+  // New task form — includes scope section + priority
   const [taskTitle, setTaskTitle]       = useState('')
   const [taskAssigneeEmail, setTaskAssigneeEmail] = useState('')
   const [taskDueDate, setTaskDueDate]   = useState('')
+  const [taskSection, setTaskSection]   = useState('')
+  const [taskPriority, setTaskPriority] = useState<TaskPriority>('normal')
   const [addingTask, setAddingTask]     = useState(false)
+
+  // Notice Board — pinned messages
+  const [noticeText, setNoticeText]     = useState('')
+  const [postingNotice, setPostingNotice] = useState(false)
+
+  // Conflict Resolver
+  const [conflictDesc, setConflictDesc]             = useState('')
+  const [conflictInvolved, setConflictInvolved]     = useState<string[]>([])
+  const [conflictResolution, setConflictResolution] = useState('')
+  const [showConflictForm, setShowConflictForm]     = useState(false)
+  const [raisingConflict, setRaisingConflict]       = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -229,14 +254,71 @@ export default function GroupsClient({ userId }: { userId: string }) {
           due_date: taskDueDate || null,
           assigned_to: member?.user_id || null,
           assigned_to_email: taskAssigneeEmail || null,
+          section: taskSection || null,
+          priority: taskPriority,
         }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      toast.success('Task added!'); setShowAddTask(false); setTaskTitle(''); setTaskAssigneeEmail(''); setTaskDueDate('')
+      toast.success('Task added!')
+      setShowAddTask(false)
+      setTaskTitle(''); setTaskAssigneeEmail(''); setTaskDueDate(''); setTaskSection(''); setTaskPriority('normal')
       await load()
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to add task') }
     finally { setAddingTask(false) }
+  }
+
+  const postNotice = async () => {
+    if (!noticeText.trim() || !selected) return
+    setPostingNotice(true)
+    try {
+      const res = await fetch('/api/groups/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assignment_id: selected.id, content: noticeText.trim(), is_decision: false }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      const { message } = await res.json()
+      // Pin it immediately
+      await fetch('/api/groups/messages', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: message.id, is_pinned: true }),
+      })
+      setNoticeText('')
+      await loadMessages(selected.id)
+      toast.success('Notice posted!')
+    } catch { toast.error('Failed to post notice') }
+    finally { setPostingNotice(false) }
+  }
+
+  const pinMessage = async (msgId: string, pinned: boolean) => {
+    await fetch('/api/groups/messages', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: msgId, is_pinned: pinned }),
+    })
+    if (selected) await loadMessages(selected.id)
+  }
+
+  const raiseConflict = async () => {
+    if (!conflictDesc.trim() || !selected) return
+    setRaisingConflict(true)
+    try {
+      const involved = conflictInvolved.length > 0 ? `\nInvolved: ${conflictInvolved.join(', ')}` : ''
+      const resolution = conflictResolution.trim() ? `\nProposed resolution: ${conflictResolution}` : ''
+      const content = `[CONFLICT] ${conflictDesc.trim()}${involved}${resolution}`
+      const res = await fetch('/api/groups/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ assignment_id: selected.id, content, is_decision: true }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      setConflictDesc(''); setConflictInvolved([]); setConflictResolution(''); setShowConflictForm(false)
+      await loadMessages(selected.id)
+      toast.success('Conflict raised — all members can now respond')
+    } catch { toast.error('Failed to raise conflict') }
+    finally { setRaisingConflict(false) }
   }
 
   const toggleTask = async (taskId: string, done: boolean) => {
@@ -399,11 +481,16 @@ export default function GroupsClient({ userId }: { userId: string }) {
       ? joinedMembers.filter(m => (contribs[m.email]?.assigned ?? 0) === 0)
       : []
 
-    const DETAIL_TABS: { id: DetailTab; label: string }[] = [
+    const pinnedMessages = messages.filter(m => m.is_pinned)
+    const conflictMessages = messages.filter(m => m.is_decision && m.content.startsWith('[CONFLICT]'))
+
+    const DETAIL_TABS: { id: DetailTab; label: string; badge?: string }[] = [
       { id: 'overview',    label: 'Overview' },
       { id: 'tasks',       label: `Tasks (${selected.group_tasks.length})` },
       { id: 'members',     label: `Team (${joinedMembers.length})` },
-      { id: 'discussion',  label: `Board (${messages.length})` },
+      { id: 'noticeboard', label: 'Board', badge: pinnedMessages.length > 0 ? String(pinnedMessages.length) : undefined },
+      { id: 'conflicts',   label: 'Conflicts', badge: conflictMessages.length > 0 ? '⚡' : undefined },
+      { id: 'discussion',  label: `Chat (${messages.length})` },
       { id: 'meetings',    label: `Meetings (${meetings.length})` },
       { id: 'tips',        label: 'Playbook' },
     ]
@@ -442,14 +529,15 @@ export default function GroupsClient({ userId }: { userId: string }) {
             {DETAIL_TABS.map(t => (
               <button key={t.id} onClick={() => {
                 setDetailTab(t.id)
-                if (t.id === 'discussion') void loadMessages(selected.id)
-                if (t.id === 'meetings')   void loadMeetings(selected.id)
+                if (t.id === 'discussion' || t.id === 'noticeboard' || t.id === 'conflicts') void loadMessages(selected.id)
+                if (t.id === 'meetings') void loadMeetings(selected.id)
               }} className={cn(
-                'flex-shrink-0 font-mono text-[0.6rem] px-3 py-1.5 rounded-lg transition-all border',
+                'flex-shrink-0 font-mono text-[0.6rem] px-3 py-1.5 rounded-lg transition-all border flex items-center gap-1',
                 detailTab === t.id ? 'bg-teal-600/15 text-teal-400 border-teal-600/20' : 'bg-transparent text-white/35 border-white/7 hover:text-white/60',
               )}>
                 {t.label}
-                {t.id === 'members' && freeRiders.length > 0 && <span className="ml-1 text-red-400">⚠</span>}
+                {t.id === 'members' && freeRiders.length > 0 && <span className="text-red-400">⚠</span>}
+                {t.badge && <span className={cn('text-[0.55rem] px-1 rounded', t.id === 'conflicts' ? 'text-amber-400' : 'text-teal-400 bg-teal-600/15')}>{t.badge}</span>}
               </button>
             ))}
           </div>
@@ -553,101 +641,283 @@ export default function GroupsClient({ userId }: { userId: string }) {
             </>
           )}
 
-          {/* ── Tasks tab ── */}
+          {/* ── Tasks tab — scope-based delegation ── */}
           {detailTab === 'tasks' && (
             <>
               <div className="flex justify-between items-center">
-                <span className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wide">Task list</span>
+                <span className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wide">Scope delegation</span>
                 <button onClick={() => setShowAddTask(!showAddTask)} className="font-mono text-[0.62rem] text-teal-400 hover:text-teal-300 transition-colors">
-                  {showAddTask ? '✕ Cancel' : '+ Add task'}
+                  {showAddTask ? '✕ Cancel' : '+ Assign task'}
                 </button>
               </div>
 
               {showAddTask && (
-                <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2">
+                <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2.5">
                   <input value={taskTitle} onChange={e => setTaskTitle(e.target.value)} placeholder="Task title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
-                  <select value={taskAssigneeEmail} onChange={e => setTaskAssigneeEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body">
-                    <option value="">Assign to… (optional)</option>
-                    {joinedMembers.map(m => (
-                      <option key={m.email} value={m.email}>{m.display_name || m.email}{m.member_role ? ` · ${m.member_role}` : ''}</option>
-                    ))}
-                  </select>
+                  <input value={taskSection} onChange={e => setTaskSection(e.target.value)} placeholder="Section / scope (e.g. Introduction, Literature Review)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 placeholder:text-white/20 outline-none focus:border-teal-600 font-body" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <select value={taskAssigneeEmail} onChange={e => setTaskAssigneeEmail(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body">
+                      <option value="">Assign to…</option>
+                      {joinedMembers.map(m => (
+                        <option key={m.email} value={m.email}>{m.display_name || m.email}{m.member_role ? ` · ${m.member_role}` : ''}</option>
+                      ))}
+                    </select>
+                    <select value={taskPriority} onChange={e => setTaskPriority(e.target.value as TaskPriority)} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body">
+                      {TASK_PRIORITIES.map(p => <option key={p} value={p}>{PRIORITY_EMOJI[p]} {p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
+                    </select>
+                  </div>
                   <input type="date" value={taskDueDate} onChange={e => setTaskDueDate(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
+                  <button onClick={addTask} disabled={addingTask || !taskTitle.trim()} className="w-full font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
+                    {addingTask ? 'Adding…' : 'Assign task'}
+                  </button>
+                </div>
+              )}
+
+              {selected.group_tasks.length === 0 ? (
+                <p className="font-mono text-[0.65rem] text-white/25 text-center py-6">No tasks yet — break the assignment into sections and assign each part</p>
+              ) : (() => {
+                // Group tasks by section
+                const sectionMap: Record<string, typeof selected.group_tasks> = {}
+                selected.group_tasks.filter(t => !t.done).forEach(t => {
+                  const key = t.section || '(General)'
+                  if (!sectionMap[key]) sectionMap[key] = []
+                  sectionMap[key].push(t)
+                })
+                return (
+                  <div className="space-y-4">
+                    {Object.entries(sectionMap).map(([section, sectionTasks]) => (
+                      <div key={section}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="flex-1 h-px bg-white/8" />
+                          <span className="font-mono text-[0.56rem] text-teal-400/70 uppercase tracking-widest flex-shrink-0">{section}</span>
+                          <div className="flex-1 h-px bg-white/8" />
+                        </div>
+                        <div className="space-y-2">
+                          {sectionTasks.map(t => {
+                            const assignee = joinedMembers.find(m => m.email === t.assigned_to_email)
+                            const isReassigning = reassignTaskId === t.id
+                            const prio = (t.priority ?? 'normal') as TaskPriority
+                            return (
+                              <div key={t.id} className="bg-white/3 border border-white/10 rounded-xl px-3 py-2.5 space-y-2">
+                                <div className="flex items-start gap-3">
+                                  <button onClick={() => toggleTask(t.id, true)} className="mt-0.5 w-5 h-5 rounded-md border-2 border-white/20 hover:border-teal-500 flex-shrink-0 transition-all" />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-body text-white">{t.title}</p>
+                                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                      {t.assigned_to_email ? (
+                                        <span className="font-mono text-[0.55rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
+                                      ) : (
+                                        <span className="font-mono text-[0.55rem] text-red-400/60">⚠ Unassigned</span>
+                                      )}
+                                      {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
+                                      {prio !== 'normal' && (
+                                        <span className={cn('font-mono text-[0.5rem] px-1.5 py-0.5 rounded border', PRIORITY_COLORS[prio])}>
+                                          {PRIORITY_EMOJI[prio]} {prio}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-1 flex-shrink-0">
+                                    <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/35 hover:text-teal-400 hover:border-teal-600/30 transition-all">⇄</button>
+                                    <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-red-400 hover:border-red-500/30 transition-all">✕</button>
+                                  </div>
+                                </div>
+                                {isReassigning && (
+                                  <select defaultValue={t.assigned_to_email ?? ''} onChange={e => reassignTask(t.id, e.target.value)} className="w-full bg-white/5 border border-teal-600/30 rounded-lg px-2 py-1.5 text-xs text-white/70 outline-none font-body">
+                                    <option value="">Unassigned</option>
+                                    {joinedMembers.map(m => <option key={m.email} value={m.email}>{m.display_name || m.email}</option>)}
+                                  </select>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                    {selected.group_tasks.some(t => t.done) && (
+                      <details className="group">
+                        <summary className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide cursor-pointer list-none flex items-center gap-2">
+                          <span>Completed ({selected.group_tasks.filter(t => t.done).length})</span>
+                          <span className="text-white/20 group-open:rotate-90 transition-transform inline-block">▸</span>
+                        </summary>
+                        <div className="space-y-1.5 mt-2">
+                          {selected.group_tasks.filter(t => t.done).map(t => {
+                            const assignee = joinedMembers.find(m => m.email === t.assigned_to_email)
+                            return (
+                              <div key={t.id} className="flex items-center gap-3 bg-white/2 border border-white/5 rounded-xl px-3 py-2 opacity-50">
+                                <button onClick={() => toggleTask(t.id, false)} className="w-5 h-5 rounded-md bg-green-500 border-green-500 border-2 flex items-center justify-center flex-shrink-0">
+                                  <span className="text-white text-[0.6rem]">✓</span>
+                                </button>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-body text-white/40 line-through">{t.title}</p>
+                                  <div className="flex gap-2 flex-wrap">
+                                    {t.section && <span className="font-mono text-[0.5rem] text-white/20">{t.section}</span>}
+                                    {t.assigned_to_email && <span className="font-mono text-[0.55rem] text-white/25">→ {assignee?.display_name || t.assigned_to_email}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+                )
+              })()}
+            </>
+          )}
+
+          {/* ── Notice Board tab ── */}
+          {detailTab === 'noticeboard' && (
+            <>
+              <div className="bg-amber-500/6 border border-amber-500/15 rounded-xl px-3 py-2.5 mb-1">
+                <p className="font-mono text-[0.58rem] text-amber-400/80">📌 Pinned notices visible to all group members. Use for deadlines, decisions, and important updates.</p>
+              </div>
+
+              <div className="space-y-2">
+                <textarea
+                  value={noticeText}
+                  onChange={e => setNoticeText(e.target.value)}
+                  placeholder="Post a notice for the group (deadline change, important update, final decision…)"
+                  rows={3}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-amber-500/50 font-body resize-none"
+                />
+                <button
+                  onClick={postNotice}
+                  disabled={postingNotice || !noticeText.trim()}
+                  className="w-full font-display font-bold text-sm bg-amber-500/15 hover:bg-amber-500/25 disabled:opacity-40 text-amber-400 border border-amber-500/20 py-2 rounded-xl transition-all"
+                >
+                  {postingNotice ? 'Posting…' : '📌 Post notice'}
+                </button>
+              </div>
+
+              {loadingMsgs ? (
+                <p className="font-mono text-[0.6rem] text-white/25 text-center py-4">Loading…</p>
+              ) : pinnedMessages.length === 0 ? (
+                <p className="font-mono text-[0.65rem] text-white/25 text-center py-6">No notices yet — post important updates above</p>
+              ) : (
+                <div className="space-y-2">
+                  {pinnedMessages.map(msg => (
+                    <div key={msg.id} className="bg-amber-500/5 border border-amber-500/15 rounded-xl px-3 py-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-body text-sm text-white/80 leading-relaxed flex-1">{msg.content}</p>
+                        <button
+                          onClick={() => pinMessage(msg.id, false)}
+                          className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-white/50 flex-shrink-0 transition-all"
+                        >
+                          unpin
+                        </button>
+                      </div>
+                      <p className="font-mono text-[0.52rem] text-white/25 mt-2">
+                        {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ── Conflict Resolver tab ── */}
+          {detailTab === 'conflicts' && (
+            <>
+              <div className="bg-rose-500/6 border border-rose-500/15 rounded-xl px-3 py-2.5 mb-1">
+                <p className="font-mono text-[0.58rem] text-rose-400/80 leading-relaxed">
+                  Group assignments are hard. Use this to raise issues early — before they become crises.
+                  Conflicts raised here are visible to all members so everyone can respond.
+                </p>
+              </div>
+
+              {!showConflictForm ? (
+                <button
+                  onClick={() => setShowConflictForm(true)}
+                  className="w-full font-display font-bold text-sm bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 py-2.5 rounded-xl transition-all"
+                >
+                  ⚡ Raise a conflict
+                </button>
+              ) : (
+                <div className="bg-white/3 border border-rose-500/20 rounded-xl p-3 space-y-3">
+                  <p className="font-mono text-[0.6rem] text-rose-400 uppercase tracking-wide">What&apos;s the issue?</p>
+                  <textarea
+                    value={conflictDesc}
+                    onChange={e => setConflictDesc(e.target.value)}
+                    placeholder="Describe the conflict clearly (e.g. two members both want to write the introduction, someone missed the deadline…)"
+                    rows={3}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-rose-500/50 font-body resize-none"
+                  />
+                  <div>
+                    <p className="font-mono text-[0.58rem] text-white/40 mb-1.5">Who&apos;s involved?</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {joinedMembers.map(m => {
+                        const isSelected = conflictInvolved.includes(m.email)
+                        return (
+                          <button
+                            key={m.email}
+                            onClick={() => setConflictInvolved(prev => isSelected ? prev.filter(e => e !== m.email) : [...prev, m.email])}
+                            className={cn('font-mono text-[0.58rem] px-2.5 py-1.5 rounded-lg border transition-all', isSelected ? 'bg-rose-500/15 text-rose-400 border-rose-500/25' : 'bg-white/4 text-white/40 border-white/10 hover:text-white/60')}
+                          >
+                            {m.display_name || m.email.split('@')[0]}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-mono text-[0.58rem] text-white/40 mb-1.5">Proposed resolution (optional)</p>
+                    <textarea
+                      value={conflictResolution}
+                      onChange={e => setConflictResolution(e.target.value)}
+                      placeholder="What do you think should happen? (e.g. split the section, set a clear deadline, reassign the task)"
+                      rows={2}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 placeholder:text-white/20 outline-none focus:border-teal-600 font-body resize-none"
+                    />
+                  </div>
                   <div className="flex gap-2">
-                    <button onClick={addTask} disabled={addingTask || !taskTitle.trim()} className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
-                      {addingTask ? 'Adding…' : 'Add task'}
+                    <button onClick={raiseConflict} disabled={raisingConflict || !conflictDesc.trim()} className="flex-1 font-display font-bold text-sm bg-rose-500 hover:bg-rose-400 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
+                      {raisingConflict ? 'Raising…' : 'Raise conflict'}
+                    </button>
+                    <button onClick={() => { setShowConflictForm(false); setConflictDesc(''); setConflictInvolved([]); setConflictResolution('') }} className="px-4 font-mono text-sm text-white/40 border border-white/10 rounded-xl">
+                      Cancel
                     </button>
                   </div>
                 </div>
               )}
 
-              {selected.group_tasks.length === 0 ? (
-                <p className="font-mono text-[0.65rem] text-white/25 text-center py-6">No tasks yet — add the first one above</p>
+              {loadingMsgs ? (
+                <p className="font-mono text-[0.6rem] text-white/25 text-center py-4">Loading…</p>
+              ) : conflictMessages.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="font-mono text-[0.65rem] text-white/25">No conflicts raised — great teamwork! 🌿</p>
+                  <p className="font-mono text-[0.58rem] text-white/15 mt-1">If an issue comes up, raise it early — before resentment builds</p>
+                </div>
               ) : (
-                <div className="space-y-2">
-                  <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide">To do</p>
-                  {selected.group_tasks.filter(t => !t.done).map(t => {
-                    const assignee = joinedMembers.find(m => m.email === t.assigned_to_email)
-                    const isReassigning = reassignTaskId === t.id
+                <div className="space-y-3">
+                  <p className="font-mono text-[0.56rem] text-white/30 uppercase tracking-wide">Open conflicts</p>
+                  {conflictMessages.map(msg => {
+                    const lines = msg.content.replace('[CONFLICT] ', '').split('\n')
+                    const issue = lines[0]
+                    const meta  = lines.slice(1)
                     return (
-                      <div key={t.id} className="bg-white/3 border border-white/10 rounded-xl px-3 py-2.5 space-y-2">
-                        <div className="flex items-start gap-3">
-                          <button onClick={() => toggleTask(t.id, true)} className="mt-0.5 w-5 h-5 rounded-md border-2 border-white/20 hover:border-teal-500 flex-shrink-0 transition-all" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-body text-white">{t.title}</p>
-                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                              {t.assigned_to_email ? (
-                                <span className="font-mono text-[0.55rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
-                              ) : (
-                                <span className="font-mono text-[0.55rem] text-red-400/60">⚠ Unassigned</span>
-                              )}
-                              {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
-                            </div>
+                      <div key={msg.id} className="bg-rose-500/5 border border-rose-500/15 rounded-xl px-3 py-3 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <p className="font-mono text-[0.6rem] text-rose-400 mb-1">⚡ CONFLICT</p>
+                            <p className="font-body text-sm text-white/80 leading-relaxed">{issue}</p>
+                            {meta.map((line, i) => <p key={i} className="font-mono text-[0.55rem] text-white/35 mt-0.5">{line}</p>)}
                           </div>
-                          <div className="flex gap-1 flex-shrink-0">
-                            <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/35 hover:text-teal-400 hover:border-teal-600/30 transition-all">
-                              reassign
-                            </button>
-                            <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-red-400 hover:border-red-500/30 transition-all">
-                              ✕
-                            </button>
-                          </div>
-                        </div>
-                        {isReassigning && (
-                          <select
-                            defaultValue={t.assigned_to_email ?? ''}
-                            onChange={e => reassignTask(t.id, e.target.value)}
-                            className="w-full bg-white/5 border border-teal-600/30 rounded-lg px-2 py-1.5 text-xs text-white/70 outline-none font-body"
+                          <button
+                            onClick={() => pinMessage(msg.id, true)}
+                            className="font-mono text-[0.5rem] px-1.5 py-1 rounded border border-white/10 text-white/25 hover:text-teal-400 flex-shrink-0"
                           >
-                            <option value="">Unassigned</option>
-                            {joinedMembers.map(m => (
-                              <option key={m.email} value={m.email}>{m.display_name || m.email}</option>
-                            ))}
-                          </select>
-                        )}
+                            pin
+                          </button>
+                        </div>
+                        <p className="font-mono text-[0.52rem] text-white/25">
+                          Raised {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · Reply in Chat tab
+                        </p>
                       </div>
                     )
                   })}
-
-                  {selected.group_tasks.some(t => t.done) && (
-                    <>
-                      <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide mt-3">Done</p>
-                      {selected.group_tasks.filter(t => t.done).map(t => {
-                        const assignee = joinedMembers.find(m => m.email === t.assigned_to_email)
-                        return (
-                          <div key={t.id} className="flex items-center gap-3 bg-white/2 border border-white/5 rounded-xl px-3 py-2 opacity-50">
-                            <button onClick={() => toggleTask(t.id, false)} className="w-5 h-5 rounded-md bg-green-500 border-green-500 border-2 flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-[0.6rem]">✓</span>
-                            </button>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-body text-white/40 line-through">{t.title}</p>
-                              {t.assigned_to_email && <span className="font-mono text-[0.55rem] text-white/25">→ {assignee?.display_name || t.assigned_to_email}</span>}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </>
-                  )}
                 </div>
               )}
             </>
@@ -746,12 +1016,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
             </>
           )}
 
-          {/* ── Discussion board tab ── */}
+          {/* ── Discussion / Chat tab ── */}
           {detailTab === 'discussion' && (
             <div className="flex flex-col gap-3">
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
                 <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">
-                  Group notice board — log decisions, share updates, flag blockers. Mark important posts as 📌 Decisions.
+                  Group chat — log decisions, share updates, flag blockers. Pin important messages to the Notice Board.
                 </p>
               </div>
 
@@ -782,17 +1052,29 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
-                  {messages.map(msg => (
+                  {messages.filter(msg => !msg.content.startsWith('[CONFLICT]')).map(msg => (
                     <div key={msg.id} className={cn(
                       'rounded-xl px-3 py-2.5 border',
-                      msg.is_decision ? 'bg-amber-500/8 border-amber-500/20' : 'bg-white/3 border-white/7',
+                      msg.is_pinned ? 'bg-amber-500/6 border-amber-500/15' : msg.is_decision ? 'bg-amber-500/8 border-amber-500/20' : 'bg-white/3 border-white/7',
                       msg.user_id === userId ? 'ml-6' : 'mr-6',
                     )}>
-                      {msg.is_decision && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 DECISION</p>}
-                      <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
-                      <p className="font-mono text-[0.52rem] text-white/25 mt-1">
-                        {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                      </p>
+                      <div className="flex items-start justify-between gap-1">
+                        <div className="flex-1 min-w-0">
+                          {msg.is_pinned && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">📌 PINNED</p>}
+                          {msg.is_decision && !msg.is_pinned && <p className="font-mono text-[0.52rem] text-amber-400 font-bold mb-1">⭐ DECISION</p>}
+                          <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
+                          <p className="font-mono text-[0.52rem] text-white/25 mt-1">
+                            {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => pinMessage(msg.id, !msg.is_pinned)}
+                          className={cn('font-mono text-[0.48rem] px-1.5 py-1 rounded border flex-shrink-0 transition-all', msg.is_pinned ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-white/20 border-white/8 hover:text-amber-400')}
+                          title={msg.is_pinned ? 'Unpin' : 'Pin to Notice Board'}
+                        >
+                          📌
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -903,8 +1185,15 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {/* ── Playbook tab ── */}
           {detailTab === 'tips' && (
             <>
+              <div className="bg-indigo-500/6 border border-indigo-500/15 rounded-xl px-3 py-2.5">
+                <p className="font-mono text-[0.58rem] text-indigo-400 font-bold mb-1">📘 Group Assignment OS vs Study Pods</p>
+                <p className="font-mono text-[0.58rem] text-white/45 leading-relaxed">
+                  <span className="text-teal-400">Groups</span> = structured assignment collaboration (tasks, roles, scope, deadlines, conflicts).
+                  <span className="text-indigo-400"> Study Pods</span> = accountability groups for solo study — check-ins, compound streaks, presence.
+                </p>
+              </div>
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">Best practices from research and books — applied to SA student group work.</p>
+                <p className="font-mono text-[0.6rem] text-white/40 leading-relaxed">Survival guide from research and books — applied to SA student group assignments.</p>
               </div>
               {[
                 { book: 'Getting Things Done — David Allen', color: '#38BDF8', tip: 'Capture everything into a shared task list before your first meeting. Every action needs an owner and a due date. If it has no owner, it will not happen.' },
@@ -931,8 +1220,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
     <div className="flex flex-col h-full">
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>
-          <h1 className="font-display font-black text-white text-xl">Group Work</h1>
-          <p className="font-mono text-[0.62rem] text-white/35 mt-0.5">Manage assignments, roles & team dynamics</p>
+          <h1 className="font-display font-black text-white text-xl">Group Assignment OS</h1>
+          <p className="font-mono text-[0.62rem] text-white/35 mt-0.5">Scope delegation · conflict resolution · notice board</p>
         </div>
         <button onClick={() => setShowNewForm(!showNewForm)} className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2 rounded-xl transition-all">
           + New

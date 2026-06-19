@@ -14,7 +14,7 @@ export async function GET() {
     // Assignments created by user
     const { data: created } = await supabase
       .from('group_assignments')
-      .select('*, group_members(id, user_id, email, display_name, role, member_role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date)')
+      .select('*, group_members(id, user_id, email, display_name, role, member_role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date, section, priority)')
       .eq('created_by', user.id)
       .order('created_at', { ascending: false })
       .limit(50)
@@ -32,7 +32,7 @@ export async function GET() {
     if (memberAssignmentIds.length > 0) {
       const { data } = await supabase
         .from('group_assignments')
-        .select('*, group_members(id, user_id, email, display_name, role, member_role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date)')
+        .select('*, group_members(id, user_id, email, display_name, role, member_role, status), group_tasks(id, title, done, assigned_to, assigned_to_email, due_date, section, priority)')
         .in('id', memberAssignmentIds)
         .order('created_at', { ascending: false })
         .limit(50)

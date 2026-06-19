@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { assignment_id, title, notes, due_date, assigned_to, assigned_to_email } = await request.json()
+    const { assignment_id, title, notes, due_date, assigned_to, assigned_to_email, section, priority } = await request.json()
     if (!assignment_id || !title?.trim()) {
       return NextResponse.json({ error: 'Assignment ID and title required' }, { status: 400 })
     }
@@ -67,6 +67,8 @@ export async function POST(request: NextRequest) {
         assigned_to: assigned_to || null,
         assigned_to_email: assigned_to_email || null,
         created_by: user.id,
+        section: section || null,
+        priority: priority || 'normal',
       })
       .select()
       .single()
@@ -93,7 +95,7 @@ export async function PATCH(request: NextRequest) {
     const hasAccess = await verifyTaskAccess(supabase, id, user.id)
     if (!hasAccess) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const allowed = ['done', 'title', 'notes', 'due_date', 'assigned_to', 'assigned_to_email']
+    const allowed = ['done', 'title', 'notes', 'due_date', 'assigned_to', 'assigned_to_email', 'section', 'priority']
     const safeUpdates = Object.fromEntries(
       Object.entries(updates).filter(([k]) => allowed.includes(k))
     )

@@ -248,6 +248,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
     import('@/lib/firebase-messaging').then(({ initPushNotifications }) => initPushNotifications(userId)).catch(() => {})
   }, [])
 
+  // 9a. Cache totalIncome so studentState.ts computeFinancial uses real income in runway formula
+  useEffect(() => {
+    const manualIncome  = initialData.incomeEntries.reduce((s: number, e: { amount: number }) => s + e.amount, 0)
+    const shiftEarnings = initialData.shiftEarnings
+    const totalIncome   = manualIncome + shiftEarnings
+    const now           = new Date()
+    const month         = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    try { localStorage.setItem('varsityos-income-cache', JSON.stringify({ totalIncome, month })) } catch { /* ignore */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // 9. Keep currentHour in sync
   useEffect(() => {
     const update = () => setCurrentHour(new Date().getHours())
@@ -443,8 +454,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           {/* 3-column bento grid */}
           <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
 
-            {/* Column 1 */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Column 1 — hero + check-in + life balance; appears first everywhere */}
+            <div className="order-1 lg:order-1" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
               {/* ── Act now: focal point ── */}
               <TabErrorBoundary label="Just Start">
@@ -555,8 +566,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </Deferred>
             </div>
 
-            {/* Column 2 */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* Column 2 — insights + study cards; order-3 on mobile (below gamification) */}
+            <div className="order-3 lg:order-2" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* Deadline Telescope — shows when exam < 21 days */}
               <TabErrorBoundary label="Deadline Telescope">
                 <DeadlineTelescope exams={allExams} />
@@ -589,8 +600,8 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
               </Deferred>
             </div>
 
-            {/* Column 3 */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* Column 3 — gamification momentum; order-2 on mobile so it appears before insights */}
+            <div className="order-2 lg:order-3" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* ── Momentum: gamification (rebalanced from main column) ── */}
               <SectionHeader label="Momentum" />
               <PendingXP />

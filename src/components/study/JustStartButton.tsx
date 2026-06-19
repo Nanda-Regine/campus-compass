@@ -75,7 +75,7 @@ function CircleTimer({ pct, size = 180, color = '#4ecf9e' }: { pct: number; size
 
 interface FocusModalProps {
   task: Task
-  onComplete: (minutes: number) => void
+  onComplete: (minutes: number, task: Task) => void
   onAbandon: () => void
 }
 
@@ -224,7 +224,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
             }}>
               {paused ? '▶ Resume' : '⏸ Pause'}
             </button>
-            <button onClick={() => { clearTick(); onComplete(dur.minutes) }} style={{
+            <button onClick={() => { clearTick(); onComplete(dur.minutes, task) }} style={{
               fontFamily: '"JetBrains Mono",monospace', fontSize: 12,
               padding: '10px 22px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)',
               background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer',
@@ -245,21 +245,31 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>
             +25 XP · {dur.minutes} minutes of focused work
           </div>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-            <button onClick={() => { setPhase('pick'); setPaused(false) }} style={{
-              fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14,
-              padding: '12px 28px', borderRadius: 12, border: 'none', cursor: 'pointer',
-              background: color, color: '#000',
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => { setPhase('pick'); setPaused(false) }} style={{
+                fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14,
+                padding: '12px 28px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                background: color, color: '#000',
+              }}>
+                Go again
+              </button>
+              <button onClick={() => onComplete(dur.minutes, task)} style={{
+                fontFamily: 'Sora,sans-serif', fontSize: 14,
+                padding: '12px 24px', borderRadius: 12,
+                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'transparent', color: 'rgba(255,255,255,0.6)', cursor: 'pointer',
+              }}>
+                I'm done
+              </button>
+            </div>
+            <button onClick={() => onComplete(dur.minutes, task)} style={{
+              fontFamily: '"JetBrains Mono",monospace', fontSize: 11, fontWeight: 700,
+              padding: '10px 28px', borderRadius: 10,
+              border: `1px solid ${color}44`, background: `${color}15`,
+              color, cursor: 'pointer', letterSpacing: '0.05em',
             }}>
-              Go again
-            </button>
-            <button onClick={() => onComplete(dur.minutes)} style={{
-              fontFamily: 'Sora,sans-serif', fontSize: 14,
-              padding: '12px 24px', borderRadius: 12,
-              border: '1px solid rgba(255,255,255,0.12)',
-              background: 'transparent', color: 'rgba(255,255,255,0.6)', cursor: 'pointer',
-            }}>
-              I'm done
+              ✓ Mark task as done
             </button>
           </div>
         </div>
@@ -287,19 +297,51 @@ interface Props { tasks: Task[] }
 
 export default function JustStartButton({ tasks }: Props) {
   const [showModal, setShowModal] = useState(false)
-  const [showEnv,   setShowEnv]   = useState(false)
+  const [showEnv,   setShowEnv]   = useState(false) // FocusEnvironmentSetup pre-session ritual
   const [mounted,   setMounted]   = useState(false)
+  const [lastDoneTask, setLastDoneTask] = useState<Task | null>(null)
   const topTask = pickTopTask(tasks)
 
   useEffect(() => { injectStyles(); setMounted(true) }, [])
 
-  const handleComplete = useCallback((minutes: number) => {
+  const handleComplete = useCallback((minutes: number, task: Task) => {
     dispatchXP('pomodoro_session')
     void minutes
+    setLastDoneTask(task)
     setShowModal(false)
   }, [])
 
-  if (!mounted || !topTask) return null
+  if (!mounted) return null
+
+  // Empty state: no pending tasks
+  if (!topTask) {
+    if (lastDoneTask) {
+      return (
+        <div style={{ borderRadius: 18, border: '1px solid #4ecf9e28', background: 'linear-gradient(145deg,#4ecf9e08 0%,rgba(0,0,0,0) 70%)', padding: '16px 18px' }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 8 }}>▸ SESSION DONE</div>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 12 }}>{lastDoneTask.title}</div>
+          <button
+            onClick={async () => {
+              await fetch('/api/tasks', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: lastDoneTask.id, status: 'done' }) })
+              setLastDoneTask(null)
+            }}
+            style={{ width: '100%', padding: '11px 0', fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 14, border: 'none', borderRadius: 12, cursor: 'pointer', background: 'linear-gradient(90deg,#4ecf9e,#4ecf9ecc)', color: '#000' }}
+          >
+            ✓ Mark task done
+          </button>
+        </div>
+      )
+    }
+    return (
+      <div style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)', padding: '16px 18px', textAlign: 'center' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.18em', marginBottom: 8 }}>▸ YOUR MOVE</div>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.35)', marginBottom: 12 }}>No pending tasks</div>
+        <a href="/study?tab=tasks" style={{ display: 'inline-block', padding: '10px 20px', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, borderRadius: 10, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.08)' }}>
+          + Add a task
+        </a>
+      </div>
+    )
+  }
 
   const today    = new Date().toISOString().split('T')[0]
   const overdue  = !!(topTask.due_date && topTask.due_date < today)

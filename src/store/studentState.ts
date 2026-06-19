@@ -98,6 +98,7 @@ export interface RecomputeInput {
   nsScore?: number | null         // latest NS score from varsityos-ns-score-cache
   cyclePhase?: string | null      // current cycle phase from varsityos-cycle-cache
   cycleEnergyLevel?: number | null // logged energy level 1–5 from cycle tracker
+  additionalIncome?: number       // manual income + shift earnings (from varsityos-income-cache)
 }
 
 // ─── Full store interface ──────────────────────────────────────
@@ -214,7 +215,7 @@ function computeAcademic(tasks: Task[], modules: Module[], exams: Exam[], studyV
   }
 }
 
-function computeFinancial(expenses: Expense[], budget: Budget | null, profile: Profile | null, nsfasDelayed = false): FinancialSlice {
+function computeFinancial(expenses: Expense[], budget: Budget | null, profile: Profile | null, nsfasDelayed = false, additionalIncome = 0): FinancialSlice {
   if (!budget) {
     return { runwayDays: 30, healthScore: 50, nsfasStatus: nsfasDelayed ? 'delayed' : 'unknown', spendingTrend: 'on_track', emergencyMode: false }
   }
@@ -229,7 +230,9 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
     (e.expense_date && e.expense_date.startsWith(monthYear))
   )
   const spentThisMonth = thisMonthExpenses.reduce((s, e) => s + (e.amount ?? 0), 0)
-  const remaining      = Math.max(0, budget.monthly_budget - spentThisMonth)
+  // Total available = base budget (NSFAS/bursary/allowance) + actual income (manual entries + shift earnings)
+  const totalAvailable = budget.monthly_budget + additionalIncome
+  const remaining      = Math.max(0, totalAvailable - spentThisMonth)
   const dailyBurn      = dayOfMonth > 0 ? spentThisMonth / dayOfMonth : 0
   const runwayDays     = dailyBurn > 0
     ? Math.floor(remaining / dailyBurn)
@@ -237,7 +240,7 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
 
   // Health score: actual spend % vs expected % of month elapsed
   const expectedPct = dayOfMonth / daysInMonth
-  const actualPct   = budget.monthly_budget > 0 ? spentThisMonth / budget.monthly_budget : 0
+  const actualPct   = totalAvailable > 0 ? spentThisMonth / totalAvailable : 0
   const healthScore = Math.max(0, Math.min(100, Math.round((1 - (actualPct - expectedPct) * 2) * 100)))
 
   // Spending trend: this week vs last week
@@ -396,7 +399,7 @@ export const useStudentState = create<StudentStateStore>()(
         // so get().wellness after set() returns the new value, making delta always 0.
         const prevWellness = get().wellness
         const academic    = computeAcademic(data.tasks, data.modules, data.exams, data.studyVelocity ?? 0, data.lowestGrade ?? 0)
-        const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false)
+        const financial   = computeFinancial(data.expenses, data.budget, data.profile, data.nsfasDelayed ?? false, data.additionalIncome ?? 0)
         const wellness    = computeWellness(data.tasks, data.moodScores ?? [], data.sleepDebt ?? 0, data.workHoursThisWeek ?? 0, data.regulationSessionsToday ?? 0, data.nsScore ?? null, data.cyclePhase ?? null, data.cycleEnergyLevel ?? null)
         // Preserve lastPlannedAt across recomputes
         const prevLastPlanned = get().schedule.lastPlannedAt
@@ -503,6 +506,21 @@ function readMoodCache(): number[] {
   }
 }
 
+// Read cached income total (written by DashboardClient: manual income + shift earnings).
+// Format: { totalIncome: number, date: string (YYYY-MM) }
+function readIncomeCache(): number {
+  if (typeof window === 'undefined') return 0
+  try {
+    const raw = localStorage.getItem('varsityos-income-cache')
+    if (!raw) return 0
+    const parsed = JSON.parse(raw) as { totalIncome?: number; month?: string }
+    if (typeof parsed?.totalIncome !== 'number') return 0
+    const now = new Date()
+    const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    return parsed.month === thisMonth ? parsed.totalIncome : 0
+  } catch { return 0 }
+}
+
 // Read cached work hours (written by DashboardClient after live shift fetch).
 // Format: { weekHours: number, weekOf: string (ISO date of week start) }
 function readWorkHoursCache(): number {
@@ -598,6 +616,7 @@ export function initOrchestration(): () => void {
       nsScore:                 readNsScoreCache(),
       cyclePhase:              cycle?.phase ?? null,
       cycleEnergyLevel:        cycle?.energyLevel ?? null,
+      additionalIncome:        readIncomeCache(),
     })
   }
 

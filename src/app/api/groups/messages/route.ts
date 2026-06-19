@@ -57,6 +57,26 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ message: data })
 }
 
+export async function PATCH(request: NextRequest) {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const body = await request.json() as Record<string, unknown>
+  const { id, is_pinned } = body
+  if (!id || typeof id !== 'string') return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+  const { data, error } = await supabase
+    .from('assignment_messages')
+    .update({ is_pinned: typeof is_pinned === 'boolean' ? is_pinned : false })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ message: data })
+}
+
 export async function DELETE(request: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
