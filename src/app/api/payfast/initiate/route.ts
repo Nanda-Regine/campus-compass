@@ -63,9 +63,10 @@ export async function POST(request: Request) {
     const nameFirst = (nameParts[0] || 'Student').slice(0, 100)
     const nameLast  = (nameParts.slice(1).join(' ') || nameFirst).slice(0, 100)
 
-    // m_payment_id: varsityos_{uuid36}_{tier}_{timestamp}
-    // Universal hub on creativelynanda.co.za parses the "varsityos_" prefix to route to this app's Supabase.
-    const mPaymentId = `varsityos_${user.id}_${tierId}_${Date.now()}`
+    // Canonical hub scheme: mm.varsityos.<tier>.<userId>
+    // The Mirembe hub (jarvis.mirembemuse.co.za) decodes this to route the verified
+    // ITN back here and to book central Finance under the varsityos revenue stream.
+    const mPaymentId = `mm.varsityos.${tierId}.${user.id}`
 
     // Fields for the PayFast checkout form (document order for human readability).
     // Subscription fields: subscription_type=1 (subscription), frequency=3 (monthly), cycles=0 (indefinite).
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
       ['merchant_key',      merchantKey],
       ['return_url',        `${appUrl}/upgrade/success`],
       ['cancel_url',        `${appUrl}/upgrade/cancel-confirm`],
-      ['notify_url',        'https://creativelynanda.co.za/api/payfast/universal-notify'],
+      ['notify_url',        (process.env.PAYFAST_HUB_NOTIFY_URL || 'https://jarvis.mirembemuse.co.za/api/payfast/notify')],
       ['name_first',        nameFirst],
       ['name_last',         nameLast],
       ['email_address',     email],
@@ -87,15 +88,12 @@ export async function POST(request: Request) {
       ['cycles',            '0'],
     ]
 
-    // PayFast signature MUST be built from fields sorted alphabetically (ksort).
-    // PayFast's server-side verification uses ksort() before computing the MD5.
-    // This is true for BOTH the checkout form and the API — do NOT use document order for the hash.
+    // PayFast verifies the REQUEST signature over the fields in SUBMITTED ORDER
+    // (proven live against Mirembe merchant 17030173 — alphabetical ksort produces a
+    // different MD5 and PayFast rejects it). Exclude empty values, append passphrase.
     const filteredFields = fields.filter(([, v]) => v !== '')
 
-    // PayFast verifies the signature by sorting received params with ksort() (alphabetical)
-    // before computing the MD5. The signature MUST be built from alphabetically sorted fields.
-    const sortedFields = [...filteredFields].sort(([a], [b]) => a.localeCompare(b))
-    const sigSource = sortedFields
+    const sigSource = filteredFields
       .map(([k, v]) => `${k}=${phpUrlencode(v.trim())}`)
       .join('&') + `&passphrase=${phpUrlencode(passphrase)}`
     const signature = createHash('md5').update(sigSource).digest('hex')
