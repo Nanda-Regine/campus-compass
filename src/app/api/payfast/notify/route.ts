@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const fromHub =
       hubSecret &&
       request.headers.get('x-hub-secret') === hubSecret &&
-      request.headers.get('x-hub-source') === 'creativelynanda'
+      request.headers.get('x-hub-source') === 'mirembe'
 
     if (!isSandbox && !fromHub && !PAYFAST_IPS.includes(clientIp)) {
       console.warn(`[PayFast ITN] Rejected request from unknown IP: ${clientIp}`)
@@ -111,8 +111,11 @@ export async function POST(request: NextRequest) {
     }
 
     // ─── MD5 signature verification ───────────────────────────────────────
+    // When forwarded by the Mirembe hub, the ITN signature was already validated
+    // there (with the correct include-empty algorithm) and authenticated by the hub
+    // secret — so we trust it and skip the local check (which is the legacy ksort form).
     const passphrase = process.env.PAYFAST_PASSPHRASE
-    if (!verifySignature(data, passphrase)) {
+    if (!fromHub && !verifySignature(data, passphrase)) {
       console.warn('[PayFast ITN] Signature verification failed')
       try {
         await supabase.from('payment_logs').insert({
@@ -127,25 +130,28 @@ export async function POST(request: NextRequest) {
       return new NextResponse('OK', { status: 200 })
     }
 
-    // m_payment_id formats supported (newest to oldest):
-    //   "varsityos_{uuid36}_{tier}_{timestamp}"  — routed via universal hub (new)
-    //   "{uuid36}_{tier}_{timestamp}"            — direct notify (legacy)
-    //   "{uuid36}_{tier}"                        — legacy without timestamp
+    // m_payment_id formats supported:
+    //   "mm.varsityos.<tier>.<uuid36>"           — Mirembe hub (canonical, new)
+    //   "varsityos_{uuid36}_{tier}_{timestamp}"  — legacy universal hub
+    //   "{uuid36}_{tier}_{timestamp}"            — legacy direct notify
     const mpid = data.m_payment_id ?? ''
-    // Strip optional "varsityos_" prefix so the rest of the parsing is unchanged
-    const stripped = mpid.startsWith('varsityos_') ? mpid.slice(10) : mpid
-    const userId = stripped.slice(0, 36)
+    let userId = ''
+    let tier: 'scholar' | 'nova_unlimited' = 'scholar'
+    if (mpid.startsWith('mm.varsityos.')) {
+      const parts = mpid.split('.') // [mm, varsityos, tier, uuid]
+      tier = parts[2] === 'nova_unlimited' ? 'nova_unlimited' : 'scholar'
+      userId = parts.slice(3).join('.')
+    } else {
+      const stripped = mpid.startsWith('varsityos_') ? mpid.slice(10) : mpid
+      userId = stripped.slice(0, 36)
+      tier = stripped.slice(37).startsWith('nova_unlimited') ? 'nova_unlimited' : 'scholar'
+    }
     // Validate that userId is a well-formed UUID before using it in DB queries
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
     if (userId && !UUID_RE.test(userId)) {
       console.warn('[PayFast ITN] Malformed userId in m_payment_id:', mpid)
       return new NextResponse('OK', { status: 200 })
     }
-    // tier is the segment after the uuid — check known values by prefix to handle nova_unlimited's underscore
-    const afterUuid = stripped.slice(37)
-    const tier: 'scholar' | 'nova_unlimited' =
-      afterUuid.startsWith('nova_unlimited') ? 'nova_unlimited'
-      : 'scholar'
 
     // The signature only proves PayFast sent the ITN, not that the correct amount was paid,
     // and the tier is derived from the client-influenced m_payment_id. Without this check a
