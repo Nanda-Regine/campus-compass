@@ -98,7 +98,11 @@ export async function POST(request: Request) {
       .join('&') + `&passphrase=${phpUrlencode(passphrase)}`
     const signature = createHash('md5').update(sigSource).digest('hex')
 
-    const formFields: Record<string, string> = Object.fromEntries(filteredFields)
+    // Submit the SAME trimmed values that were signed, so PayFast's recomputed
+    // signature always matches (a stray space in name/email would otherwise 403).
+    const formFields: Record<string, string> = Object.fromEntries(
+      filteredFields.map(([k, v]) => [k, v.trim()]),
+    )
     formFields.signature = signature
 
     const action = isSandbox
