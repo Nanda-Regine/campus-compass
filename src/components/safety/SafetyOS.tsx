@@ -1258,7 +1258,7 @@ export default function SafetyOS() {
               }}
             >
               <span style={{ fontSize: '1.1rem', opacity: activeTab === tab.id ? 1 : 0.45 }}>{tab.icon}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                 {tab.label.slice(0, 6).toUpperCase()}
               </span>
             </button>

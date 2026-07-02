@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function PaiaPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-white/80" style={{ position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="abstract-wall" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
-      <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
+      <AmbientImage zone="abstract-wall" opacity={0.30} blurPx={2} saturation={1.4} />
+      <div className="relative z-[1] border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
@@ -19,7 +19,7 @@ export default function PaiaPage() {
         <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
       </div>
 
-      <div className="max-w-2xl mx-auto px-5 py-10">
+      <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">PAIA Manual</h1>
@@ -27,7 +27,7 @@ export default function PaiaPage() {
           <p className="font-mono text-xs text-white/30 mt-1">Last updated: 14 June 2026 · Reporting year: 1 April 2025 – 31 March 2026</p>
         </div>
 
-        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/65">
+        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
 
           {/* Compliance Banner */}
           <div className="rounded-xl border border-sky-600/20 bg-sky-600/5 px-4 py-3">

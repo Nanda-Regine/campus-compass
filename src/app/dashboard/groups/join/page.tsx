@@ -96,7 +96,7 @@ function JoinGroupContent() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-6" style={{ position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="community" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="community" opacity={0.32} blurPx={2} saturation={1.4} />
       <div className="max-w-sm w-full text-center">
         <div className="w-16 h-16 rounded-2xl bg-teal-600/20 border border-teal-600/30 flex items-center justify-center text-3xl mx-auto mb-5">
           👥

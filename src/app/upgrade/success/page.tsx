@@ -34,7 +34,7 @@ export default async function UpgradeSuccessPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="nova" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="nova" opacity={0.32} blurPx={2} saturation={1.4} />
       <TopBar title="" />
 
       <div className="max-w-sm mx-auto px-4 py-12 flex flex-col items-center text-center">

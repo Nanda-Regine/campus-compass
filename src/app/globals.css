@@ -182,15 +182,17 @@ html:not(.light) {
   --dark-border:     rgba(148, 111, 255, 0.10);
   --dark-border2:    rgba(148, 111, 255, 0.18);
 
-  /* ── Text — Purple-warm white ── */
+  /* ── Text — Purple-warm white ──
+     secondary/tertiary/label brightened for AA contrast (they previously failed,
+     esp. over ambient background images). Primary/muted unchanged. */
   --text-primary:   #EDE8F8;
-  --text-secondary: #8A85B0;
-  --text-tertiary:  #56507A;
+  --text-secondary: #ADA8CE;
+  --text-tertiary:  #9C96C2;
   --text-muted:     #3D395E;
-  --text-label:     rgba(237, 232, 248, 0.38);
+  --text-label:     rgba(237, 232, 248, 0.60);
   --text-light:     #EDE8F8;
-  --text-light2:    #8A85B0;
-  --text-light3:    #56507A;
+  --text-light2:    #ADA8CE;
+  --text-light3:    #9C96C2;
 
   /* ── Primary — Jade ── */
   --teal:         #00CFA0;
