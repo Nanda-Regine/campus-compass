@@ -80,7 +80,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">5. Payments and Subscriptions</h2>
-            <p className="mb-2">Premium subscriptions are processed by <strong className="text-white">PayFast (DPO PayGate (Pty) Ltd)</strong>, a registered payment service provider in South Africa.</p>
+            <p className="mb-2">Premium subscriptions are processed by <strong className="text-white">Paystack</strong>, a PCI-DSS Level 1 compliant payment service provider.</p>
             <ul className="list-disc list-inside text-white/55 space-y-1.5">
               <li>All prices are in South African Rand (ZAR) and are inclusive of VAT where applicable</li>
               <li>Subscriptions are billed monthly and renew automatically unless cancelled</li>
@@ -122,7 +122,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">9. Service Availability</h2>
-            <p>We aim for 99% uptime but do not guarantee uninterrupted service. Scheduled maintenance will be announced in advance where possible. We are not responsible for downtime caused by third-party providers (Supabase, Vercel, Anthropic, PayFast) or events outside our reasonable control (force majeure).</p>
+            <p>We aim for 99% uptime but do not guarantee uninterrupted service. Scheduled maintenance will be announced in advance where possible. We are not responsible for downtime caused by third-party providers (Supabase, Vercel, Anthropic, Paystack) or events outside our reasonable control (force majeure).</p>
           </section>
 
           <section>

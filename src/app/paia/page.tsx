@@ -122,7 +122,7 @@ export default function PaiaPage() {
                 },
                 {
                   cat: 'Payment & Transaction Records',
-                  items: ['Subscription payment history (amounts, dates, transaction IDs)', 'Payment status records from PayFast', 'Refund records'],
+                  items: ['Subscription payment history (amounts, dates, transaction IDs)', 'Payment status records from Paystack', 'Refund records'],
                 },
                 {
                   cat: 'Technical & Security Records',
@@ -142,7 +142,7 @@ export default function PaiaPage() {
               ))}
             </div>
 
-            <p className="mt-3 text-white/40 text-xs">Note: records held by third-party processors (Supabase, Anthropic, PayFast, Vercel) on our behalf are subject to their own PAIA/data access regimes. We will assist with directing requests to the relevant party where appropriate.</p>
+            <p className="mt-3 text-white/40 text-xs">Note: records held by third-party processors (Supabase, Anthropic, Paystack, Vercel) on our behalf are subject to their own PAIA/data access regimes. We will assist with directing requests to the relevant party where appropriate.</p>
           </section>
 
           <section>

@@ -54,7 +54,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white/75">Financial data:</strong> Monthly budget, expense records, NSFAS allowance amounts you enter — stored securely, never shared</li>
               <li><strong className="text-white/75">Usage data:</strong> App interactions, AI message history, task completions — used to improve your experience</li>
               <li><strong className="text-white/75">Device &amp; technical data:</strong> IP address (for security and fraud prevention), browser type, crash logs</li>
-              <li><strong className="text-white/75">Payment data:</strong> Payment status from PayFast (we do not store your card details — PayFast is the payment processor)</li>
+              <li><strong className="text-white/75">Payment data:</strong> Payment status from Paystack (we do not store your card details — Paystack is the payment processor)</li>
             </ul>
             <p className="mt-3 text-white/40 text-xs">We do NOT collect: South African ID numbers, bank account numbers, biometric data, or information about minors under 18.</p>
           </section>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
               <li>Providing and operating the VarsityOS platform (account management, feature access)</li>
               <li>Personalising your AI companion (Nova) using your academic and financial context</li>
-              <li>Processing subscription payments via PayFast</li>
+              <li>Processing subscription payments via Paystack</li>
               <li>Sending service-related communications (account confirmations, payment receipts)</li>
               <li>Security and fraud prevention (rate limiting, suspicious activity detection)</li>
               <li>Improving our services through aggregate, anonymised analytics</li>
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
               <li><strong className="text-white/75">Supabase (Supabase Inc.):</strong> Database and authentication infrastructure — data stored in the EU (Ireland) region</li>
               <li><strong className="text-white/75">Anthropic, PBC:</strong> AI processing for Nova responses — see Section 5</li>
-              <li><strong className="text-white/75">PayFast (DPO PayGate (Pty) Ltd):</strong> Payment processing — they are a registered payment service provider in South Africa</li>
+              <li><strong className="text-white/75">Paystack:</strong> Payment processing — a PCI-DSS Level 1 compliant payment service provider</li>
               <li><strong className="text-white/75">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
               <li><strong className="text-white/75">Law enforcement:</strong> Only when required by a valid legal order under South African law</li>
             </ul>

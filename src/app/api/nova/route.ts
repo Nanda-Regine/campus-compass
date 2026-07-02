@@ -220,7 +220,7 @@ async function buildStudentContext(userId: string, supabase: ReturnType<typeof c
     proactiveSignals.push(`📉 Grade tracker shows below 50% in: ${atRiskModules.map(m => `${m.name} (${m.avg}%)`).join(', ')}. Offer academic support if relevant.`)
 
   const p = profile as Record<string, unknown> | null
-  // subscription_tier is the canonical column (set by PayFast webhook)
+  // subscription_tier is the canonical column (set by Paystack webhook)
   // fall back to plan (legacy) then free
   const tier = (
     (p?.subscription_tier as NovaTier | null) ||

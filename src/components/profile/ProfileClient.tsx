@@ -219,7 +219,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
     setCancelling(true)
     setCancelError(null)
     try {
-      const res = await fetch('/api/payfast/cancel', { method: 'POST', signal: AbortSignal.timeout(10000) })
+      const res = await fetch('/api/paystack/cancel', { method: 'POST', signal: AbortSignal.timeout(12000) })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Cancellation failed')
       setCancelled(true)

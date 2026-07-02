@@ -224,7 +224,7 @@ export default async function UpgradePage() {
         </div>
 
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
-          Secured by PayFast · Monthly subscription · Cancel anytime
+          Secured by Paystack · Monthly subscription · Cancel anytime
         </p>
 
         <Link

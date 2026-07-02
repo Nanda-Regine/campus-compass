@@ -64,8 +64,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const reqId = crypto.randomUUID()
 
-  // PayFast ITN webhook has its own IP + signature verification
-  if (pathname === '/api/payfast/notify') {
+  // Paystack subscription webhook is an external POST forwarded by the Mirembe hub;
+  // it authenticates via the x-hub-secret shared secret, so it must skip the CSRF
+  // origin check (which would 403 a cross-origin POST) — its own auth is stronger.
+  if (pathname === '/api/paystack/webhook') {
     return NextResponse.next()
   }
 
