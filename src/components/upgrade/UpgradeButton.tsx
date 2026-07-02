@@ -11,6 +11,8 @@ interface Props {
   highlight?: boolean
 }
 
+// ⚠️ PAYMENTS: subscribe goes to Paystack (via /api/paystack/initiate → Mirembe hub).
+// Not PayFast. Do not revert.
 export default function UpgradeButton({ tier, price, colour, gold, highlight }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -21,37 +23,21 @@ export default function UpgradeButton({ tier, price, colour, gold, highlight }: 
     trackEvent('upgrade_click', { tier, price })
 
     try {
-      const res = await fetch('/api/payfast/initiate', {
+      const res = await fetch('/api/paystack/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tier }),
       })
-
       const json = await res.json()
-
-      if (!res.ok) {
+      if (!res.ok || !json.redirect) {
         setError(json.error || 'Payment setup failed. Please try again.')
         setLoading(false)
         return
       }
-
-      // Build and submit a hidden form to PayFast
-      const form = document.createElement('form')
-      form.method = 'POST'
-      form.action = json.action
-
-      for (const [name, value] of Object.entries(json.fields as Record<string, string>)) {
-        const input = document.createElement('input')
-        input.type = 'hidden'
-        input.name = name
-        input.value = value
-        form.appendChild(input)
-      }
-
-      document.body.appendChild(form)
-      form.submit()
+      // Redirect to Paystack (hosted, secure, auto-renewing subscription).
+      window.location.href = json.redirect
     } catch (err) {
-      console.error('[PayFast]', err)
+      console.error('[Paystack]', err)
       setError('Network error. Check your connection and try again.')
       setLoading(false)
     }
@@ -80,7 +66,7 @@ export default function UpgradeButton({ tier, price, colour, gold, highlight }: 
           transition: 'filter var(--duration-fast) var(--ease-out)',
         }}
       >
-        {loading ? 'Redirecting to PayFast…' : `Subscribe · R${price}/month`}
+        {loading ? 'Redirecting to Paystack…' : `Subscribe · R${price}/month`}
       </button>
       {error && (
         <p style={{
