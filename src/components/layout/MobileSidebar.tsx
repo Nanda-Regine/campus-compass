@@ -10,6 +10,7 @@ import {
   GraduationCap, Globe, Flame, Rocket,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
+import { APP_PREFIXES } from '@/lib/appPrefixes'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { href: string; icon: React.ComponentType<any>; label: string; accent: string; emoji: string }
@@ -58,13 +59,6 @@ const SECTIONS: Section[] = [
       { href: '/social',           icon: MessageCircle, label: 'Social', accent: '#7090D0', emoji: '💬' },
     ],
   },
-]
-
-const APP_PREFIXES = [
-  '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
-  '/campus-life', '/referral', '/streak', '/career', '/bursaries',
-  '/notes', '/social', '/tutoring', '/health', '/sleep', '/fitness',
-  '/safety', '/movement', '/civic', '/regulate', '/housing', '/launchpad',
 ]
 
 const STYLE_ID = 'varsityos-mobile-sidebar'

@@ -12,6 +12,7 @@ import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
 import { trackEvent } from '@/lib/analytics'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { APP_PREFIXES } from '@/lib/appPrefixes'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type NavItem = { href: string; icon: React.ComponentType<any>; label: string; accent: string; accentDim: string; isNova?: boolean }
@@ -76,14 +77,6 @@ const SECTIONS: Section[] = [
       { href: '/src',              icon: Megaphone,     label: 'SRC',         accent: '#8b5cf6', accentDim: 'rgba(139,92,246,0.14)'  },
     ],
   },
-]
-
-const APP_PREFIXES = [
-  '/dashboard', '/study', '/budget', '/meals', '/nova', '/profile',
-  '/campus-life', '/referral', '/streak', '/upgrade', '/career',
-  '/bursaries', '/notes', '/social', '/tutoring', '/health', '/sleep',
-  '/fitness', '/safety', '/movement', '/civic', '/regulate', '/international', '/lms', '/housing', '/launchpad', '/broadcasts',
-  '/marketplace', '/src', '/stokvel', '/skills', '/tour',
 ]
 
 export const SIDEBAR_EXPANDED_W = 220

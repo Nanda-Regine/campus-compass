@@ -1112,8 +1112,13 @@ html.light .shimmer {
 .dot-3 { animation: nova-dot-bounce 1.2s infinite 400ms; }
 
 /* ── Chat Page Height ────────────────────────────────────── */
-
-.chat-page-height { height: calc(100dvh - 57px); }
+/* Mobile: clear the fixed 60px BottomNav (+ notch safe-area). Desktop (md+): no
+   bottom nav, so use the full viewport. Previously hardcoded 57px, which left the
+   composer ~3px behind the nav on phones and dead space below it on desktop. */
+.chat-page-height { height: calc(100dvh - 60px - env(safe-area-inset-bottom)); }
+@media (min-width: 768px) {
+  .chat-page-height { height: 100dvh; }
+}
 
 /* ── Scrollbar-none Utility ──────────────────────────────── */
 
