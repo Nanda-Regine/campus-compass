@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { hideBrokenImg } from '@/lib/imgFallback'
 import { createClient } from '@/lib/supabase/client'
 
 type Condition = 'new' | 'like_new' | 'good' | 'fair' | 'poor'
@@ -249,7 +250,7 @@ function ListingCard({ listing: l, userId, onRefresh, isOwner }: {
         <div style={{ height: 110, overflow: 'hidden', position: 'relative' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={l.image_url} alt={l.title}
+            src={l.image_url} alt={l.title} onError={hideBrokenImg}
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
           />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6))' }} />

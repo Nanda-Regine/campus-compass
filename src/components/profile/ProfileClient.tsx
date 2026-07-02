@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { hideBrokenImg } from '@/lib/imgFallback'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -533,7 +534,7 @@ export default function ProfileClient() {
                 >
                   {profile?.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={profile.avatar_url} alt="avatar" onError={hideBrokenImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : emoji}
                 </button>
                 {uploadingAvatar ? (

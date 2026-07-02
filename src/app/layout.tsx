@@ -376,6 +376,9 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: 'cover',
+  // Shrink the layout viewport when the on-screen keyboard opens, so bottom-anchored
+  // inputs (Nova composer, chat) ride above it instead of being covered on Android.
+  interactiveWidget: 'resizes-content',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FBF7EE' },
     { media: '(prefers-color-scheme: dark)', color: '#05040C' },

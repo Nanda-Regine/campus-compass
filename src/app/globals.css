@@ -1138,6 +1138,15 @@ html.light .shimmer {
 
 body.modal-open { overflow: hidden; }
 
+/* ── Touch: reveal hover-gated controls ──────────────────────
+   Many list rows hide their edit/delete buttons behind `group-hover:opacity-100`.
+   Touch devices have no hover, so those controls never appear and core CRUD
+   (delete a task, job, meal, sleep log, budget line…) is impossible on a phone.
+   On non-hover devices, force them visible. */
+@media (hover: none) {
+  .group-hover\:opacity-100 { opacity: 1 !important; }
+}
+
 /* ── Scroll Container ────────────────────────────────────── */
 
 .scroll-container {

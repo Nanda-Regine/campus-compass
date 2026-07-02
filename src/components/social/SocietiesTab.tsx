@@ -53,9 +53,15 @@ export default function SocietiesTab({ userInstitution }: { userId: string; user
   async function toggleJoin(s: Society) {
     setBusy(s.id)
     const action = s.is_member ? 'leave' : 'join'
+    const snapshot = societies // for rollback if the request fails
     setSocieties(list => list.map(x => x.id === s.id ? { ...x, is_member: !x.is_member, member_count: x.member_count + (x.is_member ? -1 : 1) } : x))
     try {
-      await fetch(`/api/social/societies?id=${s.id}&action=${action}`, { method: 'PATCH' })
+      const res = await fetch(`/api/social/societies?id=${s.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
+      if (!res.ok) throw new Error('request failed')
+    } catch {
+      setSocieties(snapshot) // revert — don't show the user as joined when it didn't persist
+      const { default: toast } = await import('react-hot-toast')
+      toast.error("Couldn't update — check your connection and try again")
     } finally { setBusy(null) }
   }
 

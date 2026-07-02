@@ -60,10 +60,15 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
   async function toggleJoin(room: Room) {
     setBusy(room.id)
     const action = room.is_member ? 'leave' : 'join'
-    if (action === 'join' && !joinedXp.current) { joinedXp.current = true; dispatchXP('body_double_joined') }
     try {
-      await fetch(`/api/social/study-rooms?id=${room.id}&action=${action}`, { method: 'PATCH' })
+      const res = await fetch(`/api/social/study-rooms?id=${room.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
+      if (!res.ok) throw new Error('request failed')
+      // Award XP only AFTER the join actually persisted (was firing before the request).
+      if (action === 'join' && !joinedXp.current) { joinedXp.current = true; dispatchXP('body_double_joined') }
       await load()
+    } catch {
+      const { default: toast } = await import('react-hot-toast')
+      toast.error("Couldn't update the room — try again")
     } finally { setBusy(null) }
   }
 

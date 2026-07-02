@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { signals } from '@/store/signals'
+import { queueWrite } from '@/lib/offline/pendingWrites'
 import type { MoodScore } from '@/types'
 import GratitudePrompt from '@/components/orchestration/GratitudePrompt'
 
@@ -51,18 +52,31 @@ export default function MoodCheckin({ userId }: Props) {
           cacheMood(today, data.mood_score)
         }
         setLoading(false)
-      })
+      }, () => setLoading(false)) // never leave the card stuck hidden on a failed load
   }, [userId])
 
   const handleSelect = async (score: number) => {
     setSaving(true)
-    setTodayScore(score)
+    setTodayScore(score) // optimistic — safe because failures are queued, not dropped
     const today = new Date().toISOString().split('T')[0]
-    await supabaseRef.current.from('mood_checkins').upsert(
-      { user_id: userId, mood_score: score, date: today },
-      { onConflict: 'user_id,date' }
-    )
-    setSaving(false)
+    const row = { user_id: userId, mood_score: score, date: today }
+    try {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        // Offline (load shedding / no data) — queue so the check-in syncs later
+        // instead of throwing an unhandled rejection and being lost.
+        await queueWrite('mood_checkins', 'upsert', row)
+      } else {
+        const { error } = await supabaseRef.current
+          .from('mood_checkins')
+          .upsert(row, { onConflict: 'user_id,date' })
+        if (error) await queueWrite('mood_checkins', 'upsert', row)
+      }
+    } catch {
+      // Network threw mid-request — queue rather than lose the check-in.
+      try { await queueWrite('mood_checkins', 'upsert', row) } catch { /* quota */ }
+    } finally {
+      setSaving(false)
+    }
 
     // Signal emission
     signals.emit({ type: 'mood_logged', payload: { score: score as MoodScore, date: today } })

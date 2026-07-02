@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { getPendingCount } from '@/lib/offline/sync'
+import { getPendingCount } from '@/lib/offline/pendingWrites'
 import { useAppStore } from '@/store'
 
 interface SyncState {
