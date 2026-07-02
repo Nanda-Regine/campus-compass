@@ -5,6 +5,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export interface GradPlan {
   headline:       string
@@ -29,6 +30,10 @@ export async function POST() {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Per-user daily ceiling on this AI (Anthropic) route — caps cost/abuse at scale.
+    const { allowed } = await checkRateLimitAsync(user.id, 'ai-grad-optimize', 10, 86_400_000)
+    if (!allowed) return NextResponse.json({ error: 'Daily plan-optimization limit reached — try again tomorrow.' }, { status: 429 })
 
     const [modsRes, cfgRes, profileRes] = await Promise.all([
       supabase

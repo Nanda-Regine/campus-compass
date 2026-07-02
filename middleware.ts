@@ -4,12 +4,17 @@ import { logSecurityEvent } from '@/lib/security'
 
 // ─── AI route paths that get a stricter rate limit ────────────
 const AI_ROUTES = [
-  '/api/nova',
+  '/api/nova',                    // also covers /api/nova/proactive-brief, /api/nova/quick
   '/api/budget/insights',
   '/api/meals/recipe',
   '/api/study/assist',
+  '/api/study/past-papers',
   '/api/work/shift-draft',
   '/api/insights/checkin',
+  '/api/insights/weekly-report',
+  '/api/study-pods/matches',
+  '/api/career/mock-interview',
+  '/api/graduation/optimize',
 ]
 
 // ─── Mutating methods that require CSRF origin check ──────────

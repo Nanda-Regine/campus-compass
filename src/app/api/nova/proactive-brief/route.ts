@@ -6,6 +6,7 @@ import type { NextRequest } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 interface StateSnapshot {
   academic: {
@@ -46,6 +47,10 @@ export async function POST(req: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Per-user daily ceiling on this AI (Anthropic) route — caps cost/abuse at scale.
+  const { allowed } = await checkRateLimitAsync(user.id, 'ai-proactive-brief', 20, 86_400_000)
+  if (!allowed) return NextResponse.json({ error: 'Daily brief limit reached — try again tomorrow.' }, { status: 429 })
 
   let snapshot: StateSnapshot
   try {

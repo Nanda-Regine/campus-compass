@@ -6,6 +6,7 @@ import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 interface CandidateProfile {
   user_id: string
@@ -79,6 +80,10 @@ export async function GET() {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Per-user daily ceiling on this AI (Anthropic) route — caps cost/abuse at scale.
+    const { allowed } = await checkRateLimitAsync(user.id, 'ai-study-pod-matches', 40, 86_400_000)
+    if (!allowed) return NextResponse.json({ error: 'Daily match limit reached — try again tomorrow.' }, { status: 429 })
 
     const admin = createAdminSupabaseClient()
 

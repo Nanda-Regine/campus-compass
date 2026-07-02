@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export async function GET(req: Request) {
   const supabase = createServerSupabaseClient()
@@ -25,7 +26,10 @@ export async function POST(req: Request) {
   const { module_code, module_name, year, paper_type, institution, extracted_text } = body
 
   let ai_insights = null
-  if (extracted_text && process.env.ANTHROPIC_API_KEY) {
+  // Per-user daily ceiling on the AI (Anthropic) analysis — over quota, the paper
+  // still saves, just without AI insights (graceful degradation, no cost blowout).
+  const { allowed: aiAllowed } = await checkRateLimitAsync(user.id, 'ai-past-papers', 20, 86_400_000)
+  if (extracted_text && process.env.ANTHROPIC_API_KEY && aiAllowed) {
     try {
       const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
       const response = await client.messages.create({
