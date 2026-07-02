@@ -72,6 +72,15 @@ export default function InterventionModal() {
             background: 'linear-gradient(90deg, var(--danger), var(--coral), transparent)',
           }} />
 
+          {/* Dismiss — removes this crisis from the queue (rule cooldown prevents instant re-fire) */}
+          <button onClick={() => dismissIntervention(crisis.id)} aria-label="Dismiss" style={{
+            position: 'absolute', top: 10, right: 10, zIndex: 2,
+            width: 40, height: 40, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.06)', border: '0.5px solid var(--border-subtle)',
+            color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: 15,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>✕</button>
+
           {/* Crisis icon */}
           <div style={{
             width: 52, height: 52, borderRadius: '50%',

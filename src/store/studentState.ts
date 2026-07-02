@@ -125,6 +125,7 @@ interface StudentStateStore {
   dismissIntervention:   (id: string) => void
   setActiveIntervention: (id: string | null) => void
   suppressInterventions: (untilIso: string) => void
+  pruneInterventions:    (ids: string[]) => void
   setLastPlannedAt:      (iso: string) => void
 }
 
@@ -235,6 +236,19 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
     ? (budget.nsfas_living ?? 0) + (budget.nsfas_accom ?? 0) + (budget.nsfas_books ?? 0)
     : 0
   const totalAvailable = budget.monthly_budget + nsfasTotal + additionalIncome
+
+  // No configured budget (0 allowance, NSFAS off, no external income) → the budget
+  // simply isn't set up. Treat as neutral, NOT a crisis. Without this guard `remaining`
+  // collapses to 0 → emergencyMode → the financial_runway_critical full-screen modal
+  // fires for anyone who logged an expense before setting a budget.
+  if (totalAvailable <= 0) {
+    return {
+      runwayDays: 30, healthScore: 50,
+      nsfasStatus: nsfasDelayed ? 'delayed' : (profile?.funding_type === 'nsfas' ? 'ok' : 'unknown'),
+      spendingTrend: 'on_track', emergencyMode: false,
+    }
+  }
+
   const remaining      = Math.max(0, totalAvailable - spentThisMonth)
   const daysLeft       = daysInMonth - dayOfMonth
   // Use days elapsed (max 1) so day-1 spending doesn't produce a 0-day runway
@@ -275,7 +289,9 @@ function computeFinancial(expenses: Expense[], budget: Budget | null, profile: P
     healthScore,
     nsfasStatus:  nsfasDelayed ? 'delayed' : (profile?.funding_type === 'nsfas' ? 'ok' : 'unknown'),
     spendingTrend,
-    emergencyMode: runwayDays < 5 || remaining < 100,
+    // Only a real emergency once there's actual spend to run out of — a fully-funded
+    // account with no expenses yet (or at month-end) is not a crisis.
+    emergencyMode: spentThisMonth > 0 && (runwayDays < 5 || remaining < 100),
   }
 }
 
@@ -461,6 +477,20 @@ export const useStudentState = create<StudentStateStore>()(
       suppressInterventions(untilIso: string) {
         set((state) => ({
           interventions: { ...state.interventions, suppressedUntil: untilIso, activeId: null },
+        }))
+      },
+
+      // Drop specific interventions by id. Used by the rules engine to garbage-collect
+      // persisted queue items whose triggering condition no longer holds.
+      pruneInterventions(ids: string[]) {
+        if (ids.length === 0) return
+        const drop = new Set(ids)
+        set((state) => ({
+          interventions: {
+            ...state.interventions,
+            queue:    state.interventions.queue.filter(i => !drop.has(i.id)),
+            activeId: state.interventions.activeId && drop.has(state.interventions.activeId) ? null : state.interventions.activeId,
+          },
         }))
       },
 

@@ -114,8 +114,10 @@ const RULES: Rule[] = [
     urgency:      5,
     variant:      'modal',
     cooldownMins: 12 * 60,
-    test: ({ financial }) =>
-      financial.emergencyMode || financial.runwayDays < 5,
+    // emergencyMode already encodes (runwayDays < 5 || remaining < 100) AND that real
+    // spending exists — so this stays a genuine crisis, never a false positive from an
+    // unconfigured budget or a no-spend month-end.
+    test: ({ financial }) => financial.emergencyMode,
     build: ({ financial }) => ({
       title:       'Money runs out in less than 5 days',
       message:     `At your current pace you have ${financial.runwayDays} days of budget left. Switch to emergency mode and stretch what you have.`,
@@ -635,16 +637,28 @@ export function runRules(): void {
 
   const store = useStudentState.getState()
 
-  // Respect global suppression
-  if (store.interventions.suppressedUntil) {
-    if (new Date(store.interventions.suppressedUntil).getTime() > Date.now()) return
-  }
-
   const snapshot: RuleSnapshot = {
     academic:  store.academic,
     financial: store.financial,
     wellness:  store.wellness,
     schedule:  store.schedule,
+  }
+
+  // Prune stale interventions: the queue is persisted to localStorage, so without this
+  // a one-time intervention (especially an urgency-5 modal) would re-appear on every
+  // reload and after each suppression window until manually dismissed — even once its
+  // triggering condition has resolved. Drop any queued item whose rule no longer passes.
+  const stale = store.interventions.queue
+    .filter(iv => {
+      const rule = RULES.find(r => r.id === iv.ruleId)
+      return !rule || !rule.test(snapshot)
+    })
+    .map(iv => iv.id)
+  store.pruneInterventions(stale)
+
+  // Respect global suppression when ADDING new interventions (pruning still runs above)
+  if (store.interventions.suppressedUntil) {
+    if (new Date(store.interventions.suppressedUntil).getTime() > Date.now()) return
   }
 
   for (const rule of RULES) {
