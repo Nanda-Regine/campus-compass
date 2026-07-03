@@ -136,7 +136,7 @@ const FIELD_UNLOCKS: Record<string, string> = {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+      <label className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
         {label}
       </label>
       {children}
@@ -241,7 +241,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
 
   return (
     <div className="rounded-2xl p-5" style={{ background: tierBg, border: tierBorder }}>
-      <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+      <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
         Subscription
       </p>
 
@@ -250,7 +250,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
           <p className="font-display font-bold text-white">
             {meta ? `✦ ${meta.name}` : 'Free plan'}
           </p>
-          <p className="font-mono text-[0.58rem] mt-0.5" style={{ color: meta ? meta.colour : 'rgba(255,255,255,0.3)' }}>
+          <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: meta ? meta.colour : 'rgba(255,255,255,0.3)' }}>
             {meta ? meta.messages : '20 Nova messages / month'}
           </p>
         </div>
@@ -282,7 +282,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
           {!confirmCancel ? (
             <button
               onClick={() => setConfirmCancel(true)}
-              className="font-mono text-[0.58rem]"
+              className="font-mono text-[0.62rem]"
               style={{ color: 'rgba(255,255,255,0.22)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               Cancel subscription
@@ -310,7 +310,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
                 </button>
               </div>
               {cancelError && (
-                <p className="font-mono text-[0.58rem] mt-2" style={{ color: '#ef4444' }}>{cancelError}</p>
+                <p className="font-mono text-[0.62rem] mt-2" style={{ color: '#ef4444' }}>{cancelError}</p>
               )}
             </div>
           )}
@@ -586,7 +586,7 @@ export default function ProfileClient() {
             {/* Emoji picker */}
             {showEmojiPicker && (
               <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Choose your avatar</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Choose your avatar</p>
                 <div className="flex flex-wrap gap-2">
                   {EMOJI_OPTIONS.map(e => (
                     <button
@@ -683,7 +683,7 @@ export default function ProfileClient() {
             <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                  <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.28)' }}>
                     OS personalisation
                   </p>
                   <p className="font-display font-bold text-sm text-white mt-0.5">{pct}% complete</p>
@@ -818,7 +818,7 @@ export default function ProfileClient() {
               </Field>
               <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
                 <div>
-                  <div className="font-mono text-[0.58rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>First-generation student</div>
+                  <div className="font-mono text-[0.62rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>First-generation student</div>
                   <div className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
                     {isFirstGen ? '✓ First in your family to study at university/college' : 'Are you the first in your family to study?'}
                   </div>
@@ -899,7 +899,7 @@ export default function ProfileClient() {
             </div>
 
             <div className="pt-1">
-              <p className="font-mono text-[0.58rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
                 Referral program
               </p>
               <ReferralWidget />
@@ -920,8 +920,8 @@ export default function ProfileClient() {
             {/* My textbook listings */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>My textbook listings</p>
-                <a href="/textbooks" className="font-mono text-[0.58rem]" style={{ color: 'rgba(0,229,176,0.6)', textDecoration: 'none' }}>Browse →</a>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>My textbook listings</p>
+                <a href="/textbooks" className="font-mono text-[0.62rem]" style={{ color: 'rgba(0,229,176,0.6)', textDecoration: 'none' }}>Browse →</a>
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 {myListings.length === 0 ? (
@@ -939,7 +939,7 @@ export default function ProfileClient() {
                     >
                       <div>
                         <p className="font-display text-sm font-medium text-white">{l.title}</p>
-                        <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
                           {l.condition} · {new Date(l.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                           {l.is_sold && <span style={{ color: 'var(--teal)', marginLeft: 5 }}>· Sold</span>}
                         </p>
@@ -968,7 +968,7 @@ export default function ProfileClient() {
             {/* Account info */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Account details</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Account details</p>
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className="flex justify-between items-center px-5 py-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -987,18 +987,18 @@ export default function ProfileClient() {
             {/* Display */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Display</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Display</p>
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
                 <div className="px-1 space-y-2">
                   <div>
-                    <p className="font-mono text-[0.54rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
                       Outdoor mode increases contrast for bright South African sunlight.
                     </p>
                     <ThemeToggle />
                   </div>
                   <div>
-                    <p className="font-mono text-[0.54rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
                       Data Saver skips auto-loading AI content to protect your prepaid data.
                     </p>
                     <DataSaverToggle />
@@ -1010,7 +1010,7 @@ export default function ProfileClient() {
             {/* Feedback */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Feedback & reviews</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Feedback & reviews</p>
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
                 <button
@@ -1032,14 +1032,14 @@ export default function ProfileClient() {
                   <span>Review on Google</span>
                   <span className="ml-auto text-xs opacity-60">→</span>
                 </a>
-                <p className="font-mono text-[0.54rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.18)' }}>Your review helps other students find VarsityOS</p>
+                <p className="font-mono text-[0.62rem] text-center pt-1" style={{ color: 'rgba(255,255,255,0.18)' }}>Your review helps other students find VarsityOS</p>
               </div>
             </div>
 
             {/* Actions */}
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Actions</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Actions</p>
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
                 <button

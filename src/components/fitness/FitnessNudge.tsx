@@ -116,13 +116,13 @@ export default function FitnessNudge({ context }: Props) {
 
       {/* Text */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ color: '#e5e7eb', fontSize: '13px', fontWeight: 700, lineHeight: 1.2, marginBottom: '2px' }}>
+        <div style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 700, lineHeight: 1.2, marginBottom: '2px' }}>
           {nudge.title}
         </div>
-        <div style={{ color: '#9ca3af', fontSize: '11px', lineHeight: 1.35 }}>
+        <div style={{ color: 'var(--text-tertiary)', fontSize: '11px', lineHeight: 1.35 }}>
           {nudge.msg}
         </div>
-        <div style={{ color: '#6b7280', fontSize: '10px', fontStyle: 'italic', marginTop: '2px' }}>
+        <div style={{ color: 'var(--text-muted)', fontSize: '10px', fontStyle: 'italic', marginTop: '2px' }}>
           {nudge.science}
         </div>
       </div>
@@ -151,7 +151,7 @@ export default function FitnessNudge({ context }: Props) {
           style={{
             background: 'none',
             border: 'none',
-            color: '#6b7280',
+            color: 'var(--text-muted)',
             fontSize: '16px',
             cursor: 'pointer',
             padding: '4px',

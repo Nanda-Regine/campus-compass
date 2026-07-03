@@ -319,7 +319,7 @@ export default function JustStartButton({ tasks }: Props) {
       return (
         <div style={{ borderRadius: 18, border: '1px solid #4ecf9e28', background: 'linear-gradient(145deg,#4ecf9e08 0%,rgba(0,0,0,0) 70%)', padding: '16px 18px' }}>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 8 }}>▸ SESSION DONE</div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 12 }}>{lastDoneTask.title}</div>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginBottom: 12 }}>{lastDoneTask.title}</div>
           <button
             onClick={async () => {
               await fetch('/api/tasks', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: lastDoneTask.id, status: 'done' }) })
@@ -370,7 +370,7 @@ export default function JustStartButton({ tasks }: Props) {
 
         <div style={{
           fontFamily: 'Sora,sans-serif', fontWeight: 700,
-          fontSize: 15, color: '#fff', lineHeight: 1.35,
+          fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.35,
           marginBottom: 14, paddingRight: 8,
         }}>
           {topTask.title}

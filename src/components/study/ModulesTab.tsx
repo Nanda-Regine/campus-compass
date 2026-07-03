@@ -145,7 +145,7 @@ function ModuleTools({
             }}
           >
             {t.icon} {t.label}
-            {t.warn && <span style={{ color: '#EF4444', marginLeft: 2, fontSize: '0.55rem' }}>⚠</span>}
+            {t.warn && <span style={{ color: '#EF4444', marginLeft: 2, fontSize: '0.62rem' }}>⚠</span>}
           </button>
         ))}
       </div>
@@ -198,7 +198,7 @@ function ModuleTools({
             <span>ATTENDANCE{pct !== null ? ` · ${pct}%` : ''}</span>
             <span style={{ display: 'flex', gap: 8 }}>
               {pct !== null && pct < 80 && <span style={{ color: '#EF4444' }}>⚠ Below 80%</span>}
-              {syncing && <span style={{ color: 'var(--text-muted)', fontSize: '0.55rem' }}>syncing…</span>}
+              {syncing && <span style={{ color: 'var(--text-muted)', fontSize: '0.62rem' }}>syncing…</span>}
             </span>
           </div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
@@ -232,7 +232,7 @@ function ModuleTools({
               )
             })}
           </div>
-          <div style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
             <span>6 days ago</span><span>today</span>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
           <div className="font-display font-bold text-white text-base">
             {modules.length > 0 ? `${modules.length} module${modules.length !== 1 ? 's' : ''}` : 'No modules'}
           </div>
-          <div className="font-mono text-[0.58rem] text-white/30">
+          <div className="font-mono text-[0.62rem] text-white/30">
             Link tasks, exams and timetable to modules
           </div>
         </div>
@@ -367,18 +367,18 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                       </div>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         {mod.credits && mod.credits > 0 && (
-                          <span className="font-mono text-[0.55rem] opacity-55" style={{ color: col.text }}>{mod.credits} credits</span>
+                          <span className="font-mono text-[0.62rem] opacity-55" style={{ color: col.text }}>{mod.credits} credits</span>
                         )}
                         {mod.lecturer_name && (
                           <>
                             {mod.credits && mod.credits > 0 && <span className="opacity-20 text-xs" style={{ color: col.text }}>·</span>}
-                            <span className="font-mono text-[0.55rem] opacity-55" style={{ color: col.text }}>{mod.lecturer_name}</span>
+                            <span className="font-mono text-[0.62rem] opacity-55" style={{ color: col.text }}>{mod.lecturer_name}</span>
                           </>
                         )}
                         {mod.venue && (
                           <>
                             <span className="opacity-20 text-xs" style={{ color: col.text }}>·</span>
-                            <span className="font-mono text-[0.55rem] opacity-50" style={{ color: col.text }}>{mod.venue}</span>
+                            <span className="font-mono text-[0.62rem] opacity-50" style={{ color: col.text }}>{mod.venue}</span>
                           </>
                         )}
                       </div>
@@ -408,7 +408,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                       {taskCnt > 0 && (
                         <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
                           style={{ background: col.dot + '15', border: `0.5px solid ${col.dot}30` }}>
-                          <span className="text-[0.55rem]">✓</span>
+                          <span className="text-[0.62rem]">✓</span>
                           <span className="font-mono text-[0.65rem] font-bold" style={{ color: col.dot }}>
                             {taskCnt} task{taskCnt !== 1 ? 's' : ''}
                           </span>
@@ -417,7 +417,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                       {examCnt > 0 && (
                         <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
                           style={{ background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.25)' }}>
-                          <span className="text-[0.55rem]">◉</span>
+                          <span className="text-[0.62rem]">◉</span>
                           <span className="font-mono text-[0.65rem] font-bold text-amber-400">
                             {examCnt} exam{examCnt !== 1 ? 's' : ''}
                           </span>

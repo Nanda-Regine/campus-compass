@@ -437,7 +437,7 @@ function SafetyTab({ institution }: { institution: string }) {
         background: 'rgba(239,68,68,0.06)', border: '0.5px solid rgba(239,68,68,0.2)',
         borderRadius: 16, padding: '18px 16px', marginBottom: 20, textAlign: 'center',
       }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9rem', color: '#fff', marginBottom: 6 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: 6 }}>
           Emergency SOS
         </div>
         <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>
@@ -460,7 +460,7 @@ function SafetyTab({ institution }: { institution: string }) {
                 <a
                   key={c.number}
                   href={`tel:${c.number.replace(/\s/g, '')}`}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: '0.5px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', color: '#fff', textDecoration: 'none' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: '0.5px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', color: 'var(--text-primary)', textDecoration: 'none' }}
                 >
                   <span style={{ fontSize: '1.1rem' }}>{c.icon}</span>
                   <div style={{ flex: 1, textAlign: 'left' }}>

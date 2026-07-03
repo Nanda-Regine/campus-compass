@@ -243,7 +243,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
         {/* Job type */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 12, fontWeight: 600 }}>Job Type</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Job Type</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8 }}>
             {JOB_TYPE_LABELS.map(jt => (
               <button
@@ -254,7 +254,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
                   borderRadius: 10,
                   border: `1px solid ${setupDraft.jobType === jt.id ? 'rgba(129,140,248,0.4)' : 'rgba(255,255,255,0.07)'}`,
                   background: setupDraft.jobType === jt.id ? 'rgba(129,140,248,0.1)' : 'rgba(255,255,255,0.02)',
-                  color: setupDraft.jobType === jt.id ? '#818cf8' : '#9ca3af',
+                  color: setupDraft.jobType === jt.id ? '#818cf8' : 'var(--text-tertiary)',
                   fontSize: 12, fontWeight: setupDraft.jobType === jt.id ? 700 : 400,
                   cursor: 'pointer', transition: 'all 0.15s',
                 }}
@@ -267,7 +267,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
         {/* Industry */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 12, fontWeight: 600 }}>Industry</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Industry</div>
           <select
             value={setupDraft.industry ?? ''}
             onChange={e => setSetupDraft(prev => ({ ...prev, industry: e.target.value }))}
@@ -277,7 +277,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
               border: '1px solid rgba(255,255,255,0.09)',
               borderRadius: 10,
               padding: '10px 12px',
-              color: setupDraft.industry ? '#e5e7eb' : '#9ca3af',
+              color: setupDraft.industry ? 'var(--text-primary)' : 'var(--text-tertiary)',
               fontSize: 13,
               outline: 'none',
               cursor: 'pointer',
@@ -292,7 +292,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
         {/* Interview type */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 12, fontWeight: 600 }}>Interview Type</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Interview Type</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {INTERVIEW_TYPE_LABELS.map(it => (
               <button
@@ -314,8 +314,8 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
                   flexShrink: 0, transition: 'all 0.15s',
                 }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: setupDraft.interviewType === it.id ? '#818cf8' : '#e5e7eb' }}>{it.label}</div>
-                  <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{it.desc}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: setupDraft.interviewType === it.id ? '#818cf8' : 'var(--text-primary)' }}>{it.label}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{it.desc}</div>
                 </div>
               </button>
             ))}
@@ -324,8 +324,8 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
         {/* Info callout */}
         <div style={{ background: 'rgba(129,140,248,0.05)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 12, padding: '12px 14px' }}>
-          <div style={{ fontSize: 12, color: '#9ca3af', lineHeight: 1.6 }}>
-            You will answer <strong style={{ color: '#e5e7eb' }}>{TOTAL_QUESTIONS} questions</strong> drawn from a question bank matched to your interview type. After each answer you receive AI feedback scored 1–5 using the STAR method.
+          <div style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
+            You will answer <strong style={{ color: 'var(--text-primary)' }}>{TOTAL_QUESTIONS} questions</strong> drawn from a question bank matched to your interview type. After each answer you receive AI feedback scored 1–5 using the STAR method.
           </div>
         </div>
 
@@ -338,7 +338,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
             borderRadius: 12,
             border: 'none',
             background: canStart ? 'linear-gradient(135deg,#818cf8,#6366f1)' : 'rgba(255,255,255,0.06)',
-            color: canStart ? '#fff' : '#9ca3af',
+            color: canStart ? '#fff' : 'var(--text-tertiary)',
             fontFamily: 'Sora, sans-serif',
             fontWeight: 700,
             fontSize: 14,
@@ -366,10 +366,10 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: 32, marginBottom: 10 }}>🎤</div>
-          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 17, fontWeight: 700, color: '#e5e7eb', marginBottom: 6 }}>
+          <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
             Interview complete!
           </div>
-          <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 16 }}>
+          <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginBottom: 16 }}>
             Well done! Keep practising to build confidence.
           </div>
 
@@ -380,21 +380,21 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, color: scoreColor, marginBottom: 4 }}>
             Average: {avgScore}/5
           </div>
-          <div style={{ fontSize: 11, color: '#9ca3af' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
             {setup.interviewType} | {setup.industry} | {setup.jobType}
           </div>
         </div>
 
         {/* Per-question scores */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '14px 16px' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 10, fontWeight: 600 }}>Question Scores</div>
+          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>Question Scores</div>
           <div style={{ display: 'flex', gap: 8 }}>
             {scores.map((s, i) => {
               const c = s >= 4 ? '#34d399' : s >= 3 ? '#f59e0b' : '#f87171'
               return (
                 <div key={i} style={{ flex: 1, background: `${c}12`, border: `1px solid ${c}30`, borderRadius: 10, padding: '8px 4px', textAlign: 'center' }}>
                   <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: c }}>{s}</div>
-                  <div style={{ fontSize: 9, color: '#9ca3af', marginTop: 2 }}>Q{i + 1}</div>
+                  <div style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 2 }}>Q{i + 1}</div>
                 </div>
               )
             })}
@@ -403,7 +403,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
         {/* Top improvement area */}
         <div style={{ background: 'rgba(129,140,248,0.05)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 12, padding: '12px 14px' }}>
-          <div style={{ fontSize: 11, color: '#9ca3af', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
             <strong style={{ color: '#818cf8' }}>Top tip:</strong> Focus on the STAR method — always include a clear Result that shows the impact of your action. This is the most common gap in SA graduate interviews.
           </div>
         </div>
@@ -418,7 +418,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
               borderRadius: 11,
               border: '1px solid rgba(255,255,255,0.1)',
               background: copied ? 'rgba(129,140,248,0.15)' : 'rgba(255,255,255,0.03)',
-              color: copied ? '#818cf8' : '#9ca3af',
+              color: copied ? '#818cf8' : 'var(--text-tertiary)',
               fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif',
               transition: 'all 0.2s',
             }}
@@ -451,10 +451,10 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
       {/* Progress bar */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <div style={{ fontSize: 12, color: '#9ca3af' }}>
-            Question <strong style={{ color: '#e5e7eb' }}>{currentQ + 1}</strong> of {TOTAL_QUESTIONS}
+          <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
+            Question <strong style={{ color: 'var(--text-primary)' }}>{currentQ + 1}</strong> of {TOTAL_QUESTIONS}
           </div>
-          <div style={{ fontSize: 11, color: '#9ca3af' }}>
+          <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
             {setup.industry} · {setup.interviewType}
           </div>
         </div>
@@ -482,7 +482,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
         <div style={{ fontSize: 15, color: '#818cf8', fontWeight: 600, lineHeight: 1.6, fontFamily: 'Sora, sans-serif' }}>
           {questions[currentQ]}
         </div>
-        <div style={{ marginTop: 10, fontSize: 10, color: '#9ca3af' }}>
+        <div style={{ marginTop: 10, fontSize: 10, color: 'var(--text-tertiary)' }}>
           Tip: Structure your answer using STAR — Situation, Task, Action, Result
         </div>
       </div>
@@ -502,7 +502,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
               border: '1px solid rgba(255,255,255,0.09)',
               borderRadius: 12,
               padding: '12px 14px',
-              color: '#e5e7eb',
+              color: 'var(--text-primary)',
               fontSize: 13,
               lineHeight: 1.7,
               resize: 'vertical',
@@ -527,7 +527,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
               borderRadius: 12,
               border: 'none',
               background: answer.trim() && !loading ? 'linear-gradient(135deg,#818cf8,#6366f1)' : 'rgba(255,255,255,0.06)',
-              color: answer.trim() && !loading ? '#fff' : '#9ca3af',
+              color: answer.trim() && !loading ? '#fff' : 'var(--text-tertiary)',
               fontFamily: 'Sora, sans-serif',
               fontWeight: 700,
               fontSize: 14,
@@ -554,10 +554,10 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <ScoreRing score={feedback.score} />
             <div>
-              <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 700, color: '#e5e7eb' }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                 Score: {feedback.score}/5
               </div>
-              <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
                 {feedback.score >= 4 ? 'Strong answer' : feedback.score >= 3 ? 'Good attempt' : 'Needs development'}
               </div>
             </div>
@@ -565,21 +565,21 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
 
           <div>
             <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#34d399', marginBottom: 5, fontWeight: 600 }}>What worked:</div>
-            <div style={{ fontSize: 12, color: '#e5e7eb', lineHeight: 1.6, background: 'rgba(52,211,153,0.05)', border: '0.5px solid rgba(52,211,153,0.15)', borderRadius: 8, padding: '8px 10px' }}>
+            <div style={{ fontSize: 12, color: 'var(--text-primary)', lineHeight: 1.6, background: 'rgba(52,211,153,0.05)', border: '0.5px solid rgba(52,211,153,0.15)', borderRadius: 8, padding: '8px 10px' }}>
               {feedback.what_worked}
             </div>
           </div>
 
           <div>
             <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#f59e0b', marginBottom: 5, fontWeight: 600 }}>To improve:</div>
-            <div style={{ fontSize: 12, color: '#e5e7eb', lineHeight: 1.6, background: 'rgba(245,158,11,0.05)', border: '0.5px solid rgba(245,158,11,0.15)', borderRadius: 8, padding: '8px 10px' }}>
+            <div style={{ fontSize: 12, color: 'var(--text-primary)', lineHeight: 1.6, background: 'rgba(245,158,11,0.05)', border: '0.5px solid rgba(245,158,11,0.15)', borderRadius: 8, padding: '8px 10px' }}>
               {feedback.improve}
             </div>
           </div>
 
           <div>
             <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#818cf8', marginBottom: 5, fontWeight: 600 }}>Example answer:</div>
-            <div style={{ fontSize: 12, color: '#9ca3af', lineHeight: 1.6, fontStyle: 'italic', background: 'rgba(129,140,248,0.05)', border: '0.5px solid rgba(129,140,248,0.15)', borderRadius: 8, padding: '8px 10px' }}>
+            <div style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6, fontStyle: 'italic', background: 'rgba(129,140,248,0.05)', border: '0.5px solid rgba(129,140,248,0.15)', borderRadius: 8, padding: '8px 10px' }}>
               {feedback.example_answer}
             </div>
           </div>

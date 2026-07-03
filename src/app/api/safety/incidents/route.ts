@@ -36,8 +36,10 @@ export async function GET(req: Request) {
     .limit(30)
   if (institution) query = query.eq('institution', institution)
   const { data, error } = await query
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ data: data ?? [] })
+  if (error) return NextResponse.json({ error: 'Failed to load incidents' }, { status: 500 })
+  // Never expose the reporter of an incident flagged anonymous (GBV/harassment safety).
+  const safe = (data ?? []).map(r => (r.is_anonymous ? { ...r, reporter_id: null } : r))
+  return NextResponse.json({ data: safe })
 }
 
 export async function POST(req: Request) {

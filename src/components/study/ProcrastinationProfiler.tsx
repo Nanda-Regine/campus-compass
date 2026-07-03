@@ -337,7 +337,7 @@ function Quiz({ onComplete }: { onComplete: (type: ProcType) => void }) {
         }} />
       </div>
 
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff', lineHeight: 1.45, marginBottom: 16 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.45, marginBottom: 16 }}>
         {question.text}
       </div>
 
@@ -413,7 +413,7 @@ export default function ProcrastinationProfiler() {
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#9b6fd4', letterSpacing: '0.18em', marginBottom: 10 }}>
           🧠 PROCRASTINATION PROFILER
         </div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: '#fff', marginBottom: 8 }}>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-primary)', marginBottom: 8 }}>
           What type of procrastinator are you?
         </div>
         <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.55, marginBottom: 18 }}>

@@ -66,7 +66,7 @@ export default function FeedbackPage() {
         {done ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>{highRater ? '🌟' : '💙'}</div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text-primary)', marginBottom: 8 }}>
               {highRater ? 'You\'re amazing — thank you!' : 'Got it — we\'ll do better'}
             </div>
             <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
@@ -113,10 +113,10 @@ export default function FeedbackPage() {
               background: 'linear-gradient(135deg, rgba(78,207,158,0.08) 0%, transparent 80%)',
               border: '1px solid rgba(78,207,158,0.2)', borderRadius: 16, padding: '18px 20px',
             }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>
                 BUILT IN SA · FOR SA STUDENTS
               </div>
-              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 17, color: '#fff', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 17, color: 'var(--text-primary)', marginBottom: 6 }}>
                 Your feedback shapes VarsityOS
               </div>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
@@ -126,7 +126,7 @@ export default function FeedbackPage() {
 
             {/* Star rating */}
             <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 16, padding: '18px 20px' }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 12 }}>
                 HOW ARE YOU FINDING VARSITYOS?
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -146,7 +146,7 @@ export default function FeedbackPage() {
                 ))}
               </div>
               {rating > 0 && (
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fbbf24', marginTop: 8 }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fbbf24', marginTop: 8 }}>
                   {['', 'Needs major work', 'Room for improvement', 'Getting there', 'Really good!', 'Absolutely love it!'][rating]}
                 </div>
               )}
@@ -154,7 +154,7 @@ export default function FeedbackPage() {
 
             {/* Category */}
             <div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
                 WHAT IS THIS ABOUT?
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -179,7 +179,7 @@ export default function FeedbackPage() {
 
             {/* Message */}
             <div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
                 YOUR MESSAGE *
               </div>
               <textarea
@@ -193,11 +193,11 @@ export default function FeedbackPage() {
                   background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 14, padding: '14px 16px',
                   fontFamily: 'DM Sans, sans-serif', fontSize: 14,
-                  color: '#fff', lineHeight: 1.6,
+                  color: 'var(--text-primary)', lineHeight: 1.6,
                   outline: 'none', resize: 'vertical',
                 }}
               />
-              <div style={{ textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>
+              <div style={{ textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>
                 {message.length}/1000
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function FeedbackPage() {
 
             {/* Recent wins */}
             <div style={{ marginTop: 8 }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', marginBottom: 12 }}>
                 RECENT CHANGES POWERED BY YOUR FEEDBACK
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

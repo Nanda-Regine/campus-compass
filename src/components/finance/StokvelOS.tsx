@@ -534,8 +534,8 @@ function MembersTab({
             <div style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{m.phone ? m.phone + ' · ' : ''}Payout: month {m.payout_month}</div>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button onClick={() => startEdit(m)} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}>✏️</button>
-            <button onClick={() => remove(m.id)} style={{ fontSize: '0.65rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+            <button onClick={() => startEdit(m)} style={{ fontSize: '0.62rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', minWidth: 40, minHeight: 40 }}>✏️</button>
+            <button onClick={() => remove(m.id)} style={{ fontSize: '0.65rem', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', minWidth: 40, minHeight: 40 }}>✕</button>
           </div>
         </div>
       ))}

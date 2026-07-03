@@ -210,7 +210,7 @@ function ContraceptionTracker() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 18 }}>💊</span>
           <div style={{ textAlign: 'left' }}>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#e5e7eb' }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-secondary)' }}>
               Contraception Tracker
             </div>
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
@@ -271,7 +271,7 @@ function ContraceptionTracker() {
                         ⚠️ Don't forget your pill today
                       </div>
                       <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 12, lineHeight: 1.6 }}>
-                        Take it at <strong style={{ color: '#fff' }}>{pillTime}</strong> daily. Missing a pill reduces effectiveness — take it as soon as you remember, unless it's nearly time for your next dose.
+                        Take it at <strong style={{ color: 'var(--text-primary)' }}>{pillTime}</strong> daily. Missing a pill reduces effectiveness — take it as soon as you remember, unless it's nearly time for your next dose.
                       </div>
                       <button onClick={markPillTaken} style={{
                         padding: '10px 24px', borderRadius: 10, border: 'none', cursor: 'pointer',
@@ -470,7 +470,7 @@ const editBtn: React.CSSProperties = {
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '10px 12px', borderRadius: 10, boxSizing: 'border-box',
   background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-  color: '#e5e7eb', fontSize: 13, outline: 'none',
+  color: 'var(--text-secondary)', fontSize: 13, outline: 'none',
 }
 const infoBox: React.CSSProperties = {
   flex: 1, padding: '10px 12px', borderRadius: 10,
@@ -481,7 +481,7 @@ const infoLabel: React.CSSProperties = {
   letterSpacing: '0.14em', marginBottom: 4,
 }
 const infoValue: React.CSSProperties = {
-  fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#e5e7eb',
+  fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-secondary)',
 }
 
 function estimatePhaseFromDate(lastPeriodDateStr: string): CyclePhase {
@@ -590,7 +590,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
   if (loading) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#9ca3af' }}>Loading your cycle data...</div>
+        <div style={{ color: 'var(--text-tertiary)' }}>Loading your cycle data...</div>
       </div>
     )
   }
@@ -605,8 +605,8 @@ export default function CycleTracker({ userId }: { userId: string }) {
 
         {/* Header */}
         <div style={{ padding: '28px 0 20px' }}>
-          <h1 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: 4 }}>Cycle Tracker</h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Track your phases, symptoms, and understand your body.</p>
+          <h1 style={{ color: 'var(--text-secondary)', fontWeight: 800, fontSize: '1.5rem', marginBottom: 4 }}>Cycle Tracker</h1>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Track your phases, symptoms, and understand your body.</p>
         </div>
 
         {/* Phase wizard — shown when no entries logged yet */}
@@ -645,7 +645,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                     style={{
                       width: '100%', padding: '10px 12px', borderRadius: 10, boxSizing: 'border-box',
                       background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(244,114,182,0.25)',
-                      color: '#e5e7eb', fontSize: 13, outline: 'none',
+                      color: 'var(--text-secondary)', fontSize: 13, outline: 'none',
                     }}
                   />
                 </div>
@@ -704,7 +704,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
               <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: currentPhaseInfo?.color, letterSpacing: '0.18em', marginBottom: 4 }}>
                 CYCLE DAY {cycleDay}
               </div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: '#fff', textTransform: 'capitalize', marginBottom: 4 }}>
+              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', textTransform: 'capitalize', marginBottom: 4 }}>
                 {currentPhaseInfo ? `${latestEntry?.phase} Phase` : 'Log your phase'}
               </div>
               {daysUntilNext !== null && daysUntilNext > 0 && (
@@ -725,11 +725,11 @@ export default function CycleTracker({ userId }: { userId: string }) {
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20, marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <button onClick={() => setActiveMonth(new Date(year, month - 1, 1))} style={navBtn}>{'<'}</button>
-            <span style={{ color: '#e5e7eb', fontWeight: 700 }}>{MONTH_NAMES[month]} {year}</span>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 700 }}>{MONTH_NAMES[month]} {year}</span>
             <button onClick={() => setActiveMonth(new Date(year, month + 1, 1))} style={navBtn}>{'>'}</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 8 }}>
-            {DAY_LABELS.map((d, i) => <div key={i} style={{ textAlign: 'center', color: '#6b7280', fontSize: '0.75rem', fontWeight: 600, padding: '4px 0' }}>{d}</div>)}
+            {DAY_LABELS.map((d, i) => <div key={i} style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, padding: '4px 0' }}>{d}</div>)}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
             {Array.from({ length: getFirstDayOfMonth(year, month) }).map((_, i) => <div key={`e${i}`} />)}
@@ -768,7 +768,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
         {/* Phase Intelligence */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20, marginBottom: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <h2 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '1rem', margin: 0 }}>Phase Intelligence</h2>
+            <h2 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '1rem', margin: 0 }}>Phase Intelligence</h2>
             {currentPhaseInfo && (
               <button
                 onClick={() => setSciencePhase(latestEntry?.phase ?? null)}
@@ -783,7 +783,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
           </div>
 
           {!currentPhaseInfo ? (
-            <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Start tracking to see your phase intelligence.</p>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Start tracking to see your phase intelligence.</p>
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
@@ -791,14 +791,14 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 <span style={{ color: currentPhaseInfo.color, fontWeight: 700, textTransform: 'capitalize', fontSize: '1.1rem' }}>
                   {latestEntry?.phase} Phase
                 </span>
-                <span style={{ color: '#9ca3af', fontSize: '0.8rem', marginLeft: 'auto' }}>Mood: {currentPhaseInfo.mood}</span>
+                <span style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem', marginLeft: 'auto' }}>Mood: {currentPhaseInfo.mood}</span>
               </div>
 
               {(['energy', 'cognitive'] as const).map(key => (
                 <div key={key} style={{ marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'capitalize' }}>{key === 'cognitive' ? 'Cognitive clarity' : 'Energy'}</span>
-                    <span style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'capitalize' }}>{currentPhaseInfo[key]}</span>
+                    <span style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'capitalize' }}>{key === 'cognitive' ? 'Cognitive clarity' : 'Energy'}</span>
+                    <span style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'capitalize' }}>{currentPhaseInfo[key]}</span>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 4, height: 6 }}>
                     <div style={{ background: currentPhaseInfo.color, borderRadius: 4, height: 6, width: `${levelPct(currentPhaseInfo[key])}%`, transition: 'width 0.4s' }} />
@@ -807,19 +807,19 @@ export default function CycleTracker({ userId }: { userId: string }) {
               ))}
 
               <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 10, padding: '12px 14px', borderLeft: `3px solid ${currentPhaseInfo.color}`, marginBottom: 16 }}>
-                <div style={{ color: '#9ca3af', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Study Tip</div>
-                <div style={{ color: '#e5e7eb', fontSize: '0.85rem', lineHeight: 1.55 }}>{currentPhaseInfo.studyTip}</div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Study Tip</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.55 }}>{currentPhaseInfo.studyTip}</div>
               </div>
 
               {/* 7-day forecast */}
               <div>
-                <div style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Next 7 Days Energy Forecast</div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>Next 7 Days Energy Forecast</div>
                 <div style={{ display: 'flex', gap: 6 }}>
                   {next7Days.map((d, i) => {
                     const info = d.phase ? PHASE_INFO[d.phase] : null
                     return (
                       <div key={i} style={{ flex: 1, textAlign: 'center' }}>
-                        <div style={{ color: '#6b7280', fontSize: '0.65rem', marginBottom: 4 }}>{d.label}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem', marginBottom: 4 }}>{d.label}</div>
                         <div style={{ width: 8, height: `${info ? levelPct(info.energy) * 0.28 : 10}px`, background: info ? info.color : '#374151', borderRadius: 4, margin: '0 auto', minHeight: 10 }} />
                         <div style={{ color: '#4b5563', fontSize: '0.55rem', marginTop: 4, textTransform: 'capitalize' }}>{d.phase?.[0]}</div>
                       </div>
@@ -853,7 +853,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
         {/* Period pain tip */}
         <div style={{ background: 'rgba(244,114,182,0.08)', border: '1px solid rgba(244,114,182,0.2)', borderRadius: 16, padding: 18, marginBottom: 12 }}>
           <div style={{ color: '#f472b6', fontWeight: 700, fontSize: '0.9rem', marginBottom: 8 }}>Period Pain Tips</div>
-          <div style={{ color: '#e5e7eb', fontSize: '0.875rem', lineHeight: 1.65 }}>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.65 }}>
             • Take ibuprofen at the <strong>first sign of pain</strong> — before it peaks. Works best prophylactically.<br />
             • A hot water bottle on the abdomen provides significant relief (heat increases blood flow).<br />
             • Ginger tea has clinical evidence for reducing dysmenorrhea (period pain).<br />
@@ -1031,6 +1031,6 @@ export default function CycleTracker({ userId }: { userId: string }) {
 }
 
 const navBtn: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.07)', border: 'none', color: '#e5e7eb',
+  background: 'rgba(255,255,255,0.07)', border: 'none', color: 'var(--text-secondary)',
   borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: '1rem',
 }

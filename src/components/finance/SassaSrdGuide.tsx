@@ -84,10 +84,10 @@ const SECTIONS: Section[] = [
     content: (
       <SectionBody>
         <Step num={1}>
-          Online — go to <strong style={{ color: '#fff' }}>srd.sassa.gov.za</strong> (type it into your browser). Takes 5 minutes. You only need your SA ID and phone number.
+          Online — go to <strong style={{ color: 'var(--text-primary)' }}>srd.sassa.gov.za</strong> (type it into your browser). Takes 5 minutes. You only need your SA ID and phone number.
         </Step>
         <Step num={2}>
-          WhatsApp — send "Hi" to <strong style={{ color: '#fff' }}>0800 60 10 11</strong> and follow the prompts.
+          WhatsApp — send "Hi" to <strong style={{ color: 'var(--text-primary)' }}>0800 60 10 11</strong> and follow the prompts.
         </Step>
         <Step num={3}>
           Walk-in — visit your nearest SASSA office with your SA ID.
@@ -150,7 +150,7 @@ const SECTIONS: Section[] = [
         >
           <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#22c55e', fontWeight: 700 }}>HOW TO APPEAL</p>
           <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.65)' }}>
-            Go to <strong style={{ color: '#fff' }}>srd.sassa.gov.za</strong>, click "Appeals", and submit within 90 days of the rejection.
+            Go to <strong style={{ color: 'var(--text-primary)' }}>srd.sassa.gov.za</strong>, click "Appeals", and submit within 90 days of the rejection.
             Include your ID number and the rejection reason. Most appeals succeed when the reason is a false positive.
           </p>
         </div>
@@ -163,19 +163,19 @@ const SECTIONS: Section[] = [
     content: (
       <SectionBody>
         <div style={{ marginBottom: '10px' }}>
-          <p style={{ margin: '0 0 4px', fontWeight: 600, color: '#fff', fontSize: '13px' }}>NSFAS Food Allowance</p>
+          <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>NSFAS Food Allowance</p>
           <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
             If you receive NSFAS, you may qualify for a food allowance. Contact your institution's financial aid office to check — it is separate from your accommodation and tuition.
           </p>
         </div>
         <div style={{ marginBottom: '10px' }}>
-          <p style={{ margin: '0 0 4px', fontWeight: 600, color: '#fff', fontSize: '13px' }}>Institution Emergency Fund</p>
+          <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Institution Emergency Fund</p>
           <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
             Most universities maintain a hardship fund. Visit the Student Affairs or Financial Aid office. You do not need to be in crisis — food insecurity qualifies.
           </p>
         </div>
         <div>
-          <p style={{ margin: '0 0 4px', fontWeight: 600, color: '#fff', fontSize: '13px' }}>Ubuntu Fund</p>
+          <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Ubuntu Fund</p>
           <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
             A student-run solidarity fund at many South African universities. Contact your SRC for access. No repayment required — it is a grant.
           </p>
@@ -194,7 +194,7 @@ export default function SassaSrdGuide() {
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
-        color: '#fff',
+        color: 'var(--text-primary)',
         fontFamily: 'inherit',
         overflow: 'hidden',
       }}

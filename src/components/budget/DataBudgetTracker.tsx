@@ -107,12 +107,12 @@ export default function DataBudgetTracker({ userId }: Props) {
   if (!budget) {
     return (
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
-        <p className="text-sm font-semibold mb-1" style={{ color: '#e5e7eb' }}>Set your monthly data budget</p>
-        <p className="text-xs mb-4" style={{ color: '#9ca3af' }}>Track mobile data usage to avoid overspending</p>
+        <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>Set your monthly data budget</p>
+        <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>Track mobile data usage to avoid overspending</p>
 
         <div className="mb-3">
           <div className="flex justify-between mb-1">
-            <span className="text-xs" style={{ color: '#9ca3af' }}>Budget</span>
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Budget</span>
             <span className="text-xs font-medium" style={{ color: '#fbbf24' }}>{fmtMb(wifiToggle ? 5120 : setupMb)}</span>
           </div>
           <input
@@ -124,7 +124,7 @@ export default function DataBudgetTracker({ userId }: Props) {
           />
           <div className="flex justify-between mt-1">
             {SLIDER_LABELS.map(l => (
-              <span key={l.mb} className="text-xs" style={{ color: '#9ca3af' }}>{l.label}</span>
+              <span key={l.mb} className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{l.label}</span>
             ))}
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function DataBudgetTracker({ userId }: Props) {
         <button
           onClick={() => setWifiToggle(!wifiToggle)}
           className="flex items-center gap-2 mb-4 text-xs"
-          style={{ color: wifiToggle ? '#fbbf24' : '#9ca3af' }}
+          style={{ color: wifiToggle ? '#fbbf24' : 'var(--text-tertiary)' }}
         >
           <div
             className="w-8 h-4 rounded-full flex items-center transition-all"
@@ -169,7 +169,7 @@ export default function DataBudgetTracker({ userId }: Props) {
   return (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs uppercase tracking-wider" style={{ color: '#9ca3af' }}>Data Budget</p>
+        <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>Data Budget</p>
         <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(251,191,36,0.1)', color: '#fbbf24' }}>
           {new Date().toLocaleString('en-ZA', { month: 'long' })}
         </span>
@@ -191,17 +191,17 @@ export default function DataBudgetTracker({ userId }: Props) {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-sm font-bold" style={{ color: gaugeColor }}>{Math.round(usedPercent)}%</span>
-            <span className="text-xs" style={{ color: '#9ca3af' }}>used</span>
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>used</span>
           </div>
         </div>
         <div>
-          <p className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
             {fmtMb(budget.data_used_mb)} used of {fmtMb(budget.data_budget_mb)}
           </p>
-          <p className="text-xs mt-1" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
             ~{daysLeft} days until data runs out
           </p>
-          <p className="text-xs mt-1" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
             {budget.wifi_sessions} Wi-Fi sessions saved
           </p>
         </div>
@@ -213,7 +213,7 @@ export default function DataBudgetTracker({ userId }: Props) {
             key={mb}
             onClick={() => addUsage(mb)}
             className="px-3 py-1.5 rounded-lg text-xs font-medium"
-            style={{ background: 'rgba(255,255,255,0.06)', color: '#e5e7eb' }}
+            style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-secondary)' }}
           >
             +{mb}MB
           </button>
@@ -236,7 +236,7 @@ export default function DataBudgetTracker({ userId }: Props) {
 
       {showAddModal && (
         <div className="mb-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-          <p className="text-xs mb-2" style={{ color: '#9ca3af' }}>Custom amount (MB)</p>
+          <p className="text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>Custom amount (MB)</p>
           <div className="flex gap-2">
             <input
               type="number" min={1} max={10240}
@@ -245,7 +245,7 @@ export default function DataBudgetTracker({ userId }: Props) {
               value={addAmount}
               onChange={e => setAddAmount(Number(e.target.value))}
               className="flex-1 px-3 py-1.5 rounded-lg text-sm bg-transparent outline-none"
-              style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#e5e7eb' }}
+              style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-secondary)' }}
             />
             <button
               onClick={() => addUsage(addAmount)}
@@ -257,7 +257,7 @@ export default function DataBudgetTracker({ userId }: Props) {
             <button
               onClick={() => setShowAddModal(false)}
               className="px-3 py-1.5 rounded-lg text-xs"
-              style={{ color: '#9ca3af' }}
+              style={{ color: 'var(--text-tertiary)' }}
             >
               Cancel
             </button>
@@ -269,7 +269,7 @@ export default function DataBudgetTracker({ userId }: Props) {
         <p className="text-xs px-3 pt-2 pb-1 font-medium" style={{ color: '#fbbf24' }}>Data-saving tips</p>
         <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
           {TIPS.map((tip, i) => (
-            <p key={i} className="text-xs px-3 py-2" style={{ color: '#9ca3af' }}>• {tip}</p>
+            <p key={i} className="text-xs px-3 py-2" style={{ color: 'var(--text-tertiary)' }}>• {tip}</p>
           ))}
         </div>
       </div>

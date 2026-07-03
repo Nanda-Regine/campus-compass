@@ -106,7 +106,7 @@ const GBV_TABS: { id: GBVTab; label: string; icon: string }[] = [
 function Tab72Hours() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
+      <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 4 }}>
         If you have experienced sexual assault or GBV
       </div>
 
@@ -135,7 +135,7 @@ function Tab72Hours() {
             }}>
               {step.num}
             </div>
-            <div style={{ fontSize: '0.82rem', color: '#e5e7eb', lineHeight: 1.65, paddingTop: 4 }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65, paddingTop: 4 }}>
               {step.text}
             </div>
           </div>
@@ -160,8 +160,8 @@ function Tab72Hours() {
               borderRadius: 10,
               padding: '12px 14px',
             }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e5e7eb', marginBottom: 2 }}>{t.location}</div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 8 }}>{t.hospital}</div>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 2 }}>{t.location}</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginBottom: 8 }}>{t.hospital}</div>
               <a
                 href={`tel:${t.phone.replace(/\s/g, '')}`}
                 style={{
@@ -186,7 +186,7 @@ function Tab72Hours() {
 function TabHotlines() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ fontSize: '0.78rem', color: '#9ca3af', lineHeight: 1.6, marginBottom: 4 }}>
+      <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', lineHeight: 1.6, marginBottom: 4 }}>
         All hotlines below are free to call from any phone. Save the GBV Command Centre now — it&apos;s available 24/7.
       </div>
       {HOTLINES.map(h => (
@@ -205,16 +205,16 @@ function TabHotlines() {
             <div style={{
               fontSize: h.important ? '0.9rem' : '0.82rem',
               fontWeight: h.important ? 700 : 600,
-              color: '#e5e7eb', marginBottom: 3,
+              color: 'var(--text-secondary)', marginBottom: 3,
             }}>
               {h.name}
             </div>
-            <div style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{h.note}</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>{h.note}</div>
           </div>
           <div style={{
             fontSize: h.important ? '1rem' : '0.85rem',
             fontWeight: 700,
-            color: h.important ? '#f87171' : '#9ca3af',
+            color: h.important ? '#f87171' : 'var(--text-tertiary)',
             fontFamily: 'monospace',
             flexShrink: 0, marginLeft: 12,
           }}>
@@ -235,7 +235,7 @@ function TabRights() {
         background: 'rgba(248,113,113,0.06)',
         border: '1px solid rgba(248,113,113,0.20)',
         borderRadius: 10, padding: '12px 14px',
-        fontSize: '0.78rem', color: '#e5e7eb', lineHeight: 1.6, marginBottom: 4,
+        fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 4,
       }}>
         These are your <strong>legal rights</strong> under South African law. You do not have to waive any of them.
       </div>
@@ -255,17 +255,17 @@ function TabRights() {
               background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', gap: 10,
             }}
           >
-            <div style={{ fontSize: '0.84rem', fontWeight: 600, color: '#e5e7eb', lineHeight: 1.4 }}>
+            <div style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
               {right.title}
             </div>
             <span style={{
-              color: '#9ca3af', fontSize: '0.7rem', flexShrink: 0,
+              color: 'var(--text-tertiary)', fontSize: '0.7rem', flexShrink: 0,
               transform: expanded === i ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.2s',
             }}>▾</span>
           </button>
           {expanded === i && (
-            <div style={{ padding: '0 16px 14px', fontSize: '0.78rem', color: '#9ca3af', lineHeight: 1.65 }}>
+            <div style={{ padding: '0 16px 14px', fontSize: '0.78rem', color: 'var(--text-tertiary)', lineHeight: 1.65 }}>
               {right.body}
             </div>
           )}
@@ -282,7 +282,7 @@ function TabForFriends() {
         background: 'rgba(167,139,250,0.08)',
         border: '1px solid rgba(167,139,250,0.25)',
         borderRadius: 12, padding: '14px 16px',
-        fontSize: '0.82rem', color: '#e5e7eb', lineHeight: 1.65,
+        fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65,
       }}>
         If someone discloses to you, your response in the first minutes matters enormously.
       </div>
@@ -299,7 +299,7 @@ function TabForFriends() {
           {['I believe you.', 'This is not your fault.', 'I\'m here. What do you need right now?'].map((phrase, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <span style={{ color: '#4ade80', fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>✓</span>
-              <span style={{ fontSize: '0.84rem', color: '#e5e7eb', fontWeight: 600, fontStyle: 'italic', lineHeight: 1.4 }}>
+              <span style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', fontWeight: 600, fontStyle: 'italic', lineHeight: 1.4 }}>
                 &quot;{phrase}&quot;
               </span>
             </div>
@@ -324,7 +324,7 @@ function TabForFriends() {
           ].map((phrase, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <span style={{ color: '#f87171', fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>✕</span>
-              <span style={{ fontSize: '0.82rem', color: '#9ca3af', lineHeight: 1.4 }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-tertiary)', lineHeight: 1.4 }}>
                 &quot;{phrase}&quot;
               </span>
             </div>
@@ -350,7 +350,7 @@ function TabForFriends() {
           ].map((tip, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <span style={{ color: '#a78bfa', flexShrink: 0, fontSize: '0.7rem', marginTop: 3 }}>◆</span>
-              <span style={{ fontSize: '0.8rem', color: '#e5e7eb', lineHeight: 1.6 }}>{tip}</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{tip}</span>
             </div>
           ))}
         </div>
@@ -366,7 +366,7 @@ function TabForFriends() {
           textDecoration: 'none', textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 4 }}>GBV COMMAND CENTRE · 24/7 · FREE</div>
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>GBV COMMAND CENTRE · 24/7 · FREE</div>
         <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f87171', fontFamily: 'monospace' }}>
           📞 0800 428 428
         </div>
@@ -540,8 +540,8 @@ function EmergencySection() {
             }}
           >
             <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e5e7eb' }}>{c.name}</div>
-              <div style={{ fontSize: '0.65rem', color: '#6b7280', marginTop: 1 }}>{c.available}</div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>{c.name}</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 1 }}>{c.available}</div>
             </div>
             <span style={{ fontSize: '0.76rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: ACCENT }}>
               {c.number}
@@ -586,7 +586,7 @@ function ImmediateStepsSection() {
           }}>
             {i + 1}
           </div>
-          <p style={{ margin: 0, fontSize: '0.78rem', color: '#d1d5db', lineHeight: 1.6 }}>{step}</p>
+          <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{step}</p>
         </div>
       ))}
     </div>
@@ -610,7 +610,7 @@ function MedicalCareSection() {
           <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f3f4f6', marginBottom: 4 }}>
             {item.title}
           </div>
-          <p style={{ margin: 0, fontSize: '0.75rem', color: '#9ca3af', lineHeight: 1.6 }}>{item.detail}</p>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-tertiary)', lineHeight: 1.6 }}>{item.detail}</p>
         </div>
       ))}
     </div>
@@ -627,7 +627,7 @@ function LegalRightsSection() {
             display: 'flex',
             gap: 10,
             fontSize: '0.78rem',
-            color: '#d1d5db',
+            color: 'var(--text-secondary)',
             lineHeight: 1.6,
             padding: '10px 14px',
             background: 'rgba(255,255,255,0.03)',
@@ -680,7 +680,7 @@ function RecoverySection() {
             display: 'flex',
             gap: 10,
             fontSize: '0.78rem',
-            color: '#d1d5db',
+            color: 'var(--text-secondary)',
             lineHeight: 1.6,
             padding: '10px 14px',
             background: 'rgba(255,255,255,0.03)',
@@ -700,7 +700,7 @@ function WitnessSection() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div>
-        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#6b7280', letterSpacing: '0.07em', marginBottom: 8 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 8 }}>
           WHAT TO DO
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -711,7 +711,7 @@ function WitnessSection() {
                 display: 'flex',
                 gap: 10,
                 fontSize: '0.78rem',
-                color: '#d1d5db',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.6,
                 padding: '9px 12px',
                 background: 'rgba(52,211,153,0.04)',
@@ -726,7 +726,7 @@ function WitnessSection() {
         </div>
       </div>
       <div>
-        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#6b7280', letterSpacing: '0.07em', marginBottom: 8 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 8 }}>
           WHAT NOT TO SAY OR DO
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -737,7 +737,7 @@ function WitnessSection() {
                 display: 'flex',
                 gap: 10,
                 fontSize: '0.78rem',
-                color: '#d1d5db',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.6,
                 padding: '9px 12px',
                 background: 'rgba(248,113,113,0.04)',
@@ -805,7 +805,7 @@ export default function GBVResponseGuide() {
   const [activeTab, setActiveTab] = useState<GBVTab>('72hours')
 
   return (
-    <div style={{ background: '#0a0a0f', minHeight: '100vh', padding: '16px' }}>
+    <div style={{ background: 'var(--bg-base)', minHeight: '100vh', padding: '16px' }}>
       <div style={{ maxWidth: 540, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Opening banner — always visible, trauma-informed */}
@@ -836,10 +836,10 @@ export default function GBVResponseGuide() {
           <div style={{ fontSize: '0.58rem', fontWeight: 700, color: '#f87171', letterSpacing: '0.09em', marginBottom: 4 }}>
             GBV RESPONSE GUIDE
           </div>
-          <div style={{ fontSize: '1rem', fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 4 }}>
             Gender-Based Violence Support
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#9ca3af', lineHeight: 1.6 }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
             Offline-first. All information is saved on your device. Trauma-informed and survivor-centred.
           </div>
         </div>
@@ -857,7 +857,7 @@ export default function GBVResponseGuide() {
                 flexShrink: 0, padding: '9px 12px',
                 background: 'none', border: 'none',
                 borderBottom: activeTab === tab.id ? '2px solid #f87171' : '2px solid transparent',
-                color: activeTab === tab.id ? '#f87171' : '#9ca3af',
+                color: activeTab === tab.id ? '#f87171' : 'var(--text-tertiary)',
                 fontSize: '0.7rem', fontWeight: activeTab === tab.id ? 700 : 400,
                 cursor: 'pointer', marginBottom: -1, whiteSpace: 'nowrap',
               }}
@@ -887,7 +887,7 @@ export default function GBVResponseGuide() {
               textDecoration: 'none', textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '0.6rem', color: '#9ca3af' }}>GBV HOTLINE</div>
+            <div style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)' }}>GBV HOTLINE</div>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f87171', fontFamily: 'monospace' }}>0800 428 428</div>
           </a>
           <a
@@ -900,8 +900,8 @@ export default function GBVResponseGuide() {
               textDecoration: 'none', textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '0.6rem', color: '#9ca3af' }}>POLICE</div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#9ca3af', fontFamily: 'monospace' }}>10111</div>
+            <div style={{ fontSize: '0.6rem', color: 'var(--text-tertiary)' }}>POLICE</div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-tertiary)', fontFamily: 'monospace' }}>10111</div>
           </a>
         </div>
 

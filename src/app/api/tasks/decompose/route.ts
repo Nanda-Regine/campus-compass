@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { callGroq, GroqMissingKeyError } from '@/lib/groq'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +13,10 @@ export async function POST(req: Request) {
     const supabase = createServerSupabaseClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Guard the shared Groq key (14,400/day) — one user can't exhaust it for all.
+    const limit = await checkRateLimitAsync(user.id, 'tasks-decompose', 40, 86_400_000)
+    if (!limit.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow' }, { status: 429 })
 
     const { title, description } = await req.json() as { title?: string; description?: string }
     if (!title?.trim()) return NextResponse.json({ error: 'title required' }, { status: 400 })

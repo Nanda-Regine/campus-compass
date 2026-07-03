@@ -35,18 +35,18 @@ const SECTIONS = [
     icon: '👤',
     content: (
       <>
-        <p style={{ fontSize: 13, color: '#e5e7eb', lineHeight: 1.7, margin: '0 0 12px' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, margin: '0 0 12px' }}>
           Your profile is your digital first impression. Make it count before you apply anywhere.
         </p>
         <div style={{ background: 'rgba(129,140,248,0.06)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 10, padding: '12px 14px', marginBottom: 10 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#818cf8', marginBottom: 6, fontWeight: 700 }}>Headline Formula</div>
-          <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
             &ldquo;[Degree] Student at [University] | Passionate about [X] | Seeking [Y] opportunities&rdquo;
           </p>
         </div>
         <div style={{ background: 'rgba(129,140,248,0.06)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 10, padding: '12px 14px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#818cf8', marginBottom: 6, fontWeight: 700 }}>About Template</div>
-          <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
             &ldquo;I&apos;m a [year] [degree] student at [university], focused on [specialization]. I&apos;m passionate about [topic] and [topic]. I&apos;m seeking [internship/graduate programme] opportunities in [industry] in South Africa.&rdquo;
           </p>
         </div>
@@ -59,7 +59,7 @@ const SECTIONS = [
     icon: '⚡',
     content: (
       <>
-        <p style={{ fontSize: 13, color: '#e5e7eb', lineHeight: 1.7, margin: '0 0 12px' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, margin: '0 0 12px' }}>
           Understanding how LinkedIn&apos;s algorithm works gives you an unfair advantage.
         </p>
         {[
@@ -71,8 +71,8 @@ const SECTIONS = [
           <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
             <span style={{ color: '#818cf8', fontSize: 14, flexShrink: 0, marginTop: 1 }}>→</span>
             <div>
-              <div style={{ fontSize: 12, color: '#e5e7eb', fontWeight: 600 }}>{item.tip}</div>
-              <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{item.detail}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{item.tip}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{item.detail}</div>
             </div>
           </div>
         ))}
@@ -85,18 +85,18 @@ const SECTIONS = [
     icon: '🤝',
     content: (
       <>
-        <p style={{ fontSize: 13, color: '#e5e7eb', lineHeight: 1.7, margin: '0 0 12px' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, margin: '0 0 12px' }}>
           Warm outreach to alumni is the highest-ROI action you can take on LinkedIn.
         </p>
         <div style={{ background: 'rgba(129,140,248,0.06)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#818cf8', marginBottom: 6, fontWeight: 700 }}>Message Template</div>
-          <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>
             &ldquo;Hi [Name], I&apos;m a [year] [degree] student at [university]. I see you also studied there — I&apos;m interested in [their field]. Would you be available for a 15-minute virtual chat? No pressure if you&apos;re busy!&rdquo;
           </p>
         </div>
-        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 6, fontWeight: 600 }}>What improves response rate:</div>
+        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 6, fontWeight: 600 }}>What improves response rate:</div>
         {['Specific ask', 'Short message (under 100 words)', 'Mention a shared connection or experience'].map((tip, i) => (
-          <div key={i} style={{ fontSize: 12, color: '#9ca3af', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+          <div key={i} style={{ fontSize: 12, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             <span style={{ color: '#818cf8' }}>✓</span> {tip}
           </div>
         ))}
@@ -109,18 +109,18 @@ const SECTIONS = [
     icon: '✍️',
     content: (
       <>
-        <p style={{ fontSize: 13, color: '#e5e7eb', lineHeight: 1.7, margin: '0 0 12px' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, margin: '0 0 12px' }}>
           Use the Hook + Context + Lesson formula to write posts that get noticed.
         </p>
         <div style={{ background: 'rgba(129,140,248,0.06)', border: '1px solid rgba(129,140,248,0.15)', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#818cf8', marginBottom: 6, fontWeight: 700 }}>Example Post</div>
-          <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.7, fontStyle: 'italic' }}>
             &ldquo;I learned something surprising in my Finance lecture today. [context in 2-3 lines]. The lesson: [1-2 lines]. What&apos;s your take? [question]&rdquo;
           </p>
         </div>
-        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 6, fontWeight: 600 }}>Post ideas:</div>
+        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 6, fontWeight: 600 }}>Post ideas:</div>
         {['A lecture insight', 'A book you read', 'A problem you solved', 'A campus event you attended'].map((idea, i) => (
-          <div key={i} style={{ fontSize: 12, color: '#9ca3af', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+          <div key={i} style={{ fontSize: 12, color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             <span style={{ color: '#818cf8' }}>→</span> {idea}
           </div>
         ))}
@@ -133,7 +133,7 @@ const SECTIONS = [
     icon: '🏢',
     content: (
       <>
-        <p style={{ fontSize: 13, color: '#e5e7eb', lineHeight: 1.7, margin: '0 0 12px' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.7, margin: '0 0 12px' }}>
           These companies actively recruit SA students on LinkedIn. Follow them and comment on their posts.
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -149,7 +149,7 @@ const SECTIONS = [
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.06)', borderRadius: 8 }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: '#818cf8', flexShrink: 0, minWidth: 120 }}>{item.company}</span>
-              <span style={{ fontSize: 11, color: '#9ca3af', lineHeight: 1.5 }}>{item.detail}</span>
+              <span style={{ fontSize: 11, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>{item.detail}</span>
             </div>
           ))}
         </div>
@@ -212,7 +212,7 @@ export default function LinkedInBootcamp() {
           <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 16, fontWeight: 700, color: '#34d399', marginBottom: 4 }}>
             LinkedIn Bootcamp complete!
           </div>
-          <div style={{ fontSize: 13, color: '#9ca3af' }}>
+          <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
             You&apos;ve completed all {totalItems} steps. Your LinkedIn profile is recruiter-ready.
           </div>
         </div>
@@ -225,8 +225,8 @@ export default function LinkedInBootcamp() {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#e5e7eb', fontFamily: 'Sora, sans-serif' }}>LinkedIn Profile Strength</div>
-              <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>{checkedCount} of {totalItems} steps complete</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Sora, sans-serif' }}>LinkedIn Profile Strength</div>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{checkedCount} of {totalItems} steps complete</div>
             </div>
             <div style={{
               fontFamily: 'JetBrains Mono, monospace',
@@ -284,8 +284,8 @@ export default function LinkedInBootcamp() {
             >
               <span style={{ fontSize: 18, flexShrink: 0 }}>{section.icon}</span>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#e5e7eb', fontFamily: 'Sora, sans-serif' }}>{section.title}</div>
-                <div style={{ fontSize: 10, color: sectionComplete ? '#34d399' : '#9ca3af', marginTop: 2 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'Sora, sans-serif' }}>{section.title}</div>
+                <div style={{ fontSize: 10, color: sectionComplete ? '#34d399' : 'var(--text-tertiary)', marginTop: 2 }}>
                   {checked}/{total} complete
                 </div>
               </div>
@@ -300,7 +300,7 @@ export default function LinkedInBootcamp() {
                     transition: 'width 0.3s ease',
                   }} />
                 </div>
-                <span style={{ fontSize: 12, color: '#9ca3af', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s', display: 'inline-block' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-tertiary)', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s', display: 'inline-block' }}>
                   ▾
                 </span>
               </div>
@@ -315,7 +315,7 @@ export default function LinkedInBootcamp() {
                 </div>
 
                 {/* Checklist items */}
-                <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 8, fontWeight: 600 }}>
+                <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 8, fontWeight: 600 }}>
                   Your checklist
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -352,7 +352,7 @@ export default function LinkedInBootcamp() {
                         }}>
                           {checked_ && <span style={{ fontSize: 10, color: '#fff', fontWeight: 700 }}>✓</span>}
                         </div>
-                        <span style={{ fontSize: 12, color: checked_ ? '#e5e7eb' : '#9ca3af', flex: 1, lineHeight: 1.4, textDecoration: checked_ ? 'line-through' : 'none' }}>
+                        <span style={{ fontSize: 12, color: checked_ ? 'var(--text-primary)' : 'var(--text-tertiary)', flex: 1, lineHeight: 1.4, textDecoration: checked_ ? 'line-through' : 'none' }}>
                           {item.label}
                         </span>
                       </button>

@@ -292,7 +292,7 @@ export default function CampusRoutes({ userId, university }: Props) {
     background: 'rgba(255,255,255,0.05)',
     border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '10px',
-    color: '#e5e7eb',
+    color: 'var(--text-secondary)',
     padding: '10px 12px',
     fontSize: '14px',
     outline: 'none',
@@ -300,21 +300,21 @@ export default function CampusRoutes({ userId, university }: Props) {
   }
 
   const labelStyle: React.CSSProperties = {
-    color: '#9ca3af',
+    color: 'var(--text-tertiary)',
     fontSize: '12px',
     marginBottom: '4px',
     display: 'block',
   }
 
   return (
-    <div style={{ background: '#0a0a0f', minHeight: '100vh' }} className="pb-8">
+    <div style={{ background: 'var(--bg-base)', minHeight: '100vh' }} className="pb-8">
       <div className="p-4 space-y-4">
         {/* Header */}
         <div>
-          <h1 style={{ color: '#e5e7eb', fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>
+          <h1 style={{ color: 'var(--text-secondary)', fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>
             Campus Routes
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: '13px' }}>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>
             Walking routes contributed by students at {university ?? 'your institution'}
           </p>
         </div>
@@ -339,7 +339,7 @@ export default function CampusRoutes({ userId, university }: Props) {
                 borderRadius: '8px',
                 background: tab === t ? 'rgba(74,222,128,0.15)' : 'none',
                 border: 'none',
-                color: tab === t ? '#4ade80' : '#9ca3af',
+                color: tab === t ? '#4ade80' : 'var(--text-tertiary)',
                 fontSize: '14px',
                 fontWeight: tab === t ? 600 : 400,
                 cursor: 'pointer',
@@ -385,10 +385,10 @@ export default function CampusRoutes({ userId, university }: Props) {
                 ))}
               </div>
             ) : routes.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px 0', color: '#9ca3af' }}>
+              <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-tertiary)' }}>
                 <div style={{ fontSize: '32px', marginBottom: '8px' }}>🗺️</div>
                 <p style={{ fontSize: '14px' }}>No routes yet for your institution.</p>
-                <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
                   Be the first to submit one!
                 </p>
               </div>
@@ -406,10 +406,10 @@ export default function CampusRoutes({ userId, university }: Props) {
                         padding: '16px',
                       }}
                     >
-                      <div style={{ color: '#e5e7eb', fontSize: '15px', fontWeight: 700, marginBottom: '4px' }}>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '15px', fontWeight: 700, marginBottom: '4px' }}>
                         {route.route_name}
                       </div>
-                      <p style={{ color: '#9ca3af', fontSize: '12px', lineHeight: 1.5, marginBottom: '10px' }}>
+                      <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', lineHeight: 1.5, marginBottom: '10px' }}>
                         {route.description}
                       </p>
 
@@ -418,27 +418,27 @@ export default function CampusRoutes({ userId, university }: Props) {
                           <span style={{ color: '#4ade80', fontSize: '13px', fontWeight: 600 }}>
                             {route.distance_km} km
                           </span>
-                          <span style={{ color: '#6b7280', fontSize: '12px' }}> · {route.duration_minutes} min</span>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}> · {route.duration_minutes} min</span>
                         </div>
                       </div>
 
                       <div className="flex gap-4 mb-2">
                         <div>
-                          <span style={{ color: '#9ca3af', fontSize: '11px', marginRight: '4px' }}>Safety</span>
+                          <span style={{ color: 'var(--text-tertiary)', fontSize: '11px', marginRight: '4px' }}>Safety</span>
                           <StarRating value={route.safety_rating} color="#4ade80" />
                         </div>
                         <div>
-                          <span style={{ color: '#9ca3af', fontSize: '11px', marginRight: '4px' }}>Scenery</span>
+                          <span style={{ color: 'var(--text-tertiary)', fontSize: '11px', marginRight: '4px' }}>Scenery</span>
                           <StarRating value={route.scenery_rating} color="#f59e0b" />
                         </div>
                       </div>
 
-                      <div style={{ color: '#6b7280', fontSize: '11px', marginBottom: '12px' }}>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginBottom: '12px' }}>
                         📍 {route.start_point} → {route.end_point}
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span style={{ color: '#6b7280', fontSize: '11px' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
                           Logged by {route.times_logged} students
                         </span>
                         <button

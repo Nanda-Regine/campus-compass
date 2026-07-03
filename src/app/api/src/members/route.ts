@@ -83,11 +83,58 @@ export async function POST(req: NextRequest) {
       role,
       portfolio: portfolio || null,
       bio:       bio       || null,
-      is_active: true,
+      // Pending until an institution admin activates. Being active grants
+      // university-wide broadcast + SRC posting power, so it must never be
+      // self-granted (previously anyone could self-register as active).
+      is_active: false,
     })
     .select('id, user_id, university, role, portfolio, bio, is_active')
     .single()
 
   if (error) return NextResponse.json({ error: 'Database error' }, { status: 500 })
-  return NextResponse.json({ data }, { status: 201 })
+  return NextResponse.json({ data, pending: true, message: 'Registered — awaiting institution admin approval.' }, { status: 201 })
+}
+
+// PATCH /api/src/members — institution admin activates/deactivates a member.
+// Scoped to the admin's own university so an admin can only manage their campus.
+export async function PATCH(req: NextRequest) {
+  const supabase = createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Caller must be an institution admin.
+  const { data: adminRow } = await supabase
+    .from('institution_admins')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  if (!adminRow) return NextResponse.json({ error: 'Not an institution admin' }, { status: 403 })
+
+  const { data: adminProfile } = await supabase
+    .from('profiles')
+    .select('university')
+    .eq('id', user.id)
+    .maybeSingle()
+  const adminUniversity = adminProfile?.university
+  if (!adminUniversity) return NextResponse.json({ error: 'Admin profile has no university' }, { status: 400 })
+
+  const body = await req.json().catch(() => ({})) as Record<string, unknown>
+  const memberId = typeof body.member_id === 'string' ? body.member_id : ''
+  const isActive = typeof body.is_active === 'boolean' ? body.is_active : null
+  if (!memberId || isActive === null) {
+    return NextResponse.json({ error: 'member_id and is_active required' }, { status: 400 })
+  }
+
+  // Only touch a member at the admin's own university.
+  const { data, error } = await supabase
+    .from('src_members')
+    .update({ is_active: isActive })
+    .eq('id', memberId)
+    .eq('university', adminUniversity)
+    .select('id, user_id, university, role, is_active')
+    .maybeSingle()
+
+  if (error) return NextResponse.json({ error: 'Database error' }, { status: 500 })
+  if (!data) return NextResponse.json({ error: 'Member not found at your institution' }, { status: 404 })
+  return NextResponse.json({ data })
 }

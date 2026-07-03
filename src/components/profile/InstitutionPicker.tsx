@@ -222,7 +222,7 @@ export default function InstitutionPicker({ value, onChange }: Props) {
         className="w-full rounded-xl px-4 py-3 font-display text-sm text-left outline-none transition-all"
         style={{
           background: 'rgba(255,255,255,0.04)', border: `1px solid ${open ? 'rgba(78,207,158,0.4)' : 'rgba(255,255,255,0.09)'}`,
-          color: value ? '#e5e7eb' : 'rgba(255,255,255,0.3)',
+          color: value ? 'var(--text-secondary)' : 'rgba(255,255,255,0.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
         }}
       >

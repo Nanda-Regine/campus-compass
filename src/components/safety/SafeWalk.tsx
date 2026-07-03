@@ -223,7 +223,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.10)',
     borderRadius: 10,
-    color: '#e5e7eb',
+    color: 'var(--text-secondary)',
     fontSize: '0.875rem',
     outline: 'none',
     boxSizing: 'border-box',
@@ -232,7 +232,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   const labelStyle: React.CSSProperties = {
     display: 'block',
     fontSize: '0.72rem',
-    color: '#9ca3af',
+    color: 'var(--text-tertiary)',
     marginBottom: 6,
     fontWeight: 600,
     letterSpacing: '0.04em',
@@ -244,7 +244,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   if (screen === 'setup') {
     const canStart = form.destination.trim() && form.contactName.trim() && form.contactPhone.trim()
     return (
-      <div style={{ background: '#0a0a0f', minHeight: '100vh', padding: '20px 16px' }}>
+      <div style={{ background: 'var(--bg-base)', minHeight: '100vh', padding: '20px 16px' }}>
         <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
           {/* Header */}
@@ -259,10 +259,10 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
               background: 'linear-gradient(90deg, #f87171, transparent)',
             }} />
             <div style={{ fontSize: '1.5rem', marginBottom: 6 }}>🛡️</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#e5e7eb', marginBottom: 4 }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 4 }}>
               Safe Walk
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', lineHeight: 1.6 }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
               Someone knows you&apos;re walking. Set a timer — if you don&apos;t check in, your contact will be alerted.
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
                         : 'rgba(255,255,255,0.04)',
                       border: `1px solid ${form.durationMinutes === min ? 'rgba(251,146,60,0.5)' : 'rgba(255,255,255,0.10)'}`,
                       borderRadius: 100,
-                      color: form.durationMinutes === min ? '#fb923c' : '#9ca3af',
+                      color: form.durationMinutes === min ? '#fb923c' : 'var(--text-tertiary)',
                       fontSize: '0.8rem',
                       fontWeight: form.durationMinutes === min ? 700 : 400,
                       cursor: 'pointer',
@@ -347,7 +347,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
                   : 'rgba(255,255,255,0.04)',
                 border: 'none',
                 borderRadius: 12,
-                color: canStart ? '#fff' : '#6b7280',
+                color: canStart ? '#fff' : 'var(--text-muted)',
                 fontSize: '0.95rem',
                 fontWeight: 700,
                 cursor: canStart ? 'pointer' : 'not-allowed',
@@ -371,7 +371,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
               textDecoration: 'none', textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 4 }}>POLICE EMERGENCY</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginBottom: 4 }}>POLICE EMERGENCY</div>
             <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f87171', fontFamily: 'monospace' }}>
               📞 10111
             </div>
@@ -386,7 +386,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   // ────────────────────────────────────────────────────────────
   if (screen === 'active') {
     return (
-      <div style={{ background: '#0a0a0f', minHeight: '100vh', padding: '20px 16px' }}>
+      <div style={{ background: 'var(--bg-base)', minHeight: '100vh', padding: '20px 16px' }}>
         <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Timer card */}
@@ -412,22 +412,22 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
             }}>
               {formatCountdown(timeRemaining)}
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: 20 }}>remaining</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginBottom: 20 }}>remaining</div>
 
             <div style={{
               background: 'rgba(255,255,255,0.03)',
               borderRadius: 10, padding: '12px 16px', marginBottom: 8,
             }}>
-              <div style={{ fontSize: '1rem', fontWeight: 600, color: '#e5e7eb', marginBottom: 4 }}>
+              <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
                 Walking to: {form.destination}
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#9ca3af' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-tertiary)' }}>
                 Contact: {form.contactName} · {form.contactPhone}
               </div>
             </div>
 
             {checkpoints.length > 0 && (
-              <div style={{ fontSize: '0.7rem', color: '#9ca3af', marginTop: 8 }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginTop: 8 }}>
                 ✓ Last check-in: {timeAgo(checkpoints[checkpoints.length - 1])}
               </div>
             )}
@@ -487,7 +487,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
               textDecoration: 'none', textAlign: 'center',
             }}
           >
-            <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 2 }}>EMERGENCY?</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginBottom: 2 }}>EMERGENCY?</div>
             <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f87171' }}>📞 Call 10111</div>
           </a>
         </div>
@@ -499,7 +499,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   // ALERT SCREEN
   // ────────────────────────────────────────────────────────────
   return (
-    <div style={{ background: '#0a0a0f', minHeight: '100vh', padding: '20px 16px' }}>
+    <div style={{ background: 'var(--bg-base)', minHeight: '100vh', padding: '20px 16px' }}>
       <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Alert card */}
@@ -513,7 +513,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
           <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f87171', marginBottom: 12, lineHeight: 1.4 }}>
             ALERT: Your safe walk ended without check-in
           </div>
-          <div style={{ fontSize: '0.9rem', color: '#e5e7eb', lineHeight: 1.6, marginBottom: 8 }}>
+          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 8 }}>
             Please call <strong>{form.contactName}</strong>
           </div>
           <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#f87171', fontFamily: 'monospace' }}>
@@ -555,7 +555,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f87171' }}>
               📞 Call {form.contactName}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginTop: 2 }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
               {form.contactPhone}
             </div>
           </a>
@@ -568,7 +568,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
             width: '100%', padding: '14px 0',
             background: 'rgba(255,255,255,0.03)',
             border: '1px solid rgba(255,255,255,0.10)',
-            borderRadius: 12, color: '#9ca3af',
+            borderRadius: 12, color: 'var(--text-tertiary)',
             fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',
           }}
         >

@@ -19,7 +19,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   return (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
       <h3 style={{ color: ACCENT, fontWeight: 700, fontSize: '1rem', marginBottom: '10px' }}>{title}</h3>
-      <div style={{ color: '#e5e7eb', fontSize: '0.9rem', lineHeight: '1.6' }}>{children}</div>
+      <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6' }}>{children}</div>
     </div>
   )
 }
@@ -29,11 +29,11 @@ function HotlineLink({ number, label, note }: { number: string; label: string; n
   return (
     <a
       href={`tel:${cleaned}`}
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(244,114,182,0.08)', border: '1px solid rgba(244,114,182,0.2)', borderRadius: '12px', padding: '14px 16px', marginBottom: '10px', textDecoration: 'none', color: '#e5e7eb' }}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(244,114,182,0.08)', border: '1px solid rgba(244,114,182,0.2)', borderRadius: '12px', padding: '14px 16px', marginBottom: '10px', textDecoration: 'none', color: 'var(--text-secondary)' }}
     >
       <div>
         <div style={{ fontWeight: 700, color: ACCENT, fontSize: '1rem' }}>{label}</div>
-        {note && <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '2px' }}>{note}</div>}
+        {note && <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '2px' }}>{note}</div>}
       </div>
       <div style={{ color: ACCENT, fontWeight: 700, fontSize: '1.1rem' }}>{number}</div>
     </a>
@@ -101,7 +101,7 @@ function GbvTab() {
     <div>
       <div style={{ background: 'rgba(244,114,182,0.1)', border: '1px solid rgba(244,114,182,0.3)', borderRadius: '16px', padding: '20px', marginBottom: '20px', textAlign: 'center' }}>
         <div style={{ color: ACCENT, fontWeight: 700, fontSize: '1.2rem', marginBottom: '6px' }}>You are believed.</div>
-        <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '1rem' }}>This is not your fault.</div>
+        <div style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '1rem' }}>This is not your fault.</div>
       </div>
 
       <Card title="First 72 Hours — What You Can Do">
@@ -110,7 +110,7 @@ function GbvTab() {
           <li style={{ marginBottom: '10px' }}>You do <strong style={{ color: ACCENT }}>NOT</strong> have to report to the police — that is entirely your choice.</li>
           <li style={{ marginBottom: '10px' }}>Medical care is critical within 72 hours for <strong style={{ color: '#fbbf24' }}>PEP</strong> (post-exposure HIV prevention) — FREE at any public hospital. It must be started within 72 hours to be effective.</li>
           <li style={{ marginBottom: '10px' }}><strong style={{ color: ACCENT }}>Thuthuzela Care Centres</strong> are one-stop centres that provide medical care, counselling, and police services in one place — you can access medical care without reporting if you prefer.</li>
-          <li>Simply say: <em style={{ color: '#9ca3af' }}>"I need medical care."</em> You will be helped.</li>
+          <li>Simply say: <em style={{ color: 'var(--text-tertiary)' }}>"I need medical care."</em> You will be helped.</li>
         </ol>
       </Card>
 
@@ -120,8 +120,8 @@ function GbvTab() {
           {THUTHUZELA_CENTRES.map(c => (
             <div key={c.city} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '14px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div style={{ color: '#e5e7eb', fontWeight: 700 }}>{c.city}</div>
-                <div style={{ color: '#9ca3af', fontSize: '0.8rem' }}>{c.hospital}</div>
+                <div style={{ color: 'var(--text-secondary)', fontWeight: 700 }}>{c.city}</div>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem' }}>{c.hospital}</div>
               </div>
               <a href={`tel:${c.phone.replace(/\s/g, '')}`} style={{ color: ACCENT, fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none' }}>{c.phone}</a>
             </div>
@@ -154,13 +154,13 @@ const STIS = [
 function StisTab() {
   return (
     <div>
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', marginBottom: '20px', color: '#9ca3af', fontSize: '0.875rem', lineHeight: '1.6' }}>
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px', marginBottom: '20px', color: 'var(--text-tertiary)', fontSize: '0.875rem', lineHeight: '1.6' }}>
         STIs are common and most are easily treated. Having an STI does not say anything about your character. Regular testing is a form of self-care and care for your partners.
       </div>
       {STIS.map(sti => (
         <div key={sti.name} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)`, borderRadius: '16px', padding: '18px', marginBottom: '14px', borderLeft: `3px solid ${sti.color}` }}>
           <div style={{ color: sti.color, fontWeight: 700, fontSize: '1rem', marginBottom: '8px' }}>{sti.name}</div>
-          <div style={{ color: '#e5e7eb', fontSize: '0.875rem', lineHeight: '1.6' }}>{sti.body}</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: '1.6' }}>{sti.body}</div>
         </div>
       ))}
     </div>
@@ -188,7 +188,7 @@ function ContraceptionTab() {
       <Card title="IUD (Intrauterine Device)">
         Copper or hormonal options. Inserted by a healthcare provider. Free at clinics. Copper IUD lasts up to 10 years; hormonal IUD 5 years. Over 99% effective. Can also be used as emergency contraception if inserted within 5 days.
       </Card>
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 18px', color: '#9ca3af', fontSize: '0.875rem' }}>
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px 18px', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
         Campus health centres at most South African universities also offer free contraception. Visit your campus clinic or student health services for a confidential consultation.
       </div>
     </div>
@@ -199,12 +199,12 @@ export default function SexualHealthHub({ userId }: { userId: string | null }) {
   const [activeTab, setActiveTab] = useState<Tab>('hiv_prep')
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '0 0 80px 0', position: 'relative', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', padding: '0 0 80px 0', position: 'relative', overflowX: 'hidden' }}>
       <AmbientImage zone="wellness" opacity={0.32} blurPx={2} saturation={1.4} />
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 16px' }}>
         <div style={{ padding: '28px 0 20px' }}>
-          <h1 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: '6px' }}>Sexual & Reproductive Health</h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Confidential information. All care described is free at public clinics.</p>
+          <h1 style={{ color: 'var(--text-secondary)', fontWeight: 800, fontSize: '1.5rem', marginBottom: '6px' }}>Sexual & Reproductive Health</h1>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Confidential information. All care described is free at public clinics.</p>
         </div>
 
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px', scrollbarWidth: 'none' }}>
@@ -218,7 +218,7 @@ export default function SexualHealthHub({ userId }: { userId: string | null }) {
                 borderRadius: '20px',
                 border: activeTab === tab.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
                 background: activeTab === tab.id ? ACCENT : 'rgba(255,255,255,0.04)',
-                color: activeTab === tab.id ? '#0a0a0f' : '#9ca3af',
+                color: activeTab === tab.id ? '#0a0a0f' : 'var(--text-tertiary)',
                 fontWeight: activeTab === tab.id ? 700 : 500,
                 fontSize: '0.8rem',
                 cursor: 'pointer',
@@ -239,7 +239,7 @@ export default function SexualHealthHub({ userId }: { userId: string | null }) {
         </div>
 
         <div style={{ marginTop: '32px', padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.7rem', textAlign: 'center', lineHeight: '1.5' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', textAlign: 'center', lineHeight: '1.5' }}>
             This is educational information. In a medical emergency call 10111 or go to your nearest emergency room.
           </p>
         </div>

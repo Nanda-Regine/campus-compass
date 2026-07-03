@@ -202,7 +202,7 @@ export default function CulturalMovement() {
   const daysCompleted = challengeDays.filter(Boolean).length
 
   return (
-    <div style={{ background: '#0a0a0f', minHeight: '100vh' }} className="pb-8">
+    <div style={{ background: 'var(--bg-base)', minHeight: '100vh' }} className="pb-8">
       <div className="p-4 space-y-4">
         {/* Philosophy Header */}
         <div
@@ -215,7 +215,7 @@ export default function CulturalMovement() {
         >
           <p
             style={{
-              color: '#e5e7eb',
+              color: 'var(--text-secondary)',
               fontSize: '16px',
               lineHeight: 1.65,
               fontStyle: 'italic',
@@ -260,10 +260,10 @@ export default function CulturalMovement() {
               <div className="flex items-center gap-3">
                 <span style={{ fontSize: '28px' }}>{section.emoji}</span>
                 <div>
-                  <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '16px' }}>
+                  <div style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '16px' }}>
                     {section.title}
                   </div>
-                  <div style={{ color: '#9ca3af', fontSize: '12px' }}>{section.subtitle}</div>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>{section.subtitle}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -271,9 +271,9 @@ export default function CulturalMovement() {
                   <div style={{ color: '#4ade80', fontSize: '12px', fontWeight: 600 }}>
                     {section.caloriesBurn}
                   </div>
-                  <div style={{ color: '#6b7280', fontSize: '10px' }}>{section.caloriesEquiv}</div>
+                  <div style={{ color: 'var(--text-muted)', fontSize: '10px' }}>{section.caloriesEquiv}</div>
                 </div>
-                <span style={{ color: '#9ca3af', fontSize: '16px' }}>
+                <span style={{ color: 'var(--text-tertiary)', fontSize: '16px' }}>
                   {expanded === section.id ? '▲' : '▼'}
                 </span>
               </div>
@@ -285,7 +285,7 @@ export default function CulturalMovement() {
                 {section.content.context && (
                   <p
                     style={{
-                      color: '#9ca3af',
+                      color: 'var(--text-tertiary)',
                       fontSize: '13px',
                       lineHeight: 1.6,
                       marginBottom: '16px',
@@ -312,10 +312,10 @@ export default function CulturalMovement() {
                           padding: '12px',
                         }}
                       >
-                        <div style={{ color: '#e5e7eb', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>
                           {move.name}
                         </div>
-                        <div style={{ color: '#9ca3af', fontSize: '12px', lineHeight: 1.55 }}>
+                        <div style={{ color: 'var(--text-tertiary)', fontSize: '12px', lineHeight: 1.55 }}>
                           {move.description}
                         </div>
                       </div>
@@ -335,7 +335,7 @@ export default function CulturalMovement() {
                   <p style={{ color: '#4ade80', fontSize: '11px', fontWeight: 700, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Practice Routine
                   </p>
-                  <p style={{ color: '#9ca3af', fontSize: '12px', lineHeight: 1.55 }}>
+                  <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', lineHeight: 1.55 }}>
                     {section.content.practice}
                   </p>
                 </div>
@@ -343,7 +343,7 @@ export default function CulturalMovement() {
                 {section.content.music && (
                   <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ fontSize: '14px' }}>🎵</span>
-                    <span style={{ color: '#9ca3af', fontSize: '12px' }}>
+                    <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>
                       Suggested: <em>{section.content.music}</em>
                     </span>
                   </div>
@@ -364,10 +364,10 @@ export default function CulturalMovement() {
         >
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h2 style={{ color: '#e5e7eb', fontSize: '16px', fontWeight: 700 }}>
+              <h2 style={{ color: 'var(--text-secondary)', fontSize: '16px', fontWeight: 700 }}>
                 7-Day Cultural Movement Challenge
               </h2>
-              <p style={{ color: '#9ca3af', fontSize: '12px', marginTop: '2px' }}>
+              <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginTop: '2px' }}>
                 10 minutes of any cultural movement form · every day this week
               </p>
             </div>
@@ -381,7 +381,7 @@ export default function CulturalMovement() {
               }}
             >
               <div style={{ color: '#4ade80', fontSize: '18px', fontWeight: 700 }}>{daysCompleted}</div>
-              <div style={{ color: '#9ca3af', fontSize: '10px' }}>/ 7</div>
+              <div style={{ color: 'var(--text-tertiary)', fontSize: '10px' }}>/ 7</div>
             </div>
           </div>
 
@@ -406,7 +406,7 @@ export default function CulturalMovement() {
                 <span style={{ fontSize: '18px' }}>
                   {challengeDays[i] ? '✅' : '○'}
                 </span>
-                <span style={{ color: challengeDays[i] ? '#4ade80' : '#6b7280', fontSize: '10px', marginTop: '4px', fontWeight: 600 }}>
+                <span style={{ color: challengeDays[i] ? '#4ade80' : 'var(--text-muted)', fontSize: '10px', marginTop: '4px', fontWeight: 600 }}>
                   D{i + 1}
                 </span>
               </button>
@@ -427,7 +427,7 @@ export default function CulturalMovement() {
               <p style={{ color: '#4ade80', fontSize: '14px', fontWeight: 700 }}>
                 🎉 Challenge complete! You moved for 7 days straight.
               </p>
-              <p style={{ color: '#9ca3af', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginTop: '4px' }}>
                 That is not a habit. That is a practice.
               </p>
             </div>

@@ -23,13 +23,24 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const today = new Date().toISOString().split('T')[0]
-  const { reward_type, reward_value, xp_awarded } = await req.json() as {
-    reward_type: string; reward_value: Record<string, unknown>; xp_awarded: number
+  const { reward_type, reward_value, xp_awarded } = await req.json().catch(() => ({})) as {
+    reward_type?: string; reward_value?: Record<string, unknown>; xp_awarded?: number
   }
+
+  // Server-side allowlist so the logged reward can't be forged (e.g. xp_awarded:999999).
+  // Mirrors MYSTERY_LOOT_TABLE. XP itself is credited client-side via the XP engine;
+  // this table is the claim record, so we clamp it to the real loot values.
+  const LOOT_XP: Record<string, number> = {
+    xp_small: 50, xp_medium: 150, xp_large: 500, multiplier: 0, shield: 0, badge_fragment: 100,
+  }
+  if (!reward_type || !(reward_type in LOOT_XP)) {
+    return NextResponse.json({ error: 'invalid reward_type' }, { status: 400 })
+  }
+  const safeXp = LOOT_XP[reward_type]
 
   const { data, error } = await supabase
     .from('mystery_box_claims')
-    .insert({ user_id: user.id, claimed_date: today, reward_type, reward_value, xp_awarded })
+    .insert({ user_id: user.id, claimed_date: today, reward_type, reward_value: reward_value ?? {}, xp_awarded: safeXp })
     .select()
     .single()
 

@@ -70,7 +70,7 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
           {archetype.emoji}
         </div>
         <div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.15rem', color: '#fff', lineHeight: 1.1, marginBottom: 4 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', lineHeight: 1.1, marginBottom: 4 }}>
             {archetype.name}
           </div>
           {daysAsThis > 0 && (

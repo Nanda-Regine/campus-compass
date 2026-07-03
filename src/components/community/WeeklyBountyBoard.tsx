@@ -119,7 +119,7 @@ export default function WeeklyBountyBoard() {
       <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#7090d0', letterSpacing: '0.18em', marginBottom: 10 }}>
         🎯 WEEKLY COMMUNITY BOUNTY
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: '#fff', marginBottom: 4 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Study together, win together
       </div>
       <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 18, lineHeight: 1.5 }}>
@@ -134,7 +134,7 @@ export default function WeeklyBountyBoard() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
           <span style={{ fontSize: 18 }}>🍅</span>
           <div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff' }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>
               Community Pomodoros
             </div>
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
@@ -172,7 +172,7 @@ export default function WeeklyBountyBoard() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ fontSize: 18 }}>✅</span>
             <div>
-              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff' }}>
+              <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>
                 Community Tasks
               </div>
               <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>

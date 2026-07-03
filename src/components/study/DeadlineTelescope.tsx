@@ -68,7 +68,7 @@ export default function DeadlineTelescope({ exams }: Props) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
         <div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', lineHeight: 1.3 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.3 }}>
             {exam.exam_name}
           </div>
           {moduleName !== exam.exam_name && (

@@ -80,6 +80,7 @@ export function ProcrastinationReflectionModal({ trigger, taskDesc, onClose, onS
     }}>
       <div style={{
         background: '#0d1225', borderRadius: 22, padding: 28, maxWidth: 420, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
         border: '1px solid rgba(255,107,107,0.2)',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#ff6b6b', letterSpacing: '0.18em', marginBottom: 10 }}>
@@ -178,7 +179,7 @@ export default function ProcrastinationJournal() {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.18em' }}>
               📓 PROCRASTINATION JOURNAL
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
               Reflect & rewire
             </div>
           </div>

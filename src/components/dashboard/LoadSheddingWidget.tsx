@@ -263,7 +263,7 @@ export default function LoadSheddingWidget() {
               style={{
                 width: '100%', background: 'rgba(255,255,255,0.05)',
                 border: '0.5px solid rgba(255,255,255,0.12)', borderRadius: 8,
-                padding: '7px 10px', color: '#fff', fontSize: 12,
+                padding: '7px 10px', color: 'var(--text-primary)', fontSize: 12,
                 fontFamily: 'DM Sans, sans-serif', outline: 'none',
               }}
             />
@@ -280,7 +280,7 @@ export default function LoadSheddingWidget() {
                       display: 'flex', flexDirection: 'column', gap: 2, textAlign: 'left',
                       background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.08)',
                       borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                     }}
                   >
                     <span style={{ fontSize: 12, fontFamily: 'DM Sans, sans-serif' }}>{area.name}</span>

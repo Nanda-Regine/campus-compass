@@ -172,7 +172,7 @@ export default function StudyContextEngine({ exams, userId }: Props) {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#6b7280',
+            color: 'var(--text-muted)',
             cursor: 'pointer',
             fontSize: '16px',
             lineHeight: 1,

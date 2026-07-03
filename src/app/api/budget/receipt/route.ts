@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
     // Rate limit: 6 receipt scans per minute
     const rl = await checkRateLimitAsync(user.id, 'receipt-ocr', 6, 60_000)
     if (!rl.allowed) return NextResponse.json({ error: 'Too many scans — wait a moment' }, { status: 429 })
+    const rlDay = await checkRateLimitAsync(user.id, 'receipt-ocr-day', 20, 86_400_000)
+    if (!rlDay.allowed) return NextResponse.json({ error: 'Daily scan limit reached — try again tomorrow' }, { status: 429 })
 
     const formData = await request.formData()
     const file = formData.get('receipt') as File | null

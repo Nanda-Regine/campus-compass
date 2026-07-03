@@ -3,9 +3,7 @@ export const dynamic = 'force-dynamic'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-// In-memory rate limit: 30 reactions per 10 min per user
-const RL = new Map<string, { count: number; reset: number }>()
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 // POST /api/alumni/bridge/react { bridge_id, kind: 'thank'|'reply', message? }
 export async function POST(request: NextRequest) {
@@ -13,16 +11,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const now = Date.now()
-  const rl = RL.get(user.id)
-  if (rl && now < rl.reset) {
-    if (rl.count >= 30) return NextResponse.json({ error: 'Slow down a moment' }, { status: 429 })
-    rl.count++
-  } else {
-    RL.set(user.id, { count: 1, reset: now + 10 * 60 * 1000 })
-  }
+  // Shared (Upstash-backed) limiter — 30 reactions / 10 min.
+  const rl = await checkRateLimitAsync(user.id, 'alumni-react', 30, 10 * 60 * 1000)
+  if (!rl.allowed) return NextResponse.json({ error: 'Slow down a moment' }, { status: 429 })
 
-  const body = await request.json()
+  const body = await request.json().catch(() => ({}))
   const bridgeId = body.bridge_id
   const kind = body.kind === 'reply' ? 'reply' : 'thank'
   if (!bridgeId || typeof bridgeId !== 'string')

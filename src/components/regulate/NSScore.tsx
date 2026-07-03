@@ -97,7 +97,7 @@ export default function NSScore({ userId }: Props) {
   if (loading) {
     return (
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16, minHeight: 180 }}>
-        <div style={{ color: '#9ca3af', fontSize: 12 }}>Loading...</div>
+        <div style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>Loading...</div>
       </div>
     )
   }
@@ -110,7 +110,7 @@ export default function NSScore({ userId }: Props) {
   return (
     <>
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
-        <p style={{ color: '#9ca3af', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>NS Score</p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>NS Score</p>
 
         <div className="flex items-center gap-4">
           <div style={{
@@ -129,24 +129,24 @@ export default function NSScore({ userId }: Props) {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   <span style={{
                     fontSize: 11, padding: '2px 8px', borderRadius: 20,
-                    background: 'rgba(255,255,255,0.06)', color: '#9ca3af',
+                    background: 'rgba(255,255,255,0.06)', color: 'var(--text-tertiary)',
                   }}>Sleep {checkin.sleep}/5</span>
                   <span style={{
                     fontSize: 11, padding: '2px 8px', borderRadius: 20,
                     background: 'rgba(255,255,255,0.06)',
-                    color: checkin.stress >= 4 ? '#f87171' : '#9ca3af',
+                    color: checkin.stress >= 4 ? '#f87171' : 'var(--text-tertiary)',
                   }}>Stress {checkin.stress >= 4 ? 'High' : checkin.stress <= 2 ? 'Low' : 'Med'}</span>
                   <span style={{
                     fontSize: 11, padding: '2px 8px', borderRadius: 20,
-                    background: 'rgba(255,255,255,0.06)', color: '#9ca3af',
+                    background: 'rgba(255,255,255,0.06)', color: 'var(--text-tertiary)',
                   }}>Energy {checkin.energy}/5</span>
                 </div>
                 {!hasToday && (
-                  <p style={{ color: '#6b7280', fontSize: 11 }}>Last checked: {checkin.date}</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: 11 }}>Last checked: {checkin.date}</p>
                 )}
               </>
             ) : (
-              <p style={{ color: '#9ca3af', fontSize: 13 }}>No check-in yet today</p>
+              <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>No check-in yet today</p>
             )}
             {!hasToday && (
               <button
@@ -170,7 +170,7 @@ export default function NSScore({ userId }: Props) {
           onClick={() => setShowModal(false)}
         >
           <div
-            style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 28, width: '100%', maxWidth: 360 }}
+            style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 28, width: '100%', maxWidth: 360, maxHeight: '85dvh', overflowY: 'auto' }}
             onClick={e => e.stopPropagation()}
           >
             <p style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700, marginBottom: 20 }}>Quick Check-In</p>

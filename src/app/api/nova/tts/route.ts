@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 const ELEVENLABS_API_KEY  = process.env.ELEVENLABS_API_KEY
 const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'EXAVITQu4vr4xnSDxMaL'
@@ -40,6 +41,13 @@ export async function POST(req: NextRequest) {
     if (tier !== 'nova_unlimited' && tier !== 'scholar') {
       return NextResponse.json({ error: 'Premium required' }, { status: 403 })
     }
+
+    // ElevenLabs bills per character — cap even paid users so a loop can't run
+    // up an unbounded bill. ~12/min burst + 120/day.
+    const burst = await checkRateLimitAsync(user.id, 'nova-tts-burst', 12, 60_000)
+    if (!burst.allowed) return NextResponse.json({ error: 'Slow down — too many voice requests' }, { status: 429 })
+    const daily = await checkRateLimitAsync(user.id, 'nova-tts-day', 120, 86_400_000)
+    if (!daily.allowed) return NextResponse.json({ error: 'Daily voice limit reached' }, { status: 429 })
 
     const body = await req.json() as { text?: string }
     if (!body.text) return NextResponse.json({ error: 'text required' }, { status: 400 })

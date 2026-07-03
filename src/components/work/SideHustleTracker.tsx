@@ -186,7 +186,7 @@ export default function SideHustleTracker({ userId }: Props) {
       {/* Total this month */}
       <div style={CARD_STYLE} className="px-5 py-4 flex items-center justify-between">
         <div>
-          <div className="text-xs mb-1" style={{ color: '#9ca3af' }}>Total this month</div>
+          <div className="text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>Total this month</div>
           <div className="text-3xl font-bold" style={{ color: '#fbbf24' }}>
             R{totalThisMonth.toLocaleString('en-ZA')}
           </div>
@@ -207,10 +207,10 @@ export default function SideHustleTracker({ userId }: Props) {
           className="px-5 py-10 text-center"
         >
           <div className="text-4xl mb-3">💼</div>
-          <p className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
             No side hustles tracked yet
           </p>
-          <p className="text-xs mt-1 mb-4" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mt-1 mb-4" style={{ color: 'var(--text-tertiary)' }}>
             Add your first hustle to start tracking income and hours.
           </p>
           <button
@@ -236,7 +236,7 @@ export default function SideHustleTracker({ userId }: Props) {
                       <HustleTypeEmoji type={hustle.hustle_type} />
                     </span>
                     <div>
-                      <div className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
+                      <div className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                         {hustle.hustle_name}
                       </div>
                       <div
@@ -254,7 +254,7 @@ export default function SideHustleTracker({ userId }: Props) {
                   <button
                     onClick={() => handleRemove(hustle.id)}
                     className="text-xs transition-colors"
-                    style={{ color: '#9ca3af' }}
+                    style={{ color: 'var(--text-tertiary)' }}
                   >
                     ✕
                   </button>
@@ -267,7 +267,7 @@ export default function SideHustleTracker({ userId }: Props) {
                     <div className="text-sm font-bold" style={{ color: '#4ecf9e' }}>
                       R{hustle.income_this_month.toLocaleString('en-ZA')}
                     </div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>
+                    <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                       /month
                     </div>
                   </div>
@@ -275,10 +275,10 @@ export default function SideHustleTracker({ userId }: Props) {
                     className="rounded-xl py-2"
                     style={{ background: 'rgba(255,255,255,0.03)' }}
                   >
-                    <div className="text-sm font-bold" style={{ color: '#e5e7eb' }}>
+                    <div className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
                       {hustle.hours_this_month}hrs
                     </div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>
+                    <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                       /month
                     </div>
                   </div>
@@ -289,7 +289,7 @@ export default function SideHustleTracker({ userId }: Props) {
                     <div className="text-sm font-bold" style={{ color: '#fbbf24' }}>
                       R{effectiveRate}/hr
                     </div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>
+                    <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                       effective
                     </div>
                   </div>
@@ -319,7 +319,7 @@ export default function SideHustleTracker({ userId }: Props) {
 
           {/* Invoice template */}
           <div>
-            <p className="text-xs mb-2" style={{ color: '#9ca3af' }}>
+            <p className="text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>
               Invoice template — copy and send to clients
             </p>
             <div
@@ -327,7 +327,7 @@ export default function SideHustleTracker({ userId }: Props) {
               style={{
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(255,255,255,0.06)',
-                color: '#9ca3af',
+                color: 'var(--text-tertiary)',
               }}
             >
               {invoiceTemplate(highEarners[0])}
@@ -351,11 +351,11 @@ export default function SideHustleTracker({ userId }: Props) {
             style={{
               background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.05)',
-              color: '#9ca3af',
+              color: 'var(--text-tertiary)',
             }}
           >
             <p>
-              <span style={{ color: '#e5e7eb', fontWeight: 600 }}>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                 At R500+/month consistently →
               </span>{' '}
               Consider registering as a sole proprietor. It&apos;s free at{' '}
@@ -363,7 +363,7 @@ export default function SideHustleTracker({ userId }: Props) {
               look professional to clients.
             </p>
             <p>
-              <span style={{ color: '#e5e7eb', fontWeight: 600 }}>Tax threshold:</span>{' '}
+              <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Tax threshold:</span>{' '}
               Under R95,750 total annual income = no tax owed. You likely don&apos;t
               need to register for tax yet.
             </p>
@@ -378,7 +378,7 @@ export default function SideHustleTracker({ userId }: Props) {
           style={{
             background: 'rgba(255,255,255,0.02)',
             border: '1px solid rgba(255,255,255,0.05)',
-            color: '#9ca3af',
+            color: 'var(--text-tertiary)',
           }}
         >
           Total earned since you started:{' '}

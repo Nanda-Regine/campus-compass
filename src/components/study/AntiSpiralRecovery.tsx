@@ -216,7 +216,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#ff6b6b', letterSpacing: '0.16em', marginBottom: 6 }}>
               SPIRAL DETECTED — {reason}
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 8, lineHeight: 1.2 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 16, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.2 }}>
               You've slipped into the spiral.
             </div>
             <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 16, lineHeight: 1.55 }}>

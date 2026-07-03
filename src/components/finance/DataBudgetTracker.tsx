@@ -56,7 +56,7 @@ export default function DataBudgetTracker() {
     border: '1px solid rgba(255,255,255,0.06)',
     borderRadius: '16px',
     padding: '24px',
-    color: '#fff',
+    color: 'var(--text-primary)',
     fontFamily: 'inherit',
   };
 
@@ -86,7 +86,7 @@ export default function DataBudgetTracker() {
               background: 'rgba(255,255,255,0.08)',
               border: '1px solid rgba(255,255,255,0.12)',
               borderRadius: '6px',
-              color: '#fff',
+              color: 'var(--text-primary)',
               fontSize: '12px',
               padding: '4px 8px',
               cursor: 'pointer',
@@ -188,7 +188,7 @@ export default function DataBudgetTracker() {
                         background: 'rgba(255,255,255,0.08)',
                         border: '1px solid rgba(255,255,255,0.2)',
                         borderRadius: '4px',
-                        color: '#fff',
+                        color: 'var(--text-primary)',
                         fontSize: '12px',
                         padding: '2px 6px',
                         textAlign: 'right',

@@ -204,7 +204,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 <div className="font-display font-bold text-sm text-white">
                   {todayHours}h logged for today
                 </div>
-                <div className="font-mono text-[0.55rem] text-white/40">
+                <div className="font-mono text-[0.62rem] text-white/40">
                   {todayHours >= 8 ? 'Excellent recovery' : todayHours >= 7 ? 'Good — aim for 7–9h' : todayHours >= 6 ? 'Slightly short — one more hour helps a lot' : 'Significantly sleep deprived — rest is productive'}
                 </div>
               </div>
@@ -213,13 +213,13 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
           {/* Form card */}
           <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 space-y-4">
-            <div className="font-mono text-[0.58rem] text-white/35 uppercase tracking-widest">
+            <div className="font-mono text-[0.62rem] text-white/35 uppercase tracking-widest">
               {editId ? 'Update today\'s sleep' : 'Log last night\'s sleep'}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="font-mono text-[0.58rem] text-white/40 block mb-1.5">Bed time</label>
+                <label className="font-mono text-[0.62rem] text-white/40 block mb-1.5">Bed time</label>
                 <input
                   type="time"
                   value={bedtime}
@@ -228,7 +228,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 />
               </div>
               <div>
-                <label className="font-mono text-[0.58rem] text-white/40 block mb-1.5">Wake time</label>
+                <label className="font-mono text-[0.62rem] text-white/40 block mb-1.5">Wake time</label>
                 <input
                   type="time"
                   value={wakeTime}
@@ -249,14 +249,14 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                   {sleepHours(bedtime, wakeTime)}h
                 </div>
                 {sleepHours(bedtime, wakeTime) < 6 && (
-                  <div className="font-mono text-[0.55rem] text-rose-400">Too short — cognitive function drops significantly below 6h</div>
+                  <div className="font-mono text-[0.62rem] text-rose-400">Too short — cognitive function drops significantly below 6h</div>
                 )}
               </div>
             )}
 
             {/* Quality */}
             <div>
-              <label className="font-mono text-[0.58rem] text-white/40 block mb-2">Sleep quality</label>
+              <label className="font-mono text-[0.62rem] text-white/40 block mb-2">Sleep quality</label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map(q => (
                   <button
@@ -280,7 +280,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               className="rounded-xl px-3.5 py-3 space-y-1"
               style={{ background: 'rgba(251,191,36,0.06)', border: '0.5px solid rgba(251,191,36,0.2)' }}
             >
-              <div className="font-mono text-[0.58rem] text-amber-400 uppercase tracking-widest">⚡ Load shedding + sleep</div>
+              <div className="font-mono text-[0.62rem] text-amber-400 uppercase tracking-widest">⚡ Load shedding + sleep</div>
               <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed">
                 Phone or laptop screens during outages expose you to blue light with no ambient light to balance it. This suppresses melatonin and can delay your sleep by 1–2 hours. Switch to a red-tinted screen mode or warm candlelight during load shedding — your brain needs the darkness signal to start winding down.
               </p>
@@ -288,7 +288,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
             {/* Notes */}
             <div>
-              <label className="font-mono text-[0.58rem] text-white/40 block mb-1.5">Notes (optional)</label>
+              <label className="font-mono text-[0.62rem] text-white/40 block mb-1.5">Notes (optional)</label>
               <input
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
@@ -310,7 +310,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
           {/* Recent logs list */}
           {recentLogs.length > 0 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">Recent nights</div>
+              <div className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest mb-2">Recent nights</div>
               <div className="space-y-2">
                 {recentLogs.map(log => {
                   const h = sleepHours(log.bedtime, log.wake_time)
@@ -326,10 +326,10 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <div className="font-display font-bold text-sm text-white">{log.sleep_date}</div>
-                          <div className="font-mono text-[0.58rem] font-bold" style={{ color: hoursColor(h) }}>{h}h</div>
+                          <div className="font-mono text-[0.62rem] font-bold" style={{ color: hoursColor(h) }}>{h}h</div>
                           {log.quality && <span className="text-sm">{qualityEmoji(log.quality)}</span>}
                         </div>
-                        <div className="font-mono text-[0.55rem] text-white/30">
+                        <div className="font-mono text-[0.62rem] text-white/30">
                           {log.bedtime.slice(0, 5)} → {log.wake_time.slice(0, 5)}
                           {log.notes && ` · ${log.notes}`}
                         </div>
@@ -364,23 +364,23 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg" style={{ color: hoursColor(avgHours) }}>{avgHours.toFixed(1)}h</div>
-                  <div className="font-mono text-[0.55rem] text-white/35 mt-0.5">Avg / night</div>
+                  <div className="font-mono text-[0.62rem] text-white/35 mt-0.5">Avg / night</div>
                 </div>
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg" style={{ color: sleepDebt > 5 ? '#FB7185' : sleepDebt > 2 ? '#f59e0b' : '#4ecf9e' }}>
                     {sleepDebt.toFixed(1)}h
                   </div>
-                  <div className="font-mono text-[0.55rem] text-white/35 mt-0.5">Sleep debt</div>
+                  <div className="font-mono text-[0.62rem] text-white/35 mt-0.5">Sleep debt</div>
                 </div>
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg text-indigo-400">{recentLogs.length}</div>
-                  <div className="font-mono text-[0.55rem] text-white/35 mt-0.5">Nights logged</div>
+                  <div className="font-mono text-[0.62rem] text-white/35 mt-0.5">Nights logged</div>
                 </div>
               </div>
 
               {/* 7-day bar chart */}
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
-                <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-3">Last 7 nights</div>
+                <div className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest mb-3">Last 7 nights</div>
                 <div className="flex items-end gap-2 h-24">
                   {recentLogs.slice(0, 7).reverse().map(log => {
                     const h = sleepHours(log.bedtime, log.wake_time)
@@ -398,7 +398,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                             opacity: 0.85,
                           }}
                         />
-                        <div className="font-mono text-[0.48rem] text-white/25 text-center leading-tight">{date}</div>
+                        <div className="font-mono text-[0.62rem] text-white/25 text-center leading-tight">{date}</div>
                       </div>
                     )
                   })}
@@ -425,7 +425,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                   className="rounded-xl p-4 space-y-2"
                   style={{ background: 'rgba(251,113,133,0.07)', border: '0.5px solid rgba(251,113,133,0.2)' }}
                 >
-                  <div className="font-mono text-[0.58rem] text-rose-400 uppercase tracking-widest">
+                  <div className="font-mono text-[0.62rem] text-rose-400 uppercase tracking-widest">
                     ⚠️ Sleep debt: {sleepDebt.toFixed(1)}h
                   </div>
                   <div className="font-body text-sm text-white/70 leading-relaxed">
@@ -436,7 +436,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
               {/* Exam tips */}
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
-                <div className="font-mono text-[0.58rem] text-indigo-400 uppercase tracking-widest mb-3">🧠 Sleep science for exams</div>
+                <div className="font-mono text-[0.62rem] text-indigo-400 uppercase tracking-widest mb-3">🧠 Sleep science for exams</div>
                 <div className="space-y-2.5">
                   {[
                     { tip: 'Sleep consolidates memory', detail: 'Your brain replays what you studied during slow-wave sleep. Reviewing notes right before bed then sleeping 7h outperforms a midnight study session.' },
@@ -476,7 +476,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
               {/* Score breakdown */}
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
-                <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-3">Your chronotype spectrum</div>
+                <div className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest mb-3">Your chronotype spectrum</div>
                 <div className="relative h-2 bg-white/8 rounded-full overflow-hidden">
                   <div
                     className="absolute left-0 top-0 h-full rounded-full"
@@ -518,7 +518,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                   {QUIZ_QUESTIONS.map((q, qi) => (
                     <div key={qi}>
                       <div className="font-display font-bold text-sm text-white mb-2">
-                        <span className="font-mono text-[0.58rem] text-indigo-400 mr-2">{qi + 1}.</span>
+                        <span className="font-mono text-[0.62rem] text-indigo-400 mr-2">{qi + 1}.</span>
                         {q.q}
                       </div>
                       <div className="space-y-1.5">

@@ -57,7 +57,7 @@ export default function AccountabilityPartner({ tasks }: Props) {
     fontFamily: 'Sora,sans-serif', fontSize: 13,
     background: 'rgba(255,255,255,0.05)',
     border: '1px solid rgba(255,255,255,0.1)',
-    color: '#fff', outline: 'none', boxSizing: 'border-box',
+    color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box',
   }
 
   return (
@@ -69,7 +69,7 @@ export default function AccountabilityPartner({ tasks }: Props) {
       <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 10 }}>
         🤝 ACCOUNTABILITY PARTNER
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 4 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Go public with your commitment
       </div>
       <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 18, lineHeight: 1.5 }}>

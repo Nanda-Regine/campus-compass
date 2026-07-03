@@ -96,10 +96,10 @@ function TimerModal({ label, seconds, onClose, onDone }: { label: string; second
       onClick={() => { stop(); onClose() }}
     >
       <div
-        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 340, textAlign: 'center' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 340, maxHeight: '85dvh', overflowY: 'auto', textAlign: 'center' }}
         onClick={e => e.stopPropagation()}
       >
-        <p style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{label}</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{label}</p>
         <p style={{ color: '#4ecf9e', fontSize: 56, fontFamily: 'monospace', fontWeight: 700, margin: '24px 0' }}>
           {mins}:{secs.toString().padStart(2, '0')}
         </p>
@@ -107,9 +107,9 @@ function TimerModal({ label, seconds, onClose, onDone }: { label: string; second
           {!running ? (
             <button onClick={start} style={{ padding: '12px 28px', background: '#a78bfa', border: 'none', borderRadius: 12, color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>Start</button>
           ) : (
-            <button onClick={stop} style={{ padding: '12px 28px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 12, color: '#e5e7eb', fontSize: 15, cursor: 'pointer' }}>Pause</button>
+            <button onClick={stop} style={{ padding: '12px 28px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 12, color: 'var(--text-secondary)', fontSize: 15, cursor: 'pointer' }}>Pause</button>
           )}
-          <button onClick={() => { stop(); onClose() }} style={{ padding: '12px 20px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: '#9ca3af', fontSize: 15, cursor: 'pointer' }}>Close</button>
+          <button onClick={() => { stop(); onClose() }} style={{ padding: '12px 20px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, color: 'var(--text-tertiary)', fontSize: 15, cursor: 'pointer' }}>Close</button>
         </div>
       </div>
     </div>
@@ -149,26 +149,26 @@ function PMRModal({ onClose, onDone }: { onClose: () => void; onDone: () => void
       onClick={() => onClose()}
     >
       <div
-        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 360, textAlign: 'center' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 360, maxHeight: '85dvh', overflowY: 'auto', textAlign: 'center' }}
         onClick={e => e.stopPropagation()}
       >
         {step === -1 ? (
           <>
-            <p style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Progressive Muscle Relaxation</p>
-            <p style={{ color: '#9ca3af', fontSize: 14, marginBottom: 24 }}>Tense each muscle group for 5s, then release for 5s. We'll guide you from feet to face.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Progressive Muscle Relaxation</p>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: 14, marginBottom: 24 }}>Tense each muscle group for 5s, then release for 5s. We'll guide you from feet to face.</p>
             <button onClick={() => setStep(0)} style={{ padding: '12px 32px', background: '#a78bfa', border: 'none', borderRadius: 12, color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer' }}>Begin</button>
           </>
         ) : step < muscles.length ? (
           <>
-            <p style={{ color: '#9ca3af', fontSize: 13, marginBottom: 8 }}>{step + 1}/{muscles.length}</p>
-            <p style={{ color: '#e5e7eb', fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{muscles[step]}</p>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: 13, marginBottom: 8 }}>{step + 1}/{muscles.length}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{muscles[step]}</p>
             <p style={{ color: phase === 'tense' ? '#f87171' : '#4ecf9e', fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
               {phase === 'tense' ? 'TENSE' : 'RELEASE'}
             </p>
-            <p style={{ color: '#e5e7eb', fontSize: 48, fontFamily: 'monospace', fontWeight: 700, margin: '16px 0' }}>{count}</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 48, fontFamily: 'monospace', fontWeight: 700, margin: '16px 0' }}>{count}</p>
           </>
         ) : null}
-        <button onClick={() => onClose()} style={{ marginTop: 12, background: 'none', border: 'none', color: '#6b7280', fontSize: 12, cursor: 'pointer' }}>Cancel</button>
+        <button onClick={() => onClose()} style={{ marginTop: 12, background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 12, cursor: 'pointer' }}>Cancel</button>
       </div>
     </div>
   )
@@ -212,8 +212,8 @@ function ExhaleGuide() {
           <p style={{ color: phase === 'inhale' ? '#7090d0' : '#4ecf9e', fontSize: 18, fontWeight: 700 }}>
             {phase === 'inhale' ? 'INHALE' : 'EXHALE SLOWLY'}
           </p>
-          <p style={{ color: '#e5e7eb', fontSize: 40, fontFamily: 'monospace', fontWeight: 700 }}>{count}</p>
-          <p style={{ color: '#6b7280', fontSize: 12 }}>Round {rounds + 1}/5</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 40, fontFamily: 'monospace', fontWeight: 700 }}>{count}</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>Round {rounds + 1}/5</p>
         </>
       ) : rounds >= 5 ? (
         <p style={{ color: '#4ecf9e', fontSize: 14 }}>Complete — well done.</p>
@@ -254,7 +254,7 @@ function EyeMovementGuide() {
               left: pos === 'left' ? 8 : 88,
             }} />
           </div>
-          <p style={{ color: '#9ca3af', fontSize: 13 }}>{count + 1}/10 — breathe slowly</p>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>{count + 1}/10 — breathe slowly</p>
         </>
       ) : count >= 10 ? (
         <p style={{ color: '#4ecf9e', fontSize: 14 }}>Complete.</p>
@@ -274,10 +274,10 @@ function PracticeCard({ icon, title, duration, description, onStart }: { icon: s
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <span style={{ fontSize: 20 }}>{icon}</span>
-            <span style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 15 }}>{title}</span>
-            <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>{duration}</span>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>{title}</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 'auto' }}>{duration}</span>
           </div>
-          <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5 }}>{description}</p>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5 }}>{description}</p>
         </div>
         {onStart && (
           <button
@@ -364,10 +364,10 @@ function VagalTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type:
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>💧</span>
-          <span style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 15 }}>Gargling</span>
-          <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>90s</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Gargling</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 'auto' }}>90s</span>
         </div>
-        <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>
           Gargle water vigorously for 30s, 3 times. Activates the same nerve branches as singing. Evidence-backed vagal toning.
         </p>
         {!gargling ? (
@@ -382,10 +382,10 @@ function VagalTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type:
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>🫁</span>
-          <span style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 15 }}>Extended Exhale Breathing</span>
-          <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>5 rounds</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Extended Exhale Breathing</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 'auto' }}>5 rounds</span>
         </div>
-        <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5 }}>Make exhales twice as long as inhales. Inhale 4s, exhale 8s. 5 rounds.</p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5 }}>Make exhales twice as long as inhales. Inhale 4s, exhale 8s. 5 rounds.</p>
         <ExhaleGuide />
       </div>
 
@@ -406,10 +406,10 @@ function EyeTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type: s
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>⏱️</span>
-          <span style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 15 }}>20-20-20 Rule</span>
-          <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>Every 20 min</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>20-20-20 Rule</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 'auto' }}>Every 20 min</span>
         </div>
-        <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5, marginBottom: 12 }}>
           Every 20 minutes, look 20 feet away for 20 seconds. Prevents eye fatigue that causes headaches and concentration drops.
         </p>
         <button
@@ -423,10 +423,10 @@ function EyeTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type: s
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>👀</span>
-          <span style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 15 }}>Eye Movement Relaxation</span>
-          <span style={{ color: '#6b7280', fontSize: 11, marginLeft: 'auto' }}>1 min</span>
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Eye Movement Relaxation</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 11, marginLeft: 'auto' }}>1 min</span>
         </div>
-        <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5 }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5 }}>
           Slowly move eyes left and right 10 times while breathing slowly. Reduces amygdala activation.
         </p>
         <EyeMovementGuide />
@@ -464,11 +464,11 @@ function HistoryTab({ userId }: { userId: string }) {
       })
   }, [userId])
 
-  if (loading) return <p style={{ color: '#9ca3af', fontSize: 14 }}>Loading...</p>
+  if (loading) return <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>Loading...</p>
   if (sessions.length === 0) {
     return (
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24, textAlign: 'center' }}>
-        <p style={{ color: '#9ca3af', fontSize: 14 }}>No sessions yet — complete a practice to see your history.</p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>No sessions yet — complete a practice to see your history.</p>
       </div>
     )
   }
@@ -507,14 +507,14 @@ function HistoryTab({ userId }: { userId: string }) {
         ].map(({ label, value }) => (
           <div key={label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16, textAlign: 'center' }}>
             <p style={{ color: '#a78bfa', fontSize: 24, fontWeight: 700 }}>{value}</p>
-            <p style={{ color: '#9ca3af', fontSize: 11 }}>{label}</p>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>{label}</p>
           </div>
         ))}
       </div>
 
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
-        <p style={{ color: '#9ca3af', fontSize: 11, marginBottom: 12 }}>Most used: <span style={{ color: '#a78bfa' }}>{mostUsed}</span></p>
-        <p style={{ color: '#9ca3af', fontSize: 11, marginBottom: 12 }}>Sessions last 14 days</p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 11, marginBottom: 12 }}>Most used: <span style={{ color: '#a78bfa' }}>{mostUsed}</span></p>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 11, marginBottom: 12 }}>Sessions last 14 days</p>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 60 }}>
           {last14.map(({ date, count }) => (
             <div key={date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -527,8 +527,8 @@ function HistoryTab({ userId }: { userId: string }) {
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-          <span style={{ color: '#6b7280', fontSize: 10 }}>14 days ago</span>
-          <span style={{ color: '#6b7280', fontSize: 10 }}>Today</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 10 }}>14 days ago</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 10 }}>Today</span>
         </div>
       </div>
     </div>
@@ -554,7 +554,7 @@ export default function RegulationRoom({ userId, exams }: Props) {
   const ACCENT = '#a78bfa'
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', display: 'flex' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-secondary)', display: 'flex' }}>
       <AmbientImage zone="wellness" opacity={0.22} blurPx={10} saturation={1.1} overlayColor="rgba(5,4,10,0.78)" />
 
       {/* Side rail */}

@@ -221,10 +221,10 @@ export default function RoomWorkout() {
   if (activeRoutine) {
     if (completed) {
       return (
-        <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 20px' }}>
+        <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 20px' }}>
           <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🎉</div>
-          <h2 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: '8px', textAlign: 'center' }}>Workout Complete!</h2>
-          <p style={{ color: '#9ca3af', fontSize: '0.9rem', marginBottom: '8px' }}>{activeRoutine.name}</p>
+          <h2 style={{ color: 'var(--text-secondary)', fontWeight: 800, fontSize: '1.5rem', marginBottom: '8px', textAlign: 'center' }}>Workout Complete!</h2>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem', marginBottom: '8px' }}>{activeRoutine.name}</p>
           <div style={{ background: 'rgba(244,114,182,0.15)', border: '1px solid rgba(244,114,182,0.3)', borderRadius: '12px', padding: '12px 24px', marginBottom: '32px', color: ACCENT, fontWeight: 700 }}>+20 XP earned</div>
           <button onClick={stopWorkout} style={{ padding: '14px 40px', background: ACCENT, border: 'none', borderRadius: '12px', color: '#0a0a0f', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>Done</button>
         </div>
@@ -235,11 +235,11 @@ export default function RoomWorkout() {
     const progress = (currentExerciseIndex / activeRoutine.exercises.length) * 100
 
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '32px 20px 80px' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--bg-base)', padding: '32px 20px 80px' }}>
         <div style={{ maxWidth: '480px', margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{activeRoutine.name}</span>
-            <button onClick={stopWorkout} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', color: '#9ca3af', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer', fontSize: '0.8rem' }}>Stop</button>
+            <span style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>{activeRoutine.name}</span>
+            <button onClick={stopWorkout} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', color: 'var(--text-tertiary)', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer', fontSize: '0.8rem' }}>Stop</button>
           </div>
 
           <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '4px', height: '4px', marginBottom: '32px' }}>
@@ -247,15 +247,15 @@ export default function RoomWorkout() {
           </div>
 
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{ color: '#6b7280', fontSize: '0.8rem', marginBottom: '8px' }}>Exercise {currentExerciseIndex + 1} of {activeRoutine.exercises.length}</div>
-            <h2 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.8rem', marginBottom: '12px' }}>{ex.name}</h2>
-            <p style={{ color: '#9ca3af', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '8px' }}>{ex.description}</p>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>Exercise {currentExerciseIndex + 1} of {activeRoutine.exercises.length}</div>
+            <h2 style={{ color: 'var(--text-secondary)', fontWeight: 800, fontSize: '1.8rem', marginBottom: '12px' }}>{ex.name}</h2>
+            <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '8px' }}>{ex.description}</p>
             <p style={{ color: ACCENT, fontSize: '0.8rem' }}>{ex.benefit}</p>
           </div>
 
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             {timerActive ? (
-              <div style={{ fontSize: '4rem', fontWeight: 800, color: countdown > 5 ? '#e5e7eb' : ACCENT, fontVariantNumeric: 'tabular-nums' }}>
+              <div style={{ fontSize: '4rem', fontWeight: 800, color: countdown > 5 ? 'var(--text-secondary)' : ACCENT, fontVariantNumeric: 'tabular-nums' }}>
                 {formatTime(countdown)}
               </div>
             ) : (
@@ -267,7 +267,7 @@ export default function RoomWorkout() {
             {!timerActive && ex.duration && (
               <button onClick={beginTimer} style={{ flex: 1, padding: '14px', background: ACCENT, border: 'none', borderRadius: '12px', color: '#0a0a0f', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>Start Timer</button>
             )}
-            <button onClick={nextExercise} style={{ flex: 1, padding: '14px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#e5e7eb', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>
+            <button onClick={nextExercise} style={{ flex: 1, padding: '14px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: 'var(--text-secondary)', fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}>
               {currentExerciseIndex + 1 >= activeRoutine.exercises.length ? 'Finish' : 'Next'}
             </button>
           </div>
@@ -277,17 +277,17 @@ export default function RoomWorkout() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', padding: '0 0 80px 0' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', padding: '0 0 80px 0' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 16px' }}>
         <div style={{ padding: '28px 0 20px' }}>
-          <h1 style={{ color: '#e5e7eb', fontWeight: 800, fontSize: '1.5rem', marginBottom: '4px' }}>Room Workout</h1>
-          <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>Exercise wherever you are — no equipment needed.</p>
+          <h1 style={{ color: 'var(--text-secondary)', fontWeight: 800, fontSize: '1.5rem', marginBottom: '4px' }}>Room Workout</h1>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Exercise wherever you are — no equipment needed.</p>
         </div>
 
         {/* Filters */}
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Space Available</div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Space Available</div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {SPACE_ORDER.map(s => (
                 <button
@@ -297,7 +297,7 @@ export default function RoomWorkout() {
                     padding: '8px 14px', borderRadius: '20px',
                     background: space === s ? ACCENT : 'rgba(255,255,255,0.05)',
                     border: space === s ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                    color: space === s ? '#0a0a0f' : '#9ca3af',
+                    color: space === s ? '#0a0a0f' : 'var(--text-tertiary)',
                     fontWeight: space === s ? 700 : 400,
                     cursor: 'pointer', fontSize: '0.8rem',
                   }}
@@ -307,7 +307,7 @@ export default function RoomWorkout() {
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <div style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Energy Level</div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Energy Level</div>
             <div style={{ display: 'flex', gap: '8px' }}>
               {([1, 2, 3, 4, 5] as EnergyLevel[]).map(n => (
                 <button
@@ -316,7 +316,7 @@ export default function RoomWorkout() {
                   style={{
                     width: '40px', height: '40px', borderRadius: '50%',
                     background: energy >= n ? ACCENT : 'rgba(255,255,255,0.06)',
-                    border: 'none', color: energy >= n ? '#0a0a0f' : '#6b7280',
+                    border: 'none', color: energy >= n ? '#0a0a0f' : 'var(--text-muted)',
                     fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem',
                   }}
                 >{n}</button>
@@ -325,7 +325,7 @@ export default function RoomWorkout() {
           </div>
 
           <div>
-            <div style={{ color: '#9ca3af', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Time Available</div>
+            <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Time Available</div>
             <div style={{ display: 'flex', gap: '8px' }}>
               {allDurations.map(t => (
                 <button
@@ -335,7 +335,7 @@ export default function RoomWorkout() {
                     padding: '8px 18px', borderRadius: '20px',
                     background: time === t ? ACCENT : 'rgba(255,255,255,0.05)',
                     border: time === t ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                    color: time === t ? '#0a0a0f' : '#9ca3af',
+                    color: time === t ? '#0a0a0f' : 'var(--text-tertiary)',
                     fontWeight: time === t ? 700 : 400,
                     cursor: 'pointer', fontSize: '0.85rem',
                   }}
@@ -356,16 +356,16 @@ export default function RoomWorkout() {
             <div key={routine.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                 <div>
-                  <h3 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '1.05rem', marginBottom: '4px' }}>{routine.name}</h3>
+                  <h3 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '1.05rem', marginBottom: '4px' }}>{routine.name}</h3>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ background: 'rgba(244,114,182,0.1)', color: ACCENT, borderRadius: '8px', padding: '2px 8px', fontSize: '0.7rem', fontWeight: 600 }}>{routine.time} min</span>
-                    <span style={{ background: 'rgba(255,255,255,0.06)', color: '#9ca3af', borderRadius: '8px', padding: '2px 8px', fontSize: '0.7rem' }}>{SPACE_LABELS[routine.space]}</span>
-                    <span style={{ background: 'rgba(255,255,255,0.06)', color: '#9ca3af', borderRadius: '8px', padding: '2px 8px', fontSize: '0.7rem' }}>Energy {routine.minEnergy}+</span>
+                    <span style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-tertiary)', borderRadius: '8px', padding: '2px 8px', fontSize: '0.7rem' }}>{SPACE_LABELS[routine.space]}</span>
+                    <span style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-tertiary)', borderRadius: '8px', padding: '2px 8px', fontSize: '0.7rem' }}>Energy {routine.minEnergy}+</span>
                   </div>
                 </div>
               </div>
 
-              <p style={{ color: '#6b7280', fontSize: '0.75rem', fontStyle: 'italic', marginBottom: '14px', lineHeight: '1.4' }}>{routine.scienceLink}</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontStyle: 'italic', marginBottom: '14px', lineHeight: '1.4' }}>{routine.scienceLink}</p>
 
               <div style={{ marginBottom: '16px' }}>
                 {routine.exercises.map((ex, i) => (
@@ -373,11 +373,11 @@ export default function RoomWorkout() {
                     <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(244,114,182,0.15)', color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                        <span style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '0.875rem' }}>{ex.name}</span>
+                        <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.875rem' }}>{ex.name}</span>
                         {ex.duration && <span style={{ color: ACCENT, fontSize: '0.75rem', fontWeight: 600 }}>{ex.duration}</span>}
                       </div>
-                      <div style={{ color: '#9ca3af', fontSize: '0.78rem', marginTop: '2px' }}>{ex.description}</div>
-                      <div style={{ color: '#6b7280', fontSize: '0.72rem', marginTop: '2px', fontStyle: 'italic' }}>{ex.benefit}</div>
+                      <div style={{ color: 'var(--text-tertiary)', fontSize: '0.78rem', marginTop: '2px' }}>{ex.description}</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem', marginTop: '2px', fontStyle: 'italic' }}>{ex.benefit}</div>
                     </div>
                   </div>
                 ))}

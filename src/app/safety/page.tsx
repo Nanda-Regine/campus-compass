@@ -67,10 +67,10 @@ export default async function SafetyPage() {
                 {f.icon}
               </div>
               <div>
-                <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '15px' }}>
+                <div style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '15px' }}>
                   {f.title}
                 </div>
-                <div style={{ color: '#9ca3af', fontSize: '13px', marginTop: '2px' }}>
+                <div style={{ color: 'var(--text-tertiary)', fontSize: '13px', marginTop: '2px' }}>
                   {f.description}
                 </div>
               </div>

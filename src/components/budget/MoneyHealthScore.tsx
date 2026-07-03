@@ -51,7 +51,7 @@ export default function MoneyHealthScore(props: Props) {
 
   return (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
-      <p className="text-xs uppercase tracking-wider" style={{ color: '#9ca3af' }}>Money Health</p>
+      <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>Money Health</p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flexShrink: 0, width: 80, height: 80 }}>
@@ -69,12 +69,12 @@ export default function MoneyHealthScore(props: Props) {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-2xl font-bold" style={{ color: band.color }}>{score}</span>
-            <span className="text-xs" style={{ color: '#9ca3af' }}>{band.label}</span>
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{band.label}</span>
           </div>
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p className="text-xs" style={{ color: '#9ca3af' }}>{band.desc}</p>
+          <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{band.desc}</p>
 
           <div className="mt-3 space-y-2">
             <MiniBar label="Budget Use" value={budgetUsePercent} color={budgetUsePercent > 100 ? '#f87171' : budgetUsePercent > 80 ? '#fbbf24' : '#4ecf9e'} invert />
@@ -98,8 +98,8 @@ function MiniBar({ label, value, color, invert }: { label: string; value: number
   return (
     <div>
       <div className="flex justify-between mb-0.5">
-        <span className="text-xs" style={{ color: '#9ca3af' }}>{label}</span>
-        <span className="text-xs" style={{ color: '#e5e7eb' }}>{Math.round(value)}%</span>
+        <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{label}</span>
+        <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{Math.round(value)}%</span>
       </div>
       <div className="w-full rounded-full overflow-hidden" style={{ height: 4, background: 'rgba(255,255,255,0.06)' }}>
         <div

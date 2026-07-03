@@ -96,7 +96,7 @@ export default function ICSImportButton({ onImported }: { onImported: () => void
           padding: 20,
         }} onClick={e => { if (e.target === e.currentTarget) close() }}>
           <div style={{
-            width: '100%', maxWidth: 460,
+            width: '100%', maxWidth: 460, maxHeight: '85dvh', overflowY: 'auto',
             background: 'var(--bg-surface, #0f1a19)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 18, overflow: 'hidden',

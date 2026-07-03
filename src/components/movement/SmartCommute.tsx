@@ -179,7 +179,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Default route pill ──────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Default route</p>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Default route</p>
         {defaultRoute ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>{TRANSPORT_ICONS[defaultRoute.transport_type] ?? '🚌'}</span>
@@ -206,7 +206,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Buffer selector ──────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
           ⚡ Extra buffer — load shedding / walking to rank
         </p>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -238,7 +238,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
         }}>
           {/* Label + countdown badge */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(14,165,233,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(14,165,233,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {focusLabel}
             </p>
             {countdown && (
@@ -258,7 +258,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
               {/* Big departure time */}
               {focusPlan.leaveByMins != null ? (
                 <div style={{ marginBottom: 14 }}>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Leave by</p>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Leave by</p>
                   <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 42, color: '#e0f2fe', lineHeight: 1, marginBottom: 6, letterSpacing: '-0.02em' }}>
                     {formatTime12(minsToTime(focusPlan.leaveByMins))}
                   </p>
@@ -310,7 +310,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Week overview ─────────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
           This week
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -335,7 +335,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
                       <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'rgba(255,255,255,0.75)', marginBottom: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {day.firstSlot.module?.module_name ?? day.firstSlot.label ?? 'Class'}
                       </p>
-                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.32)' }}>
+                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.32)' }}>
                         First class {formatTime12(day.firstSlot.start_time)}
                       </p>
                     </div>
@@ -362,7 +362,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
         border: '1px solid rgba(245,158,11,0.14)',
         borderRadius: 12, padding: '12px 14px',
       }}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(245,158,11,0.65)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(245,158,11,0.65)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
           💡 Load shedding tip
         </p>
         <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.55 }}>

@@ -594,7 +594,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   border: '1px solid rgba(78,207,158,0.2)', borderRadius: 16, padding: '16px 18px', marginBottom: 16,
                 }}>
                   <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>DON&apos;T KNOW WHAT TO BUY?</div>
-                  <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 6 }}>Load a beginner starter kit</div>
+                  <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>Load a beginner starter kit</div>
                   <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 12 }}>
                     22 essentials · feeds you for a week · works for beginners · under R350
                   </div>

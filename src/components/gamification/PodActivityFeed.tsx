@@ -37,7 +37,7 @@ export default function PodActivityFeed() {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
         Pod Activity
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -59,13 +59,13 @@ export default function PodActivityFeed() {
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>
-                <span style={{ fontWeight: 700, color: '#fff' }}>{item.user.full_name?.split(' ')[0] ?? 'A pod member'}</span>
+                <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{item.user.full_name?.split(' ')[0] ?? 'A pod member'}</span>
                 {' '}hit a Compound Day {timeAgo(item.day_date)}
               </div>
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {item.domains_hit.map(d => (
                   <span key={d} style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '0.48rem',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
                     color: DOMAIN_META[d]?.color ?? '#fff',
                     background: DOMAIN_META[d]?.darkColor ?? 'rgba(255,255,255,0.05)',
                     borderRadius: 5, padding: '1px 5px',
@@ -75,7 +75,7 @@ export default function PodActivityFeed() {
                 ))}
               </div>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
               +{item.xp_bonus}xp
             </div>
           </div>

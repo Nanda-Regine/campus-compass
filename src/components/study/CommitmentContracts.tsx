@@ -110,6 +110,7 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
       <div style={{
         background: '#0d1225', border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: 20, padding: 28, maxWidth: 420, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
         animation: 'cc-slide 0.3s ease',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 12 }}>
@@ -247,7 +248,7 @@ export default function CommitmentContracts() {
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#4ecf9e', letterSpacing: '0.18em' }}>
             🤝 COMMITMENT CONTRACTS
           </div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
             Stake your XP on your word
           </div>
         </div>
@@ -277,7 +278,7 @@ export default function CommitmentContracts() {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: accent, letterSpacing: '0.12em', marginBottom: 6 }}>
               {isPassed ? '⏰ DEADLINE PASSED' : isNear ? '⚡ ALMOST DUE' : '🎯 ACTIVE CONTRACT'}
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 6, lineHeight: 1.35 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.35 }}>
               {active.task_description}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>

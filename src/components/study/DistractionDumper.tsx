@@ -53,6 +53,7 @@ function ReviewModal({ items, onClear }: { items: Distraction[]; onClear: () => 
     }}>
       <div style={{
         background: '#0d1225', borderRadius: 20, padding: 26, maxWidth: 380, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
         border: '1px solid rgba(255,255,255,0.08)',
         animation: 'dd-pop-in 0.35s cubic-bezier(0.34,1.56,0.64,1)',
       }}>

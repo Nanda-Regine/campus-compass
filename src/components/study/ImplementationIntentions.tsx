@@ -105,6 +105,7 @@ function CreateForm({ tasks, onSave, onCancel }: CreateFormProps) {
       <div style={{
         background: '#0d1225', borderRadius: 20, padding: 26,
         border: '1px solid rgba(255,255,255,0.1)', maxWidth: 400, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#7090d0', letterSpacing: '0.18em', marginBottom: 12 }}>
           📅 IMPLEMENTATION INTENTION
@@ -262,7 +263,7 @@ export default function ImplementationIntentions({ tasks }: Props) {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#7090d0', letterSpacing: '0.18em' }}>
               📅 IMPLEMENTATION INTENTIONS
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
               Schedule the when & where
             </div>
           </div>
@@ -295,7 +296,7 @@ export default function ImplementationIntentions({ tasks }: Props) {
                   border: `1px solid ${color}25`,
                 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 12, color: '#fff', marginBottom: 3 }}>
+                    <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 12, color: 'var(--text-primary)', marginBottom: 3 }}>
                       {intent.task_title}
                     </div>
                     <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>

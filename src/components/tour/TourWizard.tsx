@@ -324,7 +324,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(168,85,247,0.7)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>
             Step 1
           </div>
-          <h1 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 22, color: '#fff', margin: 0 }}>
+          <h1 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)', margin: 0 }}>
             Khetha ulimi / Choose Language
           </h1>
           <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
@@ -384,7 +384,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         <div style={{ fontSize: 48, marginBottom: 14 }}>{current.emoji}</div>
 
         {/* Title */}
-        <h2 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 20, color: '#fff', margin: '0 0 10px' }}>
+        <h2 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text-primary)', margin: '0 0 10px' }}>
           {current.title}
         </h2>
 

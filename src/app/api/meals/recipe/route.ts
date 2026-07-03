@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const rateDay = await checkRateLimitAsync(user.id, 'meals-recipe-day', 40, 86_400_000)
+    if (!rateDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow.' }, { status: 429 })
     const rateCheck = await checkRateLimitAsync(user.id, 'meals-recipe', 8, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })
