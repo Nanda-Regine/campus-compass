@@ -500,6 +500,19 @@ ALUMNI — GIVE BACK
   - Final conversion CTA with gradient background
   - TypeScript clean, no extra dependencies
 
+### Sprint 9.5 — Habits × Streak + SEO Depth (3 July 2026) 🔥 ✅
+Branch `fix/ux-payments-scale-hardening` · commit `253fb19`
+- [x] **Habit check-ins now extend the global streak** (`src/app/api/streak/route.ts`, `src/components/habits/HabitBuilder.tsx`): the dashboard / bottom-nav / `StreakWidget` streak previously counted **completed tasks only**, so a student who did their habits every day but logged no task saw the streak stay flat ("habits doesn't add days to the streak"). `/api/streak` now treats a day as active if a task was completed **OR** a habit was checked in that day (SAST `YYYY-MM-DD` union of both sources)
+  - HabitBuilder persists a bounded `checkInDates` history **inside the existing `user_habits_state` JSONB** — no migration; backfilled from `lastCheckedIn` for habits saved before tracking existed
+  - Per-habit "day streak" logic was verified correct (1→2→3→4→5 across consecutive days, resets after a miss) — it just can't advance more than once per SAST calendar day; the real gap was the global streak feed
+- [x] **Habit un-check fixed**: toggling a completed habit was a silent no-op (the card could never be un-ticked because `lastCheckedIn` stayed = today). It now properly reverts streak / date / count
+- [x] **Check-in flush ordering**: a check-in flushes to the DB immediately, then re-reads `/api/streak` (via `refreshStreak`), so the nav/widget update without a reload and avoid the 400 ms debounce race. `StreakWidget` at-risk copy: "AT RISK — DO A TASK OR HABIT"
+- [x] **SEO depth pass** (root `layout.tsx` was already saturated with 300+ keywords + `SoftwareApplication` JSON-LD): added a second JSON-LD **`@graph`** — `Organization` (logo, founder, `sameAs` socials, contactPoint, languages), `WebSite`, and a 6-question `FAQPage` (free / NSFAS / offline / Nova / institutions / pricing)
+- [x] **Sitemap expanded** (`src/app/sitemap.ts`): added `/demo`, `/institutions`, `/security`, `/feedback`, `/paia` with priorities; auth-walled app pages deliberately excluded (they redirect to login)
+- [x] **robots.ts hardened**: comprehensive disallow of every authenticated app section to focus crawl budget on public pages
+- [x] **Metadata for public client pages**: `/demo` and `/institutions` (both `'use client'`) got titles/descriptions/canonical/OG via route-level `layout.tsx`
+- TypeScript clean; `next build` green (only offline-sandbox font-fetch warnings)
+
 ### Sprint 10 — Onboarding Polish + Quality Signals (Upcoming) ✨
 - [ ] **Onboarding flow review**: audit SetupFlow 6-step onboarding; improve university/TVET selector with searchable full 100+ list; better onboarding for TVET students (N-level, trade subjects)
 - [ ] **Tutor verification badge**: manual verification flow (student card upload) to distinguish verified tutors in search results
