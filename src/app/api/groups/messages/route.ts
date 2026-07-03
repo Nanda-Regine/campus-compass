@@ -4,6 +4,21 @@ import type { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
+// A caller may read/post/pin a group's messages only if they're a member of
+// that group (or its creator). Without this, any authenticated user could
+// enumerate assignment_ids and read/inject/pin another group's private chat.
+async function isGroupMember(
+  supabase: ReturnType<typeof createServerSupabaseClient>,
+  assignmentId: string,
+  userId: string,
+): Promise<boolean> {
+  const [member, owner] = await Promise.all([
+    supabase.from('group_members').select('id').eq('assignment_id', assignmentId).eq('user_id', userId).maybeSingle(),
+    supabase.from('group_assignments').select('id').eq('id', assignmentId).eq('created_by', userId).maybeSingle(),
+  ])
+  return !!(member.data || owner.data)
+}
+
 export async function GET(request: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -12,6 +27,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const assignmentId = searchParams.get('assignment_id')
   if (!assignmentId) return NextResponse.json({ error: 'assignment_id required' }, { status: 400 })
+  if (!(await isGroupMember(supabase, assignmentId, user.id))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const { data, error } = await supabase
     .from('assignment_messages')
@@ -33,6 +51,9 @@ export async function POST(request: NextRequest) {
   const { assignment_id, content, is_decision } = body
   if (!assignment_id || typeof assignment_id !== 'string') return NextResponse.json({ error: 'assignment_id required' }, { status: 400 })
   if (!content || typeof content !== 'string' || !content.trim()) return NextResponse.json({ error: 'content required' }, { status: 400 })
+  if (!(await isGroupMember(supabase, assignment_id, user.id))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const { data, error } = await supabase
     .from('assignment_messages')
@@ -65,6 +86,14 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json() as Record<string, unknown>
   const { id, is_pinned } = body
   if (!id || typeof id !== 'string') return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+  // Resolve the message → its group, then require membership before pinning.
+  const { data: msg } = await supabase
+    .from('assignment_messages').select('assignment_id').eq('id', id).maybeSingle()
+  if (!msg) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (!(await isGroupMember(supabase, msg.assignment_id as string, user.id))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const { data, error } = await supabase
     .from('assignment_messages')

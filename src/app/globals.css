@@ -292,7 +292,7 @@ html:not(.light) {
 
 /* ── CSS Variables — Light Theme (Ubuntu Sunrise) ─────────── */
 
-[data-theme="light"],
+:is([data-theme="light"],html.light),
 html.light {
   /* Typography — same tokens */
   --font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
@@ -440,7 +440,7 @@ html.light {
 
 /* ── CSS Variables — Outdoor Theme (Max Contrast for Bright Sunlight) ── */
 
-[data-theme="outdoor"] {
+:is([data-theme="outdoor"],html.outdoor) {
   --font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
   --font-body:    'DM Sans', 'Plus Jakarta Sans', sans-serif;
   --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
@@ -583,17 +583,17 @@ html.light {
 /* 1. Base: any white-opacity inline-styled element → force dark readable text.
       This covers the 840 hardcoded dark-mode rgba() values across 60+ components.
       Navigation bars (sidebar, bottom nav) are fixed separately in their TSX. */
-[data-theme="outdoor"] [style*="rgba(255,255,255,0."] {
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(255,255,255,0."] {
   color: var(--text-primary) !important;
 }
 
 /* 2. .dash-card-in animation wrapper — ensure text readable */
-[data-theme="outdoor"] .dash-card-in {
+:is([data-theme="outdoor"],html.outdoor) .dash-card-in {
   color: var(--text-primary);
 }
 
 /* 3. Skeleton shimmer — flip from white-glow to grey-pulse for white bg */
-[data-theme="outdoor"] .skeleton-row {
+:is([data-theme="outdoor"],html.outdoor) .skeleton-row {
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.05) 25%,
@@ -604,65 +604,65 @@ html.light {
 }
 
 /* 4. All form inputs — force readable no matter what inline style they carry */
-[data-theme="outdoor"] input,
-[data-theme="outdoor"] textarea,
-[data-theme="outdoor"] select {
+:is([data-theme="outdoor"],html.outdoor) input,
+:is([data-theme="outdoor"],html.outdoor) textarea,
+:is([data-theme="outdoor"],html.outdoor) select {
   background: #ffffff !important;
   color: #000000 !important;
   border-color: rgba(0, 0, 0, 0.3) !important;
 }
-[data-theme="outdoor"] input::placeholder,
-[data-theme="outdoor"] textarea::placeholder {
+:is([data-theme="outdoor"],html.outdoor) input::placeholder,
+:is([data-theme="outdoor"],html.outdoor) textarea::placeholder {
   color: rgba(0, 0, 0, 0.38) !important;
 }
 
 /* 5. Hardcoded dark-background overlay panels (modals, sheets) that are
       intentionally dark: restore white text inside them.
       These are identified by their specific hardcoded bg colors. */
-[data-theme="outdoor"] [style*="rgba(10,12,17"],
-[data-theme="outdoor"] [style*="rgba(6,10,8"],
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.9"],
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.95"],
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.98"] {
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(10,12,17"],
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(6,10,8"],
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.9"],
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.95"],
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.98"] {
   color: rgba(255, 255, 255, 0.9) !important;
 }
 /* …and their children */
-[data-theme="outdoor"] [style*="rgba(10,12,17"] *,
-[data-theme="outdoor"] [style*="rgba(6,10,8"] *,
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.9"] *,
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.95"] *,
-[data-theme="outdoor"] [style*="rgba(0,0,0,0.98"] * {
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(10,12,17"] *,
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(6,10,8"] *,
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.9"] *,
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.95"] *,
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(0,0,0,0.98"] * {
   color: rgba(255, 255, 255, 0.85) !important;
 }
 
 /* 6. Buttons and links with hardcoded accent colours — keep their colour */
-[data-theme="outdoor"] button[style*="color: #"],
-[data-theme="outdoor"] a[style*="color: #"] {
+:is([data-theme="outdoor"],html.outdoor) button[style*="color: #"],
+:is([data-theme="outdoor"],html.outdoor) a[style*="color: #"] {
   color: unset;
 }
 
 /* 7. Borders: white-opacity borders are invisible on white — darken them */
-[data-theme="outdoor"] [style*="rgba(255,255,255,0."] {
+:is([data-theme="outdoor"],html.outdoor) [style*="rgba(255,255,255,0."] {
   border-color: rgba(0, 0, 0, 0.16) !important;
 }
 
 /* 8. Selection */
-[data-theme="outdoor"] ::selection {
+:is([data-theme="outdoor"],html.outdoor) ::selection {
   background: rgba(6, 95, 70, 0.22);
   color: #000000;
 }
 
 /* 9. Scrollbars */
-[data-theme="outdoor"] * {
+:is([data-theme="outdoor"],html.outdoor) * {
   scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
 }
-[data-theme="outdoor"] ::-webkit-scrollbar-thumb {
+:is([data-theme="outdoor"],html.outdoor) ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.18);
 }
 
 /* 10. Toast notifications — always dark-on-light in outdoor */
-[data-theme="outdoor"] [data-sonner-toast],
-[data-theme="outdoor"] [data-hot-toast] {
+:is([data-theme="outdoor"],html.outdoor) [data-sonner-toast],
+:is([data-theme="outdoor"],html.outdoor) [data-hot-toast] {
   background: #1a1a1a !important;
   color: #ffffff !important;
 }
@@ -671,22 +671,22 @@ html.light {
 /* Inputs in light/sunrise mode need a stronger visible border since the
    warm-gold token was previously too low-contrast on the cream background. */
 
-[data-theme="light"] input,
-[data-theme="light"] textarea,
-[data-theme="light"] select {
+:is([data-theme="light"],html.light) input,
+:is([data-theme="light"],html.light) textarea,
+:is([data-theme="light"],html.light) select {
   background: #ffffff !important;
   color: var(--text-primary) !important;
   border-color: rgba(139, 100, 20, 0.35) !important;
 }
-[data-theme="light"] input:focus,
-[data-theme="light"] textarea:focus,
-[data-theme="light"] select:focus {
+:is([data-theme="light"],html.light) input:focus,
+:is([data-theme="light"],html.light) textarea:focus,
+:is([data-theme="light"],html.light) select:focus {
   border-color: var(--teal) !important;
   outline: none;
   box-shadow: 0 0 0 2px rgba(11, 174, 136, 0.15) !important;
 }
-[data-theme="light"] input::placeholder,
-[data-theme="light"] textarea::placeholder {
+:is([data-theme="light"],html.light) input::placeholder,
+:is([data-theme="light"],html.light) textarea::placeholder {
   color: var(--text-muted) !important;
   opacity: 1;
 }
@@ -733,7 +733,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   color: var(--text-primary);
 }
 
-[data-theme="light"] ::selection,
+:is([data-theme="light"],html.light) ::selection,
 html.light ::selection {
   background: rgba(139, 63, 232, 0.18);
   color: var(--text-primary);
@@ -746,7 +746,7 @@ html.light ::selection {
   scrollbar-color: rgba(255, 255, 255, 0.10) transparent;
 }
 
-[data-theme="light"],
+:is([data-theme="light"],html.light),
 html.light {
   scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
 }
@@ -769,12 +769,12 @@ html.light {
   background: rgba(255, 255, 255, 0.20);
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb,
+:is([data-theme="light"],html.light) ::-webkit-scrollbar-thumb,
 html.light ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.12);
 }
 
-[data-theme="light"] ::-webkit-scrollbar-thumb:hover,
+:is([data-theme="light"],html.light) ::-webkit-scrollbar-thumb:hover,
 html.light ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.22);
 }
@@ -813,8 +813,8 @@ a, button {
   -webkit-tap-highlight-color: rgba(0, 229, 176, 0.10);
 }
 
-[data-theme="light"] a,
-[data-theme="light"] button,
+:is([data-theme="light"],html.light) a,
+:is([data-theme="light"],html.light) button,
 html.light a,
 html.light button {
   -webkit-tap-highlight-color: rgba(13, 148, 136, 0.10);
@@ -851,13 +851,13 @@ html.light button {
   border-bottom: 0.5px solid var(--border-subtle);
 }
 
-[data-theme="light"] .glass,
+:is([data-theme="light"],html.light) .glass,
 html.light .glass {
   background: rgba(255, 255, 255, 0.72);
   border-color: var(--border-subtle);
 }
 
-[data-theme="light"] .glass-dark,
+:is([data-theme="light"],html.light) .glass-dark,
 html.light .glass-dark {
   background: rgba(250, 250, 245, 0.90);
 }
@@ -931,7 +931,7 @@ html.light .glass-dark {
     0 0 60px rgba(0, 229, 176, 0.10);
 }
 
-[data-theme="light"] .glow-ring:hover,
+:is([data-theme="light"],html.light) .glow-ring:hover,
 html.light .glow-ring:hover {
   box-shadow:
     0 0 0 1px rgba(13, 148, 136, 0.35),
@@ -952,7 +952,7 @@ html.light .glow-ring:hover {
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
-[data-theme="light"] .shimmer,
+:is([data-theme="light"],html.light) .shimmer,
 html.light .shimmer {
   background: linear-gradient(
     90deg,
@@ -1145,6 +1145,7 @@ body.modal-open { overflow: hidden; }
    On non-hover devices, force them visible. */
 @media (hover: none) {
   .group-hover\:opacity-100 { opacity: 1 !important; }
+  .group-hover\:flex { display: flex !important; }
 }
 
 /* ── Scroll Container ────────────────────────────────────── */
@@ -1372,7 +1373,7 @@ body.modal-open { overflow: hidden; }
     var(--bg-base);
 }
 
-[data-theme="light"] .bg-cosmic,
+:is([data-theme="light"],html.light) .bg-cosmic,
 html.light .bg-cosmic {
   background:
     radial-gradient(ellipse 70% 55% at 15% -5%,  rgba(139, 63, 232, 0.06) 0%, transparent 60%),

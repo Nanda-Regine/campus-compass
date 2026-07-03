@@ -580,6 +580,15 @@ export function checkAndFireCompoundDay(): void {
 
   window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName: 'compound_day', xp } }))
   window.dispatchEvent(new CustomEvent('varsityos:compound_day', { detail: { domainsHit: Array.from(domainsHit), xp } }))
+
+  // Persist the compound day server-side so it also advances the per-domain
+  // streaks (Domain Flames). The server computes the XP bonus authoritatively;
+  // we only send which domains were hit.
+  fetch('/api/gamification/compound-day', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domains_hit: Array.from(domainsHit) }),
+  }).catch(() => {})
 }
 
 /* ── Daily Challenges ───────────────────────────────────────────────────────*/
@@ -827,6 +836,30 @@ export function getNewlyUnlockedBadges(prev: XPState, next: XPState): Badge[] {
 }
 
 /* ── XP Penalty ─────────────────────────────────────────────────────────────*/
+
+// Credit a variable amount of XP (e.g. Mystery Box loot) that isn't tied to a
+// fixed XPEventName. Mirrors dispatchXP's badge/level/DB side-effects.
+export function creditXP(amount: number, label: string) {
+  if (typeof window === 'undefined') return
+  if (!Number.isFinite(amount) || amount <= 0) return
+  const state = loadXPState()
+  const prevUnlockedIds = new Set(getUnlockedBadges(state).map(b => b.id))
+  const prevLevel       = getLevel(state.totalXP)
+
+  state.totalXP += amount
+  state.recentGains.push({ xp: amount, label, ts: Date.now() })
+  saveXPState(state)
+
+  window.dispatchEvent(new CustomEvent('varsityos:xp', { detail: { eventName: 'bonus', xp: amount } }))
+  for (const badge of getUnlockedBadges(state).filter(b => !prevUnlockedIds.has(b.id))) {
+    window.dispatchEvent(new CustomEvent('varsityos:badge_unlock', { detail: badge }))
+  }
+  const newLevel = getLevel(state.totalXP)
+  if (newLevel.name !== prevLevel.name) {
+    window.dispatchEvent(new CustomEvent('varsityos:level_up', { detail: newLevel }))
+  }
+  saveXPStateToDB(state).catch(() => {})
+}
 
 export function penalizeXP(amount: number, reason: string) {
   if (typeof window === 'undefined') return

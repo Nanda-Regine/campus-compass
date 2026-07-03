@@ -1,24 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
+// Server-authoritative compound-day XP bonus (mirrors XP_VALUES.compound_day).
+// Kept as a literal so this server route never imports the 'use client' xp-engine.
+const COMPOUND_DAY_XP = 200
+
 export async function POST(req: NextRequest) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { domains_hit, xp_bonus } = await req.json() as { domains_hit: string[]; xp_bonus: number }
+  const body = await req.json().catch(() => ({})) as { domains_hit?: unknown }
+  const domains_hit = Array.isArray(body?.domains_hit)
+    ? body.domains_hit.filter((d): d is string => typeof d === 'string')
+    : []
+  // A compound day is 3+ distinct domains in one day — reject anything less so
+  // the XP bonus / streak bumps can't be forged from a single action.
+  const unique = [...new Set(domains_hit)]
+  if (unique.length < 3) {
+    return NextResponse.json({ error: 'A compound day needs 3+ domains' }, { status: 400 })
+  }
+
   const today = new Date().toISOString().split('T')[0]
 
   const { data, error } = await supabase
     .from('compound_days')
-    .upsert({ user_id: user.id, day_date: today, domains_hit, xp_bonus }, { onConflict: 'user_id,day_date', ignoreDuplicates: true })
+    .upsert(
+      { user_id: user.id, day_date: today, domains_hit: unique, xp_bonus: COMPOUND_DAY_XP },
+      { onConflict: 'user_id,day_date', ignoreDuplicates: true },
+    )
     .select()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (error) return NextResponse.json({ error: 'Failed to record compound day' }, { status: 400 })
 
-  // Also update each domain streak
-  for (const domain of domains_hit) {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/api/gamification/domain-streak`, {
+  // Advance each hit domain's streak. Use the request's own origin — the previous
+  // `NEXT_PUBLIC_SITE_URL ?? ''` fallback produced a relative URL that fetch()
+  // rejects server-side, so domain streaks never actually moved.
+  for (const domain of unique) {
+    await fetch(`${req.nextUrl.origin}/api/gamification/domain-streak`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Cookie: req.headers.get('cookie') ?? '' },
       body: JSON.stringify({ domain, action: 'increment' }),

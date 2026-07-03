@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { rollMysteryBox, MYSTERY_LOOT_TABLE, dispatchXP } from '@/lib/xp-engine'
+import { rollMysteryBox, MYSTERY_LOOT_TABLE, dispatchXP, creditXP } from '@/lib/xp-engine'
 
 type Reward = typeof MYSTERY_LOOT_TABLE[number]
 
@@ -62,7 +62,12 @@ export default function MysteryBox() {
             xp_awarded: rolled.xp,
           }),
         })
-        if (rolled.xp > 0) dispatchXP('mystery_box_opened')
+        // Always record the open (badge counter + daily claim), regardless of
+        // whether this roll carried XP. XP_VALUES['mystery_box_opened'] is 0.
+        dispatchXP('mystery_box_opened')
+        // Credit the actual rolled reward — this was previously displayed but
+        // never added to the user's XP total.
+        if (rolled.xp > 0) creditXP(rolled.xp, `🎁 ${rolled.label}`)
         // Store multiplier if that reward
         if (rolled.type === 'multiplier') {
           localStorage.setItem('varsityos_xp_multiplier', JSON.stringify({ value: 2, expires: Date.now() + 3600000 }))

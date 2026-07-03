@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const rateLimitResult = await checkRateLimitAsync(user.id, 'loadshedding', 30, 60)
+  const rateLimitResult = await checkRateLimitAsync(user.id, 'loadshedding', 30, 60_000)
   if (!rateLimitResult.allowed) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
   }

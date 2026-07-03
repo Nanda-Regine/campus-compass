@@ -265,11 +265,11 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                 <span style={{ fontSize: '1.05rem', lineHeight: 1, opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
                 <span style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.37rem',
-                  color: active ? tab.accent : 'rgba(255,255,255,0.28)',
-                  letterSpacing: '0.04em',
+                  fontSize: '0.6rem',
+                  color: active ? tab.accent : 'var(--text-tertiary)',
+                  letterSpacing: '0.01em',
                   lineHeight: 1,
-                  maxWidth: 48,
+                  maxWidth: 60,
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
@@ -282,7 +282,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                     minWidth: 14, height: 14, padding: '0 2px',
                     borderRadius: 9999,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'var(--font-mono)', fontSize: '0.4rem', fontWeight: 700,
+                    fontFamily: 'var(--font-mono)', fontSize: '0.55rem', fontWeight: 700,
                     background: `${badge.color}20`, color: badge.color,
                     border: `0.5px solid ${badge.color}40`,
                   }}>

@@ -28,8 +28,10 @@ export async function GET(req: Request) {
   if (category && category !== 'all' && VALID_CATEGORIES.has(category)) query = query.eq('category', category)
 
   const { data, error } = await query
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ data })
+  if (error) return NextResponse.json({ error: 'Failed to load posts' }, { status: 500 })
+  // Strip the author's id from anonymous posts so they can't be de-anonymised.
+  const safe = (data ?? []).map(r => (r.is_anonymous ? { ...r, user_id: null } : r))
+  return NextResponse.json({ data: safe })
 }
 
 export async function POST(req: Request) {

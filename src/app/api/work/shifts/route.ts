@@ -60,7 +60,14 @@ export async function POST(req: Request) {
   // Calculate duration and earnings
   const [sh, sm] = start_time.split(':').map(Number)
   const [eh, em] = end_time.split(':').map(Number)
-  const duration_hours = Math.round(((eh * 60 + em) - (sh * 60 + sm)) / 60 * 100) / 100
+  let minutes = (eh * 60 + em) - (sh * 60 + sm)
+  // An end before the start means an overnight shift (e.g. 22:00→06:00), not a
+  // negative one — roll it into the next day so earnings can't go negative.
+  if (minutes < 0) minutes += 24 * 60
+  if (minutes <= 0) {
+    return NextResponse.json({ error: 'end_time must differ from start_time' }, { status: 400 })
+  }
+  const duration_hours = Math.round(minutes / 60 * 100) / 100
 
   let earnings: number | null = null
   if (job?.pay_rate && job.pay_type === 'hourly') {

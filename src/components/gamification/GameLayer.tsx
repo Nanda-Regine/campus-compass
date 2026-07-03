@@ -17,6 +17,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { Badge, Level } from '@/lib/xp-engine'
+import { initXPFromDB } from '@/lib/xp-engine'
 import dynamic from 'next/dynamic'
 const CompoundDayBurst = dynamic(() => import('./CompoundDayBurst'), { ssr: false })
 const MysteryBox = dynamic(() => import('./MysteryBox'), { ssr: false })
@@ -82,6 +83,11 @@ interface XPToast { id: number; xp: number }
 function XPFloatLayer() {
   const [toasts, setToasts] = useState<XPToast[]>([])
   const counter = useRef(0)
+
+  // Rehydrate XP/challenge state from Supabase once on boot. Without this the
+  // client trusts only localStorage, so a new device shows 0 XP and server-side
+  // grants (e.g. referral XP) are invisible and get overwritten on next action.
+  useEffect(() => { initXPFromDB() }, [])
 
   useEffect(() => {
     const handler = (e: Event) => {
