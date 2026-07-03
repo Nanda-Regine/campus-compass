@@ -141,7 +141,7 @@ export default function StreakWidget() {
             marginTop: 3,
             color: isAtRisk ? '#ff9a00' : data.todayDone ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.25)',
           }}>
-            {isAtRisk ? '⚠ AT RISK — COMPLETE A TASK' : data.todayDone ? 'PROTECTED TODAY ✓' : 'DAY STREAK'}
+            {isAtRisk ? '⚠ AT RISK — DO A TASK OR HABIT' : data.todayDone ? 'PROTECTED TODAY ✓' : 'DAY STREAK'}
           </div>
         </div>
       </div>
