@@ -223,7 +223,7 @@ export default async function UpgradePage() {
           ))}
         </div>
 
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)', textAlign: 'center', marginBottom: 16 }}>
           Secured by Paystack · Monthly subscription · Cancel anytime
         </p>
 
@@ -235,11 +235,11 @@ export default async function UpgradePage() {
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 16 }}>
-          <Link href="/terms" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
+          <Link href="/terms" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
             Terms &amp; Conditions
           </Link>
-          <span style={{ color: 'var(--border-subtle)', fontFamily: 'var(--font-mono)', fontSize: '0.55rem' }}>·</span>
-          <Link href="/privacy" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
+          <span style={{ color: 'var(--border-subtle)', fontFamily: 'var(--font-mono)', fontSize: '0.62rem' }}>·</span>
+          <Link href="/privacy" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)', textDecoration: 'none' }}>
             Privacy Policy
           </Link>
         </div>

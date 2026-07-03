@@ -521,7 +521,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
             }}
           >
             <span style={{ fontSize: '0.9rem' }}>←</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Back</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Back</span>
           </button>
           {DETAIL_TABS.map(t => {
             const isActive = detailTab === t.id
@@ -544,16 +544,16 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 }}
               >
                 <span style={{ fontSize: '1rem', opacity: isActive ? 1 : 0.65 }}>{ICONS[t.id] ?? '·'}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.03em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.03em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
                   {t.label.split(' ')[0].replace(/\(.*\)/, '').trim()}
                 </span>
                 {t.badge && (
-                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.5rem', background: t.id === 'conflicts' ? '#f59e0b' : 'var(--teal)', color: '#000', borderRadius: 10, padding: '1px 4px', fontWeight: 700 }}>
+                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.62rem', background: t.id === 'conflicts' ? '#f59e0b' : 'var(--teal)', color: '#000', borderRadius: 10, padding: '1px 4px', fontWeight: 700 }}>
                     {t.badge}
                   </span>
                 )}
                 {t.id === 'members' && freeRiders.length > 0 && (
-                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.5rem', color: '#f87171' }}>⚠</span>
+                  <span style={{ position: 'absolute', top: 6, right: 6, fontSize: '0.62rem', color: '#f87171' }}>⚠</span>
                 )}
               </button>
             )
@@ -569,7 +569,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <h2 className="font-display font-bold text-white text-base leading-tight truncate">{selected.title}</h2>
                 {selected.subject && <p className="font-mono text-[0.62rem] text-teal-400 mt-0.5">{selected.subject}</p>}
               </div>
-              <span className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
+              <span className={cn('font-mono text-[0.62rem] px-2 py-1 rounded-lg border flex-shrink-0',
                 selected.status === 'active'    ? 'bg-teal-600/15 text-teal-400 border-teal-600/20'
                 : selected.status === 'submitted' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20'
                 : 'bg-green-500/15 text-green-400 border-green-500/20'
@@ -578,7 +578,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               </span>
             </div>
             {selected.due_date && (
-              <p className={cn('font-mono text-[0.58rem] mt-1.5', daysUntil(selected.due_date).color)}>
+              <p className={cn('font-mono text-[0.62rem] mt-1.5', daysUntil(selected.due_date).color)}>
                 Due {new Date(selected.due_date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · {daysUntil(selected.due_date).label}
               </p>
             )}
@@ -597,7 +597,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <div className="h-2.5 rounded-full bg-white/8 overflow-hidden">
                   <div className={cn('h-full rounded-full transition-all duration-500', progress === 100 ? 'bg-green-500' : progress > 60 ? 'bg-teal-500' : 'bg-amber-500')} style={{ width: `${progress}%` }} />
                 </div>
-                <p className="font-mono text-[0.53rem] text-white/25 mt-1">{progress}% complete</p>
+                <p className="font-mono text-[0.62rem] text-white/25 mt-1">{progress}% complete</p>
               </div>
 
               {selected.due_date && (() => {
@@ -605,13 +605,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 if (d <= 3 && d >= 0 && selected.status === 'active') return (
                   <div className="bg-red-500/8 border border-red-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.65rem] text-red-400 font-bold">⚡ Due in {d === 0 ? 'today' : `${d} day${d === 1 ? '' : 's'}`}</p>
-                    <p className="font-mono text-[0.58rem] text-white/40 mt-1">Coordinate final review now. All tasks should be done 24h before submission.</p>
+                    <p className="font-mono text-[0.62rem] text-white/40 mt-1">Coordinate final review now. All tasks should be done 24h before submission.</p>
                   </div>
                 )
                 if (d < 0) return (
                   <div className="bg-amber-500/8 border border-amber-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.65rem] text-amber-400 font-bold">⏰ Overdue by {Math.abs(d)} day{Math.abs(d) === 1 ? '' : 's'}</p>
-                    <p className="font-mono text-[0.58rem] text-white/40 mt-1">Submit immediately or contact your lecturer to request an extension.</p>
+                    <p className="font-mono text-[0.62rem] text-white/40 mt-1">Submit immediately or contact your lecturer to request an extension.</p>
                   </div>
                 )
                 return null
@@ -620,7 +620,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               {freeRiders.length > 0 && (
                 <div className="bg-red-500/6 border border-red-500/15 rounded-xl px-3 py-2.5">
                   <p className="font-mono text-[0.62rem] text-red-400 font-bold mb-1">⚠️ No tasks assigned to: {freeRiders.map(m => m.display_name || m.email).join(', ')}</p>
-                  <p className="font-mono text-[0.58rem] text-white/40">Go to the Team tab → assign tasks or remove inactive members.</p>
+                  <p className="font-mono text-[0.62rem] text-white/40">Go to the Team tab → assign tasks or remove inactive members.</p>
                 </div>
               )}
 
@@ -632,14 +632,14 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 ].map(s => (
                   <div key={s.label} className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5 text-center">
                     <div className="font-display font-black text-white text-sm">{s.value}</div>
-                    <div className="font-mono text-[0.53rem] text-white/30 mt-0.5">{s.label}</div>
+                    <div className="font-mono text-[0.62rem] text-white/30 mt-0.5">{s.label}</div>
                   </div>
                 ))}
               </div>
 
               {selected.description && (
                 <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                  <p className="font-mono text-[0.58rem] text-white/40 leading-relaxed">{selected.description}</p>
+                  <p className="font-mono text-[0.62rem] text-white/40 leading-relaxed">{selected.description}</p>
                 </div>
               )}
 
@@ -730,7 +730,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                       <div key={section}>
                         <div className="flex items-center gap-2 mb-2">
                           <div className="flex-1 h-px bg-white/8" />
-                          <span className="font-mono text-[0.56rem] text-teal-400/70 uppercase tracking-widest flex-shrink-0">{section}</span>
+                          <span className="font-mono text-[0.62rem] text-teal-400/70 uppercase tracking-widest flex-shrink-0">{section}</span>
                           <div className="flex-1 h-px bg-white/8" />
                         </div>
                         <div className="space-y-2">
@@ -746,11 +746,11 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                     <p className="text-sm font-body text-white">{t.title}</p>
                                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                                       {t.assigned_to_email ? (
-                                        <span className="font-mono text-[0.55rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
+                                        <span className="font-mono text-[0.62rem] text-teal-400">→ {assignee?.display_name || t.assigned_to_email}</span>
                                       ) : (
-                                        <span className="font-mono text-[0.55rem] text-red-400/60">⚠ Unassigned</span>
+                                        <span className="font-mono text-[0.62rem] text-red-400/60">⚠ Unassigned</span>
                                       )}
-                                      {t.due_date && <span className={cn('font-mono text-[0.55rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
+                                      {t.due_date && <span className={cn('font-mono text-[0.62rem]', daysUntil(t.due_date).color)}>{daysUntil(t.due_date).label}</span>}
                                       {prio !== 'normal' && (
                                         <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border', PRIORITY_COLORS[prio])}>
                                           {PRIORITY_EMOJI[prio]} {prio}
@@ -777,7 +777,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     ))}
                     {selected.group_tasks.some(t => t.done) && (
                       <details className="group">
-                        <summary className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide cursor-pointer list-none flex items-center gap-2">
+                        <summary className="font-mono text-[0.62rem] text-white/25 uppercase tracking-wide cursor-pointer list-none flex items-center gap-2">
                           <span>Completed ({selected.group_tasks.filter(t => t.done).length})</span>
                           <span className="text-white/20 group-open:rotate-90 transition-transform inline-block">▸</span>
                         </summary>
@@ -793,7 +793,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                   <p className="text-sm font-body text-white/40 line-through">{t.title}</p>
                                   <div className="flex gap-2 flex-wrap">
                                     {t.section && <span className="font-mono text-[0.65rem] text-white/20">{t.section}</span>}
-                                    {t.assigned_to_email && <span className="font-mono text-[0.55rem] text-white/25">→ {assignee?.display_name || t.assigned_to_email}</span>}
+                                    {t.assigned_to_email && <span className="font-mono text-[0.62rem] text-white/25">→ {assignee?.display_name || t.assigned_to_email}</span>}
                                   </div>
                                 </div>
                               </div>
@@ -812,7 +812,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {detailTab === 'noticeboard' && (
             <>
               <div className="bg-amber-500/6 border border-amber-500/15 rounded-xl px-3 py-2.5 mb-1">
-                <p className="font-mono text-[0.58rem] text-amber-400/80">📌 Pinned notices visible to all group members. Use for deadlines, decisions, and important updates.</p>
+                <p className="font-mono text-[0.62rem] text-amber-400/80">📌 Pinned notices visible to all group members. Use for deadlines, decisions, and important updates.</p>
               </div>
 
               <div className="space-y-2">
@@ -863,7 +863,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {detailTab === 'conflicts' && (
             <>
               <div className="bg-rose-500/6 border border-rose-500/15 rounded-xl px-3 py-2.5 mb-1">
-                <p className="font-mono text-[0.58rem] text-rose-400/80 leading-relaxed">
+                <p className="font-mono text-[0.62rem] text-rose-400/80 leading-relaxed">
                   Group assignments are hard. Use this to raise issues early — before they become crises.
                   Conflicts raised here are visible to all members so everyone can respond.
                 </p>
@@ -887,7 +887,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-rose-500/50 font-body resize-none"
                   />
                   <div>
-                    <p className="font-mono text-[0.58rem] text-white/40 mb-1.5">Who&apos;s involved?</p>
+                    <p className="font-mono text-[0.62rem] text-white/40 mb-1.5">Who&apos;s involved?</p>
                     <div className="flex flex-wrap gap-1.5">
                       {joinedMembers.map(m => {
                         const isSelected = conflictInvolved.includes(m.email)
@@ -895,7 +895,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           <button
                             key={m.email}
                             onClick={() => setConflictInvolved(prev => isSelected ? prev.filter(e => e !== m.email) : [...prev, m.email])}
-                            className={cn('font-mono text-[0.58rem] px-2.5 py-1.5 rounded-lg border transition-all', isSelected ? 'bg-rose-500/15 text-rose-400 border-rose-500/25' : 'bg-white/4 text-white/40 border-white/10 hover:text-white/60')}
+                            className={cn('font-mono text-[0.62rem] px-2.5 py-1.5 rounded-lg border transition-all', isSelected ? 'bg-rose-500/15 text-rose-400 border-rose-500/25' : 'bg-white/4 text-white/40 border-white/10 hover:text-white/60')}
                           >
                             {m.display_name || m.email.split('@')[0]}
                           </button>
@@ -904,7 +904,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     </div>
                   </div>
                   <div>
-                    <p className="font-mono text-[0.58rem] text-white/40 mb-1.5">Proposed resolution (optional)</p>
+                    <p className="font-mono text-[0.62rem] text-white/40 mb-1.5">Proposed resolution (optional)</p>
                     <textarea
                       value={conflictResolution}
                       onChange={e => setConflictResolution(e.target.value)}
@@ -929,11 +929,11 @@ export default function GroupsClient({ userId }: { userId: string }) {
               ) : conflictMessages.length === 0 ? (
                 <div className="text-center py-6">
                   <p className="font-mono text-[0.65rem] text-white/25">No conflicts raised — great teamwork! 🌿</p>
-                  <p className="font-mono text-[0.58rem] text-white/15 mt-1">If an issue comes up, raise it early — before resentment builds</p>
+                  <p className="font-mono text-[0.62rem] text-white/15 mt-1">If an issue comes up, raise it early — before resentment builds</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="font-mono text-[0.56rem] text-white/30 uppercase tracking-wide">Open conflicts</p>
+                  <p className="font-mono text-[0.62rem] text-white/30 uppercase tracking-wide">Open conflicts</p>
                   {conflictMessages.map(msg => {
                     const lines = msg.content.replace('[CONFLICT] ', '').split('\n')
                     const issue = lines[0]
@@ -944,7 +944,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           <div className="flex-1">
                             <p className="font-mono text-[0.6rem] text-rose-400 mb-1">⚡ CONFLICT</p>
                             <p className="font-body text-sm text-white/80 leading-relaxed">{issue}</p>
-                            {meta.map((line, i) => <p key={i} className="font-mono text-[0.55rem] text-white/35 mt-0.5">{line}</p>)}
+                            {meta.map((line, i) => <p key={i} className="font-mono text-[0.62rem] text-white/35 mt-0.5">{line}</p>)}
                           </div>
                           <button
                             onClick={() => pinMessage(msg.id, true)}
@@ -967,7 +967,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {/* ── Members / Team Dynamics tab ── */}
           {detailTab === 'members' && (
             <>
-              <p className="font-mono text-[0.58rem] text-white/35 leading-relaxed">
+              <p className="font-mono text-[0.62rem] text-white/35 leading-relaxed">
                 Assign roles so everyone knows their lane. Track who&apos;s doing the work. Leaders can remove inactive members.
               </p>
 
@@ -1001,12 +1001,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
-                            {isSelf && <span className="font-mono text-[0.48rem] bg-white/8 text-white/40 px-1 py-0.5 rounded">you</span>}
+                            {isSelf && <span className="font-mono text-[0.62rem] bg-white/8 text-white/40 px-1 py-0.5 rounded">you</span>}
                             {m.role === 'leader' && <span className="font-mono text-[0.65rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">owner</span>}
                             {mRole && <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[mRole])}>{mRole}</span>}
                             {isFreeRider && <span className="font-mono text-[0.65rem] bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-md border border-red-500/20">⚠ no tasks</span>}
                           </div>
-                          <p className="font-mono text-[0.53rem] text-white/30 mt-0.5 truncate">{m.email}</p>
+                          <p className="font-mono text-[0.62rem] text-white/30 mt-0.5 truncate">{m.email}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="text-right">
@@ -1029,7 +1029,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[0.54rem] text-white/30">Role:</span>
+                        <span className="font-mono text-[0.62rem] text-white/30">Role:</span>
                         <div className="flex gap-1 flex-wrap">
                           {MEMBER_ROLES.map(r => (
                             <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/25 border-white/8 hover:text-white/50')}>
@@ -1045,7 +1045,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
               {selected.group_members.some(m => m.status === 'invited') && (
                 <div>
-                  <p className="font-mono text-[0.56rem] text-white/25 uppercase tracking-wide mb-2">Pending invites</p>
+                  <p className="font-mono text-[0.62rem] text-white/25 uppercase tracking-wide mb-2">Pending invites</p>
                   {selected.group_members.filter(m => m.status === 'invited').map(m => (
                     <div key={m.id} className="flex items-center justify-between bg-white/2 border border-white/5 rounded-xl px-3 py-2 mb-1.5">
                       <span className="font-mono text-[0.62rem] text-white/40">{m.email}</span>
@@ -1078,7 +1078,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   <div className="bg-red-500/8 border border-red-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.6rem] text-red-400 font-bold mb-1">⚠ Team members falling behind</p>
                     {inactive.map(m => (
-                      <p key={m.id} className="font-mono text-[0.58rem] text-red-300/70">{m.display_name || m.email} has 2+ overdue tasks.</p>
+                      <p key={m.id} className="font-mono text-[0.62rem] text-red-300/70">{m.display_name || m.email} has 2+ overdue tasks.</p>
                     ))}
                   </div>
                 )
@@ -1110,7 +1110,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         </div>
                         <button
                           onClick={() => pinMessage(msg.id, !msg.is_pinned)}
-                          className={cn('font-mono text-[0.48rem] px-1.5 py-1 rounded border flex-shrink-0 transition-all', msg.is_pinned ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-white/20 border-white/8 hover:text-amber-400')}
+                          className={cn('font-mono text-[0.62rem] px-1.5 py-1 rounded border flex-shrink-0 transition-all', msg.is_pinned ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-white/20 border-white/8 hover:text-amber-400')}
                           title={msg.is_pinned ? 'Unpin' : 'Pin to Notice Board'}
                         >
                           📌
@@ -1130,7 +1130,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <div className="flex items-center justify-between gap-2">
                   <label className="flex items-center gap-1.5 cursor-pointer">
                     <input type="checkbox" checked={msgIsDecision} onChange={e => setMsgIsDecision(e.target.checked)} className="w-3 h-3" />
-                    <span className="font-mono text-[0.58rem] text-amber-400">📌 Mark as decision</span>
+                    <span className="font-mono text-[0.62rem] text-amber-400">📌 Mark as decision</span>
                   </label>
                   <button onClick={() => void sendMessage(selected.id)} disabled={!msgText.trim() || sendingMsg}
                     className="font-mono text-[0.62rem] px-3 py-1.5 bg-teal-600/15 text-teal-400 border border-teal-600/20 rounded-lg disabled:opacity-40 hover:bg-teal-600/25 transition-all">
@@ -1158,11 +1158,11 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   <input value={meetingTitle} onChange={e => setMeetingTitle(e.target.value)} placeholder="Meeting title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600 font-body" />
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Date & time *</label>
+                      <label className="font-mono text-[0.62rem] text-white/35 mb-1 block">Date & time *</label>
                       <input type="datetime-local" value={meetingAt} onChange={e => setMeetingAt(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white/70 outline-none focus:border-teal-600 font-body" />
                     </div>
                     <div>
-                      <label className="font-mono text-[0.55rem] text-white/35 mb-1 block">Duration (min)</label>
+                      <label className="font-mono text-[0.62rem] text-white/35 mb-1 block">Duration (min)</label>
                       <input type="number" inputMode="numeric" value={meetingDuration} onChange={e => setMeetingDuration(Number(e.target.value))} min={15} max={480} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
                     </div>
                   </div>
@@ -1181,7 +1181,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
                   <div className="text-2xl mb-2">📅</div>
                   <p className="font-mono text-[0.62rem] text-white/30">No meetings scheduled yet.</p>
-                  <p className="font-mono text-[0.58rem] text-white/20 mt-1">Schedule your first sync above.</p>
+                  <p className="font-mono text-[0.62rem] text-white/20 mt-1">Schedule your first sync above.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -1203,15 +1203,15 @@ export default function GroupsClient({ userId }: { userId: string }) {
                             </button>
                           )}
                         </div>
-                        {meeting.location && <p className="font-mono text-[0.58rem] text-white/40">📍 {meeting.location}</p>}
+                        {meeting.location && <p className="font-mono text-[0.62rem] text-white/40">📍 {meeting.location}</p>}
                         {meeting.link && (
-                          <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="font-mono text-[0.58rem] text-sky-400 hover:text-sky-300 transition-colors">
+                          <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="font-mono text-[0.62rem] text-sky-400 hover:text-sky-300 transition-colors">
                             🔗 Join virtual meeting →
                           </a>
                         )}
                         {meeting.agenda && (
                           <div className="bg-white/3 border border-white/7 rounded-lg px-2.5 py-2">
-                            <p className="font-mono text-[0.53rem] text-white/25 mb-1">AGENDA</p>
+                            <p className="font-mono text-[0.62rem] text-white/25 mb-1">AGENDA</p>
                             <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed whitespace-pre-wrap">{meeting.agenda}</p>
                           </div>
                         )}
@@ -1227,8 +1227,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {detailTab === 'tips' && (
             <div style={{ overflowX: 'hidden', minWidth: 0 }}>
               <div className="bg-indigo-500/6 border border-indigo-500/15 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.58rem] text-indigo-400 font-bold mb-1">📘 Group Assignment OS vs Study Pods</p>
-                <p className="font-mono text-[0.58rem] text-white/45 leading-relaxed" style={{ wordBreak: 'break-word' }}>
+                <p className="font-mono text-[0.62rem] text-indigo-400 font-bold mb-1">📘 Group Assignment OS vs Study Pods</p>
+                <p className="font-mono text-[0.62rem] text-white/45 leading-relaxed" style={{ wordBreak: 'break-word' }}>
                   <span className="text-teal-400">Groups</span> = structured assignment collaboration (tasks, roles, scope, deadlines, conflicts).
                   <span className="text-indigo-400"> Study Pods</span> = accountability groups for solo study — check-ins, compound streaks, presence.
                 </p>
@@ -1245,7 +1245,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 { book: 'SA university group work research', color: '#fb7185', tip: 'Common failures: (1) Starting writing in the last 48h. (2) Merging 5 Word docs in the final hour. Fix: use Google Docs from day 1 — one document, everyone editing simultaneously.' },
               ].map(t => (
                 <div key={t.book} className="bg-white/3 border border-white/7 rounded-xl p-3" style={{ borderLeft: `3px solid ${t.color}`, minWidth: 0 }}>
-                  <p className="font-mono text-[0.58rem] mb-2" style={{ color: t.color, wordBreak: 'break-word' }}>{t.book}</p>
+                  <p className="font-mono text-[0.62rem] mb-2" style={{ color: t.color, wordBreak: 'break-word' }}>{t.book}</p>
                   <p className="font-mono text-[0.65rem] text-white/55 leading-relaxed" style={{ wordBreak: 'break-word' }}>{t.tip}</p>
                 </div>
               ))}
@@ -1312,7 +1312,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     <h3 className="font-display font-bold text-white text-sm group-hover:text-teal-300 transition-colors">{a.title}</h3>
                     {a.subject && <p className="font-mono text-[0.6rem] text-teal-400/70 mt-0.5">{a.subject}</p>}
                   </div>
-                  <div className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border flex-shrink-0',
+                  <div className={cn('font-mono text-[0.62rem] px-2 py-1 rounded-lg border flex-shrink-0',
                     a.status === 'active'    ? 'bg-teal-600/10 text-teal-400 border-teal-600/15'
                     : a.status === 'submitted' ? 'bg-amber-500/10 text-amber-400 border-amber-500/15'
                     : 'bg-green-500/10 text-green-400 border-green-500/15'
@@ -1329,7 +1329,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 font-mono text-[0.58rem] text-white/35">
+                <div className="flex items-center gap-3 font-mono text-[0.62rem] text-white/35">
                   <span>👥 {memberCount} member{memberCount !== 1 ? 's' : ''}</span>
                   {a.group_tasks.length > 0 && <span>✓ {a.group_tasks.filter(t => t.done).length}/{a.group_tasks.length} tasks</span>}
                   {a.due_date && <span className={daysUntil(a.due_date).color}>{daysUntil(a.due_date).label}</span>}

@@ -89,7 +89,7 @@ export default function CompoundDayBurst() {
               }}>
                 {meta.emoji}
               </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.48rem', color: meta.color, textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: meta.color, textTransform: 'uppercase' }}>
                 {meta.label}
               </span>
             </div>
@@ -113,7 +113,7 @@ export default function CompoundDayBurst() {
         </span>
       </div>
 
-      <div style={{ marginTop: 24, fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)' }}>
+      <div style={{ marginTop: 24, fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.2)' }}>
         Tap to continue
       </div>
     </div>

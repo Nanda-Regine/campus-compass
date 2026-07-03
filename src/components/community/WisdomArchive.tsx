@@ -50,7 +50,7 @@ const CATEGORY_CONFIG: Record<WisdomCategory, { label: string; icon: string; col
   admin:         { label: 'Admin',       icon: '📋', color: '#fb923c' },
   wellness:      { label: 'Wellness',    icon: '💚', color: '#34d399' },
   finance:       { label: 'Finance',     icon: '🏦', color: '#fbbf24' },
-  general:       { label: 'General',     icon: '💬', color: '#9ca3af' },
+  general:       { label: 'General',     icon: '💬', color: 'var(--text-tertiary)' },
 }
 
 // ── Seed Posts ────────────────────────────────────────────────────────────────
@@ -249,7 +249,7 @@ function PostCard({
       </div>
 
       {/* Title */}
-      <p style={{ margin: 0, color: '#e5e7eb', fontWeight: 600, fontSize: '15px', lineHeight: '1.4' }}>
+      <p style={{ margin: 0, color: 'var(--text-secondary)', fontWeight: 600, fontSize: '15px', lineHeight: '1.4' }}>
         {post.title}
       </p>
 
@@ -258,7 +258,7 @@ function PostCard({
         <p
           style={{
             margin: 0,
-            color: '#9ca3af',
+            color: 'var(--text-tertiary)',
             fontSize: '13px',
             lineHeight: '1.6',
             display: '-webkit-box',
@@ -294,7 +294,7 @@ function PostCard({
               borderRadius: '20px',
               padding: '4px 12px',
               cursor: post.isSeed ? 'default' : 'pointer',
-              color: hasVoted ? '#34d399' : '#9ca3af',
+              color: hasVoted ? '#34d399' : 'var(--text-tertiary)',
               fontSize: '13px',
               transition: 'all 0.2s',
             }}
@@ -303,7 +303,7 @@ function PostCard({
             <span style={{ fontWeight: 600 }}>{post.upvotes}</span>
           </button>
           {post.institution && (
-            <span style={{ color: '#6b7280', fontSize: '11px' }}>
+            <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
               {post.institution}
             </span>
           )}
@@ -462,7 +462,7 @@ export default function WisdomArchive({
 
   return (
     <div
-      style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', position: 'relative', overflowX: 'hidden' }}
+      style={{ minHeight: '100vh', background: 'var(--bg-base)', color: 'var(--text-secondary)', position: 'relative', overflowX: 'hidden' }}
       className="pb-24"
     >
       <AmbientImage zone="vibrant" opacity={0.32} blurPx={2} saturation={1.4} />
@@ -477,11 +477,11 @@ export default function WisdomArchive({
         <div className="max-w-2xl mx-auto">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
             <span style={{ fontSize: '28px' }}>🧠</span>
-            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: '#e5e7eb' }}>
+            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 700, color: 'var(--text-secondary)' }}>
               Student Wisdom Archive
             </h1>
           </div>
-          <p style={{ margin: 0, color: '#9ca3af', fontSize: '14px' }}>
+          <p style={{ margin: 0, color: 'var(--text-tertiary)', fontSize: '14px' }}>
             Real tips from real students. No marketing. No fluff. Just what works.
           </p>
         </div>
@@ -509,7 +509,7 @@ export default function WisdomArchive({
                 borderRadius: '8px',
                 border: 'none',
                 background: tab === t ? '#34d399' : 'transparent',
-                color: tab === t ? '#0a0a0f' : '#9ca3af',
+                color: tab === t ? '#0a0a0f' : 'var(--text-tertiary)',
                 fontWeight: tab === t ? 700 : 400,
                 fontSize: '13px',
                 cursor: 'pointer',
@@ -540,7 +540,7 @@ export default function WisdomArchive({
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '10px',
                     padding: '10px 14px',
-                    color: '#e5e7eb',
+                    color: 'var(--text-secondary)',
                     fontSize: '14px',
                     outline: 'none',
                     boxSizing: 'border-box',
@@ -569,7 +569,7 @@ export default function WisdomArchive({
                     borderRadius: '20px',
                     border: categoryFilter === 'all' ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
                     background: categoryFilter === 'all' ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.04)',
-                    color: categoryFilter === 'all' ? '#34d399' : '#9ca3af',
+                    color: categoryFilter === 'all' ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
@@ -587,7 +587,7 @@ export default function WisdomArchive({
                       borderRadius: '20px',
                       border: categoryFilter === key ? `1px solid ${cfg.color}` : '1px solid rgba(255,255,255,0.1)',
                       background: categoryFilter === key ? `${cfg.color}20` : 'rgba(255,255,255,0.04)',
-                      color: categoryFilter === key ? cfg.color : '#9ca3af',
+                      color: categoryFilter === key ? cfg.color : 'var(--text-tertiary)',
                       fontSize: '12px',
                       cursor: 'pointer',
                       whiteSpace: 'nowrap',
@@ -609,7 +609,7 @@ export default function WisdomArchive({
                     borderRadius: '20px',
                     border: !myUniOnly ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
                     background: !myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
-                    color: !myUniOnly ? '#34d399' : '#9ca3af',
+                    color: !myUniOnly ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
                   }}
@@ -623,7 +623,7 @@ export default function WisdomArchive({
                     borderRadius: '20px',
                     border: myUniOnly ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
                     background: myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
-                    color: myUniOnly ? '#34d399' : '#9ca3af',
+                    color: myUniOnly ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
                   }}
@@ -635,7 +635,7 @@ export default function WisdomArchive({
 
             {/* Post list */}
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>Loading wisdom...</div>
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>Loading wisdom...</div>
             ) : error ? (
               <div
                 style={{
@@ -653,7 +653,7 @@ export default function WisdomArchive({
             ) : null}
 
             {displayPosts.length === 0 && !loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
+              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>
                 {tab === 'mine' ? 'You haven\'t posted any wisdom yet.' : 'No posts found.'}
               </div>
             ) : (
@@ -688,14 +688,14 @@ export default function WisdomArchive({
               <p style={{ margin: 0, color: '#34d399', fontSize: '13px', fontWeight: 600 }}>
                 Share what you know
               </p>
-              <p style={{ margin: '4px 0 0', color: '#9ca3af', fontSize: '12px' }}>
+              <p style={{ margin: '4px 0 0', color: 'var(--text-tertiary)', fontSize: '12px' }}>
                 Your tip could save another student hours of stress. Be specific and honest.
               </p>
             </div>
 
             {/* Title */}
             <div>
-              <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>
+              <label style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '6px' }}>
                 Title *
               </label>
               <input
@@ -711,7 +711,7 @@ export default function WisdomArchive({
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
-                  color: '#e5e7eb',
+                  color: 'var(--text-secondary)',
                   fontSize: '14px',
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -721,7 +721,7 @@ export default function WisdomArchive({
 
             {/* Category */}
             <div>
-              <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '8px' }}>
+              <label style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '8px' }}>
                 Category *
               </label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -735,7 +735,7 @@ export default function WisdomArchive({
                       borderRadius: '20px',
                       border: postForm.category === key ? `1px solid ${cfg.color}` : '1px solid rgba(255,255,255,0.1)',
                       background: postForm.category === key ? `${cfg.color}20` : 'rgba(255,255,255,0.04)',
-                      color: postForm.category === key ? cfg.color : '#9ca3af',
+                      color: postForm.category === key ? cfg.color : 'var(--text-tertiary)',
                       fontSize: '12px',
                       cursor: 'pointer',
                     }}
@@ -748,7 +748,7 @@ export default function WisdomArchive({
 
             {/* Content */}
             <div>
-              <label style={{ display: 'block', color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>
+              <label style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '6px' }}>
                 Details *
               </label>
               <textarea
@@ -763,7 +763,7 @@ export default function WisdomArchive({
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
-                  color: '#e5e7eb',
+                  color: 'var(--text-secondary)',
                   fontSize: '14px',
                   outline: 'none',
                   resize: 'vertical',
@@ -792,7 +792,7 @@ export default function WisdomArchive({
                 onChange={(e) => setPostForm((f) => ({ ...f, is_anonymous: e.target.checked }))}
                 style={{ width: '16px', height: '16px', accentColor: '#34d399' }}
               />
-              <span style={{ color: '#9ca3af', fontSize: '13px' }}>
+              <span style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>
                 Post anonymously — your name will not be shown
               </span>
             </label>

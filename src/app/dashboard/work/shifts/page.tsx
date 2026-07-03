@@ -247,7 +247,7 @@ export default function ShiftsPage() {
                         <div className="font-display font-bold text-sm text-white">
                           {shift.job?.employer_name ?? 'Shift'}
                         </div>
-                        <div className="font-mono text-[0.58rem] text-white/40">
+                        <div className="font-mono text-[0.62rem] text-white/40">
                           {shift.shift_date} · {shift.start_time}–{shift.end_time}
                           {' '}({shift.duration_hours.toFixed(1)}h)
                           {shift.earnings != null && ` · R${shift.earnings}`}
@@ -255,12 +255,12 @@ export default function ShiftsPage() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {shift.has_study_conflict && <span className="text-amber-400 text-xs">⚠️</span>}
-                        <span className={cn('font-mono text-[0.55rem] px-2 py-0.5 rounded-full border', STATUS_COLORS[shift.status])}>
+                        <span className={cn('font-mono text-[0.62rem] px-2 py-0.5 rounded-full border', STATUS_COLORS[shift.status])}>
                           {shift.status}
                         </span>
                         <button
                           onClick={() => handleDraftRequest(shift.id)}
-                          className="opacity-0 group-hover:opacity-100 font-mono text-[0.55rem] text-purple-400 hover:text-purple-300 transition-all"
+                          className="opacity-0 group-hover:opacity-100 font-mono text-[0.62rem] text-purple-400 hover:text-purple-300 transition-all"
                           title="Draft shift swap request"
                         >
                           📝
@@ -274,7 +274,7 @@ export default function ShiftsPage() {
                       </div>
                     </div>
                     {shift.has_study_conflict && shift.conflict_detail && (
-                      <div className="mt-2 ml-5 font-mono text-[0.55rem] text-amber-400/70 leading-snug">
+                      <div className="mt-2 ml-5 font-mono text-[0.62rem] text-amber-400/70 leading-snug">
                         Conflict: {shift.conflict_detail}
                       </div>
                     )}

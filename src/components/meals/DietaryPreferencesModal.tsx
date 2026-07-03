@@ -107,7 +107,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
         style={{
           maxWidth: 448,
           width: '100%',
-          background: '#1a1a2e',
+          background: 'var(--bg-surface)',
           border: '1px solid rgba(255,255,255,0.10)',
           borderRadius: 20,
           padding: 24,
@@ -121,10 +121,10 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: '#e5e7eb' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
               Dietary Preferences
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#9ca3af', marginTop: 3 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 3 }}>
               Filters recipe suggestions and meal planning
             </div>
           </div>
@@ -166,11 +166,11 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
                 <CustomCheckbox checked={prefs[option.key]} onChange={() => toggle(option.key)} />
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: '#e5e7eb' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                   {option.label}
                 </div>
                 {option.note && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#9ca3af', marginTop: 2, lineHeight: 1.4 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-tertiary)', marginTop: 2, lineHeight: 1.4 }}>
                     {option.note}
                   </div>
                 )}
@@ -197,7 +197,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
               borderRadius: 10,
               padding: '10px 14px',
               fontSize: '0.85rem',
-              color: '#e5e7eb',
+              color: 'var(--text-secondary)',
               outline: 'none',
               fontFamily: 'var(--font-body)',
               width: '100%',

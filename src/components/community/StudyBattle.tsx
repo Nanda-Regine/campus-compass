@@ -116,7 +116,7 @@ function InviteCard({ battle, onCancel }: { battle: Battle; onCancel: () => void
 
   return (
     <div>
-      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', letterSpacing: '0.18em', marginBottom: 12 }}>
+      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#c9a84c', letterSpacing: '0.18em', marginBottom: 12 }}>
         ⏳ WAITING FOR OPPONENT
       </div>
 
@@ -126,7 +126,7 @@ function InviteCard({ battle, onCancel }: { battle: Battle; onCancel: () => void
         background: 'rgba(201,168,76,0.06)', borderRadius: 14,
         border: '1px dashed rgba(201,168,76,0.3)',
       }}>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(201,168,76,0.6)', marginBottom: 8 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(201,168,76,0.6)', marginBottom: 8 }}>
           BATTLE CODE
         </div>
         <div onClick={copy} style={{
@@ -289,10 +289,10 @@ function ActiveBattle({ battle, liveXP, isChallenger, onResult }: {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', letterSpacing: '0.14em' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#c9a84c', letterSpacing: '0.14em' }}>
           ⚔️ BATTLE ACTIVE
         </div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: ended ? '#ff6b6b' : 'rgba(255,255,255,0.3)' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: ended ? '#ff6b6b' : 'rgba(255,255,255,0.3)' }}>
           {ended ? 'ENDED' : countdown}
         </div>
       </div>
@@ -304,11 +304,11 @@ function ActiveBattle({ battle, liveXP, isChallenger, onResult }: {
           background: winning ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.04)',
           border: `1px solid ${winning ? 'rgba(201,168,76,0.3)' : 'rgba(255,255,255,0.08)'}`,
         }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>YOU</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>YOU</div>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontWeight: 900, fontSize: 22, color: winning ? '#c9a84c' : '#fff' }}>
             +{myGain}
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>XP gained</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>XP gained</div>
         </div>
 
         {/* VS */}
@@ -319,11 +319,11 @@ function ActiveBattle({ battle, liveXP, isChallenger, onResult }: {
           background: !winning ? 'rgba(255,107,107,0.08)' : 'rgba(255,255,255,0.04)',
           border: `1px solid ${!winning ? 'rgba(255,107,107,0.2)' : 'rgba(255,255,255,0.08)'}`,
         }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>THEM</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>THEM</div>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontWeight: 900, fontSize: 22, color: !winning ? '#ff6b6b' : '#fff' }}>
             +{battle.opponent_id ? oppGain : '?'}
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>XP gained</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>XP gained</div>
         </div>
       </div>
 
@@ -373,7 +373,7 @@ function ResultCard({ battle, isChallenger }: { battle: Battle; isChallenger: bo
         <div style={{
           padding: '8px 14px', borderRadius: 10, display: 'inline-block',
           background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.3)',
-          fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c',
+          fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#c9a84c',
         }}>
           +100 XP battle bonus awarded
         </div>
@@ -503,7 +503,7 @@ export default function StudyBattle() {
           padding: '12px 14px', borderRadius: 12, marginBottom: 12, cursor: 'pointer',
           background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)',
         }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', marginBottom: 4 }}>ACTIVE BATTLE</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#c9a84c', marginBottom: 4 }}>ACTIVE BATTLE</div>
           <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'var(--text-primary)' }}>
             Code: {activeBattle.battle_code} · {activeBattle.end_at ? formatCountdown(activeBattle.end_at) : ''}
           </div>
@@ -515,7 +515,7 @@ export default function StudyBattle() {
           padding: '12px 14px', borderRadius: 12, marginBottom: 12, cursor: 'pointer',
           background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
         }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>WAITING FOR OPPONENT</div>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>WAITING FOR OPPONENT</div>
           <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'var(--text-primary)' }}>
             Code: {pendingBattle.battle_code}
           </div>

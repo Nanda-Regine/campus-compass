@@ -203,7 +203,7 @@ export default function StreakPage() {
                 <div className="pb-3">
                   <div className="font-mono text-sm text-white/40">day{s !== 1 ? 's' : ''}</div>
                   {streak && streak.longestStreak > s && (
-                    <div className="font-mono text-[0.58rem] text-white/20 mt-0.5">best: {streak.longestStreak}</div>
+                    <div className="font-mono text-[0.62rem] text-white/20 mt-0.5">best: {streak.longestStreak}</div>
                   )}
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function StreakPage() {
 
               {/* 7-day activity grid */}
               <div className="px-5 pb-4">
-                <div className="font-mono text-[0.55rem] text-white/25 uppercase tracking-widest mb-2">Last 7 days</div>
+                <div className="font-mono text-[0.62rem] text-white/25 uppercase tracking-widest mb-2">Last 7 days</div>
                 <div className="flex gap-1.5">
                   {days7.map((done, i) => {
                     const labelIdx = (dayLabelOffset - 6 + i + 7) % 7
@@ -237,7 +237,7 @@ export default function StreakPage() {
                         >
                           {done ? <span style={{ color: accentColor }}>✓</span> : <span className="text-white/15">·</span>}
                         </div>
-                        <span className="font-mono text-[0.48rem] text-white/30">{DAY_LABELS[labelIdx]?.slice(0, 2)}</span>
+                        <span className="font-mono text-[0.62rem] text-white/30">{DAY_LABELS[labelIdx]?.slice(0, 2)}</span>
                       </div>
                     )
                   })}
@@ -248,10 +248,10 @@ export default function StreakPage() {
               {nextMilestone && (
                 <div className="px-5 pb-5">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-mono text-[0.58rem] text-white/35">
+                    <span className="font-mono text-[0.62rem] text-white/35">
                       Next: {nextMilestone.emoji} {nextMilestone.label} (+{nextMilestone.xp} XP)
                     </span>
-                    <span className="font-mono text-[0.55rem]" style={{ color: accentColor }}>{nextMilestone.days - s}d away</span>
+                    <span className="font-mono text-[0.62rem]" style={{ color: accentColor }}>{nextMilestone.days - s}d away</span>
                   </div>
                   <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
                     <div
@@ -283,8 +283,8 @@ export default function StreakPage() {
                   }}
                 >
                   <span className="text-xl" style={{ filter: unlocked ? 'none' : 'grayscale(1)' }}>{m.emoji}</span>
-                  <span className="font-mono text-[0.52rem] text-white/50 text-center leading-tight">{m.label}</span>
-                  <span className="font-mono text-[0.5rem]" style={{ color: unlocked ? '#f59e0b' : 'rgba(255,255,255,0.2)' }}>
+                  <span className="font-mono text-[0.62rem] text-white/50 text-center leading-tight">{m.label}</span>
+                  <span className="font-mono text-[0.62rem]" style={{ color: unlocked ? '#f59e0b' : 'rgba(255,255,255,0.2)' }}>
                     {unlocked ? '✓' : `${m.days}d`}
                   </span>
                 </div>
@@ -329,7 +329,7 @@ export default function StreakPage() {
 
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest block mb-1">Target (R)</label>
+                <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Target (R)</label>
                 <input
                   type="number" placeholder="5000" value={form.target_amount}
                   onChange={e => setForm(f => ({ ...f, target_amount: e.target.value }))}
@@ -337,7 +337,7 @@ export default function StreakPage() {
                 />
               </div>
               <div>
-                <label className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest block mb-1">Already saved (R)</label>
+                <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Already saved (R)</label>
                 <input
                   type="number" placeholder="0" value={form.current_amount}
                   onChange={e => setForm(f => ({ ...f, current_amount: e.target.value }))}
@@ -347,7 +347,7 @@ export default function StreakPage() {
             </div>
 
             <div>
-              <label className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest block mb-1">Target date (optional)</label>
+              <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Target date (optional)</label>
               <input
                 type="date" value={form.deadline}
                 onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))}
@@ -357,7 +357,7 @@ export default function StreakPage() {
 
             {/* Color picker */}
             <div>
-              <label className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest block mb-1.5">Colour</label>
+              <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1.5">Colour</label>
               <div className="flex gap-2">
                 {COLORS.map(c => (
                   <button
@@ -416,7 +416,7 @@ export default function StreakPage() {
                         <div>
                           <div className="font-display font-bold text-white text-sm">{goal.name}</div>
                           {goal.deadline && (
-                            <div className="font-mono text-[0.55rem] text-white/30 mt-0.5">
+                            <div className="font-mono text-[0.62rem] text-white/30 mt-0.5">
                               by {fmt.dateShort(goal.deadline)}
                             </div>
                           )}
@@ -426,7 +426,7 @@ export default function StreakPage() {
                         <div className="font-display font-bold text-sm" style={{ color: goal.color }}>
                           {fmt.currency(goal.current_amount)}
                         </div>
-                        <div className="font-mono text-[0.55rem] text-white/25">
+                        <div className="font-mono text-[0.62rem] text-white/25">
                           of {fmt.currency(goal.target_amount)}
                         </div>
                       </div>
@@ -441,7 +441,7 @@ export default function StreakPage() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <div className="font-mono text-[0.58rem]" style={{ color: goal.color }}>
+                      <div className="font-mono text-[0.62rem]" style={{ color: goal.color }}>
                         {goal.is_completed ? '🎉 Goal reached!' : `${pct}% · R${remaining.toFixed(0)} left`}
                       </div>
                       <div className="flex items-center gap-2">
@@ -451,7 +451,7 @@ export default function StreakPage() {
                               setContributing(isContrib ? null : goal.id)
                               setContribAmount('')
                             }}
-                            className="font-mono text-[0.58rem] px-2.5 py-1 rounded-lg transition-all"
+                            className="font-mono text-[0.62rem] px-2.5 py-1 rounded-lg transition-all"
                             style={{
                               background: isContrib ? 'rgba(255,255,255,0.08)' : `${goal.color}22`,
                               color: goal.color,
@@ -462,7 +462,7 @@ export default function StreakPage() {
                         )}
                         <button
                           onClick={() => deleteGoal(goal.id)}
-                          className="font-mono text-[0.55rem] text-white/20 hover:text-red-400 transition-colors px-1"
+                          className="font-mono text-[0.62rem] text-white/20 hover:text-red-400 transition-colors px-1"
                         >
                           ✕
                         </button>
@@ -494,7 +494,7 @@ export default function StreakPage() {
 
                   {/* Completed banner */}
                   {goal.is_completed && (
-                    <div className="px-4 py-2 font-mono text-[0.58rem] text-center" style={{ background: `${goal.color}15`, color: goal.color }}>
+                    <div className="px-4 py-2 font-mono text-[0.62rem] text-center" style={{ background: `${goal.color}15`, color: goal.color }}>
                       Goal complete! Well done 🎉
                     </div>
                   )}
