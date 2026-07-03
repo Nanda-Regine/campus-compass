@@ -126,7 +126,7 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-          // Prevent window.opener attacks from popups (PayFast uses popups, so allow-popups variant)
+          // Prevent window.opener attacks while still allowing hosted-checkout popups
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
           // Prevent DNS prefetch from leaking visited subdomains
           { key: 'X-DNS-Prefetch-Control', value: 'off' },
@@ -142,9 +142,9 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat",
               "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
               "img-src 'self' data: blob: https: https://client.crisp.chat",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.payfast.co.za https://sandbox.payfast.co.za https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com wss://fcm.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io https://api.mapbox.com https://events.mapbox.com",
-              "frame-src 'self' https://www.payfast.co.za https://sandbox.payfast.co.za https://g.page https://www.google.com",
-              "form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com wss://fcm.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io https://api.mapbox.com https://events.mapbox.com",
+              "frame-src 'self' https://g.page https://www.google.com",
+              "form-action 'self'",
               "worker-src 'self' blob:",
             ].join('; '),
           },

@@ -3,7 +3,9 @@
 // ============================================================
 // InterventionBanner — renders the top-queued non-modal
 // intervention. Chip / nudge / banner variants only.
-// Modal variant is handled by InterventionModal.
+// Urgency-5 crises now use the 'banner' variant too (rendered as the
+// CRITICAL FullBanner) — the old full-screen blocking modal was retired
+// because it blurred/locked the whole dashboard on load.
 // ============================================================
 
 import { useRouter } from 'next/navigation'

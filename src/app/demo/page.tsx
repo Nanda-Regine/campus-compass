@@ -59,7 +59,7 @@ const DEMOS = [
     icon: '🎓',
     accent: '#c9a84c',
     tagline: 'Book a tutor. Become one. Earn.',
-    description: 'Find peer tutors at your university for any subject. Set your own rate. Pay online via PayFast. Rate your session. Build your academic reputation.',
+    description: 'Find peer tutors at your university for any subject. Set your own rate. Rate your session. Build your academic reputation.',
     bullets: [
       'Browse tutors at your institution by subject and rating',
       'Book 30min → 2hr sessions, pay cash/EFT/online',

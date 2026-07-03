@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { hideBrokenImg } from '@/lib/imgFallback'
 import { DOMAIN_META, DomainKey } from '@/lib/xp-engine'
 
 interface FeedItem {
@@ -53,7 +54,7 @@ export default function PodActivityFeed() {
               fontSize: 14, overflow: 'hidden',
             }}>
               {item.user.avatar_url
-                ? <img src={item.user.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ? <img src={item.user.avatar_url} alt="" onError={hideBrokenImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 : '👤'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>

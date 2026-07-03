@@ -306,7 +306,7 @@ export default function ReaderPage() {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      <AmbientImage zone="study" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="study" opacity={0.32} blurPx={2} saturation={1.4} />
       {/* ── Top bar ── */}
       <div style={{
         flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8,
@@ -340,7 +340,7 @@ export default function ReaderPage() {
         <button
           onClick={() => setShowOutline(v => !v)}
           title="Section outline (O)"
-          style={{ background: showOutline ? 'rgba(245,158,11,0.15)' : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), border: `1px solid ${showOutline ? 'rgba(245,158,11,0.4)' : t.border}`, borderRadius: 8, color: showOutline ? '#f59e0b' : t.sub, fontSize: 13, padding: '5px 8px', cursor: 'pointer', flexShrink: 0 }}
+          style={{ background: showOutline ? 'rgba(245,158,11,0.15)' : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), border: `1px solid ${showOutline ? 'rgba(245,158,11,0.4)' : t.border}`, borderRadius: 8, color: showOutline ? '#f59e0b' : t.sub, fontSize: 15, minWidth: 40, minHeight: 40, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
         >
           ☰
         </button>
@@ -349,7 +349,7 @@ export default function ReaderPage() {
         <button
           onClick={toggleBookmark}
           title="Bookmark this section"
-          style={{ background: isBookmarked ? 'rgba(245,158,11,0.12)' : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), border: `1px solid ${isBookmarked ? 'rgba(245,158,11,0.4)' : t.border}`, borderRadius: 8, color: isBookmarked ? '#f59e0b' : t.sub, fontSize: 13, padding: '5px 8px', cursor: 'pointer', flexShrink: 0 }}
+          style={{ background: isBookmarked ? 'rgba(245,158,11,0.12)' : (theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'), border: `1px solid ${isBookmarked ? 'rgba(245,158,11,0.4)' : t.border}`, borderRadius: 8, color: isBookmarked ? '#f59e0b' : t.sub, fontSize: 15, minWidth: 40, minHeight: 40, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
         >
           {isBookmarked ? '🔖' : '🏷'}
         </button>
@@ -358,7 +358,7 @@ export default function ReaderPage() {
         <button
           onClick={() => setTheme(prev => themeOrder[(themeOrder.indexOf(prev) + 1) % 3])}
           title="Toggle reading theme"
-          style={{ background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${t.border}`, borderRadius: 8, color: t.sub, fontFamily: 'DM Mono, monospace', fontSize: 9, padding: '5px 8px', cursor: 'pointer', flexShrink: 0 }}
+          style={{ background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${t.border}`, borderRadius: 8, color: t.sub, fontFamily: 'DM Mono, monospace', fontSize: 10, minWidth: 40, minHeight: 40, padding: '0 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
         >
           {t.label}
         </button>
@@ -366,7 +366,7 @@ export default function ReaderPage() {
         {/* Font size */}
         <button
           onClick={() => setFontIdx(i => ((i + 1) % 3) as 0 | 1 | 2)}
-          style={{ background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${t.border}`, borderRadius: 8, color: t.sub, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 11, padding: '5px 9px', cursor: 'pointer', flexShrink: 0 }}
+          style={{ background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', border: `1px solid ${t.border}`, borderRadius: 8, color: t.sub, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, minWidth: 40, minHeight: 40, padding: '0 10px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
         >
           {FONT_LABELS[fontIdx]}
         </button>

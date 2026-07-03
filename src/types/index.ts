@@ -163,8 +163,6 @@ export interface NovaMessage {
 export interface Subscription {
   id: string
   user_id: string
-  payfast_payment_id: string | null
-  payfast_subscription_token: string | null
   plan: 'free' | 'scholar' | 'nova_unlimited'
   status: 'active' | 'cancelled' | 'expired' | 'pending'
   amount: number | null
@@ -515,25 +513,6 @@ export interface GeneratedRecipe {
 export interface ApiResponse<T> {
   data: T | null
   error: string | null
-}
-
-export interface PayFastPaymentData {
-  merchant_id: string
-  merchant_key: string
-  return_url: string
-  cancel_url: string
-  notify_url: string
-  name_first: string
-  email_address: string
-  m_payment_id: string
-  amount: string
-  item_name: string
-  subscription_type?: '1' | '2'
-  billing_date?: string
-  recurring_amount?: string
-  frequency?: '3' // Monthly
-  cycles?: '0' // Indefinite
-  signature: string
 }
 
 // ─── Part-Time Job Manager ────────────────────────────────────

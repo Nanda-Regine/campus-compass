@@ -169,24 +169,6 @@ export function novaMessagesRemaining(used: number, plan: NovaTier): number | 'u
 export const NOVA_SCHOLAR_PRICE   = 29   // R29/month — ~79% gross margin on Nova API costs
 export const NOVA_UNLIMITED_PRICE = 89   // R89/month — unlimited Nova (fair use up to 1 000 msgs)
 
-// ─── PayFast signature ────────────────────────────────────────
-export function generatePayFastSignature(data: Record<string, string>, passphrase?: string): string {
-  // Sort and build query string
-  const params = Object.entries(data)
-    .filter(([, v]) => v !== '' && v !== undefined)
-    .sort(([a], [b]) => a.localeCompare(b))
-
-  let queryString = params.map(([k, v]) => `${k}=${encodeURIComponent(v).replace(/%20/g, '+')}`).join('&')
-
-  if (passphrase) {
-    queryString += `&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, '+')}`
-  }
-
-  // MD5 hash — use crypto on server side
-  // This is a placeholder; actual hashing done server-side
-  return queryString
-}
-
 // ─── Crisis keyword detection ─────────────────────────────────
 const CRISIS_KEYWORDS = [
   'suicid', 'kill myself', 'end my life', "don't want to be here",

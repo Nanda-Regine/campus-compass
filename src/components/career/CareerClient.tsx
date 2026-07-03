@@ -1238,7 +1238,7 @@ export default function CareerClient({ userId, profile, modules }: Props) {
                 }}
               >
                 <span style={{ fontSize: '1.1rem', opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tab.accent : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tab.accent : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tab.label.slice(0, 5).toUpperCase()}
                 </span>
               </button>

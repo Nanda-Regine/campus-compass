@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-white/80" style={{ position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="impasto" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
-      <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
+      <AmbientImage zone="impasto" opacity={0.30} blurPx={2} saturation={1.4} />
+      <div className="relative z-[1] border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
@@ -19,14 +19,14 @@ export default function TermsPage() {
         <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
       </div>
 
-      <div className="max-w-2xl mx-auto px-5 py-10">
+      <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
         </div>
 
-        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/65">
+        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">1. Parties and Agreement</h2>
@@ -80,7 +80,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">5. Payments and Subscriptions</h2>
-            <p className="mb-2">Premium subscriptions are processed by <strong className="text-white">PayFast (DPO PayGate (Pty) Ltd)</strong>, a registered payment service provider in South Africa.</p>
+            <p className="mb-2">Premium subscriptions are processed by <strong className="text-white">Paystack</strong>, a PCI-DSS Level 1 compliant payment service provider.</p>
             <ul className="list-disc list-inside text-white/55 space-y-1.5">
               <li>All prices are in South African Rand (ZAR) and are inclusive of VAT where applicable</li>
               <li>Subscriptions are billed monthly and renew automatically unless cancelled</li>
@@ -122,7 +122,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">9. Service Availability</h2>
-            <p>We aim for 99% uptime but do not guarantee uninterrupted service. Scheduled maintenance will be announced in advance where possible. We are not responsible for downtime caused by third-party providers (Supabase, Vercel, Anthropic, PayFast) or events outside our reasonable control (force majeure).</p>
+            <p>We aim for 99% uptime but do not guarantee uninterrupted service. Scheduled maintenance will be announced in advance where possible. We are not responsible for downtime caused by third-party providers (Supabase, Vercel, Anthropic, Paystack) or events outside our reasonable control (force majeure).</p>
           </section>
 
           <section>

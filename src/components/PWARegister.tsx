@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useAppStore } from '@/store'
-import { initOfflineSync, flushPendingWrites } from '@/lib/offline/sync'
+import { initOfflineSync, flushPendingWrites } from '@/lib/offline/pendingWrites'
 
 export default function PWARegister() {
   const setIsOnline = useAppStore(s => s.setIsOnline)

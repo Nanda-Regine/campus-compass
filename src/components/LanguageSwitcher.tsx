@@ -25,8 +25,8 @@ export default function LanguageSwitcher({ currentLocale, onChange }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ preferred_language: locale }),
     }).catch(() => {})
-    const labels: Record<AppLocale, string> = { en: 'English', zu: 'isiZulu', af: 'Afrikaans' }
-    toast.success(`Language changed to ${labels[locale]}`)
+    const label = LANGUAGES.find(l => l.code === locale)?.nativeLabel ?? locale
+    toast.success(`Language changed to ${label}`)
     // Reload to apply new locale to all server-rendered strings
     setTimeout(() => window.location.reload(), 600)
   }

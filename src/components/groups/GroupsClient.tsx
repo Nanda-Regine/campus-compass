@@ -498,7 +498,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
     return (
       <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
-        <AmbientImage zone="study" opacity={0.55} blurPx={4} saturation={1.4} overlayColor="transparent" />
+        <AmbientImage zone="study" opacity={0.32} blurPx={4} saturation={1.4} />
 
         {/* Side rail */}
         <div style={{
@@ -584,7 +584,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
             )}
           </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
 
           {/* ── Overview tab ── */}
           {detailTab === 'overview' && (
@@ -1260,7 +1260,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
   // ── List view ────────────────────────────────────────────────────────────────
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)' }}>
-      <AmbientImage zone="study" opacity={0.55} blurPx={4} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="study" opacity={0.32} blurPx={4} saturation={1.4} />
       <div className="flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>

@@ -234,7 +234,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
   return (
     <>
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="movement" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="movement" opacity={0.32} blurPx={2} saturation={1.4} />
       {/* Header */}
       <div className="px-5 pt-12 pb-6" style={{ background: 'linear-gradient(135deg, #0f4c75 0%, #0d3a5e 100%)' }}>
         <div className="flex items-center gap-3 mb-1">
@@ -268,7 +268,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 }}
               >
                 <Icon size={18} style={{ opacity: active ? 1 : 0.45, color: active ? '#38bdf8' : 'rgba(255,255,255,0.45)' }} />
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.42rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.35)', lineHeight: 1.2, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tLabel.slice(0, 5).toUpperCase()}
                 </span>
               </button>

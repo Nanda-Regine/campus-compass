@@ -4,12 +4,17 @@ import { logSecurityEvent } from '@/lib/security'
 
 // ─── AI route paths that get a stricter rate limit ────────────
 const AI_ROUTES = [
-  '/api/nova',
+  '/api/nova',                    // also covers /api/nova/proactive-brief, /api/nova/quick
   '/api/budget/insights',
   '/api/meals/recipe',
   '/api/study/assist',
+  '/api/study/past-papers',
   '/api/work/shift-draft',
   '/api/insights/checkin',
+  '/api/insights/weekly-report',
+  '/api/study-pods/matches',
+  '/api/career/mock-interview',
+  '/api/graduation/optimize',
 ]
 
 // ─── Mutating methods that require CSRF origin check ──────────
@@ -64,8 +69,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const reqId = crypto.randomUUID()
 
-  // PayFast ITN webhook has its own IP + signature verification
-  if (pathname === '/api/payfast/notify') {
+  // Paystack subscription webhook is an external POST forwarded by the Mirembe hub;
+  // it authenticates via the x-hub-secret shared secret, so it must skip the CSRF
+  // origin check (which would 403 a cross-origin POST) — its own auth is stronger.
+  if (pathname === '/api/paystack/webhook') {
     return NextResponse.next()
   }
 

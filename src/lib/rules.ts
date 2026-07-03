@@ -74,13 +74,18 @@ function isOnCooldown(ruleId: string): boolean {
 // evaluated first so the queue is always sorted correctly.
 
 const RULES: Rule[] = [
-  // ── URGENCY 5 — CRISIS: full-screen modal ─────────────────
+  // ── URGENCY 5 — CRISIS ────────────────────────────────────
+  // Rendered as a prominent CRITICAL banner at the top of the dashboard
+  // (InterventionBanner), NOT a full-screen blocking modal. A blur modal
+  // that auto-opens on load made the whole dashboard unusable, so crises
+  // now surface loudly but non-blockingly. Do NOT switch these back to
+  // variant: 'modal' — the modal path has been retired.
 
   // ⚡ CROSS-DOMAIN: mind + money + body all failing simultaneously
   {
     id:           'compound_crisis',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 6 * 60,
     test: ({ academic, financial, wellness }) =>
       wellness.burnoutScore > 60 &&
@@ -97,7 +102,7 @@ const RULES: Rule[] = [
   {
     id:           'academic_exclusion_risk',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 24 * 60,  // once per day max
     test: ({ academic }) =>
       academic.riskLevel === 'critical' && academic.examPressure >= 80,
@@ -112,10 +117,12 @@ const RULES: Rule[] = [
   {
     id:           'financial_runway_critical',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 12 * 60,
-    test: ({ financial }) =>
-      financial.emergencyMode || financial.runwayDays < 5,
+    // emergencyMode already encodes (runwayDays < 5 || remaining < 100) AND that real
+    // spending exists — so this stays a genuine crisis, never a false positive from an
+    // unconfigured budget or a no-spend month-end.
+    test: ({ financial }) => financial.emergencyMode,
     build: ({ financial }) => ({
       title:       'Money runs out in less than 5 days',
       message:     `At your current pace you have ${financial.runwayDays} days of budget left. Switch to emergency mode and stretch what you have.`,
@@ -635,16 +642,28 @@ export function runRules(): void {
 
   const store = useStudentState.getState()
 
-  // Respect global suppression
-  if (store.interventions.suppressedUntil) {
-    if (new Date(store.interventions.suppressedUntil).getTime() > Date.now()) return
-  }
-
   const snapshot: RuleSnapshot = {
     academic:  store.academic,
     financial: store.financial,
     wellness:  store.wellness,
     schedule:  store.schedule,
+  }
+
+  // Prune stale interventions: the queue is persisted to localStorage, so without this
+  // a one-time intervention (especially an urgency-5 modal) would re-appear on every
+  // reload and after each suppression window until manually dismissed — even once its
+  // triggering condition has resolved. Drop any queued item whose rule no longer passes.
+  const stale = store.interventions.queue
+    .filter(iv => {
+      const rule = RULES.find(r => r.id === iv.ruleId)
+      return !rule || !rule.test(snapshot)
+    })
+    .map(iv => iv.id)
+  store.pruneInterventions(stale)
+
+  // Respect global suppression when ADDING new interventions (pruning still runs above)
+  if (store.interventions.suppressedUntil) {
+    if (new Date(store.interventions.suppressedUntil).getTime() > Date.now()) return
   }
 
   for (const rule of RULES) {

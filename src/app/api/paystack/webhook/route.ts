@@ -32,18 +32,23 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     if (evt.event === 'charge.success' && userId && map) {
-      await supabase.from('profiles').update({
+      const { error } = await supabase.from('profiles').update({
         plan: map.tier, subscription_tier: map.tier, is_premium: true, nova_messages_limit: map.limit,
       }).eq('id', userId)
+      // Return non-2xx on DB failure so the hub RETRIES — otherwise the user paid
+      // but their tier never activates and the 200 tells the hub all is well.
+      if (error) { console.error('[paystack] activation failed', userId, error.message); return new NextResponse('DB error', { status: 500 }) }
       console.log('[paystack] activated', userId, map.tier)
     } else if ((evt.event === 'subscription.disable' || evt.event === 'subscription.not_renew') && userId) {
-      await supabase.from('profiles').update({
+      const { error } = await supabase.from('profiles').update({
         plan: 'free', subscription_tier: 'free', is_premium: false, nova_messages_limit: 20,
       }).eq('id', userId)
+      if (error) { console.error('[paystack] downgrade failed', userId, error.message); return new NextResponse('DB error', { status: 500 }) }
     }
     return new NextResponse('OK', { status: 200 })
   } catch (e) {
     console.error('[paystack] webhook error', e)
-    return new NextResponse('OK', { status: 200 })
+    // Transient failure — signal retry rather than silently acking.
+    return new NextResponse('error', { status: 500 })
   }
 }

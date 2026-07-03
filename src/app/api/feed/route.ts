@@ -20,10 +20,12 @@ export async function GET(req: NextRequest) {
       .single()
     if (!p) return NextResponse.json({ post: null })
     const row = p as Record<string, unknown>
-    const [{ data: reactions }, { data: myReaction }, { data: comments }] = await Promise.all([
-      supabase.from('post_reactions').select('post_id').eq('post_id', singleId),
-      supabase.from('post_reactions').select('post_id').eq('post_id', singleId).eq('user_id', user.id),
-      supabase.from('post_comments').select('post_id').eq('post_id', singleId),
+    // Count-only queries (head:true) — never pulls the row set, so a viral post's
+    // thousands of reactions don't get streamed just to produce a number.
+    const [{ count: reactionCount }, { count: myReactionCount }, { count: commentCount }] = await Promise.all([
+      supabase.from('post_reactions').select('post_id', { count: 'exact', head: true }).eq('post_id', singleId),
+      supabase.from('post_reactions').select('post_id', { count: 'exact', head: true }).eq('post_id', singleId).eq('user_id', user.id),
+      supabase.from('post_comments').select('post_id', { count: 'exact', head: true }).eq('post_id', singleId),
     ])
     const author = row.author as { name: string; emoji: string } | null
     return NextResponse.json({
@@ -32,9 +34,9 @@ export async function GET(req: NextRequest) {
         institution: row.institution, created_at: row.created_at, user_id: row.user_id,
         author_name: author?.name ?? 'Student', author_emoji: author?.emoji ?? '🎓',
         is_own: row.user_id === user.id,
-        reaction_count: reactions?.length ?? 0,
-        reacted: (myReaction?.length ?? 0) > 0,
-        comment_count: comments?.length ?? 0,
+        reaction_count: reactionCount ?? 0,
+        reacted: (myReactionCount ?? 0) > 0,
+        comment_count: commentCount ?? 0,
       }
     })
   }

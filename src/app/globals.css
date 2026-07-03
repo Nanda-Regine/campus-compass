@@ -182,15 +182,17 @@ html:not(.light) {
   --dark-border:     rgba(148, 111, 255, 0.10);
   --dark-border2:    rgba(148, 111, 255, 0.18);
 
-  /* ── Text — Purple-warm white ── */
+  /* ── Text — Purple-warm white ──
+     secondary/tertiary/label brightened for AA contrast (they previously failed,
+     esp. over ambient background images). Primary/muted unchanged. */
   --text-primary:   #EDE8F8;
-  --text-secondary: #8A85B0;
-  --text-tertiary:  #56507A;
+  --text-secondary: #ADA8CE;
+  --text-tertiary:  #9C96C2;
   --text-muted:     #3D395E;
-  --text-label:     rgba(237, 232, 248, 0.38);
+  --text-label:     rgba(237, 232, 248, 0.60);
   --text-light:     #EDE8F8;
-  --text-light2:    #8A85B0;
-  --text-light3:    #56507A;
+  --text-light2:    #ADA8CE;
+  --text-light3:    #9C96C2;
 
   /* ── Primary — Jade ── */
   --teal:         #00CFA0;
@@ -1112,8 +1114,13 @@ html.light .shimmer {
 .dot-3 { animation: nova-dot-bounce 1.2s infinite 400ms; }
 
 /* ── Chat Page Height ────────────────────────────────────── */
-
-.chat-page-height { height: calc(100dvh - 57px); }
+/* Mobile: clear the fixed 60px BottomNav (+ notch safe-area). Desktop (md+): no
+   bottom nav, so use the full viewport. Previously hardcoded 57px, which left the
+   composer ~3px behind the nav on phones and dead space below it on desktop. */
+.chat-page-height { height: calc(100dvh - 60px - env(safe-area-inset-bottom)); }
+@media (min-width: 768px) {
+  .chat-page-height { height: 100dvh; }
+}
 
 /* ── Scrollbar-none Utility ──────────────────────────────── */
 
@@ -1130,6 +1137,15 @@ html.light .shimmer {
 /* ── Body Scroll Lock ────────────────────────────────────── */
 
 body.modal-open { overflow: hidden; }
+
+/* ── Touch: reveal hover-gated controls ──────────────────────
+   Many list rows hide their edit/delete buttons behind `group-hover:opacity-100`.
+   Touch devices have no hover, so those controls never appear and core CRUD
+   (delete a task, job, meal, sleep log, budget line…) is impossible on a phone.
+   On non-hover devices, force them visible. */
+@media (hover: none) {
+  .group-hover\:opacity-100 { opacity: 1 !important; }
+}
 
 /* ── Scroll Container ────────────────────────────────────── */
 

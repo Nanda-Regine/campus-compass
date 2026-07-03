@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { anthropicUnconfiguredResponse } from '@/lib/anthropic'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 export async function POST(req: Request) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY
@@ -9,6 +10,10 @@ export async function POST(req: Request) {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Per-user daily ceiling on this AI (Anthropic) route — caps cost/abuse at scale.
+  const { allowed } = await checkRateLimitAsync(user.id, 'ai-mock-interview', 20, 86_400_000)
+  if (!allowed) return NextResponse.json({ error: 'Daily interview-practice limit reached — try again tomorrow.' }, { status: 429 })
 
   const { question, answer, job_type, industry } = await req.json()
   if (!question || !answer) return NextResponse.json({ error: 'Missing question or answer' }, { status: 400 })

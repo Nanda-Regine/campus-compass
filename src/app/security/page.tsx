@@ -66,10 +66,9 @@ const SHIELDS = [
     label: 'Payment Security',
     color: '#fb7185',
     items: [
-      'PayFast handles all card data — we never see or store card numbers',
-      'ITN webhook IP whitelist: only PayFast server IPs accepted',
-      'MD5 signature verification on every payment callback',
-      'PayFast is a PCI-DSS Level 1 compliant payment service provider',
+      'Paystack handles all card data — we never see or store card numbers',
+      'Subscription webhooks are authenticated with a shared secret — forged callbacks are rejected',
+      'Paystack is a PCI-DSS Level 1 compliant payment service provider',
       'Payment records retained 5 years for SARS tax compliance only',
     ],
   },
@@ -99,8 +98,8 @@ const COMPLIANCE = [
 export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-white/80" style={{ position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="alerts" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
-      <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
+      <AmbientImage zone="alerts" opacity={0.30} blurPx={2} saturation={1.4} />
+      <div className="relative z-[1] border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
@@ -108,7 +107,7 @@ export default function SecurityPage() {
         <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Trust Centre</span>
       </div>
 
-      <div className="max-w-2xl mx-auto px-5 py-10">
+      <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Security</h1>
@@ -182,7 +181,7 @@ export default function SecurityPage() {
                 { name: 'Arcjet', cert: 'Security middleware, bot detection, DDoS protection', role: 'Edge security' },
                 { name: 'Upstash Redis', cert: 'SOC 2 Type II, GDPR', role: 'Distributed rate limiting' },
                 { name: 'Anthropic', cert: 'SOC 2 Type II, enterprise data processing agreement', role: 'AI (Nova)' },
-                { name: 'PayFast (DPO PayGate)', cert: 'PCI-DSS Level 1, South African FSCA regulated', role: 'Payment processing' },
+                { name: 'Paystack', cert: 'PCI-DSS Level 1 compliant payment service provider', role: 'Payment processing' },
                 { name: 'Sentry', cert: 'SOC 2 Type II, GDPR', role: 'Error monitoring (no PII in error events)' },
               ].map(p => (
                 <div key={p.name} className="flex items-start gap-3 rounded-lg border border-white/6 bg-white/[0.015] px-3 py-2.5">
@@ -234,7 +233,7 @@ export default function SecurityPage() {
             <ul className="space-y-2 text-xs text-white/55">
               {[
                 'Sell your personal information to advertisers or data brokers',
-                'Store your payment card details (PayFast handles all card data)',
+                'Store your payment card details (Paystack handles all card data)',
                 'Use your Nova conversations to train AI models',
                 'Share your academic or financial data with your institution without your consent',
                 'Send unsolicited marketing without explicit opt-in',

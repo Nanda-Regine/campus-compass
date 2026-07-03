@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { hideBrokenImg } from '@/lib/imgFallback'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,7 +73,7 @@ function MatchCard({ match, onConnect, connecting }: {
           fontSize: 16, fontWeight: 700, color: '#38BDF8',
         }}>
           {match.avatar_url
-            ? <img src={match.avatar_url} alt="" style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover' }} />
+            ? <img src={match.avatar_url} alt="" onError={hideBrokenImg} style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover' }} />
             : match.full_name[0]?.toUpperCase()}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -160,7 +161,7 @@ function ConnectionCard({ conn, myUserId, onAction, acting }: {
             fontSize: 12, fontWeight: 700, color: '#38BDF8',
           }}>
             {other?.avatar_url
-              ? <img src={other.avatar_url} alt="" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+              ? <img src={other.avatar_url} alt="" onError={hideBrokenImg} style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
               : otherName[0]?.toUpperCase()}
           </div>
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>

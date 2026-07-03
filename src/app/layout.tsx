@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
 import Providers from '@/components/Providers'
+import { APP_PREFIXES } from '@/lib/appPrefixes'
 import PWARegister from '@/components/PWARegister'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { Sidebar } from '@/components/layout/Sidebar'
@@ -375,6 +376,9 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: 'cover',
+  // Shrink the layout viewport when the on-screen keyboard opens, so bottom-anchored
+  // inputs (Nova composer, chat) ride above it instead of being covered on Android.
+  interactiveWidget: 'resizes-content',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FBF7EE' },
     { media: '(prefers-color-scheme: dark)', color: '#05040C' },
@@ -385,8 +389,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-ZA" suppressHydrationWarning>
       <head>
-        {/* Initialize sidebar CSS var before paint to avoid layout flash */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var p=window.location.pathname,a=['/dashboard','/study','/budget','/meals','/nova','/profile','/campus-life','/referral','/streak','/upgrade','/career','/bursaries','/notes','/social','/tutoring','/health','/sleep','/fitness','/safety','/movement','/civic','/regulate','/international','/lms','/housing','/launchpad','/broadcasts','/marketplace','/src','/stokvel','/skills','/tour','/groups','/jobs','/mentors','/growth','/entrepreneur','/wisdom','/reader','/discounts','/feedback','/security','/admin'],s=a.some(function(x){return p===x||p.startsWith(x+'/')});if(!s){document.documentElement.style.setProperty('--sidebar-w','0px');return;}var c=localStorage.getItem('varsityos_sidebar_collapsed');document.documentElement.style.setProperty('--sidebar-w',c==='true'?'56px':'220px');}catch(e){}})();` }} />
+        {/* Initialize sidebar CSS var before paint to avoid layout flash.
+            The route list is derived from the shared APP_PREFIXES constant so this
+            pre-paint script can never disagree with Sidebar/MobileSidebar. */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var p=window.location.pathname,a=${JSON.stringify([...APP_PREFIXES])},s=a.some(function(x){return p===x||p.startsWith(x+'/')});if(!s){document.documentElement.style.setProperty('--sidebar-w','0px');return;}var c=localStorage.getItem('varsityos_sidebar_collapsed');document.documentElement.style.setProperty('--sidebar-w',c==='true'?'56px':'220px');}catch(e){}})();` }} />
 
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="32x32" />
         <link rel="icon" href="/favicon.jpg" type="image/jpeg" sizes="48x48" />

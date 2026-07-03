@@ -465,7 +465,7 @@ export default function WisdomArchive({
       style={{ minHeight: '100vh', background: '#0a0a0f', color: '#e5e7eb', position: 'relative', overflowX: 'hidden' }}
       className="pb-24"
     >
-      <AmbientImage zone="vibrant" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="vibrant" opacity={0.32} blurPx={2} saturation={1.4} />
       {/* Header */}
       <div
         style={{

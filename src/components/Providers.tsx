@@ -85,8 +85,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         const derivedSub: Subscription = {
           id: p.id,
           user_id: p.id,
-          payfast_payment_id: null,
-          payfast_subscription_token: null,
           plan: tier as Subscription['plan'],
           status: 'active',
           amount: null,

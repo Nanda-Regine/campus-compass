@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-white/80" style={{ position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="digital" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
-      <div className="border-b border-white/8 px-4 py-4 flex items-center gap-3">
+      <AmbientImage zone="digital" opacity={0.30} blurPx={2} saturation={1.4} />
+      <div className="relative z-[1] border-b border-white/8 px-4 py-4 flex items-center gap-3">
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
@@ -19,14 +19,14 @@ export default function PrivacyPage() {
         <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
       </div>
 
-      <div className="max-w-2xl mx-auto px-5 py-10">
+      <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
           <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
         </div>
 
-        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/65">
+        <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
 
           {/* POPIA Compliance Banner */}
           <div className="rounded-xl border border-teal-600/20 bg-teal-600/5 px-4 py-3 mb-2">
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white/75">Financial data:</strong> Monthly budget, expense records, NSFAS allowance amounts you enter — stored securely, never shared</li>
               <li><strong className="text-white/75">Usage data:</strong> App interactions, AI message history, task completions — used to improve your experience</li>
               <li><strong className="text-white/75">Device &amp; technical data:</strong> IP address (for security and fraud prevention), browser type, crash logs</li>
-              <li><strong className="text-white/75">Payment data:</strong> Payment status from PayFast (we do not store your card details — PayFast is the payment processor)</li>
+              <li><strong className="text-white/75">Payment data:</strong> Payment status from Paystack (we do not store your card details — Paystack is the payment processor)</li>
             </ul>
             <p className="mt-3 text-white/40 text-xs">We do NOT collect: South African ID numbers, bank account numbers, biometric data, or information about minors under 18.</p>
           </section>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
               <li>Providing and operating the VarsityOS platform (account management, feature access)</li>
               <li>Personalising your AI companion (Nova) using your academic and financial context</li>
-              <li>Processing subscription payments via PayFast</li>
+              <li>Processing subscription payments via Paystack</li>
               <li>Sending service-related communications (account confirmations, payment receipts)</li>
               <li>Security and fraud prevention (rate limiting, suspicious activity detection)</li>
               <li>Improving our services through aggregate, anonymised analytics</li>
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white/55">
               <li><strong className="text-white/75">Supabase (Supabase Inc.):</strong> Database and authentication infrastructure — data stored in the EU (Ireland) region</li>
               <li><strong className="text-white/75">Anthropic, PBC:</strong> AI processing for Nova responses — see Section 5</li>
-              <li><strong className="text-white/75">PayFast (DPO PayGate (Pty) Ltd):</strong> Payment processing — they are a registered payment service provider in South Africa</li>
+              <li><strong className="text-white/75">Paystack:</strong> Payment processing — a PCI-DSS Level 1 compliant payment service provider</li>
               <li><strong className="text-white/75">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
               <li><strong className="text-white/75">Law enforcement:</strong> Only when required by a valid legal order under South African law</li>
             </ul>

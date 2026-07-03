@@ -44,7 +44,7 @@ export default async function BroadcastsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="amoled" opacity={0.60} blurPx={2} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="amoled" opacity={0.32} blurPx={2} saturation={1.4} />
       <TopBar title="Broadcasts" />
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 16px 100px' }}>
         <BroadcastOS

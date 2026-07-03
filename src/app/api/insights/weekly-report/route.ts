@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 function isoDate(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -37,6 +38,10 @@ export async function GET() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Per-user daily ceiling on this AI (Anthropic) route — caps cost/abuse at scale.
+  const { allowed } = await checkRateLimitAsync(user.id, 'ai-weekly-report', 10, 86_400_000)
+  if (!allowed) return NextResponse.json({ error: 'Daily report limit reached — try again tomorrow.' }, { status: 429 })
 
   const { startStr, startTs, label } = getWeekBounds()
   const todayStr = isoDate(new Date())

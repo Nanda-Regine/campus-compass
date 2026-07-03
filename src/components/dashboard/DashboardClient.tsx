@@ -21,7 +21,6 @@ import DailyChallenges from '@/components/gamification/DailyChallenges'
 import StreakWidget from '@/components/gamification/StreakWidget'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import InterventionBanner from '@/components/orchestration/InterventionBanner'
-import InterventionModal from '@/components/orchestration/InterventionModal'
 import SundayPlanning from '@/components/orchestration/SundayPlanning'
 import WeatherWidget from '@/components/dashboard/WeatherWidget'
 import NotificationPrompt from '@/components/dashboard/NotificationPrompt'
@@ -717,8 +716,6 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           {!isPremium && <UpgradeBar />}
         </div>
       </div>
-
-      <TabErrorBoundary label="Intervention Modal"><InterventionModal /></TabErrorBoundary>
     </>
   )
 }

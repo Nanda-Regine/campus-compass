@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { hideBrokenImg } from '@/lib/imgFallback'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -219,7 +220,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
     setCancelling(true)
     setCancelError(null)
     try {
-      const res = await fetch('/api/payfast/cancel', { method: 'POST', signal: AbortSignal.timeout(10000) })
+      const res = await fetch('/api/paystack/cancel', { method: 'POST', signal: AbortSignal.timeout(12000) })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Cancellation failed')
       setCancelled(true)
@@ -533,7 +534,7 @@ export default function ProfileClient() {
                 >
                   {profile?.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={profile.avatar_url} alt="avatar" onError={hideBrokenImg} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : emoji}
                 </button>
                 {uploadingAvatar ? (

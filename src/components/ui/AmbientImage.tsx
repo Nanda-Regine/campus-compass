@@ -81,10 +81,13 @@ export function AmbientImage({
   zone,
   src,
   alt = '',
-  opacity = 0.42,
+  opacity = 0.34,
   blurPx = 3,
   saturation = 1.3,
-  overlayColor = 'rgba(5,4,12,0.06)',
+  // Real legibility scrim by default (was 6% — effectively none). A top-to-bottom
+  // gradient keeps text readable further down the page. Pages that need no scrim
+  // still pass overlayColor="transparent" explicitly.
+  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.40) 0%, rgba(5,4,12,0.66) 100%)',
   sizes = '100vw',
 }: AmbientImageProps) {
   const imageSrc = zone ? AMBIENT_IMAGES[zone] : src
