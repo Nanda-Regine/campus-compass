@@ -74,13 +74,18 @@ function isOnCooldown(ruleId: string): boolean {
 // evaluated first so the queue is always sorted correctly.
 
 const RULES: Rule[] = [
-  // ── URGENCY 5 — CRISIS: full-screen modal ─────────────────
+  // ── URGENCY 5 — CRISIS ────────────────────────────────────
+  // Rendered as a prominent CRITICAL banner at the top of the dashboard
+  // (InterventionBanner), NOT a full-screen blocking modal. A blur modal
+  // that auto-opens on load made the whole dashboard unusable, so crises
+  // now surface loudly but non-blockingly. Do NOT switch these back to
+  // variant: 'modal' — the modal path has been retired.
 
   // ⚡ CROSS-DOMAIN: mind + money + body all failing simultaneously
   {
     id:           'compound_crisis',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 6 * 60,
     test: ({ academic, financial, wellness }) =>
       wellness.burnoutScore > 60 &&
@@ -97,7 +102,7 @@ const RULES: Rule[] = [
   {
     id:           'academic_exclusion_risk',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 24 * 60,  // once per day max
     test: ({ academic }) =>
       academic.riskLevel === 'critical' && academic.examPressure >= 80,
@@ -112,7 +117,7 @@ const RULES: Rule[] = [
   {
     id:           'financial_runway_critical',
     urgency:      5,
-    variant:      'modal',
+    variant:      'banner',
     cooldownMins: 12 * 60,
     // emergencyMode already encodes (runwayDays < 5 || remaining < 100) AND that real
     // spending exists — so this stays a genuine crisis, never a false positive from an
