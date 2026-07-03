@@ -44,6 +44,16 @@ const monoFont = JetBrains_Mono({
 
 const APP_URL = 'https://varsityos.co.za'
 
+// Analytics IDs are embedded verbatim into inline <Script> bodies, so a stray
+// newline/quote in the env value (e.g. a value pasted with a trailing "\n")
+// would produce invalid JS and crash the whole tree with
+// "SyntaxError: Invalid or unexpected token" the moment next/script appends it.
+// Trim first, then validate/JSON-encode so a malformed value can never break syntax.
+const HOTJAR_ID = process.env.NEXT_PUBLIC_HOTJAR_ID?.trim()
+const CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID?.trim()
+const HOTJAR_ENABLED = !!HOTJAR_ID && /^\d+$/.test(HOTJAR_ID)
+const CRISP_ENABLED = !!CRISP_WEBSITE_ID && /^[0-9a-f-]+$/i.test(CRISP_WEBSITE_ID)
+
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
@@ -472,6 +482,109 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+        {/* ── Schema.org JSON-LD graph: Organization + WebSite + FAQ ── */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'Organization',
+                  '@id': `${APP_URL}/#organization`,
+                  name: 'VarsityOS',
+                  legalName: 'Mirembe Muse (Pty) Ltd',
+                  url: APP_URL,
+                  logo: { '@type': 'ImageObject', url: `${APP_URL}/icon-512.png`, width: 512, height: 512 },
+                  image: `${APP_URL}/images/og-image.png`,
+                  description:
+                    'VarsityOS is the free super-app for South African university and TVET students — NSFAS tracking, student budgeting, study planning, meal prep and Nova AI mental-health support.',
+                  foundingDate: '2025',
+                  founder: { '@type': 'Person', name: 'Nandawula Regine Kabali-Kagwa', url: 'https://creativelynanda.co.za' },
+                  areaServed: { '@type': 'Country', name: 'South Africa' },
+                  knowsLanguage: ['en-ZA', 'zu', 'xh', 'af', 'st', 'tn'],
+                  sameAs: [
+                    'https://twitter.com/varsityos',
+                    'https://www.instagram.com/varsityos',
+                    'https://www.tiktok.com/@varsityos',
+                    'https://www.linkedin.com/company/varsityos',
+                  ],
+                  contactPoint: {
+                    '@type': 'ContactPoint',
+                    contactType: 'customer support',
+                    email: 'hello@varsityos.co.za',
+                    areaServed: 'ZA',
+                    availableLanguage: ['English', 'Zulu', 'Xhosa', 'Afrikaans', 'Sotho', 'Tswana'],
+                  },
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': `${APP_URL}/#website`,
+                  url: APP_URL,
+                  name: 'VarsityOS',
+                  description: 'The free super-app for South African university and TVET students.',
+                  publisher: { '@id': `${APP_URL}/#organization` },
+                  inLanguage: 'en-ZA',
+                },
+                {
+                  '@type': 'FAQPage',
+                  '@id': `${APP_URL}/#faq`,
+                  mainEntity: [
+                    {
+                      '@type': 'Question',
+                      name: 'Is VarsityOS free for students?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'Yes. VarsityOS is free for every South African student. The free plan includes the study planner, NSFAS and budget tracker, savings goals, meal prep, work tracker and 20 Nova AI messages a month — no credit card required, and it works offline.',
+                      },
+                    },
+                    {
+                      '@type': 'Question',
+                      name: 'Can VarsityOS track my NSFAS allowance?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'Yes. VarsityOS tracks your NSFAS monthly allowance, expected payment dates, food, transport, accommodation and book allowances, and warns you when a disbursement is delayed so you can budget through the gap.',
+                      },
+                    },
+                    {
+                      '@type': 'Question',
+                      name: 'Does VarsityOS work during load shedding or without data?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'Yes. VarsityOS is an offline-first Progressive Web App built for low-data phones like the Tecno Spark. Your data, study plans and notes stay available during load shedding and sync automatically when you are back online.',
+                      },
+                    },
+                    {
+                      '@type': 'Question',
+                      name: 'What is Nova?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'Nova is the built-in AI companion in VarsityOS. It offers mental-health and wellbeing support, helps you plan study sessions and budgets, and answers questions about student life in South Africa. The free plan includes 20 Nova messages a month.',
+                      },
+                    },
+                    {
+                      '@type': 'Question',
+                      name: 'Which universities and colleges does VarsityOS support?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'VarsityOS supports students at all 26 South African public universities, the universities of technology, UNISA, private higher-education institutions and all TVET colleges — from UCT, Wits, UP, Stellenbosch and UJ to TUT, CPUT, DUT and every TVET college nationwide.',
+                      },
+                    },
+                    {
+                      '@type': 'Question',
+                      name: 'How much does the paid plan cost?',
+                      acceptedAnswer: {
+                        '@type': 'Answer',
+                        text: 'Nova Scholar is R29/month (150 Nova messages, AI recipe generator, AI budget coach and AI study plans) and Nova Unlimited is R89/month (unlimited Nova messages, CSV export and first access to new features). The core app stays free.',
+                      },
+                    },
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
+
         {/* ── Google Tag Manager ── */}
         <Script
           id="gtm-head"
@@ -495,11 +608,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
 
         {/* ── Hotjar ── */}
-        {process.env.NEXT_PUBLIC_HOTJAR_ID && (
+        {HOTJAR_ENABLED && (
           <Script id="hotjar" strategy="afterInteractive">
             {`(function(h,o,t,j,a,r){
 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-h._hjSettings={hjid:${process.env.NEXT_PUBLIC_HOTJAR_ID},hjsv:6};
+h._hjSettings={hjid:${HOTJAR_ID},hjsv:6};
 a=o.getElementsByTagName('head')[0];
 r=o.createElement('script');r.async=1;
 r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
@@ -509,9 +622,9 @@ a.appendChild(r);
         )}
 
         {/* ── Crisp Live Chat ── */}
-        {process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID && (
+        {CRISP_ENABLED && (
           <Script id="crisp-widget" strategy="afterInteractive">
-            {`window.$crisp=[];window.CRISP_WEBSITE_ID="${process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID}";(function(){var d=document;var s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`}
+            {`window.$crisp=[];window.CRISP_WEBSITE_ID=${JSON.stringify(CRISP_WEBSITE_ID)};(function(){var d=document;var s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`}
           </Script>
         )}
       </head>

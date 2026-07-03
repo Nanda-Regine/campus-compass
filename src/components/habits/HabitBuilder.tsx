@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from 'react'
 import { dispatchXP } from '@/lib/xp-engine'
 import { signals } from '@/store/signals'
 import { createClient } from '@/lib/supabase/client'
+import { refreshStreak } from '@/lib/intelligenceSync'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -26,6 +27,7 @@ interface Habit {
   lastCheckedIn: string | null  // ISO date
   completedToday: boolean
   totalCompleted: number
+  checkInDates?: string[]       // SAST YYYY-MM-DD history — feeds the global streak
 }
 
 type HabitPack = 'study' | 'wellness' | 'finances' | 'social' | 'morning' | 'mental_health' | 'load_shedding' | 'exam_mode' | 'deep_work' | 'custom'
@@ -351,7 +353,13 @@ export default function HabitBuilder() {
 
   useEffect(() => {
     const refreshHabits = (raw: Habit[]) =>
-      raw.map(h => ({ ...h, completedToday: h.lastCheckedIn === today() }))
+      raw.map(h => ({
+        ...h,
+        completedToday: h.lastCheckedIn === today(),
+        // Backfill history for habits saved before check-in dates were tracked,
+        // so an existing streak still counts toward the global streak.
+        checkInDates: h.checkInDates ?? (h.lastCheckedIn ? [h.lastCheckedIn] : []),
+      }))
 
     // Merge remote and local habit arrays. For each habit, keep whichever copy
     // has the more recent lastCheckedIn (string comparison works for YYYY-MM-DD).
@@ -396,18 +404,26 @@ export default function HabitBuilder() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const persist = (updated: Habit[]) => {
+  const syncToDB = async (updated: Habit[]) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { error } = await supabase.from('user_habits_state')
+      .upsert({ user_id: user.id, habits: updated, updated_at: new Date().toISOString() })
+    if (error) console.error('[habits] sync failed:', error.message)
+  }
+
+  const persist = (updated: Habit[], immediate = false) => {
     setHabits(updated)
     saveHabitsLocal(updated)
     if (saveTimer.current) clearTimeout(saveTimer.current)
+    if (immediate) {
+      // Flush now so /api/streak sees today's check-in before we re-read it.
+      return syncToDB(updated)
+    }
     // Debounce rapid toggles but don't wait longer than 400ms so navigation
     // away from the page doesn't silently lose the streak update.
-    saveTimer.current = setTimeout(() => {
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) supabase.from('user_habits_state').upsert({ user_id: user.id, habits: updated, updated_at: new Date().toISOString() })
-          .then(({ error }) => { if (error) console.error('[habits] sync failed:', error.message) })
-      })
-    }, 400)
+    saveTimer.current = setTimeout(() => { syncToDB(updated) }, 400)
+    return Promise.resolve()
   }
 
   const [milestone, setMilestone] = useState<{ name: string; streak: number } | null>(null)
@@ -416,40 +432,55 @@ export default function HabitBuilder() {
   const MILESTONES = [7, 14, 21, 30, 60, 100]
 
   const toggleHabit = (id: string) => {
+    const t = today()
     const updated = habits.map(h => {
       if (h.id !== id) return h
-      const checking = h.lastCheckedIn !== today()
-      const newStreak = calcStreak(h, checking)
+      const dates = h.checkInDates ?? (h.lastCheckedIn ? [h.lastCheckedIn] : [])
 
-      if (checking) {
-        // XP for check-in
-        dispatchXP('habit_checkin')
-        // Streak milestone XP
-        if (newStreak === 7)   dispatchXP('habit_streak_7')
-        if (newStreak === 30)  dispatchXP('habit_streak_30')
-        if (newStreak === 100) dispatchXP('habit_streak_100')
-        // Emit signal
-        signals.emit({
-          type: 'habit_completed',
-          payload: { habitId: h.id, habitName: h.name, streakDays: newStreak, pack: h.pack },
-        })
-        // Milestone celebration
-        if (MILESTONES.includes(newStreak)) {
-          if (milestoneRef.current) clearTimeout(milestoneRef.current)
-          setMilestone({ name: h.name, streak: newStreak })
-          milestoneRef.current = setTimeout(() => setMilestone(null), 4000)
+      // ── Un-check today's completion ────────────────────────────
+      // Previously this was a no-op (lastCheckedIn stayed = today), so the card
+      // could never be un-ticked. Revert to the prior check-in state instead.
+      if (h.lastCheckedIn === t) {
+        const remaining = dates.filter(d => d !== t)
+        return {
+          ...h,
+          completedToday: false,
+          lastCheckedIn: remaining.length ? remaining[remaining.length - 1] : null,
+          streakDays: Math.max(0, h.streakDays - 1),
+          totalCompleted: Math.max(0, h.totalCompleted - 1),
+          checkInDates: remaining,
         }
+      }
+
+      // ── Check in for today ─────────────────────────────────────
+      const newStreak = calcStreak(h, true)
+      dispatchXP('habit_checkin')
+      if (newStreak === 7)   dispatchXP('habit_streak_7')
+      if (newStreak === 30)  dispatchXP('habit_streak_30')
+      if (newStreak === 100) dispatchXP('habit_streak_100')
+      signals.emit({
+        type: 'habit_completed',
+        payload: { habitId: h.id, habitName: h.name, streakDays: newStreak, pack: h.pack },
+      })
+      if (MILESTONES.includes(newStreak)) {
+        if (milestoneRef.current) clearTimeout(milestoneRef.current)
+        setMilestone({ name: h.name, streak: newStreak })
+        milestoneRef.current = setTimeout(() => setMilestone(null), 4000)
       }
 
       return {
         ...h,
-        completedToday: checking,
-        lastCheckedIn: checking ? today() : h.lastCheckedIn,
+        completedToday: true,
+        lastCheckedIn: t,
         streakDays: newStreak,
-        totalCompleted: checking ? h.totalCompleted + 1 : h.totalCompleted,
+        totalCompleted: h.totalCompleted + 1,
+        // Keep a bounded date history — this is what makes a daily habit
+        // extend the global streak even on days with no completed tasks.
+        checkInDates: [...new Set([...dates, t])].sort().slice(-120),
       }
     })
-    persist(updated)
+    // Flush to DB first, then re-read the global streak so it reflects today.
+    persist(updated, true).then(() => refreshStreak()).catch(() => {})
   }
 
   const removeHabit = (id: string) => {
@@ -472,6 +503,7 @@ export default function HabitBuilder() {
         lastCheckedIn: null,
         completedToday: false,
         totalCompleted: 0,
+        checkInDates: [],
       }))
     persist([...habits, ...newHabits])
     setView('today')
