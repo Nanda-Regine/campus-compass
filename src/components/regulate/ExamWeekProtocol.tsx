@@ -85,7 +85,7 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
   if (!nearExam || dismissed) {
     return (
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}>
-        <p style={{ color: '#9ca3af', fontSize: 14 }}>
+        <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>
           No exams in the next 7 days — great time to build regulation habits.
         </p>
       </div>
@@ -101,9 +101,9 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
       <div className="flex items-start justify-between mb-4">
         <div>
           <p style={{ color: '#a78bfa', fontWeight: 700, fontSize: 16 }}>{nearExam.exam_name || nearExam.name}</p>
-          <p style={{ color: '#9ca3af', fontSize: 13 }}>in {days}d {hours}h</p>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>in {days}d {hours}h</p>
         </div>
-        <button onClick={dismiss} style={{ color: '#6b7280', fontSize: 12, background: 'none', border: 'none', cursor: 'pointer' }}>
+        <button onClick={dismiss} style={{ color: 'var(--text-muted)', fontSize: 12, background: 'none', border: 'none', cursor: 'pointer' }}>
           Dismiss
         </button>
       </div>
@@ -143,7 +143,7 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span>{step.icon}</span>
-                  <span style={{ color: isChecked ? '#9ca3af' : '#e5e7eb', fontSize: 14, fontWeight: 500, textDecoration: isChecked ? 'line-through' : 'none' }}>
+                  <span style={{ color: isChecked ? 'var(--text-tertiary)' : 'var(--text-primary)', fontSize: 14, fontWeight: 500, textDecoration: isChecked ? 'line-through' : 'none' }}>
                     {step.label}{extraLabel}
                   </span>
                   {step.href && (
@@ -156,14 +156,14 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
                     </Link>
                   )}
                 </div>
-                <p style={{ color: '#6b7280', fontSize: 12, marginTop: 2 }}>{step.science}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{step.science}</p>
               </div>
             </div>
           )
         })}
       </div>
 
-      <p style={{ color: '#6b7280', fontSize: 12, marginTop: 20, fontStyle: 'italic', lineHeight: 1.5 }}>
+      <p style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 20, fontStyle: 'italic', lineHeight: 1.5 }}>
         Pre-exam cortisol is normal and even helpful in small doses. The physiological sigh reduces it in 30 seconds.
       </p>
     </div>

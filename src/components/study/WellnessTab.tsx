@@ -319,7 +319,7 @@ function SleepScience() {
                 {[{ l: 'Hours slept', k: 'hours', t: 'number', p: '7.5' }, { l: 'Quality (1–5)', k: 'quality', t: 'number', p: '3' }, { l: 'Bedtime', k: 'bedtime', t: 'time', p: '' }, { l: 'Wake up', k: 'wakeup', t: 'time', p: '' }].map(f => (
                   <div key={f.k}>
                     <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>{f.l}</div>
-                    <input type={f.t} placeholder={f.p} value={form[f.k as keyof typeof form]} onChange={e => setForm(v => ({ ...v, [f.k]: e.target.value }))} style={{ width: '100%', padding: '8px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: '#fff', fontSize: '0.8rem' }} />
+                    <input type={f.t} placeholder={f.p} value={form[f.k as keyof typeof form]} onChange={e => setForm(v => ({ ...v, [f.k]: e.target.value }))} style={{ width: '100%', padding: '8px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.8rem' }} />
                   </div>
                 ))}
               </div>

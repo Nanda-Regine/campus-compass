@@ -128,7 +128,7 @@ const CARD: React.CSSProperties = {
   border: '1px solid rgba(255,255,255,0.06)',
   borderRadius: '16px',
   padding: '24px',
-  color: '#fff',
+  color: 'var(--text-primary)',
   fontFamily: 'inherit',
 };
 
@@ -218,7 +218,7 @@ export default function BankingAdvisor() {
 
           {step === 0 && (
             <div>
-              <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#fff', fontWeight: 600 }}>
+              <p style={{ margin: '0 0 12px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>
                 How many bank transactions do you make per month?
               </p>
               <QuizButton label="Fewer than 15 (mostly cash)" onClick={() => setAnswer('transactions', 'few')} />
@@ -228,7 +228,7 @@ export default function BankingAdvisor() {
 
           {step === 1 && (
             <div>
-              <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#fff', fontWeight: 600 }}>
+              <p style={{ margin: '0 0 12px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>
                 Do you receive NSFAS or a bursary?
               </p>
               <QuizButton label="Yes — I receive NSFAS / bursary" onClick={() => setAnswer('nsfas', true)} />
@@ -243,7 +243,7 @@ export default function BankingAdvisor() {
 
           {step === 2 && (
             <div>
-              <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#fff', fontWeight: 600 }}>
+              <p style={{ margin: '0 0 12px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600 }}>
                 Do you shop at Pick n Pay or care about cashback rewards?
               </p>
               <QuizButton label="Yes — I shop at PnP regularly" onClick={() => setAnswer('cashback', true)} />

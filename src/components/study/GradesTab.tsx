@@ -204,7 +204,7 @@ function GradeCalcCard({
             style={{
               background: 'transparent', border: 'none', outline: 'none',
               fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 14,
-              color: '#fff', width: 160,
+              color: 'var(--text-primary)', width: 160,
             }}
           />
           {currentAvg !== null && (
@@ -440,7 +440,7 @@ function GpaCalculator({
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <TrendingUp size={16} color="#7090d0" />
-        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 14, color: '#fff' }}>
+        <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>
           GPA Calculator
         </span>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -585,7 +585,7 @@ const inputStyle: CSSProperties = {
   border: '0.5px solid rgba(255,255,255,0.1)',
   borderRadius: 8,
   padding: '6px 8px',
-  color: '#fff',
+  color: 'var(--text-primary)',
   fontSize: 12,
   fontFamily: 'DM Sans, sans-serif',
   width: '100%',

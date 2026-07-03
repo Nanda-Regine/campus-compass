@@ -352,8 +352,8 @@ export default function SafetyFeed() {
             <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>
               SAFETY FEED
             </div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#e5e7eb' }}>Campus Incidents</div>
-            <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginTop: 3 }}>Community-reported · Updated in real time</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Campus Incidents</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 3 }}>Community-reported · Updated in real time</div>
           </div>
           <button
             onClick={() => setShowModal(true)}
@@ -412,8 +412,8 @@ export default function SafetyFeed() {
           gap: 8,
         }}>
           <div style={{ fontSize: '2rem' }}>&#128205;</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#e5e7eb' }}>Location needed</div>
-          <div style={{ fontSize: '0.73rem', color: '#6b7280', lineHeight: 1.6, maxWidth: 260 }}>
+          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Location needed</div>
+          <div style={{ fontSize: '0.73rem', color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 260 }}>
             Enable location access to see incidents near your current position on campus.
           </div>
           <button
@@ -471,7 +471,7 @@ export default function SafetyFeed() {
                         display: 'inline-block',
                         flexShrink: 0,
                       }} />
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f3f4f6' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                         {TYPE_LABELS[inc.type]}
                       </span>
                       {inc.verified && (
@@ -490,12 +490,12 @@ export default function SafetyFeed() {
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '0.68rem', color: '#6b7280', marginTop: 1 }}>{inc.location}</div>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: 1 }}>{inc.location}</div>
                   </div>
                 </div>
                 <span style={{ fontSize: '0.65rem', color: '#4b5563', flexShrink: 0, marginTop: 2 }}>{inc.timeAgo}</span>
               </div>
-              <p style={{ margin: 0, fontSize: '0.76rem', color: '#9ca3af', lineHeight: 1.6 }}>{inc.description}</p>
+              <p style={{ margin: 0, fontSize: '0.76rem', color: 'var(--text-tertiary)', lineHeight: 1.6 }}>{inc.description}</p>
             </div>
           ))}
         </div>
@@ -516,7 +516,7 @@ export default function SafetyFeed() {
           <div style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.07em', marginBottom: 4 }}>
             SAFETY TIP
           </div>
-          <p style={{ margin: 0, fontSize: '0.76rem', color: '#d1d5db', lineHeight: 1.55 }}>
+          <p style={{ margin: 0, fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
             {SAFETY_TIPS[tipIndex]}
           </p>
         </div>

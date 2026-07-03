@@ -241,7 +241,7 @@ export default function CohortCard() {
             <ArcGauge percentile={p} color={color} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', lineHeight: 1.35, marginBottom: 6 }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.35, marginBottom: 6 }}>
               {p >= 50 ? `{"You're in the"} {percentileLabel(p)}` : percentileLabel(p).charAt(0).toUpperCase() + percentileLabel(p).slice(1)}
             </div>
             <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.5, marginBottom: 8 }}>

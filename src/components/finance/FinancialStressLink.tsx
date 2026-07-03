@@ -32,9 +32,9 @@ const CONFIG: Record<Props['stressLevel'], StressConfig> = {
     body: (
       <span>
         You may qualify for support:{' '}
-        <strong style={{ color: '#fff' }}>NSFAS emergency fund</strong> (contact your financial aid office),{' '}
-        <strong style={{ color: '#fff' }}>Ubuntu Fund</strong> (ask your SRC), or the{' '}
-        <strong style={{ color: '#fff' }}>SASSA SRD grant</strong> at srd.sassa.gov.za (R370/month, no income required).
+        <strong style={{ color: 'var(--text-primary)' }}>NSFAS emergency fund</strong> (contact your financial aid office),{' '}
+        <strong style={{ color: 'var(--text-primary)' }}>Ubuntu Fund</strong> (ask your SRC), or the{' '}
+        <strong style={{ color: 'var(--text-primary)' }}>SASSA SRD grant</strong> at srd.sassa.gov.za (R370/month, no income required).
       </span>
     ),
     showHotline: false,
@@ -46,9 +46,9 @@ const CONFIG: Record<Props['stressLevel'], StressConfig> = {
     heading: 'Urgent Financial Help',
     body: (
       <span>
-        Go to your <strong style={{ color: '#fff' }}>institution financial aid office today</strong> — walk-ins accepted.
-        Call NSFAS: <strong style={{ color: '#fff' }}>0800 067 327</strong> (free, Mon–Fri 8am–4pm).
-        Apply for SASSA SRD at <strong style={{ color: '#fff' }}>srd.sassa.gov.za</strong> (R370/month).
+        Go to your <strong style={{ color: 'var(--text-primary)' }}>institution financial aid office today</strong> — walk-ins accepted.
+        Call NSFAS: <strong style={{ color: 'var(--text-primary)' }}>0800 067 327</strong> (free, Mon–Fri 8am–4pm).
+        Apply for SASSA SRD at <strong style={{ color: 'var(--text-primary)' }}>srd.sassa.gov.za</strong> (R370/month).
         Your SRC Ubuntu Fund can also provide emergency grocery vouchers.
       </span>
     ),
@@ -66,7 +66,7 @@ export default function FinancialStressLink({ stressLevel }: Props) {
         border: `1px solid ${cfg.borderColor}`,
         borderRadius: '16px',
         padding: '16px 18px',
-        color: '#fff',
+        color: 'var(--text-primary)',
         fontFamily: 'inherit',
       }}
     >

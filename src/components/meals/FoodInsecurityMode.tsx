@@ -124,7 +124,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
           Campus Food Support
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: '#e5e7eb', marginBottom: 6 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: 6 }}>
           {foodBank.name}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -145,12 +145,12 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
                 {foodBank.contact}
               </a>
             ) : (
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#9ca3af' }}>{foodBank.contact}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text-tertiary)' }}>{foodBank.contact}</span>
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: '0.75rem' }}>🕐</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: '#9ca3af' }}>{foodBank.hours}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{foodBank.hours}</span>
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
                 padding: 14,
               }}
             >
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#e5e7eb', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 6 }}>
                 {meal.name}
               </div>
               <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
@@ -252,7 +252,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
                   {meal.calories} kcal
                 </span>
               </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: '#9ca3af', lineHeight: 1.5 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
                 {meal.tip}
               </div>
             </div>

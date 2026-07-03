@@ -88,7 +88,7 @@ function CompoundCalculator() {
       <div style={{ marginBottom: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
           <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>Monthly investment</label>
-          <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700 }}>R{monthly}</span>
+          <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 700 }}>R{monthly}</span>
         </div>
         <input
           type="range"
@@ -108,7 +108,7 @@ function CompoundCalculator() {
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
           <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>Years</label>
-          <span style={{ fontSize: '13px', color: '#fff', fontWeight: 700 }}>{years} yrs</span>
+          <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 700 }}>{years} yrs</span>
         </div>
         <input
           type="range"
@@ -194,9 +194,9 @@ function NomvulaStory() {
       </p>
       <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.6' }}>
         Nomvula invests R50/month from her NSFAS allowance at age 19.
-        After <strong style={{ color: '#fff' }}>3 years</strong>:{' '}
+        After <strong style={{ color: 'var(--text-primary)' }}>3 years</strong>:{' '}
         <strong style={{ color: '#22c55e' }}>R2,100</strong>.
-        After <strong style={{ color: '#fff' }}>10 years</strong>:{' '}
+        After <strong style={{ color: 'var(--text-primary)' }}>10 years</strong>:{' '}
         <strong style={{ color: '#22c55e' }}>R10,300</strong>.
         She contributed only R6,000 — compound interest added the rest.
         At 30, she has a deposit for postgrad or a car. She also teaches her younger sibling: ubuntu in action.
@@ -215,7 +215,7 @@ export default function FirstInvestment() {
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         padding: '24px',
-        color: '#fff',
+        color: 'var(--text-primary)',
         fontFamily: 'inherit',
       }}
     >
@@ -258,7 +258,7 @@ export default function FirstInvestment() {
               >
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{step.icon}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#fff', fontWeight: 600 }}>{step.title}</p>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>{step.title}</p>
                   <p style={{ margin: '1px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>{step.subtitle}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>

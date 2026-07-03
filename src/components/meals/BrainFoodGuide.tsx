@@ -40,10 +40,10 @@ function SectionContent({ id }: { id: string }) {
                 >
                   <span style={{ color: '#86efac', flexShrink: 0, marginTop: 1 }}>✓</span>
                   <div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', color: '#e5e7eb', marginBottom: 2 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 2 }}>
                       {item.food}
                     </div>
-                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#9ca3af' }}>{item.why}</div>
+                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'var(--text-tertiary)' }}>{item.why}</div>
                   </div>
                 </div>
               ))}
@@ -103,7 +103,7 @@ function SectionContent({ id }: { id: string }) {
                 padding: 12,
               }}
             >
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', color: '#e5e7eb', marginBottom: 4 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: 4 }}>
                 {item.food}
               </div>
               <div
@@ -116,7 +116,7 @@ function SectionContent({ id }: { id: string }) {
               >
                 {item.price}
               </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: '#9ca3af', lineHeight: 1.45 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text-tertiary)', lineHeight: 1.45 }}>
                 {item.benefit}
               </div>
             </div>
@@ -148,7 +148,7 @@ function SectionContent({ id }: { id: string }) {
               Signs of study dehydration
             </div>
             {['Headache mid-study session', 'Difficulty focusing on a single paragraph', 'Irritability for no reason'].map(s => (
-              <div key={s} style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#9ca3af', display: 'flex', gap: 8, alignItems: 'center', marginBottom: 5 }}>
+              <div key={s} style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'var(--text-tertiary)', display: 'flex', gap: 8, alignItems: 'center', marginBottom: 5 }}>
                 <span style={{ color: '#38bdf8', flexShrink: 0 }}>·</span>
                 {s}
               </div>
@@ -172,7 +172,7 @@ function SectionContent({ id }: { id: string }) {
           >
             <span style={{ fontSize: '1.5rem' }}>💧</span>
             <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#e5e7eb' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 8 glasses (2 litres) per day
               </div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#38bdf8', marginTop: 2 }}>
@@ -224,10 +224,10 @@ function SectionContent({ id }: { id: string }) {
               >
                 <span style={{ color: colors[item.severity], fontSize: '1rem', flexShrink: 0, marginTop: 1 }}>⚠</span>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#e5e7eb', marginBottom: 3 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 3 }}>
                     {item.item}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#9ca3af', lineHeight: 1.5 }}>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
                     {item.why}
                   </div>
                 </div>
@@ -281,10 +281,10 @@ function SectionContent({ id }: { id: string }) {
                 {row.pct}
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#e5e7eb', marginBottom: 2 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: 2 }}>
                   {row.label}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#9ca3af' }}>{row.examples}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)' }}>{row.examples}</div>
               </div>
             </div>
           ))}
@@ -327,7 +327,7 @@ export default function BrainFoodGuide() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: '#e5e7eb' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-secondary)' }}>
           Brain Food Guide
         </div>
         <div
@@ -378,7 +378,7 @@ export default function BrainFoodGuide() {
                   fontFamily: 'var(--font-display)',
                   fontWeight: 700,
                   fontSize: '0.88rem',
-                  color: isOpen ? ACCENT : '#e5e7eb',
+                  color: isOpen ? ACCENT : 'var(--text-secondary)',
                   flex: 1,
                   transition: 'color 0.2s',
                 }}

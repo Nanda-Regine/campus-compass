@@ -66,7 +66,7 @@ export default function FeedbackPage() {
         {done ? (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>{highRater ? '🌟' : '💙'}</div>
-            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text-primary)', marginBottom: 8 }}>
               {highRater ? 'You\'re amazing — thank you!' : 'Got it — we\'ll do better'}
             </div>
             <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
@@ -116,7 +116,7 @@ export default function FeedbackPage() {
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>
                 BUILT IN SA · FOR SA STUDENTS
               </div>
-              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 17, color: '#fff', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 17, color: 'var(--text-primary)', marginBottom: 6 }}>
                 Your feedback shapes VarsityOS
               </div>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
@@ -193,7 +193,7 @@ export default function FeedbackPage() {
                   background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 14, padding: '14px 16px',
                   fontFamily: 'DM Sans, sans-serif', fontSize: 14,
-                  color: '#fff', lineHeight: 1.6,
+                  color: 'var(--text-primary)', lineHeight: 1.6,
                   outline: 'none', resize: 'vertical',
                 }}
               />

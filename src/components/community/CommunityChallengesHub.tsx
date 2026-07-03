@@ -37,7 +37,7 @@ export default function CommunityChallengesHub() {
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', letterSpacing: '0.18em', marginBottom: 4 }}>
           🌍 COMMUNITY CHALLENGES
         </div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: '#fff' }}>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>
           Compete, collaborate, win
         </div>
       </div>

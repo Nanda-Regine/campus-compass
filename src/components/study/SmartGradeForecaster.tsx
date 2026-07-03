@@ -56,7 +56,7 @@ function LabeledSlider({ label, value, min, max, unit = '', onChange, color = AC
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between items-center">
-        <span style={{ color: '#9ca3af', fontSize: '13px' }}>{label}</span>
+        <span style={{ color: 'var(--text-tertiary)', fontSize: '13px' }}>{label}</span>
         <span style={{ color, fontSize: '20px', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
           {value}{unit}
         </span>
@@ -104,7 +104,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
     : '#6b7280'
 
   return (
-    <div style={{ color: '#e5e7eb' }}>
+    <div style={{ color: 'var(--text-secondary)' }}>
       {/* Module selector */}
       {modules.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
@@ -121,7 +121,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
                   borderRadius: '999px',
                   border: active ? `1px solid ${tok.text}` : '1px solid rgba(255,255,255,0.1)',
                   background: active ? tok.bg : 'transparent',
-                  color: active ? tok.text : '#9ca3af',
+                  color: active ? tok.text : 'var(--text-tertiary)',
                   fontSize: '12px',
                   fontWeight: active ? 700 : 400,
                   cursor: 'pointer',
@@ -136,7 +136,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
       )}
 
       {modules.length === 0 && (
-        <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '16px' }}>Add modules in the Modules tab to use the forecaster.</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '16px' }}>Add modules in the Modules tab to use the forecaster.</p>
       )}
 
       <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
@@ -148,7 +148,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
           padding: '20px',
           gridColumn: '1 / -1',
         }}>
-          <p style={{ color: '#9ca3af', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>
             Your current standing
           </p>
           <div className="flex flex-col gap-5">
@@ -181,7 +181,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
           padding: '20px',
           gridColumn: '1 / -1',
         }}>
-          <p style={{ color: '#9ca3af', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '20px' }}>
             What do you need?
           </p>
           <LabeledSlider
@@ -204,14 +204,14 @@ export default function SmartGradeForecaster({ modules }: Props) {
             borderRadius: '14px',
           }}>
             {feas === 'impossible' ? (
-              <p style={{ color: '#6b7280', fontSize: '18px', fontWeight: 700 }}>Not achievable from here</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '18px', fontWeight: 700 }}>Not achievable from here</p>
             ) : displayNeeded !== null ? (
               <>
-                <p style={{ color: '#9ca3af', fontSize: '12px', marginBottom: '6px' }}>You need on remaining work</p>
+                <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginBottom: '6px' }}>You need on remaining work</p>
                 <p style={{ color: neededColor, fontSize: '48px', fontWeight: 800, lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
                   {displayNeeded}%
                 </p>
-                <p style={{ color: '#9ca3af', fontSize: '12px', marginTop: '8px' }}>
+                <p style={{ color: 'var(--text-tertiary)', fontSize: '12px', marginTop: '8px' }}>
                   If you score {displayNeeded}% on remaining work, your final mark will be{' '}
                   <span style={{ color: neededColor, fontWeight: 600 }}>
                     {Math.round(clamp(projected, 0, 100))}%
@@ -248,14 +248,14 @@ export default function SmartGradeForecaster({ modules }: Props) {
 
           {/* Best case note */}
           {remainingWeight > 0 && feas !== 'impossible' && (
-            <p style={{ color: '#6b7280', fontSize: '12px', textAlign: 'center', marginTop: '8px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', marginTop: '8px' }}>
               Best possible mark if you score 100% on remaining: {projectedIfMax}%
             </p>
           )}
         </div>
       </div>
 
-      <p style={{ color: '#9ca3af', fontSize: '11px', opacity: 0.5, marginTop: '16px', textAlign: 'center' }}>
+      <p style={{ color: 'var(--text-tertiary)', fontSize: '11px', opacity: 0.5, marginTop: '16px', textAlign: 'center' }}>
         Estimate only — check your module outline for exact weights
       </p>
     </div>

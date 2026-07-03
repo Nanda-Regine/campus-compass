@@ -61,10 +61,10 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
           </svg>
         </div>
         <div>
-          <div className="font-semibold text-sm" style={{ color: '#e5e7eb' }}>
+          <div className="font-semibold text-sm" style={{ color: 'var(--text-secondary)' }}>
             NSFAS Income Compatibility
           </div>
-          <div className="text-xs mt-0.5" style={{ color: '#9ca3af' }}>
+          <div className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
             Work earnings check
           </div>
         </div>
@@ -72,10 +72,10 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
 
       {/* Annualized earnings */}
       <div>
-        <div className="text-xs mb-1" style={{ color: '#9ca3af' }}>
+        <div className="text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>
           Your annualized work earnings
         </div>
-        <div className="text-2xl font-bold" style={{ color: '#e5e7eb' }}>
+        <div className="text-2xl font-bold" style={{ color: 'var(--text-secondary)' }}>
           R{annualized.toLocaleString('en-ZA')}
         </div>
       </div>
@@ -97,10 +97,10 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
           />
         </div>
         <div className="flex justify-between">
-          <span className="text-xs" style={{ color: '#9ca3af' }}>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             R0
           </span>
-          <span className="text-xs" style={{ color: '#9ca3af' }}>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             Household income threshold: R350,000/year
           </span>
         </div>
@@ -129,7 +129,7 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
         <button
           onClick={() => setInfoOpen(prev => !prev)}
           className="flex items-center gap-2 text-xs transition-colors"
-          style={{ color: '#9ca3af' }}
+          style={{ color: 'var(--text-tertiary)' }}
         >
           <svg
             width="14"
@@ -158,18 +158,18 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
             style={{
               background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.06)',
-              color: '#9ca3af',
+              color: 'var(--text-tertiary)',
             }}
           >
             <p>
-              NSFAS means test applies to your <strong style={{ color: '#e5e7eb' }}>total household income</strong> —
+              NSFAS means test applies to your <strong style={{ color: 'var(--text-secondary)' }}>total household income</strong> —
               this includes your parents&apos; or guardian&apos;s income as well as your own.
             </p>
             <p>
               NSFAS does cross-reference with SARS, so declared income should be accurate and consistent.
             </p>
             <p>
-              If you&apos;re unsure about your situation, speak to your <strong style={{ color: '#e5e7eb' }}>Financial Aid Office</strong> —
+              If you&apos;re unsure about your situation, speak to your <strong style={{ color: 'var(--text-secondary)' }}>Financial Aid Office</strong> —
               they are there to help you, not penalise you. Many students successfully disclose work income without affecting their funding.
             </p>
           </div>

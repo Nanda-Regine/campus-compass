@@ -59,7 +59,7 @@ export default function PodActivityFeed() {
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>
-                <span style={{ fontWeight: 700, color: '#fff' }}>{item.user.full_name?.split(' ')[0] ?? 'A pod member'}</span>
+                <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{item.user.full_name?.split(' ')[0] ?? 'A pod member'}</span>
                 {' '}hit a Compound Day {timeAgo(item.day_date)}
               </div>
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>

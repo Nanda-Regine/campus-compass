@@ -543,7 +543,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 4 }}>
             🤖 AI GENERATED FOR YOU
           </div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 18, color: '#fff', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 18, color: 'var(--text-primary)', marginBottom: 8 }}>
             {generatedRecipe.name}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
@@ -659,7 +659,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
                 <span style={{ fontSize: 24, flexShrink: 0 }}>{recipe.icon}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                    <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff' }}>{recipe.name}</span>
+                    <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)' }}>{recipe.name}</span>
                     {recipe.tags.slice(0, 2).map(tag => (
                       <span key={tag} style={{
                         fontFamily: '"JetBrains Mono",monospace', fontSize: 7.5, padding: '2px 7px', borderRadius: 10,

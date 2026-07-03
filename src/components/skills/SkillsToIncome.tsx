@@ -117,10 +117,10 @@ export default function SkillsToIncome({ completedSkills }: Props) {
           </svg>
         </div>
         <div>
-          <h2 className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
             Turn Your Skills Into Income
           </h2>
-          <p className="text-xs mt-0.5" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
             {isEmpty
               ? 'Complete a Digital Skills module to unlock income ideas'
               : `${matchedEntries.length} income ${matchedEntries.length === 1 ? 'opportunity' : 'opportunities'} based on your skills`}
@@ -135,10 +135,10 @@ export default function SkillsToIncome({ completedSkills }: Props) {
           className="px-5 py-10 text-center"
         >
           <div className="text-4xl mb-3">🎓</div>
-          <p className="text-sm font-semibold mb-1" style={{ color: '#e5e7eb' }}>
+          <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>
             No skills unlocked yet
           </p>
-          <p className="text-xs mb-4" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>
             Complete your first Digital Skills module to see personalised income ideas.
           </p>
           <Link
@@ -169,20 +169,20 @@ export default function SkillsToIncome({ completedSkills }: Props) {
 
               {/* Income type */}
               <div>
-                <div className="text-xs mb-0.5" style={{ color: '#9ca3af' }}>
+                <div className="text-xs mb-0.5" style={{ color: 'var(--text-tertiary)' }}>
                   Income type
                 </div>
-                <div className="text-sm font-semibold" style={{ color: '#e5e7eb' }}>
+                <div className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                   {entry.income}
                 </div>
               </div>
 
               {/* How-to tip */}
               <div>
-                <div className="text-xs mb-0.5" style={{ color: '#9ca3af' }}>
+                <div className="text-xs mb-0.5" style={{ color: 'var(--text-tertiary)' }}>
                   How to start
                 </div>
-                <div className="text-sm" style={{ color: '#e5e7eb' }}>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {entry.how}
                 </div>
               </div>
@@ -211,10 +211,10 @@ export default function SkillsToIncome({ completedSkills }: Props) {
 
               {/* Where to find */}
               <div>
-                <div className="text-xs mb-0.5" style={{ color: '#9ca3af' }}>
+                <div className="text-xs mb-0.5" style={{ color: 'var(--text-tertiary)' }}>
                   Where to find clients
                 </div>
-                <div className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
+                <div className="text-xs leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
                   {entry.where}
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default function SkillsToIncome({ completedSkills }: Props) {
             style={{
               background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.05)',
-              color: '#9ca3af',
+              color: 'var(--text-tertiary)',
             }}
           >
             Complete more Digital Skills modules to unlock more income ideas.{' '}

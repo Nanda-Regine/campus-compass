@@ -179,7 +179,7 @@ export default function ProcrastinationJournal() {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.18em' }}>
               📓 PROCRASTINATION JOURNAL
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
               Reflect & rewire
             </div>
           </div>

@@ -298,7 +298,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
   }
 
   return (
-    <div style={{ color: '#e5e7eb' }} className="pb-8">
+    <div style={{ color: 'var(--text-secondary)' }} className="pb-8">
       {/* Header */}
       <div style={{
         background: 'linear-gradient(135deg, rgba(52,211,153,0.1) 0%, rgba(167,139,250,0.06) 100%)',
@@ -309,9 +309,9 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <span style={{ fontSize: 24 }}>🤜🤛</span>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#e5e7eb' }}>Accountability Partner</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text-secondary)' }}>Accountability Partner</h2>
         </div>
-        <p style={{ margin: 0, color: '#9ca3af', fontSize: 13, lineHeight: 1.5 }}>
+        <p style={{ margin: 0, color: 'var(--text-tertiary)', fontSize: 13, lineHeight: 1.5 }}>
           Share a goal · Find a partner at {myUniversity ?? 'your university'} · Check in daily · Build your streak
         </p>
       </div>
@@ -349,7 +349,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px 0', color: '#6b7280', fontSize: 13 }}>Loading…</div>
+        <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 13 }}>Loading…</div>
       ) : error ? (
         <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 12, padding: '12px 14px', color: '#f87171', fontSize: 13, marginBottom: 16 }}>
           {error} <button onClick={() => void loadData()} style={{ marginLeft: 8, color: '#34d399', background: 'none', border: 'none', cursor: 'pointer', fontSize: 12 }}>Retry</button>
@@ -367,10 +367,10 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
 
           {/* Post goal form */}
           <div style={card}>
-            <p style={{ margin: '0 0 14px', color: '#e5e7eb', fontWeight: 600, fontSize: 15 }}>Post Your Goal</p>
+            <p style={{ margin: '0 0 14px', color: 'var(--text-secondary)', fontWeight: 600, fontSize: 15 }}>Post Your Goal</p>
             <form onSubmit={e => { void handlePostGoal(e) }} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, marginBottom: 6 }}>What goal do you want to achieve? *</label>
+                <label style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: 12, marginBottom: 6 }}>What goal do you want to achieve? *</label>
                 <textarea
                   value={postForm.shared_goal}
                   onChange={e => setPostForm(f => ({ ...f, shared_goal: e.target.value }))}
@@ -378,20 +378,20 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                   rows={3}
                   maxLength={500}
                   required
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: '#e5e7eb', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }}
                 />
                 <div style={{ textAlign: 'right', fontSize: 11, color: '#4b5563', marginTop: 3 }}>{postForm.shared_goal.length}/500</div>
               </div>
 
               <div>
-                <label style={{ display: 'block', color: '#9ca3af', fontSize: 12, marginBottom: 6 }}>Deadline *</label>
+                <label style={{ display: 'block', color: 'var(--text-tertiary)', fontSize: 12, marginBottom: 6 }}>Deadline *</label>
                 <input
                   type="date"
                   value={postForm.goal_deadline}
                   onChange={e => setPostForm(f => ({ ...f, goal_deadline: e.target.value }))}
                   min={new Date(Date.now() + 86400000).toISOString().split('T')[0]} // at least tomorrow
                   required
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: '#e5e7eb', fontSize: 14, outline: 'none', colorScheme: 'dark', width: '100%', boxSizing: 'border-box' }}
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', colorScheme: 'dark', width: '100%', boxSizing: 'border-box' }}
                 />
               </div>
 
@@ -415,12 +415,12 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
 
           {/* Open goals */}
           <div>
-            <p style={{ margin: '0 0 10px', color: '#9ca3af', fontSize: 13, fontWeight: 600 }}>
+            <p style={{ margin: '0 0 10px', color: 'var(--text-tertiary)', fontSize: 13, fontWeight: 600 }}>
               Open Goals at {myUniversity ?? 'Your University'}
               <span style={{ fontWeight: 400, marginLeft: 8, color: '#4b5563' }}>Accept to become their partner</span>
             </p>
             {openGoals.length === 0 ? (
-              <div style={{ ...card, textAlign: 'center', padding: '32px', color: '#6b7280', fontSize: 13 }}>
+              <div style={{ ...card, textAlign: 'center', padding: '32px', color: 'var(--text-muted)', fontSize: 13 }}>
                 No open goals right now.<br />
                 <span style={{ color: '#4b5563', fontSize: 12 }}>Post yours — when others join you'll be notified.</span>
               </div>
@@ -435,10 +435,10 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                           🎯
                         </div>
                         <div style={{ flex: 1 }}>
-                          <p style={{ margin: '0 0 4px', color: '#e5e7eb', fontSize: 14, fontWeight: 600, lineHeight: 1.4 }}>
+                          <p style={{ margin: '0 0 4px', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, lineHeight: 1.4 }}>
                             {goal.shared_goal}
                           </p>
-                          <span style={{ color: '#6b7280', fontSize: 11 }}>
+                          <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>
                             {goal.requester_name ?? 'A student'} · {timeAgo(goal.created_at)}
                           </span>
                         </div>
@@ -480,9 +480,9 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       {tab === 'active' && !loading && (
         <>
           {!myPartnership ? (
-            <div style={{ textAlign: 'center', padding: '48px 16px', color: '#9ca3af' }}>
+            <div style={{ textAlign: 'center', padding: '48px 16px', color: 'var(--text-tertiary)' }}>
               <p style={{ fontSize: 36, margin: '0 0 12px' }}>🤝</p>
-              <p style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 600, color: '#e5e7eb' }}>No active partnership</p>
+              <p style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 600, color: 'var(--text-secondary)' }}>No active partnership</p>
               <p style={{ margin: '0 0 16px', fontSize: 13 }}>Post a goal or accept someone else&apos;s goal to get started.</p>
               <button onClick={() => setTab('find')} style={{ padding: '10px 20px', borderRadius: 10, border: '1px solid #34d399', background: 'rgba(52,211,153,0.1)', color: '#34d399', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                 Find a Partner
@@ -492,7 +492,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Shared goal card */}
               <div style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.2)', borderRadius: 16, padding: 20, textAlign: 'center' }}>
-                <p style={{ margin: '0 0 8px', color: '#9ca3af', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Shared Goal</p>
+                <p style={{ margin: '0 0 8px', color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Shared Goal</p>
                 <p style={{ margin: '0 0 14px', color: '#34d399', fontSize: 17, fontWeight: 700, lineHeight: 1.4 }}>
                   {myPartnership.shared_goal}
                 </p>
@@ -518,7 +518,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                   <p style={{ margin: 0, fontSize: 32, fontWeight: 700, color: '#34d399' }}>
                     🔥 {computeStreak(myPartnership)}
                   </p>
-                  <p style={{ margin: '2px 0 0', color: '#9ca3af', fontSize: 12 }}>Day streak</p>
+                  <p style={{ margin: '2px 0 0', color: 'var(--text-tertiary)', fontSize: 12 }}>Day streak</p>
                 </div>
                 <div style={{ width: 1, height: 44, background: 'rgba(255,255,255,0.08)' }} />
                 <div style={{ textAlign: 'center' }}>
@@ -557,7 +557,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                 </div>
               )}
               {!partnerCheckedIn && (
-                <div style={{ textAlign: 'center', color: '#6b7280', fontSize: 13 }}>
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
                   Waiting for partner to check in today…
                 </div>
               )}
@@ -586,7 +586,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       {tab === 'history' && !loading && (
         <div>
           {historyItems.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: '#6b7280', fontSize: 14 }}>
+            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)', fontSize: 14 }}>
               No completed or cancelled partnerships yet.
             </div>
           ) : (
@@ -594,7 +594,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
               {historyItems.map(p => (
                 <div key={p.id} style={{ ...card }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
-                    <p style={{ margin: 0, color: '#e5e7eb', fontSize: 14, fontWeight: 600, lineHeight: 1.4, flex: 1 }}>
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, lineHeight: 1.4, flex: 1 }}>
                       {p.shared_goal}
                     </p>
                     <span style={{

@@ -56,7 +56,7 @@ export default async function HealthPage() {
                 background: 'rgba(167,139,250,0.18)', fontSize: 26,
               }}>🌸</div>
               <div style={{ flex: 1 }}>
-                <div style={{ color: '#e5e7eb', fontWeight: 700, fontSize: 16, marginBottom: 2 }}>Cycle Tracker</div>
+                <div style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 16, marginBottom: 2 }}>Cycle Tracker</div>
                 <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 1.5 }}>
                   Track your phase, symptoms & sync with study planning
                 </div>
@@ -79,7 +79,7 @@ export default async function HealthPage() {
 
         {/* Mind OS — Procrastination Profiler */}
         <div style={{ marginTop: '28px' }}>
-          <h2 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
+          <h2 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
             🧠 Mind Fitness
           </h2>
           <ProcrastinationProfiler />
@@ -87,7 +87,7 @@ export default async function HealthPage() {
 
         {/* More health rooms */}
         <div style={{ marginTop: '28px' }}>
-          <h2 style={{ color: '#e5e7eb', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
+          <h2 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '17px', marginBottom: '12px' }}>
             More Health Rooms
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
@@ -114,8 +114,8 @@ export default async function HealthPage() {
                   {f.icon}
                 </div>
                 <div>
-                  <div style={{ color: '#e5e7eb', fontWeight: 600, fontSize: '15px' }}>{f.title}</div>
-                  <div style={{ color: '#9ca3af', fontSize: '13px', marginTop: '2px' }}>{f.description}</div>
+                  <div style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '15px' }}>{f.title}</div>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '13px', marginTop: '2px' }}>{f.description}</div>
                 </div>
               </Link>
             ))}

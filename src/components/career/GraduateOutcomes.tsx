@@ -305,7 +305,7 @@ function EmploymentGauge({ rate }: { rate: number }) {
           {rate}%
         </div>
       </div>
-      <div style={{ fontSize: 10, color: '#9ca3af', textAlign: 'center' }}>Employment rate</div>
+      <div style={{ fontSize: 10, color: 'var(--text-tertiary)', textAlign: 'center' }}>Employment rate</div>
     </div>
   )
 }
@@ -336,7 +336,7 @@ export default function GraduateOutcomes() {
 
       {/* Institution selector */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
-        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 10, fontWeight: 600 }}>
+        <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>
           Select Institution
         </div>
         <select
@@ -348,7 +348,7 @@ export default function GraduateOutcomes() {
             border: '1px solid rgba(255,255,255,0.09)',
             borderRadius: 10,
             padding: '10px 12px',
-            color: selectedInstitution ? '#e5e7eb' : '#9ca3af',
+            color: selectedInstitution ? 'var(--text-primary)' : 'var(--text-tertiary)',
             fontSize: 13,
             outline: 'none',
             cursor: 'pointer',
@@ -369,7 +369,7 @@ export default function GraduateOutcomes() {
       {/* Degree selector */}
       {selectedInstitution && (
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
-          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 10, fontWeight: 600 }}>
+          <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>
             Select Degree
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -382,7 +382,7 @@ export default function GraduateOutcomes() {
                   borderRadius: 10,
                   border: `1px solid ${selectedDegree === deg ? 'rgba(129,140,248,0.4)' : 'rgba(255,255,255,0.07)'}`,
                   background: selectedDegree === deg ? 'rgba(129,140,248,0.08)' : 'rgba(255,255,255,0.02)',
-                  color: selectedDegree === deg ? '#818cf8' : '#e5e7eb',
+                  color: selectedDegree === deg ? '#818cf8' : 'var(--text-primary)',
                   fontSize: 13,
                   fontWeight: selectedDegree === deg ? 600 : 400,
                   cursor: 'pointer',
@@ -407,7 +407,7 @@ export default function GraduateOutcomes() {
             padding: '18px 16px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', fontWeight: 600 }}>
+              <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 600 }}>
                 Graduate Outcomes
               </div>
               {isEstimate && (
@@ -429,9 +429,9 @@ export default function GraduateOutcomes() {
                   borderRadius: 10,
                   padding: '10px 12px',
                 }}>
-                  <div style={{ fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Median starting salary</div>
+                  <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Median starting salary</div>
                   <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#818cf8' }}>
-                    R{outcomeData.median_salary.toLocaleString('en-ZA')}<span style={{ fontSize: 11, color: '#9ca3af', fontWeight: 400 }}>/mo</span>
+                    R{outcomeData.median_salary.toLocaleString('en-ZA')}<span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 400 }}>/mo</span>
                   </div>
                 </div>
 
@@ -445,8 +445,8 @@ export default function GraduateOutcomes() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                  <div style={{ fontSize: 11, color: '#9ca3af' }}>Avg. months to first job</div>
-                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: '#e5e7eb' }}>
+                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Avg. months to first job</div>
+                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
                     {outcomeData.months_to_job}
                   </div>
                 </div>
@@ -455,7 +455,7 @@ export default function GraduateOutcomes() {
 
             {/* Top employers */}
             <div>
-              <div style={{ fontSize: 9, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, fontWeight: 600 }}>Top employers</div>
+              <div style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, fontWeight: 600 }}>Top employers</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {outcomeData.top_employers.map(emp => (
                   <span
@@ -484,18 +484,18 @@ export default function GraduateOutcomes() {
             borderRadius: 16,
             padding: '16px',
           }}>
-            <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9ca3af', marginBottom: 14, fontWeight: 600 }}>
+            <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 14, fontWeight: 600 }}>
               Savings Calculator
             </div>
 
-            <div style={{ fontSize: 13, color: '#e5e7eb', marginBottom: 14, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 14, lineHeight: 1.6 }}>
               At <strong style={{ color: '#818cf8' }}>R{outcomeData.median_salary.toLocaleString('en-ZA')}/month</strong>, here is what you could save:
             </div>
 
             {/* Saving rate control */}
             <div style={{ marginBottom: 14 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <div style={{ fontSize: 12, color: '#9ca3af' }}>Monthly saving rate</div>
+                <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Monthly saving rate</div>
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#818cf8' }}>{savingRate}%</div>
               </div>
               <input
@@ -507,9 +507,9 @@ export default function GraduateOutcomes() {
                 onChange={e => setSavingRate(Number(e.target.value))}
                 style={{ width: '100%', accentColor: '#818cf8', cursor: 'pointer' }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#9ca3af', marginTop: 4 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-tertiary)', marginTop: 4 }}>
                 <span>5%</span>
-                <span style={{ fontSize: 11, color: '#9ca3af' }}>
+                <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                   = {formatRand(outcomeData.median_salary * savingRate / 100)}/mo
                 </span>
                 <span>40%</span>
@@ -518,7 +518,7 @@ export default function GraduateOutcomes() {
 
             {/* Year toggle */}
             <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 8 }}>Show savings over:</div>
+              <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 8 }}>Show savings over:</div>
               <div style={{ display: 'flex', gap: 6 }}>
                 {[1, 3, 5].map(y => (
                   <button
@@ -530,7 +530,7 @@ export default function GraduateOutcomes() {
                       borderRadius: 8,
                       border: `1px solid ${years === y ? 'rgba(129,140,248,0.4)' : 'rgba(255,255,255,0.08)'}`,
                       background: years === y ? 'rgba(129,140,248,0.12)' : 'rgba(255,255,255,0.02)',
-                      color: years === y ? '#818cf8' : '#9ca3af',
+                      color: years === y ? '#818cf8' : 'var(--text-tertiary)',
                       fontSize: 12,
                       fontWeight: years === y ? 700 : 400,
                       cursor: 'pointer',
@@ -561,14 +561,14 @@ export default function GraduateOutcomes() {
                       borderRadius: 10,
                     }}
                   >
-                    <div style={{ fontSize: 12, color: isSelected ? '#e5e7eb' : '#9ca3af' }}>
-                      After {y} {y === 1 ? 'year' : 'years'} <span style={{ fontSize: 10, color: '#9ca3af' }}>(5% p.a.)</span>
+                    <div style={{ fontSize: 12, color: isSelected ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>
+                      After {y} {y === 1 ? 'year' : 'years'} <span style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>(5% p.a.)</span>
                     </div>
                     <div style={{
                       fontFamily: 'JetBrains Mono, monospace',
                       fontSize: isSelected ? 16 : 13,
                       fontWeight: 700,
-                      color: isSelected ? '#818cf8' : '#9ca3af',
+                      color: isSelected ? '#818cf8' : 'var(--text-tertiary)',
                     }}>
                       {formatRand(savings)}
                     </div>
@@ -577,13 +577,13 @@ export default function GraduateOutcomes() {
               })}
             </div>
 
-            <div style={{ marginTop: 12, fontSize: 10, color: '#9ca3af', lineHeight: 1.6 }}>
+            <div style={{ marginTop: 12, fontSize: 10, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
               Saving {savingRate}% = {formatRand(outcomeData.median_salary * savingRate / 100)}/month put into savings at 5% annual interest (compound monthly). After {outcomeData.months_to_job} months of job searching, you could have {formatRand(outcomeData.median_salary * savingRate / 100 * outcomeData.months_to_job)} saved before your first paycheque.
             </div>
           </div>
 
           {/* Disclaimer */}
-          <p style={{ fontSize: 10, color: '#9ca3af', lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+          <p style={{ fontSize: 10, color: 'var(--text-tertiary)', lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
             {isEstimate
               ? 'National estimate by degree field — institution-specific data for this university is coming. '
               : ''}
@@ -602,8 +602,8 @@ export default function GraduateOutcomes() {
           textAlign: 'center',
         }}>
           <div style={{ fontSize: 32, marginBottom: 10 }}>🎓</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#e5e7eb', marginBottom: 6 }}>Graduate Outcomes Explorer</div>
-          <div style={{ fontSize: 12, color: '#9ca3af', lineHeight: 1.6 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>Graduate Outcomes Explorer</div>
+          <div style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
             Select your institution above to see employment rates, median starting salaries, and top employers for your degree.
           </div>
         </div>
@@ -617,7 +617,7 @@ export default function GraduateOutcomes() {
           padding: '14px 16px',
           textAlign: 'center',
         }}>
-          <div style={{ fontSize: 12, color: '#9ca3af' }}>
+          <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
             Select your degree above to see outcomes data.
           </div>
         </div>

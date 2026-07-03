@@ -245,7 +245,7 @@ export default function RewardUnlock() {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', letterSpacing: '0.18em' }}>
               🎁 REWARD UNLOCK
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
               Earn it, then enjoy it
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function RewardUnlock() {
               border: '1px solid rgba(255,255,255,0.06)',
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', marginBottom: 6 }}>
+                <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'var(--text-primary)', marginBottom: 6 }}>
                   {r.title}
                 </div>
                 <div style={{ height: 4, borderRadius: 4, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>

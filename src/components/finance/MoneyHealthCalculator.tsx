@@ -183,7 +183,7 @@ export default function MoneyHealthCalculator({
     border: '1px solid rgba(255,255,255,0.06)',
     borderRadius: '16px',
     padding: compact ? '16px' : '24px',
-    color: '#fff',
+    color: 'var(--text-primary)',
     fontFamily: 'inherit',
   };
 
@@ -227,7 +227,7 @@ export default function MoneyHealthCalculator({
                 border: '1px solid rgba(255,255,255,0.12)',
                 borderRadius: '8px',
                 padding: '8px 12px',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '14px',
                 boxSizing: 'border-box',
               }}

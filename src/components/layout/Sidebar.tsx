@@ -163,7 +163,7 @@ export function Sidebar() {
         }}>✦</div>
         {!collapsed && (
           <div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 13, color: '#fff', letterSpacing: '-0.02em' }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 13, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               VarsityOS
             </div>
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7.5, color: 'rgba(168,85,247,0.65)', letterSpacing: '0.14em' }}>

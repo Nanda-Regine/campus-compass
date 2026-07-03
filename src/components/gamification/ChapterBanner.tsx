@@ -54,7 +54,7 @@ export default function ChapterBanner() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 18 }}>{chapter.emoji}</span>
-            <span style={{ fontFamily: "'Sora', 'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: '0.9rem', color: '#fff' }}>
+            <span style={{ fontFamily: "'Sora', 'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
               {chapter.name.replace(/[^\x20-\x7E\xC0-\xFF]/g, '').trim() || chapter.name}
             </span>
           </div>

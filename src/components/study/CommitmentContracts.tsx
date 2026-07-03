@@ -248,7 +248,7 @@ export default function CommitmentContracts() {
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#4ecf9e', letterSpacing: '0.18em' }}>
             🤝 COMMITMENT CONTRACTS
           </div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', marginTop: 3 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
             Stake your XP on your word
           </div>
         </div>
@@ -278,7 +278,7 @@ export default function CommitmentContracts() {
             <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: accent, letterSpacing: '0.12em', marginBottom: 6 }}>
               {isPassed ? '⏰ DEADLINE PASSED' : isNear ? '⚡ ALMOST DUE' : '🎯 ACTIVE CONTRACT'}
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 6, lineHeight: 1.35 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.35 }}>
               {active.task_description}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>

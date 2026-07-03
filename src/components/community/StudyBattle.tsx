@@ -63,7 +63,7 @@ function CreateForm({ onCreated, onCancel }: { onCreated: (b: Battle) => void; o
 
   return (
     <div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 4 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Challenge someone to a study battle
       </div>
       <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 18, lineHeight: 1.5 }}>
@@ -197,7 +197,7 @@ function JoinForm({ onJoined, onCancel }: { onJoined: (b: Battle) => void; onCan
 
   return (
     <div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', marginBottom: 14 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 14 }}>
         Join a battle by code
       </div>
       <input
@@ -490,7 +490,7 @@ export default function StudyBattle() {
   // Lobby
   return (
     <div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: '#fff', marginBottom: 4 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Study Battles ⚔️
       </div>
       <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 16, lineHeight: 1.5 }}>
@@ -504,7 +504,7 @@ export default function StudyBattle() {
           background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.25)',
         }}>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#c9a84c', marginBottom: 4 }}>ACTIVE BATTLE</div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: '#fff' }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'var(--text-primary)' }}>
             Code: {activeBattle.battle_code} · {activeBattle.end_at ? formatCountdown(activeBattle.end_at) : ''}
           </div>
         </div>
@@ -516,7 +516,7 @@ export default function StudyBattle() {
           background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
         }}>
           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>WAITING FOR OPPONENT</div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: '#fff' }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'var(--text-primary)' }}>
             Code: {pendingBattle.battle_code}
           </div>
         </div>
