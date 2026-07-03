@@ -80,6 +80,7 @@ export function ProcrastinationReflectionModal({ trigger, taskDesc, onClose, onS
     }}>
       <div style={{
         background: '#0d1225', borderRadius: 22, padding: 28, maxWidth: 420, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
         border: '1px solid rgba(255,107,107,0.2)',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#ff6b6b', letterSpacing: '0.18em', marginBottom: 10 }}>

@@ -105,6 +105,7 @@ function CreateForm({ tasks, onSave, onCancel }: CreateFormProps) {
       <div style={{
         background: '#0d1225', borderRadius: 20, padding: 26,
         border: '1px solid rgba(255,255,255,0.1)', maxWidth: 400, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#7090d0', letterSpacing: '0.18em', marginBottom: 12 }}>
           📅 IMPLEMENTATION INTENTION

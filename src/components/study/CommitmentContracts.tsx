@@ -110,6 +110,7 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
       <div style={{
         background: '#0d1225', border: '1px solid rgba(255,255,255,0.1)',
         borderRadius: 20, padding: 28, maxWidth: 420, width: '100%',
+        maxHeight: '85dvh', overflowY: 'auto',
         animation: 'cc-slide 0.3s ease',
       }}>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#4ecf9e', letterSpacing: '0.18em', marginBottom: 12 }}>

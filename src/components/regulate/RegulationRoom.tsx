@@ -96,7 +96,7 @@ function TimerModal({ label, seconds, onClose, onDone }: { label: string; second
       onClick={() => { stop(); onClose() }}
     >
       <div
-        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 340, textAlign: 'center' }}
+        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 340, maxHeight: '85dvh', overflowY: 'auto', textAlign: 'center' }}
         onClick={e => e.stopPropagation()}
       >
         <p style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{label}</p>
@@ -149,7 +149,7 @@ function PMRModal({ onClose, onDone }: { onClose: () => void; onDone: () => void
       onClick={() => onClose()}
     >
       <div
-        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 360, textAlign: 'center' }}
+        style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 36, width: '100%', maxWidth: 360, maxHeight: '85dvh', overflowY: 'auto', textAlign: 'center' }}
         onClick={e => e.stopPropagation()}
       >
         {step === -1 ? (

@@ -691,6 +691,13 @@ html.light {
   opacity: 1;
 }
 
+/* Light Mode: rescue hardcoded dark-mode white text (rgba white) so it stays
+   readable on the cream background — mirrors the outdoor catch-all above. Does
+   not touch solid-hex colours (#fff on coloured buttons stays intentional). */
+:is([data-theme="light"],html.light) [style*="rgba(255,255,255,0."] {
+  color: var(--text-primary) !important;
+}
+
 /* ── Base Reset ──────────────────────────────────────────── */
 
 *, *::before, *::after {

@@ -295,7 +295,7 @@ function GradeCalcCard({
                 />
                 <button
                   onClick={() => removeAssessment(a.id)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40, minHeight: 40 }}
                 >
                   <Trash2 size={12} />
                 </button>

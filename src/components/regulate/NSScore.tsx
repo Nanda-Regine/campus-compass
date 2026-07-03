@@ -170,7 +170,7 @@ export default function NSScore({ userId }: Props) {
           onClick={() => setShowModal(false)}
         >
           <div
-            style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 28, width: '100%', maxWidth: 360 }}
+            style={{ background: '#13131a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: 28, width: '100%', maxWidth: 360, maxHeight: '85dvh', overflowY: 'auto' }}
             onClick={e => e.stopPropagation()}
           >
             <p style={{ color: '#e5e7eb', fontSize: 18, fontWeight: 700, marginBottom: 20 }}>Quick Check-In</p>

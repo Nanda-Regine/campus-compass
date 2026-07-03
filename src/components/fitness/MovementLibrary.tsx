@@ -791,9 +791,11 @@ export default function MovementLibrary() {
       {/* Circuit Panel */}
       {circuit.length > 0 && !timerActive && !workoutComplete && (
         <div
+          // Sit above the mobile bottom nav (z-50, 60px) so the Start Workout
+          // CTA isn't covered/untappable; flush to the bottom on md+ (no nav).
+          className="z-[60] bottom-[calc(60px+env(safe-area-inset-bottom))] md:bottom-0"
           style={{
             position: 'fixed',
-            bottom: 0,
             left: 0,
             right: 0,
             background: 'rgba(10,10,15,0.96)',

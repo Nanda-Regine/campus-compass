@@ -408,7 +408,7 @@ function CookingMode({ recipe, onClose }: { recipe: Recipe; onClose: () => void 
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24,
     }}>
       <div style={{
-        maxWidth: 440, width: '100%',
+        maxWidth: 440, width: '100%', maxHeight: '85dvh', overflowY: 'auto',
         background: '#0d1225', borderRadius: 24, padding: '28px 26px',
         border: '1px solid rgba(255,255,255,0.08)',
         animation: 'rt-in 0.3s ease',
