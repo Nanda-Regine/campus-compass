@@ -20,6 +20,8 @@ export async function GET(_request: NextRequest) {
 
     const rl = await checkRateLimitAsync(user.id, 'checkin', 5, 60_000)
     if (!rl.allowed) return NextResponse.json({ error: 'Rate limit exceeded.' }, { status: 429 })
+    const rlDay = await checkRateLimitAsync(user.id, 'checkin-day', 20, 86_400_000)
+    if (!rlDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow.' }, { status: 429 })
 
     const { start, end } = currentMonthRange()
     const now = new Date()

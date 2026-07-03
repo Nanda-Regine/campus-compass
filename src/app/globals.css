@@ -698,6 +698,24 @@ html.light {
   color: var(--text-primary) !important;
 }
 
+/* ── Study pages: text pops on the dark navy day-gradient (DARK MODE ONLY) ──
+   The study tabs sit on a deep navy/purple header gradient where --text-muted
+   (#3D395E) and low-alpha white labels read too dim. Lift both. Scoped to
+   `.study-page` and to non-light/non-outdoor themes, so Sunrise/Outdoor keep
+   using their own rescues (light text here would be invisible on cream). */
+html:not(.light):not(.outdoor) .study-page {
+  --text-muted:    #8681ab;   /* was #3D395E */
+  --text-tertiary: #c2bce2;   /* was #9C96C2 — a touch brighter */
+}
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.2)"],
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.25)"],
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.3)"],
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.35)"],
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.4)"],
+html:not(.light):not(.outdoor) .study-page [style*="rgba(255,255,255,0.45)"] {
+  color: rgba(255,255,255,0.75) !important;
+}
+
 /* ── Base Reset ──────────────────────────────────────────── */
 
 *, *::before, *::after {

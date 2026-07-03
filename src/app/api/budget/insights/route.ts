@@ -19,6 +19,8 @@ export async function GET(_request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     // Rate limit: max 5 budget analyses per minute
+    const rateDay = await checkRateLimitAsync(user.id, 'budget-insights-day', 30, 86_400_000)
+    if (!rateDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow.' }, { status: 429 })
     const rateCheck = await checkRateLimitAsync(user.id, 'budget-insights', 5, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })

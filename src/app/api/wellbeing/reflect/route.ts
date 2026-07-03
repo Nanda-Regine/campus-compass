@@ -3,9 +3,7 @@ export const dynamic = 'force-dynamic'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-// In-memory rate limit: 5 reflections per 10 min per user
-const RL = new Map<string, { count: number; reset: number }>()
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 const CRISIS_WORDS = ['suicide', 'kill myself', 'end my life', 'self-harm', 'hurt myself', 'no reason to live']
 
@@ -17,17 +15,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Rate limit
-  const now = Date.now()
-  const rl = RL.get(user.id)
-  if (rl && now < rl.reset) {
-    if (rl.count >= 5) return NextResponse.json({ error: 'Rate limit — wait a few minutes' }, { status: 429 })
-    rl.count++
-  } else {
-    RL.set(user.id, { count: 1, reset: now + 10 * 60 * 1000 })
-  }
+  // Shared (Upstash-backed) limiter — 5 reflections / 10 min.
+  const rl = await checkRateLimitAsync(user.id, 'wellbeing-reflect', 5, 10 * 60 * 1000)
+  if (!rl.allowed) return NextResponse.json({ error: 'Rate limit — wait a few minutes' }, { status: 429 })
 
-  const { entry_text } = await request.json()
+  const { entry_text } = await request.json().catch(() => ({})) as { entry_text?: string }
   if (!entry_text?.trim() || entry_text.trim().length < 10)
     return NextResponse.json({ error: 'Entry too short' }, { status: 400 })
 

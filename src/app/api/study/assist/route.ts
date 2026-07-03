@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     if (!process.env.GROQ_API_KEY) return groqUnconfiguredResponse()
 
+    const rateDay = await checkRateLimitAsync(user.id, 'study-assist-day', 60, 86_400_000)
+    if (!rateDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow.' }, { status: 429 })
     const rateCheck = await checkRateLimitAsync(user.id, 'study-assist', 10, 60_000)
     if (!rateCheck.allowed) {
       return NextResponse.json({ error: 'Too many requests — please wait a moment' }, { status: 429 })

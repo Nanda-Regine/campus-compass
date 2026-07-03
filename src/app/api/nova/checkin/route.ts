@@ -19,6 +19,8 @@ export async function GET() {
 
     const rl = await checkRateLimitAsync(user.id, 'nova_checkin', 5, 60_000)
     if (!rl.allowed) return NextResponse.json({ error: 'Rate limit' }, { status: 429 })
+    const rlDay = await checkRateLimitAsync(user.id, 'nova_checkin_day', 30, 86_400_000)
+    if (!rlDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow.' }, { status: 429 })
 
     const { start, end } = currentMonthRange()
     const now = new Date()

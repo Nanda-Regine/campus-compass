@@ -4,42 +4,31 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { groqUnconfiguredResponse } from '@/lib/groq'
+import { checkRateLimitAsync } from '@/lib/rateLimit'
 
 const GROQ_BASE  = 'https://api.groq.com/openai/v1'
 const KIT_MODEL  = 'llama-3.3-70b-versatile'   // better JSON adherence than 8b
 const MAX_TEXT   = 5000
 const MIN_TEXT   = 50
 
-// Simple per-user rate limit — 5 generations per 5 minutes in-memory
-const rateLimits = new Map<string, { count: number; resetAt: number }>()
-
-function checkRateLimit(userId: string): boolean {
-  const now    = Date.now()
-  const window = 5 * 60 * 1000  // 5 minutes
-  const limit  = 5
-
-  const entry = rateLimits.get(userId)
-  if (!entry || entry.resetAt < now) {
-    rateLimits.set(userId, { count: 1, resetAt: now + window })
-    return true
-  }
-  if (entry.count >= limit) return false
-  entry.count++
-  return true
-}
-
 export async function POST(request: NextRequest) {
+ try {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  if (!checkRateLimit(user.id))
+  // Shared (Upstash-backed) limiter — the old in-memory Map reset on every cold
+  // start, so the Groq key was effectively unprotected at scale.
+  const rl = await checkRateLimitAsync(user.id, 'generate-kit', 5, 5 * 60 * 1000)
+  if (!rl.allowed)
     return NextResponse.json({ error: 'Rate limit: 5 generations per 5 minutes' }, { status: 429 })
 
   const key = process.env.GROQ_API_KEY
   if (!key) return groqUnconfiguredResponse()
 
-  const { text, subject } = await request.json()
+  const body = await request.json().catch(() => null) as { text?: unknown; subject?: unknown } | null
+  const text = body?.text
+  const subject = body?.subject
   if (!text || typeof text !== 'string')
     return NextResponse.json({ error: 'text required' }, { status: 400 })
 
@@ -114,10 +103,14 @@ Return ONLY this JSON (no other text):
   try {
     kit = JSON.parse(raw)
   } catch {
-    // Try to extract JSON block if model added surrounding text
+    // Try to extract a JSON block if the model added surrounding text.
     const match = raw.match(/\{[\s\S]*\}/)
-    if (!match) return NextResponse.json({ error: 'AI returned invalid format. Try again.' }, { status: 502 })
-    kit = JSON.parse(match[0])
+    try {
+      if (!match) throw new Error('no json')
+      kit = JSON.parse(match[0])
+    } catch {
+      return NextResponse.json({ error: 'AI returned invalid format. Try again.' }, { status: 502 })
+    }
   }
 
   // Sanitise output
@@ -143,4 +136,8 @@ Return ONLY this JSON (no other text):
   }
 
   return NextResponse.json(sanitised)
+ } catch (err) {
+  console.error('[generate-kit]', err)
+  return NextResponse.json({ error: 'Something went wrong. Try again.' }, { status: 500 })
+ }
 }
