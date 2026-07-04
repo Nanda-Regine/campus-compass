@@ -137,8 +137,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => { unsubOrch(); unsubRules() }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Locked to the default dark theme — light/outdoor themes were removed.
+  // forcedTheme makes setTheme a no-op and always applies `dark`.
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="varsityos-theme">
+    <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false} storageKey="varsityos-theme">
       <PostHogProvider client={posthog}>
         <PostHogPageView />
         <OfflineSyncRunner />

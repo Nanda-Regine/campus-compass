@@ -12,7 +12,6 @@ import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { SA_LANGUAGES } from '@/types'
 import InstitutionPicker from '@/components/profile/InstitutionPicker'
 import { cn } from '@/lib/utils'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { DataSaverToggle } from '@/components/ui/DataSaverToggle'
 import { getStoredLocale, type AppLocale } from '@/lib/i18n/IntlProvider'
 
@@ -991,12 +990,6 @@ export default function ProfileClient() {
               </div>
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
                 <div className="px-1 space-y-2">
-                  <div>
-                    <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                      Outdoor mode increases contrast for bright South African sunlight.
-                    </p>
-                    <ThemeToggle />
-                  </div>
                   <div>
                     <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
                       Data Saver skips auto-loading AI content to protect your prepaid data.
