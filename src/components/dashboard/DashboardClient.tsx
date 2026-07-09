@@ -9,7 +9,7 @@ import {
   type Module, type TimetableEntry, type Expense,
   type Subscription,
 } from '@/types'
-import { getDaysUntil, calcTotalBudget } from '@/lib/utils'
+import { getDaysUntil, calcTotalBudget, sastHour } from '@/lib/utils'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import { getDataSaverEnabled, onDataSaverChange } from '@/lib/dataSaver'
 import { getDayMode } from '@/components/dashboard/DayModeBanner'
@@ -147,7 +147,10 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
   const [novaCheckin, setNovaCheckin] = useState<string | null>(null)
   const [streakDays, setStreakDays] = useState(0)
   const [streakTodayDone, setStreakTodayDone] = useState(false)
-  const [currentHour, setCurrentHour] = useState(() => new Date().getHours())
+  // SAST hour, computed identically on server (UTC) + client so DayModeBanner renders
+  // the same markup on both — a raw new Date().getHours() differed by 2h and caused a
+  // hydration mismatch that tripped the dashboard error boundary ("couldn't load").
+  const [currentHour, setCurrentHour] = useState(() => sastHour())
   const [todayStudyMins] = useState(initialData.todayStudyMins)
   const [lastSleepHours] = useState<number | null>(initialData.lastSleepHours)
   const [weekWorkouts] = useState(initialData.weekWorkouts)
@@ -295,7 +298,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
 
   // 9. Keep currentHour in sync
   useEffect(() => {
-    const update = () => setCurrentHour(new Date().getHours())
+    const update = () => setCurrentHour(sastHour())
     const now = new Date()
     const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
     let interval: ReturnType<typeof setInterval> | null = null

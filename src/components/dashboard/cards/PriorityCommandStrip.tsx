@@ -2,13 +2,15 @@
 
 import Link from 'next/link'
 import { type Task, type Exam, type Module } from '@/types'
-import { getDaysUntil } from '@/lib/utils'
+import { getDaysUntil, sastToday } from '@/lib/utils'
 
 export default function PriorityCommandStrip({ tasks, exams, totalBudget, remaining }: {
   tasks: Task[]; exams: Exam[]; totalBudget: number; remaining: number
 }) {
-  const _now = new Date()
-  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
+  // SAST date on both server + client — a local new Date() (UTC on Vercel) made the
+  // date-filtered `items` empty on one side and not the other near midnight, flipping
+  // the `return null` below and crashing hydration.
+  const todayStr = sastToday()
 
   const overdueList = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr)
   const dueTodayList = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date === todayStr)

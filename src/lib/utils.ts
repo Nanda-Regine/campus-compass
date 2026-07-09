@@ -38,8 +38,40 @@ export const fmt = {
 }
 
 // ─── Date helpers ─────────────────────────────────────────────
+// Current hour (0-23) in South African Standard Time, computed the SAME way on the
+// server (Vercel runs UTC) and in the browser (SAST, UTC+2). Deriving the hour from
+// the local `new Date().getHours()` made SSR and client hydration disagree by 2h,
+// producing hydration mismatches on hour-dependent UI (e.g. the DayModeBanner, which
+// returns null for 'sleep' mode) that tripped the dashboard error boundary.
+export function sastHour(): number {
+  return Number(
+    new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      hourCycle: 'h23',
+      timeZone: 'Africa/Johannesburg',
+    }).format(new Date())
+  )
+}
+
+// Current date as YYYY-MM-DD in SAST, computed identically on the server (UTC) and in
+// the browser. Date-filtered dashboard UI that used a local `new Date()` disagreed
+// across the UTC/SAST midnight window — which flipped PriorityCommandStrip between
+// rendering and returning null (a structural hydration mismatch → crash). en-CA
+// formats as YYYY-MM-DD.
+export function sastToday(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Johannesburg' }).format(new Date())
+}
+
+// `days` offset from SAST today, still YYYY-MM-DD. Uses UTC math on the fixed date
+// string so the result is identical on server and client.
+export function sastDatePlus(days: number): string {
+  const d = new Date(`${sastToday()}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().split('T')[0]
+}
+
 export function getGreeting(): string {
-  const h = new Date().getHours()
+  const h = sastHour()
   if (h < 12) return 'Good morning'
   if (h < 17) return 'Good afternoon'
   return 'Good evening'
