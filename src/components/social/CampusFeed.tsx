@@ -192,7 +192,7 @@ function PostCard({
             </span>
             {post.is_own ? (
               <button
-                onClick={() => onDelete(post.id)}
+                onClick={() => { if (confirm('Delete this post?')) onDelete(post.id) }}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 4, display: 'flex', alignItems: 'center' }}
               >
                 <Trash2 size={13} />

@@ -1,5 +1,6 @@
 import type { TimetableEntry } from '@/types'
 import { type DayMode } from '@/components/dashboard/DayModeBanner'
+import { sastHour } from '@/lib/utils'
 
 /* ── DayMode-driven design tokens ─────────────────────────── */
 export const DASH_THEME: Record<DayMode, {
@@ -61,7 +62,7 @@ export const MODE_LABEL: Record<DayMode, { label: string; emoji: string }> = {
 
 /* ── helpers ─────────────────────────────────────────────── */
 export function getGreeting() {
-  const h = new Date().getHours()
+  const h = sastHour()  // SAST on both server + client — avoids hydration mismatch
   if (h < 12) return 'Good morning'
   if (h < 17) return 'Good afternoon'
   return 'Good evening'

@@ -427,7 +427,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                           </div>
                         )}
                         <button
-                          onClick={e => { e.stopPropagation(); deleteEntry(entry.id) }}
+                          onClick={e => { e.stopPropagation(); if (confirm('Delete this timetable slot?')) deleteEntry(entry.id) }}
                           className="hidden group-hover:flex items-center justify-center"
                           style={{
                             position: 'absolute', top: 2, right: 2,

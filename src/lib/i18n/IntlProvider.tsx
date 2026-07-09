@@ -51,7 +51,16 @@ export function IntlProvider({ children }: { children: React.ReactNode }) {
   }, [profile?.preferred_language])
 
   return (
-    <NextIntlClientProvider locale={locale} messages={MESSAGES[locale]}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={MESSAGES[locale]}
+      // App is South-Africa only. A fixed timeZone keeps next-intl date/number
+      // formatting identical on the server (UTC) and client (SAST), avoiding the
+      // ENVIRONMENT_FALLBACK warning and any markup mismatch on hydration.
+      timeZone="Africa/Johannesburg"
+      // Never let a missing translation / env fallback bubble up and crash a page.
+      onError={() => {}}
+    >
       {children}
     </NextIntlClientProvider>
   )

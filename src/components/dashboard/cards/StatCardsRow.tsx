@@ -1,17 +1,16 @@
 'use client'
 
 import { type Task, type Exam } from '@/types'
-import { getDaysUntil } from '@/lib/utils'
+import { getDaysUntil, sastToday, sastDatePlus } from '@/lib/utils'
 import { FlameIcon } from '../dashboardHelpers'
 
 export default function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streakTodayDone, todayStudyMins, lastSleepHours, weekWorkouts }: {
   remaining: number; totalBudget: number; tasks: Task[]; exams: Exam[]; streakDays: number; streakTodayDone: boolean
   todayStudyMins: number; lastSleepHours: number | null; weekWorkouts: number
 }) {
-  const _now = new Date()
-  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`
-  const _w = new Date(_now); _w.setDate(_now.getDate() + 7)
-  const weekAheadStr = `${_w.getFullYear()}-${String(_w.getMonth()+1).padStart(2,'0')}-${String(_w.getDate()).padStart(2,'0')}`
+  // SAST dates, identical on server + client (avoids a near-midnight hydration mismatch)
+  const todayStr = sastToday()
+  const weekAheadStr = sastDatePlus(7)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
   const nextExam = exams[0]
