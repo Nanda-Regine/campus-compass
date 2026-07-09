@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout'
 import { createClient } from '@/lib/supabase/client'
 import { dispatchXP } from '@/lib/xp-engine'
 import { AmbientImage } from '@/components/ui/AmbientImage'
@@ -216,7 +217,7 @@ export default function MutualAidBoard({
       const params = new URLSearchParams()
       if (typeFilter !== 'all') params.set('type', typeFilter)
       if (categoryFilter !== 'all') params.set('category', categoryFilter)
-      const res = await fetch(`/api/community/mutual-aid?${params.toString()}`)
+      const res = await fetchWithTimeout(`/api/community/mutual-aid?${params.toString()}`)
       const json = await res.json() as { data?: MutualAidRequest[]; error?: string }
       if (json.error) throw new Error(json.error)
       setItems(json.data ?? [])
@@ -233,7 +234,7 @@ export default function MutualAidBoard({
   }, [loadItems])
 
   async function handleFulfill(id: string) {
-    const res = await fetch('/api/community/mutual-aid', {
+    const res = await fetchWithTimeout('/api/community/mutual-aid', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, is_fulfilled: true }),
@@ -260,7 +261,7 @@ export default function MutualAidBoard({
       }
       if (postForm.expires_at) payload.expiry_date = postForm.expires_at
 
-      const res = await fetch('/api/community/mutual-aid', {
+      const res = await fetchWithTimeout('/api/community/mutual-aid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

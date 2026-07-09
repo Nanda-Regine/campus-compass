@@ -510,7 +510,7 @@ export default function PastPaperVault({ userId }: Props) {
                   position: 'relative',
                 }}>
                   <button
-                    onClick={() => handleDelete(paper.id)}
+                    onClick={() => { if (confirm('Delete this past paper?')) handleDelete(paper.id) }}
                     style={{
                       position: 'absolute',
                       top: '12px',

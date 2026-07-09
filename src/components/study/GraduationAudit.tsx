@@ -542,7 +542,7 @@ export default function GraduationAudit() {
             <div key={m.id ?? i} style={{ position: 'relative' }}>
               <ModuleRow module={m} minPass={config.minPassMark} />
               {m.id && (
-                <button onClick={() => deleteModule(m.id!)}
+                <button onClick={() => { if (confirm('Remove this module from your graduation plan?')) deleteModule(m.id!) }}
                   style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.7rem', opacity: 0.5, padding: '2px 6px' }}
                   title="Remove">✕</button>
               )}

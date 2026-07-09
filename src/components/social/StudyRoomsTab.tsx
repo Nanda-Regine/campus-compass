@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout'
 import { dispatchXP } from '@/lib/xp-engine'
 
 interface Room {
@@ -42,7 +43,7 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
   const load = useCallback(async () => {
     try {
       const url = userInstitution ? `/api/social/study-rooms?institution=${encodeURIComponent(userInstitution)}` : '/api/social/study-rooms'
-      const res = await fetch(url)
+      const res = await fetchWithTimeout(url)
       const data = await res.json()
       setRooms(data.rooms || [])
     } catch { /* ignore */ }
@@ -61,7 +62,7 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
     setBusy(room.id)
     const action = room.is_member ? 'leave' : 'join'
     try {
-      const res = await fetch(`/api/social/study-rooms?id=${room.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
+      const res = await fetchWithTimeout(`/api/social/study-rooms?id=${room.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
       if (!res.ok) throw new Error('request failed')
       // Award XP only AFTER the join actually persisted (was firing before the request).
       if (action === 'join' && !joinedXp.current) { joinedXp.current = true; dispatchXP('body_double_joined') }
@@ -76,7 +77,7 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
     if (!form.name.trim()) return
     setBusy('create')
     try {
-      const res = await fetch('/api/social/study-rooms', {
+      const res = await fetchWithTimeout('/api/social/study-rooms', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, institution: userInstitution }),
       })
@@ -87,7 +88,7 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
   async function endRoom(id: string) {
     setBusy(id)
     setRooms(list => list.filter(r => r.id !== id))
-    try { await fetch(`/api/social/study-rooms?id=${id}`, { method: 'DELETE' }) } finally { setBusy(null) }
+    try { await fetchWithTimeout(`/api/social/study-rooms?id=${id}`, { method: 'DELETE' }) } finally { setBusy(null) }
   }
 
   return (

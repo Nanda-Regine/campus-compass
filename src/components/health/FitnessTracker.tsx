@@ -352,7 +352,7 @@ export default function FitnessTracker() {
                     </button>
                     {/* Delete button */}
                     <button
-                      onClick={() => deleteLog(l.id)}
+                      onClick={() => { if (confirm('Remove this workout?')) deleteLog(l.id) }}
                       title="Remove workout"
                       style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', color: 'var(--text-muted)', fontSize: '0.75rem', lineHeight: 1 }}
                     >

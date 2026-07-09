@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout'
 import { loadXPState } from '@/lib/xp-engine'
 
 interface Entry {
@@ -41,7 +42,7 @@ export default function CampusLeaderboard() {
     if (f === 'uni' && myUni)  params.set('university', myUni)
     if (f === 'year' && myYear) params.set('year', String(myYear))
     try {
-      const res = await fetch(`/api/leaderboard?${params}`)
+      const res = await fetchWithTimeout(`/api/leaderboard?${params}`)
       if (!res.ok) throw new Error()
       const d = await res.json()
       setEntries(d.entries ?? [])
@@ -61,7 +62,7 @@ export default function CampusLeaderboard() {
 
   useEffect(() => {
     // Fetch profile info for filter values (best-effort, from the "me" row)
-    fetch('/api/profile/me').then(r => r.ok ? r.json() : null).then(d => {
+    fetchWithTimeout('/api/profile/me').then(r => r.ok ? r.json() : null).then(d => {
       if (d?.university)    setMyUni(d.university)
       if (d?.year_of_study) setMyYear(d.year_of_study)
     }).catch(() => {})

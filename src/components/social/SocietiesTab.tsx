@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { fetchWithTimeout } from '@/lib/fetchWithTimeout'
 
 interface Society {
   id: string
@@ -41,7 +42,7 @@ export default function SocietiesTab({ userInstitution }: { userId: string; user
     setLoading(true)
     try {
       const url = userInstitution ? `/api/social/societies?institution=${encodeURIComponent(userInstitution)}` : '/api/social/societies'
-      const res = await fetch(url)
+      const res = await fetchWithTimeout(url)
       const data = await res.json()
       setSocieties(data.societies || [])
     } catch { /* ignore */ }
@@ -56,7 +57,7 @@ export default function SocietiesTab({ userInstitution }: { userId: string; user
     const snapshot = societies // for rollback if the request fails
     setSocieties(list => list.map(x => x.id === s.id ? { ...x, is_member: !x.is_member, member_count: x.member_count + (x.is_member ? -1 : 1) } : x))
     try {
-      const res = await fetch(`/api/social/societies?id=${s.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
+      const res = await fetchWithTimeout(`/api/social/societies?id=${s.id}&action=${action}`, { method: 'PATCH', signal: AbortSignal.timeout(10000) })
       if (!res.ok) throw new Error('request failed')
     } catch {
       setSocieties(snapshot) // revert — don't show the user as joined when it didn't persist
@@ -69,7 +70,7 @@ export default function SocietiesTab({ userInstitution }: { userId: string; user
     if (!form.name.trim()) return
     setBusy('create')
     try {
-      const res = await fetch('/api/social/societies', {
+      const res = await fetchWithTimeout('/api/social/societies', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, institution: userInstitution }),
       })
@@ -80,7 +81,7 @@ export default function SocietiesTab({ userInstitution }: { userId: string; user
   async function remove(id: string) {
     setBusy(id)
     setSocieties(list => list.filter(x => x.id !== id))
-    try { await fetch(`/api/social/societies?id=${id}`, { method: 'DELETE' }) } finally { setBusy(null) }
+    try { await fetchWithTimeout(`/api/social/societies?id=${id}`, { method: 'DELETE' }) } finally { setBusy(null) }
   }
 
   const filtered = societies.filter(s =>

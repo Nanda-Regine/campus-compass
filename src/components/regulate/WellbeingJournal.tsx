@@ -290,7 +290,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
                       </p>
                     </div>
                     <button
-                      onClick={ev => { ev.stopPropagation(); deleteEntry(e.id) }}
+                      onClick={ev => { ev.stopPropagation(); if (confirm('Delete this journal entry?')) deleteEntry(e.id) }}
                       style={{ flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: '2px 4px' }}
                     >
                       <Trash2 size={11} />
