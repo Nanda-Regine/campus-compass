@@ -104,11 +104,17 @@ export async function middleware(request: NextRequest) {
   if (process.env.ARCJET_KEY) {
     const aj = await getArcjet()
     if (aj) {
-      const isAiRoute = AI_ROUTES.some(r => pathname.startsWith(r))
-      const decision = await (isAiRoute ? aj.ai : aj.base).protect(request)
-      if (decision.isDenied()) {
-        logSecurityEvent('rate_limited', { reqId, pathname, reason: decision.reason?.toString() ?? 'arcjet' })
-        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+      try {
+        const isAiRoute = AI_ROUTES.some(r => pathname.startsWith(r))
+        const decision = await (isAiRoute ? aj.ai : aj.base).protect(request)
+        if (decision.isDenied()) {
+          logSecurityEvent('rate_limited', { reqId, pathname, reason: decision.reason?.toString() ?? 'arcjet' })
+          return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+        }
+      } catch (err) {
+        // An Arcjet outage/timeout must NEVER take the whole site down — especially not
+        // login/signup during a traffic surge. Fail open (allow the request through).
+        logSecurityEvent('arcjet_error', { reqId, pathname, error: err instanceof Error ? err.message : 'unknown' })
       }
     }
   }
@@ -116,7 +122,16 @@ export async function middleware(request: NextRequest) {
   // ── 4. Supabase session update (page routes only, not API) ───
   let response: NextResponse
   if (!pathname.startsWith('/api/')) {
-    response = await updateSession(request) as NextResponse
+    try {
+      response = await updateSession(request) as NextResponse
+    } catch (err) {
+      // A Supabase/network hiccup in the auth gate must not 500 every page route
+      // (including /auth/login and /auth/signup) and lock everyone out. Fail open —
+      // the destination page still runs its own server-side getUser() check and
+      // redirects if the user is genuinely unauthenticated, and RLS still protects data.
+      logSecurityEvent('middleware_session_error', { reqId, pathname, error: err instanceof Error ? err.message : 'unknown' })
+      response = NextResponse.next()
+    }
   } else {
     response = NextResponse.next()
   }
