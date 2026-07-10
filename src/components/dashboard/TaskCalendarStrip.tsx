@@ -9,6 +9,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { Task } from '@/types'
+import { sastToday } from '@/lib/utils'
 
 type ViewMode = 'day' | 'week'
 
@@ -20,28 +21,24 @@ const P_BG: Record<string, string> = {
   urgent: 'var(--danger-dim)', high: 'var(--coral-dim)', medium: 'var(--gold-dim)', low: 'var(--teal-dim)',
 }
 
-function offsetDateStr(days: number) {
-  const d = new Date()
-  d.setDate(d.getDate() + days)
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-}
-
-function todayStr() { return offsetDateStr(0) }
+// SAST-anchored so the strip renders identically on server (UTC) and client (SAST).
+function todayStr() { return sastToday() }
 
 function getWeekDays(): { date: string; label: string; dayNum: number; isToday: boolean }[] {
-  const today    = new Date()
-  const jsDay    = today.getDay()        // 0 = Sun
-  // Start from Monday of current week
-  const toMon    = jsDay === 0 ? -6 : 1 - jsDay
+  const today = sastToday()
+  // Anchor on SAST today, do the Monday-based week math in UTC on the fixed date string.
+  const base  = new Date(`${today}T00:00:00Z`)
+  const jsDay = base.getUTCDay()          // 0 = Sun
+  const toMon = jsDay === 0 ? -6 : 1 - jsDay
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today)
-    d.setDate(today.getDate() + toMon + i)
-    const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+    const d = new Date(base)
+    d.setUTCDate(base.getUTCDate() + toMon + i)
+    const iso = d.toISOString().slice(0, 10)
     return {
       date:    iso,
-      label:   DAY_ABBR[d.getDay()],
-      dayNum:  d.getDate(),
-      isToday: iso === todayStr(),
+      label:   DAY_ABBR[d.getUTCDay()],
+      dayNum:  d.getUTCDate(),
+      isToday: iso === today,
     }
   })
 }

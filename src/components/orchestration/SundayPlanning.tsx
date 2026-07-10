@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
+import { sastToday } from '@/lib/utils'
 
 interface WeeklyPlan {
   weekStart: string           // Monday's date (YYYY-MM-DD)
@@ -50,8 +51,9 @@ function buildWeeklyPlan(priorities: string[], wins: string[], blockers: string[
 type Stage = 'intro' | 'wins' | 'priorities' | 'blockers' | 'plan'
 
 export default function SundayPlanning() {
-  const today = new Date()
-  const isSunday = today.getDay() === 0
+  // SAST day-of-week, identical on server (UTC) and client — a raw new Date().getDay()
+  // disagreed near midnight and flipped this label/colour on hydration.
+  const isSunday = new Date(`${sastToday()}T00:00:00Z`).getUTCDay() === 0
   const userId = useAppStore((s) => s.userId)
 
   const [open, setOpen] = useState(false)

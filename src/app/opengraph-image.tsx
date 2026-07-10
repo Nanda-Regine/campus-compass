@@ -1,5 +1,10 @@
 import { ImageResponse } from 'next/og'
 
+// Keep the edge runtime. On the Node runtime @vercel/og prerenders this at build
+// time and its font handling throws "Cannot read properties of undefined (reading
+// 'trim')", failing the whole build. On edge the same vendored bug can surface as a
+// rare, non-fatal runtime error for social-share crawlers only (no app impact). A
+// real fix needs an explicit bundled font passed to ImageResponse.
 export const runtime = 'edge'
 export const alt = 'VarsityOS — The super-app for South African university students'
 export const size = { width: 1200, height: 630 }

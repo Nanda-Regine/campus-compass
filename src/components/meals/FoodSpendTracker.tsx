@@ -79,7 +79,11 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
   const [showCustom,  setShowCustom]  = useState(false)
   const [customDesc,  setCustomDesc]  = useState('')
   const [customAmt,   setCustomAmt]   = useState('')
-  const [tipIdx]                      = useState(() => Math.floor(Math.random() * STRETCH_TIPS.length))
+  // Start at 0 for a stable server/client first render, then pick a random tip on mount
+  // (a random useState initializer runs on both sides and warns on hydration).
+  const [tipIdx, setTipIdx]           = useState(0)
+
+  useEffect(() => { setTipIdx(Math.floor(Math.random() * STRETCH_TIPS.length)) }, [])
 
   useEffect(() => {
     const load = async () => {
