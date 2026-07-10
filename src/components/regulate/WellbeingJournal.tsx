@@ -57,8 +57,12 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
   const [saving,      setSaving]      = useState(false)
   const [reflection,  setReflection]  = useState<string | null>(null)
   const [isCrisis,    setIsCrisis]    = useState(false)
-  const [promptIdx]                   = useState(() => Math.floor(Math.random() * PROMPTS.length))
+  // Stable 0 on first render (server + client match), then randomise on mount — a
+  // random useState initializer runs on both sides and warns on hydration.
+  const [promptIdx,   setPromptIdx]   = useState(0)
   const [expanded,    setExpanded]    = useState<string | null>(null)
+
+  useEffect(() => { setPromptIdx(Math.floor(Math.random() * PROMPTS.length)) }, [])
 
   useEffect(() => {
     fetch('/api/wellbeing/journal?limit=20')

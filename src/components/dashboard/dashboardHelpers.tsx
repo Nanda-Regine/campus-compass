@@ -1,6 +1,6 @@
 import type { TimetableEntry } from '@/types'
 import { type DayMode } from '@/components/dashboard/DayModeBanner'
-import { sastHour } from '@/lib/utils'
+import { sastHour, sastToday } from '@/lib/utils'
 
 /* ── DayMode-driven design tokens ─────────────────────────── */
 export const DASH_THEME: Record<DayMode, {
@@ -69,13 +69,15 @@ export function getGreeting() {
 }
 
 export function getWeekBadge() {
-  const now = new Date()
-  const day = now.getDay()
-  const weekStart = new Date(now)
-  weekStart.setDate(now.getDate() - (day === 0 ? 6 : day - 1))
+  // Anchor on SAST today and do all week math + formatting in UTC, so the label is
+  // identical on server (UTC) and client (SAST) — no hydration mismatch near midnight.
+  const base = new Date(`${sastToday()}T00:00:00Z`)
+  const day = base.getUTCDay()
+  const weekStart = new Date(base)
+  weekStart.setUTCDate(base.getUTCDate() - (day === 0 ? 6 : day - 1))
   const weekEnd = new Date(weekStart)
-  weekEnd.setDate(weekStart.getDate() + 6)
-  const f = (d: Date) => d.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' })
+  weekEnd.setUTCDate(weekStart.getUTCDate() + 6)
+  const f = (d: Date) => d.toLocaleDateString('en-ZA', { month: 'short', day: 'numeric', timeZone: 'UTC' })
   return `${f(weekStart)} – ${f(weekEnd)}`
 }
 

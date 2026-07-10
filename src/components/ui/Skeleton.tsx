@@ -19,12 +19,16 @@ export function Skeleton({ className, style }: { className?: string; style?: Rea
   )
 }
 
+// Deterministic line widths — a random width per render differs between the server
+// and client render and warns on hydration; this keeps the varied look without it.
+const SKELETON_LINE_WIDTHS = ['86%', '72%', '92%', '68%', '80%', '76%']
+
 export function SkeletonCard({ lines = 3 }: SkeletonProps) {
   return (
     <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4 space-y-3">
       <Skeleton className="h-4 w-2/3" />
       {Array.from({ length: lines - 1 }).map((_, i) => (
-        <Skeleton key={i} className="h-3" style={{ width: `${70 + Math.random() * 30}%` } as React.CSSProperties} />
+        <Skeleton key={i} className="h-3" style={{ width: SKELETON_LINE_WIDTHS[i % SKELETON_LINE_WIDTHS.length] }} />
       ))}
     </div>
   )
