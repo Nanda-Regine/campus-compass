@@ -3,6 +3,13 @@ import { redirect } from 'next/navigation'
 import TopBar from '@/components/layout/TopBar'
 import GroupsClient from '@/components/groups/GroupsClient'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Study Groups',
+  description:
+    'Create and join study groups, share resources and collaborate with classmates on VarsityOS.',
+}
 
 export default async function GroupsPage() {
   const supabase = createServerSupabaseClient()

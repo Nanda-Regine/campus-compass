@@ -8,11 +8,16 @@ const APP_URL = 'https://varsityos.co.za'
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
-  const entries: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] }[] = [
-    { path: '',              priority: 1.0, changeFrequency: 'weekly' },
+  const entries: {
+    path: string
+    priority: number
+    changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']
+    images?: string[]
+  }[] = [
+    { path: '',              priority: 1.0, changeFrequency: 'weekly',  images: [`${APP_URL}/opengraph-image`] },
     { path: '/auth/signup',  priority: 0.9, changeFrequency: 'monthly' },
     { path: '/auth/login',   priority: 0.8, changeFrequency: 'monthly' },
-    { path: '/demo',         priority: 0.8, changeFrequency: 'monthly' },
+    { path: '/demo',         priority: 0.8, changeFrequency: 'monthly', images: [`${APP_URL}/opengraph-image`] },
     { path: '/institutions', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/upgrade',      priority: 0.7, changeFrequency: 'monthly' },
     { path: '/security',     priority: 0.5, changeFrequency: 'monthly' },
@@ -27,5 +32,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: now,
     changeFrequency: e.changeFrequency,
     priority: e.priority,
+    ...(e.images ? { images: e.images } : {}),
   }))
 }

@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import StokvelOS from '@/components/finance/StokvelOS'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Stokvel',
+  description:
+    'Run a student stokvel or savings circle — contributions, payouts and shared goals, the Ubuntu way.',
+}
 
 export default async function StokvelPage() {
   const supabase = await createClient()

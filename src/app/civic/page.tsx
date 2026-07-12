@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import CivicEducation from '@/components/civic/CivicEducation'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Civic OS — Student Rights & Democracy',
+  description:
+    'Know your rights as a South African student — SRC, protests, voting and campus democracy explained. Part of VarsityOS.',
+}
 
 export default async function CivicPage() {
   const supabase = await createClient()

@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import EntrepreneurOS from '@/components/entrepreneur/EntrepreneurOS'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Hustle OS — Student Entrepreneur Toolkit',
+  description:
+    'Start and grow a student side-hustle in South Africa — ideas, pricing, invoicing and business tools built for varsity founders.',
+}
 
 export default async function EntrepreneurPage() {
   const supabase = createClient()

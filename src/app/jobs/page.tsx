@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import SAJobBoard from '@/components/career/SAJobBoard'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Student Jobs',
+  description:
+    'Browse part-time jobs, internships and graduate roles for South African students — earn while you study.',
+}
 
 export default async function JobsPage() {
   const supabase = await createClient()

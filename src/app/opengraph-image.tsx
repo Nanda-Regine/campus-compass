@@ -1,10 +1,12 @@
 import { ImageResponse } from 'next/og'
+import { notoSansData } from './ogFont'
+import { logoDataUri } from './ogLogo'
 
-// Keep the edge runtime. On the Node runtime @vercel/og prerenders this at build
-// time and its font handling throws "Cannot read properties of undefined (reading
-// 'trim')", failing the whole build. On edge the same vendored bug can surface as a
-// rare, non-fatal runtime error for social-share crawlers only (no app impact). A
-// real fix needs an explicit bundled font passed to ImageResponse.
+// A font MUST be passed explicitly. Without one, @vercel/og tries to fetch a
+// default font at render time; when that fetch fails (or is unreachable) it
+// throws "Cannot read properties of undefined (reading 'trim')" and the card
+// 500s. The font is embedded as base64 in ./ogFont so rendering never depends on
+// a network fetch or asset resolution — works on edge or node, prod or offline.
 export const runtime = 'edge'
 export const alt = 'VarsityOS — The super-app for South African university students'
 export const size = { width: 1200, height: 630 }
@@ -19,7 +21,7 @@ export default function Image() {
           height: '630px',
           display: 'flex',
           background: '#0b0907',
-          fontFamily: 'sans-serif',
+          fontFamily: '"Noto Sans"',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -59,51 +61,44 @@ export default function Image() {
             position: 'relative',
           }}
         >
-          {/* Brand mark */}
+          {/* Brand mark — the real VarsityOS app icon (embedded) + wordmark */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              marginBottom: '36px',
+              marginBottom: '40px',
             }}
           >
-            <div
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={logoDataUri}
+              width={96}
+              height={96}
+              alt="VarsityOS logo"
               style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '14px',
-                background: 'linear-gradient(135deg, #0d9488, #0f766e)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: '14px',
+                borderRadius: '22px',
+                marginRight: '20px',
+                boxShadow: '0 10px 34px rgba(0,0,0,0.32)',
               }}
-            >
-              <div
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  border: '3px solid rgba(255,255,255,0.9)',
-                }}
-              />
-            </div>
+            />
             <span
               style={{
-                fontSize: '22px',
+                fontSize: '32px',
                 fontWeight: '800',
-                color: 'rgba(255,255,255,0.7)',
-                letterSpacing: '3px',
-                textTransform: 'uppercase',
+                color: '#ffffff',
+                letterSpacing: '1px',
               }}
             >
-              VarsityOS
+              varsity<span style={{ color: '#e07858' }}>os</span>
             </span>
           </div>
 
-          {/* Headline */}
+          {/* Headline — stacked spans (flex column) instead of <br/>, which satori
+              renders unreliably since it defaults divs to flex-row. */}
           <div
             style={{
+              display: 'flex',
+              flexDirection: 'column',
               fontSize: '60px',
               fontWeight: '900',
               color: '#ffffff',
@@ -111,8 +106,7 @@ export default function Image() {
               marginBottom: '20px',
             }}
           >
-            Your varsity life,
-            <br />
+            <span>Your varsity life,</span>
             <span style={{ color: '#e07858' }}>finally under control.</span>
           </div>
 
@@ -126,7 +120,7 @@ export default function Image() {
               maxWidth: '540px',
             }}
           >
-            NSFAS tracking, budget management, study planner, meal prep, and Nova AI — built for SA students.
+            NSFAS tracking, budget management, study planner, meal prep, and Nova AI - built for SA students.
           </div>
 
           {/* Tags */}
@@ -184,7 +178,10 @@ export default function Image() {
                   display: 'flex',
                   alignItems: 'center',
                   padding: '18px 22px',
-                  borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.07)' : undefined,
+                  // A style value of `undefined` makes satori's css-to-react-native
+                  // expander call .trim() on undefined and 500 the whole card, so we
+                  // conditionally spread the border in instead of setting undefined.
+                  ...(i < 3 ? { borderBottom: '1px solid rgba(255,255,255,0.07)' } : {}),
                 }}
               >
                 <div
@@ -248,7 +245,7 @@ export default function Image() {
                   padding: '10px 14px',
                 }}
               >
-                I get it — NSFAS stress is real. Let&apos;s work through this together.
+                I get it - NSFAS stress is real. Let&apos;s work through this together.
               </div>
             </div>
           </div>
@@ -256,6 +253,9 @@ export default function Image() {
 
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      fonts: [{ name: 'Noto Sans', data: notoSansData, weight: 400, style: 'normal' }],
+    },
   )
 }
