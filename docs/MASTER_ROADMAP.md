@@ -1615,8 +1615,11 @@ First automated test suite in the repo. **Vitest** + **happy-dom** (dev deps), `
 
 `src/lib/xp-engine.test.ts` — 21 tests over the XP engine's pure functions: `getLevel` / `getLevelProgress` thresholds, `MYSTERY_LOOT_TABLE` invariants (weights = 100, xp matches the server allowlist), `rollMysteryBox` (always-defined + boundary tiers), `calculateArchetype`, `getUnlockedBadges`, and SAST-anchored `getDomainsHitToday` / `getPendingXP` (a regression guard for the UTC→SAST day-boundary fix). The single Supabase-backed import is mocked so the suite runs in ~0.4s with no network/auth.
 
+Extended (a7b8f29) to `utils` (fmt + SAST/date helpers + budget), `gamification/streak` (incrementStreak via a fake Supabase client), and `security` (sanitizers, validators, threat detection, CSRF) — **56 tests across 4 files**, all pure/isolated.
+
 ```
 53aa346  test(xp-engine): add Vitest harness for the XP engine's pure functions
+a7b8f29  test: extend harness to utils, streak, and security modules
 ```
 
 ---
