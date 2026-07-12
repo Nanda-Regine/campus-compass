@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -84,6 +84,7 @@ export default function SignupForm() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const { loading, signUp, signInWithGoogle } = useAuth()
   const searchParams = useSearchParams()
+  const consentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ref = searchParams.get('ref')
@@ -96,6 +97,7 @@ export default function SignupForm() {
 
   const passwordValue = watch('password') ?? ''
   const emailValue    = watch('email') ?? ''
+  const consentChecked = watch('popia_consent') === true
   const strength      = getPasswordStrength(passwordValue)
   const uniHint       = getUniHint(emailValue)
 
@@ -107,6 +109,13 @@ export default function SignupForm() {
   }
 
   const handleGoogle = async () => {
+    // POPIA requires explicit consent for OAuth signups too, not just the
+    // email/password path — gate the Google button on the same checkbox.
+    if (!consentChecked) {
+      setAuthError('Please tick the Privacy Policy consent box below before continuing.')
+      consentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
     setGoogleLoading(true)
     await signInWithGoogle()
     setGoogleLoading(false)
@@ -250,8 +259,9 @@ export default function SignupForm() {
               {...register('confirmPassword')}
             />
 
-            {/* POPIA explicit consent — required by POPIA s11 */}
-            <div className="rounded-xl border border-white/8 bg-white/3 px-3 py-3">
+            {/* POPIA explicit consent — required by POPIA s11 (gates both the
+                email/password submit and the Google button above) */}
+            <div ref={consentRef} className="rounded-xl border border-white/8 bg-white/3 px-3 py-3">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"

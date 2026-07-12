@@ -23,9 +23,22 @@ export async function GET(request: NextRequest) {
         if (user) {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('onboarding_complete')
+            .select('onboarding_complete, popia_consent')
             .eq('id', user.id)
             .single()
+
+          // Record POPIA consent server-side. The client-side signUp write runs
+          // as anon (no session until confirmation) and is blocked by RLS, so
+          // consent must be stamped here where we hold an authenticated session.
+          // Covers both email/password and Google OAuth — the signup UI gates
+          // each path behind the consent checkbox. Stamp once; never overwrite
+          // the original timestamp on later logins.
+          if (profile && profile.popia_consent !== true) {
+            await supabase
+              .from('profiles')
+              .update({ popia_consent: true, popia_consent_at: new Date().toISOString() })
+              .eq('id', user.id)
+          }
 
           if (!profile?.onboarding_complete) {
             return NextResponse.redirect(`${appUrl}/setup`)
