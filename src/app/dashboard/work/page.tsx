@@ -18,7 +18,7 @@ export default async function WorkPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="career" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="career" opacity={0.18} blurPx={14} saturation={1.2} overlayColor="rgba(5,4,12,0.66)" />
       <TopBar title="Work" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <WorkClient userId={user.id} />

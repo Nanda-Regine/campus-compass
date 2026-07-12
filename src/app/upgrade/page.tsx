@@ -82,7 +82,7 @@ export default async function UpgradePage() {
   return (
     <UpgradeErrorBoundary>
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="nsfas" opacity={0.38} blurPx={5} saturation={1.5} overlayColor="transparent" />
+      <AmbientImage zone="nsfas" opacity={0.15} blurPx={16} saturation={1.5} overlayColor="rgba(5,4,12,0.72)" />
       <TopBar title="Upgrade" />
 
       <div className="max-w-sm mx-auto px-4 py-8">

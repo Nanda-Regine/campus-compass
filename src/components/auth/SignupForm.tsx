@@ -138,7 +138,7 @@ export default function SignupForm() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="onboarding" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="onboarding" opacity={0.15} blurPx={16} saturation={1.4} overlayColor="rgba(5,4,12,0.72)" />
       <div className="px-5 pt-12 pb-8 text-center">
         <Link href="/" className="inline-flex items-center gap-2.5 mb-6">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">

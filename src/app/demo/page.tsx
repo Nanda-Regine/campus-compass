@@ -330,7 +330,7 @@ export default function DemoPage() {
           .demo-nav-label { display: none; }
         }
       `}</style>
-      <AmbientImage zone="dashboard" opacity={0.38} blurPx={5} saturation={1.4} overlayColor="transparent" />
+      <AmbientImage zone="dashboard" opacity={0.26} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.55)" />
 
       {/* Nav */}
       <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', background: 'rgba(5,4,12,0.92)', borderBottom: '1px solid rgba(148,111,255,0.12)', backdropFilter: 'blur(20px)' }}>
