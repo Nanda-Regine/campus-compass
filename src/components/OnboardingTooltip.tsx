@@ -38,7 +38,10 @@ export default function OnboardingTooltip() {
     if (!APP_PREFIXES.some(p => pathname.startsWith(p))) return
     try {
       const done = localStorage.getItem('varsityos_onboarded')
-      if (!done) setVisible(true)
+      // Don't stack the tour on top of the cookie-consent banner on first run —
+      // wait until the student has made a consent choice, then show the tour.
+      const consent = localStorage.getItem('varsityos_cookie_consent')
+      if (!done && consent) setVisible(true)
     } catch {
       // localStorage unavailable (SSR safety)
     }
