@@ -183,6 +183,8 @@ export type SecurityEvent =
   | 'rate_limited'
   | 'path_traversal'
   | 'unauthorized_admin'
+  | 'arcjet_error'
+  | 'middleware_session_error'
 
 export function logSecurityEvent(
   event: SecurityEvent,

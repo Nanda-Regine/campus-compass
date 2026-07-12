@@ -145,6 +145,14 @@ export default function SetupFlow() {
           if (p.icsImported) setIcsImported(p.icsImported)
           if (p.nextExamName) setNextExamName(p.nextExamName)
           if (p.nextExamDate) setNextExamDate(p.nextExamDate)
+          // Restore these too — omitting them silently reverted an international
+          // student to sa_citizen (re-showing NSFAS) and lost their language/TVET
+          // choices on a mid-onboarding refresh.
+          if (p.preferredLang)   setPreferredLang(p.preferredLang)
+          if (p.studentStatus)   setStudentStatus(p.studentStatus)
+          if (p.countryOfOrigin) setCountryOfOrigin(p.countryOfOrigin)
+          if (p.tvetLevel)       setTvetLevel(p.tvetLevel)
+          if (p.tvetProgram)     setTvetProgram(p.tvetProgram)
         }
       } catch { /* ignore corrupt data */ }
 
@@ -190,11 +198,13 @@ export default function SetupFlow() {
         step, name, emoji, university, year, faculty, funding,
         nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
         modules, living, diet, icsImported, nextExamName, nextExamDate,
+        preferredLang, studentStatus, countryOfOrigin, tvetLevel, tvetProgram,
       }))
     } catch { /* storage full or private mode */ }
   }, [step, name, emoji, university, year, faculty, funding,
       nsfasLiving, nsfasAccom, nsfasBooks, monthlyBudget, foodBudget,
-      modules, living, diet, icsImported, nextExamName, nextExamDate])
+      modules, living, diet, icsImported, nextExamName, nextExamDate,
+      preferredLang, studentStatus, countryOfOrigin, tvetLevel, tvetProgram])
 
   // Close combobox on outside click
   useEffect(() => {
@@ -295,17 +305,16 @@ export default function SetupFlow() {
         preferred_language: preferredLang,
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .upsert({ id: user.id, email: user.email, ...profileData })
-        .select()
-        .single()
+      // Write the satellite rows FIRST and the profile (which carries
+      // onboarding_complete — the gate) LAST. If any write fails we throw before
+      // marking onboarding done, so the localStorage draft is kept and the
+      // student simply retries with everything intact rather than landing on a
+      // half-populated dashboard they can never fix. Every error is checked
+      // (previously budgets/modules/exams errors were swallowed) and the module/
+      // exam inserts are guarded so a retry can't duplicate rows.
 
-      if (profileError) throw profileError
-      setProfile(profile)
-
-      // Save budget targets
-      await supabase
+      // Budget targets (upsert — idempotent on user_id)
+      const { error: budgetError } = await supabase
         .from('budgets')
         .upsert({
           user_id: user.id,
@@ -316,33 +325,62 @@ export default function SetupFlow() {
           nsfas_accom:    parseFloat(nsfasAccom)     || 0,
           nsfas_books:    parseFloat(nsfasBooks)     || 0,
         }, { onConflict: 'user_id' })
+      if (budgetError) throw budgetError
 
-      // Save initial modules
+      // Initial modules — insert only if the student has none yet, so a retry
+      // after a partial failure doesn't duplicate their subjects.
       if (modules.length > 0) {
-        const colours = MODULE_COLOURS
-        const moduleRows = modules.map((modName, i) => ({
-          user_id: user.id,
-          module_name: modName,
-          module_code: modName.replace(/\s+/g, '').slice(0, 8).toUpperCase(),
-          color: colours[i % colours.length],
-        }))
-        await supabase.from('modules').insert(moduleRows)
+        const { count: existingModules } = await supabase
+          .from('modules')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+        if (!existingModules) {
+          const colours = MODULE_COLOURS
+          const moduleRows = modules.map((modName, i) => ({
+            user_id: user.id,
+            module_name: modName,
+            module_code: modName.replace(/\s+/g, '').slice(0, 8).toUpperCase(),
+            color: colours[i % colours.length],
+          }))
+          const { error: modulesError } = await supabase.from('modules').insert(moduleRows)
+          if (modulesError) throw modulesError
+        }
       }
 
-      // Save next exam if provided
+      // Next exam — insert only if this exam isn't already captured (retry-safe)
       if (nextExamName.trim() && nextExamDate) {
-        await supabase.from('exams').insert({
-          user_id: user.id,
-          module_id: null,
-          exam_name: nextExamName.trim(),
-          exam_date: nextExamDate,
-          start_time: '09:00',
-          venue: null,
-          duration_minutes: null,
-          exam_type: 'final', // CHECK constraint only allows test/mid_year/final/supplementary/assignment_deadline — 'exam' silently failed
-          notes: null,
-        })
+        const { count: existingExam } = await supabase
+          .from('exams')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('exam_name', nextExamName.trim())
+          .eq('exam_date', nextExamDate)
+        if (!existingExam) {
+          const { error: examError } = await supabase.from('exams').insert({
+            user_id: user.id,
+            module_id: null,
+            exam_name: nextExamName.trim(),
+            exam_date: nextExamDate,
+            start_time: '09:00',
+            venue: null,
+            duration_minutes: null,
+            exam_type: 'final', // CHECK constraint only allows test/mid_year/final/supplementary/assignment_deadline — 'exam' silently failed
+            notes: null,
+          })
+          if (examError) throw examError
+        }
       }
+
+      // Profile LAST — carries onboarding_complete, so it's only set once every
+      // satellite write above has succeeded.
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .upsert({ id: user.id, email: user.email, ...profileData })
+        .select()
+        .single()
+
+      if (profileError) throw profileError
+      setProfile(profile)
 
       // Award XP for completing onboarding
       dispatchXP('task_complete', 'Completed VarsityOS onboarding')

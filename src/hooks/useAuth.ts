@@ -19,23 +19,19 @@ export function useAuth() {
       // Prevents IndexedDB lock contention on interrupted signups.
       await supabase.auth.signOut({ scope: 'local' })
 
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: name },
+          // Carry consent in user_metadata for the audit trail. The profiles row
+          // is stamped server-side in /auth/callback — a client write here runs
+          // as the anon role (no session until email confirmation) and is blocked
+          // by RLS, so it cannot be relied on.
+          data: { full_name: name, popia_consent: popiaConsent },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
       if (error) throw error
-      // Record POPIA consent immediately — profile row created by handle_new_user trigger
-      if (popiaConsent && data.user) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          popia_consent: true,
-          popia_consent_at: new Date().toISOString(),
-        }, { onConflict: 'id' })
-      }
       toast.success('Check your email to confirm your account!')
       return { error: null }
     } catch (err: unknown) {

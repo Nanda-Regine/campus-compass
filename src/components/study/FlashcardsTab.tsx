@@ -18,15 +18,38 @@ function renderMathSegment(latex: string, display: boolean): string {
   try {
     return katex.renderToString(latex, { throwOnError: false, displayMode: display, output: 'htmlAndMathml' })
   } catch {
-    return display ? `$$${latex}$$` : `$${latex}$`
+    // Escape the raw fallback — latex may contain markup and this string goes
+    // straight into dangerouslySetInnerHTML.
+    return escapeHtml(display ? `$$${latex}$$` : `$${latex}$`)
   }
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function parseMathHtml(text: string): string {
-  // Replace $$...$$ first (block), then $...$ (inline)
-  return text
-    .replace(/\$\$([\s\S]+?)\$\$/g, (_, m) => renderMathSegment(m, true))
-    .replace(/\$([^\$\n]+?)\$/g, (_, m) => renderMathSegment(m, false))
+  // Split into math ($$…$$ or $…$) and non-math runs, keeping the delimiters.
+  // Math is rendered by KaTeX (safe, escaped HTML); every non-math run is
+  // HTML-escaped so a user-authored card like `$x$<img src=x onerror=…>` cannot
+  // inject markup — the whole string is fed to dangerouslySetInnerHTML.
+  const parts = text.split(/(\$\$[\s\S]+?\$\$|\$[^\$\n]+?\$)/g)
+  return parts
+    .map(part => {
+      if (part.length >= 4 && part.startsWith('$$') && part.endsWith('$$')) {
+        return renderMathSegment(part.slice(2, -2), true)
+      }
+      if (part.length >= 2 && part.startsWith('$') && part.endsWith('$')) {
+        return renderMathSegment(part.slice(1, -1), false)
+      }
+      return escapeHtml(part)
+    })
+    .join('')
 }
 
 function MathText({ text, style }: { text: string; style?: CSSProperties }) {
