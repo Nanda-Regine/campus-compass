@@ -194,8 +194,14 @@ export default function StokvelOS() {
         const data = await res.json()
         setBoardMessages(prev => [...prev, data.message])
         setBoardIsDecision(false)
+      } else {
+        setBoardText(text) // restore the typed notice — clearing it before a
+        toast.error('Could not post to the board — please try again.') // failed post lost it
       }
-    } catch { toast.error('Failed to post to board') }
+    } catch {
+      setBoardText(text)
+      toast.error('Failed to post to board')
+    }
     setSendingBoard(false)
   }
 
@@ -455,7 +461,11 @@ function MembersTab({
     if (!form.name.trim()) return
     setSaving(true)
     try {
-      const nextPayout = members.length + 1
+      // Smallest unused payout month — `members.length + 1` collided after any
+      // deletion left a gap (e.g. [1,3] + 1 new → month 3 again).
+      const used = new Set(members.map(m => m.payout_month))
+      let nextPayout = 1
+      while (used.has(nextPayout)) nextPayout++
       const { data, error } = await supabase
         .from('stokvel_members')
         .insert({ group_id: groupId, name: form.name.trim(), phone: form.phone.trim() || null, payout_month: nextPayout, active: true })
@@ -660,6 +670,14 @@ function PayoutsTab({
 
   const updatePayoutMonth = async (id: string, newMonth: number) => {
     const clamped = Math.max(1, newMonth)
+    const editing = members.find(m => m.id === id)
+    if (!editing || editing.payout_month === clamped) return
+    // Reject collisions: two members on the same payout month means one silently
+    // never shows as "this month's payout" and the rotation is disputed.
+    if (members.some(m => m.id !== id && m.payout_month === clamped)) {
+      toast.error(`Month ${clamped} is already taken by another member — move them first.`)
+      return
+    }
     try {
       const { data, error } = await supabase
         .from('stokvel_members')

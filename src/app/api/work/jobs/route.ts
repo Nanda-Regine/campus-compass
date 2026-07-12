@@ -18,6 +18,24 @@ function pickAllowed(body: Record<string, unknown>) {
   )
 }
 
+// Reject negative / non-finite / absurd numeric values — the allowlist stopped
+// mass-assignment but did no range checks, so `pay_rate: -50` or `999999999`
+// persisted and skewed every earnings/affordability calculation downstream.
+const NUMERIC_BOUNDS: Record<string, number> = {
+  pay_rate: 1_000_000,
+  contracted_hours_per_week: 168,
+  max_comfortable_hours: 168,
+}
+function validateNumerics(fields: Record<string, unknown>): string | null {
+  for (const [k, max] of Object.entries(NUMERIC_BOUNDS)) {
+    const v = fields[k]
+    if (v === undefined || v === null || v === '') continue
+    const n = Number(v)
+    if (!Number.isFinite(n) || n < 0 || n > max) return `${k} must be between 0 and ${max}`
+  }
+  return null
+}
+
 export async function GET() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -45,6 +63,8 @@ export async function POST(req: Request) {
   if (!safeFields.employer_name) {
     return NextResponse.json({ error: 'employer_name is required' }, { status: 400 })
   }
+  const numErr = validateNumerics(safeFields)
+  if (numErr) return NextResponse.json({ error: numErr }, { status: 400 })
 
   const { data, error } = await supabase
     .from('part_time_jobs')
@@ -69,6 +89,8 @@ export async function PATCH(req: Request) {
   if (Object.keys(safeUpdates).length === 0) {
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
   }
+  const numErr = validateNumerics(safeUpdates)
+  if (numErr) return NextResponse.json({ error: numErr }, { status: 400 })
 
   const { data, error } = await supabase
     .from('part_time_jobs')

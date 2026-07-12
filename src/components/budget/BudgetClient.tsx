@@ -118,6 +118,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
   // Wallet state
   const [incomeEntries, setIncomeEntries] = useState<IncomeEntry[]>(initialData.incomeEntries)
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([])
+  const [contributingGoalId, setContributingGoalId] = useState<string | null>(null)
   const [walletLoaded, setWalletLoaded] = useState(false)
   const [addingGoal, setAddingGoal] = useState(false)
   const [goalName, setGoalName] = useState('')
@@ -273,16 +274,33 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
   }
 
   const contributeToGoal = async (goalId: string, current: number, target: number) => {
+    if (contributingGoalId) return // in-flight lock — a double-tap can't create two contribution rows
     const amtStr = window.prompt('How much are you adding? (R)')
     const amt = parseFloat(amtStr || '')
     if (!amt || amt <= 0) return
-    const newAmount = Math.min(current + amt, target)
-    const { error } = await supabase.from('savings_goals').update({ current_amount: newAmount, is_completed: newAmount >= target, completed_at: newAmount >= target ? new Date().toISOString() : null }).eq('id', goalId)
-    if (!error) {
+    // Store the CAPPED delta so the contributions ledger can never sum past the
+    // goal (the goal balance was already capped, but the raw amount was logged).
+    const delta = Math.min(amt, Math.max(0, target - current))
+    if (delta <= 0) { toast('Goal already reached 🎉'); return }
+    const newAmount = current + delta
+    setContributingGoalId(goalId)
+    try {
+      const { error: goalErr } = await supabase.from('savings_goals')
+        .update({ current_amount: newAmount, is_completed: newAmount >= target, completed_at: newAmount >= target ? new Date().toISOString() : null })
+        .eq('id', goalId)
+      if (goalErr) throw goalErr
+      const { error: contribErr } = await supabase.from('savings_contributions')
+        .insert({ user_id: initialData.userId, goal_id: goalId, amount: delta, contribution_date: new Date().toISOString().split('T')[0] })
+      if (contribErr) throw contribErr
+      // Update local state only after both writes succeed, so a failure never
+      // shows a contribution that wasn't recorded.
       setSavingsGoals(prev => prev.map(g => g.id === goalId ? { ...g, current_amount: newAmount, is_completed: newAmount >= target } : g).filter(g => !g.is_completed))
-      await supabase.from('savings_contributions').insert({ user_id: initialData.userId, goal_id: goalId, amount: amt, contribution_date: new Date().toISOString().split('T')[0] })
       if (newAmount >= target) dispatchXP('savings_goal_hit')
-      toast.success(newAmount >= target ? 'Goal completed! 🎉' : `+${fmt.currencyShort(amt)} added!`)
+      toast.success(newAmount >= target ? 'Goal completed! 🎉' : `+${fmt.currencyShort(delta)} added!`)
+    } catch {
+      toast.error('Could not add your contribution — please try again.')
+    } finally {
+      setContributingGoalId(null)
     }
   }
 
@@ -1023,9 +1041,10 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                         {!isComplete ? (
                           <button
                             onClick={() => contributeToGoal(goal.id, goal.current_amount, goal.target_amount)}
-                            className="font-mono text-[0.6rem] bg-teal-600/15 hover:bg-teal-600/30 text-teal-400 px-3 py-1 rounded-lg transition-all border border-teal-600/20"
+                            disabled={contributingGoalId !== null}
+                            className="font-mono text-[0.6rem] bg-teal-600/15 hover:bg-teal-600/30 text-teal-400 px-3 py-1 rounded-lg transition-all border border-teal-600/20 disabled:opacity-50"
                           >
-                            + Add
+                            {contributingGoalId === goal.id ? 'Adding…' : '+ Add'}
                           </button>
                         ) : (
                           <span className="font-mono text-[0.58rem] text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-lg">Goal reached!</span>

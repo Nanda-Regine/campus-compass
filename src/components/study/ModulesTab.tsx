@@ -109,7 +109,12 @@ function ModuleTools({
         { user_id: userId, module_id: moduleId, date: today, status: attended ? 'present' : 'absent' },
         { onConflict: 'user_id,module_id,date' }
       )
-      .then(() => setSyncing(false))
+      .then(({ error }) => {
+        setSyncing(false)
+        // Previously the error was swallowed: localStorage said "marked" while the
+        // DB never got it. Surface the failure so the student knows to retry online.
+        if (error) toast.error('Saved on this device, but could not sync attendance — check your connection.')
+      })
   }
 
   // ── Will I Pass state ──
@@ -292,8 +297,14 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
   }
 
   const deleteModule = async (id: string) => {
+    if (!window.confirm('Delete this module? Its linked tasks and exams may be removed too. This cannot be undone.')) return
+    const snapshot = modules.find(m => m.id === id)
     removeModule(id)
-    await supabase.from('modules').delete().eq('id', id)
+    const { error } = await supabase.from('modules').delete().eq('id', id)
+    if (error && snapshot) {
+      addModule(snapshot) // roll back the optimistic removal
+      toast.error('Could not delete the module — please try again.')
+    }
   }
 
   function moduleTaskCount(id: string) {
