@@ -1580,6 +1580,35 @@ b73045b  fix(security): escape flashcard HTML, harden ICS SSRF, restore type-che
 
 ---
 
+## Sweep — Forms, Gamification & Long-Term Durability (2026-07-12)
+
+Three parallel audit agents (gamification/XP engine · all forms · long-term durability) plus verification of the highest-value findings. Focus: things that miscount or break for a student using the app daily for years.
+
+### Fixed
+
+| Area | Fix |
+|---|---|
+| Safety (critical) | Incident report showed "submitted" even when the save failed (swallowed error) — now confirms only on 2xx, keeps the form, shows the 10111/112 fallback. Dead fake-success `SafetyFeed.tsx` deleted. |
+| SAST day boundary | `xp-engine`, `FocusMomentumScore`, `studentState`, all 6 `/api/gamification` routes keyed "today" to UTC → late-night activity split/reset at 02:00. Now SAST everywhere. |
+| XP inflation | Daily challenges counted lifetime events (free XP daily) → now count today's; mystery box double-credited on a 409 → now 2xx-only; habit milestone XP had no cap and re-awarded on toggle → now idempotent per habit. |
+| Durability | Dashboard SSR + refetch SAST-anchored & bounded/ordered (kills "Exam in -340d"); StudyVelocity/Attendance bounded to ~180 days; `dailyEventLog` pruned to 90 days; streak window 60→400 with a true longest-run "best"; money formatted via `fmt.currencyShort`. |
+| Money forms | Savings-goal in-flight lock + error checks + capped delta; stokvel board-message restore + payout-collision rejection + gap-free month assignment; server-side numeric validation on work/jobs; confirm + rollback on exam/module deletes; attendance-sync errors surfaced. |
+
+### Deferred (design judgment / heavier)
+
+Shield semantics, `ubuntu_graduate` archetype threshold, VarsityOS-score trailing window, multi-device XP merge, hardcoded years/rates (PAYE/NSFAS/GoalArchitecture), true all-time streak persistence (needs a `longest_streak` column).
+
+### Commits
+
+```
+74f2871  fix(safety): never show a false "report submitted" on a failed incident save
+2337ef1  fix(gamification): SAST day boundaries, stop XP inflation, prune event log
+c22953c  fix(durability): bound long-lived queries, SAST dashboard, fix stale exam UI
+24e8f44  fix(money-forms): lock contributions, guard amounts, safe deletes
+```
+
+---
+
 Every feature decision is tested against Nomvula:
 
 > **Nomvula** is a first-generation student from Soweto. She's studying BCom Accounting at Wits on a full NSFAS bursary. She has a prepaid Tecno Spark with 2GB of data per month. She takes two taxis to get to campus. She's brilliant, but she arrives without the network of tutors, advisors, and mentors that her more privileged classmates take for granted. She is homesick, occasionally overwhelmed, and full of potential.
