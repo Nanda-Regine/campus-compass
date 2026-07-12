@@ -566,7 +566,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
             onClose={() => setAssistModal({ open: false, exam: null, type: 'exam_prep' })}
             type={assistModal.type}
             examName={assistModal.exam?.exam_name}
-            moduleName={assistModal.exam?.module?.name}
+            moduleName={assistModal.exam?.module?.module_name}
             dueDate={assistModal.exam?.exam_date ?? undefined}
           />
 
