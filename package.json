@@ -72,6 +72,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "happy-dom": "^15.11.7",
+    "playwright": "^1.61.1",
     "postcss": "^8.4.39",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.6",
