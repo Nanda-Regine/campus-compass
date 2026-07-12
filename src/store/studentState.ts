@@ -10,6 +10,7 @@ import { persist } from 'zustand/middleware'
 import { useAppStore } from './index'
 import { signals } from './signals'
 import { refreshSleepDebt, refreshStudyVelocity, refreshStreak, refreshNsfas } from '@/lib/intelligenceSync'
+import { sastToday } from '@/lib/utils'
 import type { Task, Module, Exam, Expense, Budget, Profile } from '@/types'
 
 // ─── Shared enums ──────────────────────────────────────────────
@@ -598,7 +599,7 @@ function readRegulationCache(): number {
     const raw = localStorage.getItem('varsityos-regulation-cache')
     if (!raw) return 0
     const parsed = JSON.parse(raw) as { date?: string; count?: number }
-    const today = new Date().toISOString().split('T')[0]
+    const today = sastToday()
     return parsed.date === today && typeof parsed.count === 'number' ? parsed.count : 0
   } catch { return 0 }
 }
@@ -610,7 +611,7 @@ function readNsScoreCache(): number | null {
     const raw = localStorage.getItem('varsityos-ns-score-cache')
     if (!raw) return null
     const parsed = JSON.parse(raw) as { date?: string; score?: number }
-    const today = new Date().toISOString().split('T')[0]
+    const today = sastToday()
     return parsed.date === today && typeof parsed.score === 'number' ? parsed.score : null
   } catch { return null }
 }
@@ -703,7 +704,7 @@ export function initOrchestration(): () => void {
     signals.on('regulation_completed', () => {
       if (typeof window !== 'undefined') {
         try {
-          const today = new Date().toISOString().split('T')[0]
+          const today = sastToday()
           const raw = localStorage.getItem('varsityos-regulation-cache')
           const existing = raw ? JSON.parse(raw) as { date?: string; count?: number } : {}
           const count = existing.date === today ? (existing.count ?? 0) + 1 : 1
@@ -716,7 +717,7 @@ export function initOrchestration(): () => void {
     signals.on('ns_score_updated', ({ payload }) => {
       if (typeof window !== 'undefined') {
         try {
-          const today = new Date().toISOString().split('T')[0]
+          const today = sastToday()
           localStorage.setItem('varsityos-ns-score-cache', JSON.stringify({ date: today, score: payload.score }))
         } catch { /* quota */ }
       }

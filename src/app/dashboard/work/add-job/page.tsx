@@ -157,6 +157,7 @@ export default function AddJobPage() {
             <Input
               label={`Pay rate (R${form.pay_type === 'hourly' ? '/hr' : form.pay_type === 'shift' ? '/shift' : '/mo'})`}
               type="number"
+              min={0}
               placeholder="e.g. 35"
               value={form.pay_rate}
               onChange={e => set('pay_rate', e.target.value)}
@@ -164,6 +165,8 @@ export default function AddJobPage() {
             <Input
               label="Hours/week (typical)"
               type="number"
+              min={0}
+              max={168}
               placeholder="e.g. 12"
               value={form.contracted_hours_per_week}
               onChange={e => set('contracted_hours_per_week', e.target.value)}
@@ -173,6 +176,8 @@ export default function AddJobPage() {
           <Input
             label="My max comfortable hours/week"
             type="number"
+            min={0}
+            max={168}
             placeholder="20"
             value={form.max_comfortable_hours}
             onChange={e => set('max_comfortable_hours', e.target.value)}

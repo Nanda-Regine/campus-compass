@@ -84,10 +84,15 @@ export default function AttendanceTab({ modules, userId }: { modules: Module[]; 
 
   const loadRecords = useCallback(async () => {
     if (!modules.length) { setLoading(false); return }
+    // Bound to ~180 days (a semester) — otherwise every mount pulls the full
+    // multi-year attendance history and recomputes it in render. Current modules
+    // only span the current term, so this drops no in-term data.
+    const cutoff = new Date(Date.now() - 180 * 86400000).toISOString().split('T')[0]
     const { data } = await supabase
       .from('attendance_records')
       .select('id, module_id, date, status, notes')
       .eq('user_id', userId)
+      .gte('date', cutoff)
       .order('date', { ascending: false })
 
     const records = (data ?? []) as AttendanceRecord[]

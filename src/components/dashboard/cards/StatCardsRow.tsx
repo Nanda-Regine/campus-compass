@@ -1,7 +1,7 @@
 'use client'
 
 import { type Task, type Exam } from '@/types'
-import { getDaysUntil, sastToday, sastDatePlus } from '@/lib/utils'
+import { getDaysUntil, sastToday, sastDatePlus, fmt } from '@/lib/utils'
 import { FlameIcon } from '../dashboardHelpers'
 
 export default function StatCardsRow({ remaining, totalBudget, tasks, exams, streakDays, streakTodayDone, todayStudyMins, lastSleepHours, weekWorkouts }: {
@@ -13,14 +13,17 @@ export default function StatCardsRow({ remaining, totalBudget, tasks, exams, str
   const weekAheadStr = sastDatePlus(7)
   const overdueTasks = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date < todayStr).length
   const tasksDueWeek = tasks.filter(t => t.status !== 'done' && t.due_date && t.due_date >= todayStr && t.due_date <= weekAheadStr).length
-  const nextExam = exams[0]
+  // Defensive: the next exam that is today or later. Even with the queries now
+  // filtering past exams, a stale store value must never surface a long-past
+  // exam as "TODAY" / a negative countdown.
+  const nextExam = exams.find(e => e.exam_date && getDaysUntil(e.exam_date) >= 0) ?? null
   const daysToExam = nextExam ? getDaysUntil(nextExam.exam_date) : null
 
   const studyDisplay = todayStudyMins >= 60 ? `${Math.floor(todayStudyMins/60)}h${todayStudyMins%60>0?`${todayStudyMins%60}m`:''}` : todayStudyMins > 0 ? `${todayStudyMins}m` : '—'
   const sleepDisplay = lastSleepHours !== null ? `${lastSleepHours}h` : '—'
   void totalBudget
   const cards = [
-    { value: remaining >= 0 ? `R${Math.round(remaining)}` : `−R${Math.round(Math.abs(remaining))}`, label: 'Budget left',    accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
+    { value: remaining >= 0 ? fmt.currencyShort(remaining) : `−${fmt.currencyShort(Math.abs(remaining))}`, label: 'Budget left',    accent: remaining >= 0 ? '#c9a84c' : '#ff6b6b' },
     { value: daysToExam !== null ? (daysToExam <= 0 ? 'TODAY' : String(daysToExam)) : '—',           label: 'Days to exam',  accent: daysToExam !== null && daysToExam <= 3 ? '#ff6b6b' : '#7090d0' },
     { value: String(tasksDueWeek + overdueTasks),                                                      label: overdueTasks > 0 ? `${overdueTasks} overdue` : 'Tasks ahead', accent: overdueTasks > 0 ? '#ff6b6b' : '#4ecf9e' },
     { value: String(streakDays), label: streakTodayDone ? 'Streak safe ✓' : 'Study streak',           accent: streakTodayDone ? '#4ecf9e' : streakDays > 0 ? '#f59e0b' : '#4ecf9e', suffix: <FlameIcon streak={streakDays} /> },

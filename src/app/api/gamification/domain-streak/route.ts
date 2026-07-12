@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastToday, sastDatePlus } from '@/lib/utils'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
@@ -38,13 +39,11 @@ export async function POST(req: NextRequest) {
 
   if (!streaks[domain]) return NextResponse.json({ error: 'Invalid domain' }, { status: 400 })
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
   const ds = streaks[domain]
 
   if (action === 'increment') {
-    const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
+    const yesterdayStr = sastDatePlus(-1)
 
     if (ds.last_date === today) {
       // Already incremented today

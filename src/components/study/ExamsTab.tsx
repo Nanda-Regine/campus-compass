@@ -289,8 +289,14 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
   }
 
   const deleteExam = async (id: string) => {
+    if (!window.confirm('Delete this exam? This cannot be undone.')) return
+    const snapshot = exams.find(e => e.id === id)
     removeExam(id)
-    await supabase.from('exams').delete().eq('id', id)
+    const { error } = await supabase.from('exams').delete().eq('id', id)
+    if (error && snapshot) {
+      addExam(snapshot) // roll back the optimistic removal so it doesn't vanish then reappear
+      toast.error('Could not delete the exam — please try again.')
+    }
   }
 
   const generatePlan = async (exam: Exam) => {

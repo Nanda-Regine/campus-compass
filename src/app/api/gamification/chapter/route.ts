@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastToday } from '@/lib/utils'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
 
   const [{ data: activeChapter }, { data: allChapters }] = await Promise.all([
     supabase.from('semester_chapters').select('*').eq('is_active', true).lte('start_date', today).gte('end_date', today).single(),

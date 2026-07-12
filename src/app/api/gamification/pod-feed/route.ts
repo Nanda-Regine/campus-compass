@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastDatePlus } from '@/lib/utils'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
@@ -28,14 +29,13 @@ export async function GET() {
   if (!members?.length) return NextResponse.json({ feed: [] })
   const memberIds = members.map(m => m.user_id)
 
-  const since = new Date()
-  since.setDate(since.getDate() - 3)
+  const since = sastDatePlus(-3)
 
   const [{ data: compoundDays }, { data: profiles }] = await Promise.all([
     admin.from('compound_days')
       .select('user_id, day_date, domains_hit, xp_bonus')
       .in('user_id', memberIds)
-      .gte('day_date', since.toISOString().split('T')[0])
+      .gte('day_date', since)
       .order('day_date', { ascending: false })
       .limit(20),
     admin.from('profiles')

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastToday } from '@/lib/utils'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { archetype } = await req.json() as { archetype: string }
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
 
   await supabase
     .from('profiles')
