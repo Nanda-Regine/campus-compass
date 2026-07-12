@@ -1621,6 +1621,16 @@ First automated test suite in the repo. **Vitest** + **happy-dom** (dev deps), `
 
 ---
 
+## UX + Full-Loop Audit (2026-07-12)
+
+Four-agent audit: ambient-background legibility + three content clusters (academic/money/life) checking whether every system closes its loop (see → act → feedback → persist). Full report + prioritised backlog in **[docs/FULL_LOOP_AUDIT_2026-07.md](FULL_LOOP_AUDIT_2026-07.md)**.
+
+**Fixed & shipped:** ambient legibility on ~19 pages (killed the `opacity=0.38`+`transparent`-scrim-over-bright-image contrast bug), Nova never renders blank on API failure, onboarding tour no longer stacks on the consent banner, JobApplicationTracker Rules-of-Hooks crash, three false-success toasts (StudyTwins / alumni mentor request + become-mentor), exam module field.
+
+**Documented backlog (not built — needs product decisions):** safety incident read-feed + real SafeWalk alerts, XP server-authoritative, domain flames on daily activity, unify the two stokvel systems + rotating payouts, money streams (side-hustle/rent) into Budget, Study-Kit→Flashcards, single attendance source, Bursary Find→Track with real dates, mount 5 orphaned components (FoodInsecurityMode, BrainFoodGuide, SkillsToIncome, NsfasWorkCheck, MockInterviewCoach), persist generated AI plans, mentor inbox, marketplace messaging entry point. Verified via a Playwright login+screenshot walkthrough of the live app.
+
+---
+
 Every feature decision is tested against Nomvula:
 
 > **Nomvula** is a first-generation student from Soweto. She's studying BCom Accounting at Wits on a full NSFAS bursary. She has a prepaid Tecno Spark with 2GB of data per month. She takes two taxis to get to campus. She's brilliant, but she arrives without the network of tutors, advisors, and mentors that her more privileged classmates take for granted. She is homesick, occasionally overwhelmed, and full of potential.
