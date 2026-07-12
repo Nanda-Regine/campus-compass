@@ -96,10 +96,14 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
     const now      = new Date()
     const today    = now.toISOString().slice(0, 10)
     const week7Ago = new Date(now.getTime() - 7 * 86400000).toISOString()
+    // Bound to ~180 days (a semester) so this doesn't pull the student's entire
+    // multi-year study_sessions history into the browser and re-aggregate it in
+    // render on every open. Velocity is a term-scoped metric anyway.
+    const termAgo  = new Date(now.getTime() - 180 * 86400000).toISOString()
 
     const [sessionsRes, examsRes] = await Promise.all([
       supabase.from('study_sessions').select('id, module_id, duration_minutes, started_at')
-        .eq('user_id', userId).not('module_id', 'is', null),
+        .eq('user_id', userId).not('module_id', 'is', null).gte('started_at', termAgo),
       supabase.from('exams').select('id, module_id, exam_date, module:modules(id)')
         .eq('user_id', userId).gte('exam_date', today),
     ])

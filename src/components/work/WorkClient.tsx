@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { dispatchXP } from '@/lib/xp-engine'
 import { type PartTimeJob, type WorkShift, JOB_TYPE_LABELS } from '@/types'
-import { cn } from '@/lib/utils'
+import { cn, fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
 interface Props {
@@ -254,7 +254,7 @@ export default function WorkClient({ userId }: Props) {
                   </div>
                   <div className="font-mono text-[0.58rem] text-white/40">
                     {shift.shift_date} · {shift.start_time}–{shift.end_time}
-                    {shift.earnings && ` · R${shift.earnings}`}
+                    {shift.earnings ? ` · ${fmt.currencyShort(shift.earnings)}` : ''}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">

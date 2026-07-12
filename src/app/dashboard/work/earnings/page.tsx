@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import TopBar from '@/components/layout/TopBar'
 import { type WorkShift } from '@/types'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import { fmt } from '@/lib/utils'
 
 interface MonthSummary {
   month: string
@@ -72,7 +73,7 @@ export default function EarningsPage() {
         >
           <div className="font-mono text-[0.6rem] text-teal-400/60 uppercase tracking-widest mb-2">Total earned (all time)</div>
           <div className="font-display font-black text-3xl text-white">
-            R{totalEarnings.toFixed(0)}
+            {fmt.currencyShort(totalEarnings)}
           </div>
           <div className="font-mono text-[0.58rem] text-teal-300/50 mt-1">
             {totalHours.toFixed(1)} hours worked · {workedShifts.length} shifts
@@ -86,7 +87,7 @@ export default function EarningsPage() {
               {thisMonth.label}
             </div>
             <div className="font-display font-black text-2xl text-amber-400 mb-1">
-              R{thisMonth.earnings.toFixed(0)}
+              {fmt.currencyShort(thisMonth.earnings)}
             </div>
             <div className="font-mono text-[0.58rem] text-white/40">
               {thisMonth.hours.toFixed(1)} hours across {thisMonth.shifts} shifts
@@ -100,7 +101,7 @@ export default function EarningsPage() {
                   <div key={item.label} className="flex items-center justify-between text-xs">
                     <span className="font-body text-white/55">{item.emoji} {item.label}</span>
                     <span className={`font-mono font-bold ${item.covered ? 'text-teal-400' : 'text-white/25'}`}>
-                      {item.covered ? '✓ covered' : `R${item.cost}`}
+                      {item.covered ? '✓ covered' : fmt.currencyShort(item.cost)}
                     </span>
                   </div>
                 ))}
@@ -132,7 +133,7 @@ export default function EarningsPage() {
                     </div>
                   </div>
                   <div className="font-display font-black text-lg text-amber-400">
-                    R{m.earnings.toFixed(0)}
+                    {fmt.currencyShort(m.earnings)}
                   </div>
                 </div>
               ))}

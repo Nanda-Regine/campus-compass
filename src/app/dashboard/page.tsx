@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import DashboardClient from '@/components/dashboard/DashboardClient'
 import './dashboard.css'
-import { currentMonthRange } from '@/lib/utils'
+import { currentMonthRange, sastToday, sastDatePlus } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Dashboard' }
@@ -15,17 +15,18 @@ export default async function DashboardPage() {
 
   const { start, end } = currentMonthRange()
 
-  // Date ranges shared by the core + enhancement queries (Monday-start week, SAST is UTC+2).
-  const now = new Date()
-  const jsDay = now.getDay()
-  const weekStart = new Date(now)
-  weekStart.setDate(now.getDate() - (jsDay === 0 ? 6 : jsDay - 1))
-  weekStart.setHours(0, 0, 0, 0)
-  const weekStartStr  = weekStart.toISOString().split('T')[0]
-  const weekEndStr    = new Date(weekStart.getTime() + 6 * 86_400_000).toISOString().split('T')[0]
-  const todayStr      = now.toISOString().split('T')[0]
-  const sevenDaysStr  = new Date(now.getTime() + 7 * 86_400_000).toISOString().split('T')[0]
-  const week7AgoStr   = new Date(now.getTime() - 7 * 86_400_000).toISOString().split('T')[0]
+  // Date ranges shared by the core + enhancement queries (Monday-start week).
+  // All anchored to the SAST calendar day (UTC+2). Deriving these from the
+  // server's UTC toISOString() shifted every range back a day during the
+  // 00:00–02:00 SAST window — e.g. the exam filter dropped an exam on its
+  // actual day and "this week" counts were off.
+  const todayStr      = sastToday()
+  const jsDay         = new Date(`${todayStr}T00:00:00Z`).getUTCDay() // 0=Sun..6=Sat
+  const mondayOffset  = jsDay === 0 ? 6 : jsDay - 1
+  const weekStartStr  = sastDatePlus(-mondayOffset)
+  const weekEndStr    = sastDatePlus(6 - mondayOffset)
+  const sevenDaysStr  = sastDatePlus(7)
+  const week7AgoStr   = sastDatePlus(-7)
 
   // Core data (must succeed) runs alongside the enhancement data (best-effort). Folding the
   // enhancement queries into SSR removes the ~9 client-side round-trips the dashboard used to

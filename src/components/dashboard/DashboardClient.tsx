@@ -9,7 +9,7 @@ import {
   type Module, type TimetableEntry, type Expense,
   type Subscription,
 } from '@/types'
-import { getDaysUntil, calcTotalBudget, sastHour } from '@/lib/utils'
+import { getDaysUntil, calcTotalBudget, sastHour, sastToday } from '@/lib/utils'
 import { useAutoTodoSpawner } from '@/lib/todoSpawner'
 import { getDataSaverEnabled, onDataSaverChange } from '@/lib/dataSaver'
 import { getDayMode } from '@/components/dashboard/DayModeBanner'
@@ -334,9 +334,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
+      // Mirror the SSR query (app/dashboard/page.tsx) exactly. A bare
+      // select-all here reloaded EVERY task/exam ever — unordered and including
+      // long-past exams — so exams[0] became an arbitrary past exam and the UI
+      // showed "Days to exam = TODAY" / "Exam in -340d" permanently. Also grows
+      // unbounded over years.
+      const today = sastToday()
       const [{ data: tasks }, { data: exams }] = await Promise.all([
-        supabase.from('tasks').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
-        supabase.from('exams').select('*, module:modules(id,module_name,color)').eq('user_id', user.id),
+        supabase.from('tasks').select('*, module:modules(id,module_name,color)').eq('user_id', user.id)
+          .not('status', 'eq', 'done').order('due_date', { ascending: true, nullsFirst: false }).limit(50),
+        supabase.from('exams').select('*, module:modules(id,module_name,color)').eq('user_id', user.id)
+          .gte('exam_date', today).order('exam_date', { ascending: true }).limit(20),
       ])
       if (tasks) store.setTasks(tasks)
       if (exams)  store.setExams(exams)
