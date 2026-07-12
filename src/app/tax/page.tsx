@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import TaxReturnHelper from '@/components/finance/TaxReturnHelper'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Tax Helper',
+  description:
+    'Understand SARS tax as a student earner — returns, refunds and deadlines made simple.',
+}
 
 export default async function TaxPage() {
   const supabase = await createClient()

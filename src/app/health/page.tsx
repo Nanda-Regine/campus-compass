@@ -4,6 +4,13 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import WhenYouAreSick from '@/components/health/WhenYouAreSick'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Health OS',
+  description:
+    "Look after your body and mind at varsity — campus clinic info, what to do when you're sick, cycle tracking and wellbeing tools for SA students.",
+}
 
 const ProcrastinationProfiler = dynamic(
   () => import('@/components/study/ProcrastinationProfiler'),

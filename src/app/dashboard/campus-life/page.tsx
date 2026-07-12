@@ -4,6 +4,13 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TopBar from '@/components/layout/TopBar'
 import CampusLifeHub from '@/components/campus/CampusLifeHub'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Campus Life',
+  description:
+    'Guides for thriving at varsity — making friends, navigating res life and adjusting to university in South Africa.',
+}
 
 const GUIDES = [
   {

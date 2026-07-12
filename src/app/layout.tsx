@@ -321,21 +321,16 @@ export const metadata: Metadata = {
     title: 'VarsityOS — The Super-App for South African University Students',
     description:
       'Track NSFAS, manage your student budget, plan meals on R33/day, stay on top of assignments and exams, and get AI mental health support from Nova. Free for all SA students.',
-    images: [
-      {
-        url: '/images/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'VarsityOS — The super-app for South African university students',
-      },
-    ],
+    // og:image is supplied by the file-based, logo-branded generator at
+    // src/app/opengraph-image.tsx (inherited by every route) — no static path,
+    // so it can never 404 the way the old /images/og-image.png did.
   },
   twitter: {
     card: 'summary_large_image',
     title: 'VarsityOS — The Super-App for South African University Students',
     description:
       'Free app for SA students: NSFAS tracker, budget manager, study planner, meal prep, and Nova AI mental health companion. Built for varsity life.',
-    images: ['/images/og-image.png'],
+    // twitter:image is supplied by src/app/twitter-image.tsx.
     creator: '@varsityos',
     site: '@varsityos',
   },
@@ -496,7 +491,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   legalName: 'Mirembe Muse (Pty) Ltd',
                   url: APP_URL,
                   logo: { '@type': 'ImageObject', url: `${APP_URL}/icon-512.png`, width: 512, height: 512 },
-                  image: `${APP_URL}/images/og-image.png`,
+                  image: `${APP_URL}/opengraph-image`,
                   description:
                     'VarsityOS is the free super-app for South African university and TVET students — NSFAS tracking, student budgeting, study planning, meal prep and Nova AI mental-health support.',
                   foundingDate: '2025',

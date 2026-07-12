@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import StudentDiscounts from '@/components/community/StudentDiscounts'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Student Discounts',
+  description:
+    'Find student discounts and deals across South Africa — food, tech, transport, fashion and more.',
+}
 
 export default async function DiscountsPage() {
   const supabase = await createClient()

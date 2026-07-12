@@ -2,6 +2,13 @@
 import { redirect } from 'next/navigation'
 import SkillsAcademyClient from '@/components/skills/SkillsAcademyClient'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Skills Academy',
+  description:
+    'Build in-demand skills with free micro-courses — coding, design, finance and more, made for South African students.',
+}
 
 export default async function SkillsPage() {
   const supabase = await createClient()

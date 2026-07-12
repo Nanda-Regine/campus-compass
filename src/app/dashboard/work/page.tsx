@@ -3,6 +3,13 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TopBar from '@/components/layout/TopBar'
 import WorkClient from '@/components/work/WorkClient'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Work & Earnings',
+  description:
+    'Track part-time jobs, shifts and student earnings alongside your NSFAS allowance on VarsityOS.',
+}
 
 export default async function WorkPage() {
   const supabase = createServerSupabaseClient()
