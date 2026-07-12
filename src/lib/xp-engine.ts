@@ -643,7 +643,13 @@ const CHALLENGE_POOL: DailyChallenge[] = [
   { id: 'c_safety',     title: 'Safety ready',     description: 'Check emergency contacts in Safety OS',     xp: 15, icon: '🛡️' },
 ]
 
-function dateStr(d = new Date()) { return d.toISOString().split('T')[0] }
+// SAST calendar day (UTC+2). Using toISOString() here keyed every daily bucket
+// — fire caps, challenges, dailyEventLog, compound-day — to the UTC day, so a
+// student active 22:00–02:00 SAST had their day split/reset at 02:00 instead of
+// midnight. en-CA gives YYYY-MM-DD; matches streak.ts and sastToday().
+function dateStr(d = new Date()) {
+  return d.toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' })
+}
 
 function seededRandom(seed: string): () => number {
   let h = 0
@@ -681,7 +687,22 @@ export function loadXPState(): XPState {
   try { return JSON.parse(localStorage.getItem(KEY_STATE) ?? 'null') ?? emptyState() } catch { return emptyState() }
 }
 
+// Keep only the last ~90 days of daily event history. dailyEventLog is
+// re-serialized to localStorage AND upserted to Supabase on every dispatchXP;
+// unpruned it grows ~30 entries/day forever (~4 years risks the 5MB localStorage
+// quota and bloats every write). 90 days covers everything that reads it —
+// daily-challenge counts, FocusMomentumScore's 7-day window, and the archetype's
+// 7-day window. Mutates in place so the pruned log also flows to the DB save.
+const DAILY_LOG_RETENTION_DAYS = 90
+function pruneDailyEventLog(s: XPState) {
+  const cutoff = dateStr(new Date(Date.now() - DAILY_LOG_RETENTION_DAYS * 86_400_000))
+  for (const day of Object.keys(s.dailyEventLog)) {
+    if (day < cutoff) delete s.dailyEventLog[day]
+  }
+}
+
 function saveXPState(s: XPState) {
+  pruneDailyEventLog(s)
   try { localStorage.setItem(KEY_STATE, JSON.stringify({ ...s, recentGains: s.recentGains.slice(-20) })) } catch { /* quota full */ }
 }
 
@@ -729,12 +750,18 @@ export function dispatchXP(eventName: XPEventName, labelOverride?: string) {
     completion.date = today
     completion.completed = []
   }
+  // Count occurrences of an event in TODAY's log — used for multi-action
+  // challenge thresholds. Must be today's count, not the all-time eventCounts,
+  // or these auto-complete on the first matching action of every day once the
+  // lifetime total passes the threshold (free daily XP).
+  const countToday = (e: XPEventName) => (state.dailyEventLog[today] ?? []).filter(x => x === e).length
   for (const ch of challenges) {
     if (ch.autoDetect === eventName && !completion.completed.includes(ch.id)) {
-      // Minimum-count guards for multi-action challenges
-      if (ch.id === 'c_task3'  && (state.eventCounts['task_complete'] ?? 0) < 3) continue
-      if (ch.id === 'c_task2'  && (state.eventCounts['task_complete'] ?? 0) < 2) continue
-      if (ch.id === 'c_habits' && (state.eventCounts['habit_checkin'] ?? 0) < 3) continue
+      // Minimum-count guards for multi-action challenges (today's counts)
+      if (ch.id === 'c_task3'     && countToday('task_complete')   < 3) continue
+      if (ch.id === 'c_task2'     && countToday('task_complete')   < 2) continue
+      if (ch.id === 'c_habits'    && countToday('habit_checkin')   < 3) continue
+      if (ch.id === 'c_deep_work' && countToday('pomodoro_session') < 2) continue
       completion.completed.push(ch.id)
       // Award challenge XP (avoid double-counting if already fired)
       if (!state.dailyEventLog[today]?.includes(`challenge_${ch.id}`)) {

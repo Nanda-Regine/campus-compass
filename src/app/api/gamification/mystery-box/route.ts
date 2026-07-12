@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastToday } from '@/lib/utils'
 
 export async function GET() {
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
   const { data } = await supabase
     .from('mystery_box_claims')
     .select('reward_type, reward_value, xp_awarded, created_at')
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
   const { reward_type, reward_value, xp_awarded } = await req.json().catch(() => ({})) as {
     reward_type?: string; reward_value?: Record<string, unknown>; xp_awarded?: number
   }

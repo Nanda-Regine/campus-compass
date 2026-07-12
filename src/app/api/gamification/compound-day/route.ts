@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { sastToday } from '@/lib/utils'
 
 // Server-authoritative compound-day XP bonus (mirrors XP_VALUES.compound_day).
 // Kept as a literal so this server route never imports the 'use client' xp-engine.
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'A compound day needs 3+ domains' }, { status: 400 })
   }
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
 
   const { data, error } = await supabase
     .from('compound_days')

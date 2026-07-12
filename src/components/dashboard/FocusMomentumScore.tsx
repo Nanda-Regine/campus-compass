@@ -8,9 +8,11 @@ import { useState, useEffect, useMemo } from 'react'
 import { loadXPState } from '@/lib/xp-engine'
 
 function dateKey(daysAgo = 0): string {
-  const d = new Date()
-  d.setDate(d.getDate() - daysAgo)
-  return d.toISOString().split('T')[0]
+  // SAST calendar day N days ago — must match xp-engine's dateStr() (also SAST)
+  // so these keys line up with dailyEventLog. SA has no DST, so a fixed 86.4M-ms
+  // step is exact.
+  const ms = Date.now() - daysAgo * 86_400_000
+  return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' })
 }
 
 function computeScore(events: string[]): number {

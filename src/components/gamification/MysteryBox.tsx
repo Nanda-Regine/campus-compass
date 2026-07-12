@@ -51,9 +51,23 @@ export default function MysteryBox() {
 
     setTimeout(async () => {
       setPhase('revealed')
-      // Persist claim
+      // Applies the rolled reward locally (badge counter + XP + multiplier).
+      const applyReward = () => {
+        // Record the open (badge counter + daily claim) regardless of whether
+        // this roll carried XP. XP_VALUES['mystery_box_opened'] is 0.
+        dispatchXP('mystery_box_opened')
+        if (rolled.xp > 0) creditXP(rolled.xp, `🎁 ${rolled.label}`)
+        if (rolled.type === 'multiplier') {
+          localStorage.setItem('varsityos_xp_multiplier', JSON.stringify({ value: 2, expires: Date.now() + 3600000 }))
+        }
+      }
+      // Persist claim. The server enforces one claim/day and returns 409 on a
+      // duplicate (e.g. already opened on another device or before a reload).
+      // fetch does NOT throw on 409, so only credit when the POST actually
+      // succeeded — otherwise the box would double-award XP the claim table
+      // explicitly refused to record.
       try {
-        await fetch('/api/gamification/mystery-box', {
+        const res = await fetch('/api/gamification/mystery-box', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -62,17 +76,12 @@ export default function MysteryBox() {
             xp_awarded: rolled.xp,
           }),
         })
-        // Always record the open (badge counter + daily claim), regardless of
-        // whether this roll carried XP. XP_VALUES['mystery_box_opened'] is 0.
-        dispatchXP('mystery_box_opened')
-        // Credit the actual rolled reward — this was previously displayed but
-        // never added to the user's XP total.
-        if (rolled.xp > 0) creditXP(rolled.xp, `🎁 ${rolled.label}`)
-        // Store multiplier if that reward
-        if (rolled.type === 'multiplier') {
-          localStorage.setItem('varsityos_xp_multiplier', JSON.stringify({ value: 2, expires: Date.now() + 3600000 }))
-        }
-      } catch { /* offline */ }
+        if (res.ok) applyReward()
+        // else (e.g. 409 already claimed) → credit nothing
+      } catch {
+        // Network unreachable — credit optimistically (best-effort, offline).
+        applyReward()
+      }
       setAlreadyClaimed(true)
     }, 900)
   }, [phase, alreadyClaimed])

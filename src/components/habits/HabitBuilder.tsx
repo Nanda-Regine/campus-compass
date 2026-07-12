@@ -28,6 +28,7 @@ interface Habit {
   completedToday: boolean
   totalCompleted: number
   checkInDates?: string[]       // SAST YYYY-MM-DD history — feeds the global streak
+  awardedMilestones?: number[]  // streak milestones already granted XP (prevents re-award on uncheck/re-check)
 }
 
 type HabitPack = 'study' | 'wellness' | 'finances' | 'social' | 'morning' | 'mental_health' | 'load_shedding' | 'exam_mode' | 'deep_work' | 'custom'
@@ -455,14 +456,24 @@ export default function HabitBuilder() {
       // ── Check in for today ─────────────────────────────────────
       const newStreak = calcStreak(h, true)
       dispatchXP('habit_checkin')
-      if (newStreak === 7)   dispatchXP('habit_streak_7')
-      if (newStreak === 30)  dispatchXP('habit_streak_30')
-      if (newStreak === 100) dispatchXP('habit_streak_100')
+      // Milestone XP (habit_streak_*) has NO daily fire cap, so award it at most
+      // once per habit per milestone. Otherwise unchecking then re-checking at a
+      // milestone streak (streak goes 7→6→7) re-fires the +50/+150/+500 XP every
+      // toggle. Keep only milestones ≤ the current streak so a genuinely broken
+      // and rebuilt streak (streak resets to 1) can earn the milestone again.
+      const awarded = (h.awardedMilestones ?? []).filter(m => m <= newStreak)
+      const hitMilestone = MILESTONES.includes(newStreak) && !awarded.includes(newStreak)
+      if (hitMilestone) {
+        // Only these carry XP; the visual-only milestones (14/21/60) just pop.
+        if (newStreak === 7)   dispatchXP('habit_streak_7')
+        if (newStreak === 30)  dispatchXP('habit_streak_30')
+        if (newStreak === 100) dispatchXP('habit_streak_100')
+      }
       signals.emit({
         type: 'habit_completed',
         payload: { habitId: h.id, habitName: h.name, streakDays: newStreak, pack: h.pack },
       })
-      if (MILESTONES.includes(newStreak)) {
+      if (hitMilestone) {
         if (milestoneRef.current) clearTimeout(milestoneRef.current)
         setMilestone({ name: h.name, streak: newStreak })
         milestoneRef.current = setTimeout(() => setMilestone(null), 4000)
@@ -477,6 +488,7 @@ export default function HabitBuilder() {
         // Keep a bounded date history — this is what makes a daily habit
         // extend the global streak even on days with no completed tasks.
         checkInDates: [...new Set([...dates, t])].sort().slice(-120),
+        awardedMilestones: hitMilestone ? [...awarded, newStreak] : awarded,
       }
     })
     // Flush to DB first, then re-read the global streak so it reflects today.
