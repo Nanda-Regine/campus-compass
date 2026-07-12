@@ -56,6 +56,31 @@ function assertPublicUrl(raw: string): URL {
   return parsed
 }
 
+// fetch() follows redirects by default, so a public host could 30x to an
+// internal IP (169.254.169.254 metadata, etc.) and bypass assertPublicUrl.
+// Follow manually and re-validate every hop. (Residual: a public hostname that
+// DNS-resolves to a private IP is not caught here — accepted for now.)
+async function safeFetch(startUrl: string, maxHops = 5): Promise<Response> {
+  let current = assertPublicUrl(startUrl).toString()
+  for (let hop = 0; hop <= maxHops; hop++) {
+    const res = await fetch(current, {
+      headers: { 'User-Agent': 'VarsityOS/1.0 (timetable-import)' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get('location')
+      if (!loc) return res
+      const next = new URL(loc, current)
+      assertPublicUrl(next.toString())  // throws on private/loopback redirect target
+      current = next.toString()
+      continue
+    }
+    return res
+  }
+  throw new Error('Too many redirects')
+}
+
 // ─── Day mappings ─────────────────────────────────────────────────────────────
 
 // node-ical byweekday may be: string 'MO', prefixed '+1MO', or rrule integer (0=Mon…6=Sun)
@@ -251,15 +276,13 @@ export async function POST(req: NextRequest) {
     let icsText = rawText ?? ''
 
     if (url) {
-      // SSRF guard
-      try { assertPublicUrl(url) } catch (e) {
+      // SSRF guard (re-validated across every redirect hop inside safeFetch)
+      let fetchRes: Response
+      try {
+        fetchRes = await safeFetch(url)
+      } catch (e) {
         return NextResponse.json({ error: (e as Error).message }, { status: 400 })
       }
-
-      const fetchRes = await fetch(url, {
-        headers: { 'User-Agent': 'VarsityOS/1.0 (timetable-import)' },
-        signal: AbortSignal.timeout(10_000),
-      })
       if (!fetchRes.ok) {
         return NextResponse.json(
           { error: `Could not fetch calendar — server returned ${fetchRes.status}` },
