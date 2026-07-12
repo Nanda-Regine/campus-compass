@@ -789,10 +789,12 @@ function ReportTab() {
   const [form, setForm] = useState({ type: '', location: '', description: '', anonymous: true })
   const [submitted, setSubmitted] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async () => {
     if (!form.type || !form.description) return
     setSaving(true)
+    setError(null)
     try {
       // Try to get geolocation for better incident tracking
       let latitude: number | undefined
@@ -805,7 +807,7 @@ function ReportTab() {
         longitude = pos.coords.longitude
       } catch { /* geolocation not available or denied — continue without */ }
 
-      await fetch('/api/safety/incidents', {
+      const res = await fetch('/api/safety/incidents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -820,9 +822,16 @@ function ReportTab() {
           anonymous: form.anonymous,
         }),
       })
-    } catch { /* best effort — show success even if network fails */ }
-    setSaving(false)
-    setSubmitted(true)
+      // NEVER show a false "submitted" for a safety report — a silently lost
+      // assault/GBV report is dangerous. Only confirm on a real 2xx; otherwise
+      // keep the form populated so the student can retry.
+      if (!res.ok) throw new Error(`server responded ${res.status}`)
+      setSubmitted(true)
+    } catch {
+      setError('Could not submit your report — please check your connection and try again. If this is an emergency, call 10111 (police) or 112 from any cell phone now.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (submitted) {
@@ -921,6 +930,16 @@ function ReportTab() {
         />
         <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Submit anonymously</span>
       </label>
+
+      {error && (
+        <div role="alert" style={{
+          background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.35)',
+          borderRadius: 12, padding: '10px 14px',
+          fontSize: '0.73rem', color: '#f87171', lineHeight: 1.55, fontFamily: 'var(--font-body)',
+        }}>
+          {error}
+        </div>
+      )}
 
       <button
         onClick={() => { void handleSubmit() }}
