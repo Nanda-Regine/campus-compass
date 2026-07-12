@@ -1609,6 +1609,18 @@ c22953c  fix(durability): bound long-lived queries, SAST dashboard, fix stale ex
 
 ---
 
+## Testing — XP Engine Harness (2026-07-12)
+
+First automated test suite in the repo. **Vitest** + **happy-dom** (dev deps), `npm test` / `npm run test:watch`, config at `vitest.config.ts` (`@/` alias + happy-dom for `localStorage`).
+
+`src/lib/xp-engine.test.ts` — 21 tests over the XP engine's pure functions: `getLevel` / `getLevelProgress` thresholds, `MYSTERY_LOOT_TABLE` invariants (weights = 100, xp matches the server allowlist), `rollMysteryBox` (always-defined + boundary tiers), `calculateArchetype`, `getUnlockedBadges`, and SAST-anchored `getDomainsHitToday` / `getPendingXP` (a regression guard for the UTC→SAST day-boundary fix). The single Supabase-backed import is mocked so the suite runs in ~0.4s with no network/auth.
+
+```
+53aa346  test(xp-engine): add Vitest harness for the XP engine's pure functions
+```
+
+---
+
 Every feature decision is tested against Nomvula:
 
 > **Nomvula** is a first-generation student from Soweto. She's studying BCom Accounting at Wits on a full NSFAS bursary. She has a prepaid Tecno Spark with 2GB of data per month. She takes two taxis to get to campus. She's brilliant, but she arrives without the network of tutors, advisors, and mentors that her more privileged classmates take for granted. She is homesick, occasionally overwhelmed, and full of potential.
