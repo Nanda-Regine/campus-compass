@@ -3,6 +3,7 @@
 // Connect students with alumni mentors by career field + institution
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
 
 interface MentorProfile {
   id:string;user_id:string;display_name:string;institution:string;degree:string;grad_year:number|null;
@@ -89,7 +90,8 @@ function MentorCard({mentor:m,userId}:{mentor:MentorProfile;userId:string}) {
   const supabase=createClient()
 
   const send=async()=>{
-    await supabase.from('mentor_requests').upsert({mentor_id:m.id,mentee_id:userId,topic,message:message||null})
+    const {error}=await supabase.from('mentor_requests').upsert({mentor_id:m.id,mentee_id:userId,topic,message:message||null})
+    if(error){toast.error('Could not send your request — please try again');return} // don't show "sent" on failure
     setSent(true);setOpen(false)
   }
 
@@ -148,8 +150,9 @@ function BecomeMentor({userId,university,onDone}:{userId:string;university?:stri
   const submit=async()=>{
     if(!form.display_name||!form.degree||!form.institution) return
     setSaving(true)
-    await supabase.from('mentor_profiles').upsert({user_id:userId,display_name:form.display_name,institution:form.institution,degree:form.degree,grad_year:parseInt(form.grad_year)||null,career_field:form.career_field,company:form.company||null,job_title:form.job_title||null,bio:form.bio||null,available_for:form.available_for,linkedin_url:form.linkedin_url||null})
+    const {error}=await supabase.from('mentor_profiles').upsert({user_id:userId,display_name:form.display_name,institution:form.institution,degree:form.degree,grad_year:parseInt(form.grad_year)||null,career_field:form.career_field,company:form.company||null,job_title:form.job_title||null,bio:form.bio||null,available_for:form.available_for,linkedin_url:form.linkedin_url||null})
     setSaving(false)
+    if(error){toast.error('Could not save your mentor profile — please try again');return}
     onDone()
   }
 

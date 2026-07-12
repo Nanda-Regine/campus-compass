@@ -85,6 +85,11 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
   const [adding, setAdding]     = useState(false)
   const [saving, setSaving]     = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
+  // Draft notes for the currently-expanded card. Only one card is open at a
+  // time, so a single parent state replaces the per-item useState that used to
+  // live inside .map() — that was a Rules-of-Hooks violation (hook count changed
+  // when the list grew/shrank/filtered) and crashed the tab.
+  const [noteDraft, setNoteDraft] = useState('')
   const [form, setForm]         = useState(EMPTY_FORM)
   const [filter, setFilter]     = useState<AppStatus | 'all'>('all')
 
@@ -326,13 +331,12 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
           const ddTag = deadlineTag(app.deadline)
           const ivMsg = interviewCountdown(app.interview_at)
           const isOpen = expanded === app.id
-          const [localNotes, setLocalNotes] = useState(app.notes ?? '')
 
           return (
             <div key={app.id} style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${isOpen ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 14, overflow: 'hidden' }}>
               {/* Header row */}
               <div
-                onClick={() => setExpanded(isOpen ? null : app.id)}
+                onClick={() => { const willOpen = !isOpen; setExpanded(willOpen ? app.id : null); if (willOpen) setNoteDraft(app.notes ?? '') }}
                 style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '13px 14px', cursor: 'pointer' }}
               >
                 <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{m.emoji}</span>
@@ -406,9 +410,9 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
                     </label>
                     <textarea
                       rows={3}
-                      value={localNotes}
-                      onChange={e => setLocalNotes(e.target.value)}
-                      onBlur={() => saveNotes(app.id, localNotes)}
+                      value={noteDraft}
+                      onChange={e => setNoteDraft(e.target.value)}
+                      onBlur={() => saveNotes(app.id, noteDraft)}
                       placeholder="Interview prep notes, contact person, next steps…"
                       style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)', fontSize: 12.5, outline: 'none', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.5 }}
                     />

@@ -416,7 +416,10 @@ export default function NovaPage() {
       try {
         const res = await fetch('/api/nova')
         if (!res.ok) {
-          if (res.status === 401) router.push('/auth/login')
+          if (res.status === 401) { router.push('/auth/login'); return }
+          // History failed to load (500/timeout/etc) — still show the daily
+          // brief so Nova lands on a usable screen instead of blank.
+          setShowWelcome(true)
           return
         }
         const data = await res.json()
@@ -435,6 +438,9 @@ export default function NovaPage() {
         if (data.dailyBriefData) setDailyBriefData(data.dailyBriefData)
       } catch (err) {
         console.error(err)
+        // Network error reaching /api/nova — fall back to the welcome brief
+        // rather than leaving the chat blank.
+        setShowWelcome(true)
       } finally {
         setInitialLoading(false)
       }

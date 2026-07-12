@@ -26,7 +26,7 @@ export default async function TutoringPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="schedule" opacity={0.38} blurPx={5} saturation={1.2} overlayColor="transparent" />
+      <AmbientImage zone="schedule" opacity={0.15} blurPx={16} saturation={1.2} overlayColor="rgba(5,4,12,0.72)" />
       <TopBar title="Tutoring" />
       <TutoringMarketplace
         userId={user.id}

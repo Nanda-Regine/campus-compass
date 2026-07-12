@@ -26,7 +26,7 @@ export default async function NotesPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="study" opacity={0.38} blurPx={5} saturation={1.3} overlayColor="transparent" />
+      <AmbientImage zone="study" opacity={0.26} blurPx={8} saturation={1.3} overlayColor="rgba(5,4,12,0.55)" />
       <TopBar title="Notes" />
       <NotesMarketplace
         userId={user.id}

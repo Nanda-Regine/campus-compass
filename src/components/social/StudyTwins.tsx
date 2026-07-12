@@ -31,11 +31,12 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
   async function saveSettings(updates: { opt_in?: boolean; whatsapp_number?: string }) {
     setSavingSettings(true)
     try {
-      await fetch('/api/study-twins', {
+      const res = await fetch('/api/study-twins', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
       })
+      if (!res.ok) throw new Error('save failed') // don't show success on a 4xx/5xx
       toast.success('Settings saved')
     } catch {
       toast.error('Failed to save')
