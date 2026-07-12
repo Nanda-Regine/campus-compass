@@ -1546,6 +1546,40 @@ New functions:
 
 ---
 
+## Sweep — App Health, Security & Onboarding Hardening (2026-07-12)
+
+Two parallel audit agents (security + onboarding) plus a full type-check/lint pass. App health restored (`tsc --noEmit` was failing on two untyped `SecurityEvent`s from the middleware fail-open commit) and eight audit findings triaged into fix-now vs deferred.
+
+### Fixed
+
+| Area | Fix | Files |
+|---|---|---|
+| Type-check | `SecurityEvent` union missing `arcjet_error` / `middleware_session_error` → `tsc` red | `lib/security.ts` |
+| XSS (MED) | Flashcard `parseMathHtml` HTML-escapes non-math text before `dangerouslySetInnerHTML`; KaTeX still renders math | `study/FlashcardsTab.tsx` |
+| SSRF (MED) | ICS import follows redirects manually and re-validates every hop against the private/loopback guard | `api/timetable/import-ics/route.ts` |
+| POPIA (HIGH) | Consent recorded server-side in `/auth/callback` (client write ran as anon → blocked by RLS → swallowed); carried in signUp metadata | `auth/callback/route.ts`, `hooks/useAuth.ts` |
+| POPIA (HIGH) | Google OAuth button gated behind the consent checkbox | `auth/SignupForm.tsx` |
+| Onboarding | Satellite writes first, profile (`onboarding_complete` gate) last, all errors checked; module/exam inserts guarded against duplicate-on-retry; language/status/TVET/country persist across mid-setup refresh | `setup/SetupFlow.tsx` |
+
+### Deferred (bigger / riskier — tracked)
+
+CSP `unsafe-inline`/`unsafe-eval` (needs nonce migration); Paystack webhook trusts a static secret + attacker-supplied metadata instead of real HMAC; ICS DNS-rebinding residual; dashboard SSR computes today/week in UTC not SAST (exam filter off by a day 00:00–02:00); dead `DashboardGreeting.tsx` hydration hazard; setup-form a11y gaps.
+
+### Prod env must-verify (checked `.env.local` only)
+
+`INNGEST_SIGNING_KEY` (functions publicly triggerable if unset — **security**), `UPSTASH_*` (rate limiting degrades to per-instance in-memory), `ARCJET_KEY`, `SENTRY_DSN`.
+
+### Commits
+
+```
+b73045b  fix(security): escape flashcard HTML, harden ICS SSRF, restore type-check
+         3 files changed, 60 insertions(+), 12 deletions(-)
+97ee606  fix(onboarding): persist POPIA consent, order writes safely, keep draft on refresh
+         4 files changed, 103 insertions(+), 46 deletions(-)
+```
+
+---
+
 Every feature decision is tested against Nomvula:
 
 > **Nomvula** is a first-generation student from Soweto. She's studying BCom Accounting at Wits on a full NSFAS bursary. She has a prepaid Tecno Spark with 2GB of data per month. She takes two taxis to get to campus. She's brilliant, but she arrives without the network of tutors, advisors, and mentors that her more privileged classmates take for granted. She is homesick, occasionally overwhelmed, and full of potential.
