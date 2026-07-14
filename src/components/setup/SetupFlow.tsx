@@ -373,11 +373,32 @@ export default function SetupFlow() {
 
       // Profile LAST — carries onboarding_complete, so it's only set once every
       // satellite write above has succeeded.
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .upsert({ id: user.id, email: user.email, ...profileData })
-        .select()
-        .single()
+      //
+      // Self-heal against schema drift: if the live DB is missing a newer,
+      // non-essential column (a migration not yet applied), PostgREST rejects
+      // the whole write with PGRST204 ("Could not find the 'x' column ... in the
+      // schema cache") or Postgres 42703. Rather than lock a brand-new student
+      // out of the app entirely, strip the offending column and retry. The
+      // onboarding gate (onboarding_complete) and identity columns are core and
+      // will never be stripped, so the student always lands on a usable dashboard.
+      const CORE_COLUMNS = new Set(['id', 'email', 'name', 'full_name', 'onboarding_complete', 'onboarding_completed'])
+      let payload: Record<string, unknown> = { id: user.id, email: user.email, ...profileData }
+      let profile = null
+      let profileError = null
+      for (let attempt = 0; attempt < 8; attempt++) {
+        const res = await supabase.from('profiles').upsert(payload).select().single()
+        profile = res.data
+        profileError = res.error
+        if (!profileError) break
+        // Extract the missing column name from a schema-cache / undefined-column error.
+        const isSchemaDrift = profileError.code === 'PGRST204' || profileError.code === '42703'
+        const missing = profileError.message?.match(/'([^']+)' column/)?.[1]
+          ?? profileError.message?.match(/column "?([a-z_]+)"? .*does not exist/i)?.[1]
+        if (!isSchemaDrift || !missing || CORE_COLUMNS.has(missing) || !(missing in payload)) break
+        console.warn(`[SetupFlow] live DB missing profiles.${missing} — dropping it and retrying`)
+        const { [missing]: _dropped, ...rest } = payload
+        payload = rest
+      }
 
       if (profileError) throw profileError
       setProfile(profile)
@@ -391,8 +412,14 @@ export default function SetupFlow() {
       router.push('/tour')
       router.refresh()
     } catch (err) {
-      console.error(err)
-      toast.error('Something went wrong. Please try again.')
+      console.error('[SetupFlow] onboarding save failed:', err)
+      // Surface the real Postgres/Supabase error so schema mismatches (a missing
+      // column, a failing CHECK/FK) are diagnosable instead of hidden behind a
+      // generic message the student can't act on and we can't debug from a report.
+      const e = err as { message?: string; details?: string; hint?: string; code?: string }
+      const detail = e?.message || e?.details || e?.hint || 'Unknown error'
+      const code = e?.code ? ` (${e.code})` : ''
+      toast.error(`Couldn't save your setup: ${detail}${code}`)
     } finally {
       setSaving(false)
     }

@@ -9,25 +9,23 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Find study pod members
-  const { data: podMember } = await admin
-    .from('study_pod_members')
-    .select('pod_id')
-    .eq('user_id', user.id)
-    .limit(1)
-    .single()
+  // Study "pod" members = the other party in every accepted pod connection.
+  // There is no pods/pod_members table — the model is peer-to-peer connections
+  // (study_pod_connections: requester_id ↔ recipient_id, status).
+  const { data: connections } = await admin
+    .from('study_pod_connections')
+    .select('requester_id, recipient_id')
+    .eq('status', 'accepted')
+    .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+    .limit(50)
 
-  if (!podMember) return NextResponse.json({ feed: [] })
+  if (!connections?.length) return NextResponse.json({ feed: [] })
 
-  const { data: members } = await admin
-    .from('study_pod_members')
-    .select('user_id')
-    .eq('pod_id', podMember.pod_id)
-    .neq('user_id', user.id)
-    .limit(10)
+  const memberIds = [...new Set(
+    connections.map(c => (c.requester_id === user.id ? c.recipient_id : c.requester_id)),
+  )].slice(0, 10)
 
-  if (!members?.length) return NextResponse.json({ feed: [] })
-  const memberIds = members.map(m => m.user_id)
+  if (!memberIds.length) return NextResponse.json({ feed: [] })
 
   const since = sastDatePlus(-3)
 
