@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const CONSENT_KEY = 'varsityos_cookie_consent'
 
@@ -9,6 +9,7 @@ type ConsentChoice = 'all' | 'essential' | null
 export default function ConsentBanner() {
   const [choice, setChoice] = useState<ConsentChoice>(null)
   const [visible, setVisible] = useState(false)
+  const bannerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY) as ConsentChoice | null
@@ -19,6 +20,27 @@ export default function ConsentBanner() {
     setChoice(stored)
     applyConsent(stored)
   }, [])
+
+  // While the fixed banner is on screen it overlays the bottom of every page —
+  // which was trapping the signup "Create free account" button (and any other
+  // bottom-anchored primary action) on mobile, blocking conversion until the
+  // banner was dismissed. Reserve matching space at the bottom of the document
+  // so nothing is ever hidden behind it; released the moment a choice is made.
+  useEffect(() => {
+    if (!visible) return
+    const el = bannerRef.current
+    if (!el) return
+    const apply = () => { document.body.style.paddingBottom = `${el.offsetHeight + 16}px` }
+    apply()
+    const ro = new ResizeObserver(apply)
+    ro.observe(el)
+    window.addEventListener('resize', apply)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', apply)
+      document.body.style.paddingBottom = ''
+    }
+  }, [visible])
 
   function applyConsent(c: ConsentChoice) {
     if (c === 'essential') {
@@ -52,6 +74,7 @@ export default function ConsentBanner() {
 
   return (
     <div
+      ref={bannerRef}
       role="dialog"
       aria-label="Cookie consent"
       style={{
