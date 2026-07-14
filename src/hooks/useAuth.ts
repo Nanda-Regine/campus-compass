@@ -19,7 +19,7 @@ export function useAuth() {
       // Prevents IndexedDB lock contention on interrupted signups.
       await supabase.auth.signOut({ scope: 'local' })
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -32,12 +32,18 @@ export function useAuth() {
         },
       })
       if (error) throw error
-      toast.success('Check your email to confirm your account!')
-      return { error: null }
+      // With email auto-confirm ON, signUp returns a live session immediately —
+      // no email in the critical path, so the student goes straight to onboarding.
+      // If confirmation is ever re-enabled, session is null and we fall back to
+      // the "check your email" screen. Email must never be able to block signup.
+      const session = data.session ?? null
+      if (session) toast.success('Account created! Let’s set you up 🚀')
+      else toast.success('Check your email to confirm your account!')
+      return { error: null, session }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Sign up failed'
       toast.error(message)
-      return { error: message }
+      return { error: message, session: null }
     } finally {
       setLoading(false)
     }
