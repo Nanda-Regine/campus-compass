@@ -646,6 +646,26 @@ html.light {
   border-color: rgba(0, 0, 0, 0.16) !important;
 }
 
+/* 7b. Ambient background scrim (AmbientImage `.ambient-scrim`).
+       Every page passes a DARK gradient inline for the dark theme. On the light
+       and outdoor themes that dark scrim muddies the bright surface, so replace it
+       with a pale scrim. Outdoor washes the image out almost entirely for max text
+       contrast in direct sunlight; Sunrise keeps a soft veil so the art still reads. */
+:is([data-theme="light"],html.light) .ambient-scrim {
+  background: linear-gradient(180deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.82) 100%) !important;
+}
+:is([data-theme="outdoor"],html.outdoor) .ambient-scrim {
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.96) 100%) !important;
+}
+/* Dim the underlying ambient image itself in the bright themes so colour doesn't
+   bleed through the pale scrim and reduce text contrast. */
+:is([data-theme="light"],html.light) .ambient-img {
+  opacity: 0.14 !important;
+}
+:is([data-theme="outdoor"],html.outdoor) .ambient-img {
+  opacity: 0.05 !important;
+}
+
 /* 8. Selection */
 :is([data-theme="outdoor"],html.outdoor) ::selection {
   background: rgba(6, 95, 70, 0.22);

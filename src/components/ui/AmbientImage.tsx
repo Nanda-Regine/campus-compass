@@ -81,13 +81,15 @@ export function AmbientImage({
   zone,
   src,
   alt = '',
-  opacity = 0.34,
+  opacity = 0.40,
   blurPx = 3,
   saturation = 1.3,
-  // Real legibility scrim by default (was 6% — effectively none). A top-to-bottom
-  // gradient keeps text readable further down the page. Pages that need no scrim
-  // still pass overlayColor="transparent" explicitly.
-  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.40) 0%, rgba(5,4,12,0.66) 100%)',
+  // Dark-theme legibility scrim. Lightened (was 0.40→0.66) so the background image
+  // stays visible instead of being crushed to black, while text further down the
+  // page stays readable. In light/outdoor themes the `.ambient-scrim` class below
+  // is overridden in globals.css with a pale scrim so the dark gradient never
+  // muddies a bright surface. Pages that want no scrim pass overlayColor="transparent".
+  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.30) 0%, rgba(5,4,12,0.52) 100%)',
   sizes = '100vw',
 }: AmbientImageProps) {
   const imageSrc = zone ? AMBIENT_IMAGES[zone] : src
@@ -99,6 +101,7 @@ export function AmbientImage({
       style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}
     >
       <Image
+        className="ambient-img"
         src={imageSrc}
         alt={alt}
         fill
@@ -110,7 +113,7 @@ export function AmbientImage({
         sizes={sizes}
         priority={false}
       />
-      <div style={{ position: 'absolute', inset: 0, background: overlayColor }} />
+      <div className="ambient-scrim" style={{ position: 'absolute', inset: 0, background: overlayColor }} />
     </div>
   )
 }
