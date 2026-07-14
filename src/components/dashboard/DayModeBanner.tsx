@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import type { Task, Exam, TimetableEntry, Module } from '@/types'
@@ -184,15 +184,23 @@ const MODE_LABEL_KEY: Record<DayMode, string> = {
 /* ── Component ──────────────────────────────────────────── */
 export default function DayModeBanner({ timetable, tasks, exams, hour, firstName }: DayModeBannerProps) {
   const t   = useTranslations('dayMode')
-  const now = useMemo(() => new Date(), [])
+  // The context line is derived from `new Date()` local-timezone reads (getDay/
+  // getHours/getMinutes), which are UTC on the server and SAST in the browser —
+  // a reliable hydration mismatch (#425/#422). Defer the whole time-dependent
+  // banner to after mount so SSR and the first client render agree (both null),
+  // then render the real banner. Same null-first shape the sleep mode already uses.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const now = useMemo(() => (mounted ? new Date() : null), [mounted])
   const mode = getDayMode(hour)
   const meta = MODE_META[mode]
   const ctx  = useMemo(
-    () => getContextLine(mode, timetable, tasks, exams, now, firstName),
+    () => (now ? getContextLine(mode, timetable, tasks, exams, now, firstName) : null),
     [mode, timetable, tasks, exams, now, firstName],
   )
 
-  if (mode === 'sleep') return null  // no banner during late-night hours
+  if (!mounted || !ctx) return null   // no banner until mounted / during late-night hours
+  if (mode === 'sleep') return null   // no banner during late-night hours
 
   return (
     <div
