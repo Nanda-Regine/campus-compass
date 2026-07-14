@@ -403,8 +403,18 @@ export default function SetupFlow() {
       if (profileError) throw profileError
       setProfile(profile)
 
-      // Award XP for completing onboarding
-      dispatchXP('task_complete', 'Completed VarsityOS onboarding')
+      // ⚠️ Everything past this point is a NON-CRITICAL side effect. Onboarding has
+      // already succeeded (profile row carries onboarding_complete=true), so a
+      // failure here must NEVER surface a "something went wrong" error or block the
+      // student from reaching /tour. dispatchXP is a synchronous client-only
+      // gamification write (localStorage / challenge logic) that can throw on
+      // corrupt or full localStorage — previously that threw all the way into the
+      // catch below and showed an error at the very end even though setup saved.
+      try {
+        dispatchXP('task_complete', 'Completed VarsityOS onboarding')
+      } catch (xpErr) {
+        console.warn('[SetupFlow] XP dispatch failed (non-critical, onboarding already saved):', xpErr)
+      }
 
       try { localStorage.removeItem(`setup_progress_${user.id}`) } catch { /* ok */ }
       try { localStorage.setItem('varsityos-new-user', name || 'Student') } catch { /* ok */ }
