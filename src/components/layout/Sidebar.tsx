@@ -11,7 +11,6 @@ import {
 import { useAppStore } from '@/store'
 import { useEffect, useState } from 'react'
 import { trackEvent } from '@/lib/analytics'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { APP_PREFIXES } from '@/lib/appPrefixes'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -281,7 +280,6 @@ export function Sidebar() {
             {initials}
           </div>
         </Link>
-        <ThemeToggle compact />
         <div title={online ? 'Online' : 'Offline'} style={{ color: online ? '#00CFA0' : 'var(--text-muted)', transition: 'color 300ms' }}>
           {online ? <Wifi size={12} strokeWidth={1.8} /> : <WifiOff size={12} strokeWidth={1.8} />}
         </div>

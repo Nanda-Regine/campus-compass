@@ -137,11 +137,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => { unsubOrch(); unsubRules() }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Dark is the default, but the theme is user-switchable again (Dark / Sunrise /
-  // Outdoor). Outdoor is a high-contrast mode for bright SA sunlight, where a dark
-  // UI is physically unreadable. Toggle lives in the Sidebar and Profile.
+  // Locked to the dark theme. Light/outdoor modes were removed — forcedTheme makes
+  // setTheme a no-op and always applies `dark`, so there is no theme switcher.
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} storageKey="varsityos-theme">
+    <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false} storageKey="varsityos-theme">
       <PostHogProvider client={posthog}>
         <PostHogPageView />
         <OfflineSyncRunner />
