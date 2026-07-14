@@ -681,6 +681,19 @@ html.light {
   z-index: 1;
 }
 
+/* 7d. Crisp live-chat launcher — keep it clear of the mobile bottom nav (60px)
+   and the Nova quick-action FAB (bottom 72px). Crisp's launcher sits in
+   .crisp-client with version-obfuscated inner classes, so raise the root and its
+   direct children. If a Crisp version ignores this, set a Y-offset in the Crisp
+   dashboard (Chatbox → Position) instead. */
+@media (max-width: 767px) {
+  .crisp-client,
+  .crisp-client > div,
+  .crisp-client [class*="cc-"][class*="1brb6"] {
+    bottom: 138px !important;
+  }
+}
+
 /* 8. Selection */
 :is([data-theme="outdoor"],html.outdoor) ::selection {
   background: rgba(6, 95, 70, 0.22);

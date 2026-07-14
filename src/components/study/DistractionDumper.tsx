@@ -134,7 +134,7 @@ function CapturePopup({ onSave, onClose }: { onSave: (text: string) => void; onC
 
   return (
     <div style={{
-      position: 'absolute', bottom: 60, right: 0,
+      position: 'absolute', bottom: 60, left: 0,
       width: 280, padding: '14px 16px', borderRadius: 16,
       background: '#0d1225', border: '1px solid rgba(255,255,255,0.12)',
       boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
@@ -228,7 +228,7 @@ export default function DistractionDumper() {
     <>
       {/* Floating button */}
       <div style={{
-        position: 'fixed', bottom: 88, right: 18, zIndex: 8000,
+        position: 'fixed', bottom: 88, left: 18, zIndex: 8000,
       }}>
         <div style={{ position: 'relative' }}>
           <button
@@ -265,7 +265,7 @@ export default function DistractionDumper() {
             <button
               onClick={() => setShowReview(true)}
               style={{
-                position: 'absolute', bottom: 52, right: 0,
+                position: 'absolute', bottom: 52, left: 0,
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 9, fontWeight: 700,
                 padding: '5px 10px', borderRadius: 8, border: 'none', cursor: 'pointer',
                 background: 'rgba(78,207,158,0.15)', color: '#4ecf9e',
