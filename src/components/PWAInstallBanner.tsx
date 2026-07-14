@@ -74,12 +74,12 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
       >
         <div className="flex items-start justify-between mb-2">
           <p className="font-display font-bold text-teal-400 text-sm">Install VarsityOS on iPhone</p>
-          <button onClick={handleDismiss}><X size={14} className="text-white/78" /></button>
+          <button onClick={handleDismiss}><X size={14} className="text-white" /></button>
         </div>
-        <ol className="font-mono text-[0.62rem] text-white/80 space-y-1 list-decimal list-inside">
-          <li>Tap the <strong className="text-white/80">Share</strong> button in Safari (the box with an arrow)</li>
-          <li>Scroll down and tap <strong className="text-white/80">Add to Home Screen</strong></li>
-          <li>Tap <strong className="text-white/80">Add</strong> — VarsityOS is now on your home screen!</li>
+        <ol className="font-mono text-[0.62rem] text-white space-y-1 list-decimal list-inside">
+          <li>Tap the <strong className="text-white">Share</strong> button in Safari (the box with an arrow)</li>
+          <li>Scroll down and tap <strong className="text-white">Add to Home Screen</strong></li>
+          <li>Tap <strong className="text-white">Add</strong> — VarsityOS is now on your home screen!</li>
         </ol>
       </div>
     )
@@ -97,10 +97,10 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
           </div>
           <div>
             <p className="font-display font-bold text-white text-sm">Install VarsityOS</p>
-            <p className="font-mono text-[0.6rem] text-white/85">Works offline · No app store needed</p>
+            <p className="font-mono text-[0.6rem] text-white">Works offline · No app store needed</p>
           </div>
         </div>
-        <p className="font-mono text-[0.65rem] text-white/78 mb-4">
+        <p className="font-mono text-[0.65rem] text-white mb-4">
           Add VarsityOS to your home screen for instant access, offline study tracking, and exam reminders — even without internet.
         </p>
         <button
@@ -138,7 +138,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
       </div>
       <div className="flex-1 min-w-0">
         <p className="font-display font-bold text-white text-xs">Install VarsityOS</p>
-        <p className="font-mono text-[0.65rem] text-white/82 truncate">Works offline · Home screen shortcut</p>
+        <p className="font-mono text-[0.65rem] text-white truncate">Works offline · Home screen shortcut</p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <button
@@ -148,7 +148,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
         >
           {isIOS ? 'How?' : 'Install'}
         </button>
-        <button onClick={handleDismiss} className="text-white/75 hover:text-white/70 transition-colors">
+        <button onClick={handleDismiss} className="text-white hover:text-white transition-colors">
           <X size={14} />
         </button>
       </div>

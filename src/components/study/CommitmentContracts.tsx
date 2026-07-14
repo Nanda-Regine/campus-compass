@@ -135,7 +135,7 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
           </div>
 
           <div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginBottom: 8 }}>
               XP STAKE — you lose this if you fail: <span style={{ color: '#ff6b6b' }}>{stake} XP</span>
               {' '}(win bonus: <span style={{ color: '#4ecf9e' }}>+75 XP</span>)
             </div>
@@ -144,7 +144,7 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
               value={stake} onChange={e => setStake(Number(e.target.value))}
               style={{ width: '100%', accentColor: '#ff6b6b' }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginTop: 2 }}>
               <span>Low risk (10)</span><span>High stakes (500)</span>
             </div>
           </div>
@@ -155,7 +155,7 @@ function CreateModal({ onClose, onCreate }: CreateModalProps) {
             <button type="button" onClick={onClose} style={{
               flex: 1, padding: '12px 0', borderRadius: 12,
               border: '1px solid rgba(255,255,255,0.1)',
-              background: 'transparent', color: 'rgba(255,255,255,0.5)',
+              background: 'transparent', color: '#fff',
               fontFamily: 'Sora,sans-serif', cursor: 'pointer', fontSize: 14,
             }}>
               Cancel
@@ -282,7 +282,7 @@ export default function CommitmentContracts() {
               {active.task_description}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>
+              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff' }}>
                 {formatDeadline(active.deadline)}
               </div>
               <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#ff6b6b' }}>
@@ -324,7 +324,7 @@ export default function CommitmentContracts() {
       {!hasActive && recent.length === 0 && (
         <div style={{ textAlign: 'center', padding: '16px 0' }}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>🤝</div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.4 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: '#fff', lineHeight: 1.4 }}>
             No active contract. Commit to finishing something today — stake your XP on it.
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function CommitmentContracts() {
               <span style={{ fontSize: 14 }}>{c.status === 'completed' ? '✅' : '❌'}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.6)',
+                  fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff',
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
                   {c.task_description}

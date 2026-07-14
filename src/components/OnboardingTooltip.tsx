@@ -75,7 +75,7 @@ export default function OnboardingTooltip() {
           {/* Skip */}
           <button
             onClick={dismiss}
-            className="absolute top-4 right-4 font-mono text-[0.65rem] text-white/78 hover:text-white/80 transition-colors"
+            className="absolute top-4 right-4 font-mono text-[0.65rem] text-white hover:text-white transition-colors"
           >
             Skip
           </button>
@@ -96,7 +96,7 @@ export default function OnboardingTooltip() {
 
           <div className="text-2xl mb-2">{current.icon}</div>
           <div className="font-display font-bold text-white text-base mb-1">{current.title}</div>
-          <p className="font-mono text-[0.62rem] text-white/70 leading-relaxed mb-5">{current.body}</p>
+          <p className="font-mono text-[0.62rem] text-white leading-relaxed mb-5">{current.body}</p>
 
           <button
             onClick={next}

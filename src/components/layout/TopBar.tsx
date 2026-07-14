@@ -37,7 +37,7 @@ export default function TopBar({ title, action, variant = 'dark', className }: T
             'min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl transition-all',
             isLight
               ? 'bg-teal-600/10 hover:bg-teal-600/20 text-teal-700'
-              : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
+              : 'bg-white/5 hover:bg-white/10 text-white hover:text-white'
           )}
           aria-label="Open navigation menu"
         >

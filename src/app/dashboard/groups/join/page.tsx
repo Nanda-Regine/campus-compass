@@ -68,7 +68,7 @@ function JoinGroupContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
-        <div className="font-mono text-white/82 text-sm">Loading invite…</div>
+        <div className="font-mono text-white text-sm">Loading invite…</div>
       </div>
     )
   }
@@ -79,7 +79,7 @@ function JoinGroupContent() {
         <div className="text-center">
           <div className="text-4xl mb-4">⚠️</div>
           <h2 className="font-display font-bold text-white text-xl mb-2">Invalid Invite</h2>
-          <p className="font-mono text-sm text-white/82 mb-6">{error}</p>
+          <p className="font-mono text-sm text-white mb-6">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
             className="font-display font-bold text-sm bg-teal-600 text-white px-6 py-3 rounded-xl"
@@ -102,7 +102,7 @@ function JoinGroupContent() {
           👥
         </div>
         <h2 className="font-display font-black text-white text-2xl mb-1">You&apos;re invited!</h2>
-        <p className="font-mono text-[0.7rem] text-white/82 mb-6">
+        <p className="font-mono text-[0.7rem] text-white mb-6">
           {creatorName} invited you to collaborate on a group assignment
         </p>
 
@@ -112,7 +112,7 @@ function JoinGroupContent() {
             <p className="font-mono text-[0.65rem] text-teal-400">{assignment.subject}</p>
           )}
           {assignment?.due_date && (
-            <p className="font-mono text-[0.62rem] text-white/82 mt-1">
+            <p className="font-mono text-[0.62rem] text-white mt-1">
               Due: {new Date(assignment.due_date).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
           )}
@@ -125,7 +125,7 @@ function JoinGroupContent() {
         >
           {joining ? 'Joining…' : 'Join Group'}
         </button>
-        <p className="font-mono text-[0.65rem] text-white/75">
+        <p className="font-mono text-[0.65rem] text-white">
           You need a VarsityOS account to join. We&apos;ll create one if you don&apos;t have one.
         </p>
       </div>
@@ -137,7 +137,7 @@ export default function JoinGroupPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center">
-        <div className="font-mono text-white/82 text-sm">Loading invite…</div>
+        <div className="font-mono text-white text-sm">Loading invite…</div>
       </div>
     }>
       <JoinGroupContent />

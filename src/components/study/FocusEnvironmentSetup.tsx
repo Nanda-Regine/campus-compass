@@ -44,7 +44,7 @@ export default function FocusEnvironmentSetup({ taskTitle, onReady, onSkip }: Pr
         <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 22, color: '#fff', marginBottom: 6, lineHeight: 1.2 }}>
           30 seconds to<br />prime your brain
         </div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 28 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginBottom: 28 }}>
           Working on: {taskTitle}
         </div>
 
@@ -77,7 +77,7 @@ export default function FocusEnvironmentSetup({ taskTitle, onReady, onSkip }: Pr
                   <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 13, color: done ? '#4ecf9e' : '#fff' }}>
                     {item.emoji} {item.label}
                   </div>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginTop: 2 }}>
                     {item.sub}
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export default function FocusEnvironmentSetup({ taskTitle, onReady, onSkip }: Pr
 
         {/* Micro-goal input */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 8, letterSpacing: '0.1em' }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 8, letterSpacing: '0.1em' }}>
             🎯 THIS SESSION I WILL FINISH…
           </div>
           <input
@@ -142,7 +142,7 @@ export default function FocusEnvironmentSetup({ taskTitle, onReady, onSkip }: Pr
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 12, padding: '11px 0',
-            cursor: 'pointer', color: 'rgba(255,255,255,0.45)',
+            cursor: 'pointer', color: '#fff',
             transition: 'all 0.2s',
           }}
         >

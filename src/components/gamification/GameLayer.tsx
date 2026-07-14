@@ -241,7 +241,7 @@ function BadgeUnlockModal({ badge, onDismiss }: { badge: Badge; onDismiss: () =>
         {/* Description */}
         <div style={{
           fontFamily: 'Sora, sans-serif', fontSize: 15,
-          color: 'rgba(255,255,255,0.55)',
+          color: '#fff',
           maxWidth: 270, lineHeight: 1.55,
           animation: 'gl-badge-text-in 0.4s ease 0.7s both',
         }}>
@@ -251,7 +251,7 @@ function BadgeUnlockModal({ badge, onDismiss }: { badge: Badge; onDismiss: () =>
         <div style={{
           marginTop: 28,
           fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10, color: 'rgba(255,255,255,0.2)',
+          fontSize: 10, color: '#fff',
           animation: 'gl-badge-text-in 0.4s ease 0.9s both',
         }}>
           Tap to continue
@@ -339,7 +339,7 @@ function LevelUpOverlay({ level, onDismiss }: { level: Level; onDismiss: () => v
         <div style={{
           marginTop: 28,
           fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10, color: 'rgba(255,255,255,0.42)',
+          fontSize: 10, color: '#fff',
           animation: 'gl-badge-text-in 0.4s ease 0.8s both',
         }}>
           Tap to continue

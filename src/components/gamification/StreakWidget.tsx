@@ -110,7 +110,7 @@ export default function StreakWidget() {
         position: 'absolute', top: 13, right: 14,
         textAlign: 'right', lineHeight: 1.3,
       }}>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.08em' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', letterSpacing: '0.08em' }}>
           best
         </div>
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 13, fontWeight: 700, color: fc }}>

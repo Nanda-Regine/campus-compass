@@ -159,7 +159,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
             <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>Official Notices</div>
           </div>
         </div>
-        <div style={{ marginTop: 8, fontSize: '0.73rem', color: 'rgba(255,255,255,0.55)' }}>
+        <div style={{ marginTop: 8, fontSize: '0.73rem', color: '#fff' }}>
           {university || 'Your institution'} · {broadcasts.length} broadcast{broadcasts.length !== 1 ? 's' : ''}
           {unreadCount > 0 && (
             <span style={{ marginLeft: 8, color: '#38bdf8', fontWeight: 700 }}>{unreadCount} unread</span>
@@ -231,7 +231,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
             padding: '10px 14px', borderRadius: 10,
             background: 'rgba(56,189,248,0.08)',
             border: '1px solid rgba(56,189,248,0.15)',
-            fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)',
+            fontSize: '0.75rem', color: '#fff',
           }}>
             Broadcast will be sent to all students at your university.
           </div>
@@ -284,7 +284,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                   minHeight: 100,
                 }}
               />
-              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textAlign: 'right' }}>
+              <div style={{ fontSize: '0.65rem', color: '#fff', textAlign: 'right' }}>
                 {body.length}/2000
               </div>
             </div>
@@ -498,7 +498,7 @@ function BroadcastCard({
         }}>
           {b.body}
           {b.expires_at && (
-            <div style={{ marginTop: 10, fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono,monospace)' }}>
+            <div style={{ marginTop: 10, fontSize: '0.65rem', color: '#fff', fontFamily: 'var(--font-mono,monospace)' }}>
               EXPIRES {new Date(b.expires_at).toLocaleString('en-ZA', { dateStyle: 'medium', timeStyle: 'short' })}
             </div>
           )}

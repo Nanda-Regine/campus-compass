@@ -145,7 +145,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
           {task.title}
         </div>
         {task.due_date && (
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginTop: 6 }}>
             Due {new Date(task.due_date).toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })}
           </div>
         )}
@@ -168,7 +168,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
             ))}
           </div>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: '#fff' }}>
               {dur.desc} · {dur.minutes} minute{dur.minutes !== 1 ? 's' : ''} of pure focus
             </div>
           </div>
@@ -211,7 +211,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
               }}>
                 {String(mins).padStart(2,'0')}:{String(secs).padStart(2,'0')}
               </div>
-              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4, letterSpacing: '0.1em' }}>
+              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginTop: 4, letterSpacing: '0.1em' }}>
                 {paused ? 'PAUSED' : 'FOCUS'}
               </div>
             </div>
@@ -227,7 +227,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
             <button onClick={() => { clearTick(); onComplete(dur.minutes, task) }} style={{
               fontFamily: '"JetBrains Mono",monospace', fontSize: 12,
               padding: '10px 22px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)',
-              background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer',
+              background: 'rgba(255,255,255,0.04)', color: '#fff', cursor: 'pointer',
             }}>
               Done early
             </button>
@@ -242,7 +242,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
           <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 26, color, marginBottom: 8 }}>
             Session complete!
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 32 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 12, color: '#fff', marginBottom: 32 }}>
             +25 XP · {dur.minutes} minutes of focused work
           </div>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -258,7 +258,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
                 fontFamily: 'Sora,sans-serif', fontSize: 14,
                 padding: '12px 24px', borderRadius: 12,
                 border: '1px solid rgba(255,255,255,0.12)',
-                background: 'transparent', color: 'rgba(255,255,255,0.6)', cursor: 'pointer',
+                background: 'transparent', color: '#fff', cursor: 'pointer',
               }}>
                 I'm done
               </button>
@@ -281,7 +281,7 @@ function FocusSessionModal({ task, onComplete, onAbandon }: FocusModalProps) {
           position: 'absolute', top: 20, right: 20,
           fontFamily: '"JetBrains Mono",monospace', fontSize: 11,
           background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 8, padding: '6px 14px', color: 'rgba(255,255,255,0.3)',
+          borderRadius: 8, padding: '6px 14px', color: '#fff',
           cursor: 'pointer',
         }}>
           ✕ Close
@@ -334,9 +334,9 @@ export default function JustStartButton({ tasks }: Props) {
     }
     return (
       <div style={{ borderRadius: 18, border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)', padding: '16px 18px', textAlign: 'center' }}>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.18em', marginBottom: 8 }}>▸ YOUR MOVE</div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.35)', marginBottom: 12 }}>No pending tasks</div>
-        <a href="/study?tab=tasks" style={{ display: 'inline-block', padding: '10px 20px', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, borderRadius: 10, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', letterSpacing: '0.18em', marginBottom: 8 }}>▸ YOUR MOVE</div>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: '#fff', marginBottom: 12 }}>No pending tasks</div>
+        <a href="/study?tab=tasks" style={{ display: 'inline-block', padding: '10px 20px', fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, borderRadius: 10, background: 'rgba(255,255,255,0.06)', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.08)' }}>
           + Add a task
         </a>
       </div>
@@ -377,7 +377,7 @@ export default function JustStartButton({ tasks }: Props) {
         </div>
 
         {topTask.due_date && (
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 14 }}>
             Due {new Date(topTask.due_date).toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })}
           </div>
         )}

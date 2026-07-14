@@ -853,7 +853,7 @@ function GuideTab() {
               <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>{e.note}</div>
             </div>
           ))}
-          <div style={{ background: 'rgba(255,107,107,0.06)', border: '1px solid rgba(255,107,107,0.15)', borderRadius: 12, padding: '10px 14px', fontSize: '0.68rem', color: 'rgba(255,107,107,0.8)', lineHeight: 1.6 }}>
+          <div style={{ background: 'rgba(255,107,107,0.06)', border: '1px solid rgba(255,107,107,0.15)', borderRadius: 12, padding: '10px 14px', fontSize: '0.68rem', color: 'rgb(255,107,107)', lineHeight: 1.6 }}>
             ⚠️ The R350,000 threshold is combined family income. Even if your family earns slightly above this, apply — NSFAS sometimes makes exceptions for SASSA households and students with extenuating circumstances.
           </div>
         </>
@@ -1031,7 +1031,7 @@ export default function NsfasTrackerOS({ budget, userId, fundingType }: Props) {
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 10, fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ marginTop: 10, fontSize: '0.62rem', color: '#fff' }}>
             Amounts are 2025/26 DHET-approved rates. Contact your TVET campus financial aid office for your institution-specific schedule.
           </div>
         </div>

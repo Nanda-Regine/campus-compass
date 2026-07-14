@@ -103,7 +103,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
 
   if (!loaded) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: '#fff', fontSize: 13 }}>
         Loading your CV…
       </div>
     )
@@ -114,35 +114,35 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
 
       {/* Summary */}
       <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 10, fontWeight: 600 }}>Personal summary</div>
+        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 10, fontWeight: 600 }}>Personal summary</div>
         <textarea
           value={summary}
           onChange={e => setSummary(e.target.value)}
           onBlur={() => save({ summary })}
           placeholder="e.g. Motivated 2nd-year BCom student passionate about financial markets and data analysis. Seeking to apply analytical skills and a work ethic shaped by 3 years on NSFAS…"
           rows={3}
-          style={{ width: '100%', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '10px 12px', color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.6, resize: 'vertical', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+          style={{ width: '100%', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '10px 12px', color: '#fff', fontSize: 12, lineHeight: 1.6, resize: 'vertical', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
         />
       </div>
 
       {/* Education (auto) */}
       <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Education</div>
+          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', fontWeight: 600 }}>Education</div>
           <span style={{ fontSize: 9, padding: '2px 7px', borderRadius: 9999, background: 'rgba(78,207,158,0.1)', color: '#4ecf9e', border: '0.5px solid rgba(78,207,158,0.2)' }}>Auto-filled</span>
         </div>
         {profile.university ? (
           <div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>{profile.university}</div>
-            {profile.faculty && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.62)', marginTop: 2 }}>{profile.faculty}</div>}
-            {profile.yearOfStudy && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{profile.yearOfStudy}</div>}
+            <div style={{ fontSize: 13, color: '#fff', fontWeight: 600 }}>{profile.university}</div>
+            {profile.faculty && <div style={{ fontSize: 12, color: '#fff', marginTop: 2 }}>{profile.faculty}</div>}
+            {profile.yearOfStudy && <div style={{ fontSize: 11, color: '#fff', marginTop: 2 }}>{profile.yearOfStudy}</div>}
           </div>
         ) : (
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>Complete your profile to auto-fill education details.</div>
+          <div style={{ fontSize: 12, color: '#fff' }}>Complete your profile to auto-fill education details.</div>
         )}
         {modules.length > 0 && (
           <div style={{ marginTop: 10 }}>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginBottom: 6 }}>Relevant modules ({modules.length})</div>
+            <div style={{ fontSize: 10, color: '#fff', marginBottom: 6 }}>Relevant modules ({modules.length})</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
               {modules.slice(0, 10).map(m => (
                 <span key={m.id} style={{ fontSize: 10, padding: '3px 8px', borderRadius: 9999, background: `${m.color ?? '#4ecf9e'}15`, border: `0.5px solid ${m.color ?? '#4ecf9e'}30`, color: m.color ?? '#4ecf9e' }}>{m.module_name}</span>
@@ -220,7 +220,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
       <div style={{ display: 'flex', gap: 10 }}>
         <button
           onClick={() => setPreview(!preview)}
-          style={{ flex: 1, padding: '11px 0', borderRadius: 11, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora,sans-serif' }}
+          style={{ flex: 1, padding: '11px 0', borderRadius: 11, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora,sans-serif' }}
         >
           {preview ? 'Hide preview' : 'Preview CV'}
         </button>
@@ -233,7 +233,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
       </div>
 
       {preview && (
-        <div style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px', fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+        <div style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px', fontFamily: 'JetBrains Mono,monospace', fontSize: 11, color: '#fff', lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
           {cvText}
         </div>
       )}
@@ -244,7 +244,7 @@ function CVBuilder({ profile, modules }: { profile: Props['profile']; modules: P
           <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#9b6fd4,#6b3fa0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>✦</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#c5a8f0', fontFamily: 'Sora,sans-serif' }}>Ask Nova to improve your CV</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>Nova will rewrite, strengthen, and suggest missing sections</div>
+            <div style={{ fontSize: 11, color: '#fff', marginTop: 2 }}>Nova will rewrite, strengthen, and suggest missing sections</div>
           </div>
           <span style={{ color: '#9b6fd4', fontSize: 16 }}>→</span>
         </div>
@@ -259,12 +259,12 @@ function ChipSection({ title, chips, input, setInput, placeholder, suggestions, 
 }) {
   return (
     <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '16px' }}>
-      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 10, fontWeight: 600 }}>{title}</div>
+      <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 10, fontWeight: 600 }}>{title}</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: chips.length ? 10 : 0 }}>
         {chips.map(c => (
           <span key={c} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 9999, background: 'rgba(112,144,208,0.1)', border: '0.5px solid rgba(112,144,208,0.25)', color: '#7090d0', display: 'flex', alignItems: 'center', gap: 5 }}>
             {c}
-            <button onClick={() => onRemove(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(112,144,208,0.5)', fontSize: 10, padding: 0, lineHeight: 1 }}>✕</button>
+            <button onClick={() => onRemove(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(112,144,208)', fontSize: 10, padding: 0, lineHeight: 1 }}>✕</button>
           </span>
         ))}
       </div>
@@ -274,14 +274,14 @@ function ChipSection({ title, chips, input, setInput, placeholder, suggestions, 
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') { onAdd(input); e.preventDefault() } }}
           placeholder={placeholder}
-          style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '8px 12px', color: 'rgba(255,255,255,0.7)', fontSize: 12, outline: 'none' }}
+          style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '8px 12px', color: '#fff', fontSize: 12, outline: 'none' }}
         />
         <button onClick={() => onAdd(input)} style={{ padding: '8px 14px', borderRadius: 9, border: 'none', background: 'rgba(112,144,208,0.15)', color: '#7090d0', fontSize: 18, cursor: 'pointer', lineHeight: 1 }}>+</button>
       </div>
       {suggestions.length > 0 && (
         <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {suggestions.slice(0, 6).map(s => (
-            <button key={s} onClick={() => onAdd(s)} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.55)', cursor: 'pointer' }}>
+            <button key={s} onClick={() => onAdd(s)} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.09)', color: '#fff', cursor: 'pointer' }}>
               + {s}
             </button>
           ))}
@@ -447,7 +447,7 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '18px 16px' }}>
-          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 14, fontWeight: 600 }}>Choose a role to interview for</div>
+          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 14, fontWeight: 600 }}>Choose a role to interview for</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
             {ROLE_PRESETS.map(p => (
               <button
@@ -461,7 +461,7 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
               >
                 <div style={{ fontSize: 20, marginBottom: 4 }}>{p.icon}</div>
                 <div style={{ fontSize: 12, color: role === p.label ? '#7090d0' : 'rgba(255,255,255,0.7)', fontWeight: 600 }}>{p.label}</div>
-                {p.field && <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{p.field}</div>}
+                {p.field && <div style={{ fontSize: 10, color: '#fff', marginTop: 2 }}>{p.field}</div>}
               </button>
             ))}
           </div>
@@ -470,14 +470,14 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
               value={customRole}
               onChange={e => setCustomRole(e.target.value)}
               placeholder="e.g. Junior Accountant at PwC"
-              style={{ marginTop: 10, width: '100%', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '10px 12px', color: 'rgba(255,255,255,0.75)', fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
+              style={{ marginTop: 10, width: '100%', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '10px 12px', color: '#fff', fontSize: 12, outline: 'none', boxSizing: 'border-box' }}
             />
           )}
         </div>
 
         <div style={{ background: 'rgba(112,144,208,0.06)', border: '1px solid rgba(112,144,208,0.15)', borderRadius: 12, padding: '12px 14px' }}>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>
-            Nova will generate <strong style={{ color: 'rgba(255,255,255,0.65)' }}>{MAX_Q} interview questions</strong> tailored to your background. Answer each one as you would in a real interview. You&apos;ll get a score and feedback after each answer.
+          <div style={{ fontSize: 11, color: '#fff', lineHeight: 1.6 }}>
+            Nova will generate <strong style={{ color: '#fff' }}>{MAX_Q} interview questions</strong> tailored to your background. Answer each one as you would in a real interview. You&apos;ll get a score and feedback after each answer.
           </div>
         </div>
 
@@ -502,13 +502,13 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>Mock Interview</div>
+          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', fontWeight: 600 }}>Mock Interview</div>
           <div style={{ fontSize: 13, color: '#7090d0', fontWeight: 600, marginTop: 2 }}>{effectiveRole}</div>
         </div>
         {avgScore !== null && (
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 22, fontWeight: 700, color: scoreColor }}>{avgScore}<span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>/10</span></div>
-            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>avg score</div>
+            <div style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 22, fontWeight: 700, color: scoreColor }}>{avgScore}<span style={{ fontSize: 11, color: '#fff' }}>/10</span></div>
+            <div style={{ fontSize: 9, color: '#fff' }}>avg score</div>
           </div>
         )}
       </div>
@@ -522,11 +522,11 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
                 <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(112,144,208,0.15)', border: '1px solid rgba(112,144,208,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>💼</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 9, color: '#7090d0', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>Interviewer</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{msg.text}</div>
+                  <div style={{ fontSize: 13, color: '#fff', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{msg.text}</div>
                   {msg.score !== undefined && (
                     <div style={{ marginTop: 8, padding: '8px 12px', background: `${msg.score >= 8 ? 'rgba(78,207,158' : msg.score >= 6 ? 'rgba(201,168,76' : 'rgba(255,107,107'},0.08)`, border: `0.5px solid ${msg.score >= 8 ? 'rgba(78,207,158' : msg.score >= 6 ? 'rgba(201,168,76' : 'rgba(255,107,107'},0.25)`, borderRadius: 8, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                       <span style={{ fontFamily: 'JetBrains Mono,monospace', fontSize: 16, fontWeight: 700, color: msg.score >= 8 ? '#4ecf9e' : msg.score >= 6 ? '#c9a84c' : '#ff6b6b', flexShrink: 0 }}>{msg.score}/10</span>
-                      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.66)', lineHeight: 1.5 }}>{msg.feedback}</span>
+                      <span style={{ fontSize: 11, color: '#fff', lineHeight: 1.5 }}>{msg.feedback}</span>
                     </div>
                   )}
                 </div>
@@ -537,12 +537,12 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
                 <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(78,207,158,0.1)', border: '1px solid rgba(78,207,158,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>🎓</div>
                 <div style={{ flex: 1, textAlign: 'right' }}>
                   <div style={{ fontSize: 9, color: '#4ecf9e', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>You</div>
-                  <div style={{ display: 'inline-block', background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', borderRadius: 10, padding: '8px 12px', fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, textAlign: 'left', maxWidth: '90%' }}>{msg.text}</div>
+                  <div style={{ display: 'inline-block', background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', borderRadius: 10, padding: '8px 12px', fontSize: 13, color: '#fff', lineHeight: 1.6, textAlign: 'left', maxWidth: '90%' }}>{msg.text}</div>
                 </div>
               </div>
             )}
             {msg.role === 'system' && (
-              <div style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.5)', padding: '4px 0' }}>{msg.text}</div>
+              <div style={{ textAlign: 'center', fontSize: 11, color: '#fff', padding: '4px 0' }}>{msg.text}</div>
             )}
           </div>
         ))}
@@ -564,7 +564,7 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
             placeholder="Type your answer… (Ctrl+Enter to submit)"
             rows={3}
             disabled={loading}
-            style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '10px 12px', color: 'rgba(255,255,255,0.75)', fontSize: 12, lineHeight: 1.6, resize: 'none', outline: 'none', fontFamily: 'inherit' }}
+            style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '10px 12px', color: '#fff', fontSize: 12, lineHeight: 1.6, resize: 'none', outline: 'none', fontFamily: 'inherit' }}
           />
           <button
             onClick={submitAnswer}
@@ -577,10 +577,10 @@ Return ONLY valid JSON: {"score": 7, "feedback": "Good structure but lacked a co
           <div style={{ background: 'rgba(78,207,158,0.07)', border: '1px solid rgba(78,207,158,0.2)', borderRadius: 12, padding: '14px 16px', textAlign: 'center' }}>
             <div style={{ fontSize: 24, marginBottom: 4 }}>🎉</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: '#4ecf9e', fontFamily: 'Sora,sans-serif' }}>Interview complete!</div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.62)', marginTop: 4 }}>Final score: <strong style={{ color: scoreColor }}>{avgScore}/10</strong> across {MAX_Q} questions</div>
+            <div style={{ fontSize: 12, color: '#fff', marginTop: 4 }}>Final score: <strong style={{ color: scoreColor }}>{avgScore}/10</strong> across {MAX_Q} questions</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => { setStarted(false); setMessages([]); setDone(false); setQIndex(0); setRole('') }} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.6)', fontSize: 12, cursor: 'pointer' }}>Try again</button>
+            <button onClick={() => { setStarted(false); setMessages([]); setDone(false); setQIndex(0); setRole('') }} style={{ flex: 1, padding: '10px 0', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: '#fff', fontSize: 12, cursor: 'pointer' }}>Try again</button>
             <Link href={`/nova?prompt=${novaDebriefPrompt}`} style={{ flex: 2, textDecoration: 'none' }}>
               <div style={{ padding: '10px 0', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg,#9b6fd4,#7090d0)', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', textAlign: 'center', fontFamily: 'Sora,sans-serif' }}>Debrief with Nova →</div>
             </Link>
@@ -701,7 +701,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
 
   if (!loaded) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 120, color: '#fff', fontSize: 13 }}>
         Loading career data…
       </div>
     )
@@ -711,7 +711,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '18px 16px' }}>
-          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 14, fontWeight: 600 }}>Choose your target career</div>
+          <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 14, fontWeight: 600 }}>Choose your target career</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
             {CAREER_PATHS.map(cp => (
               <button
@@ -720,8 +720,8 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
                 style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 14px', borderRadius: 14, border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.06)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
               >
                 <span style={{ fontSize: 22 }}>{cp.icon}</span>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: 600, lineHeight: 1.3 }}>{cp.label}</div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 'auto' }}>{cp.field}</div>
+                <div style={{ fontSize: 12, color: '#fff', fontWeight: 600, lineHeight: 1.3 }}>{cp.label}</div>
+                <div style={{ fontSize: 10, color: '#fff', marginTop: 'auto' }}>{cp.field}</div>
               </button>
             ))}
           </div>
@@ -750,10 +750,10 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
           <span style={{ fontSize: 28 }}>{selected.icon}</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.9)', fontFamily: 'Sora,sans-serif' }}>{selected.label}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{selected.field}</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontFamily: 'Sora,sans-serif' }}>{selected.label}</div>
+            <div style={{ fontSize: 11, color: '#fff', marginTop: 2 }}>{selected.field}</div>
           </div>
-          <button onClick={() => setSelected(null)} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.58)', cursor: 'pointer' }}>Change</button>
+          <button onClick={() => setSelected(null)} style={{ fontSize: 11, padding: '4px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#fff', cursor: 'pointer' }}>Change</button>
         </div>
 
         {/* Readiness ring */}
@@ -772,7 +772,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 13, color: readinessColor }}>
               {readiness >= 70 ? 'Strong foundation' : readiness >= 40 ? 'Making progress' : 'Gap to close'}
             </div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', marginTop: 3 }}>
+            <div style={{ fontSize: 11, color: '#fff', marginTop: 3 }}>
               {coreMatched.length}/{selected.coreSkills.length} core skills · {niceMatched.length}/{selected.niceToHave.length} extras
             </div>
           </div>
@@ -781,20 +781,20 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
 
       {/* Your skills (manual) */}
       <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 10, fontWeight: 600 }}>Your skills & experience</div>
+        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 10, fontWeight: 600 }}>Your skills & experience</div>
         {addedSkills.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 10 }}>
             {addedSkills.map(s => (
               <span key={s} style={{ fontSize: 10, padding: '3px 9px', borderRadius: 9999, background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', display: 'flex', alignItems: 'center', gap: 4 }}>
                 {s}
-                <button onClick={() => handleRemoveSkill(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(78,207,158,0.5)', fontSize: 9, padding: 0 }}>✕</button>
+                <button onClick={() => handleRemoveSkill(s)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(78,207,158)', fontSize: 9, padding: 0 }}>✕</button>
               </span>
             ))}
           </div>
         )}
         {modules.length > 0 && (
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)', marginBottom: 5 }}>Auto-detected from your modules</div>
+            <div style={{ fontSize: 9, color: '#fff', marginBottom: 5 }}>Auto-detected from your modules</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
               {modules.slice(0, 8).map(m => (
                 <span key={m.id} style={{ fontSize: 10, padding: '3px 8px', borderRadius: 9999, background: `${m.color ?? '#4ecf9e'}10`, border: `0.5px solid ${m.color ?? '#4ecf9e'}25`, color: m.color ?? '#4ecf9e' }}>{m.module_name}</span>
@@ -803,7 +803,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
           </div>
         )}
         <div style={{ display: 'flex', gap: 8 }}>
-          <input value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleAddSkill(skillInput) }} placeholder="Add skill or experience" style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '7px 11px', color: 'rgba(255,255,255,0.7)', fontSize: 12, outline: 'none' }} />
+          <input value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleAddSkill(skillInput) }} placeholder="Add skill or experience" style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, padding: '7px 11px', color: '#fff', fontSize: 12, outline: 'none' }} />
           <button onClick={() => handleAddSkill(skillInput)} style={{ padding: '7px 13px', borderRadius: 9, border: 'none', background: 'rgba(78,207,158,0.12)', color: '#4ecf9e', fontSize: 18, cursor: 'pointer' }}>+</button>
         </div>
       </div>
@@ -814,12 +814,12 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
 
       {/* Certifications */}
       <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 10, fontWeight: 600 }}>Recommended certifications</div>
+        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', marginBottom: 10, fontWeight: 600 }}>Recommended certifications</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {selected.certifications.map((cert, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', background: 'rgba(201,168,76,0.06)', border: '0.5px solid rgba(201,168,76,0.15)', borderRadius: 8 }}>
               <span style={{ fontSize: 14, flexShrink: 0 }}>🏅</span>
-              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>{cert}</span>
+              <span style={{ fontSize: 12, color: '#fff' }}>{cert}</span>
             </div>
           ))}
         </div>
@@ -831,7 +831,7 @@ function SkillsGap({ modules }: { modules: Props['modules'] }) {
           <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,#9b6fd4,#6b3fa0)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>✦</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#c5a8f0', fontFamily: 'Sora,sans-serif' }}>Get a personalised 6-month plan</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>Nova will map your gap and give you a step-by-step roadmap</div>
+            <div style={{ fontSize: 11, color: '#fff', marginTop: 2 }}>Nova will map your gap and give you a step-by-step roadmap</div>
           </div>
           <span style={{ color: '#9b6fd4', fontSize: 16 }}>→</span>
         </div>
@@ -845,7 +845,7 @@ function SkillGroup({ title, required, items, matched }: { title: string; requir
   return (
     <div style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '14px 16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>{title}</div>
+        <div style={{ fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#fff', fontWeight: 600 }}>{title}</div>
         {required && <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 9999, background: 'rgba(255,107,107,0.08)', color: '#ff6b6b', border: '0.5px solid rgba(255,107,107,0.2)' }}>Required</span>}
         <span style={{ marginLeft: 'auto', fontSize: 10, color: matched.length === items.length ? '#4ecf9e' : 'rgba(255,255,255,0.5)' }}>{matched.length}/{items.length}</span>
       </div>
@@ -1210,7 +1210,7 @@ export default function CareerClient({ userId, profile, modules }: Props) {
             <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1 }}>
               Career OS
             </h1>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', marginTop: 3 }}>
               {profile.yearOfStudy || 'Student'} · {profile.university || 'SA University'}
             </div>
           </div>

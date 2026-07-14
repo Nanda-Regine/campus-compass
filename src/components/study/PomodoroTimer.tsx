@@ -282,7 +282,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="font-mono text-[0.6rem] px-2.5 py-1 rounded-xl transition-all"
-            style={{ color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+            style={{ color: '#fff', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
             aria-label="Timer settings"
           >
             ⚙
@@ -327,7 +327,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
             >
               {formatTime(secondsLeft)}
             </span>
-            <span className="font-mono text-[0.65rem] mt-1.5 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span className="font-mono text-[0.65rem] mt-1.5 uppercase tracking-widest" style={{ color: '#fff' }}>
               {PHASE_LABELS[phase]}
             </span>
             {running && (
@@ -341,7 +341,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
           <button
             onClick={handleReset}
             className="w-10 h-10 rounded-xl flex items-center justify-center font-mono text-sm transition-all"
-            style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
             aria-label="Reset timer"
           >
             ↺
@@ -359,7 +359,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
           <button
             onClick={handleSkip}
             className="w-10 h-10 rounded-xl flex items-center justify-center font-mono text-sm transition-all"
-            style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
             aria-label="Skip to next phase"
           >
             ⏭
@@ -384,7 +384,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         className="rounded-2xl p-4 space-y-3"
         style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)' }}
       >
-        <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: '#fff' }}>
           Studying for (optional)
         </p>
 
@@ -442,7 +442,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
               ? `${Math.floor(todayMinutes / 60)}h ${todayMinutes % 60}m`
               : `${todayMinutes}m`}
           </p>
-          <p className="font-mono text-[0.63rem] text-white/78 mt-0.5">studied today</p>
+          <p className="font-mono text-[0.63rem] text-white mt-0.5">studied today</p>
         </div>
         <div
           className="rounded-2xl p-4 text-center relative overflow-hidden"
@@ -450,7 +450,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         >
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
           <p className="font-display font-black text-2xl" style={{ color: '#e8956e' }}>{completedSessions}</p>
-          <p className="font-mono text-[0.63rem] text-white/78 mt-0.5">sessions this run</p>
+          <p className="font-mono text-[0.63rem] text-white mt-0.5">sessions this run</p>
         </div>
       </div>
 
@@ -490,7 +490,7 @@ function FlowInsightCard({ workMinutes }: { workMinutes: number }) {
             The science of deep focus
           </span>
         </span>
-        <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+        <span style={{ fontSize: '0.6rem', color: '#fff', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
       </button>
       {open && (
         <div style={{ padding: '0 14px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -514,8 +514,8 @@ function FlowInsightCard({ workMinutes }: { workMinutes: number }) {
             },
           ].map(item => (
             <div key={item.book} style={{ paddingLeft: 8, borderLeft: '2px solid rgba(13,148,136,0.4)' }}>
-              <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.35)', marginBottom: 3 }}>{item.book}</div>
-              <div style={{ fontSize: '0.63rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.55 }}>{item.insight}</div>
+              <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#fff', marginBottom: 3 }}>{item.book}</div>
+              <div style={{ fontSize: '0.63rem', color: '#fff', lineHeight: 1.55 }}>{item.insight}</div>
             </div>
           ))}
         </div>
@@ -536,7 +536,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
   const slider = (label: string, key: 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes' | 'sessionsUntilLongBreak', min: number, max: number) => (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <label className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <label className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: '#fff' }}>
           {label}
         </label>
         <span className="font-display font-bold text-white text-sm tabular-nums">
@@ -560,7 +560,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
     >
       <div className="text-left">
         <p className="font-display text-xs text-white">{label}</p>
-        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{description}</p>
+        <p className="font-mono text-[0.65rem]" style={{ color: '#fff' }}>{description}</p>
       </div>
       <div
         className="w-9 h-5 rounded-full flex-shrink-0 relative transition-colors"
@@ -578,12 +578,12 @@ function SettingsPanel({ settings, onApply, onClose }: {
     <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.1)' }}>
       <div className="flex items-center justify-between">
         <p className="font-display font-bold text-white text-sm">Timer settings</p>
-        <button onClick={onClose} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>
+        <button onClick={onClose} className="font-mono text-xs" style={{ color: '#fff' }}>✕</button>
       </div>
 
       {/* Presets */}
       <div>
-        <p className="font-mono text-[0.64rem] uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Presets</p>
+        <p className="font-mono text-[0.64rem] uppercase tracking-widest mb-2" style={{ color: '#fff' }}>Presets</p>
         <div className="grid grid-cols-4 gap-1.5">
           {PRESETS.map(p => {
             const active = s.workMinutes === p.s.workMinutes && s.sessionsUntilLongBreak === p.s.sessionsUntilLongBreak
@@ -596,7 +596,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
               >
                 <span style={{ fontSize: '1rem' }}>{p.emoji}</span>
                 <span className="font-mono text-[0.63rem]" style={{ color: active ? '#4db6ac' : 'rgba(255,255,255,0.4)' }}>{p.label}</span>
-                <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>{p.s.workMinutes}m</span>
+                <span className="font-mono text-[0.65rem]" style={{ color: '#fff' }}>{p.s.workMinutes}m</span>
               </button>
             )
           })}
@@ -605,7 +605,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
 
       {/* Sliders */}
       <div className="space-y-3">
-        <p className="font-mono text-[0.64rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Custom duration</p>
+        <p className="font-mono text-[0.64rem] uppercase tracking-widest" style={{ color: '#fff' }}>Custom duration</p>
         {slider('Focus', 'workMinutes', 1, 90)}
         {slider('Short break', 'shortBreakMinutes', 1, 30)}
         {slider('Long break', 'longBreakMinutes', 5, 60)}
@@ -622,7 +622,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
         <button
           onClick={() => setS(DEFAULT_SETTINGS)}
           className="flex-1 font-display text-xs py-2 rounded-xl"
-          style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.45)' }}
+          style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
         >
           Reset
         </button>

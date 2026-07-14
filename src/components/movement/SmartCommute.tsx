@@ -163,7 +163,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Loading commute…</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#fff' }}>Loading commute…</span>
     </div>
   )
 
@@ -179,13 +179,13 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Default route pill ──────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Default route</p>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Default route</p>
         {defaultRoute ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>{TRANSPORT_ICONS[defaultRoute.transport_type] ?? '🚌'}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 2 }}>{defaultRoute.label}</p>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.58)' }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14, color: '#fff', marginBottom: 2 }}>{defaultRoute.label}</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                 {TRANSPORT_LABELS[defaultRoute.transport_type] ?? defaultRoute.transport_type}
                 {defaultRoute.estimated_minutes ? ` · ${defaultRoute.estimated_minutes} min travel` : ' · travel time not set'}
               </p>
@@ -193,10 +193,10 @@ export default function SmartCommute({ userId }: { userId: string }) {
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <MapPin size={20} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+            <MapPin size={20} style={{ color: '#fff', flexShrink: 0 }} />
             <div>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'rgba(255,255,255,0.62)', marginBottom: 3 }}>No route saved yet</p>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.48)' }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: '#fff', marginBottom: 3 }}>No route saved yet</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                 Go to My Routes tab → add a route → star it as default
               </p>
             </div>
@@ -206,7 +206,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Buffer selector ──────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
           ⚡ Extra buffer — load shedding / walking to rank
         </p>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -238,7 +238,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
         }}>
           {/* Label + countdown badge */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(14,165,233,0.7)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgb(14,165,233)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {focusLabel}
             </p>
             {countdown && (
@@ -258,18 +258,18 @@ export default function SmartCommute({ userId }: { userId: string }) {
               {/* Big departure time */}
               {focusPlan.leaveByMins != null ? (
                 <div style={{ marginBottom: 14 }}>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>Leave by</p>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff', marginBottom: 4 }}>Leave by</p>
                   <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 42, color: '#e0f2fe', lineHeight: 1, marginBottom: 6, letterSpacing: '-0.02em' }}>
                     {formatTime12(minsToTime(focusPlan.leaveByMins))}
                   </p>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                     {TRANSPORT_ICONS[defaultRoute?.transport_type ?? ''] ?? '🚌'}{' '}
                     {travelMins != null ? `${travelMins} min travel` : 'travel time unknown'}
                     {buffer > 0 ? ` + ${buffer} min buffer` : ''}
                   </p>
                 </div>
               ) : (
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'rgba(255,255,255,0.62)', marginBottom: 14 }}>
+                <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: '#fff', marginBottom: 14 }}>
                   Set your route travel time to see a departure time
                 </p>
               )}
@@ -281,10 +281,10 @@ export default function SmartCommute({ userId }: { userId: string }) {
                     <div style={{ width: 3, height: 34, borderRadius: 2, background: focusPlan.firstSlot.module.color, flexShrink: 0 }} />
                   )}
                   <div>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'rgba(255,255,255,0.88)', marginBottom: 2 }}>
+                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: '#fff', marginBottom: 2 }}>
                       {focusPlan.firstSlot.module?.module_name ?? focusPlan.firstSlot.label ?? 'Class'}
                     </p>
-                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.58)' }}>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                       🕐 {formatTime12(focusPlan.firstSlot.start_time)}
                       {focusPlan.firstSlot.venue ? `  ·  📍 ${focusPlan.firstSlot.venue}` : ''}
                     </p>
@@ -293,16 +293,16 @@ export default function SmartCommute({ userId }: { userId: string }) {
               </div>
             </>
           ) : (
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'rgba(255,255,255,0.62)' }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: '#fff' }}>
               No classes on {focusPlan.dayName} — enjoy the break!
             </p>
           )}
         </div>
       ) : (
         <div style={{ ...card, textAlign: 'center', padding: '28px 20px' }}>
-          <Navigation size={28} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 auto 10px' }} />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'rgba(255,255,255,0.58)', marginBottom: 6 }}>No timetable found</p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>
+          <Navigation size={28} style={{ color: '#fff', margin: '0 auto 10px' }} />
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: '#fff', marginBottom: 6 }}>No timetable found</p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
             Add your classes in Study OS → Timetable to see departure times
           </p>
         </div>
@@ -310,7 +310,7 @@ export default function SmartCommute({ userId }: { userId: string }) {
 
       {/* ── Week overview ─────────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
           This week
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -332,10 +332,10 @@ export default function SmartCommute({ userId }: { userId: string }) {
                 {day.firstSlot ? (
                   <>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'rgba(255,255,255,0.75)', marginBottom: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: '#fff', marginBottom: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {day.firstSlot.module?.module_name ?? day.firstSlot.label ?? 'Class'}
                       </p>
-                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.32)' }}>
+                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                         First class {formatTime12(day.firstSlot.start_time)}
                       </p>
                     </div>
@@ -344,11 +344,11 @@ export default function SmartCommute({ userId }: { userId: string }) {
                         Leave {formatTime12(minsToTime(day.leaveByMins))}
                       </span>
                     ) : (
-                      <Clock size={12} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                      <Clock size={12} style={{ color: '#fff', flexShrink: 0 }} />
                     )}
                   </>
                 ) : (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>No classes</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>No classes</span>
                 )}
               </div>
             )
@@ -362,10 +362,10 @@ export default function SmartCommute({ userId }: { userId: string }) {
         border: '1px solid rgba(245,158,11,0.14)',
         borderRadius: 12, padding: '12px 14px',
       }}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(245,158,11,0.65)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgb(245,158,11)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
           💡 Load shedding tip
         </p>
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.55 }}>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: '#fff', lineHeight: 1.55 }}>
           During Stage 2+ load shedding, traffic lights go dark — budget an extra 20–45 min for Joburg and Cape Town commutes. Set the buffer above before heading out.
         </p>
       </div>

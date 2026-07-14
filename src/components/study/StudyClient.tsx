@@ -159,7 +159,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
       return { count: upcomingExams.length, color: '#f59e0b', glow: 'rgba(245,158,11,0.25)' }
     }
     if (id === 'modules' && modules.length > 0) {
-      return { count: modules.length, color: 'rgba(255,255,255,0.3)', glow: 'transparent' }
+      return { count: modules.length, color: '#fff', glow: 'transparent' }
     }
     return null
   }
@@ -177,7 +177,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
           <div>
             <div style={{
               fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-              color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 3,
+              color: '#fff', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 3,
             }}>
               {headerTheme.label}
             </div>
@@ -330,11 +330,11 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: '#f59e0b', margin: 0 }}>
                   Reading Mode
                 </p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff', marginTop: 2 }}>
                   Upload a PDF or Word doc — read section by section, not all at once
                 </p>
               </div>
-              <span style={{ color: 'rgba(245,158,11,0.5)', fontSize: 16, flexShrink: 0 }}>→</span>
+              <span style={{ color: 'rgb(245,158,11)', fontSize: 16, flexShrink: 0 }}>→</span>
             </Link>
           </div>
         </div>

@@ -94,7 +94,7 @@ export default function FinancialStressLink({ stressLevel }: Props) {
           >
             {cfg.heading}
           </p>
-          <p style={{ margin: '0 0 12px', fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.55' }}>
+          <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#fff', lineHeight: '1.55' }}>
             {cfg.body}
           </p>
 

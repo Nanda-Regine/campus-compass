@@ -72,7 +72,7 @@ export default function DeadlineTelescope({ exams }: Props) {
             {exam.exam_name}
           </div>
           {moduleName !== exam.exam_name && (
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginTop: 3 }}>
               {moduleName}
             </div>
           )}
@@ -86,7 +86,7 @@ export default function DeadlineTelescope({ exams }: Props) {
         </div>
       </div>
 
-      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 10, letterSpacing: '0.12em' }}>
+      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 10, letterSpacing: '0.12em' }}>
         STUDY SCENARIOS ({STUDY_HOURS_NEEDED}h total needed)
       </div>
 
@@ -110,7 +110,7 @@ export default function DeadlineTelescope({ exams }: Props) {
                   color, display: 'flex', alignItems: 'baseline', gap: 2,
                 }}>
                   {s.hrsPerDay}
-                  <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>
+                  <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, fontWeight: 400, color: '#fff' }}>
                     {' '}hrs/day
                   </span>
                 </div>

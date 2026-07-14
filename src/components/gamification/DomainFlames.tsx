@@ -19,7 +19,7 @@ function getFlameState(streak: number): { emoji: string; label: string; color: s
   if (streak >= 7)  return { emoji: '🔥', label: 'Warm',      color: '#ff7e00', glow: '0 0 10px rgba(255,126,0,0.4)' }
   if (streak >= 3)  return { emoji: '🔥', label: 'Lit',       color: '#ffb01c', glow: '0 0 8px rgba(255,176,28,0.3)' }
   if (streak >= 1)  return { emoji: '🕯️', label: 'Sparked',  color: '#4ecf9e', glow: '0 0 6px rgba(78,207,158,0.3)' }
-  return { emoji: '💤', label: 'Cold', color: 'rgba(255,255,255,0.2)', glow: 'none' }
+  return { emoji: '💤', label: 'Cold', color: '#fff', glow: 'none' }
 }
 
 const DOMAIN_ORDER: DomainKey[] = ['academic', 'money', 'life', 'career', 'community']
@@ -43,7 +43,7 @@ export default function DomainFlames() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>Domain Flames</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#fff', letterSpacing: '0.14em', textTransform: 'uppercase' }}>Domain Flames</span>
         {todayDomains.size >= 3 && (
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.12)', border: '1px solid rgba(78,207,158,0.3)', borderRadius: 6, padding: '1px 6px' }}>
             🔥 Compound Day!
@@ -71,11 +71,11 @@ export default function DomainFlames() {
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, color: flame.color, lineHeight: 1 }}>
                 {ds.streak}
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 {meta.label}
               </div>
               {ds.shields > 0 && (
-                <div style={{ marginTop: 4, fontSize: 8, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ marginTop: 4, fontSize: 8, color: '#fff', fontFamily: 'var(--font-mono)' }}>
                   {'🛡️'.repeat(ds.shields)}
                 </div>
               )}
@@ -87,9 +87,9 @@ export default function DomainFlames() {
         })}
       </div>
       {todayDomains.size > 0 && (
-        <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', textAlign: 'center' }}>
+        <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', textAlign: 'center' }}>
           {todayDomains.size}/5 domains active today
-          {todayDomains.size < 3 && <span style={{ color: 'rgba(255,255,255,0.15)' }}> · {3 - todayDomains.size} more for Compound Day</span>}
+          {todayDomains.size < 3 && <span style={{ color: '#fff' }}> · {3 - todayDomains.size} more for Compound Day</span>}
         </div>
       )}
     </div>

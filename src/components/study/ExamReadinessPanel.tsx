@@ -274,7 +274,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
                   </span>
                   <Stars examId={exam.id} value={conf} onChange={v => handleConf(exam.id, v)} />
                   {conf === 0 && (
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(245,158,11,0.55)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgb(245,158,11)' }}>
                       tap to rate
                     </span>
                   )}
@@ -384,7 +384,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
             <div style={{ fontSize: '0.67rem', color: 'var(--text-tertiary)', lineHeight: 1.55 }}>{a.detail}</div>
           </div>
         ))}
-        <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'rgba(251,113,133,0.5)', marginTop: 6 }}>
+        <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'rgb(251,113,133)', marginTop: 6 }}>
           SADAG crisis line: 0800 567 567 · Lifeline: 0861 322 322
         </div>
       </div>

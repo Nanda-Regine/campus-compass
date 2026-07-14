@@ -126,7 +126,7 @@ export function MobileSidebar() {
               }}>✦</div>
               <div>
                 <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 13, color: '#fff' }}>VarsityOS</div>
-                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: 'rgba(168,85,247,0.65)', letterSpacing: '0.14em' }}>STUDENT OS</div>
+                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: 'rgb(168,85,247)', letterSpacing: '0.14em' }}>STUDENT OS</div>
               </div>
             </div>
             <button
@@ -135,7 +135,7 @@ export function MobileSidebar() {
                 width: 30, height: 30, borderRadius: 8,
                 background: 'rgba(255,255,255,0.06)', border: 'none',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'rgba(255,255,255,0.58)',
+                color: '#fff',
               }}
             >
               <X size={14} />
@@ -148,7 +148,7 @@ export function MobileSidebar() {
               <div key={section.id} style={{ marginBottom: 4 }}>
                 <div style={{
                   fontFamily: '"JetBrains Mono",monospace', fontSize: 8, fontWeight: 700,
-                  color: 'rgba(255,255,255,0.2)', letterSpacing: '0.18em',
+                  color: '#fff', letterSpacing: '0.18em',
                   padding: '8px 16px 3px',
                 }}>
                   {section.label.toUpperCase()}
@@ -203,8 +203,8 @@ export function MobileSidebar() {
                 background: 'rgba(255,255,255,0.08)',
                 border: '0.5px solid rgba(255,255,255,0.08)',
               }}>
-                <UserCircle size={16} style={{ color: 'rgba(255,255,255,0.58)' }} />
-                <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
+                <UserCircle size={16} style={{ color: '#fff' }} />
+                <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: '#fff' }}>
                   My Profile
                 </span>
               </div>

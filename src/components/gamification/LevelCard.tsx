@@ -276,7 +276,7 @@ export default function LevelCard() {
                   fontFamily: 'Sora, sans-serif',
                   fontWeight: 500,
                   fontSize: 11,
-                  color: 'rgba(255,255,255,0.62)',
+                  color: '#fff',
                   marginLeft: 3,
                 }}
               >
@@ -321,7 +321,7 @@ export default function LevelCard() {
             style={{
               fontFamily: '"JetBrains Mono", monospace',
               fontSize: 10,
-              color: 'rgba(255,255,255,0.30)',
+              color: '#fff',
               letterSpacing: '0.03em',
             }}
           >

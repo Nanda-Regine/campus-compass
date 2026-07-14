@@ -69,7 +69,7 @@ export default function FeedbackPage() {
             <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text-primary)', marginBottom: 8 }}>
               {highRater ? 'You\'re amazing — thank you!' : 'Got it — we\'ll do better'}
             </div>
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
+            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: '#fff', marginBottom: 28, lineHeight: 1.6 }}>
               {highRater
                 ? 'Your feedback goes directly to the builder. Want to help other students find VarsityOS?'
                 : 'Every piece of criticism makes this better. It goes directly to the builder.'}
@@ -98,7 +98,7 @@ export default function FeedbackPage() {
                 style={{
                   fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'rgba(255,255,255,0.3)',
+                  color: '#fff',
                 }}
               >
                 Send more feedback →
@@ -119,14 +119,14 @@ export default function FeedbackPage() {
               <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 17, color: 'var(--text-primary)', marginBottom: 6 }}>
                 Your feedback shapes VarsityOS
               </div>
-              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: '#fff', lineHeight: 1.6 }}>
                 Every bug report, feature idea, and star rating goes directly to the builder. This app exists because of student voices.
               </div>
             </div>
 
             {/* Star rating */}
             <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 16, padding: '18px 20px' }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', letterSpacing: '0.1em', marginBottom: 12 }}>
                 HOW ARE YOU FINDING VARSITYOS?
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -154,7 +154,7 @@ export default function FeedbackPage() {
 
             {/* Category */}
             <div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', letterSpacing: '0.1em', marginBottom: 10 }}>
                 WHAT IS THIS ABOUT?
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -179,7 +179,7 @@ export default function FeedbackPage() {
 
             {/* Message */}
             <div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', letterSpacing: '0.1em', marginBottom: 10 }}>
                 YOUR MESSAGE *
               </div>
               <textarea
@@ -197,7 +197,7 @@ export default function FeedbackPage() {
                   outline: 'none', resize: 'vertical',
                 }}
               />
-              <div style={{ textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 4 }}>
+              <div style={{ textAlign: 'right', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', marginTop: 4 }}>
                 {message.length}/1000
               </div>
             </div>
@@ -228,7 +228,7 @@ export default function FeedbackPage() {
                 padding: '12px 0', borderRadius: 14,
                 background: 'rgba(245,158,11,0.07)',
                 border: '1px solid rgba(245,158,11,0.18)',
-                color: 'rgba(251,191,36,0.85)',
+                color: 'rgb(251,191,36)',
                 fontFamily: 'Sora, sans-serif', fontWeight: 600, fontSize: 14,
                 textDecoration: 'none',
               }}
@@ -238,7 +238,7 @@ export default function FeedbackPage() {
 
             {/* Recent wins */}
             <div style={{ marginTop: 8 }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', letterSpacing: '0.1em', marginBottom: 12 }}>
                 RECENT CHANGES POWERED BY YOUR FEEDBACK
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -249,13 +249,13 @@ export default function FeedbackPage() {
                     background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
                   }}>
                     <span style={{ fontSize: 14, flexShrink: 0 }}>{w.icon}</span>
-                    <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{w.text}</span>
+                    <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12.5, color: '#fff', lineHeight: 1.4 }}>{w.text}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <Link href="/profile" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', textAlign: 'center', textDecoration: 'none' }}>
+            <Link href="/profile" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', textAlign: 'center', textDecoration: 'none' }}>
               Also in Profile → Feedback & Reviews
             </Link>
           </div>

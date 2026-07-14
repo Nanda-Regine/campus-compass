@@ -65,7 +65,7 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
           <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: '#fff', margin: 0 }}>
             Feed Moderation
           </h1>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', margin: 0 }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff', margin: 0 }}>
             {reports.filter(r => !r.resolved).length} unresolved · {reports.length} total
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
       {/* Report cards */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {visible.length === 0 && (
-          <div style={{ textAlign: 'center', paddingTop: 60, color: 'rgba(255,255,255,0.2)', fontFamily: 'DM Sans, sans-serif' }}>
+          <div style={{ textAlign: 'center', paddingTop: 60, color: '#fff', fontFamily: 'DM Sans, sans-serif' }}>
             <CheckCircle2 size={32} style={{ margin: '0 auto 10px', opacity: 0.3 }} />
             No reports to review
           </div>
@@ -118,7 +118,7 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
               }}>
                 {REASON_LABELS[report.reason] ?? report.reason}
               </span>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.25)' }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#fff' }}>
                 reported by {report.reporter?.name ?? 'user'} · {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
               </span>
               {report.resolved && (
@@ -132,20 +132,20 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
             <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 10, padding: '10px 12px', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                 <span style={{ fontSize: '0.9rem' }}>{report.campus_posts.profiles?.emoji ?? '🎓'}</span>
-                <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
+                <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: '#fff' }}>
                   {report.campus_posts.profiles?.name ?? 'Student'}
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)' }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#fff' }}>
                   · {report.campus_posts.category} · {report.campus_posts.institution ?? 'unknown institution'}
                 </span>
               </div>
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: '#fff', margin: 0, lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                 {report.campus_posts.content}
               </p>
             </div>
 
             {report.details && (
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.35)', margin: '0 0 10px', fontStyle: 'italic' }}>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: '#fff', margin: '0 0 10px', fontStyle: 'italic' }}>
                 Reporter note: {report.details}
               </p>
             )}

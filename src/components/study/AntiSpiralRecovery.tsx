@@ -219,7 +219,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 16, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.2 }}>
               You've slipped into the spiral.
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.45)', marginBottom: 16, lineHeight: 1.55 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', marginBottom: 16, lineHeight: 1.55 }}>
               That's okay — every student hits this. The 4-step protocol below has you back on track in under 10 minutes.
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -233,7 +233,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
               <button onClick={() => setDismissed(true)} style={{
                 flex: 1, padding: '11px 0', borderRadius: 12,
                 border: '1px solid rgba(255,255,255,0.1)',
-                background: 'transparent', color: 'rgba(255,255,255,0.3)',
+                background: 'transparent', color: '#fff',
                 fontFamily: 'Sora,sans-serif', fontSize: 12, cursor: 'pointer',
               }}>
                 Not now
@@ -267,7 +267,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
           </div>
           <button onClick={() => { setStep(0); setDismissed(true) }} style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'rgba(255,255,255,0.25)', fontSize: 16, lineHeight: 1,
+            color: '#fff', fontSize: 16, lineHeight: 1,
           }}>✕</button>
         </div>
 
@@ -282,7 +282,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
           <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 20, color: '#fff', marginBottom: 10 }}>
             {current.title}
           </div>
-          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65 }}>
+          <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 14, color: '#fff', lineHeight: 1.65 }}>
             {current.desc}
           </div>
         </div>
@@ -305,7 +305,7 @@ export default function AntiSpiralRecovery({ tasks }: Props) {
           <button onClick={() => advance(null)} style={{
             width: '100%', marginTop: 12, padding: '11px 0', borderRadius: 12,
             border: '1px solid rgba(255,255,255,0.1)',
-            background: 'transparent', color: 'rgba(255,255,255,0.35)',
+            background: 'transparent', color: '#fff',
             fontFamily: 'Sora,sans-serif', fontSize: 12, cursor: 'pointer',
           }}>
             Skip timer →

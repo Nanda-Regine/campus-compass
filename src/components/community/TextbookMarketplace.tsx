@@ -349,7 +349,7 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
   const relevant = interests.filter(i => i.listing_id === listingId)
 
   if (loading) return (
-    <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', padding: '4px 0' }}>
+    <div style={{ fontSize: '0.6rem', color: '#fff', fontFamily: 'var(--font-mono)', padding: '4px 0' }}>
       checking interest…
     </div>
   )
@@ -359,7 +359,7 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
     : `R${(listing.price_cents / 100).toFixed(0)}`
 
   if (!relevant.length) return (
-    <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', padding: '4px 0' }}>
+    <div style={{ fontSize: '0.6rem', color: '#fff', fontFamily: 'var(--font-mono)', padding: '4px 0' }}>
       No buyers yet — share your listing
     </div>
   )
@@ -397,7 +397,7 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
               >
                 <div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>{i.buyerName}</div>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#fff' }}>
                     {new Date(i.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                     {i.whatsapp_number && (
                       <span style={{ marginLeft: 5, color: '#25D366' }}>· {i.whatsapp_number}</span>
@@ -414,14 +414,14 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
                     💬 Chat
                   </a>
                 ) : (
-                  <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontSize: '0.65rem', color: '#fff', fontFamily: 'var(--font-mono)' }}>
                     No WA given
                   </span>
                 )}
               </div>
             )
           })}
-          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+          <div style={{ fontSize: '0.65rem', color: '#fff', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
             Arrange campus pickup — no payments through the app
           </div>
         </div>
@@ -552,7 +552,7 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
           placeholder="e.g. 073 456 7890"
           style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }}
         />
-        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
+        <div style={{ fontSize: '0.6rem', color: '#fff', marginTop: 3 }}>
           Shown only to potential buyers on this listing
         </div>
       </div>

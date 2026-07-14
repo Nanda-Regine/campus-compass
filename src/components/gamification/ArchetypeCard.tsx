@@ -46,7 +46,7 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
         borderRadius: 10, padding: '4px 10px',
       }}>
         <span style={{ fontSize: 14 }}>{archetype.emoji}</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', fontWeight: 600 }}>
           {archetype.name}
         </span>
       </div>
@@ -58,7 +58,7 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
       background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01))',
       border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '18px 20px',
     }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 12 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fff', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 12 }}>
         This week you are
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -74,16 +74,16 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
             {archetype.name}
           </div>
           {daysAsThis > 0 && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fff' }}>
               {daysAsThis} day{daysAsThis !== 1 ? 's' : ''} building this pattern
             </div>
           )}
         </div>
       </div>
-      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.55, margin: 0 }}>
+      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#fff', lineHeight: 1.55, margin: 0 }}>
         {archetype.description}
       </p>
-      <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.18)' }}>
+      <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff' }}>
         Updates weekly based on where you spend your energy
       </div>
     </div>

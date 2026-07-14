@@ -213,10 +213,10 @@ export default function ReaderPage() {
         padding: '0 16px 40px',
       }}>
         <div style={{ width: '100%', maxWidth: 520, display: 'flex', alignItems: 'center', padding: '16px 0', gap: 12 }}>
-          <Link href="/study" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
+          <Link href="/study" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: '#fff', textDecoration: 'none' }}>
             ← Study
           </Link>
-          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
+          <span style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13, color: '#fff' }}>
             Reading Mode
           </span>
         </div>
@@ -227,7 +227,7 @@ export default function ReaderPage() {
             <h1 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 800, fontSize: 26, color: '#fff', margin: 0 }}>
               Reading Mode
             </h1>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.45)', marginTop: 10, lineHeight: 1.65, maxWidth: 380, margin: '10px auto 0' }}>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: '#fff', marginTop: 10, lineHeight: 1.65, maxWidth: 380, margin: '10px auto 0' }}>
               Upload your textbook or notes. We split it into comfortable sections — jump around, bookmark, and ask Nova to explain anything.
             </p>
           </div>
@@ -251,14 +251,14 @@ export default function ReaderPage() {
             {uploading ? (
               <>
                 <div style={{ fontSize: 32, marginBottom: 10 }}>⏳</div>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.75)', margin: 0 }}>Extracting text…</p>
-                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>This takes a few seconds for large files</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', margin: 0 }}>Extracting text…</p>
+                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, color: '#fff', marginTop: 6 }}>This takes a few seconds for large files</p>
               </>
             ) : (
               <>
                 <div style={{ fontSize: 32, marginBottom: 10 }}>📄</div>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 15, color: 'rgba(255,255,255,0.8)', margin: 0 }}>Drop your file here, or tap to browse</p>
-                <p style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>PDF & DOCX · max 20 MB · text must be selectable</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 15, color: '#fff', margin: 0 }}>Drop your file here, or tap to browse</p>
+                <p style={{ fontFamily: 'DM Mono, monospace', fontSize: 11, color: '#fff', marginTop: 8 }}>PDF & DOCX · max 20 MB · text must be selectable</p>
               </>
             )}
           </div>
@@ -275,13 +275,13 @@ export default function ReaderPage() {
             ].map(f => (
               <div key={f.label} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '12px 14px' }}>
                 <div style={{ fontSize: 20, marginBottom: 5 }}>{f.icon}</div>
-                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,0.8)', margin: 0 }}>{f.label}</p>
-                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2, lineHeight: 1.4 }}>{f.sub}</p>
+                <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 11, color: '#fff', margin: 0 }}>{f.label}</p>
+                <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: '#fff', marginTop: 2, lineHeight: 1.4 }}>{f.sub}</p>
               </div>
             ))}
           </div>
 
-          <p style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)', textAlign: 'center', marginTop: 18, lineHeight: 1.5 }}>
+          <p style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, color: '#fff', textAlign: 'center', marginTop: 18, lineHeight: 1.5 }}>
             Files are processed server-side and not stored. Scanned PDFs (image-only) won&apos;t work — text must be selectable.
           </p>
         </div>

@@ -32,7 +32,7 @@ function renderMd(text: string) {
       if (firstMark === boldIdx) {
         const end = remaining.indexOf('**', boldIdx + 2)
         if (end === -1) { parts.push(remaining.slice(boldIdx)); break }
-        parts.push(<strong key={key++} style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>{remaining.slice(boldIdx + 2, end)}</strong>)
+        parts.push(<strong key={key++} style={{ color: '#fff', fontWeight: 700 }}>{remaining.slice(boldIdx + 2, end)}</strong>)
         remaining = remaining.slice(end + 2)
       } else {
         const end = remaining.indexOf('`', codeIdx + 1)

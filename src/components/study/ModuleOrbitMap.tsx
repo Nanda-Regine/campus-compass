@@ -51,7 +51,7 @@ const ModuleNode = memo(({ data }: { data: Record<string, unknown> }) => {
         {String(data.label)}
       </div>
       {!!data.name && (
-        <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: '9px', marginTop: '2px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ color: '#fff', fontSize: '9px', marginTop: '2px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {String(data.name)}
         </div>
       )}

@@ -55,7 +55,7 @@ export default function Modal({ open, onClose, title, children, footer, size = '
             <h2 className="font-display font-bold text-white text-base">{title}</h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-white/82 hover:text-white hover:bg-white/5 transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-white hover:text-white hover:bg-white/5 transition-all"
               aria-label="Close"
             >
               ✕

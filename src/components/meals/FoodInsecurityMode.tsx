@@ -96,7 +96,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           >
             {budgetHealth === 'critical' ? 'Stretch Week Mode' : 'Budget Stretching Tips'}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.62)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff' }}>
             {budgetHealth === 'critical'
               ? 'Resources available right now on campus.'
               : 'Here\'s what works when funds are tight.'}
@@ -105,7 +105,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
         {budgetHealth === 'tight' && (
           <button
             onClick={() => setExpanded(false)}
-            style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
+            style={{ color: '#fff', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
           >
             ✕
           </button>
@@ -121,7 +121,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           padding: 16,
         }}
       >
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
           Campus Food Support
         </div>
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: 6 }}>
@@ -172,7 +172,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', color: '#fbbf24', marginBottom: 2 }}>
             No income this month?
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.66)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff' }}>
             Check if you qualify for R370/month SASSA SRD
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
 
       {/* Meal cards */}
       <div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
           Nutritionally complete meals under R20
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -246,7 +246,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
                   style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.6rem',
-                    color: 'rgba(255,255,255,0.58)',
+                    color: '#fff',
                   }}
                 >
                   {meal.calories} kcal
@@ -272,7 +272,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
           Community kitchen tip
         </div>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#fff', lineHeight: 1.6 }}>
           Most mosques, churches, and community centres near campuses run soup kitchens or Friday/Sunday meal programmes — often open to students regardless of affiliation. Ask at your SRC or check campus notice boards for times.
         </div>
       </div>

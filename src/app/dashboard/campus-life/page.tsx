@@ -127,7 +127,7 @@ export default async function CampusLifePage() {
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 
         {/* Wellness guides header */}
-        <div className="font-mono text-[0.6rem] uppercase tracking-widest px-1 pt-2 pb-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+        <div className="font-mono text-[0.6rem] uppercase tracking-widest px-1 pt-2 pb-1" style={{ color: '#fff' }}>
           Real talk — open a Nova conversation
         </div>
 
@@ -142,7 +142,7 @@ export default async function CampusLifePage() {
           <div className="font-display font-black text-white text-lg mb-1">
             Real talk about varsity life 🏛️
           </div>
-          <p className="font-body text-sm text-white/78 leading-relaxed">
+          <p className="font-body text-sm text-white leading-relaxed">
             Things orientation day doesn&apos;t cover. Tap any guide to open a conversation with Nova — she&apos;s heard it all and won&apos;t judge.
           </p>
         </div>
@@ -161,9 +161,9 @@ export default async function CampusLifePage() {
                 <div className="text-2xl flex-shrink-0">{guide.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm">{guide.title}</div>
-                  <div className="font-mono text-[0.65rem] text-white/82 mt-0.5 leading-snug">{guide.subtitle}</div>
+                  <div className="font-mono text-[0.65rem] text-white mt-0.5 leading-snug">{guide.subtitle}</div>
                 </div>
-                <div className="font-mono text-[0.6rem] text-white/75 flex-shrink-0">→</div>
+                <div className="font-mono text-[0.6rem] text-white flex-shrink-0">→</div>
               </Link>
             )
           })}
@@ -171,7 +171,7 @@ export default async function CampusLifePage() {
 
         {/* Crisis resources */}
         <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.6rem] text-white/78 uppercase tracking-widest mb-3">
+          <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-3">
             Crisis support — free, 24/7
           </div>
           <div className="space-y-2.5">
@@ -182,7 +182,7 @@ export default async function CampusLifePage() {
               { label: 'Suicide Crisis Line (SMS)',    number: '31393' },
             ].map(r => (
               <div key={r.number} className="flex items-center justify-between gap-3">
-                <span className="font-body text-xs text-white/78 leading-tight">{r.label}</span>
+                <span className="font-body text-xs text-white leading-tight">{r.label}</span>
                 <a
                   href={`tel:${r.number.replace(/\s/g, '')}`}
                   className="font-mono text-xs text-teal-400 font-bold flex-shrink-0"

@@ -263,10 +263,10 @@ export default function LandingPage() {
             <span className="font-display font-bold text-white text-sm">VarsityOS</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/demo" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors hidden sm:block min-h-[44px] flex items-center" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <Link href="/demo" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors hidden sm:block min-h-[44px] flex items-center" style={{ color: '#fff' }}>
               See demo
             </Link>
-            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors min-h-[44px] flex items-center" style={{ color: 'rgba(255,255,255,0.55)' }}>
+            <Link href="/auth/login" className="font-display text-xs font-medium px-3.5 py-3 rounded-lg transition-colors min-h-[44px] flex items-center" style={{ color: '#fff' }}>
               Log in
             </Link>
             <Link
@@ -312,7 +312,7 @@ export default function LandingPage() {
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              <p className="text-base sm:text-lg max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed" style={{ color: '#fff' }}>
                 Mind, body, money, safety, fitness, community, and career — all 9 life domains, one app, built for SA. Budget & NSFAS tracking, Safety OS with SOS alerts, Stokvel savings circles, Fitness tracker, Nova AI, and 30+ more tools. Works at every SA university and TVET college. Offline ready.
               </p>
 
@@ -332,7 +332,7 @@ export default function LandingPage() {
                   ▶ See interactive demo
                 </Link>
               </div>
-              <p className="font-mono text-xs text-center lg:text-left" style={{ color: 'rgba(255,255,255,0.3)' }}>Free forever · Works offline · Install on your phone</p>
+              <p className="font-mono text-xs text-center lg:text-left" style={{ color: '#fff' }}>Free forever · Works offline · Install on your phone</p>
             </div>
 
             {/* Right: mini app preview (desktop only) */}
@@ -350,7 +350,7 @@ export default function LandingPage() {
                       ].map(item => (
                         <div key={item.label}>
                           <div className="flex justify-between mb-1">
-                            <span className="font-display text-xs text-white/70">{item.label}</span>
+                            <span className="font-display text-xs text-white">{item.label}</span>
                             <span className="font-mono text-xs font-bold" style={{ color: item.colour }}>{item.amount}</span>
                           </div>
                           <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
@@ -369,7 +369,7 @@ export default function LandingPage() {
                     </div>
                     <div className="space-y-1.5">
                       <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.07)' }}>
-                        <p className="font-display text-xs text-white/75">stressed about exams 😔</p>
+                        <p className="font-display text-xs text-white">stressed about exams 😔</p>
                       </div>
                       <div className="rounded-xl rounded-tr-sm px-3 py-2" style={{ background: 'rgba(13,148,136,0.15)', border: '1px solid rgba(13,148,136,0.25)' }}>
                         <p className="font-display text-xs leading-relaxed" style={{ color: '#5eead4' }}>Let&apos;s start with tonight — what&apos;s keeping you awake?</p>
@@ -381,7 +381,7 @@ export default function LandingPage() {
                     <div className="rounded-2xl p-3" style={{ background: 'rgba(224,120,88,0.1)', border: '1px solid rgba(224,120,88,0.25)' }}>
                       <span className="text-lg">🔥</span>
                       <p className="font-display font-bold text-white text-xs mt-1">12 day streak</p>
-                      <p className="font-mono text-[0.6rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Keep it going</p>
+                      <p className="font-mono text-[0.6rem] mt-0.5" style={{ color: '#fff' }}>Keep it going</p>
                     </div>
                     <div className="rounded-2xl p-3" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
                       <span className="text-lg">🛡️</span>
@@ -422,14 +422,14 @@ export default function LandingPage() {
                 ].filter(Boolean).join(' ')}
               >
                 <span className="font-display font-black text-2xl sm:text-3xl mb-0.5" style={{ color: stat.color }}>{stat.value}</span>
-                <span className="font-display text-xs text-white/70">{stat.label}</span>
-                <span className="font-mono text-[0.63rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{stat.sub}</span>
+                <span className="font-display text-xs text-white">{stat.label}</span>
+                <span className="font-mono text-[0.63rem] mt-0.5" style={{ color: '#fff' }}>{stat.sub}</span>
               </div>
             ))}
           </div>
 
           {/* University trust */}
-          <p className="font-mono text-xs text-center uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="font-mono text-xs text-center uppercase tracking-widest mb-4" style={{ color: '#fff' }}>
             For students at all 26 public universities · all 50 TVET colleges · private HEIs
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2" role="list">
@@ -447,7 +447,7 @@ export default function LandingPage() {
                 {uni}
               </span>
             ))}
-            <span className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}>+ more</span>
+            <span className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>+ more</span>
           </div>
         </section>
 
@@ -471,7 +471,7 @@ export default function LandingPage() {
                   }}
                 >
                   <span className="text-2xl flex-shrink-0 mt-0.5" aria-hidden="true">{p.icon}</span>
-                  <p className="font-display text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>{p.text}</p>
+                  <p className="font-display text-sm leading-relaxed" style={{ color: '#fff' }}>{p.text}</p>
                 </div>
               ))}
             </div>
@@ -507,7 +507,7 @@ export default function LandingPage() {
                   ].map(item => (
                     <div key={item.label}>
                       <div className="flex justify-between mb-1">
-                        <span className="font-display text-xs text-white/70">{item.label}</span>
+                        <span className="font-display text-xs text-white">{item.label}</span>
                         <span className="font-mono text-xs font-bold" style={{ color: item.colour }}>{item.amount}</span>
                       </div>
                       <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }}>
@@ -534,8 +534,8 @@ export default function LandingPage() {
                       <div key={item.label} className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: item.urgent ? '#f87171' : 'rgba(255,255,255,0.25)' }} />
                         <div className="flex-1 min-w-0">
-                          <p className="font-display text-xs truncate text-white/80">{item.label}</p>
-                          <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.date}</p>
+                          <p className="font-display text-xs truncate text-white">{item.label}</p>
+                          <p className="font-mono text-[0.63rem]" style={{ color: '#fff' }}>{item.date}</p>
                         </div>
                       </div>
                     ))}
@@ -546,7 +546,7 @@ export default function LandingPage() {
                     <span className="text-xl" aria-hidden="true">🔥</span>
                     <div>
                       <p className="font-display font-bold text-white text-sm">12 day streak</p>
-                      <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Keep it going</p>
+                      <p className="font-mono text-[0.63rem]" style={{ color: '#fff' }}>Keep it going</p>
                     </div>
                   </div>
                 </div>
@@ -561,7 +561,7 @@ export default function LandingPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="rounded-xl rounded-tl-sm px-3 py-2" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    <p className="font-display text-xs text-white/75">stressed about exams + not sleeping 😔</p>
+                    <p className="font-display text-xs text-white">stressed about exams + not sleeping 😔</p>
                   </div>
                   <div className="rounded-xl rounded-tr-sm px-3 py-2" style={{ background: 'rgba(13,148,136,0.15)', border: '1px solid rgba(13,148,136,0.25)' }}>
                     <p className="font-display text-xs leading-relaxed" style={{ color: '#5eead4' }}>Let&apos;s start with tonight — what&apos;s actually keeping you awake?</p>
@@ -579,7 +579,7 @@ export default function LandingPage() {
             <h2 id="features-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
               Not a super-app.<br />A Student Operating System.
             </h2>
-            <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>Mind · Body · Money · Safety · Movement · Growth · Community · Work · Future</p>
+            <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: '#fff' }}>Mind · Body · Money · Safety · Movement · Growth · Community · Work · Future</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {FEATURES.map((f) => (
@@ -598,12 +598,12 @@ export default function LandingPage() {
                     <span className="font-mono text-[0.65rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
                   )}
                   {f.domain && (
-                    <span className="font-mono text-[0.58rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
+                    <span className="font-mono text-[0.58rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
                   )}
                 </div>
                 <div className="text-2xl mb-3" aria-hidden="true">{f.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-1.5">{f.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{f.desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#fff' }}>{f.desc}</p>
               </article>
             ))}
           </div>
@@ -628,7 +628,7 @@ export default function LandingPage() {
                 <h2 id="nova-heading" className="font-display font-black text-3xl sm:text-4xl text-white mb-4">
                   Not a chatbot.<br />Someone who gets it.
                 </h2>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#fff' }}>
                   Nova runs on a comprehensive SA student knowledge base — NSFAS rules, load-shedding strategies, CBT techniques, imposter syndrome coaching, real-rand financial guidance. It knows the difference between ordinary stress and a crisis.
                 </p>
                 <div className="space-y-3">
@@ -646,7 +646,7 @@ export default function LandingPage() {
                       <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                       <div>
                         <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
-                        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
+                        <p className="font-mono text-[0.65rem]" style={{ color: '#fff' }}>{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -679,11 +679,11 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <div className="mt-4 pt-3 flex items-center gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                    <div className="flex-1 rounded-xl px-3 py-2 font-display text-xs" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.08)' }}>Talk to Nova...</div>
+                    <div className="flex-1 rounded-xl px-3 py-2 font-display text-xs" style={{ background: 'rgba(255,255,255,0.04)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}>Talk to Nova...</div>
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }} aria-hidden="true">↑</div>
                   </div>
                 </div>
-                <p className="font-mono text-[0.63rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
+                <p className="font-mono text-[0.63rem] text-center mt-2" style={{ color: '#fff' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
               </div>
             </div>
           </div>
@@ -708,7 +708,7 @@ export default function LandingPage() {
                 <h2 id="safety-heading" className="font-display font-black text-3xl sm:text-4xl text-white mb-4">
                   Campus safety,<br />finally built in.
                 </h2>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <p className="text-sm leading-relaxed mb-6" style={{ color: '#fff' }}>
                   SA campuses can be dangerous. VarsityOS is the only student app with a built-in Safety OS — SOS alerts, a Walk Me Home timer that texts your emergency contact if you don&apos;t check in, incident reporting, a self-defence library, and a plain-language Legal Rights guide for students.
                 </p>
                 <div className="space-y-3">
@@ -726,7 +726,7 @@ export default function LandingPage() {
                       <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                       <div>
                         <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
-                        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
+                        <p className="font-mono text-[0.65rem]" style={{ color: '#fff' }}>{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -747,19 +747,19 @@ export default function LandingPage() {
                       <span className="font-mono text-[0.63rem] uppercase tracking-widest" style={{ color: '#6ee7b7' }}>Walk Me Home</span>
                       <span className="font-mono text-[0.65rem] px-2 py-0.5 rounded-full" style={{ background: 'rgba(16,185,129,0.2)', color: '#6ee7b7' }}>Active</span>
                     </div>
-                    <p className="font-display text-xs text-white/80">Timer: <span style={{ color: '#6ee7b7', fontWeight: 700 }}>12:00</span> remaining</p>
-                    <p className="font-mono text-[0.63rem] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Check-in required by 22:15 · Lethabo will be notified</p>
+                    <p className="font-display text-xs text-white">Timer: <span style={{ color: '#6ee7b7', fontWeight: 700 }}>12:00</span> remaining</p>
+                    <p className="font-mono text-[0.63rem] mt-1" style={{ color: '#fff' }}>Check-in required by 22:15 · Lethabo will be notified</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}>
                       <p className="text-xl mb-1">🚨</p>
                       <p className="font-display font-bold text-white text-xs">SOS</p>
-                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Hold 3s to activate</p>
+                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: '#fff' }}>Hold 3s to activate</p>
                     </div>
                     <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.25)' }}>
                       <p className="text-xl mb-1">⚖️</p>
                       <p className="font-display font-bold text-white text-xs">Legal Rights</p>
-                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Know your rights</p>
+                      <p className="font-mono text-[0.65rem] mt-0.5" style={{ color: '#fff' }}>Know your rights</p>
                     </div>
                   </div>
                 </div>
@@ -772,7 +772,7 @@ export default function LandingPage() {
         <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="how-heading">
           <div className="text-center mb-10">
             <h2 id="how-heading" className="font-display font-black text-3xl text-white">Up and running in 3 minutes.</h2>
-            <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>No app store. No credit card. Just sign up.</p>
+            <p className="text-sm mt-2" style={{ color: '#fff' }}>No app store. No credit card. Just sign up.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
             {[
@@ -798,7 +798,7 @@ export default function LandingPage() {
                 </span>
                 <div className="text-2xl mb-3" aria-hidden="true">{step.icon}</div>
                 <h3 className="font-display font-bold text-white text-sm mb-2">{step.title}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{step.desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#fff' }}>{step.desc}</p>
                 {i < 2 && (
                   <div
                     className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 font-display text-lg font-bold"
@@ -817,7 +817,7 @@ export default function LandingPage() {
         <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="pricing-heading">
           <div className="text-center mb-10">
             <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Start free. Upgrade only when you need more Nova.</p>
+            <p className="text-sm" style={{ color: '#fff' }}>Start free. Upgrade only when you need more Nova.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {PRICING.map((tier) => (
@@ -856,11 +856,11 @@ export default function LandingPage() {
 
                 <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: tier.accentColor }}>{tier.name}</div>
                 <div className="font-display font-black text-4xl text-white mb-0.5">{tier.price}</div>
-                <div className="font-mono text-xs mb-5" style={{ color: 'rgba(255,255,255,0.3)' }}>{tier.sub}</div>
+                <div className="font-mono text-xs mb-5" style={{ color: '#fff' }}>{tier.sub}</div>
 
                 <ul className="space-y-2.5 mb-6">
                   {tier.features.map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: '#fff' }}>
                       <span className="text-xs flex-shrink-0 font-bold" style={{ color: tier.checkColor }} aria-hidden="true">✓</span>
                       {f}
                     </li>
@@ -900,10 +900,10 @@ export default function LandingPage() {
                 }}
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${t.accent}80, transparent)` }} />
-                <p className="font-display text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.75)' }}>&ldquo;{t.quote}&rdquo;</p>
+                <p className="font-display text-sm leading-relaxed mb-4" style={{ color: '#fff' }}>&ldquo;{t.quote}&rdquo;</p>
                 <footer>
                   <p className="font-display font-bold text-xs" style={{ color: t.accent }}>{t.name}</p>
-                  <p className="font-mono text-[0.63rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.role}</p>
+                  <p className="font-mono text-[0.63rem] mt-0.5" style={{ color: '#fff' }}>{t.role}</p>
                 </footer>
               </blockquote>
             ))}
@@ -948,7 +948,7 @@ export default function LandingPage() {
                   {faq.q}
                   <span className="text-xs flex-shrink-0 transition-transform group-open:rotate-180" style={{ color: '#3b82f6' }}>▼</span>
                 </summary>
-                <p className="text-sm leading-relaxed px-5 pb-4" style={{ color: 'rgba(255,255,255,0.6)' }}>{faq.a}</p>
+                <p className="text-sm leading-relaxed px-5 pb-4" style={{ color: '#fff' }}>{faq.a}</p>
               </details>
             ))}
           </div>
@@ -969,7 +969,7 @@ export default function LandingPage() {
               <h2 className="font-display font-black text-white mb-3" style={{ fontSize: 'clamp(1.8rem, 5vw, 3rem)' }}>
                 Ready to actually get on top of it?
               </h2>
-              <p className="text-sm max-w-md mx-auto mb-8" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              <p className="text-sm max-w-md mx-auto mb-8" style={{ color: '#fff' }}>
                 Your NSFAS, your budget, your safety, your body, your community — all 9 domains of student life, one lekker OS built for SA reality. Free to start. No app store. Works offline.
               </p>
               <Link
@@ -979,9 +979,9 @@ export default function LandingPage() {
               >
                 Create your free account
               </Link>
-              <p className="font-mono text-xs mt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>No credit card · No app store · Works on any device</p>
+              <p className="font-mono text-xs mt-4" style={{ color: '#fff' }}>No credit card · No app store · Works on any device</p>
               <div className="mt-6 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="font-mono text-[0.6rem] mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>Already using VarsityOS? A quick review helps the next student find us.</p>
+                <p className="font-mono text-[0.6rem] mb-3" style={{ color: '#fff' }}>Already using VarsityOS? A quick review helps the next student find us.</p>
                 <a
                   href="https://g.page/r/CdPIXBcTmJE6EAI/review"
                   target="_blank"
@@ -1003,10 +1003,10 @@ export default function LandingPage() {
               <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center" style={{ boxShadow: '0 0 8px rgba(13,148,136,0.3)' }}>
                 <Image src="/favicon.jpg" alt="VarsityOS" width={28} height={28} className="object-contain" />
               </div>
-              <span className="font-display font-bold text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>VarsityOS</span>
+              <span className="font-display font-bold text-sm" style={{ color: '#fff' }}>VarsityOS</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <p className="font-mono text-[0.6rem] text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <p className="font-mono text-[0.6rem] text-center" style={{ color: '#fff' }}>
                 Built by{' '}
                 <a
                   href="https://creativelynanda.co.za"
@@ -1019,7 +1019,7 @@ export default function LandingPage() {
                 </a>
                 {' '}· Mirembe Muse (Pty) Ltd
               </p>
-              <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.18)' }}>
+              <p className="font-mono text-[0.63rem]" style={{ color: '#fff' }}>
                 POPIA Reg. 2026-005658 · East London, Eastern Cape, South Africa
               </p>
             </div>
@@ -1034,8 +1034,8 @@ export default function LandingPage() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-[0.6rem] transition-colors hover:text-white/80 min-h-[44px] flex items-center"
-                  style={{ color: 'rgba(255,255,255,0.25)' }}
+                  className="font-mono text-[0.6rem] transition-colors hover:text-white min-h-[44px] flex items-center"
+                  style={{ color: '#fff' }}
                 >
                   {link.label}
                 </a>

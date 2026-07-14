@@ -37,7 +37,7 @@ export default function PodActivityFeed() {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
         Pod Activity
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -58,7 +58,7 @@ export default function PodActivityFeed() {
                 : '👤'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', marginBottom: 4 }}>
                 <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{item.user.full_name?.split(' ')[0] ?? 'A pod member'}</span>
                 {' '}hit a Compound Day {timeAgo(item.day_date)}
               </div>
@@ -75,7 +75,7 @@ export default function PodActivityFeed() {
                 ))}
               </div>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.2)', flexShrink: 0 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', flexShrink: 0 }}>
               +{item.xp_bonus}xp
             </div>
           </div>

@@ -108,13 +108,13 @@ function BudgetPreview() {
       <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#93c5fd', marginBottom: 14 }}>March Budget</p>
       <div style={{ marginBottom: 16, padding: '10px 14px', borderRadius: 12, background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>NSFAS food allowance</span>
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, color: '#fff' }}>NSFAS food allowance</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: '#3b82f6' }}>R1,500</span>
         </div>
         <div style={{ height: 4, borderRadius: 9999, background: 'rgba(255,255,255,0.08)' }}>
           <div style={{ height: 4, borderRadius: 9999, width: '62%', background: '#3b82f6' }} />
         </div>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>R930 spent · R570 left</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', marginTop: 4 }}>R930 spent · R570 left</p>
       </div>
       {[
         { label: 'Transport', spent: 'R340', left: 'R260', pct: 57, color: '#e07858' },
@@ -123,7 +123,7 @@ function BudgetPreview() {
       ].map(item => (
         <div key={item.label} style={{ marginBottom: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-            <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
+            <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: '#fff' }}>{item.label}</span>
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: item.color }}>{item.spent}</span>
           </div>
           <div style={{ height: 3, borderRadius: 9999, background: 'rgba(255,255,255,0.06)' }}>
@@ -168,7 +168,7 @@ function NovaPreview() {
         ))}
       </div>
       <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
-        <div style={{ flex: 1, padding: '8px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Reply to Nova...</div>
+        <div style={{ flex: 1, padding: '8px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: '#fff' }}>Reply to Nova...</div>
         <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(135deg, #0d9488, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, cursor: 'pointer' }}>↑</div>
       </div>
     </div>
@@ -180,24 +180,24 @@ function StudyPreview() {
     <div style={{ background: 'rgba(6,12,24,0.9)', borderRadius: 16, padding: 20, border: '1px solid rgba(139,92,246,0.2)' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
         <div style={{ padding: 12, borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Next exam</p>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Next exam</p>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: '#fff', margin: '0 0 2px 0' }}>CHEM3</p>
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#f87171', margin: 0 }}>6 days</p>
         </div>
         <div style={{ padding: 12, borderRadius: 12, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Readiness</p>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', margin: '0 0 4px 0', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Readiness</p>
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#a78bfa', margin: '0 0 2px 0' }}>67%</p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.4)', margin: 0 }}>Keep reviewing</p>
+          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: '#fff', margin: 0 }}>Keep reviewing</p>
         </div>
       </div>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px 0' }}>Flashcards due today</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px 0' }}>Flashcards due today</p>
       {[
         { q: 'Le Chatelier\'s Principle', status: 'due', color: '#f59e0b' },
         { q: 'Hess\'s Law applications', status: 'due', color: '#f59e0b' },
         { q: 'Electrochemical series', status: 'done', color: '#0d9488' },
       ].map(card => (
         <div key={card.q} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', marginBottom: 6 }}>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>{card.q}</span>
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: '#fff' }}>{card.q}</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: card.color, fontWeight: 700 }}>{card.status}</span>
         </div>
       ))}
@@ -217,7 +217,7 @@ function TutoringPreview() {
   ]
   return (
     <div style={{ background: 'rgba(6,12,24,0.9)', borderRadius: 16, padding: 16, border: '1px solid rgba(201,168,76,0.2)' }}>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 10px 0' }}>Tutors at your university</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 10px 0' }}>Tutors at your university</p>
       {tutors.map(t => (
         <div key={t.name} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', marginBottom: 8, position: 'relative' }}>
           <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>{t.emoji}</div>
@@ -226,11 +226,11 @@ function TutoringPreview() {
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#fff', margin: 0 }}>{t.name}</p>
               {t.badge && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 8, color: '#c9a84c', background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 9999, padding: '1px 5px' }}>{t.badge}</span>}
             </div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.45)', margin: '2px 0 0 0' }}>{t.subject}</p>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: '#fff', margin: '2px 0 0 0' }}>{t.subject}</p>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0 }}>
             <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, color: '#c9a84c', margin: '0 0 2px 0' }}>{t.rate}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', margin: 0 }}>⭐ {t.rating} · {t.sessions} sessions</p>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', margin: 0 }}>⭐ {t.rating} · {t.sessions} sessions</p>
           </div>
         </div>
       ))}
@@ -250,7 +250,7 @@ function NotesPreview() {
   return (
     <div style={{ background: 'rgba(6,12,24,0.9)', borderRadius: 16, padding: 16, border: '1px solid rgba(78,207,158,0.2)' }}>
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-        <div style={{ flex: 1, padding: '6px 10px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Search module code...</div>
+        <div style={{ flex: 1, padding: '6px 10px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: '#fff' }}>Search module code...</div>
         <div style={{ padding: '6px 12px', borderRadius: 10, background: 'rgba(78,207,158,0.15)', border: '1px solid rgba(78,207,158,0.3)', fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#4ecf9e', cursor: 'pointer' }}>+ Upload</div>
       </div>
       {notes.map(n => (
@@ -259,14 +259,14 @@ function NotesPreview() {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '1px solid rgba(78,207,158,0.25)', borderRadius: 9999, padding: '1px 6px' }}>{n.module}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)', borderRadius: 9999, padding: '1px 6px' }}>{n.type}</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', background: 'rgba(255,255,255,0.05)', borderRadius: 9999, padding: '1px 6px' }}>{n.type}</span>
                 {n.isNew && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 8, color: '#f59e0b', background: 'rgba(245,158,11,0.1)', borderRadius: 9999, padding: '1px 5px' }}>New</span>}
               </div>
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 12, color: '#fff', margin: '0 0 2px 0' }}>{n.title}</p>
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.35)', margin: 0 }}>by {n.uploader}</p>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: '#fff', margin: 0 }}>by {n.uploader}</p>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', margin: '0 0 4px 0' }}>🔖 {n.saves}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', margin: '0 0 4px 0' }}>🔖 {n.saves}</p>
               <div style={{ padding: '4px 8px', borderRadius: 8, background: 'rgba(78,207,158,0.1)', border: '1px solid rgba(78,207,158,0.25)', cursor: 'pointer' }}>
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#4ecf9e' }}>Save</span>
               </div>
@@ -301,7 +301,7 @@ function BursaryPreview() {
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: b.color }}>{b.amount}</span>
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>{b.field}</span>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff' }}>{b.field}</span>
               <span style={{ width: 2, height: 2, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: b.urgent ? '#ef4444' : 'rgba(255,255,255,0.35)' }}>Closes {b.deadline}</span>
               {b.urgent && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 8, color: '#ef4444', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 9999, padding: '1px 5px' }}>Urgent</span>}
@@ -309,7 +309,7 @@ function BursaryPreview() {
           </div>
         </div>
       ))}
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.2)', textAlign: 'center', marginTop: 4 }}>100+ bursaries · updated monthly</p>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', textAlign: 'center', marginTop: 4 }}>100+ bursaries · updated monthly</p>
     </div>
   )
 }
@@ -342,7 +342,7 @@ export default function DemoPage() {
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#0d9488', background: 'rgba(13,148,136,0.12)', border: '1px solid rgba(13,148,136,0.3)', borderRadius: 9999, padding: '2px 8px' }}>Interactive Demo</span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', padding: '6px 12px' }}>
+          <Link href="/" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 12, fontWeight: 500, color: '#fff', textDecoration: 'none', padding: '6px 12px' }}>
             Back
           </Link>
           <Link href="/auth/signup" style={{ fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 700, color: '#fff', textDecoration: 'none', padding: '8px 16px', borderRadius: 10, background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }}>
@@ -363,7 +363,7 @@ export default function DemoPage() {
             One lekker app.
           </span>
         </h1>
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 500, margin: '0 auto' }}>
+        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 15, color: '#fff', lineHeight: 1.6, maxWidth: 500, margin: '0 auto' }}>
           Tap any feature below to see a live preview of what VarsityOS looks like — before you sign up.
         </p>
       </div>
@@ -406,12 +406,12 @@ export default function DemoPage() {
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 900, fontSize: 'clamp(1.4rem, 3vw, 2rem)', lineHeight: 1.2, marginBottom: 12 }}>
               {demo.tagline}
             </h2>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 20 }}>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: '#fff', lineHeight: 1.7, marginBottom: 20 }}>
               {demo.description}
             </p>
             <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
               {demo.bullets.map((b, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: '#fff', lineHeight: 1.5 }}>
                   <span style={{ width: 18, height: 18, borderRadius: '50%', background: `${demo.accent}20`, border: `1px solid ${demo.accent}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: demo.accent, flexShrink: 0, marginTop: 1 }}>✓</span>
                   {b}
                 </li>
@@ -432,7 +432,7 @@ export default function DemoPage() {
               >
                 Try {demo.label} free →
               </Link>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', textAlign: 'center' }}>
                 No credit card · No app store · Works offline
               </p>
             </div>
@@ -442,7 +442,7 @@ export default function DemoPage() {
           <div className="demo-preview">
             <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0d9488', animation: 'pulse 2s ease-in-out infinite' }} />
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live preview</span>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Live preview</span>
             </div>
             {demo.id === 'budget' && <BudgetPreview />}
             {demo.id === 'nova' && <NovaPreview />}
@@ -457,7 +457,7 @@ export default function DemoPage() {
 
       {/* Social proof strip */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '40px 20px 50px', maxWidth: 900, margin: '0 auto' }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.25)', marginBottom: 24 }}>What students say</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#fff', marginBottom: 24 }}>What students say</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
           {[
             { quote: "Nova talked me through a full breakdown before my CHEM3 exam. It didn't feel like a chatbot.", name: 'Lethabo M.', role: '3rd year BSc, Wits', accent: '#0d9488' },
@@ -467,9 +467,9 @@ export default function DemoPage() {
           ].map(t => (
             <div key={t.name} style={{ padding: '16px 18px', borderRadius: 16, background: `${t.accent}0a`, border: `1px solid ${t.accent}25`, position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${t.accent}80, transparent)` }} />
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.75)', marginBottom: 10 }}>&ldquo;{t.quote}&rdquo;</p>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, lineHeight: 1.6, color: '#fff', marginBottom: 10 }}>&ldquo;{t.quote}&rdquo;</p>
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 11, color: t.accent, margin: '0 0 2px 0' }}>{t.name}</p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', margin: 0 }}>{t.role}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', margin: 0 }}>{t.role}</p>
             </div>
           ))}
         </div>
@@ -484,7 +484,7 @@ export default function DemoPage() {
             <h2 style={{ fontFamily: 'Sora, sans-serif', fontWeight: 900, fontSize: 'clamp(1.4rem, 4vw, 2rem)', marginBottom: 10 }}>
               Ready to get on top of it?
             </h2>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, marginBottom: 24 }}>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 14, color: '#fff', lineHeight: 1.6, marginBottom: 24 }}>
               Budget, notes, tutoring, bursaries, and Nova — free forever. No app store. Works offline. Built for South African students.
             </p>
             <Link
@@ -498,7 +498,7 @@ export default function DemoPage() {
             >
               Create your free account
             </Link>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.25)', marginTop: 12 }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: '#fff', marginTop: 12 }}>
               No credit card · No app store · Works on any phone
             </p>
           </div>

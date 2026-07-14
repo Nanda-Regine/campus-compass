@@ -321,13 +321,13 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         <AmbientImage zone="onboarding" opacity={0.32} blurPx={2} saturation={1.4} />
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🌍</div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(168,85,247,0.7)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgb(168,85,247)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>
             Step 1
           </div>
           <h1 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)', margin: 0 }}>
             Khetha ulimi / Choose Language
           </h1>
-          <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', marginTop: 6 }}>
+          <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff', marginTop: 6 }}>
             Pick the language for your VarsityOS training tour
           </p>
         </div>
@@ -376,7 +376,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         marginBottom: 20,
       }}>
         {/* Section label */}
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(168,85,247,0.7)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgb(168,85,247)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>
           {current.section} · {step + 1} / {totalSteps}
         </div>
 
@@ -389,7 +389,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         </h2>
 
         {/* Body */}
-        <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, margin: '0 0 18px' }}>
+        <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 14, color: '#fff', lineHeight: 1.65, margin: '0 0 18px' }}>
           {current.body}
         </p>
 
@@ -398,7 +398,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
           {current.features.map(f => (
             <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: TEAL, flexShrink: 0 }} />
-              <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: 'rgba(255,255,255,0.66)' }}>{f}</span>
+              <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: '#fff' }}>{f}</span>
             </div>
           ))}
         </div>
@@ -409,11 +409,11 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
         <button onClick={() => step > 0 ? setStep(s => s - 1) : setStep(-1)} style={{
           padding: '10px 18px', borderRadius: 10, fontSize: 13, fontWeight: 500,
           background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)',
-          color: 'rgba(255,255,255,0.62)', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif',
+          color: '#fff', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif',
         }}>{t.back}</button>
 
         <button onClick={() => router.push('/dashboard')} style={{
-          background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)',
+          background: 'none', border: 'none', color: '#fff',
           fontSize: 11, fontFamily: '"JetBrains Mono",monospace', cursor: 'pointer', letterSpacing: '0.05em',
         }}>{t.skip}</button>
 

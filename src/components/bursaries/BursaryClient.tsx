@@ -93,7 +93,7 @@ function BursaryCard({
           <div style={{
             display: 'inline-block', marginTop: 6,
             fontFamily: 'var(--font-mono)', fontSize: '0.63rem',
-            color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.06)',
+            color: '#fff', background: 'rgba(255,255,255,0.06)',
             border: '0.5px solid rgba(255,255,255,0.08)',
             padding: '3px 8px', borderRadius: 6,
           }}>
@@ -113,7 +113,7 @@ function BursaryCard({
           >
             {saved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
           </button>
-          <div style={{ color: 'rgba(255,255,255,0.45)', paddingTop: 2 }}>
+          <div style={{ color: '#fff', paddingTop: 2 }}>
             {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </div>
         </div>
@@ -203,7 +203,7 @@ function BursaryCard({
                 background: 'rgba(255,255,255,0.07)',
                 border: '0.5px solid rgba(255,255,255,0.1)',
                 fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.72rem',
-                color: 'rgba(255,255,255,0.66)',
+                color: '#fff',
               }}
             >
               <ExternalLink size={12} /> Website
@@ -224,7 +224,7 @@ const labelStyle: CSSProperties = {
 
 const chip: CSSProperties = {
   fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-  color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.06)',
+  color: '#fff', background: 'rgba(255,255,255,0.06)',
   border: '0.5px solid rgba(255,255,255,0.08)',
   padding: '3px 8px', borderRadius: 6,
 }
@@ -318,7 +318,7 @@ export default function BursaryClient() {
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#c084fc' }}>
               Get a personal bursary plan from Nova
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'rgba(192,132,252,0.6)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'rgb(192,132,252)', marginTop: 2 }}>
               Nova knows your degree, year, and funding type — tap for a custom application strategy
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function BursaryClient() {
         <div style={{ position: 'relative' }}>
           <Search size={14} style={{
             position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-            color: 'rgba(255,255,255,0.5)',
+            color: '#fff',
           }} />
           <input
             value={query}

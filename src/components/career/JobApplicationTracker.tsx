@@ -168,7 +168,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Loading applications…</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#fff' }}>Loading applications…</span>
     </div>
   )
 
@@ -184,7 +184,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
         ].map(s => (
           <div key={s.label} style={{ flex: 1, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '10px 12px', textAlign: 'center' }}>
             <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: s.color, lineHeight: 1, marginBottom: 3 }}>{s.value}</p>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</p>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -217,32 +217,32 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
             { label: 'Job URL',      key: 'url',        placeholder: 'https://…' },
           ].map(({ label, key, placeholder }) => (
             <div key={key}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>{label}</label>
+              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>{label}</label>
               <input
                 value={(form as Record<string, string>)[key]}
                 onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))}
                 placeholder={placeholder}
-                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-body)', fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 13, outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
           ))}
 
           <div style={{ display: 'flex', gap: 10 }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>Deadline</label>
+              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>Deadline</label>
               <input type="date" value={form.deadline} onChange={e => setForm(p => ({ ...p, deadline: e.target.value }))}
-                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }} />
+                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>Applied date</label>
+              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>Applied date</label>
               <input type="date" value={form.applied_date} onChange={e => setForm(p => ({ ...p, applied_date: e.target.value }))}
-                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }} />
+                style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }} />
             </div>
           </div>
 
           {/* Status */}
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Status</label>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Status</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {STATUS_ORDER.map(s => {
                 const m = STATUS_META[s]
@@ -263,7 +263,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
 
           {/* Job type */}
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Type</label>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Type</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {(Object.keys(JOB_TYPE_LABELS) as JobType[]).map(t => (
                 <button key={t} onClick={() => setForm(p => ({ ...p, job_type: t }))} style={{
@@ -317,11 +317,11 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
       {/* ── Application list ───────────────────────────────────────────────── */}
       {visible.length === 0 && !adding ? (
         <div style={{ ...card, textAlign: 'center', padding: '32px 20px' }}>
-          <Briefcase size={28} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 auto 10px' }} />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'rgba(255,255,255,0.58)', marginBottom: 6 }}>
+          <Briefcase size={28} style={{ color: '#fff', margin: '0 auto 10px' }} />
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: '#fff', marginBottom: 6 }}>
             {apps.length === 0 ? 'No applications tracked yet' : 'Nothing here'}
           </p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
             Start tracking — click the button above to add your first application.
           </p>
         </div>
@@ -341,11 +341,11 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
               >
                 <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{m.emoji}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13.5, color: 'rgba(255,255,255,0.9)', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13.5, color: '#fff', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {app.job_title}
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.66)' }}>{app.company}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>{app.company}</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: m.color, background: m.bg, padding: '2px 7px', borderRadius: 6 }}>
                       {m.label}
                     </span>
@@ -357,7 +357,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
                     )}
                   </div>
                 </div>
-                <div style={{ flexShrink: 0, color: 'rgba(255,255,255,0.5)', marginTop: 3 }}>
+                <div style={{ flexShrink: 0, color: '#fff', marginTop: 3 }}>
                   {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </div>
               </div>
@@ -368,7 +368,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
 
                   {/* Pipeline stepper */}
                   <div>
-                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Update status</p>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Update status</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                       {STATUS_ORDER.map(s => {
                         const sm = STATUS_META[s]
@@ -391,21 +391,21 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
                   {/* Interview date */}
                   {(app.status === 'phone_screen' || app.status === 'interview' || app.status === 'assessment') && (
                     <div>
-                      <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>
+                      <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>
                         Interview / assessment date & time
                       </label>
                       <input
                         type="datetime-local"
                         defaultValue={app.interview_at ? app.interview_at.slice(0, 16) : ''}
                         onBlur={e => saveInterviewAt(app.id, e.target.value)}
-                        style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }}
+                        style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontFamily: 'var(--font-mono)', fontSize: 12, outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }}
                       />
                     </div>
                   )}
 
                   {/* Notes */}
                   <div>
-                    <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>
+                    <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>
                       Notes (auto-saved)
                     </label>
                     <textarea
@@ -414,30 +414,30 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
                       onChange={e => setNoteDraft(e.target.value)}
                       onBlur={() => saveNotes(app.id, noteDraft)}
                       placeholder="Interview prep notes, contact person, next steps…"
-                      style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)', fontSize: 12.5, outline: 'none', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.5 }}
+                      style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '9px 12px', color: '#fff', fontFamily: 'var(--font-body)', fontSize: 12.5, outline: 'none', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.5 }}
                     />
                   </div>
 
                   {/* Meta row */}
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
                     {app.location && (
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.58)' }}>📍 {app.location}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>📍 {app.location}</span>
                     )}
                     {app.salary_range && (
                       <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#4ecf9e' }}>💰 {app.salary_range}</span>
                     )}
                     {app.applied_date && (
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>📤 Applied {app.applied_date}</span>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>📤 Applied {app.applied_date}</span>
                     )}
                     {app.url && (
                       <a href={app.url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 4, fontFamily: 'var(--font-mono)', fontSize: 10, color: '#60a5fa', textDecoration: 'none' }}>
                         <ExternalLink size={11} /> View listing
                       </a>
                     )}
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#fff' }}>
                       {JOB_TYPE_LABELS[app.job_type]}
                     </span>
-                    <button onClick={() => deleteApp(app.id)} style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '4px 9px', color: 'rgba(239,68,68,0.6)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10 }}>
+                    <button onClick={() => deleteApp(app.id)} style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '4px 9px', color: 'rgb(239,68,68)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 10 }}>
                       <Trash2 size={11} /> Remove
                     </button>
                   </div>
@@ -456,7 +456,7 @@ export default function JobApplicationTracker({ userId }: { userId: string }) {
           <div key={`alert-${app.id}`} style={{ background: 'rgba(129,140,248,0.08)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: 12, padding: '11px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: 18 }}>🎯</span>
             <div>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12.5, color: 'rgba(255,255,255,0.85)', marginBottom: 2 }}>{app.job_title} — {app.company}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12.5, color: '#fff', marginBottom: 2 }}>{app.job_title} — {app.company}</p>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#818cf8' }}>{msg}</p>
             </div>
           </div>

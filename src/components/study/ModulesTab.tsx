@@ -164,7 +164,7 @@ function ModuleTools({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.55)' }}>Year mark</span>
+                <span style={{ fontSize: '0.68rem', color: '#fff' }}>Year mark</span>
                 <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color }}>{yearMark}%</span>
               </div>
               <input type="range" min={0} max={100} value={yearMark}
@@ -173,7 +173,7 @@ function ModuleTools({
             </div>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.55)' }}>Weighting</span>
+                <span style={{ fontSize: '0.68rem', color: '#fff' }}>Weighting</span>
                 <span style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color }}>{ymWeight}% YM / {examWeight}% Exam</span>
               </div>
               <input type="range" min={40} max={70} step={5} value={ymWeight}
@@ -189,7 +189,7 @@ function ModuleTools({
               {verdict === 'fail' && <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#EF4444' }}>✗ Cannot pass — year mark too low</div>}
               {verdict === 'need' && <>
                 <div style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color }}>{Math.ceil(required)}%</div>
-                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>needed on final exam to pass</div>
+                <div style={{ fontSize: '0.65rem', color: '#fff', marginTop: 2 }}>needed on final exam to pass</div>
               </>}
             </div>
           </div>
@@ -237,7 +237,7 @@ function ModuleTools({
               )
             })}
           </div>
-          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '0.62rem', color: '#fff', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
             <span>6 days ago</span><span>today</span>
           </div>
         </div>
@@ -323,7 +323,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
           <div className="font-display font-bold text-white text-base">
             {modules.length > 0 ? `${modules.length} module${modules.length !== 1 ? 's' : ''}` : 'No modules'}
           </div>
-          <div className="font-mono text-[0.62rem] text-white/78">
+          <div className="font-mono text-[0.62rem] text-white">
             Link tasks, exams and timetable to modules
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
         <div className="text-center py-14 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
           <div className="text-4xl mb-3">📚</div>
           <p className="font-display font-bold text-white text-sm">No modules yet</p>
-          <p className="font-mono text-[0.6rem] text-white/78 mt-1 px-8">
+          <p className="font-mono text-[0.6rem] text-white mt-1 px-8">
             Add your modules to connect tasks, timetable slots and exams in one place.
           </p>
           <button
@@ -396,7 +396,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                     </div>
                     <button
                       onClick={() => deleteModule(mod.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all text-white/72 hover:text-red-400 hover:bg-red-400/10"
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all text-white hover:text-red-400 hover:bg-red-400/10"
                     >
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -467,7 +467,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
             <Input label="Credits (optional)" type="number" placeholder="16" {...register('credits')} />
           </div>
           <div>
-            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-3">Colour</div>
+            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white mb-3">Colour</div>
             <div className="flex gap-3 flex-wrap">
               {COLOUR_OPTIONS.map(c => {
                 const col      = MODULE_COLOURS[c]

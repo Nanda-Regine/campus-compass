@@ -135,7 +135,7 @@ export default function BodyDoubleMode() {
               <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
                 Study with others
               </div>
-              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff' }}>
                 Virtual presence reduces procrastination by 40%
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function BodyDoubleMode() {
                 width: 32, height: 32, borderRadius: '50%',
                 background: 'rgba(255,255,255,0.1)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)',
+                fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff',
               }}>+{count - 6}</div>
             )}
           </div>
@@ -212,7 +212,7 @@ export default function BodyDoubleMode() {
           }}>
             {count}
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 20 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginBottom: 20 }}>
             {count === 1 ? 'student' : 'students'} · {elapsed < 25 * 60 * 1000
               ? `+15 XP at 25 min`
               : xpAwarded ? '✦ +15 XP earned!' : 'Keep going'}
@@ -223,7 +223,7 @@ export default function BodyDoubleMode() {
             padding: '9px 24px', borderRadius: 10,
             border: '1px solid rgba(255,255,255,0.1)',
             background: 'rgba(255,255,255,0.04)',
-            color: 'rgba(255,255,255,0.4)', cursor: 'pointer',
+            color: '#fff', cursor: 'pointer',
           }}>
             Leave room
           </button>

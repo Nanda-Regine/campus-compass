@@ -143,7 +143,7 @@ function LibraryTab({ institution }: { institution: string }) {
             {data?.myCheckin ? `📍 ${data.myCheckin.zone}` : 'Not checked in'}
           </div>
           {data?.myCheckin && (
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>
+            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff' }}>
               Checked in {formatDistanceToNow(parseISO(data.myCheckin.checked_in_at), { addSuffix: true })}
             </div>
           )}
@@ -171,8 +171,8 @@ function LibraryTab({ institution }: { institution: string }) {
       {showZonePicker && (
         <div style={{ background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 14, marginBottom: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase' }}>Select zone</span>
-            <button onClick={() => setShowZonePicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff', textTransform: 'uppercase' }}>Select zone</span>
+            <button onClick={() => setShowZonePicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}>
               <X size={14} />
             </button>
           </div>
@@ -181,7 +181,7 @@ function LibraryTab({ institution }: { institution: string }) {
               <button
                 key={zone}
                 onClick={() => checkIn(zone)}
-                style={{ padding: '9px 12px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', cursor: 'pointer', textAlign: 'left' }}
+                style={{ padding: '9px 12px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', cursor: 'pointer', textAlign: 'left' }}
               >
                 {zone}
               </button>
@@ -191,7 +191,7 @@ function LibraryTab({ institution }: { institution: string }) {
       )}
 
       {/* Zone occupancy */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Current occupancy at {institution?.split(' ').slice(0, 3).join(' ') ?? 'campus'}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -202,18 +202,18 @@ function LibraryTab({ institution }: { institution: string }) {
           return (
             <div key={zone} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: 'rgba(255,255,255,0.06)', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.06)' }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{zone}</div>
+                <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{zone}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                 <Users size={11} style={{ color }} />
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color }}>{count}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)', background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{label}</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#fff', background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{label}</span>
               </div>
             </div>
           )
         })}
       </div>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', marginTop: 12, textAlign: 'center' }}>
+      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.65rem', color: '#fff', marginTop: 12, textAlign: 'center' }}>
         Crowd-sourced by students · updates every 60 sec
       </p>
     </div>
@@ -295,7 +295,7 @@ function EventsTab() {
       {loading ? (
         Array.from({ length: 3 }).map((_, i) => <div key={i} style={{ height: 100, borderRadius: 12, background: 'rgba(255,255,255,0.07)', marginBottom: 8 }} />)
       ) : events.length === 0 ? (
-        <div style={{ textAlign: 'center', paddingTop: 40, color: 'rgba(255,255,255,0.2)', fontFamily: 'DM Sans, sans-serif' }}>
+        <div style={{ textAlign: 'center', paddingTop: 40, color: '#fff', fontFamily: 'DM Sans, sans-serif' }}>
           <Calendar size={28} style={{ margin: '0 auto 8px', opacity: 0.3 }} />
           No upcoming events — be the first to post one!
         </div>
@@ -318,25 +318,25 @@ function EventsTab() {
                   <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color, background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{event.category}</span>
                 </div>
                 {event.venue && (
-                  <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)' }}>
+                  <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: '#fff' }}>
                     📍 {event.venue}{event.event_time ? ` · ${event.event_time}` : ''}
                   </div>
                 )}
                 {event.description && (
-                  <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.58)', marginTop: 4, lineHeight: 1.4 }}>
+                  <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: '#fff', marginTop: 4, lineHeight: 1.4 }}>
                     {event.description.slice(0, 100)}{event.description.length > 100 ? '...' : ''}
                   </div>
                 )}
               </div>
               {event.is_own && (
-                <button onClick={() => deleteEvent(event.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 2, flexShrink: 0 }}>
+                <button onClick={() => deleteEvent(event.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', padding: 2, flexShrink: 0 }}>
                   <Trash2 size={13} />
                 </button>
               )}
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff' }}>
                 {event.creator_emoji} {event.creator_name} · {event.rsvp_count} going
               </div>
               <button
@@ -394,7 +394,7 @@ function CreateEventForm({ onCreated, onClose }: { onCreated: () => void; onClos
     <div style={{ background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 16, marginBottom: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-primary)' }}>New Event</span>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}><X size={15} /></button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff' }}><X size={15} /></button>
       </div>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <input style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="Event title *" maxLength={120} />
@@ -440,7 +440,7 @@ function SafetyTab({ institution }: { institution: string }) {
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: 6 }}>
           Emergency SOS
         </div>
-        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.58)', marginBottom: 14 }}>
+        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: '#fff', marginBottom: 14 }}>
           Opens your phone dialer · you choose who to call
         </div>
         {!showSOS ? (
@@ -452,7 +452,7 @@ function SafetyTab({ institution }: { institution: string }) {
           </button>
         ) : (
           <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginBottom: 10 }}>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: '#fff', marginBottom: 10 }}>
               Who do you need?
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -471,7 +471,7 @@ function SafetyTab({ institution }: { institution: string }) {
                 </a>
               ))}
             </div>
-            <button onClick={() => setShowSOS(false)} style={{ marginTop: 10, background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem' }}>
+            <button onClick={() => setShowSOS(false)} style={{ marginTop: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem' }}>
               Cancel
             </button>
           </div>
@@ -479,7 +479,7 @@ function SafetyTab({ institution }: { institution: string }) {
       </div>
 
       {/* All emergency contacts */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Emergency contacts — free to call 24/7
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -494,7 +494,7 @@ function SafetyTab({ institution }: { institution: string }) {
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.8rem', color: 'var(--text-primary)' }}>{c.label}</div>
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#4ecf9e', marginTop: 1 }}>{c.number}</div>
             </div>
-            <Phone size={13} style={{ color: 'rgba(255,255,255,0.45)', flexShrink: 0 }} />
+            <Phone size={13} style={{ color: '#fff', flexShrink: 0 }} />
           </a>
         ))}
       </div>
@@ -503,8 +503,8 @@ function SafetyTab({ institution }: { institution: string }) {
       <div style={{ marginTop: 16, padding: '12px 14px', background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.06)', borderRadius: 12 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <AlertTriangle size={13} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.62)', margin: 0, lineHeight: 1.5 }}>
-            <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Stay safe tip:</strong> Share your live location with a trusted friend when going somewhere unfamiliar. WhatsApp &rsquo;Share Live Location&rsquo; works well for this.
+          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: '#fff', margin: 0, lineHeight: 1.5 }}>
+            <strong style={{ color: '#fff' }}>Stay safe tip:</strong> Share your live location with a trusted friend when going somewhere unfamiliar. WhatsApp &rsquo;Share Live Location&rsquo; works well for this.
           </p>
         </div>
       </div>
@@ -537,7 +537,7 @@ function MapTab({ institution }: { institution: string }) {
   return (
     <div style={{ padding: '16px 20px' }}>
       {/* Quick navigation */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Navigate to campus
       </div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
@@ -557,7 +557,7 @@ function MapTab({ institution }: { institution: string }) {
       </div>
 
       {/* Campus area quick links */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Find on campus
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -571,14 +571,14 @@ function MapTab({ institution }: { institution: string }) {
               rel="noopener noreferrer"
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.06)', textDecoration: 'none' }}
             >
-              <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)' }}>{area.label}</span>
-              <ExternalLink size={11} style={{ color: 'rgba(255,255,255,0.2)' }} />
+              <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: '#fff' }}>{area.label}</span>
+              <ExternalLink size={11} style={{ color: '#fff' }} />
             </a>
           )
         })}
       </div>
 
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', marginTop: 14, textAlign: 'center' }}>
+      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.65rem', color: '#fff', marginTop: 14, textAlign: 'center' }}>
         Links open Google Maps · data charges may apply
       </p>
     </div>

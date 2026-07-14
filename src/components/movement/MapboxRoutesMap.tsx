@@ -293,7 +293,7 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
           borderRadius: 16, display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 2,
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>
             Initialising map…
           </span>
         </div>
@@ -314,7 +314,7 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#f97316' }}>⬤ To</span>
           </>}
           {liftPosts.length > 0 &&
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.66)' }}>🚗 Lift offer</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#fff' }}>🚗 Lift offer</span>
           }
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#38bdf8' }}>⬤ You</span>
         </div>

@@ -335,7 +335,7 @@ export default function FinancialLiteracy101() {
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{f.def}</div>
               </div>
             ))}
-            <div style={{ padding: '10px 14px', background: 'rgba(255,107,107,0.06)', border: '1px solid rgba(255,107,107,0.12)', borderRadius: 9, fontSize: '0.68rem', color: 'rgba(255,107,107,0.7)', lineHeight: 1.6 }}>
+            <div style={{ padding: '10px 14px', background: 'rgba(255,107,107,0.06)', border: '1px solid rgba(255,107,107,0.12)', borderRadius: 9, fontSize: '0.68rem', color: 'rgb(255,107,107)', lineHeight: 1.6 }}>
               ⚠️ Never invest money you cannot afford to lose or money you need in the next 12 months. Emergency fund first, debt second, investing third.
             </div>
           </>

@@ -98,7 +98,7 @@ function ShiftBlock({ shift, top, height }: { shift: WorkShift; top: number; hei
         💼
       </div>
       {height > 34 && (
-        <div style={{ fontSize: '0.64rem', color: 'rgba(168,85,247,0.85)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: '0.64rem', color: 'rgb(168,85,247)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {label}
         </div>
       )}

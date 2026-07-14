@@ -141,14 +141,14 @@ export default function GuardianAccess() {
           marginBottom: 12,
         }}
       >
-        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.66)' }}>What does my guardian see?</span>
+        <span style={{ fontSize: '0.7rem', color: '#fff' }}>What does my guardian see?</span>
         <span style={{ fontSize: '0.65rem', color: '#4ecf9e', transform: showExplainer ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
       </button>
 
       {showExplainer && (
         <div style={{ background: 'rgba(78,207,158,0.05)', border: '1px solid rgba(78,207,158,0.12)', borderRadius: 12, padding: '12px 14px', marginBottom: 12 }}>
-          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7 }}>
-            Your guardian sees a <strong style={{ color: 'rgba(255,255,255,0.8)' }}>read-only summary</strong> with:
+          <div style={{ fontSize: '0.7rem', color: '#fff', lineHeight: 1.7 }}>
+            Your guardian sees a <strong style={{ color: '#fff' }}>read-only summary</strong> with:
             <ul style={{ margin: '8px 0 0 14px', padding: 0, listStyle: 'disc' }}>
               <li>Study streak (consecutive days)</li>
               <li>Hours studied this week</li>
@@ -156,7 +156,7 @@ export default function GuardianAccess() {
               <li>Budget health (managing well / watch spending / tight) — <em>no rand amounts</em></li>
               <li>Upcoming exams in the next 14 days</li>
             </ul>
-            <div style={{ marginTop: 8, padding: '6px 10px', background: 'rgba(78,207,158,0.08)', borderRadius: 8, fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)' }}>
+            <div style={{ marginTop: 8, padding: '6px 10px', background: 'rgba(78,207,158,0.08)', borderRadius: 8, fontSize: '0.65rem', color: '#fff' }}>
               🔒 Your guardian can never see your grades, expenses, messages, or any personal details.
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function GuardianAccess() {
           background: 'rgba(78,207,158,0.05)', border: '1px solid rgba(78,207,158,0.15)',
           borderRadius: 14, padding: '14px 16px', marginBottom: 14,
         }}>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.66)', marginBottom: 8 }}>
+          <div style={{ fontSize: '0.72rem', color: '#fff', marginBottom: 8 }}>
             Give this link a label so you know who it&apos;s for
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -197,7 +197,7 @@ export default function GuardianAccess() {
               {creating ? '…' : 'Create'}
             </button>
           </div>
-          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>
+          <div style={{ fontSize: '0.62rem', color: '#fff', marginTop: 8 }}>
             Links expire after 90 days. Financial amounts are never shown.
           </div>
         </div>
@@ -235,7 +235,7 @@ export default function GuardianAccess() {
                   <button
                     onClick={() => revokeToken(t.id, t.label)}
                     disabled={revoking === t.id}
-                    style={{ marginLeft: 'auto', fontSize: '0.62rem', color: 'rgba(248,113,113,0.6)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
+                    style={{ marginLeft: 'auto', fontSize: '0.62rem', color: 'rgb(248,113,113)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px' }}
                   >
                     {revoking === t.id ? '…' : 'Revoke'}
                   </button>
@@ -244,7 +244,7 @@ export default function GuardianAccess() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{
                       background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
-                      borderRadius: 8, padding: '6px 10px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)',
+                      borderRadius: 8, padding: '6px 10px', fontSize: '0.65rem', color: '#fff',
                       fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {guardianUrl(t.token)}

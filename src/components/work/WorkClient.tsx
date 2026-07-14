@@ -14,7 +14,7 @@ interface Props {
 const STATUS_STYLES: Record<string, string> = {
   active:   'bg-teal-600/15 text-teal-400 border-teal-600/25',
   seasonal: 'bg-amber-500/15 text-amber-400 border-amber-500/25',
-  ended:    'bg-white/5 text-white/78 border-white/10',
+  ended:    'bg-white/5 text-white border-white/10',
 }
 
 const SHIFT_STATUS_STYLES: Record<string, string> = {
@@ -22,7 +22,7 @@ const SHIFT_STATUS_STYLES: Record<string, string> = {
   worked:    'bg-teal-600/10 text-teal-400 border-teal-600/20',
   missed:    'bg-red-500/10 text-red-400 border-red-500/20',
   swapped:   'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  declined:  'bg-white/5 text-white/78 border-white/10',
+  declined:  'bg-white/5 text-white border-white/10',
 }
 
 export default function WorkClient({ userId }: Props) {
@@ -129,7 +129,7 @@ export default function WorkClient({ userId }: Props) {
         ].map(stat => (
           <div key={stat.label} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-3 text-center">
             <div className={`font-display font-black text-lg ${stat.color}`}>{stat.value}</div>
-            <div className="font-mono text-[0.62rem] text-white/78 uppercase mt-0.5">{stat.label}</div>
+            <div className="font-mono text-[0.62rem] text-white uppercase mt-0.5">{stat.label}</div>
           </div>
         ))}
       </div>
@@ -141,10 +141,10 @@ export default function WorkClient({ userId }: Props) {
             ⚠️ {conflictShifts.length} shift{conflictShifts.length > 1 ? 's' : ''} with study conflicts
           </div>
           {conflictShifts.map(s => (
-            <div key={s.id} className="text-sm text-white/70">
+            <div key={s.id} className="text-sm text-white">
               <span className="font-body">{s.shift_date} {s.start_time}–{s.end_time}</span>
               {s.conflict_detail && (
-                <span className="font-mono text-[0.65rem] text-amber-400/70 ml-2">conflicts with {s.conflict_detail}</span>
+                <span className="font-mono text-[0.65rem] text-amber-400 ml-2">conflicts with {s.conflict_detail}</span>
               )}
             </div>
           ))}
@@ -155,7 +155,7 @@ export default function WorkClient({ userId }: Props) {
       {novaInsight ? (
         <div className="bg-purple-500/8 border border-purple-500/20 rounded-2xl p-4">
           <div className="font-mono text-[0.65rem] text-purple-400 uppercase tracking-widest mb-2">🌟 Nova</div>
-          <p className="font-body text-sm text-white/75 leading-relaxed">{novaInsight}</p>
+          <p className="font-body text-sm text-white leading-relaxed">{novaInsight}</p>
         </div>
       ) : (
         <button
@@ -168,7 +168,7 @@ export default function WorkClient({ userId }: Props) {
             <div className="font-display font-bold text-purple-300 text-sm">
               {insightLoading ? 'Nova is thinking...' : 'Get Nova\'s take on your week'}
             </div>
-            <div className="font-mono text-[0.65rem] text-white/78">Work-study balance tip →</div>
+            <div className="font-mono text-[0.65rem] text-white">Work-study balance tip →</div>
           </div>
         </button>
       )}
@@ -176,7 +176,7 @@ export default function WorkClient({ userId }: Props) {
       {/* ─── Jobs list ─── */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
-          <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest">
+          <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest">
             Your jobs ({jobs.length})
           </div>
           <Link href="/dashboard/work/add-job" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">
@@ -188,7 +188,7 @@ export default function WorkClient({ userId }: Props) {
           <div className="text-center py-12">
             <div className="text-4xl mb-3">💼</div>
             <p className="font-display font-bold text-white">No jobs added yet</p>
-            <p className="font-mono text-[0.6rem] text-white/78 mt-1 mb-4">
+            <p className="font-mono text-[0.6rem] text-white mt-1 mb-4">
               Add your first part-time job to start tracking shifts and earnings.
             </p>
             <Link
@@ -205,7 +205,7 @@ export default function WorkClient({ userId }: Props) {
                 <div className="text-xl flex-shrink-0">{JOB_TYPE_LABELS[job.job_type]?.split(' ')[0] ?? '💼'}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm truncate">{job.employer_name}</div>
-                  <div className="font-mono text-[0.65rem] text-white/82 mt-0.5">
+                  <div className="font-mono text-[0.65rem] text-white mt-0.5">
                     {job.role_title ?? JOB_TYPE_LABELS[job.job_type]?.split(' ').slice(1).join(' ')}
                     {job.pay_rate && ` · R${job.pay_rate}/${job.pay_type === 'hourly' ? 'hr' : 'shift'}`}
                     {job.location && ` · ${job.location}`}
@@ -217,7 +217,7 @@ export default function WorkClient({ userId }: Props) {
                   </span>
                   <button
                     onClick={() => handleDeleteJob(job.id)}
-                    className="opacity-0 group-hover:opacity-100 text-white/72 hover:text-red-400 transition-all text-xs"
+                    className="opacity-0 group-hover:opacity-100 text-white hover:text-red-400 transition-all text-xs"
                   >
                     ✕
                   </button>
@@ -231,7 +231,7 @@ export default function WorkClient({ userId }: Props) {
       {/* ─── This week's shifts ─── */}
       <section>
         <div className="flex items-center justify-between mb-2.5">
-          <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest">This week</div>
+          <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest">This week</div>
           <Link href="/dashboard/work/shifts" className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400">
             All shifts →
           </Link>
@@ -241,7 +241,7 @@ export default function WorkClient({ userId }: Props) {
           <div className="text-center py-8">
             <div className="text-4xl mb-2">📅</div>
             <p className="font-display font-bold text-white text-sm">No shifts this week</p>
-            <p className="font-mono text-[0.6rem] text-white/78 mt-1">Your schedule is clear — enjoy the break!</p>
+            <p className="font-mono text-[0.6rem] text-white mt-1">Your schedule is clear — enjoy the break!</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -252,7 +252,7 @@ export default function WorkClient({ userId }: Props) {
                   <div className="font-display font-bold text-sm text-white truncate">
                     {shift.job?.employer_name ?? 'Shift'}
                   </div>
-                  <div className="font-mono text-[0.65rem] text-white/82">
+                  <div className="font-mono text-[0.65rem] text-white">
                     {shift.shift_date} · {shift.start_time}–{shift.end_time}
                     {shift.earnings ? ` · ${fmt.currencyShort(shift.earnings)}` : ''}
                   </div>

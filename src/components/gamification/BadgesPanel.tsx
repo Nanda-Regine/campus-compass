@@ -28,7 +28,7 @@ export default function BadgesPanel() {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         marginBottom: 14,
       }}>
-        <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>
+        <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#fff' }}>
           Badges
         </span>
         <span style={{
@@ -40,7 +40,7 @@ export default function BadgesPanel() {
       </div>
 
       {unlockedBadges.length === 0 && (
-        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 14 }}>
+        <p style={{ fontSize: 12, color: '#fff', marginBottom: 14 }}>
           Start using VarsityOS to earn your first badge.
         </p>
       )}
@@ -48,7 +48,7 @@ export default function BadgesPanel() {
       {/* Unlocked */}
       {unlockedBadges.length > 0 && (
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Earned</div>
+          <div style={{ fontSize: 10, color: '#fff', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Earned</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
             {unlockedBadges.map(b => <BadgeChip key={b.id} badge={b} unlocked />)}
           </div>
@@ -58,7 +58,7 @@ export default function BadgesPanel() {
       {/* Locked */}
       {lockedBadges.length > 0 && (
         <div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Locked</div>
+          <div style={{ fontSize: 10, color: '#fff', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Locked</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
             {lockedBadges.map(b => <BadgeChip key={b.id} badge={b} unlocked={false} />)}
           </div>
@@ -103,7 +103,7 @@ function BadgeChip({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
           transform: 'translateX(-50%)',
           background: 'rgba(13,14,20,0.97)', border: '1px solid rgba(255,255,255,0.1)',
           borderRadius: 7, padding: '5px 8px', width: 130, zIndex: 50,
-          fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.4, textAlign: 'center',
+          fontSize: 10, color: '#fff', lineHeight: 1.4, textAlign: 'center',
           pointerEvents: 'none',
           boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
         }}>

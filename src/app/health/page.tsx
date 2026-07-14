@@ -64,7 +64,7 @@ export default async function HealthPage() {
               }}>🌸</div>
               <div style={{ flex: 1 }}>
                 <div style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 16, marginBottom: 2 }}>Cycle Tracker</div>
-                <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 1.5 }}>
+                <div style={{ color: '#fff', fontSize: 12, lineHeight: 1.5 }}>
                   Track your phase, symptoms & sync with study planning
                 </div>
               </div>

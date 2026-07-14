@@ -208,7 +208,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
         <div style={{
           fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
           letterSpacing: '0.12em', textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.22)', fontWeight: 600,
+          color: '#fff', fontWeight: 600,
         }}>
           Week · {today.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}
         </div>
@@ -229,10 +229,10 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
           textAlign: 'center',
         }}>
           <div style={{ fontSize: 28, marginBottom: 8 }}>🗓️</div>
-          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13, margin: 0 }}>
+          <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#fff', fontSize: 13, margin: 0 }}>
             Your timetable is empty
           </p>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', margin: '4px 0 14px' }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', margin: '4px 0 14px' }}>
             Import your university calendar to add all classes at once, or tap any slot below.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -253,7 +253,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                   position: 'absolute', top: (h - GRID_START) * ROW_H - 7,
                   right: 4, fontSize: 8,
                   fontFamily: 'JetBrains Mono, monospace',
-                  color: 'rgba(255,255,255,0.18)',
+                  color: '#fff',
                   userSelect: 'none',
                 }}>
                   {h === 12 ? '12p' : h > 12 ? `${h - 12}p` : `${h}a`}
@@ -366,7 +366,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
                     }}>
                       <span style={{
                         fontFamily: 'JetBrains Mono, monospace', fontSize: 7,
-                        color: 'rgba(78,207,158,0.38)',
+                        color: 'rgb(78,207,158)',
                         letterSpacing: '0.06em', textTransform: 'uppercase',
                       }}>
                         ✦ study

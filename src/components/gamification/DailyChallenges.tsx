@@ -258,7 +258,7 @@ export default function DailyChallenges() {
             </div>
             <div style={{
               fontFamily: 'Sora, sans-serif', fontSize: 10, fontWeight: 400,
-              color: 'rgba(78,207,158,0.65)', marginTop: 1,
+              color: 'rgb(78,207,158)', marginTop: 1,
             }}>
               Come back tomorrow for new challenges
             </div>

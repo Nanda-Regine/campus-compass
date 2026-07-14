@@ -52,13 +52,13 @@ export default function ReferralWidget() {
       <div className="flex items-start justify-between mb-3">
         <div>
           <h3 className="font-display font-bold text-white text-sm">Refer a friend</h3>
-          <p className="font-mono text-[0.6rem] text-white/80 mt-0.5">
+          <p className="font-mono text-[0.6rem] text-white mt-0.5">
             You get <span className="text-teal-400">+250 XP</span> · They get <span className="text-teal-400">+100 XP</span>
           </p>
         </div>
         <div className="text-right">
           <p className="font-display font-bold text-teal-400 text-lg leading-none">{data.referralCount}</p>
-          <p className="font-mono text-[0.63rem] text-white/78">referrals</p>
+          <p className="font-mono text-[0.63rem] text-white">referrals</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export default function ReferralWidget() {
 
       {/* Referral code */}
       <div className="flex items-center gap-2 mb-3 bg-white/3 border border-white/10 rounded-xl px-3 py-2">
-        <span className="font-mono text-[0.6rem] text-white/80">Your code:</span>
+        <span className="font-mono text-[0.6rem] text-white">Your code:</span>
         <span className="font-mono font-bold text-white tracking-widest text-sm uppercase">
           {data.referralCode}
         </span>
@@ -94,14 +94,14 @@ export default function ReferralWidget() {
             'px-4 font-mono text-xs py-2.5 rounded-xl border transition-all',
             copied
               ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
-              : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+              : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
           )}
         >
           {copied ? '✓' : 'Copy'}
         </button>
       </div>
 
-      <p className="font-mono text-[0.63rem] text-white/72 text-center mt-2">
+      <p className="font-mono text-[0.63rem] text-white text-center mt-2">
         XP climbs your level and unlocks badges. It never expires.
       </p>
     </div>

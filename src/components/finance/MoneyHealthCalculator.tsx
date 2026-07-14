@@ -122,7 +122,7 @@ function PillarBar({ pillar }: { pillar: Pillar }) {
   return (
     <div style={{ marginBottom: '8px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>{pillar.label}</span>
+        <span style={{ fontSize: '12px', color: '#fff' }}>{pillar.label}</span>
         <span style={{ fontSize: '12px', color: zone.color, fontWeight: 600 }}>{pillar.score}</span>
       </div>
       <div style={{ height: '4px', background: 'rgba(255,255,255,0.08)', borderRadius: '2px' }}>
@@ -194,7 +194,7 @@ export default function MoneyHealthCalculator({
           <h3 style={{ margin: 0, fontSize: compact ? '14px' : '16px', color: '#fbbf24', fontWeight: 700 }}>
             Money Health Score
           </h3>
-          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.66)' }}>
+          <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#fff' }}>
             Enter your monthly figures
           </p>
         </div>
@@ -208,7 +208,7 @@ export default function MoneyHealthCalculator({
           { key: 'data', label: 'Airtime / data (R/month)', min: 0, max: 5000 },
         ].map(({ key, label, min, max }) => (
           <div key={key} style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', display: 'block', marginBottom: '4px' }}>
+            <label style={{ fontSize: '12px', color: '#fff', display: 'block', marginBottom: '4px' }}>
               {label}
             </label>
             <input
@@ -262,7 +262,7 @@ export default function MoneyHealthCalculator({
           <h3 style={{ margin: 0, fontSize: compact ? '14px' : '16px', color: '#fbbf24', fontWeight: 700 }}>
             Money Health Score
           </h3>
-          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#fff' }}>
             Based on your budget data
           </p>
         </div>
@@ -274,7 +274,7 @@ export default function MoneyHealthCalculator({
               border: '1px solid rgba(255,255,255,0.12)',
               borderRadius: '6px',
               padding: '4px 10px',
-              color: 'rgba(255,255,255,0.6)',
+              color: '#fff',
               fontSize: '11px',
               cursor: 'pointer',
             }}
@@ -318,7 +318,7 @@ export default function MoneyHealthCalculator({
             padding: '12px 14px',
           }}
         >
-          <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.8)', lineHeight: '1.5' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.5' }}>
             <span style={{ color: '#fbbf24', fontWeight: 700 }}>Insight: </span>
             {insight}
           </p>

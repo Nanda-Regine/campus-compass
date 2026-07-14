@@ -35,7 +35,7 @@ const RING_C   = 2 * Math.PI * RING_R  // circumference ≈ 106.8
 
 // ─── Urgency helpers ──────────────────────────────────────────────────────────
 function urgency(days: number, isPast: boolean): { color: string; label: string } {
-  if (isPast)     return { color: 'rgba(255,255,255,0.42)', label: 'DONE' }
+  if (isPast)     return { color: '#fff', label: 'DONE' }
   if (days === 0) return { color: '#ff6b6b', label: 'TODAY!' }
   if (days <= 3)  return { color: '#ff6b6b', label: 'CRITICAL' }
   if (days <= 7)  return { color: '#f59e0b', label: 'HIGH' }
@@ -103,7 +103,7 @@ function ExamTimeline({ exams }: { exams: Exam[] }) {
     }}>
       <div style={{
         fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5,
-        color: 'rgba(255,255,255,0.42)', textTransform: 'uppercase',
+        color: '#fff', textTransform: 'uppercase',
         letterSpacing: '0.12em', marginBottom: 14,
       }}>
         Exam Timeline · {sorted.length} upcoming
@@ -120,7 +120,7 @@ function ExamTimeline({ exams }: { exams: Exam[] }) {
           <div style={{ width: 1.5, height: 12, background: 'rgba(78,207,158,0.65)' }} />
           <div style={{
             fontFamily: 'JetBrains Mono, monospace', fontSize: 6.5,
-            color: 'rgba(78,207,158,0.65)', marginTop: 1, whiteSpace: 'nowrap',
+            color: 'rgb(78,207,158)', marginTop: 1, whiteSpace: 'nowrap',
           }}>
             NOW
           </div>
@@ -380,7 +380,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
 
             <div style={{
               fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-              color: 'rgba(255,255,255,0.55)', marginBottom: 8,
+              color: '#fff', marginBottom: 8,
             }}>
               {fmt.dateFull(exam.exam_date)}
               {exam.start_time && ` · ${fmt.time(exam.start_time)}`}
@@ -425,7 +425,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                   padding: '4px 8px', borderRadius: 8,
                   background: 'transparent', border: '1px solid rgba(255,255,255,0.07)',
                   fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-                  color: 'rgba(255,255,255,0.48)', cursor: 'pointer',
+                  color: '#fff', cursor: 'pointer',
                 }}
               >
                 ✕
@@ -495,10 +495,10 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
           {exams.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>📝</div>
-              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>
+              <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: '#fff', fontSize: 13 }}>
                 No exams added yet
               </p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: '#fff', marginTop: 4 }}>
                 Add upcoming exams to track countdowns and get AI prep guides.
               </p>
               <button
@@ -523,7 +523,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                   <div>
                     <div style={{
                       fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
-                      color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
+                      color: '#fff', textTransform: 'uppercase',
                       letterSpacing: '0.1em', marginBottom: 8,
                     }}>
                       Upcoming · {upcoming.length}
@@ -538,7 +538,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
               {upcoming.length === 0 && (
                 <p style={{
                   textAlign: 'center', fontFamily: 'JetBrains Mono, monospace',
-                  fontSize: 10, color: 'rgba(255,255,255,0.5)', padding: '12px 0',
+                  fontSize: 10, color: '#fff', padding: '12px 0',
                 }}>
                   No upcoming exams — you&apos;re done! 🎉
                 </p>
@@ -548,7 +548,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                 <div style={{ opacity: 0.55 }}>
                   <div style={{
                     fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
-                    color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
+                    color: '#fff', textTransform: 'uppercase',
                     letterSpacing: '0.1em', marginBottom: 8, marginTop: 8,
                   }}>
                     Past · {past.length}

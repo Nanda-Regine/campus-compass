@@ -27,7 +27,7 @@ export default function PendingXP() {
         <span style={{ fontSize: 16 }}>🌍</span>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.72rem', color: '#4ecf9e' }}>Ubuntu Day Complete!</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)' }}>All 5 domains active — incredible.</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fff' }}>All 5 domains active — incredible.</div>
         </div>
       </div>
     )
@@ -47,12 +47,12 @@ export default function PendingXP() {
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.72rem', color: '#f59e0b' }}>
             {pending} XP waiting tonight
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fff' }}>
             {domainsHit === 0 ? 'Start in any domain to claim it' : `${5 - domainsHit} more domain${5 - domainsHit !== 1 ? 's' : ''} to unlock compound bonus`}
           </div>
         </div>
       </div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(245,158,11,0.5)' }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgb(245,158,11)' }}>
         Don't leave it
       </div>
     </div>

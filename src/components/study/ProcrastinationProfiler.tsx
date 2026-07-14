@@ -229,14 +229,14 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
           <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 17, color: meta.color }}>
             {meta.label}
           </div>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginTop: 2 }}>
             {meta.tagline}
           </div>
         </div>
       </div>
 
       <div style={{ marginBottom: 14 }}>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', marginBottom: 8 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', letterSpacing: '0.12em', marginBottom: 8 }}>
           YOUR BEST INTERVENTIONS
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -247,7 +247,7 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
               background: 'rgba(255,255,255,0.03)',
             }}>
               <span style={{ color: meta.color, fontSize: 11, flexShrink: 0, marginTop: 1 }}>→</span>
-              <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.45 }}>{tip}</span>
+              <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.45 }}>{tip}</span>
             </div>
           ))}
         </div>
@@ -261,7 +261,7 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#ff6b6b', letterSpacing: '0.1em', marginBottom: 4 }}>
           AVOID THIS TRAP
         </div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.4 }}>
           {meta.avoid}
         </div>
       </div>
@@ -284,7 +284,7 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
               }}>
                 {i + 1}.
               </span>
-              <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
+              <span style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.45 }}>
                 {step}
               </span>
             </div>
@@ -295,7 +295,7 @@ function ResultCard({ profile, onReset }: { profile: Profile; onReset: () => voi
       <button onClick={onReset} style={{
         fontFamily: '"JetBrains Mono",monospace', fontSize: 9,
         background: 'none', border: 'none', cursor: 'pointer',
-        color: 'rgba(255,255,255,0.2)', padding: 0,
+        color: '#fff', padding: 0,
       }}>
         Retake quiz →
       </button>
@@ -348,7 +348,7 @@ function Quiz({ onComplete }: { onComplete: (type: ProcType) => void }) {
             onClick={() => handlePick(opt.type)}
             style={{
               padding: '11px 14px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)',
-              background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.7)',
+              background: 'rgba(255,255,255,0.03)', color: '#fff',
               fontFamily: 'Sora,sans-serif', fontSize: 12, lineHeight: 1.45,
               textAlign: 'left', cursor: 'pointer',
               transition: 'all 0.15s',
@@ -364,7 +364,7 @@ function Quiz({ onComplete }: { onComplete: (type: ProcType) => void }) {
       {step > 0 && (
         <button onClick={() => { setStep(s => s - 1); setAnswers(a => a.slice(0, -1)) }} style={{
           marginTop: 12, fontFamily: '"JetBrains Mono",monospace', fontSize: 9,
-          background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)',
+          background: 'none', border: 'none', cursor: 'pointer', color: '#fff',
         }}>
           ← back
         </button>
@@ -416,7 +416,7 @@ export default function ProcrastinationProfiler() {
         <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-primary)', marginBottom: 8 }}>
           What type of procrastinator are you?
         </div>
-        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.55, marginBottom: 18 }}>
+        <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.55, marginBottom: 18 }}>
           5 quick questions. Different types need different fixes — knowing yours unlocks the right interventions.
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 18 }}>

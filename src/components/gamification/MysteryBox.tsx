@@ -100,7 +100,7 @@ export default function MysteryBox() {
     >
       {phase === 'ready' && (
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)', letterSpacing: '0.2em', marginBottom: 20, textTransform: 'uppercase' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', letterSpacing: '0.2em', marginBottom: 20, textTransform: 'uppercase' }}>
             All 3 challenges complete!
           </div>
           <div
@@ -112,7 +112,7 @@ export default function MysteryBox() {
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.5rem', color: '#fff', marginBottom: 8 }}>
             Mystery Box Unlocked!
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.58)', marginBottom: 24 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: '#fff', marginBottom: 24 }}>
             Tap the box to reveal your reward
           </div>
           <button
@@ -136,13 +136,13 @@ export default function MysteryBox() {
       {phase === 'revealed' && reward && (
         <div style={{ textAlign: 'center', animation: 'mb-reveal 0.6s cubic-bezier(0.34,1.56,0.64,1) both' }}>
           <div style={{ fontSize: 72, marginBottom: 16 }}>{reward.emoji}</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(167,139,250,0.8)', letterSpacing: '0.2em', marginBottom: 6, textTransform: 'uppercase' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgb(167,139,250)', letterSpacing: '0.2em', marginBottom: 6, textTransform: 'uppercase' }}>
             You got
           </div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: '1.8rem', color: '#fff', marginBottom: 8 }}>
             {reward.label}
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'rgba(255,255,255,0.66)', marginBottom: 24 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: '#fff', marginBottom: 24 }}>
             {reward.description}
           </div>
           {reward.xp > 0 && (
@@ -154,7 +154,7 @@ export default function MysteryBox() {
               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.1rem', color: '#4ecf9e' }}>+{reward.xp} XP</span>
             </div>
           )}
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fff' }}>
             Tap anywhere to continue
           </div>
         </div>

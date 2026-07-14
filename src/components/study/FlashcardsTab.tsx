@@ -276,7 +276,7 @@ function FSRSExplainer() {
 
 function DueChip({ count, color }: { count: number; color: string }) {
   if (count === 0) return (
-    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)' }}>
+    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff' }}>
       All done
     </span>
   )
@@ -406,7 +406,7 @@ function DeckListScreen({
                   style={{
                     width: 36, height: 36, borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.08)',
                     background: 'rgba(255,255,255,0.04)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'rgba(255,255,255,0.4)',
+                    color: '#fff',
                   }}
                 >
                   <Edit3 size={14} />
@@ -492,7 +492,7 @@ function DeckEditorScreen({
         {!isNew && (
           <button
             onClick={() => { if (window.confirm('Delete this deck?')) { onDelete(deck!.id); onBack() } }}
-            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,107,107,0.6)', display: 'flex', alignItems: 'center' }}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(255,107,107)', display: 'flex', alignItems: 'center' }}
           >
             <Trash2 size={14} />
           </button>
@@ -569,8 +569,8 @@ function DeckEditorScreen({
                     )}
                   </div>
                   <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
-                    <button onClick={() => startEdit(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', padding: 4 }}><Edit3 size={12} /></button>
-                    <button onClick={() => removeCard(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,107,107,0.4)', padding: 4 }}><Trash2 size={12} /></button>
+                    <button onClick={() => startEdit(c)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', padding: 4 }}><Edit3 size={12} /></button>
+                    <button onClick={() => removeCard(c.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgb(255,107,107)', padding: 4 }}><Trash2 size={12} /></button>
                   </div>
                 </div>
               )}
@@ -691,7 +691,7 @@ function StudyScreen({
           }}>
             <div style={{
               fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
-              color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em',
+              color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em',
               background: 'rgba(255,255,255,0.04)', padding: '3px 10px', borderRadius: 99,
               border: '0.5px solid rgba(255,255,255,0.08)',
             }}>
@@ -796,7 +796,7 @@ const ghostBtn: CSSProperties = {
   padding: '10px 0', borderRadius: 12,
   border: '0.5px solid rgba(255,255,255,0.08)', background: 'transparent',
   cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600,
-  fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', width: '100%',
+  fontSize: '0.78rem', color: '#fff', width: '100%',
   transition: 'all 0.15s',
 }
 
@@ -827,7 +827,7 @@ function smallAccentBtn(color: string): CSSProperties {
 const smallGhostBtn: CSSProperties = {
   padding: '5px 12px', borderRadius: 7, border: '0.5px solid rgba(255,255,255,0.1)',
   background: 'transparent', cursor: 'pointer', fontFamily: 'var(--font-display)',
-  fontWeight: 400, fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
+  fontWeight: 400, fontSize: '0.7rem', color: '#fff',
 }
 
 // ── Main FlashcardsTab ────────────────────────────────────────────────────────
@@ -940,9 +940,9 @@ export default function FlashcardsTab({ modules }: Props) {
           <span style={{ fontSize: 16 }}>☁️</span>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#38BDF8' }}>Cloud sync — Scholar feature</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Decks saved locally only · Tap to upgrade</div>
+            <div style={{ fontSize: 10, color: '#fff', marginTop: 1 }}>Decks saved locally only · Tap to upgrade</div>
           </div>
-          <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgba(56,189,248,0.6)' }}>⭐ R29</span>
+          <span style={{ marginLeft: 'auto', fontSize: 10, color: 'rgb(56,189,248)' }}>⭐ R29</span>
         </button>
       )}
       <DeckListScreen

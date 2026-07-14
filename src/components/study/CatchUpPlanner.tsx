@@ -116,13 +116,13 @@ export default function CatchUpPlanner({ moduleName, moduleColor, onClose }: Cat
     <div style={{ padding: '16px', background: 'rgba(0,0,0,0.25)', border: `1px solid ${moduleColor}25`, borderRadius: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', color: moduleColor, letterSpacing: '0.08em' }}>CATCH-UP PLANNER — {moduleName.toUpperCase()}</div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '0.9rem', lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '0.9rem', lineHeight: 1 }}>✕</button>
       </div>
 
       {phase === 'questions' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-mono)', marginBottom: 2 }}>Question {step + 1} of {QUESTIONS.length}</div>
-          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, marginBottom: 4 }}>{current.q}</div>
+          <div style={{ fontSize: '0.6rem', color: '#fff', fontFamily: 'var(--font-mono)', marginBottom: 2 }}>Question {step + 1} of {QUESTIONS.length}</div>
+          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff', lineHeight: 1.5, marginBottom: 4 }}>{current.q}</div>
           {current.options.map(o => (
             <button key={o} onClick={() => setSelected(o)} style={{ padding: '10px 14px', background: selected === o ? `${moduleColor}18` : 'rgba(255,255,255,0.04)', border: `1px solid ${selected === o ? moduleColor + '50' : 'rgba(255,255,255,0.08)'}`, borderRadius: 8, color: selected === o ? moduleColor : 'rgba(255,255,255,0.6)', fontSize: '0.78rem', cursor: 'pointer', textAlign: 'left', fontFamily: selected === o ? 'var(--font-mono)' : 'inherit', fontWeight: selected === o ? 600 : 400 }}>
               {o}
@@ -137,23 +137,23 @@ export default function CatchUpPlanner({ moduleName, moduleColor, onClose }: Cat
       {phase === 'generating' && (
         <div style={{ textAlign: 'center', padding: '24px 0' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: 10 }}>🧠</div>
-          <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-mono)' }}>Building your recovery plan…</div>
+          <div style={{ fontSize: '0.78rem', color: '#fff', fontFamily: 'var(--font-mono)' }}>Building your recovery plan…</div>
         </div>
       )}
 
       {phase === 'plan' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, marginBottom: 4 }}>
+          <div style={{ fontSize: '0.72rem', color: '#fff', lineHeight: 1.5, marginBottom: 4 }}>
             Your personalised catch-up plan for <strong style={{ color: moduleColor }}>{moduleName}</strong>:
           </div>
           {(aiPlan ? [aiPlan] : plan).map((item, i) => (
-            <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${moduleColor}20`, borderLeft: `3px solid ${moduleColor}`, borderRadius: '0 8px 8px 0', fontSize: '0.72rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.65 }}>
+            <div key={i} style={{ padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${moduleColor}20`, borderLeft: `3px solid ${moduleColor}`, borderRadius: '0 8px 8px 0', fontSize: '0.72rem', color: '#fff', lineHeight: 1.65 }}>
               {item}
             </div>
           ))}
-          {loadingAI && <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>Enhancing with Nova AI…</div>}
+          {loadingAI && <div style={{ fontSize: '0.65rem', color: '#fff', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>Enhancing with Nova AI…</div>}
           <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-            <button onClick={() => { setStep(0); setAnswers([]); setSelected(null); setPhase('questions'); setPlan([]); setAiPlan(null) }} style={{ flex: 1, padding: '9px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: 'rgba(255,255,255,0.4)', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', cursor: 'pointer' }}>Redo</button>
+            <button onClick={() => { setStep(0); setAnswers([]); setSelected(null); setPhase('questions'); setPlan([]); setAiPlan(null) }} style={{ flex: 1, padding: '9px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', cursor: 'pointer' }}>Redo</button>
             <button onClick={onClose} style={{ flex: 2, padding: '9px 0', background: `${moduleColor}18`, border: `1px solid ${moduleColor}40`, borderRadius: 8, color: moduleColor, fontSize: '0.72rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Got it — start now ✓</button>
           </div>
         </div>

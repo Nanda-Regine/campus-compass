@@ -213,7 +213,7 @@ function ContraceptionTracker() {
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-secondary)' }}>
               Contraception Tracker
             </div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginTop: 2 }}>
               {method === 'none' ? 'Tap to set up reminders' : CONTRA_LABELS[method].label}
             </div>
           </div>
@@ -239,7 +239,7 @@ function ContraceptionTracker() {
               {daysToInj <= 0 ? '⚠️ Overdue' : `${daysToInj}d to next`}
             </div>
           )}
-          <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{open ? '▲' : '▼'}</span>
+          <span style={{ color: '#fff', fontSize: 12 }}>{open ? '▲' : '▼'}</span>
         </div>
       </button>
 
@@ -250,7 +250,7 @@ function ContraceptionTracker() {
               {/* Method summary + status */}
               {method === 'none' || method === 'condoms' ? (
                 <div style={{ paddingTop: 14 }}>
-                  <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.66)', marginBottom: 14, lineHeight: 1.6 }}>
+                  <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff', marginBottom: 14, lineHeight: 1.6 }}>
                     {method === 'condoms'
                       ? '🛡️ Condoms are your primary method. Remember: condoms are the only contraceptive that also protects against STIs.'
                       : 'No contraception method set. Tap Edit to set up reminders.'}
@@ -259,7 +259,7 @@ function ContraceptionTracker() {
                 </div>
               ) : method === 'pill' ? (
                 <div style={{ paddingTop: 14 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 10 }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 10 }}>
                     REMINDER TIME: {pillTime}
                   </div>
                   {!pillTaken ? (
@@ -270,7 +270,7 @@ function ContraceptionTracker() {
                       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: '#ff6b6b', marginBottom: 6 }}>
                         ⚠️ Don't forget your pill today
                       </div>
-                      <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.66)', marginBottom: 12, lineHeight: 1.6 }}>
+                      <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: '#fff', marginBottom: 12, lineHeight: 1.6 }}>
                         Take it at <strong style={{ color: 'var(--text-primary)' }}>{pillTime}</strong> daily. Missing a pill reduces effectiveness — take it as soon as you remember, unless it's nearly time for your next dose.
                       </div>
                       <button onClick={markPillTaken} style={{
@@ -291,7 +291,7 @@ function ContraceptionTracker() {
                       </div>
                     </div>
                   )}
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginBottom: 12, lineHeight: 1.7 }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 12, lineHeight: 1.7 }}>
                     💡 Take at the same time every day for maximum effectiveness. Set an alarm on your phone if needed.
                     Missing 2+ pills in a row significantly reduces protection — use a condom as backup.
                   </div>
@@ -328,13 +328,13 @@ function ContraceptionTracker() {
                           </div>
                         </div>
                       )}
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginBottom: 12, lineHeight: 1.7 }}>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 12, lineHeight: 1.7 }}>
                         💡 Depo works for 12 weeks, Nur-Isterate for 8 weeks. Being late by more than 2 weeks
                         significantly reduces protection. Book your next appointment NOW, don't wait.
                       </div>
                     </>
                   ) : (
-                    <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.66)', marginBottom: 12 }}>
+                    <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff', marginBottom: 12 }}>
                       Set your last injection date to track your next appointment.
                     </p>
                   )}
@@ -356,14 +356,14 @@ function ContraceptionTracker() {
                           </div>
                         </div>
                       </div>
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginBottom: 12, lineHeight: 1.7 }}>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 12, lineHeight: 1.7 }}>
                         {method === 'implant'
                           ? '💡 Nexplanon lasts 3 years. It requires no daily action — just remember to replace it on time.'
                           : `💡 Your IUD lasts ${iudYears} years. You should feel a check string inside — if you can't feel it, see a doctor.`}
                       </div>
                     </>
                   ) : (
-                    <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.66)', marginBottom: 12 }}>
+                    <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff', marginBottom: 12 }}>
                       Set the date it was placed to track when to replace it.
                     </p>
                   )}
@@ -374,7 +374,7 @@ function ContraceptionTracker() {
           ) : (
             /* Edit form */
             <div style={{ paddingTop: 14 }}>
-              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 8, letterSpacing: '0.14em' }}>
+              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 8, letterSpacing: '0.14em' }}>
                 CONTRACEPTION METHOD
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
@@ -398,7 +398,7 @@ function ContraceptionTracker() {
 
               {method === 'pill' && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>DAILY REMINDER TIME</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6 }}>DAILY REMINDER TIME</div>
                   <input
                     type="time" value={pillTime}
                     onChange={e => setPillTime(e.target.value)}
@@ -409,9 +409,9 @@ function ContraceptionTracker() {
 
               {(method === 'depo' || method === 'nur-isterate') && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>LAST INJECTION DATE</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6 }}>LAST INJECTION DATE</div>
                   <input type="date" value={injDate} onChange={e => setInjDate(e.target.value)} style={inputStyle} />
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginTop: 4 }}>
                     {method === 'depo' ? 'Depo-Provera: every 12 weeks' : 'Nur-Isterate: every 8 weeks'}
                   </div>
                 </div>
@@ -419,16 +419,16 @@ function ContraceptionTracker() {
 
               {method === 'implant' && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>DATE IMPLANT WAS PLACED</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6 }}>DATE IMPLANT WAS PLACED</div>
                   <input type="date" value={implantDate} onChange={e => setImplantDate(e.target.value)} style={inputStyle} />
                 </div>
               )}
 
               {method === 'iud' && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>DATE IUD WAS PLACED</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6 }}>DATE IUD WAS PLACED</div>
                   <input type="date" value={iudDate} onChange={e => setIudDate(e.target.value)} style={{ ...inputStyle, marginBottom: 8 }} />
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>LASTS HOW MANY YEARS</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6 }}>LASTS HOW MANY YEARS</div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     {[5, 10].map(y => (
                       <button key={y} onClick={() => setIudYears(y)} style={{
@@ -451,7 +451,7 @@ function ContraceptionTracker() {
                 <button onClick={() => setEditing(false)} style={{
                   flex: 1, padding: '11px', borderRadius: 10, cursor: 'pointer',
                   border: '1px solid rgba(255,255,255,0.1)', background: 'transparent',
-                  color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans,sans-serif', fontSize: 13,
+                  color: '#fff', fontFamily: 'DM Sans,sans-serif', fontSize: 13,
                 }}>Cancel</button>
               </div>
             </div>
@@ -465,7 +465,7 @@ function ContraceptionTracker() {
 const editBtn: React.CSSProperties = {
   padding: '8px 20px', borderRadius: 10, cursor: 'pointer',
   border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.08)',
-  color: 'rgba(255,255,255,0.66)', fontFamily: 'DM Sans,sans-serif', fontSize: 12,
+  color: '#fff', fontFamily: 'DM Sans,sans-serif', fontSize: 12,
 }
 const inputStyle: React.CSSProperties = {
   width: '100%', padding: '10px 12px', borderRadius: 10, boxSizing: 'border-box',
@@ -477,7 +477,7 @@ const infoBox: React.CSSProperties = {
   background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)',
 }
 const infoLabel: React.CSSProperties = {
-  fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)',
+  fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff',
   letterSpacing: '0.14em', marginBottom: 4,
 }
 const infoValue: React.CSSProperties = {
@@ -618,7 +618,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
             <div style={{ color: '#f472b6', fontWeight: 700, fontSize: '0.95rem', marginBottom: 6 }}>
               🌸 Not sure what phase you're in?
             </div>
-            <p style={{ color: 'rgba(255,255,255,0.66)', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: 14 }}>
+            <p style={{ color: '#fff', fontSize: '0.8rem', lineHeight: 1.6, marginBottom: 14 }}>
               No problem. Tell us when your last period started and we'll estimate your current phase so you can start immediately.
             </p>
             {!showWizard ? (
@@ -635,7 +635,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
             ) : (
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
                 <div style={{ flex: 1, minWidth: 160 }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)', marginBottom: 6, letterSpacing: '0.12em' }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 6, letterSpacing: '0.12em' }}>
                     MY LAST PERIOD STARTED ON
                   </div>
                   <input
@@ -708,7 +708,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 {currentPhaseInfo ? `${latestEntry?.phase} Phase` : 'Log your phase'}
               </div>
               {daysUntilNext !== null && daysUntilNext > 0 && (
-                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)' }}>
+                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff' }}>
                   ~{daysUntilNext} day{daysUntilNext !== 1 ? 's' : ''} until next period
                 </div>
               )}
@@ -756,7 +756,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
             {PHASE_ORDER.map(p => (
               <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: PHASE_INFO[p].color }} />
-                <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.55)', textTransform: 'capitalize' }}>{p}</span>
+                <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', textTransform: 'capitalize' }}>{p}</span>
               </div>
             ))}
           </div>
@@ -840,7 +840,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                       <div style={{ width: 7, height: 7, borderRadius: '50%', background: PHASE_INFO[p].color }} />
                       <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 11.5, color: PHASE_INFO[p].color, textTransform: 'capitalize' }}>{p}</span>
                     </div>
-                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)' }}>
+                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff' }}>
                       Day {PHASE_ORDER.slice(0, PHASE_ORDER.indexOf(p)).reduce((s, ph) => s + PHASE_INFO[ph].durationDays, 1)}–{PHASE_ORDER.slice(0, PHASE_ORDER.indexOf(p) + 1).reduce((s, ph) => s + PHASE_INFO[ph].durationDays, 0)} · Tap for science
                     </div>
                   </button>
@@ -879,7 +879,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: scInfo.color, letterSpacing: '0.18em', marginBottom: 3 }}>PHASE SCIENCE</div>
                 <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 20, color: '#fff', textTransform: 'capitalize' }}>{sciencePhase} Phase</div>
               </div>
-              <button onClick={() => setSciencePhase(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', fontSize: 18 }}>✕</button>
+              <button onClick={() => setSciencePhase(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', fontSize: 18 }}>✕</button>
             </div>
 
             {/* Phase selector */}
@@ -916,7 +916,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: scInfo.color, letterSpacing: '0.12em', marginBottom: 6 }}>
                   {item.label.toUpperCase()}
                 </div>
-                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, background: 'rgba(255,255,255,0.06)', borderRadius: 10, padding: '10px 14px' }}>
+                <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13.5, color: '#fff', lineHeight: 1.7, background: 'rgba(255,255,255,0.06)', borderRadius: 10, padding: '10px 14px' }}>
                   {item.text}
                 </div>
               </div>
@@ -926,7 +926,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
             <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
               {[{ label: 'Energy', val: scInfo.energy }, { label: 'Cognition', val: scInfo.cognitive }, { label: 'Mood', val: scInfo.mood }].map(item => (
                 <div key={item.label} style={{ flex: 1, padding: '10px', borderRadius: 10, background: `${scInfo.color}0d`, border: `1px solid ${scInfo.color}25`, textAlign: 'center' }}>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>{item.label.toUpperCase()}</div>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', marginBottom: 4 }}>{item.label.toUpperCase()}</div>
                   <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 12, color: scInfo.color, textTransform: 'capitalize' }}>{item.val}</div>
                 </div>
               ))}

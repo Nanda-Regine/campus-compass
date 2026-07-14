@@ -114,7 +114,7 @@ export default function Image() {
           <div
             style={{
               fontSize: '20px',
-              color: 'rgba(255,255,255,0.5)',
+              color: '#fff',
               lineHeight: 1.5,
               marginBottom: '36px',
               maxWidth: '540px',
@@ -134,7 +134,7 @@ export default function Image() {
                   borderRadius: '100px',
                   padding: '8px 18px',
                   fontSize: '15px',
-                  color: 'rgba(255,255,255,0.55)',
+                  color: '#fff',
                   marginRight: i < 2 ? '10px' : '0',
                 }}
               >
@@ -198,7 +198,7 @@ export default function Image() {
                   <span style={{ fontSize: '16px', fontWeight: '700', color: '#ffffff' }}>
                     {item.label}
                   </span>
-                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '2px' }}>
+                  <span style={{ fontSize: '12px', color: '#fff', marginTop: '2px' }}>
                     {item.sub}
                   </span>
                 </div>
@@ -237,7 +237,7 @@ export default function Image() {
               <div
                 style={{
                   fontSize: '13px',
-                  color: 'rgba(178,223,219,0.85)',
+                  color: 'rgb(178,223,219)',
                   lineHeight: 1.4,
                   background: 'rgba(13,148,136,0.15)',
                   border: '1px solid rgba(13,148,136,0.2)',

@@ -63,7 +63,7 @@ function ReviewModal({ items, onClear }: { items: Distraction[]; onClear: () => 
         <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 17, color: '#fff', marginBottom: 6 }}>
           You captured {items.length} distraction{items.length !== 1 ? 's' : ''}
         </div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 20 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginBottom: 20 }}>
           Review each — act on it, schedule it, or let it go.
         </div>
 
@@ -163,7 +163,7 @@ function CapturePopup({ onSave, onClose }: { onSave: (text: string) => void; onC
         <button onClick={onClose} style={{
           flex: 1, padding: '8px 0', borderRadius: 9,
           border: '1px solid rgba(255,255,255,0.08)',
-          background: 'transparent', color: 'rgba(255,255,255,0.3)',
+          background: 'transparent', color: '#fff',
           fontFamily: '"JetBrains Mono",monospace', fontSize: 10, cursor: 'pointer',
         }}>Esc</button>
         <button onClick={handleSave} style={{
@@ -176,7 +176,7 @@ function CapturePopup({ onSave, onClose }: { onSave: (text: string) => void; onC
           {text.trim() ? '↵ Park it' : 'Skip'}
         </button>
       </div>
-      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.2)', marginTop: 8 }}>
+      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', marginTop: 8 }}>
         Saved here · review after your session
       </div>
     </div>

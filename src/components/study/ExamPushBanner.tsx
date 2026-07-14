@@ -18,7 +18,7 @@ export default function ExamPushBanner() {
         <button
           onClick={unsubscribe}
           disabled={loading}
-          className="font-mono text-[0.63rem] text-white/75 hover:text-white/70 transition-colors disabled:opacity-40"
+          className="font-mono text-[0.63rem] text-white hover:text-white transition-colors disabled:opacity-40"
         >
           Turn off
         </button>
@@ -37,8 +37,8 @@ export default function ExamPushBanner() {
     >
       <span className="text-lg">🔔</span>
       <div>
-        <p className="font-display font-bold text-sm text-white/80">Get exam reminders</p>
-        <p className="font-mono text-[0.65rem] text-white/80">
+        <p className="font-display font-bold text-sm text-white">Get exam reminders</p>
+        <p className="font-mono text-[0.65rem] text-white">
           {loading ? 'Requesting permission…' : 'We\'ll notify you 3 days before each exam'}
         </p>
       </div>

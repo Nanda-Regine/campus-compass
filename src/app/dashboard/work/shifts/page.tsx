@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
   worked:    'bg-teal-600/10 text-teal-400 border-teal-600/20',
   missed:    'bg-red-500/10 text-red-400 border-red-500/20',
   swapped:   'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  declined:  'bg-white/5 text-white/78 border-white/10',
+  declined:  'bg-white/5 text-white border-white/10',
 }
 
 export default function ShiftsPage() {
@@ -131,10 +131,10 @@ export default function ShiftsPage() {
         {/* ─── Add shift form ─── */}
         {addMode && (
           <form onSubmit={handleAddShift} className="bg-[var(--bg-surface)] border border-white/10 rounded-2xl p-4 space-y-3">
-            <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest">New Shift</div>
+            <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest">New Shift</div>
 
             <div>
-              <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-1.5">Job</div>
+              <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-1.5">Job</div>
               <select
                 value={newShift.job_id}
                 onChange={e => setNewShift(p => ({ ...p, job_id: e.target.value }))}
@@ -150,7 +150,7 @@ export default function ShiftsPage() {
 
             <div className="grid grid-cols-1 gap-3">
               <div>
-                <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-1.5">Date</div>
+                <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-1.5">Date</div>
                 <input
                   type="date"
                   value={newShift.shift_date}
@@ -161,7 +161,7 @@ export default function ShiftsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-1.5">Start</div>
+                  <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-1.5">Start</div>
                   <input
                     type="time"
                     value={newShift.start_time}
@@ -171,7 +171,7 @@ export default function ShiftsPage() {
                   />
                 </div>
                 <div>
-                  <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-1.5">End</div>
+                  <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-1.5">End</div>
                   <input
                     type="time"
                     value={newShift.end_time}
@@ -201,7 +201,7 @@ export default function ShiftsPage() {
               </div>
             ) : (
               <>
-                <p className="font-body text-sm text-white/80 leading-relaxed whitespace-pre-wrap">{draftText}</p>
+                <p className="font-body text-sm text-white leading-relaxed whitespace-pre-wrap">{draftText}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => { navigator.clipboard.writeText(draftText); toast.success('Copied!') }}
@@ -211,7 +211,7 @@ export default function ShiftsPage() {
                   </button>
                   <button
                     onClick={() => { setDraftMode(null); setDraftText('') }}
-                    className="font-mono text-[0.6rem] text-white/78 hover:text-white/70"
+                    className="font-mono text-[0.6rem] text-white hover:text-white"
                   >
                     Close
                   </button>
@@ -230,12 +230,12 @@ export default function ShiftsPage() {
           <div className="text-center py-12">
             <div className="text-3xl mb-3">📅</div>
             <p className="font-display font-bold text-white text-sm">No shifts yet</p>
-            <p className="font-mono text-[0.6rem] text-white/78 mt-1">Add your first shift above</p>
+            <p className="font-mono text-[0.6rem] text-white mt-1">Add your first shift above</p>
           </div>
         ) : (
           Object.entries(grouped).sort((a, b) => b[0].localeCompare(a[0])).map(([month, monthShifts]) => (
             <section key={month}>
-              <div className="font-mono text-[0.6rem] text-white/78 uppercase tracking-widest mb-2">
+              <div className="font-mono text-[0.6rem] text-white uppercase tracking-widest mb-2">
                 {new Date(month + '-01').toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' })}
               </div>
               <div className="space-y-2">
@@ -247,7 +247,7 @@ export default function ShiftsPage() {
                         <div className="font-display font-bold text-sm text-white">
                           {shift.job?.employer_name ?? 'Shift'}
                         </div>
-                        <div className="font-mono text-[0.62rem] text-white/82">
+                        <div className="font-mono text-[0.62rem] text-white">
                           {shift.shift_date} · {shift.start_time}–{shift.end_time}
                           {' '}({shift.duration_hours.toFixed(1)}h)
                           {shift.earnings != null && ` · R${shift.earnings}`}
@@ -267,14 +267,14 @@ export default function ShiftsPage() {
                         </button>
                         <button
                           onClick={() => handleDeleteShift(shift.id)}
-                          className="opacity-0 group-hover:opacity-100 text-white/72 hover:text-red-400 transition-all text-xs"
+                          className="opacity-0 group-hover:opacity-100 text-white hover:text-red-400 transition-all text-xs"
                         >
                           ✕
                         </button>
                       </div>
                     </div>
                     {shift.has_study_conflict && shift.conflict_detail && (
-                      <div className="mt-2 ml-5 font-mono text-[0.62rem] text-amber-400/70 leading-snug">
+                      <div className="mt-2 ml-5 font-mono text-[0.62rem] text-amber-400 leading-snug">
                         Conflict: {shift.conflict_detail}
                       </div>
                     )}

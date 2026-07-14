@@ -72,7 +72,7 @@ export default function AccountabilityPartner({ tasks }: Props) {
       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Go public with your commitment
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 18, lineHeight: 1.5 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', marginBottom: 18, lineHeight: 1.5 }}>
         Telling a specific person raises follow-through by 65%.
       </div>
 
@@ -122,7 +122,7 @@ export default function AccountabilityPartner({ tasks }: Props) {
         <div style={{
           padding: '12px 14px', borderRadius: 12, marginBottom: 14,
           background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-          fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.45)',
+          fontFamily: 'Sora,sans-serif', fontSize: 11, color: '#fff',
           lineHeight: 1.65, whiteSpace: 'pre-line',
         }}>
           {message}

@@ -29,7 +29,7 @@ function Gauge({ count, goal, color }: { count: number; goal: number; color: str
         <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color, fontWeight: 700 }}>
           {count.toLocaleString()} / {goal.toLocaleString()}
         </div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff' }}>
           {pct}%
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function WeeklyBountyBoard() {
       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>
         Study together, win together
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginBottom: 18, lineHeight: 1.5 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: '#fff', marginBottom: 18, lineHeight: 1.5 }}>
         Week of {weekLabel} · All VarsityOS students contribute
       </div>
 
@@ -137,7 +137,7 @@ export default function WeeklyBountyBoard() {
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>
               Community Pomodoros
             </div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff' }}>
               Goal: {pomodoroGoal.toLocaleString()} this week
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function WeeklyBountyBoard() {
               <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>
                 Community Tasks
               </div>
-              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>
+              <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff' }}>
                 Goal: {(data.events['task_complete'].goal).toLocaleString()} this week
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function WeeklyBountyBoard() {
                     <div style={{ fontFamily: '"JetBrains Mono",monospace', fontWeight: 700, fontSize: 12, color: meta.color }}>
                       {count}
                     </div>
-                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: 'rgba(255,255,255,0.45)' }}>
+                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7, color: '#fff' }}>
                       {meta.label}
                     </div>
                   </div>

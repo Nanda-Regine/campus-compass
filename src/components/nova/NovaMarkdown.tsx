@@ -15,7 +15,7 @@ const components: Components = {
     <strong className="font-bold text-white">{children}</strong>
   ),
   em: ({ children }) => (
-    <em className="italic text-white/80">{children}</em>
+    <em className="italic text-white">{children}</em>
   ),
 
   // Lists
@@ -79,14 +79,14 @@ const components: Components = {
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="font-display font-semibold text-[0.85rem] text-white/90 mb-1 mt-2 first:mt-0">
+    <h3 className="font-display font-semibold text-[0.85rem] text-white mb-1 mt-2 first:mt-0">
       {children}
     </h3>
   ),
 
   // Blockquotes — used for key insights
   blockquote: ({ children }) => (
-    <blockquote className="border-l-2 border-teal-500/50 pl-3 my-2 last:mb-0 text-white/82 italic">
+    <blockquote className="border-l-2 border-teal-500/50 pl-3 my-2 last:mb-0 text-white italic">
       {children}
     </blockquote>
   ),
@@ -104,12 +104,12 @@ const components: Components = {
     <thead className="border-b border-white/15">{children}</thead>
   ),
   th: ({ children }) => (
-    <th className="text-left px-3 py-1.5 font-mono font-semibold text-teal-300/80 uppercase tracking-wide text-[0.65rem]">
+    <th className="text-left px-3 py-1.5 font-mono font-semibold text-teal-300 uppercase tracking-wide text-[0.65rem]">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="px-3 py-1.5 border-b border-white/5 text-white/80">{children}</td>
+    <td className="px-3 py-1.5 border-b border-white/5 text-white">{children}</td>
   ),
 }
 

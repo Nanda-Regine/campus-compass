@@ -10,7 +10,7 @@ interface Section {
 
 function SectionBody({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ padding: '0 16px 14px', fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
+    <div style={{ padding: '0 16px 14px', fontSize: '13px', color: '#fff', lineHeight: '1.6' }}>
       {children}
     </div>
   );
@@ -45,7 +45,7 @@ function Step({ num, children }: { num: number; children: React.ReactNode }) {
       >
         {num}
       </span>
-      <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.5' }}>{children}</span>
+      <span style={{ fontSize: '13px', color: '#fff', lineHeight: '1.5' }}>{children}</span>
     </div>
   );
 }
@@ -92,7 +92,7 @@ const SECTIONS: Section[] = [
         <Step num={3}>
           Walk-in — visit your nearest SASSA office with your SA ID.
         </Step>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: '#fff' }}>
           Re-apply every month — approval is not automatic. Set a monthly reminder.
         </p>
       </SectionBody>
@@ -106,7 +106,7 @@ const SECTIONS: Section[] = [
         <Bullet>SA ID (green book or smart card)</Bullet>
         <Bullet>Active South African phone number (for OTP verification)</Bullet>
         <Bullet>Bank account number for payment (optional — post office also works)</Bullet>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: '#fff' }}>
           No proof of income or address required for the online application.
         </p>
       </SectionBody>
@@ -123,7 +123,7 @@ const SECTIONS: Section[] = [
         <Bullet>Direct bank deposit (fastest)</Bullet>
         <Bullet>SASSA card — collect at Post Office or Pick n Pay</Bullet>
         <Bullet>Cash send — collect at specific retailers</Bullet>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: '#fff' }}>
           Payments are usually released in the first two weeks of each month.
         </p>
       </SectionBody>
@@ -149,7 +149,7 @@ const SECTIONS: Section[] = [
           }}
         >
           <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#22c55e', fontWeight: 700 }}>HOW TO APPEAL</p>
-          <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.65)' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#fff' }}>
             Go to <strong style={{ color: 'var(--text-primary)' }}>srd.sassa.gov.za</strong>, click "Appeals", and submit within 90 days of the rejection.
             Include your ID number and the rejection reason. Most appeals succeed when the reason is a false positive.
           </p>
@@ -164,19 +164,19 @@ const SECTIONS: Section[] = [
       <SectionBody>
         <div style={{ marginBottom: '10px' }}>
           <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>NSFAS Food Allowance</p>
-          <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#fff' }}>
             If you receive NSFAS, you may qualify for a food allowance. Contact your institution's financial aid office to check — it is separate from your accommodation and tuition.
           </p>
         </div>
         <div style={{ marginBottom: '10px' }}>
           <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Institution Emergency Fund</p>
-          <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#fff' }}>
             Most universities maintain a hardship fund. Visit the Student Affairs or Financial Aid office. You do not need to be in crisis — food insecurity qualifies.
           </p>
         </div>
         <div>
           <p style={{ margin: '0 0 4px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>Ubuntu Fund</p>
-          <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: '#fff' }}>
             A student-run solidarity fund at many South African universities. Contact your SRC for access. No repayment required — it is a grant.
           </p>
         </div>
@@ -211,7 +211,7 @@ export default function SassaSrdGuide() {
             <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
               SASSA SRD Grant Guide
             </h3>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.66)' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#fff' }}>
               R370/month — many students qualify and never apply
             </p>
           </div>
@@ -262,7 +262,7 @@ export default function SassaSrdGuide() {
                 >
                   {section.title}
                 </span>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', flexShrink: 0 }}>
+                <span style={{ fontSize: '12px', color: '#fff', flexShrink: 0 }}>
                   {isOpen ? '▲' : '▼'}
                 </span>
               </button>
@@ -273,7 +273,7 @@ export default function SassaSrdGuide() {
       </div>
 
       <div style={{ padding: '14px 16px' }}>
-        <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.5' }}>
+        <p style={{ margin: 0, fontSize: '11px', color: '#fff', lineHeight: '1.5' }}>
           Information current as of 2026. Grant amounts and eligibility may change. Verify at srd.sassa.gov.za.
         </p>
       </div>

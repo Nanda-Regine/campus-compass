@@ -108,7 +108,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
               {active.label}
             </div>
             {userInstitution && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#fff', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {userInstitution}
               </div>
             )}

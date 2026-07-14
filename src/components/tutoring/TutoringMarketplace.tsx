@@ -128,7 +128,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>Peer Tutoring</div>
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff', marginTop: 2 }}>
               {userInstitution ?? 'All institutions'} · learn from your peers
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
 
         {tab === 'browse' && (
           <div style={{ position: 'relative', marginBottom: 14 }}>
-            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }} />
+            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#fff' }} />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by subject or module" style={{ width: '100%', paddingLeft: 34, paddingRight: 12, paddingTop: 10, paddingBottom: 10, background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box' as const }} />
           </div>
         )}
@@ -172,7 +172,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
           loading ? (
             Array.from({ length: 3 }).map((_, i) => <div key={i} style={{ height: 130, borderRadius: 14, background: 'rgba(255,255,255,0.07)', marginBottom: 10 }} />)
           ) : tutors.length === 0 ? (
-            <div style={{ textAlign: 'center', paddingTop: 48, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
+            <div style={{ textAlign: 'center', paddingTop: 48, color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
               <GraduationCap size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
               <div>No tutors found — be the first to sign up!</div>
             </div>
@@ -183,7 +183,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
           )
         ) : (
           sessions.length === 0 ? (
-            <div style={{ textAlign: 'center', paddingTop: 48, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
+            <div style={{ textAlign: 'center', paddingTop: 48, color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
               <Clock size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
               <div>No sessions yet</div>
             </div>
@@ -218,7 +218,7 @@ export default function TutoringMarketplace({ userId, userInstitution }: Props) 
             </div>
             <textarea value={reviewComment} onChange={e => setReviewComment(e.target.value)} placeholder="How was the session? (optional)" style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.12)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem', fontFamily: 'DM Sans, sans-serif', outline: 'none', resize: 'none', height: 80, boxSizing: 'border-box', marginBottom: 12 }} />
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setReviewingSession(null)} style={{ flex: 1, padding: '12px', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.66)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => setReviewingSession(null)} style={{ flex: 1, padding: '12px', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.07)', color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', cursor: 'pointer' }}>Cancel</button>
               <button onClick={submitReview} style={{ flex: 2, padding: '12px', borderRadius: 12, border: 'none', background: '#f59e0b', color: '#000', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer' }}>Submit Review</button>
             </div>
           </div>
@@ -258,7 +258,7 @@ function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; o
               </span>
             )}
           </div>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)', marginTop: 2 }}>
+          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: '#fff', marginTop: 2 }}>
             {[tutor.faculty, tutor.year_of_study ? `Year ${tutor.year_of_study}` : null].filter(Boolean).join(' · ')}
           </div>
         </div>
@@ -270,20 +270,20 @@ function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; o
       {/* Subjects */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: tutor.bio ? 8 : 10 }}>
         {tutor.subjects.slice(0, 6).map(s => (
-          <span key={s} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.12)', padding: '2px 7px', borderRadius: 9999 }}>{s}</span>
+          <span key={s} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.12)', padding: '2px 7px', borderRadius: 9999 }}>{s}</span>
         ))}
       </div>
 
       {tutor.bio && (
-        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.73rem', color: 'rgba(255,255,255,0.58)', marginBottom: 10, lineHeight: 1.4 }}>
+        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.73rem', color: '#fff', marginBottom: 10, lineHeight: 1.4 }}>
           {tutor.bio.slice(0, 120)}{tutor.bio.length > 120 ? '...' : ''}
         </div>
       )}
 
       {tutor.availability && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 10 }}>
-          <Clock size={11} style={{ color: 'rgba(255,255,255,0.5)' }} />
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.68rem', color: 'rgba(255,255,255,0.55)' }}>{tutor.availability}</span>
+          <Clock size={11} style={{ color: '#fff' }} />
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.68rem', color: '#fff' }}>{tutor.availability}</span>
         </div>
       )}
 
@@ -318,7 +318,7 @@ function SessionCard({ session, role, userId, onConfirm, onComplete, onCancel, o
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)' }}>{session.subject}</div>
-          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)', marginTop: 2 }}>{other}</div>
+          <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: '#fff', marginTop: 2 }}>{other}</div>
         </div>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color, background: `${color}15`, border: `0.5px solid ${color}35`, padding: '3px 8px', borderRadius: 9999, textTransform: 'uppercase' }}>
           {session.status}
@@ -327,15 +327,15 @@ function SessionCard({ session, role, userId, onConfirm, onComplete, onCancel, o
 
       <div style={{ display: 'flex', gap: 12, marginBottom: session.notes ? 8 : 10 }}>
         {session.scheduled_date && (
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)' }}>📅 {session.scheduled_date}</span>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff' }}>📅 {session.scheduled_date}</span>
         )}
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)' }}>⏱ {session.duration_hours}h</span>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff' }}>⏱ {session.duration_hours}h</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#4ecf9e' }}>R{Number(session.total_amount).toFixed(0)}</span>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)' }}>💵 cash/EFT</span>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff' }}>💵 cash/EFT</span>
       </div>
 
       {session.notes && (
-        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', marginBottom: 10, lineHeight: 1.4 }}>
+        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: '#fff', marginBottom: 10, lineHeight: 1.4 }}>
           {session.notes}
         </div>
       )}

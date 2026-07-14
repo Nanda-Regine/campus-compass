@@ -87,7 +87,7 @@ function CompoundCalculator() {
 
       <div style={{ marginBottom: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>Monthly investment</label>
+          <label style={{ fontSize: '12px', color: '#fff' }}>Monthly investment</label>
           <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 700 }}>R{monthly}</span>
         </div>
         <input
@@ -100,14 +100,14 @@ function CompoundCalculator() {
           style={{ width: '100%', accentColor: '#fbbf24', cursor: 'pointer' }}
         />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>R10</span>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>R1,000</span>
+          <span style={{ fontSize: '10px', color: '#fff' }}>R10</span>
+          <span style={{ fontSize: '10px', color: '#fff' }}>R1,000</span>
         </div>
       </div>
 
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>Years</label>
+          <label style={{ fontSize: '12px', color: '#fff' }}>Years</label>
           <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 700 }}>{years} yrs</span>
         </div>
         <input
@@ -120,15 +120,15 @@ function CompoundCalculator() {
           style={{ width: '100%', accentColor: '#fbbf24', cursor: 'pointer' }}
         />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>1 yr</span>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>20 yrs</span>
+          <span style={{ fontSize: '10px', color: '#fff' }}>1 yr</span>
+          <span style={{ fontSize: '10px', color: '#fff' }}>20 yrs</span>
         </div>
       </div>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
         {[
           { label: 'Final value', value: `R${result.toLocaleString()}`, color: '#22c55e' },
-          { label: 'You put in', value: `R${contributed.toLocaleString()}`, color: 'rgba(255,255,255,0.6)' },
+          { label: 'You put in', value: `R${contributed.toLocaleString()}`, color: '#fff' },
           { label: 'Growth', value: `R${growth.toLocaleString()}`, color: '#fbbf24' },
         ].map((item) => (
           <div
@@ -141,7 +141,7 @@ function CompoundCalculator() {
               textAlign: 'center',
             }}
           >
-            <p style={{ margin: '0 0 2px', fontSize: '9px', color: 'rgba(255,255,255,0.58)' }}>{item.label}</p>
+            <p style={{ margin: '0 0 2px', fontSize: '9px', color: '#fff' }}>{item.label}</p>
             <p style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: item.color }}>{item.value}</p>
           </div>
         ))}
@@ -149,7 +149,7 @@ function CompoundCalculator() {
 
       {milestones.length > 0 && (
         <div>
-          <p style={{ margin: '0 0 8px', fontSize: '10px', color: 'rgba(255,255,255,0.58)', fontWeight: 600 }}>
+          <p style={{ margin: '0 0 8px', fontSize: '10px', color: '#fff', fontWeight: 600 }}>
             GROWTH OVER TIME
           </p>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', height: '60px' }}>
@@ -167,7 +167,7 @@ function CompoundCalculator() {
                       transition: 'height 0.3s ease',
                     }}
                   />
-                  <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.58)' }}>{y}y</span>
+                  <span style={{ fontSize: '9px', color: '#fff' }}>{y}y</span>
                 </div>
               );
             })}
@@ -192,7 +192,7 @@ function NomvulaStory() {
       <p style={{ margin: '0 0 6px', fontSize: '11px', color: '#fbbf24', fontWeight: 700 }}>
         NOMVULA'S STORY
       </p>
-      <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: '1.6' }}>
+      <p style={{ margin: 0, fontSize: '13px', color: '#fff', lineHeight: '1.6' }}>
         Nomvula invests R50/month from her NSFAS allowance at age 19.
         After <strong style={{ color: 'var(--text-primary)' }}>3 years</strong>:{' '}
         <strong style={{ color: '#22c55e' }}>R2,100</strong>.
@@ -223,7 +223,7 @@ export default function FirstInvestment() {
         <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
           Your First Investment
         </h3>
-        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>
+        <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#fff' }}>
           A 5-step guide built for SA students
         </p>
       </div>
@@ -259,7 +259,7 @@ export default function FirstInvestment() {
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{step.icon}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>{step.title}</p>
-                  <p style={{ margin: '1px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.62)' }}>{step.subtitle}</p>
+                  <p style={{ margin: '1px 0 0', fontSize: '11px', color: '#fff' }}>{step.subtitle}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <span
@@ -273,13 +273,13 @@ export default function FirstInvestment() {
                   >
                     {step.tag}
                   </span>
-                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>{isOpen ? '▲' : '▼'}</span>
+                  <span style={{ fontSize: '12px', color: '#fff' }}>{isOpen ? '▲' : '▼'}</span>
                 </div>
               </button>
 
               {isOpen && (
                 <div style={{ padding: '0 16px 16px' }}>
-                  <p style={{ margin: '0 0 12px', fontSize: '13px', color: 'rgba(255,255,255,0.72)', lineHeight: '1.6' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#fff', lineHeight: '1.6' }}>
                     {step.body}
                   </p>
                   {step.id === 4 && <CompoundCalculator />}
@@ -296,7 +296,7 @@ export default function FirstInvestment() {
         style={{
           margin: '16px 0 0',
           fontSize: '11px',
-          color: 'rgba(255,255,255,0.5)',
+          color: '#fff',
           lineHeight: '1.5',
           padding: '10px 12px',
           background: 'rgba(255,255,255,0.02)',

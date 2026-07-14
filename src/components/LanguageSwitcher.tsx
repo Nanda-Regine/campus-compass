@@ -33,7 +33,7 @@ export default function LanguageSwitcher({ currentLocale, onChange }: Props) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
         Language / Ulimi / Taal
       </div>
       <div style={{ display: 'flex', gap: 6 }}>

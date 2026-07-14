@@ -165,7 +165,7 @@ export function Sidebar() {
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 13, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               VarsityOS
             </div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7.5, color: 'rgba(168,85,247,0.65)', letterSpacing: '0.14em' }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 7.5, color: 'rgb(168,85,247)', letterSpacing: '0.14em' }}>
               STUDENT OS
             </div>
           </div>
@@ -183,7 +183,7 @@ export function Sidebar() {
             {!collapsed && (
               <div style={{
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 7.5, fontWeight: 700,
-                color: 'rgba(255,255,255,0.18)', letterSpacing: '0.2em',
+                color: '#fff', letterSpacing: '0.2em',
                 padding: '8px 14px 3px', whiteSpace: 'nowrap',
               }}>
                 {section.label}
@@ -259,7 +259,7 @@ export function Sidebar() {
             margin: '0 auto', background: 'rgba(255,255,255,0.07)',
             border: '0.5px solid rgba(255,255,255,0.07)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: 5, color: 'rgba(255,255,255,0.48)', transition: 'all 0.28s',
+            gap: 5, color: '#fff', transition: 'all 0.28s',
           }}
         >
           {collapsed

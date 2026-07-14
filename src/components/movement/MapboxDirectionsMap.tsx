@@ -218,7 +218,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           borderRadius: 16, display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 2,
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>
             Finding route…
           </span>
         </div>
@@ -233,7 +233,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           alignItems: 'center', justifyContent: 'center', gap: 8,
         }}>
           <span style={{ fontSize: 28 }}>🗺️</span>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff', textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
             Couldn't locate one or both addresses. Try adding a suburb, city, or campus name.
           </p>
         </div>
@@ -259,7 +259,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: '#0d9488', fontWeight: 600 }}>
             🕒 {fmtDuration(routeInfo.duration)}
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#fff' }}>
             {fmtDistance(routeInfo.distance)}
           </span>
         </div>
@@ -273,7 +273,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8,
           padding: '5px 10px',
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#fff' }}>
             Showing straight line (routing unavailable)
           </span>
         </div>

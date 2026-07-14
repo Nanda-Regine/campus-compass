@@ -67,7 +67,7 @@ function SectionContent({ id }: { id: string }) {
                 'Heavy fried food — blood goes to gut, not brain',
                 'Eating nothing — glucose depletion means you cannot form new memories',
               ].map(item => (
-                <div key={item} style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'rgba(255,255,255,0.55)', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <div key={item} style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#fff', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                   <span style={{ color: '#f87171', flexShrink: 0 }}>✕</span>
                   {item}
                 </div>
@@ -75,7 +75,7 @@ function SectionContent({ id }: { id: string }) {
             </div>
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff' }}>
             R8-15 pre-exam meal is achievable at any campus tuck shop or res kitchen.
           </div>
         </div>
@@ -138,13 +138,13 @@ function SectionContent({ id }: { id: string }) {
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.88rem', color: '#38bdf8', marginBottom: 4 }}>
               5% dehydration = 30% drop in concentration
             </div>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.55 }}>
+            <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#fff', lineHeight: 1.55 }}>
               Working memory, focus, and recall all tank before you feel thirsty. By the time you notice, you are already impaired.
             </div>
           </div>
 
           <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
               Signs of study dehydration
             </div>
             {['Headache mid-study session', 'Difficulty focusing on a single paragraph', 'Irritability for no reason'].map(s => (
@@ -155,7 +155,7 @@ function SectionContent({ id }: { id: string }) {
             ))}
           </div>
 
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)', fontStyle: 'italic' }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: '#fff', fontStyle: 'italic' }}>
             "Drink water before reaching for coffee. Most study headaches are dehydration."
           </div>
 
@@ -240,7 +240,7 @@ function SectionContent({ id }: { id: string }) {
     case 'plate':
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'rgba(255,255,255,0.55)', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: '#fff', marginBottom: 4 }}>
             A simple formula for sustained focus throughout a study day.
           </div>
 
@@ -389,7 +389,7 @@ export default function BrainFoodGuide() {
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.75rem',
-                  color: 'rgba(255,255,255,0.5)',
+                  color: '#fff',
                   transition: 'transform 0.2s',
                   display: 'inline-block',
                   transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',

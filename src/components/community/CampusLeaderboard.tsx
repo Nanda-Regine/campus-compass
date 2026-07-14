@@ -20,7 +20,7 @@ const FILTER_STYLE: React.CSSProperties = {
   padding: '5px 12px', borderRadius: 20, fontSize: 10,
   fontFamily: '"JetBrains Mono",monospace', cursor: 'pointer',
   border: '1px solid rgba(255,255,255,0.1)',
-  background: 'transparent', color: 'rgba(255,255,255,0.58)',
+  background: 'transparent', color: '#fff',
   transition: 'all 0.15s',
 }
 const FILTER_ACTIVE: React.CSSProperties = {
@@ -91,7 +91,7 @@ export default function CampusLeaderboard() {
       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 4 }}>
         Who's studying hardest?
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginBottom: 14, lineHeight: 1.5 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: '#fff', marginBottom: 14, lineHeight: 1.5 }}>
         Your XP: <span style={{ color: '#c9a84c', fontWeight: 700 }}>{myXP.toLocaleString()}</span>
       </div>
 
@@ -105,11 +105,11 @@ export default function CampusLeaderboard() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>
+        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff' }}>
           Loading rankings…
         </div>
       ) : entries.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff' }}>
           No data yet — be the first to earn XP in this category!
         </div>
       ) : (
@@ -142,7 +142,7 @@ export default function CampusLeaderboard() {
                   {e.first_name}
                   {e.is_me && <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#c9a84c' }}>YOU</span>}
                 </div>
-                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.45)', marginTop: 1 }}>
+                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', marginTop: 1 }}>
                   {e.university} · Yr {e.year_of_study ?? '?'}
                 </div>
               </div>

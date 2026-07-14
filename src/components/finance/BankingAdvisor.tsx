@@ -197,7 +197,7 @@ export default function BankingAdvisor() {
         <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
           Banking Advisor
         </h3>
-        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>
+        <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#fff' }}>
           SA bank comparison — find your best match
         </p>
       </div>
@@ -234,7 +234,7 @@ export default function BankingAdvisor() {
               <QuizButton label="Yes — I receive NSFAS / bursary" onClick={() => setAnswer('nsfas', true)} />
               <QuizButton label="No — self-funded or part-time income" onClick={() => setAnswer('nsfas', false)} />
               {step > 0 && (
-                <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+                <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: '#fff', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
                   ← Back
                 </button>
               )}
@@ -248,7 +248,7 @@ export default function BankingAdvisor() {
               </p>
               <QuizButton label="Yes — I shop at PnP regularly" onClick={() => setAnswer('cashback', true)} />
               <QuizButton label="No — lower fees matter more" onClick={() => setAnswer('cashback', false)} />
-              <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+              <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: '#fff', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
                 ← Back
               </button>
             </div>
@@ -282,7 +282,7 @@ export default function BankingAdvisor() {
                 RECOMMENDED
               </span>
             </div>
-            <p style={{ margin: '0 0 14px', fontSize: '12px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.5' }}>{bank.verdict}</p>
+            <p style={{ margin: '0 0 14px', fontSize: '12px', color: '#fff', lineHeight: '1.5' }}>{bank.verdict}</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '14px' }}>
               {[
@@ -297,13 +297,13 @@ export default function BankingAdvisor() {
                   key={item.label}
                   style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '8px', padding: '8px 10px' }}
                 >
-                  <p style={{ margin: '0 0 1px', fontSize: '10px', color: 'rgba(255,255,255,0.58)' }}>{item.label}</p>
+                  <p style={{ margin: '0 0 1px', fontSize: '10px', color: '#fff' }}>{item.label}</p>
                   <p style={{ margin: 0, fontSize: '12px', color: '#fff', fontWeight: 600 }}>{item.val}</p>
                 </div>
               ))}
             </div>
 
-            <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'rgba(255,255,255,0.66)', fontWeight: 700 }}>
+            <p style={{ margin: '0 0 8px', fontSize: '11px', color: '#fff', fontWeight: 700 }}>
               HOW TO OPEN YOUR ACCOUNT
             </p>
             {bank.openingSteps.map((s, i) => (
@@ -325,7 +325,7 @@ export default function BankingAdvisor() {
                 >
                   {i + 1}
                 </span>
-                <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.4' }}>{s}</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.4' }}>{s}</p>
               </div>
             ))}
           </div>
@@ -336,7 +336,7 @@ export default function BankingAdvisor() {
               background: 'none',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '8px',
-              color: 'rgba(255,255,255,0.66)',
+              color: '#fff',
               fontSize: '12px',
               padding: '8px 14px',
               cursor: 'pointer',
@@ -358,7 +358,7 @@ export default function BankingAdvisor() {
                         style={{
                           textAlign: 'left',
                           padding: '6px 8px',
-                          color: 'rgba(255,255,255,0.58)',
+                          color: '#fff',
                           borderBottom: '1px solid rgba(255,255,255,0.06)',
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
@@ -378,9 +378,9 @@ export default function BankingAdvisor() {
                       <td style={{ padding: '7px 8px', color: key === result ? b.color : 'rgba(255,255,255,0.8)', fontWeight: key === result ? 700 : 400, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                         {b.name}
                       </td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.monthlyFee}</td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.atmFee}</td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>{b.cashback}</td>
+                      <td style={{ padding: '7px 8px', color: '#fff', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.monthlyFee}</td>
+                      <td style={{ padding: '7px 8px', color: '#fff', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.atmFee}</td>
+                      <td style={{ padding: '7px 8px', color: '#fff', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>{b.cashback}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -400,7 +400,7 @@ export default function BankingAdvisor() {
             <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#fbbf24', fontWeight: 700 }}>
               SASSA SRD GRANT — R370/MONTH
             </p>
-            <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.65)', lineHeight: '1.5' }}>
+            <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.5' }}>
               If you have no income or income below R624/month, you may qualify for the SASSA SRD grant.
               Apply online at <span style={{ color: '#fbbf24' }}>srd.sassa.gov.za</span> with your SA ID number.
               No documents needed — just your ID and phone number. Many students qualify and never apply.

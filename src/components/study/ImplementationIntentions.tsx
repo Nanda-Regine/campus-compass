@@ -163,7 +163,7 @@ function CreateForm({ tasks, onSave, onCancel }: CreateFormProps) {
           <button onClick={onCancel} style={{
             flex: 1, padding: '11px 0', borderRadius: 11,
             border: '1px solid rgba(255,255,255,0.1)',
-            background: 'transparent', color: 'rgba(255,255,255,0.4)',
+            background: 'transparent', color: '#fff',
             fontFamily: 'Sora,sans-serif', cursor: 'pointer', fontSize: 13,
           }}>Cancel</button>
           <button onClick={handleSave} style={{
@@ -279,7 +279,7 @@ export default function ImplementationIntentions({ tasks }: Props) {
         {upcoming.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '12px 0' }}>
             <div style={{ fontSize: 26, marginBottom: 8 }}>📅</div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.5 }}>
               Research shows scheduling <em>when</em> and <em>where</em> you'll study doubles your follow-through. Plan your next session.
             </div>
           </div>
@@ -299,7 +299,7 @@ export default function ImplementationIntentions({ tasks }: Props) {
                     <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 600, fontSize: 12, color: 'var(--text-primary)', marginBottom: 3 }}>
                       {intent.task_title}
                     </div>
-                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff' }}>
                       {formatWhen(intent.scheduled_at)} · {intent.location}
                     </div>
                   </div>
@@ -308,7 +308,7 @@ export default function ImplementationIntentions({ tasks }: Props) {
                   </div>
                   <button onClick={() => remove(intent.id)} style={{
                     background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'rgba(255,255,255,0.2)', fontSize: 12, padding: 0,
+                    color: '#fff', fontSize: 12, padding: 0,
                   }}>✕</button>
                 </div>
               )

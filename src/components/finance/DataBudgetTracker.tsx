@@ -73,12 +73,12 @@ export default function DataBudgetTracker() {
           <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
             Data Budget Tracker
           </h3>
-          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#fff' }}>
             Monthly mobile data usage
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.66)' }}>Bundle:</label>
+          <label style={{ fontSize: '11px', color: '#fff' }}>Bundle:</label>
           <select
             value={bundleGB}
             onChange={(e) => setBundleGB(Number(e.target.value))}
@@ -119,7 +119,7 @@ export default function DataBudgetTracker() {
 
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+          <span style={{ fontSize: '13px', color: '#fff' }}>
             {mbToReadable(usedMB)} used of {bundleGB} GB
           </span>
           <span
@@ -148,7 +148,7 @@ export default function DataBudgetTracker() {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
+          <span style={{ fontSize: '11px', color: '#fff' }}>
             {mbToReadable(remainingMB)} remaining
           </span>
           <span style={{ fontSize: '11px', color: daysLeft < 7 ? '#ef4444' : 'rgba(255,255,255,0.58)' }}>
@@ -158,7 +158,7 @@ export default function DataBudgetTracker() {
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'rgba(255,255,255,0.66)', fontWeight: 600 }}>
+        <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#fff', fontWeight: 600 }}>
           USAGE BY CATEGORY
         </p>
         {categories.map((cat) => {
@@ -170,7 +170,7 @@ export default function DataBudgetTracker() {
                   <div
                     style={{ width: '8px', height: '8px', borderRadius: '50%', background: cat.color, flexShrink: 0 }}
                   />
-                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>{cat.label}</span>
+                  <span style={{ fontSize: '12px', color: '#fff' }}>{cat.label}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {editingId === cat.id ? (
@@ -200,7 +200,7 @@ export default function DataBudgetTracker() {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: 'rgba(255,255,255,0.66)',
+                        color: '#fff',
                         fontSize: '12px',
                         cursor: 'pointer',
                         padding: 0,
@@ -225,7 +225,7 @@ export default function DataBudgetTracker() {
             </div>
           );
         })}
-        <p style={{ margin: '6px 0 0', fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
+        <p style={{ margin: '6px 0 0', fontSize: '10px', color: '#fff' }}>
           Tap any usage value to edit it
         </p>
       </div>
@@ -243,7 +243,7 @@ export default function DataBudgetTracker() {
             <p style={{ margin: '0 0 2px', fontSize: '10px', color: '#fbbf24', fontWeight: 700 }}>
               DATA SAVING TIP
             </p>
-            <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.5' }}>
+            <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.5' }}>
               {TIPS[tipIndex % TIPS.length]}
             </p>
           </div>

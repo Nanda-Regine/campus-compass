@@ -175,7 +175,7 @@ function PostCard({
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.82rem', color: '#fff', margin: 0 }}>
                 {post.author_name}
               </p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', margin: 0 }}>
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 {post.institution ? ` · ${post.institution.split(' ').slice(0, 2).join(' ')}` : ''}
               </p>
@@ -193,7 +193,7 @@ function PostCard({
             {post.is_own ? (
               <button
                 onClick={() => { if (confirm('Delete this post?')) onDelete(post.id) }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 4, display: 'flex', alignItems: 'center' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', padding: 4, display: 'flex', alignItems: 'center' }}
               >
                 <Trash2 size={13} />
               </button>
@@ -202,7 +202,7 @@ function PostCard({
                 <button
                   onClick={() => setShowMenu(v => !v)}
                   disabled={reporting}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.2)', padding: 4, display: 'flex', alignItems: 'center' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', padding: 4, display: 'flex', alignItems: 'center' }}
                 >
                   <MoreHorizontal size={13} />
                 </button>
@@ -213,7 +213,7 @@ function PostCard({
                     borderRadius: 10, padding: '4px 0', minWidth: 148,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                   }}>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)', padding: '6px 12px 4px', margin: 0 }}>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#fff', padding: '6px 12px 4px', margin: 0 }}>
                       REPORT POST
                     </p>
                     {REPORT_REASONS.map(r => (
@@ -224,7 +224,7 @@ function PostCard({
                           display: 'flex', alignItems: 'center', gap: 7,
                           width: '100%', background: 'none', border: 'none',
                           cursor: 'pointer', padding: '7px 12px',
-                          color: 'rgba(255,255,255,0.65)',
+                          color: '#fff',
                           fontFamily: 'DM Sans, sans-serif', fontSize: '0.77rem',
                           textAlign: 'left',
                         }}
@@ -243,7 +243,7 @@ function PostCard({
         </div>
 
         {/* Content */}
-        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.88rem', lineHeight: 1.65, color: 'rgba(255,255,255,0.82)', margin: '0 0 12px 0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.88rem', lineHeight: 1.65, color: '#fff', margin: '0 0 12px 0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
           {post.content}
         </p>
 
@@ -284,18 +284,18 @@ function PostCard({
         <div style={{ borderTop: '0.5px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.2)' }}>
           <div style={{ padding: '10px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {!commentsLoaded && (
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', margin: 0 }}>Loading...</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#fff', margin: 0 }}>Loading...</p>
             )}
             {commentsLoaded && comments.length === 0 && (
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', margin: 0 }}>No replies yet — be the first.</p>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: '#fff', margin: 0 }}>No replies yet — be the first.</p>
             )}
             {comments.map(c => (
               <div key={c.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '0.9rem', flexShrink: 0, marginTop: 1 }}>{c.author_emoji}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginRight: 6 }}>{c.author_name}</span>
-                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, wordBreak: 'break-word' }}>{c.content}</span>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)', margin: '2px 0 0 0' }}>
+                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: '#fff', marginRight: 6 }}>{c.author_name}</span>
+                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: '#fff', lineHeight: 1.5, wordBreak: 'break-word' }}>{c.content}</span>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#fff', margin: '2px 0 0 0' }}>
                     {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
                   </p>
                 </div>
@@ -390,7 +390,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
           }}
         >
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>🎓</div>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: '#fff' }}>
             Share something with {institution ? `your campus` : 'SA students'}...
           </span>
         </button>
@@ -437,7 +437,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
               {content.length}/500
             </span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" onClick={() => { setOpen(false); setContent('') }} style={{ padding: '7px 14px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'none', color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', cursor: 'pointer' }}>
+              <button type="button" onClick={() => { setOpen(false); setContent('') }} style={{ padding: '7px 14px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'none', color: '#fff', fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', cursor: 'pointer' }}>
                 Cancel
               </button>
               <button
@@ -637,7 +637,7 @@ export default function CampusFeed({ institution }: Props) {
         <div style={{ textAlign: 'center', padding: '48px 20px' }}>
           <p style={{ fontSize: '2rem', marginBottom: 12 }}>📣</p>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#fff', marginBottom: 6 }}>Be the first to post</p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.58)', maxWidth: 280, margin: '0 auto' }}>
+          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: '#fff', maxWidth: 280, margin: '0 auto' }}>
             Share a tip, post an opportunity, or start a conversation with students at your campus.
           </p>
         </div>
@@ -652,7 +652,7 @@ export default function CampusFeed({ institution }: Props) {
               disabled={loadingMore}
               style={{
                 padding: '12px', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.08)',
-                background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.58)',
+                background: 'rgba(255,255,255,0.06)', color: '#fff',
                 fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem',
                 cursor: 'pointer', width: '100%', marginTop: 4,
               }}

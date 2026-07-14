@@ -89,13 +89,13 @@ export function ProcrastinationReflectionModal({ trigger, taskDesc, onClose, onS
         <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 18, color: '#fff', marginBottom: 6 }}>
           What happened?
         </div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 24 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#fff', marginBottom: 24 }}>
           {taskDesc}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', marginBottom: 7, letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 7, letterSpacing: '0.1em' }}>
               1. WHAT GOT IN THE WAY?
             </div>
             <textarea
@@ -108,7 +108,7 @@ export function ProcrastinationReflectionModal({ trigger, taskDesc, onClose, onS
           </div>
 
           <div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', marginBottom: 7, letterSpacing: '0.1em' }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', marginBottom: 7, letterSpacing: '0.1em' }}>
               2. WHAT WILL YOU DO DIFFERENTLY?
             </div>
             <textarea
@@ -125,7 +125,7 @@ export function ProcrastinationReflectionModal({ trigger, taskDesc, onClose, onS
           <button onClick={onClose} style={{
             flex: 1, padding: '12px 0', borderRadius: 12,
             border: '1px solid rgba(255,255,255,0.1)',
-            background: 'transparent', color: 'rgba(255,255,255,0.4)',
+            background: 'transparent', color: '#fff',
             fontFamily: 'Sora,sans-serif', cursor: 'pointer', fontSize: 13,
           }}>Skip</button>
           <button onClick={handleSave} disabled={saving} style={{
@@ -176,7 +176,7 @@ export default function ProcrastinationJournal() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
           <div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.18em' }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff', letterSpacing: '0.18em' }}>
               📓 PROCRASTINATION JOURNAL
             </div>
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-primary)', marginTop: 3 }}>
@@ -187,7 +187,7 @@ export default function ProcrastinationJournal() {
             fontFamily: '"JetBrains Mono",monospace', fontSize: 10, fontWeight: 700,
             padding: '7px 14px', borderRadius: 10,
             border: '1px solid rgba(255,255,255,0.1)',
-            background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)',
+            background: 'rgba(255,255,255,0.05)', color: '#fff',
             cursor: 'pointer',
           }}>
             + Reflect
@@ -197,7 +197,7 @@ export default function ProcrastinationJournal() {
         {entries.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '12px 0' }}>
             <div style={{ fontSize: 26, marginBottom: 8 }}>📓</div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.5 }}>
               When things don't go to plan, reflect here. Every miss is data — not failure.
             </div>
           </div>
@@ -218,24 +218,24 @@ export default function ProcrastinationJournal() {
                   <span>{triggerIcon(entry.trigger)}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.6)',
+                      fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff',
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {entry.obstacle.slice(0, 60)}{entry.obstacle.length > 60 ? '…' : ''}
                     </div>
                   </div>
-                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>
+                  <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#fff' }}>
                     {new Date(entry.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                   </div>
                 </div>
                 {expanded === entry.id && (
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 10 }}>
                     <div style={{ marginBottom: 8 }}>
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.25)', marginBottom: 4, letterSpacing: '0.1em' }}>OBSTACLE</div>
-                      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>{entry.obstacle}</div>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', marginBottom: 4, letterSpacing: '0.1em' }}>OBSTACLE</div>
+                      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#fff', lineHeight: 1.5 }}>{entry.obstacle}</div>
                     </div>
                     <div>
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.25)', marginBottom: 4, letterSpacing: '0.1em' }}>PLAN</div>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#fff', marginBottom: 4, letterSpacing: '0.1em' }}>PLAN</div>
                       <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: '#4ecf9e', lineHeight: 1.5 }}>{entry.plan}</div>
                     </div>
                   </div>

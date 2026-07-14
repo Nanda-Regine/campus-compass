@@ -535,7 +535,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
           <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '0.02em' }}>
             📞 CALL 10111
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.75)', marginTop: 3 }}>
+          <div style={{ fontSize: '0.72rem', color: '#fff', marginTop: 3 }}>
             South African Police Emergency
           </div>
         </a>

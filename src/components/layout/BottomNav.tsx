@@ -237,7 +237,7 @@ export function BottomNav() {
               </Link>
               <button
                 onClick={() => setOpenSheet(null)}
-                style={{ background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.58)' }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}
               >
                 <X size={14} />
               </button>
