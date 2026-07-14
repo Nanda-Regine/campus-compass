@@ -188,7 +188,7 @@ export default function StreakPage() {
                     </span>
                   </div>
                 ) : (
-                  <span className="font-mono text-[0.62rem] text-white/25 uppercase tracking-widest">Daily Streak</span>
+                  <span className="font-mono text-[0.62rem] text-white/50 uppercase tracking-widest">Daily Streak</span>
                 )}
                 {streak?.todayDone && (
                   <span className="font-mono text-[0.6rem] px-2 py-1 rounded-full" style={{ background: 'rgba(78,207,158,0.12)', color: '#4ecf9e' }}>
@@ -201,9 +201,9 @@ export default function StreakPage() {
               <div className="px-5 pt-3 pb-2 flex items-end gap-3">
                 <span className="font-display font-black leading-none" style={{ fontSize: 72, color: accentColor }}>{s}</span>
                 <div className="pb-3">
-                  <div className="font-mono text-sm text-white/40">day{s !== 1 ? 's' : ''}</div>
+                  <div className="font-mono text-sm text-white/65">day{s !== 1 ? 's' : ''}</div>
                   {streak && streak.longestStreak > s && (
-                    <div className="font-mono text-[0.62rem] text-white/20 mt-0.5">best: {streak.longestStreak}</div>
+                    <div className="font-mono text-[0.62rem] text-white/45 mt-0.5">best: {streak.longestStreak}</div>
                   )}
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function StreakPage() {
 
               {/* 7-day activity grid */}
               <div className="px-5 pb-4">
-                <div className="font-mono text-[0.62rem] text-white/25 uppercase tracking-widest mb-2">Last 7 days</div>
+                <div className="font-mono text-[0.62rem] text-white/50 uppercase tracking-widest mb-2">Last 7 days</div>
                 <div className="flex gap-1.5">
                   {days7.map((done, i) => {
                     const labelIdx = (dayLabelOffset - 6 + i + 7) % 7
@@ -237,7 +237,7 @@ export default function StreakPage() {
                         >
                           {done ? <span style={{ color: accentColor }}>✓</span> : <span className="text-white/15">·</span>}
                         </div>
-                        <span className="font-mono text-[0.62rem] text-white/30">{DAY_LABELS[labelIdx]?.slice(0, 2)}</span>
+                        <span className="font-mono text-[0.62rem] text-white/55">{DAY_LABELS[labelIdx]?.slice(0, 2)}</span>
                       </div>
                     )
                   })}
@@ -248,7 +248,7 @@ export default function StreakPage() {
               {nextMilestone && (
                 <div className="px-5 pb-5">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-mono text-[0.62rem] text-white/35">
+                    <span className="font-mono text-[0.62rem] text-white/60">
                       Next: {nextMilestone.emoji} {nextMilestone.label} (+{nextMilestone.xp} XP)
                     </span>
                     <span className="font-mono text-[0.62rem]" style={{ color: accentColor }}>{nextMilestone.days - s}d away</span>
@@ -267,7 +267,7 @@ export default function StreakPage() {
 
         {/* ── Milestone unlocks ── */}
         <div>
-          <div className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest mb-3">Milestones</div>
+          <div className="font-mono text-[0.6rem] text-white/55 uppercase tracking-widest mb-3">Milestones</div>
           <div className="grid grid-cols-4 gap-2">
             {MILESTONES.map(m => {
               const s = streak?.streak ?? 0
@@ -283,7 +283,7 @@ export default function StreakPage() {
                   }}
                 >
                   <span className="text-xl" style={{ filter: unlocked ? 'none' : 'grayscale(1)' }}>{m.emoji}</span>
-                  <span className="font-mono text-[0.62rem] text-white/50 text-center leading-tight">{m.label}</span>
+                  <span className="font-mono text-[0.62rem] text-white/70 text-center leading-tight">{m.label}</span>
                   <span className="font-mono text-[0.62rem]" style={{ color: unlocked ? '#f59e0b' : 'rgba(255,255,255,0.2)' }}>
                     {unlocked ? '✓' : `${m.days}d`}
                   </span>
@@ -295,7 +295,7 @@ export default function StreakPage() {
 
         {/* ── Savings Goals ── */}
         <div className="flex items-center justify-between">
-          <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest">Savings Goals</div>
+          <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest">Savings Goals</div>
           <button
             onClick={() => setShowAdd(v => !v)}
             className="font-mono text-[0.6rem] text-teal-400 hover:text-teal-300 transition-colors"
@@ -324,30 +324,30 @@ export default function StreakPage() {
               placeholder="Goal name (e.g. New laptop)"
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 font-body text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-teal-600/50"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 font-body text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-teal-600/50"
             />
 
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Target (R)</label>
+                <label className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest block mb-1">Target (R)</label>
                 <input
                   type="number" placeholder="5000" value={form.target_amount}
                   onChange={e => setForm(f => ({ ...f, target_amount: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 font-body text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-teal-600/50"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 font-body text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-teal-600/50"
                 />
               </div>
               <div>
-                <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Already saved (R)</label>
+                <label className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest block mb-1">Already saved (R)</label>
                 <input
                   type="number" placeholder="0" value={form.current_amount}
                   onChange={e => setForm(f => ({ ...f, current_amount: e.target.value }))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 font-body text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-teal-600/50"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 font-body text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-teal-600/50"
                 />
               </div>
             </div>
 
             <div>
-              <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1">Target date (optional)</label>
+              <label className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest block mb-1">Target date (optional)</label>
               <input
                 type="date" value={form.deadline}
                 onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))}
@@ -357,7 +357,7 @@ export default function StreakPage() {
 
             {/* Color picker */}
             <div>
-              <label className="font-mono text-[0.62rem] text-white/30 uppercase tracking-widest block mb-1.5">Colour</label>
+              <label className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest block mb-1.5">Colour</label>
               <div className="flex gap-2">
                 {COLORS.map(c => (
                   <button
@@ -394,7 +394,7 @@ export default function StreakPage() {
           <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-8 text-center">
             <div className="text-4xl mb-3">🎯</div>
             <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
-            <p className="font-mono text-[0.6rem] text-white/30 mt-1">Set a goal and track your progress</p>
+            <p className="font-mono text-[0.6rem] text-white/55 mt-1">Set a goal and track your progress</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -416,7 +416,7 @@ export default function StreakPage() {
                         <div>
                           <div className="font-display font-bold text-white text-sm">{goal.name}</div>
                           {goal.deadline && (
-                            <div className="font-mono text-[0.62rem] text-white/30 mt-0.5">
+                            <div className="font-mono text-[0.62rem] text-white/55 mt-0.5">
                               by {fmt.dateShort(goal.deadline)}
                             </div>
                           )}
@@ -426,7 +426,7 @@ export default function StreakPage() {
                         <div className="font-display font-bold text-sm" style={{ color: goal.color }}>
                           {fmt.currency(goal.current_amount)}
                         </div>
-                        <div className="font-mono text-[0.62rem] text-white/25">
+                        <div className="font-mono text-[0.62rem] text-white/50">
                           of {fmt.currency(goal.target_amount)}
                         </div>
                       </div>
@@ -462,7 +462,7 @@ export default function StreakPage() {
                         )}
                         <button
                           onClick={() => deleteGoal(goal.id)}
-                          className="font-mono text-[0.62rem] text-white/20 hover:text-red-400 transition-colors px-1"
+                          className="font-mono text-[0.62rem] text-white/45 hover:text-red-400 transition-colors px-1"
                         >
                           ✕
                         </button>
@@ -477,7 +477,7 @@ export default function StreakPage() {
                           placeholder="Amount (R)"
                           value={contribAmount}
                           onChange={e => setContribAmount(e.target.value)}
-                          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 font-body text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-teal-600/50"
+                          className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 font-body text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-teal-600/50"
                           autoFocus
                         />
                         <button
@@ -507,7 +507,7 @@ export default function StreakPage() {
         {/* Link to budget */}
         <Link
           href="/budget"
-          className="block text-center font-mono text-[0.6rem] text-white/25 hover:text-white/40 transition-colors py-2"
+          className="block text-center font-mono text-[0.6rem] text-white/50 hover:text-white/65 transition-colors py-2"
         >
           Track expenses in Budget →
         </Link>

@@ -51,7 +51,7 @@ const STATUS_COLOR: Record<DisbursementStatus, string> = {
 }
 
 const STATUS_BG: Record<DisbursementStatus, string> = {
-  expected: 'rgba(255,255,255,0.04)',
+  expected: 'rgba(255,255,255,0.07)',
   pending:  'var(--gold-dim)',
   received: 'var(--teal-dim)',
   late:     'var(--coral-dim)',
@@ -1031,7 +1031,7 @@ export default function NsfasTrackerOS({ budget, userId, fundingType }: Props) {
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 10, fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)' }}>
+          <div style={{ marginTop: 10, fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)' }}>
             Amounts are 2025/26 DHET-approved rates. Contact your TVET campus financial aid office for your institution-specific schedule.
           </div>
         </div>

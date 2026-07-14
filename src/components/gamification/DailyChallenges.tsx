@@ -11,7 +11,7 @@ const ICON_COLORS: Record<string, { bg: string; glow: string; border: string }> 
   '🧠': { bg: 'linear-gradient(135deg, #2a1f4d, #160f2e)', glow: 'rgba(155,111,212,0.55)', border: 'rgba(155,111,212,0.5)' },
   '⏱️': { bg: 'linear-gradient(135deg, #4d3a0d, #2e220a)', glow: 'rgba(201,168,76,0.55)', border: 'rgba(201,168,76,0.5)' },
   '🃏': { bg: 'linear-gradient(135deg, #2a1f4d, #160f2e)', glow: 'rgba(155,111,212,0.55)', border: 'rgba(155,111,212,0.5)' },
-  '🏁': { bg: 'linear-gradient(135deg, #1a1a1a, #0d0d0d)', glow: 'rgba(255,255,255,0.35)', border: 'rgba(255,255,255,0.35)' },
+  '🏁': { bg: 'linear-gradient(135deg, #1a1a1a, #0d0d0d)', glow: 'rgba(255,255,255,0.55)', border: 'rgba(255,255,255,0.55)' },
   '✦':  { bg: 'linear-gradient(135deg, #0d2a4d, #08192e)', glow: 'rgba(112,144,208,0.55)', border: 'rgba(112,144,208,0.5)' },
   '🎓': { bg: 'linear-gradient(135deg, #4d2a0d, #2e180a)', glow: 'rgba(232,131,74,0.55)', border: 'rgba(232,131,74,0.5)' },
   '💼': { bg: 'linear-gradient(135deg, #0d2a4d, #08192e)', glow: 'rgba(112,144,208,0.55)', border: 'rgba(112,144,208,0.5)' },
@@ -167,7 +167,7 @@ export default function DailyChallenges() {
           color: done === 3 ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
           background: done === 3
             ? 'linear-gradient(135deg, rgba(78,207,158,0.18), rgba(78,207,158,0.08))'
-            : 'rgba(255,255,255,0.05)',
+            : 'rgba(255,255,255,0.08)',
           border: `1.5px solid ${done === 3 ? 'rgba(78,207,158,0.45)' : 'rgba(255,255,255,0.1)'}`,
           borderRadius: 20,
           padding: '3px 10px',
@@ -208,7 +208,7 @@ export default function DailyChallenges() {
               fontFamily: 'Sora, sans-serif',
               fontSize: 9,
               fontWeight: 600,
-              color: i < done ? barColor : 'rgba(255,255,255,0.22)',
+              color: i < done ? barColor : 'rgba(255,255,255,0.42)',
               transition: 'color 0.4s',
               letterSpacing: '0.03em',
               textTransform: 'uppercase',
@@ -317,7 +317,7 @@ function QuestCard({
       borderRadius: 13,
       background: ch.completed
         ? 'linear-gradient(135deg, rgba(78,207,158,0.5), rgba(78,207,158,0.1), rgba(78,207,158,0.3))'
-        : `linear-gradient(135deg, ${iconColor.border}, rgba(255,255,255,0.06), rgba(255,255,255,0.03))`,
+        : `linear-gradient(135deg, ${iconColor.border}, rgba(255,255,255,0.06), rgba(255,255,255,0.06))`,
       animation: justDone ? 'dc-card-pop 0.45s cubic-bezier(0.34,1.56,0.64,1)' : undefined,
       transition: 'all 0.35s ease',
     }}>
@@ -333,7 +333,7 @@ function QuestCard({
         cursor: (!ch.autoDetect && !ch.completed) ? 'pointer' : 'default',
         boxShadow: ch.completed
           ? 'inset 0 0 20px rgba(78,207,158,0.05)'
-          : pressing ? 'inset 0 0 16px rgba(255,255,255,0.04)' : 'none',
+          : pressing ? 'inset 0 0 16px rgba(255,255,255,0.07)' : 'none',
       }}
         onClick={(!ch.autoDetect && !ch.completed) ? handleMark : undefined}
       >
@@ -383,7 +383,7 @@ function QuestCard({
           <div style={{
             fontFamily: 'Sora, sans-serif',
             fontSize: 10,
-            color: ch.completed ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.38)',
+            color: ch.completed ? 'rgba(255,255,255,0.42)' : 'rgba(255,255,255,0.38)',
             marginTop: 2,
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
             transition: 'color 0.3s',

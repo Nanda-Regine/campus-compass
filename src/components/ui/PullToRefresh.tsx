@@ -30,7 +30,7 @@ export default function PullToRefresh({ onRefresh }: Props) {
         >
           <path d="M7 1a6 6 0 100 12A6 6 0 007 1zm0 0v3M7 1l2 2M7 1L5 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <span className="font-mono text-[0.58rem] text-white/50">
+        <span className="font-mono text-[0.58rem] text-white/70">
           {refreshing ? 'Refreshing…' : 'Release to refresh'}
         </span>
       </div>

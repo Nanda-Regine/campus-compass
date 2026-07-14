@@ -117,7 +117,7 @@ function Tab72Hours() {
             style={{
               display: 'flex',
               gap: 14,
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 12,
               padding: '14px 16px',
@@ -155,7 +155,7 @@ function Tab72Hours() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {THUTHUZELA.map(t => (
             <div key={t.location} style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 10,
               padding: '12px 14px',
@@ -196,7 +196,7 @@ function TabHotlines() {
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: h.important ? '16px 16px' : '13px 14px',
-            background: h.important ? 'rgba(248,113,113,0.07)' : 'rgba(255,255,255,0.03)',
+            background: h.important ? 'rgba(248,113,113,0.07)' : 'rgba(255,255,255,0.06)',
             border: h.important ? '1px solid rgba(248,113,113,0.25)' : '1px solid rgba(255,255,255,0.06)',
             borderRadius: 12, textDecoration: 'none',
           }}
@@ -242,7 +242,7 @@ function TabRights() {
 
       {RIGHTS_LIST.map((right, i) => (
         <div key={i} style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: `1px solid ${expanded === i ? 'rgba(248,113,113,0.30)' : 'rgba(255,255,255,0.06)'}`,
           borderLeft: '3px solid #f87171',
           borderRadius: 12, overflow: 'hidden',
@@ -288,7 +288,7 @@ function TabForFriends() {
       </div>
 
       <div style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: 14, padding: '16px',
       }}>
@@ -308,7 +308,7 @@ function TabForFriends() {
       </div>
 
       <div style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: 14, padding: '16px',
       }}>
@@ -333,7 +333,7 @@ function TabForFriends() {
       </div>
 
       <div style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: 14, padding: '16px',
       }}>
@@ -533,7 +533,7 @@ function EmergencySection() {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '11px 14px',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 12,
               textDecoration: 'none',
@@ -563,7 +563,7 @@ function ImmediateStepsSection() {
             display: 'flex',
             gap: 12,
             padding: '12px 14px',
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 12,
           }}
@@ -601,7 +601,7 @@ function MedicalCareSection() {
           key={item.title}
           style={{
             padding: '13px 14px',
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderLeft: `3px solid ${item.color}`,
             borderRadius: 12,
@@ -630,7 +630,7 @@ function LegalRightsSection() {
             color: 'var(--text-secondary)',
             lineHeight: 1.6,
             padding: '10px 14px',
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 12,
           }}
@@ -683,7 +683,7 @@ function RecoverySection() {
             color: 'var(--text-secondary)',
             lineHeight: 1.6,
             padding: '10px 14px',
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 12,
           }}
@@ -824,7 +824,7 @@ export default function GBVResponseGuide() {
 
         {/* Header */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 16, padding: '18px 20px',
           position: 'relative', overflow: 'hidden',
@@ -894,7 +894,7 @@ export default function GBVResponseGuide() {
             href="tel:10111"
             style={{
               flex: 1, display: 'block',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 10, padding: '10px 0',
               textDecoration: 'none', textAlign: 'center',

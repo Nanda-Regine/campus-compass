@@ -240,7 +240,7 @@ export default function ValuesMap() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>VALUES MAP</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Discover what you actually stand for</div>
@@ -286,7 +286,7 @@ function QuizPhase({ dilemma, index, total, onChoose }: {
         </div>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '16px', lineHeight: 1.65 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '16px', lineHeight: 1.65 }}>
         <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 8 }}>THE SCENARIO</div>
         <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>{dilemma.scenario}</div>
       </div>
@@ -297,7 +297,7 @@ function QuizPhase({ dilemma, index, total, onChoose }: {
             key={i}
             onClick={() => onChoose(option.values)}
             style={{
-              padding: '14px 16px', background: 'rgba(255,255,255,0.03)',
+              padding: '14px 16px', background: 'rgba(255,255,255,0.06)',
               border: `1px solid rgba(255,255,255,0.08)`,
               borderRadius: 14, cursor: 'pointer', textAlign: 'left',
               transition: 'border-color 0.2s',
@@ -330,7 +330,7 @@ function ResultsPhase({ top3, onContinue, onRetake }: { top3: ValueName[]; onCon
       {top3.map((valueName, rank) => {
         const meta = VALUE_META[valueName]
         return (
-          <div key={valueName} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,${rank === 0 ? '0.35' : '0.15'})`, borderRadius: 16, padding: '16px', position: 'relative', overflow: 'hidden' }}>
+          <div key={valueName} style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,${rank === 0 ? '0.35' : '0.15'})`, borderRadius: 16, padding: '16px', position: 'relative', overflow: 'hidden' }}>
             {rank === 0 && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div>
@@ -348,7 +348,7 @@ function ResultsPhase({ top3, onContinue, onRetake }: { top3: ValueName[]; onCon
               <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 6 }}>CAREER PATHS THAT HONOUR THIS</div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                 {meta.careers.map(career => (
-                  <span key={career} style={{ fontSize: '0.67rem', padding: '3px 9px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, color: 'var(--text-secondary)' }}>{career}</span>
+                  <span key={career} style={{ fontSize: '0.67rem', padding: '3px 9px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 100, color: 'var(--text-secondary)' }}>{career}</span>
                 ))}
               </div>
             </div>
@@ -388,7 +388,7 @@ function CommitmentPhase({ top3, commitment, onChange, onCopy, copied, onRetake 
         ))}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
         <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 8 }}>MY VALUES COMMITMENT</div>
         <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 10 }}>
           Write how you will live these values. Be specific. This becomes your personal compass.

@@ -284,7 +284,7 @@ export default function KitchenGuide() {
             style={{
               flexShrink: 0, padding: '10px 16px', borderRadius: 14,
               border: section === s.id ? 'none' : '1px solid rgba(255,255,255,0.1)',
-              background: section === s.id ? s.color : 'rgba(255,255,255,0.04)',
+              background: section === s.id ? s.color : 'rgba(255,255,255,0.07)',
               color: section === s.id ? '#000' : 'rgba(255,255,255,0.55)',
               fontFamily: 'Sora,sans-serif', fontWeight: section === s.id ? 700 : 500, fontSize: 12.5,
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
@@ -340,11 +340,11 @@ export default function KitchenGuide() {
                     <div key={idx} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       padding: '10px 14px', borderRadius: 10,
-                      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)',
                     }}>
                       <div>
                         <div style={{ fontFamily: 'DM Sans,sans-serif', fontWeight: 600, fontSize: 13.5, color: 'var(--text-secondary)' }}>{item.name}</div>
-                        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{item.qty}</div>
+                        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>{item.qty}</div>
                       </div>
                       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: catColor }}>R{item.cost}</div>
                     </div>
@@ -355,10 +355,10 @@ export default function KitchenGuide() {
           })}
 
           <div style={{
-            background: 'rgba(255,255,255,0.03)', borderRadius: 14, padding: '14px 16px',
+            background: 'rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px',
             border: '1px dashed rgba(255,255,255,0.1)', marginTop: 8,
           }}>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 8 }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>
               💡 MONEY TIPS
             </div>
             {[
@@ -367,7 +367,7 @@ export default function KitchenGuide() {
               'Dry goods (rice, lentils, oats, maize meal) are always cheaper per kg in larger sizes.',
               'Frozen veg is JUST as nutritious as fresh — and won\'t go off before you use it.',
             ].map((tip, i) => (
-              <div key={i} style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 4 }}>
+              <div key={i} style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.66)', lineHeight: 1.6, marginBottom: 4 }}>
                 • {tip}
               </div>
             ))}
@@ -380,7 +380,7 @@ export default function KitchenGuide() {
         <div>
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', marginBottom: 6 }}>Cooking Skills 101</div>
-            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>
               8 essential techniques that cover 90% of what you'll ever need to cook as a student.
             </div>
           </div>
@@ -391,7 +391,7 @@ export default function KitchenGuide() {
                 <div
                   key={idx}
                   style={{
-                    background: open ? 'rgba(245,158,11,0.07)' : 'rgba(255,255,255,0.03)',
+                    background: open ? 'rgba(245,158,11,0.07)' : 'rgba(255,255,255,0.06)',
                     border: `1px solid ${open ? 'rgba(245,158,11,0.25)' : 'rgba(255,255,255,0.07)'}`,
                     borderRadius: 14, overflow: 'hidden',
                   }}
@@ -407,7 +407,7 @@ export default function KitchenGuide() {
                       <span style={{ fontSize: 20 }}>{skill.emoji}</span>
                       <span style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-secondary)' }}>{skill.title}</span>
                     </div>
-                    <span style={{ color: open ? '#f59e0b' : 'rgba(255,255,255,0.3)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
+                    <span style={{ color: open ? '#f59e0b' : 'rgba(255,255,255,0.5)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
                   </button>
                   {open && (
                     <div style={{ padding: '0 16px 16px' }}>
@@ -445,7 +445,7 @@ export default function KitchenGuide() {
         <div>
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', marginBottom: 6 }}>Airfryer Meals</div>
-            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>
               No oil, no fuss, no watching the stove. These 6 recipes are designed for students with an airfryer and zero patience.
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
@@ -463,7 +463,7 @@ export default function KitchenGuide() {
               const open = expandedAF === idx
               return (
                 <div key={idx} style={{
-                  background: open ? 'rgba(251,146,60,0.06)' : 'rgba(255,255,255,0.03)',
+                  background: open ? 'rgba(251,146,60,0.06)' : 'rgba(255,255,255,0.06)',
                   border: `1px solid ${open ? 'rgba(251,146,60,0.25)' : 'rgba(255,255,255,0.07)'}`,
                   borderRadius: 16, overflow: 'hidden',
                 }}>
@@ -478,19 +478,19 @@ export default function KitchenGuide() {
                           <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-secondary)', marginBottom: 3 }}>{r.name}</div>
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                             {[{ l: '⏱️', v: r.time }, { l: '🌡️', v: r.temp }, { l: '💰', v: r.cost }].map(item => (
-                              <span key={item.l} style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)' }}>
+                              <span key={item.l} style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)' }}>
                                 {item.l} {item.v}
                               </span>
                             ))}
                           </div>
                         </div>
                       </div>
-                      <span style={{ color: open ? '#fb923c' : 'rgba(255,255,255,0.3)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
+                      <span style={{ color: open ? '#fb923c' : 'rgba(255,255,255,0.5)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
                     </div>
                   </button>
                   {open && (
                     <div style={{ padding: '0 16px 16px' }}>
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 6, letterSpacing: '0.12em' }}>INGREDIENTS</div>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6, letterSpacing: '0.12em' }}>INGREDIENTS</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
                         {r.ingredients.map((ing, i) => (
                           <div key={i} style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
@@ -498,7 +498,7 @@ export default function KitchenGuide() {
                           </div>
                         ))}
                       </div>
-                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginBottom: 6, letterSpacing: '0.12em' }}>STEPS</div>
+                      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginBottom: 6, letterSpacing: '0.12em' }}>STEPS</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
                         {r.steps.map((step, si) => (
                           <div key={si} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
@@ -533,7 +533,7 @@ export default function KitchenGuide() {
         <div>
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', marginBottom: 6 }}>Spices Index</div>
-            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>
               These 12 spices cover everything from a student kitchen. Start with salt, curry powder, and paprika.
             </div>
           </div>
@@ -541,16 +541,16 @@ export default function KitchenGuide() {
             {SPICES.map((spice, i) => (
               <div key={i} style={{
                 padding: '14px 16px', borderRadius: 14,
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(167,139,250,0.12)',
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(167,139,250,0.12)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                   <span style={{ fontSize: 22, flexShrink: 0 }}>{spice.emoji}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-secondary)', marginBottom: 4 }}>{spice.name}</div>
-                    <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', marginBottom: 6, lineHeight: 1.5 }}>
+                    <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.66)', marginBottom: 6, lineHeight: 1.5 }}>
                       <span style={{ color: '#a78bfa' }}>Flavour: </span>{spice.flavour}
                     </div>
-                    <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.5)', marginBottom: 6, lineHeight: 1.5 }}>
+                    <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.66)', marginBottom: 6, lineHeight: 1.5 }}>
                       <span style={{ color: '#a78bfa' }}>Pairs with: </span>{spice.pairsWidth}
                     </div>
                     <div style={{
@@ -573,7 +573,7 @@ export default function KitchenGuide() {
         <div>
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', marginBottom: 6 }}>Food & Your Body</div>
-            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+            <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6 }}>
               What SA student staple foods actually do for your brain, body, and study performance.
             </div>
           </div>
@@ -582,7 +582,7 @@ export default function KitchenGuide() {
               const open = expandedBen === idx
               return (
                 <div key={idx} style={{
-                  background: open ? 'rgba(52,211,153,0.06)' : 'rgba(255,255,255,0.03)',
+                  background: open ? 'rgba(52,211,153,0.06)' : 'rgba(255,255,255,0.06)',
                   border: `1px solid ${open ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.07)'}`,
                   borderRadius: 14, overflow: 'hidden',
                 }}>
@@ -598,7 +598,7 @@ export default function KitchenGuide() {
                           <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8.5, color: 'rgba(52,211,153,0.6)', marginTop: 2 }}>{f.nutrients}</div>
                         </div>
                       </div>
-                      <span style={{ color: open ? '#34d399' : 'rgba(255,255,255,0.3)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
+                      <span style={{ color: open ? '#34d399' : 'rgba(255,255,255,0.5)', fontSize: 12, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
                     </div>
                   </button>
                   {open && (

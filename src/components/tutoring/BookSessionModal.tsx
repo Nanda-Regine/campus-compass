@@ -63,7 +63,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
-    background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.12)',
     borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem',
     fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
   }
@@ -82,7 +82,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: '#4ecf9e' }}>R{tutor.rate_per_hour}/hr</div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.66)' }}>
             <X size={16} />
           </button>
         </div>
@@ -90,7 +90,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
         <form onSubmit={handleBook} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* Subject */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Subject</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Subject</label>
             {tutor.subjects.length > 1 ? (
               <select style={{ ...inputStyle }} value={subject} onChange={e => setSubject(e.target.value)}>
                 {tutor.subjects.map(s => <option key={s} value={s}>{s}</option>)}
@@ -102,7 +102,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
 
           {/* Date */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>
               <Calendar size={10} style={{ display: 'inline', marginRight: 4 }} />
               Preferred date (optional)
             </label>
@@ -111,13 +111,13 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
 
           {/* Duration */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>
               <Clock size={10} style={{ display: 'inline', marginRight: 4 }} />
               Duration
             </label>
             <div style={{ display: 'flex', gap: 8 }}>
               {DURATIONS.map(d => (
-                <button key={d.value} type="button" onClick={() => setDuration(d.value)} style={{ flex: 1, padding: '8px 0', borderRadius: 10, border: '0.5px solid', borderColor: duration === d.value ? '#4ecf9e' : 'rgba(255,255,255,0.1)', background: duration === d.value ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)', color: duration === d.value ? '#4ecf9e' : 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', cursor: 'pointer' }}>
+                <button key={d.value} type="button" onClick={() => setDuration(d.value)} style={{ flex: 1, padding: '8px 0', borderRadius: 10, border: '0.5px solid', borderColor: duration === d.value ? '#4ecf9e' : 'rgba(255,255,255,0.1)', background: duration === d.value ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.07)', color: duration === d.value ? '#4ecf9e' : 'rgba(255,255,255,0.62)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', cursor: 'pointer' }}>
                   {d.label}
                 </button>
               ))}
@@ -134,15 +134,15 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
 
           {/* Notes */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Notes to tutor</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Notes to tutor</label>
             <textarea style={{ ...inputStyle, resize: 'none', height: 72 }} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Specific topics, exam date, what you're struggling with..." maxLength={500} />
           </div>
 
           {/* Total + Submit */}
           <div style={{ background: 'rgba(78,207,158,0.06)', border: '0.5px solid rgba(78,207,158,0.2)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)' }}>Agree to pay tutor</div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>sorted directly · cash or EFT</div>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.66)' }}>Agree to pay tutor</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>sorted directly · cash or EFT</div>
             </div>
             <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '1rem', color: '#4ecf9e' }}>R{total.toFixed(0)}</div>
           </div>

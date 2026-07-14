@@ -118,7 +118,7 @@ export default function SRCAnalyticsOS({ userId, initialPosts, members, isSrcMem
                 background: isActive ? `${ACCENT}14` : 'transparent',
                 border: 'none',
                 borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
-                color: isActive ? ACCENT : 'rgba(255,255,255,0.4)',
+                color: isActive ? ACCENT : 'rgba(255,255,255,0.58)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
                 padding: '6px 2px',
@@ -163,7 +163,7 @@ export default function SRCAnalyticsOS({ userId, initialPosts, members, isSrcMem
               {activeTab.label}
             </div>
             {university && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {university}
               </div>
             )}
@@ -243,7 +243,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                 borderRadius: 20,
                 border: `1px solid ${isActive ? color : 'rgba(255,255,255,0.12)'}`,
                 background: isActive ? `${color}18` : 'transparent',
-                color: isActive ? color : 'rgba(255,255,255,0.5)',
+                color: isActive ? color : 'rgba(255,255,255,0.66)',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.6rem',
                 letterSpacing: '0.04em',
@@ -259,7 +259,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
       </div>
 
       {ordered.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '48px 24px', color: 'rgba(255,255,255,0.3)' }}>
+        <div style={{ textAlign: 'center', padding: '48px 24px', color: 'rgba(255,255,255,0.5)' }}>
           <Megaphone size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: 6 }}>
             No posts yet
@@ -316,7 +316,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                   )}
                   {cfg.label}
                 </span>
-                <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-mono)' }}>
+                <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)' }}>
                   {timeAgo(post.created_at)}
                 </span>
               </div>
@@ -352,7 +352,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                   style={{
                     display: 'flex', alignItems: 'center', gap: 4,
                     background: 'none', border: 'none',
-                    color: liked ? '#f87171' : 'rgba(255,255,255,0.35)',
+                    color: liked ? '#f87171' : 'rgba(255,255,255,0.55)',
                     cursor: 'pointer',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.65rem',
@@ -363,7 +363,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                   <Heart size={13} fill={liked ? '#f87171' : 'none'} />
                   {post.likes_count}
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.25)', fontFamily: 'var(--font-mono)', fontSize: '0.65rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-mono)', fontSize: '0.65rem' }}>
                   <Eye size={12} />
                   {post.views_count}
                 </div>
@@ -381,9 +381,9 @@ function TeamTab({ members }: { members: Member[] }) {
   return (
     <div>
       {members.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '48px 24px', color: 'rgba(255,255,255,0.3)' }}>
+        <div style={{ textAlign: 'center', padding: '48px 24px', color: 'rgba(255,255,255,0.5)' }}>
           <Users2 size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: 6, color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', marginBottom: 6, color: 'rgba(255,255,255,0.66)' }}>
             No SRC members registered yet
           </div>
           <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem' }}>
@@ -421,7 +421,7 @@ function TeamTab({ members }: { members: Member[] }) {
                   </span>
                 </div>
                 {member.portfolio && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.58)', marginBottom: 4 }}>
                     Portfolio: {member.portfolio}
                   </div>
                 )}
@@ -443,7 +443,7 @@ function TeamTab({ members }: { members: Member[] }) {
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.8rem', color: 'var(--text-primary)', marginBottom: 3 }}>
             Want to join SRC?
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.66)', lineHeight: 1.5 }}>
             SRC membership is subject to election by your student body. Contact your university's Student Affairs office for information on how to stand for election. Once elected, you can register your profile on this platform.
           </div>
         </div>
@@ -477,7 +477,7 @@ function PostTab({
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)', marginBottom: 8 }}>
           SRC members only
         </div>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.55, maxWidth: 280, margin: '0 auto' }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.55, maxWidth: 280, margin: '0 auto' }}>
           Only active SRC members can publish posts. If you are an elected SRC representative, please register your profile via the Members API.
         </div>
       </div>
@@ -527,7 +527,7 @@ function PostTab({
 
           {/* Title */}
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.62)', display: 'block', marginBottom: 6 }}>
               Title *
             </label>
             <input
@@ -538,7 +538,7 @@ function PostTab({
               required
               style={{
                 width: '100%',
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(255,255,255,0.12)',
                 borderRadius: 10,
                 padding: '10px 12px',
@@ -549,14 +549,14 @@ function PostTab({
                 boxSizing: 'border-box',
               }}
             />
-            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)', marginTop: 3 }}>
+            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
               {title.length}/120
             </div>
           </div>
 
           {/* Body */}
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.62)', display: 'block', marginBottom: 6 }}>
               Body *
             </label>
             <textarea
@@ -568,7 +568,7 @@ function PostTab({
               required
               style={{
                 width: '100%',
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(255,255,255,0.12)',
                 borderRadius: 10,
                 padding: '10px 12px',
@@ -581,14 +581,14 @@ function PostTab({
                 lineHeight: 1.6,
               }}
             />
-            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)', marginTop: 3 }}>
+            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
               {body.length}/5000
             </div>
           </div>
 
           {/* Category */}
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.62)', display: 'block', marginBottom: 6 }}>
               Category *
             </label>
             <div style={{ position: 'relative' }}>
@@ -597,7 +597,7 @@ function PostTab({
                 onChange={e => setCategory(e.target.value as PostCategory)}
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.12)',
                   borderRadius: 10,
                   padding: '10px 36px 10px 12px',
@@ -615,7 +615,7 @@ function PostTab({
                   </option>
                 ))}
               </select>
-              <ChevronDown size={14} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none' }} />
+              <ChevronDown size={14} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.58)', pointerEvents: 'none' }} />
             </div>
           </div>
 
@@ -625,7 +625,7 @@ function PostTab({
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
                 Pin this post
               </div>
-              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)' }}>
                 Pinned posts appear at the top of the feed
               </div>
             </div>
@@ -705,7 +705,7 @@ function AboutTab() {
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: ACCENT, flexShrink: 0, marginTop: 6 }} />
               <div>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.78rem', color: 'var(--text-primary)', marginBottom: 2 }}>{item.right}</div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{item.detail}</div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.73rem', color: 'rgba(255,255,255,0.66)', lineHeight: 1.5 }}>{item.detail}</div>
               </div>
             </div>
           ))}
@@ -765,7 +765,7 @@ function AboutTab() {
               <AlertTriangle size={12} style={{ color: ACCENT, flexShrink: 0, marginTop: 3, opacity: 0.7 }} />
               <div>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.77rem', color: 'var(--text-primary)', marginBottom: 1 }}>{item.method}</div>
-                <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{item.detail}</div>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{item.detail}</div>
               </div>
             </div>
           ))}

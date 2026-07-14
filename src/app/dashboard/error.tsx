@@ -10,7 +10,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
       <div className="text-center">
         <div className="text-4xl mb-4">⚠️</div>
         <p className="font-display font-bold text-white text-base mb-1">Something went wrong</p>
-        <p className="font-mono text-[0.6rem] text-white/40 mb-6">Dashboard failed to load. Try again or go home.</p>
+        <p className="font-mono text-[0.6rem] text-white/65 mb-6">Dashboard failed to load. Try again or go home.</p>
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
@@ -18,7 +18,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
           >
             Try again
           </button>
-          <Link href="/" className="font-mono text-[0.65rem] bg-white/5 border border-white/10 text-white/50 px-4 py-2 rounded-xl transition-all hover:text-white/70">
+          <Link href="/" className="font-mono text-[0.65rem] bg-white/5 border border-white/10 text-white/70 px-4 py-2 rounded-xl transition-all hover:text-white/70">
             Go home
           </Link>
         </div>

@@ -291,7 +291,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
   const historyItems = partnerships.filter(p => p.status === 'completed' || p.status === 'cancelled')
 
   const card: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.03)',
+    background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.07)',
     borderRadius: 16,
     padding: 16,
@@ -319,7 +319,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
       {/* Tab bar */}
       <div style={{
         display: 'flex', gap: 4,
-        background: 'rgba(255,255,255,0.04)',
+        background: 'rgba(255,255,255,0.07)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 12, padding: 4, marginBottom: 16,
       }}>
@@ -378,7 +378,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                   rows={3}
                   maxLength={500}
                   required
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'inherit' }}
                 />
                 <div style={{ textAlign: 'right', fontSize: 11, color: '#4b5563', marginTop: 3 }}>{postForm.shared_goal.length}/500</div>
               </div>
@@ -391,7 +391,7 @@ export default function AccountabilityPartner({ userId }: { userId: string }) {
                   onChange={e => setPostForm(f => ({ ...f, goal_deadline: e.target.value }))}
                   min={new Date(Date.now() + 86400000).toISOString().split('T')[0]} // at least tomorrow
                   required
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', colorScheme: 'dark', width: '100%', boxSizing: 'border-box' }}
+                  style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 12px', color: 'var(--text-secondary)', fontSize: 14, outline: 'none', colorScheme: 'dark', width: '100%', boxSizing: 'border-box' }}
                 />
               </div>
 

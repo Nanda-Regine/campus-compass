@@ -15,15 +15,15 @@ export default function PrivacyPage() {
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
-        <span className="text-white/20 font-mono text-xs">|</span>
-        <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
+        <span className="text-white/45 font-mono text-xs">|</span>
+        <span className="font-mono text-xs text-white/65 uppercase tracking-widest">Legal</span>
       </div>
 
       <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
-          <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
+          <p className="font-mono text-xs text-white/55">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             <h2 className="font-display font-bold text-white text-lg mb-3">1. Who We Are (Responsible Party)</h2>
             <p>VarsityOS is operated by <strong className="text-white">Mirembe Muse (Pty) Ltd</strong>, a company registered in South Africa. We are the &quot;responsible party&quot; as defined in the Protection of Personal Information Act 4 of 2013 (&quot;POPIA&quot;). Our POPIA registration number is <strong className="text-white/80">2026-005658</strong>.</p>
             <p className="mt-2">Contact our Information Officer: <a href="mailto:privacy@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">privacy@mirembemuse.co.za</a></p>
-            <p className="mt-2 text-white/40 text-xs">We are required by POPIA to process your personal information lawfully, responsibly, and transparently. You have the right to access, correct, delete, or object to the processing of your personal information, and to lodge a complaint with the Information Regulator at <a href="https://inforeg.org.za" target="_blank" rel="noopener noreferrer" className="text-teal-400">inforeg.org.za</a>.</p>
+            <p className="mt-2 text-white/65 text-xs">We are required by POPIA to process your personal information lawfully, responsibly, and transparently. You have the right to access, correct, delete, or object to the processing of your personal information, and to lodge a complaint with the Information Regulator at <a href="https://inforeg.org.za" target="_blank" rel="noopener noreferrer" className="text-teal-400">inforeg.org.za</a>.</p>
           </section>
 
           <section>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white/75">Device &amp; technical data:</strong> IP address (for security and fraud prevention), browser type, crash logs</li>
               <li><strong className="text-white/75">Payment data:</strong> Payment status from Paystack (we do not store your card details — Paystack is the payment processor)</li>
             </ul>
-            <p className="mt-3 text-white/40 text-xs">We do NOT collect: South African ID numbers, bank account numbers, biometric data, or information about minors under 18.</p>
+            <p className="mt-3 text-white/65 text-xs">We do NOT collect: South African ID numbers, bank account numbers, biometric data, or information about minors under 18.</p>
           </section>
 
           <section>
@@ -109,7 +109,7 @@ export default function PrivacyPage() {
               <li><strong className="text-white/75">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
               <li><strong className="text-white/75">Law enforcement:</strong> Only when required by a valid legal order under South African law</li>
             </ul>
-            <p className="mt-3 text-white/40 text-xs">All third-party processors are bound by data processing agreements ensuring POPIA-equivalent protections.</p>
+            <p className="mt-3 text-white/65 text-xs">All third-party processors are bound by data processing agreements ensuring POPIA-equivalent protections.</p>
           </section>
 
           <section>
@@ -188,7 +188,7 @@ export default function PrivacyPage() {
               PAIA requests require a completed <strong className="text-white/70">Form C</strong> (from the Information Regulator) and payment of a non-refundable request fee of <strong className="text-white/70">R50</strong>. We must respond within 30 days. Our full PAIA manual covers request procedures, fees, grounds for refusal, and our annual report.
             </p>
             <div className="rounded-lg border border-sky-600/20 bg-sky-600/5 px-4 py-3">
-              <p className="text-xs text-white/50 mb-2">
+              <p className="text-xs text-white/70 mb-2">
                 <strong className="text-sky-400">Tip:</strong> If you only want access to your <em>own</em> personal information (your account data, messages, entries), use your POPIA rights under Section 8 above — no Form C or fee required.
               </p>
               <Link href="/paia" className="text-teal-400 hover:text-teal-300 text-xs font-display font-bold">

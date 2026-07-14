@@ -166,7 +166,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
           {loading && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[1, 2, 3].map(i => (
-                <div key={i} className="animate-pulse" style={{ height: 80, borderRadius: 12, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)' }} />
+                <div key={i} className="animate-pulse" style={{ height: 80, borderRadius: 12, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.06)' }} />
               ))}
             </div>
           )}
@@ -392,12 +392,12 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   paddingTop: idx > 0 ? 8 : 0,
-                  borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                 }}
               >
                 <div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>{i.buyerName}</div>
-                  <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)' }}>
+                  <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)' }}>
                     {new Date(i.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                     {i.whatsapp_number && (
                       <span style={{ marginLeft: 5, color: '#25D366' }}>· {i.whatsapp_number}</span>
@@ -552,7 +552,7 @@ function SellForm({ userId, university, onDone }: { userId: string; university?:
           placeholder="e.g. 073 456 7890"
           style={{ width: '100%', padding: '9px 12px', background: 'var(--bg-base)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.82rem' }}
         />
-        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', marginTop: 3 }}>
+        <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
           Shown only to potential buyers on this listing
         </div>
       </div>

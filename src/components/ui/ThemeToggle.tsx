@@ -21,7 +21,7 @@ export function ThemeToggle({ compact = false }: ThemeToggleProps) {
   useEffect(() => { setMounted(true) }, [])
 
   if (!mounted) {
-    return <div style={{ width: compact ? 32 : 80, height: 32, borderRadius: 9999, background: 'rgba(255,255,255,0.04)' }} />
+    return <div style={{ width: compact ? 32 : 80, height: 32, borderRadius: 9999, background: 'rgba(255,255,255,0.07)' }} />
   }
 
   const current: VTheme = (CYCLE.includes(theme as VTheme) ? theme : 'dark') as VTheme
@@ -30,7 +30,7 @@ export function ThemeToggle({ compact = false }: ThemeToggleProps) {
 
   const isLight = current === 'light'
   const isOutdoor = current === 'outdoor'
-  const accentColor = isOutdoor ? '#065F46' : isLight ? '#0BAE88' : 'rgba(255,255,255,0.45)'
+  const accentColor = isOutdoor ? '#065F46' : isLight ? '#0BAE88' : 'rgba(255,255,255,0.62)'
 
   if (compact) {
     return (
@@ -57,7 +57,7 @@ export function ThemeToggle({ compact = false }: ThemeToggleProps) {
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '8px 14px', borderRadius: 10,
-        background: isLight || isOutdoor ? 'rgba(0,181,150,0.08)' : 'rgba(255,255,255,0.05)',
+        background: isLight || isOutdoor ? 'rgba(0,181,150,0.08)' : 'rgba(255,255,255,0.08)',
         border: `0.5px solid ${isLight || isOutdoor ? 'rgba(0,181,150,0.25)' : 'rgba(255,255,255,0.08)'}`,
         cursor: 'pointer', transition: 'all 0.2s ease',
         color: accentColor,
@@ -70,7 +70,7 @@ export function ThemeToggle({ compact = false }: ThemeToggleProps) {
       <span style={{
         marginLeft: 'auto', fontSize: 10,
         fontFamily: 'JetBrains Mono, monospace',
-        color: isLight || isOutdoor ? accentColor : 'rgba(255,255,255,0.25)',
+        color: isLight || isOutdoor ? accentColor : 'rgba(255,255,255,0.45)',
       }}>
         ON
       </span>

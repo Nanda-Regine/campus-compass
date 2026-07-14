@@ -15,15 +15,15 @@ export default function TermsPage() {
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
-        <span className="text-white/20 font-mono text-xs">|</span>
-        <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
+        <span className="text-white/45 font-mono text-xs">|</span>
+        <span className="font-mono text-xs text-white/65 uppercase tracking-widest">Legal</span>
       </div>
 
       <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
-          <p className="font-mono text-xs text-white/30">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
+          <p className="font-mono text-xs text-white/55">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
@@ -48,7 +48,7 @@ export default function TermsPage() {
               <li><strong className="text-white/75">Nova Scholar (R29/month):</strong> 150 Nova messages per month, AI Recipe Generator, AI Budget Coach, AI Study Plans, priority support</li>
               <li><strong className="text-white/75">Nova Unlimited (R89/month):</strong> Unlimited Nova messages, CSV data export, first access to new Nova capabilities, direct feedback channel to the builder</li>
             </ul>
-            <p className="mt-2 text-xs text-white/40">We process your personal information in compliance with POPIA (Act 4 of 2013). Mirembe Muse (Pty) Ltd POPIA Registration No.: <strong className="text-white/60">2026-005658</strong>.</p>
+            <p className="mt-2 text-xs text-white/65">We process your personal information in compliance with POPIA (Act 4 of 2013). Mirembe Muse (Pty) Ltd POPIA Registration No.: <strong className="text-white/60">2026-005658</strong>.</p>
           </section>
 
           <section>

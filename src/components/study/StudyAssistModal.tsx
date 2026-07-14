@@ -88,7 +88,7 @@ export default function StudyAssistModal({
               <div key={i} className="typing-dot" style={{ animationDelay: `${i * 0.2}s` }} />
             ))}
           </div>
-          <p className="font-mono text-[0.62rem] text-white/30">Nova is thinking…</p>
+          <p className="font-mono text-[0.62rem] text-white/55">Nova is thinking…</p>
         </div>
       )}
 
@@ -107,21 +107,21 @@ export default function StudyAssistModal({
       {/* Grade calculator form */}
       {type === 'grade_calculator' && !submitted && !loading && (
         <div className="space-y-4">
-          <p className="font-mono text-[0.65rem] text-white/40">
+          <p className="font-mono text-[0.65rem] text-white/65">
             Enter your current marks and I'll calculate what you need to hit your target.
           </p>
           <div>
-            <label className="font-mono text-[0.6rem] text-white/50 uppercase tracking-wide block mb-1.5">Module name</label>
+            <label className="font-mono text-[0.6rem] text-white/70 uppercase tracking-wide block mb-1.5">Module name</label>
             <input
               value={gradeModuleName}
               onChange={e => setGradeModuleName(e.target.value)}
               placeholder="e.g. Organic Chemistry"
-              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-mono text-[0.6rem] text-white/50 uppercase tracking-wide block mb-1.5">Current grade (%)</label>
+              <label className="font-mono text-[0.6rem] text-white/70 uppercase tracking-wide block mb-1.5">Current grade (%)</label>
               <input
                 type="number"
                 min="0"
@@ -129,11 +129,11 @@ export default function StudyAssistModal({
                 value={currentGrade}
                 onChange={e => setCurrentGrade(e.target.value)}
                 placeholder="e.g. 58"
-                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
               />
             </div>
             <div>
-              <label className="font-mono text-[0.6rem] text-white/50 uppercase tracking-wide block mb-1.5">Target grade (%)</label>
+              <label className="font-mono text-[0.6rem] text-white/70 uppercase tracking-wide block mb-1.5">Target grade (%)</label>
               <input
                 type="number"
                 min="0"
@@ -141,19 +141,19 @@ export default function StudyAssistModal({
                 value={targetGrade}
                 onChange={e => setTargetGrade(e.target.value)}
                 placeholder="e.g. 75"
-                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
               />
             </div>
           </div>
           <div>
-            <label className="font-mono text-[0.6rem] text-white/50 uppercase tracking-wide block mb-1.5">
+            <label className="font-mono text-[0.6rem] text-white/70 uppercase tracking-wide block mb-1.5">
               Assessment weights (optional)
             </label>
             <input
               value={assessmentWeights}
               onChange={e => setAssessmentWeights(e.target.value)}
               placeholder="e.g. Assignments 30%, Exam 70%"
-              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
             />
           </div>
           <button
@@ -193,12 +193,12 @@ export default function StudyAssistModal({
                     <div key={i} className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-display font-bold text-sm text-teal-400">{day.day}</span>
-                        <span className="font-mono text-[0.58rem] text-white/30">{day.hours}h</span>
+                        <span className="font-mono text-[0.58rem] text-white/55">{day.hours}h</span>
                       </div>
                       <p className="font-body text-sm text-white/80 mb-2">{day.focus}</p>
                       <ul className="space-y-1">
                         {day.tasks.map((t, j) => (
-                          <li key={j} className="font-mono text-[0.6rem] text-white/50 flex gap-1.5">
+                          <li key={j} className="font-mono text-[0.6rem] text-white/70 flex gap-1.5">
                             <span className="text-teal-600 flex-shrink-0">·</span>{t}
                           </li>
                         ))}
@@ -210,7 +210,7 @@ export default function StudyAssistModal({
                   ))}
                 </div>
                 {plan?.motivationNote && (
-                  <p className="font-body text-sm text-white/40 italic text-center py-2">{plan.motivationNote}</p>
+                  <p className="font-body text-sm text-white/65 italic text-center py-2">{plan.motivationNote}</p>
                 )}
               </>
             )
@@ -229,12 +229,12 @@ export default function StudyAssistModal({
               <>
                 {guide?.prepPhases && guide.prepPhases.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest">Prep Phases</div>
+                    <div className="font-mono text-[0.58rem] text-white/55 uppercase tracking-widest">Prep Phases</div>
                     {guide.prepPhases.map((phase, i) => (
                       <div key={i} className="bg-[var(--bg-surface)] border border-purple-500/20 rounded-xl p-4">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <span className="font-display font-bold text-sm text-purple-300">{phase.phase}</span>
-                          <span className="font-mono text-[0.55rem] text-white/30 flex-shrink-0">{phase.days}</span>
+                          <span className="font-mono text-[0.55rem] text-white/55 flex-shrink-0">{phase.days}</span>
                         </div>
                         <p className="font-body text-sm text-white/70 mb-2">{phase.focus}</p>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -242,19 +242,19 @@ export default function StudyAssistModal({
                             <span key={j} className="font-mono text-[0.55rem] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">{t}</span>
                           ))}
                         </div>
-                        <p className="font-mono text-[0.58rem] text-white/30 mt-2">✓ {phase.milestone}</p>
+                        <p className="font-mono text-[0.58rem] text-white/55 mt-2">✓ {phase.milestone}</p>
                       </div>
                     ))}
                   </div>
                 )}
                 {guide?.studyTechniques && guide.studyTechniques.length > 0 && (
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">Study Techniques</div>
+                    <div className="font-mono text-[0.58rem] text-white/55 uppercase tracking-widest mb-2">Study Techniques</div>
                     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                       {guide.studyTechniques.map((t, i) => (
                         <div key={i} className="flex-shrink-0 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 w-40">
                           <div className="font-display font-bold text-xs text-white mb-1">{t.name}</div>
-                          <p className="font-mono text-[0.55rem] text-white/40 leading-relaxed">{t.description}</p>
+                          <p className="font-mono text-[0.55rem] text-white/65 leading-relaxed">{t.description}</p>
                         </div>
                       ))}
                     </div>
@@ -267,7 +267,7 @@ export default function StudyAssistModal({
                         <div className="font-mono text-[0.55rem] text-amber-400 uppercase tracking-widest mb-2">Day Before</div>
                         <ul className="space-y-1.5">
                           {guide.dayBeforeTips.map((tip, i) => (
-                            <li key={i} className="font-mono text-[0.58rem] text-white/50 flex gap-1.5"><span>·</span>{tip}</li>
+                            <li key={i} className="font-mono text-[0.58rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
                           ))}
                         </ul>
                       </div>
@@ -277,7 +277,7 @@ export default function StudyAssistModal({
                         <div className="font-mono text-[0.55rem] text-teal-400 uppercase tracking-widest mb-2">Exam Day</div>
                         <ul className="space-y-1.5">
                           {guide.examDayTips.map((tip, i) => (
-                            <li key={i} className="font-mono text-[0.58rem] text-white/50 flex gap-1.5"><span>·</span>{tip}</li>
+                            <li key={i} className="font-mono text-[0.58rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
                           ))}
                         </ul>
                       </div>
@@ -311,7 +311,7 @@ export default function StudyAssistModal({
                   )}>
                     {res?.requiredScore !== undefined ? `${res.requiredScore}%` : '—'}
                   </div>
-                  <div className="font-mono text-[0.6rem] text-white/40 mb-3">Required on remaining assessment</div>
+                  <div className="font-mono text-[0.6rem] text-white/65 mb-3">Required on remaining assessment</div>
                   {res?.isAchievable !== undefined && (
                     <span className={cn(
                       'font-mono text-[0.6rem] px-3 py-1 rounded-full border',
@@ -333,12 +333,12 @@ export default function StudyAssistModal({
                 )}
                 {res?.alternativeScenarios && res.alternativeScenarios.length > 0 && (
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest mb-2">Alternative targets</div>
+                    <div className="font-mono text-[0.58rem] text-white/55 uppercase tracking-widest mb-2">Alternative targets</div>
                     <div className="flex gap-2">
                       {res.alternativeScenarios.map((s, i) => (
                         <div key={i} className="flex-1 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 text-center">
                           <div className="font-display font-black text-lg text-white">{s.requiredScore}%</div>
-                          <div className="font-mono text-[0.55rem] text-white/30 mt-0.5">{s.label}</div>
+                          <div className="font-mono text-[0.55rem] text-white/55 mt-0.5">{s.label}</div>
                         </div>
                       ))}
                     </div>
@@ -346,7 +346,7 @@ export default function StudyAssistModal({
                 )}
                 <button
                   onClick={() => { setResult(null); setSubmitted(false); setCurrentGrade(''); setTargetGrade('') }}
-                  className="w-full font-mono text-xs text-white/30 hover:text-white/50 py-2 transition-colors"
+                  className="w-full font-mono text-xs text-white/55 hover:text-white/70 py-2 transition-colors"
                 >
                   ← Try different values
                 </button>
@@ -373,7 +373,7 @@ export default function StudyAssistModal({
               <>
                 {analysis?.overallLoad && (
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest">Overall load:</span>
+                    <span className="font-mono text-[0.58rem] text-white/65 uppercase tracking-widest">Overall load:</span>
                     <span className={cn(
                       'font-mono text-[0.6rem] px-2.5 py-1 rounded-full border',
                       analysis.overallLoad === 'critical' ? 'bg-red-500/10 text-red-400 border-red-500/20'
@@ -386,13 +386,13 @@ export default function StudyAssistModal({
                 )}
                 {analysis?.topPriority && (
                   <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl px-4 py-3">
-                    <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest mb-1">Top priority</div>
+                    <div className="font-mono text-[0.55rem] text-white/55 uppercase tracking-widest mb-1">Top priority</div>
                     <p className="font-display font-bold text-sm text-white">{analysis.topPriority}</p>
                   </div>
                 )}
                 {analysis?.conflictPeriods && analysis.conflictPeriods.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-mono text-[0.58rem] text-white/30 uppercase tracking-widest">Conflict periods</div>
+                    <div className="font-mono text-[0.58rem] text-white/55 uppercase tracking-widest">Conflict periods</div>
                     {analysis.conflictPeriods.map((period, i) => (
                       <div key={i} className={cn('rounded-xl p-4 border', severityStyle[period.severity] || severityStyle.low)}>
                         <div className="flex items-center justify-between mb-2">
@@ -401,10 +401,10 @@ export default function StudyAssistModal({
                         </div>
                         <ul className="space-y-0.5 mb-2">
                           {period.items.map((item, j) => (
-                            <li key={j} className="font-mono text-[0.58rem] text-white/50">· {item}</li>
+                            <li key={j} className="font-mono text-[0.58rem] text-white/70">· {item}</li>
                           ))}
                         </ul>
-                        <p className="font-mono text-[0.6rem] text-white/40">{period.suggestion}</p>
+                        <p className="font-mono text-[0.6rem] text-white/65">{period.suggestion}</p>
                       </div>
                     ))}
                   </div>

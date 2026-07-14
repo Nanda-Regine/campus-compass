@@ -98,7 +98,7 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 Notes Marketplace
               </div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
                 {userInstitution ?? 'All institutions'} · free to access
               </div>
             </div>
@@ -119,14 +119,14 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
 
         {/* Search */}
         <div style={{ position: 'relative', marginBottom: 14 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)' }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by module code (e.g. MATH1014)"
             style={{
               width: '100%', paddingLeft: 34, paddingRight: 12, paddingTop: 10, paddingBottom: 10,
-              background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.1)',
+              background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.1)',
               borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem',
               fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
             }}
@@ -142,8 +142,8 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
               style={{
                 padding: '6px 14px', borderRadius: 20, border: '0.5px solid',
                 borderColor: tab === t.id ? '#4ecf9e' : 'rgba(255,255,255,0.1)',
-                background: tab === t.id ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)',
-                color: tab === t.id ? '#4ecf9e' : 'rgba(255,255,255,0.45)',
+                background: tab === t.id ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.07)',
+                color: tab === t.id ? '#4ecf9e' : 'rgba(255,255,255,0.62)',
                 fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem',
                 fontWeight: tab === t.id ? 600 : 400, cursor: 'pointer',
               }}
@@ -168,8 +168,8 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
                   display: 'flex', alignItems: 'center', gap: 4,
                   padding: '5px 11px', borderRadius: 20, border: '0.5px solid',
                   borderColor: sort === key ? '#c9a84c' : 'rgba(255,255,255,0.08)',
-                  background: sort === key ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.03)',
-                  color: sort === key ? '#c9a84c' : 'rgba(255,255,255,0.35)',
+                  background: sort === key ? 'rgba(201,168,76,0.1)' : 'rgba(255,255,255,0.06)',
+                  color: sort === key ? '#c9a84c' : 'rgba(255,255,255,0.55)',
                   fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem',
                   fontWeight: sort === key ? 600 : 400, cursor: 'pointer',
                 }}
@@ -186,10 +186,10 @@ export default function NotesMarketplace({ userId, userInstitution, userFaculty,
       <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} style={{ height: 100, borderRadius: 14, background: 'rgba(255,255,255,0.04)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ height: 100, borderRadius: 14, background: 'rgba(255,255,255,0.07)', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))
         ) : notes.length === 0 ? (
-          <div style={{ textAlign: 'center', paddingTop: 48, color: 'rgba(255,255,255,0.25)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
+          <div style={{ textAlign: 'center', paddingTop: 48, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
             <BookMarked size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
             {tab === 'mine' ? "You haven't shared any notes yet" : tab === 'saved' ? "No saved notes yet" : "No notes found — be the first to share!"}
           </div>
@@ -248,7 +248,7 @@ function NoteCard({
             }}>{typeLabel}</span>
             <span style={{
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem',
-              color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.66)', background: 'rgba(255,255,255,0.06)',
               border: '0.5px solid rgba(255,255,255,0.1)',
               padding: '2px 7px', borderRadius: 9999,
             }}>{note.module_code}</span>
@@ -257,7 +257,7 @@ function NoteCard({
             {note.title}
           </div>
           {note.description && (
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.73rem', color: 'rgba(255,255,255,0.45)', marginTop: 3, lineHeight: 1.4 }}>
+            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.73rem', color: 'rgba(255,255,255,0.62)', marginTop: 3, lineHeight: 1.4 }}>
               {note.description}
             </div>
           )}
@@ -270,7 +270,7 @@ function NoteCard({
           {note.tags.map(tag => (
             <span key={tag} style={{
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem',
-              color: 'rgba(255,255,255,0.35)', background: 'rgba(255,255,255,0.05)',
+              color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.08)',
               padding: '2px 6px', borderRadius: 9999,
             }}>#{tag}</span>
           ))}
@@ -281,11 +281,11 @@ function NoteCard({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 13 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: '0.85rem' }}>{note.uploader_emoji ?? '🎓'}</span>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)' }}>
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)' }}>
             {note.uploader_name ?? 'Student'}
             {note.year_of_study && ` · Year ${note.year_of_study}`}
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)' }}>
             · {note.save_count ?? 0} saves
           </span>
           {(note.view_count ?? 0) > 0 && (
@@ -306,7 +306,7 @@ function NoteCard({
           )}
           <button
             onClick={() => onToggleSave(note)}
-            style={{ background: note.is_saved ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.05)', border: `0.5px solid ${note.is_saved ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: note.is_saved ? '#4ecf9e' : 'rgba(255,255,255,0.4)' }}
+            style={{ background: note.is_saved ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.08)', border: `0.5px solid ${note.is_saved ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: note.is_saved ? '#4ecf9e' : 'rgba(255,255,255,0.58)' }}
           >
             {note.is_saved ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
           </button>

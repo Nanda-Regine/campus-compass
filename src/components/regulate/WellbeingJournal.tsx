@@ -122,7 +122,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
   }
 
   const card: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.04)',
+    background: 'rgba(255,255,255,0.07)',
     border: '1px solid rgba(255,255,255,0.08)',
     borderRadius: 14,
     padding: '14px 16px',
@@ -130,7 +130,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading journal…</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Loading journal…</span>
     </div>
   )
 
@@ -142,19 +142,19 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13.5, color: 'rgba(255,255,255,0.88)', marginBottom: 4 }}>
           Your private space 🌙
         </p>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.58)', lineHeight: 1.6 }}>
           Only you can see these entries. Write freely — no grammar, no filter. Your AI companion will hold space after you share.
         </p>
       </div>
 
       {/* ── Write new entry ─────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
           Today&apos;s entry
         </p>
 
         {/* Prompt suggestion */}
-        <p style={{ fontFamily: 'var(--font-display)', fontSize: 11.5, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', marginBottom: 10, lineHeight: 1.5 }}>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: 11.5, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', marginBottom: 10, lineHeight: 1.5 }}>
           "{PROMPTS[promptIdx]}"
         </p>
 
@@ -164,7 +164,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
           onChange={e => setText(e.target.value)}
           placeholder="Start writing here — no one else will see this…"
           style={{
-            width: '100%', background: 'rgba(255,255,255,0.04)',
+            width: '100%', background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10,
             padding: '12px', color: 'rgba(255,255,255,0.85)',
             fontFamily: 'var(--font-body)', fontSize: 13.5,
@@ -178,7 +178,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
 
         {/* Mood selector */}
         <div style={{ marginTop: 12, marginBottom: 14 }}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
             How are you feeling right now?
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -195,7 +195,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
                 }}
               >
                 <span style={{ fontSize: 20 }}>{m.emoji}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: mood === m.score ? '#a78bfa' : 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: mood === m.score ? '#a78bfa' : 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
                   {m.label}
                 </span>
               </button>
@@ -266,7 +266,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
       {/* ── Past entries ─────────────────────────────────────────────────── */}
       {entries.length > 0 && (
         <div style={card}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14 }}>
             Past entries ({entries.length})
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -274,7 +274,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
               const moodMeta = MOOD_OPTIONS.find(m => m.score === e.mood_score)
               const isOpen = expanded === e.id
               return (
-                <div key={e.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, overflow: 'hidden' }}>
+                <div key={e.id} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, overflow: 'hidden' }}>
                   <div
                     onClick={() => setExpanded(isOpen ? null : e.id)}
                     style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px 13px', cursor: 'pointer' }}
@@ -282,7 +282,7 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
                     <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>{moodMeta?.emoji ?? '📝'}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.45)' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(255,255,255,0.62)' }}>
                           {formatEntryDate(e.entry_date)}
                         </span>
                         {moodMeta && (
@@ -316,8 +316,8 @@ export default function WellbeingJournal({ userId }: { userId: string }) {
       {entries.length === 0 && !loading && (
         <div style={{ ...card, textAlign: 'center', padding: '28px 20px' }}>
           <BookOpen size={28} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 auto 10px' }} />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>Your journal is empty</p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.25)' }}>Write your first entry above — it stays private, just for you.</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'rgba(255,255,255,0.58)', marginBottom: 6 }}>Your journal is empty</p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.45)' }}>Write your first entry above — it stays private, just for you.</p>
         </div>
       )}
     </div>

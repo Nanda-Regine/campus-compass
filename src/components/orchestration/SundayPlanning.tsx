@@ -261,7 +261,7 @@ export default function SundayPlanning() {
               Weekly planning takes 5 minutes and gives you 3× more clarity about your week. You&apos;ll answer 3 questions in under 5 minutes.
             </div>
             {[{ icon: '🏆', q: '2 wins from last week' }, { icon: '🎯', q: '3 priorities for this week' }, { icon: '🧱', q: '1 thing blocking your progress' }].map(q => (
-              <div key={q.q} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
+              <div key={q.q} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 12px', background: 'rgba(255,255,255,0.06)', borderRadius: 8 }}>
                 <span style={{ fontSize: '1.1rem' }}>{q.icon}</span>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{q.q}</div>
               </div>
@@ -327,7 +327,7 @@ export default function SundayPlanning() {
             </div>
             {/* Priorities with checkboxes */}
             {plan.priorities.map((p, i) => (
-              <button key={i} onClick={() => togglePriority(i)} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(255,255,255,0.03)', border: `1px solid ${plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.2)' : 'var(--border-subtle)'}`, borderRadius: 8, cursor: 'pointer', textAlign: 'left', alignItems: 'center' }}>
+              <button key={i} onClick={() => togglePriority(i)} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(255,255,255,0.06)', border: `1px solid ${plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.2)' : 'var(--border-subtle)'}`, borderRadius: 8, cursor: 'pointer', textAlign: 'left', alignItems: 'center' }}>
                 <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${plan.completedPriorities.includes(i) ? 'var(--teal)' : 'var(--border-default)'}`, background: plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.55rem', color: 'var(--teal)' }}>{plan.completedPriorities.includes(i) ? '✓' : ''}</div>
                 <div style={{ fontSize: '0.75rem', color: plan.completedPriorities.includes(i) ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: plan.completedPriorities.includes(i) ? 'line-through' : 'none', flex: 1 }}>{p}</div>
               </button>

@@ -32,7 +32,7 @@ export default class TabErrorBoundary extends Component<Props, State> {
             {this.props.label ? `${this.props.label} ran into a problem` : 'Something went wrong'}
           </p>
           {msg && (
-            <p className="font-mono text-[0.58rem] text-white/30 mb-5 max-w-xs leading-relaxed">
+            <p className="font-mono text-[0.58rem] text-white/55 mb-5 max-w-xs leading-relaxed">
               {msg}
             </p>
           )}

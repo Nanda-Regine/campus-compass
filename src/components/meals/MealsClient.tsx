@@ -330,7 +330,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             <div className="flex items-center gap-2 px-3 pt-2 pb-1 border-b border-white/7">
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
               {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
               )}
@@ -347,7 +347,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl">📅</div>
                 <div>
                   <div className="font-display font-bold text-white text-sm">AI Weekly Meal Plan</div>
-                  <div className="font-mono text-[0.58rem] text-white/40">
+                  <div className="font-mono text-[0.58rem] text-white/65">
                     Personalised for your budget & diet ({initialData.profile?.dietary_pref || 'No restrictions'})
                   </div>
                 </div>
@@ -363,17 +363,17 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               {generatedPlan && (
                 <div className="mt-4 space-y-3 animate-fade-up">
                   <div className="flex items-center justify-between">
-                    <div className="font-mono text-[0.58rem] text-white/40 uppercase">Estimated weekly cost</div>
+                    <div className="font-mono text-[0.58rem] text-white/65 uppercase">Estimated weekly cost</div>
                     <div className="font-display font-black text-teal-400">{fmt.currencyShort(generatedPlan.weeklyTotal)}</div>
                   </div>
 
                   {generatedPlan.days.slice(0, 5).map(day => (
                     <div key={day.day} className="bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded-xl p-3">
-                      <div className="font-mono text-[0.6rem] text-white/40 uppercase tracking-widest mb-2">{day.day}</div>
+                      <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest mb-2">{day.day}</div>
                       <div className="space-y-1.5">
                         {(['breakfast', 'lunch', 'supper'] as const).map(slot => (
                           <div key={slot} className="flex items-center gap-2">
-                            <div className="font-mono text-[0.55rem] text-white/30 w-16 capitalize">{slot}</div>
+                            <div className="font-mono text-[0.55rem] text-white/55 w-16 capitalize">{slot}</div>
                             <div className="flex-1 font-body text-sm text-white">{day[slot].name}</div>
                             <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(day[slot].cost)}</div>
                           </div>
@@ -390,13 +390,13 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   {/* Shopping list from plan */}
                   {generatedPlan.shoppingList.length > 0 && (
                     <div>
-                      <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-widest mb-2">Shopping list</div>
+                      <div className="font-mono text-[0.58rem] text-white/65 uppercase tracking-widest mb-2">Shopping list</div>
                       <div className="space-y-1.5">
                         {generatedPlan.shoppingList.map((item, i) => (
                           <div key={i} className="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded-lg px-3 py-2">
                             <div>
                               <div className="font-body text-sm text-white">{item.item}</div>
-                              <div className="font-mono text-[0.55rem] text-white/30">Used: {item.usedIn.join(', ')}</div>
+                              <div className="font-mono text-[0.55rem] text-white/55">Used: {item.usedIn.join(', ')}</div>
                             </div>
                             <div className="font-display font-bold text-sm text-white/60">{fmt.currencyShort(item.estimatedCost)}</div>
                           </div>
@@ -414,7 +414,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 <div className="w-10 h-10 bg-teal-600/15 rounded-xl flex items-center justify-center text-xl">👨‍🍳</div>
                 <div>
                   <div className="font-display font-bold text-white text-sm">What can I cook?</div>
-                  <div className="font-mono text-[0.58rem] text-white/40">Tell me your ingredients → get a recipe</div>
+                  <div className="font-mono text-[0.58rem] text-white/65">Tell me your ingredients → get a recipe</div>
                 </div>
               </div>
 
@@ -423,12 +423,12 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   value={ingredients}
                   onChange={e => setIngredients(e.target.value)}
                   placeholder="e.g. eggs, onions, tomatoes, pasta, tin of tuna, soya sauce..."
-                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/25 outline-none transition-all resize-none font-body"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/50 outline-none transition-all resize-none font-body"
                   rows={3}
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-wide mb-1.5">Meal type</div>
+                    <div className="font-mono text-[0.58rem] text-white/65 uppercase tracking-wide mb-1.5">Meal type</div>
                     <div className="flex flex-wrap gap-1.5">
                       {['Breakfast', 'Lunch', 'Supper', 'Snack'].map(t => (
                         <button
@@ -438,7 +438,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                             'px-2.5 py-1 rounded-full font-mono text-[0.58rem] border transition-all',
                             mealType === t
                               ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
-                              : 'bg-white/5 border-white/10 text-white/50 hover:text-white'
+                              : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
                           )}
                         >
                           {t}
@@ -447,13 +447,13 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                     </div>
                   </div>
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-wide mb-1.5">Max budget (R)</div>
+                    <div className="font-mono text-[0.58rem] text-white/65 uppercase tracking-wide mb-1.5">Max budget (R)</div>
                     <input
                       type="number"
                       value={maxBudget}
                       onChange={e => setMaxBudget(e.target.value)}
                       placeholder="e.g. 50"
-                      className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                      className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2 text-sm text-white placeholder:text-white/50 outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             <div className="flex items-center justify-between">
               <div className="font-display font-bold text-white">This week</div>
               <div className="flex items-center gap-3">
-                <div className="font-mono text-[0.58rem] text-white/30">{initialData.weekStart}</div>
+                <div className="font-mono text-[0.58rem] text-white/55">{initialData.weekStart}</div>
                 <button
                   onClick={() => setActiveTab('nutrition')}
                   className="font-mono text-[0.55rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg transition-all"
@@ -488,7 +488,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               <div key={day} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-white/5 flex items-center justify-between">
                   <div className="font-display font-bold text-white text-sm">{day}</div>
-                  <div className="font-mono text-[0.55rem] text-white/25 uppercase">{day.slice(0, 3)}</div>
+                  <div className="font-mono text-[0.55rem] text-white/50 uppercase">{day.slice(0, 3)}</div>
                 </div>
                 <div className="divide-y divide-white/5">
                   {MEAL_SLOTS.map(slot => {
@@ -499,7 +499,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                         {isEditing ? (
                           <div className="px-4 py-3 space-y-2">
                             <div className="flex items-center gap-2">
-                              <div className="font-mono text-[0.55rem] text-white/30 uppercase w-16 flex-shrink-0">{slot}</div>
+                              <div className="font-mono text-[0.55rem] text-white/55 uppercase w-16 flex-shrink-0">{slot}</div>
                               <input
                                 autoFocus
                                 value={editValue}
@@ -509,7 +509,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                                   if (e.key === 'Escape') { setEditingSlot(null); setEditValue('') }
                                 }}
                                 placeholder={`e.g. ${QUICK_SUGGESTIONS[slot.toLowerCase()]?.[0] ?? 'Enter meal name'}`}
-                                className="flex-1 bg-[var(--bg-base)] border border-teal-600/40 focus:border-teal-500 rounded-lg px-2.5 py-1.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                                className="flex-1 bg-[var(--bg-base)] border border-teal-600/40 focus:border-teal-500 rounded-lg px-2.5 py-1.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
                               />
                             </div>
                             <div className="flex items-center gap-2 pl-[4.5rem]">
@@ -529,7 +529,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                               </button>
                               <button
                                 onClick={() => { setEditingSlot(null); setEditValue('') }}
-                                className="font-mono text-[0.6rem] text-white/30 hover:text-white/60 px-2 py-1.5 transition-all"
+                                className="font-mono text-[0.6rem] text-white/55 hover:text-white/60 px-2 py-1.5 transition-all"
                               >
                                 Cancel
                               </button>
@@ -539,7 +539,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                                 <button
                                   key={s}
                                   onClick={() => setEditValue(s)}
-                                  className="font-mono text-[0.55rem] bg-white/5 hover:bg-white/10 border border-white/10 text-white/50 hover:text-white/80 px-2 py-1 rounded-full transition-all"
+                                  className="font-mono text-[0.55rem] bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white/80 px-2 py-1 rounded-full transition-all"
                                 >
                                   {s}
                                 </button>
@@ -551,17 +551,17 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                             onClick={() => { setEditingSlot({ day, slot }); setEditValue(meal?.meal_name ?? '') }}
                             className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors group"
                           >
-                            <div className="font-mono text-[0.55rem] text-white/30 uppercase w-16 flex-shrink-0">{slot}</div>
+                            <div className="font-mono text-[0.55rem] text-white/55 uppercase w-16 flex-shrink-0">{slot}</div>
                             <div className="flex-1 font-body text-sm">
                               {meal?.meal_name
                                 ? <span className="text-white/70">{meal.meal_name}</span>
-                                : <span className="text-white/20 group-hover:text-white/35 transition-colors">+ Add meal</span>
+                                : <span className="text-white/45 group-hover:text-white/60 transition-colors">+ Add meal</span>
                               }
                             </div>
                             {meal?.cost && (
                               <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(meal.cost)}</div>
                             )}
-                            <span className="opacity-0 group-hover:opacity-100 font-mono text-[0.55rem] text-white/25 transition-opacity flex-shrink-0">✎</span>
+                            <span className="opacity-0 group-hover:opacity-100 font-mono text-[0.55rem] text-white/50 transition-opacity flex-shrink-0">✎</span>
                           </button>
                         )}
                       </div>
@@ -595,7 +595,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 }}>
                   <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#4ecf9e', letterSpacing: '0.14em', marginBottom: 6 }}>DON&apos;T KNOW WHAT TO BUY?</div>
                   <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>Load a beginner starter kit</div>
-                  <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.6, marginBottom: 12 }}>
+                  <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12.5, color: 'rgba(255,255,255,0.62)', lineHeight: 1.6, marginBottom: 12 }}>
                     22 essentials · feeds you for a week · works for beginners · under R350
                   </div>
                   <button
@@ -613,7 +613,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
               {/* Category chips */}
               <div className="space-y-2">
-                <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest">Category</div>
+                <div className="font-mono text-[0.55rem] text-white/55 uppercase tracking-widest">Category</div>
                 <div className="flex flex-wrap gap-1.5">
                   {GROCERY_CATS.map(cat => (
                     <button
@@ -624,7 +624,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                         'flex items-center gap-1 px-2.5 py-1.5 rounded-full font-mono text-[0.58rem] border transition-all',
                         selectedCat === cat.id
                           ? 'border-white/30 text-white'
-                          : 'border-white/10 text-white/45 hover:text-white/70'
+                          : 'border-white/10 text-white/68 hover:text-white/70'
                       )}
                       style={selectedCat === cat.id ? { background: `${cat.color}18`, borderColor: `${cat.color}50`, color: cat.color } : {}}
                     >
@@ -641,14 +641,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   onChange={e => setGroceryInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && addGroceryItem()}
                   placeholder={`Add ${GROCERY_CATS.find(c => c.id === selectedCat)?.label.toLowerCase() ?? 'item'}…`}
-                  className="flex-1 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  className="flex-1 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
                 />
                 <input
                   type="number"
                   value={groceryPrice}
                   onChange={e => setGroceryPrice(e.target.value)}
                   placeholder="R"
-                  className="w-20 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-all"
+                  className="w-20 bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
                 />
                 <button
                   onClick={addGroceryItem}
@@ -661,14 +661,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               {/* Cart balance insight */}
               {groceryItems.filter(i => !i.checked).length > 2 && (
                 <div className="bg-[var(--bg-surface)] border border-white/8 rounded-xl p-3 space-y-2">
-                  <div className="font-mono text-[0.55rem] text-white/35 uppercase tracking-widest">Cart balance</div>
+                  <div className="font-mono text-[0.55rem] text-white/60 uppercase tracking-widest">Cart balance</div>
                   <div className="flex gap-2 flex-wrap">
                     {GROCERY_CATS.map(cat => {
                       const count = catCounts[cat.id] || 0
                       return (
                         <div key={cat.id} className="flex items-center gap-1" style={{ opacity: count > 0 ? 1 : 0.3 }}>
                           <span style={{ fontSize: 13 }}>{cat.icon}</span>
-                          <span className="font-mono text-[0.55rem]" style={{ color: count > 0 ? cat.color : 'rgba(255,255,255,0.3)' }}>
+                          <span className="font-mono text-[0.55rem]" style={{ color: count > 0 ? cat.color : 'rgba(255,255,255,0.5)' }}>
                             ×{count}
                           </span>
                         </div>
@@ -683,7 +683,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                     <div className="text-[0.7rem] text-teal-400/80">🥦 Add some veg — tomatoes, spinach, or carrots boost iron and brain function</div>
                   )}
                   {hasProtein && hasVeg && hasCarbs && (
-                    <div className="text-[0.7rem] text-white/50">✓ Balanced cart — protein, carbs, and veg all covered</div>
+                    <div className="text-[0.7rem] text-white/70">✓ Balanced cart — protein, carbs, and veg all covered</div>
                   )}
                 </div>
               )}
@@ -691,7 +691,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               {/* Total */}
               {groceryItems.length > 0 && (
                 <div className="flex items-center justify-between">
-                  <div className="font-mono text-[0.6rem] text-white/40">
+                  <div className="font-mono text-[0.6rem] text-white/65">
                     {groceryItems.filter(i => !i.checked).length} items · estimated total
                   </div>
                   <div className="flex items-center gap-3">
@@ -699,7 +699,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                     {groceryItems.some(i => i.checked) && (
                       <button
                         onClick={clearChecked}
-                        className="font-mono text-[0.58rem] text-white/30 hover:text-red-400 transition-colors"
+                        className="font-mono text-[0.58rem] text-white/55 hover:text-red-400 transition-colors"
                       >
                         Clear checked
                       </button>
@@ -713,7 +713,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 <div className="text-center py-12">
                   <div className="text-3xl mb-3">🛒</div>
                   <p className="font-display font-bold text-white text-sm">Grocery list is empty</p>
-                  <p className="font-mono text-[0.6rem] text-white/30 mt-1">Pick a category above, then add items.</p>
+                  <p className="font-mono text-[0.6rem] text-white/55 mt-1">Pick a category above, then add items.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -750,7 +750,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                           </span>
                         )}
                         <div className="flex-1">
-                          <div className={cn('font-body text-sm text-white', item.checked && 'line-through text-white/40')}>
+                          <div className={cn('font-body text-sm text-white', item.checked && 'line-through text-white/65')}>
                             {item.name}
                           </div>
                           {cat && (
@@ -762,7 +762,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                         )}
                         <button
                           onClick={() => deleteGroceryItem(item.id)}
-                          className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs"
+                          className="opacity-0 group-hover:opacity-100 text-white/45 hover:text-red-400 transition-all text-xs"
                         >
                           ✕
                         </button>

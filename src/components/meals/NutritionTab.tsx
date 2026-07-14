@@ -274,7 +274,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       <div className="flex items-center justify-between">
         <div className="font-display font-bold text-white">Today&apos;s Nutrition</div>
         <div className="flex items-center gap-2">
-          <div className="font-mono text-[0.58rem] text-white/30">{today}</div>
+          <div className="font-mono text-[0.58rem] text-white/55">{today}</div>
           {logs.length > 0 && (
             <div
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border"
@@ -292,7 +292,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
         {/* Calorie progress bar */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <div className="font-mono text-[0.58rem] text-white/40 uppercase tracking-wide">Calories</div>
+            <div className="font-mono text-[0.58rem] text-white/65 uppercase tracking-wide">Calories</div>
             <div className="font-mono text-[0.6rem] font-bold" style={{ color: calColor }}>
               {Math.round(totals.calories)} / {DAILY_TARGETS.calories} kcal
             </div>
@@ -304,7 +304,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
             />
           </div>
           {totals.calories === 0 && (
-            <div className="font-mono text-[0.55rem] text-white/20 mt-1">Log your first meal below to track your day</div>
+            <div className="font-mono text-[0.55rem] text-white/45 mt-1">Log your first meal below to track your day</div>
           )}
         </div>
 
@@ -337,7 +337,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                   {label}
                 </span>
                 {slotCal > 0 && (
-                  <span className="ml-2 font-mono text-[0.55rem] text-white/30">{slotCal} kcal</span>
+                  <span className="ml-2 font-mono text-[0.55rem] text-white/55">{slotCal} kcal</span>
                 )}
               </div>
               <button
@@ -346,7 +346,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                   'font-mono text-[0.6rem] px-3 py-1.5 rounded-lg border transition-all',
                   isOpen
                     ? 'bg-white/8 border-white/20 text-white/60'
-                    : 'bg-[var(--bg-base)] border-white/10 hover:border-teal-600/50 text-white/45 hover:text-teal-400'
+                    : 'bg-[var(--bg-base)] border-white/10 hover:border-teal-600/50 text-white/68 hover:text-teal-400'
                 )}
               >
                 {isOpen ? '↑ Close' : '+ Add'}
@@ -360,7 +360,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                   <div key={log.id} className="flex items-center gap-3 px-4 py-2.5 group">
                     <div className="flex-1 min-w-0">
                       <div className="font-body text-sm text-white/80 truncate">{log.food_name}</div>
-                      <div className="font-mono text-[0.53rem] text-white/28">
+                      <div className="font-mono text-[0.53rem] text-white/52">
                         {log.calories} kcal
                         {log.protein_g > 0 && ` · P ${Math.round(log.protein_g)}g`}
                         {log.carbs_g   > 0 && ` · C ${Math.round(log.carbs_g)}g`}
@@ -369,7 +369,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                     </div>
                     <button
                       onClick={() => deleteLog(log.id)}
-                      className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition-all text-xs flex-shrink-0"
+                      className="opacity-0 group-hover:opacity-100 text-white/45 hover:text-red-400 transition-all text-xs flex-shrink-0"
                     >
                       ✕
                     </button>
@@ -381,14 +381,14 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
             {/* Empty state */}
             {slotLogs.length === 0 && !isOpen && (
               <div className="px-4 py-3">
-                <div className="font-mono text-[0.58rem] text-white/18">Nothing logged yet — tap + Add</div>
+                <div className="font-mono text-[0.58rem] text-white/40">Nothing logged yet — tap + Add</div>
               </div>
             )}
 
             {/* Quick-add panel */}
             {isOpen && (
               <div className="border-t border-white/8 p-3 space-y-3 animate-fade-up">
-                <div className="font-mono text-[0.55rem] text-white/28 uppercase tracking-widest">SA food quick-add</div>
+                <div className="font-mono text-[0.55rem] text-white/52 uppercase tracking-widest">SA food quick-add</div>
                 <div className="grid grid-cols-2 gap-1.5">
                   {foods.map(food => (
                     <button
@@ -400,7 +400,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                       <span className="text-base flex-shrink-0">{food.icon}</span>
                       <div className="min-w-0">
                         <div className="font-body text-[0.72rem] text-white/80 leading-tight truncate">{food.name}</div>
-                        <div className="font-mono text-[0.65rem] text-white/32 flex gap-2">
+                        <div className="font-mono text-[0.65rem] text-white/55 flex gap-2">
                           <span>{food.cal} kcal</span>
                           {food.protein > 5 && <span className="text-rose-400/60">P{Math.round(food.protein)}g</span>}
                           {'price' in food && <span className="text-emerald-400/50">~R{(food as typeof food & {price:number}).price}</span>}
@@ -416,14 +416,14 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                     value={customName}
                     onChange={e => setCustomName(e.target.value)}
                     placeholder="Other food name"
-                    className="flex-1 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/22 outline-none transition-all"
+                    className="flex-1 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none transition-all"
                   />
                   <input
                     type="number"
                     value={customCal}
                     onChange={e => setCustomCal(e.target.value)}
                     placeholder="kcal"
-                    className="w-16 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-lg px-2 py-2 text-sm text-white placeholder:text-white/22 outline-none"
+                    className="w-16 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-lg px-2 py-2 text-sm text-white placeholder:text-white/45 outline-none"
                   />
                   <button
                     onClick={() => addCustom(slot)}

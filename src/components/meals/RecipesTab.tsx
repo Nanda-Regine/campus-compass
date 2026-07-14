@@ -422,7 +422,7 @@ function CookingMode({ recipe, onClose }: { recipe: Recipe; onClose: () => void 
               {recipe.name}
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.3)', fontSize: 18 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', fontSize: 18 }}>✕</button>
         </div>
 
         {/* Progress bar */}
@@ -454,7 +454,7 @@ function CookingMode({ recipe, onClose }: { recipe: Recipe; onClose: () => void 
                 <button onClick={() => setStep(s => s - 1)} style={{
                   flex: 1, padding: '12px 0', borderRadius: 12,
                   border: '1px solid rgba(255,255,255,0.12)', background: 'transparent',
-                  color: 'rgba(255,255,255,0.5)', fontFamily: 'Sora,sans-serif', fontSize: 13, cursor: 'pointer',
+                  color: 'rgba(255,255,255,0.66)', fontFamily: 'Sora,sans-serif', fontSize: 13, cursor: 'pointer',
                 }}>
                   ← Back
                 </button>
@@ -474,7 +474,7 @@ function CookingMode({ recipe, onClose }: { recipe: Recipe; onClose: () => void 
             <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 900, fontSize: 22, color: '#4ecf9e', marginBottom: 8 }}>
               Meal complete!
             </div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 24 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', marginBottom: 24 }}>
               You cooked {recipe.name} for ~{recipe.cost}. Now log it in Nutrition →
             </div>
             {recipe.tip && (
@@ -562,17 +562,17 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
             ))}
           </div>
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', marginBottom: 8, letterSpacing: '0.14em' }}>INGREDIENTS</div>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)', marginBottom: 8, letterSpacing: '0.14em' }}>INGREDIENTS</div>
             {generatedRecipe.ingredients.map((ing, i) => (
-              <div key={i} style={{ display: 'flex', gap: 10, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+              <div key={i} style={{ display: 'flex', gap: 10, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                 <span style={{ flex: 1, fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>{ing.item}</span>
-                <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>{ing.amount}</span>
+                <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>{ing.amount}</span>
                 <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#4ecf9e' }}>{fmtCurrency(ing.estimatedCost)}</span>
               </div>
             ))}
           </div>
           <div>
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', marginBottom: 8, letterSpacing: '0.14em' }}>STEPS</div>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)', marginBottom: 8, letterSpacing: '0.14em' }}>STEPS</div>
             {generatedRecipe.steps.map(s => (
               <div key={s.step} style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
                 <div style={{
@@ -585,7 +585,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
             ))}
           </div>
           {generatedRecipe.storageTip && (
-            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>
+            <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>
               🥡 {generatedRecipe.storageTip}
             </div>
           )}
@@ -594,7 +594,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
 
       {/* Section header */}
       <div>
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.18em', marginBottom: 10 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.18em', marginBottom: 10 }}>
           📖 RECIPE LIBRARY — {RECIPES.length} SA STUDENT RECIPES
         </div>
 
@@ -606,7 +606,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
           style={{
             width: '100%', padding: '10px 14px', marginBottom: 10,
             fontFamily: 'DM Sans,sans-serif', fontSize: 13,
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 12, color: '#fff', outline: 'none', boxSizing: 'border-box',
           }}
         />
@@ -621,7 +621,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
                 padding: '5px 12px', borderRadius: 20, border: 'none', cursor: 'pointer',
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 9, fontWeight: 700,
                 background: filter === cat.id ? '#e8834a' : 'rgba(255,255,255,0.06)',
-                color: filter === cat.id ? '#000' : 'rgba(255,255,255,0.45)',
+                color: filter === cat.id ? '#000' : 'rgba(255,255,255,0.62)',
                 transition: 'all 0.15s',
               }}
             >
@@ -631,7 +631,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
         </div>
 
         {/* Recipe count */}
-        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', marginBottom: 10 }}>
+        <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginBottom: 10 }}>
           {filtered.length} recipe{filtered.length !== 1 ? 's' : ''} found
         </div>
       </div>
@@ -644,7 +644,7 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
             <div
               key={recipe.id}
               style={{
-                background: 'rgba(255,255,255,0.03)', border: `1px solid ${isOpen ? 'rgba(232,131,74,0.35)' : 'rgba(255,255,255,0.07)'}`,
+                background: 'rgba(255,255,255,0.06)', border: `1px solid ${isOpen ? 'rgba(232,131,74,0.35)' : 'rgba(255,255,255,0.07)'}`,
                 borderRadius: 16, overflow: 'hidden', transition: 'border-color 0.2s',
               }}
             >
@@ -669,9 +669,9 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
                   </div>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: '#4ecf9e', fontWeight: 700 }}>{recipe.cost}</span>
-                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>⏱ {recipe.time}</span>
-                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>🍽 {recipe.servings} serving{recipe.servings !== 1 ? 's' : ''}</span>
-                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>{isOpen ? '▲' : '▼'}</span>
+                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>⏱ {recipe.time}</span>
+                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>🍽 {recipe.servings} serving{recipe.servings !== 1 ? 's' : ''}</span>
+                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' }}>{isOpen ? '▲' : '▼'}</span>
                   </div>
                 </div>
               </button>
@@ -686,18 +686,18 @@ export default function RecipesTab({ generatedRecipe, onGoToAIPlanner, fmt }: Pr
                   {/* Nutrition bar */}
                   <div style={{
                     display: 'flex', gap: 12, padding: '8px 12px', borderRadius: 10,
-                    background: 'rgba(255,255,255,0.04)', marginBottom: 14, flexWrap: 'wrap',
+                    background: 'rgba(255,255,255,0.07)', marginBottom: 14, flexWrap: 'wrap',
                   }}>
                     <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#f59e0b' }}>🔥 {recipe.nutrition.cal} kcal</span>
                     <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#FB7185' }}>P {recipe.nutrition.protein}g</span>
                     <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#f59e0b' }}>C {recipe.nutrition.carbs}g</span>
                     <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: '#818CF8' }}>F {recipe.nutrition.fat}g</span>
-                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.25)' }}>per serving</span>
+                    <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.45)' }}>per serving</span>
                   </div>
 
                   {/* Ingredients */}
                   <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', marginBottom: 6 }}>INGREDIENTS</div>
+                    <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', marginBottom: 6 }}>INGREDIENTS</div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                       {recipe.ingredients.map((ing, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

@@ -44,7 +44,7 @@ export default function CookingSetupSelector({ value, onChange }: Props) {
               key={option.value}
               onClick={() => handleSelect(option.value)}
               style={{
-                background: isSelected ? 'rgba(251,146,60,0.1)' : 'rgba(255,255,255,0.03)',
+                background: isSelected ? 'rgba(251,146,60,0.1)' : 'rgba(255,255,255,0.06)',
                 border: isSelected ? '1px solid rgba(251,146,60,0.5)' : '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 16,
                 padding: '16px 14px',

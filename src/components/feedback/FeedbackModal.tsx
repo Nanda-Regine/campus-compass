@@ -93,7 +93,7 @@ export function FeedbackModal({ open, onClose }: Props) {
         <div className="text-center py-2">
           <div className="text-4xl mb-3">⭐</div>
           <p className="font-display font-bold text-white mb-2">A quick Google review makes a huge difference</p>
-          <p className="font-mono text-xs text-white/50 leading-relaxed">
+          <p className="font-mono text-xs text-white/70 leading-relaxed">
             Students searching for a budgeting or study app find VarsityOS through reviews.
             Your experience helps the next student who&apos;s struggling make the right call.
           </p>
@@ -102,7 +102,7 @@ export function FeedbackModal({ open, onClose }: Props) {
         <div className="space-y-5">
           {/* Star rating */}
           <div>
-            <label className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide mb-2 block">
+            <label className="font-mono text-[0.62rem] text-white/70 uppercase tracking-wide mb-2 block">
               How are you finding VarsityOS?
             </label>
             <div className="flex gap-2">
@@ -123,7 +123,7 @@ export function FeedbackModal({ open, onClose }: Props) {
 
           {/* Category */}
           <div>
-            <label className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide mb-2 block">
+            <label className="font-mono text-[0.62rem] text-white/70 uppercase tracking-wide mb-2 block">
               Category
             </label>
             <div className="flex flex-wrap gap-2">
@@ -135,7 +135,7 @@ export function FeedbackModal({ open, onClose }: Props) {
                     'font-mono text-[0.58rem] px-3 py-1.5 rounded-full border transition-all',
                     category === c.value
                       ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
-                      : 'bg-white/5 border-white/10 text-white/50 hover:text-white/80'
+                      : 'bg-white/5 border-white/10 text-white/70 hover:text-white/80'
                   )}
                 >
                   {c.label}
@@ -146,7 +146,7 @@ export function FeedbackModal({ open, onClose }: Props) {
 
           {/* Message */}
           <div>
-            <label className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide mb-2 block">
+            <label className="font-mono text-[0.62rem] text-white/70 uppercase tracking-wide mb-2 block">
               Your feedback
             </label>
             <textarea
@@ -155,9 +155,9 @@ export function FeedbackModal({ open, onClose }: Props) {
               placeholder="Tell us what's working, what's broken, or what you wish existed."
               rows={4}
               maxLength={1000}
-              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 resize-none outline-none transition-all font-body"
+              className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/50 resize-none outline-none transition-all font-body"
             />
-            <div className="text-right font-mono text-[0.55rem] text-white/20 mt-1">
+            <div className="text-right font-mono text-[0.55rem] text-white/45 mt-1">
               {message.length}/1000
             </div>
           </div>

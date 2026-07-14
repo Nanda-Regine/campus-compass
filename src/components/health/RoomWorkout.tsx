@@ -242,7 +242,7 @@ export default function RoomWorkout() {
             <button onClick={stopWorkout} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', color: 'var(--text-tertiary)', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer', fontSize: '0.8rem' }}>Stop</button>
           </div>
 
-          <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '4px', height: '4px', marginBottom: '32px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: '4px', height: '4px', marginBottom: '32px' }}>
             <div style={{ background: ACCENT, height: '4px', borderRadius: '4px', width: `${progress}%`, transition: 'width 0.4s' }} />
           </div>
 
@@ -285,7 +285,7 @@ export default function RoomWorkout() {
         </div>
 
         {/* Filters */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
           <div style={{ marginBottom: '16px' }}>
             <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Space Available</div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -295,7 +295,7 @@ export default function RoomWorkout() {
                   onClick={() => setSpace(s)}
                   style={{
                     padding: '8px 14px', borderRadius: '20px',
-                    background: space === s ? ACCENT : 'rgba(255,255,255,0.05)',
+                    background: space === s ? ACCENT : 'rgba(255,255,255,0.08)',
                     border: space === s ? 'none' : '1px solid rgba(255,255,255,0.1)',
                     color: space === s ? '#0a0a0f' : 'var(--text-tertiary)',
                     fontWeight: space === s ? 700 : 400,
@@ -333,7 +333,7 @@ export default function RoomWorkout() {
                   onClick={() => setTime(t)}
                   style={{
                     padding: '8px 18px', borderRadius: '20px',
-                    background: time === t ? ACCENT : 'rgba(255,255,255,0.05)',
+                    background: time === t ? ACCENT : 'rgba(255,255,255,0.08)',
                     border: time === t ? 'none' : '1px solid rgba(255,255,255,0.1)',
                     color: time === t ? '#0a0a0f' : 'var(--text-tertiary)',
                     fontWeight: time === t ? 700 : 400,
@@ -353,7 +353,7 @@ export default function RoomWorkout() {
 
         <div>
           {displayedRoutines.map(routine => (
-            <div key={routine.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
+            <div key={routine.id} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                 <div>
                   <h3 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '1.05rem', marginBottom: '4px' }}>{routine.name}</h3>
@@ -369,7 +369,7 @@ export default function RoomWorkout() {
 
               <div style={{ marginBottom: '16px' }}>
                 {routine.exercises.map((ex, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '12px', padding: '10px 0', borderBottom: i < routine.exercises.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                  <div key={i} style={{ display: 'flex', gap: '12px', padding: '10px 0', borderBottom: i < routine.exercises.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none' }}>
                     <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(244,114,182,0.15)', color: ACCENT, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>

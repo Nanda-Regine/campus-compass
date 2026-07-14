@@ -28,7 +28,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
       {label && (
         <label
           htmlFor={selectId}
-          className="block font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-1.5"
+          className="block font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-1.5"
         >
           {label}
         </label>
@@ -47,7 +47,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           className
         )}
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'right 12px center',
           paddingRight: '2.5rem',
@@ -69,7 +69,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
         <p className="mt-1 font-mono text-[0.6rem] text-red-400">{error}</p>
       )}
       {hint && !error && (
-        <p className="mt-1 font-mono text-[0.6rem] text-white/30">{hint}</p>
+        <p className="mt-1 font-mono text-[0.6rem] text-white/55">{hint}</p>
       )}
     </div>
   )

@@ -67,7 +67,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
                 background: isActive ? `${t.accent}14` : 'transparent',
                 border: 'none',
                 borderLeft: `2px solid ${isActive ? t.accent : 'transparent'}`,
-                color: isActive ? t.accent : 'rgba(255,255,255,0.4)',
+                color: isActive ? t.accent : 'rgba(255,255,255,0.58)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
                 padding: '6px 2px',
@@ -108,7 +108,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
               {active.label}
             </div>
             {userInstitution && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {userInstitution}
               </div>
             )}

@@ -42,7 +42,7 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
     return (
       <div style={{
         display: 'inline-flex', alignItems: 'center', gap: 6,
-        background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+        background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 10, padding: '4px 10px',
       }}>
         <span style={{ fontSize: 14 }}>{archetype.emoji}</span>
@@ -55,10 +55,10 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01))',
       border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, padding: '18px 20px',
     }}>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 12 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 12 }}>
         This week you are
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -74,13 +74,13 @@ export default function ArchetypeCard({ compact = false }: ArchetypeCardProps) {
             {archetype.name}
           </div>
           {daysAsThis > 0 && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)' }}>
               {daysAsThis} day{daysAsThis !== 1 ? 's' : ''} building this pattern
             </div>
           )}
         </div>
       </div>
-      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.55, margin: 0 }}>
+      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.55, margin: 0 }}>
         {archetype.description}
       </p>
       <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.18)' }}>

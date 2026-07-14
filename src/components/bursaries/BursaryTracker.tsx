@@ -54,13 +54,13 @@ function daysUntil(dateStr: string | null): number | null {
 
 function formatDeadline(dateStr: string | null): { text: string; color: string } {
   const days = daysUntil(dateStr)
-  if (days === null) return { text: 'No deadline set', color: 'rgba(255,255,255,0.25)' }
+  if (days === null) return { text: 'No deadline set', color: 'rgba(255,255,255,0.45)' }
   if (days < 0)  return { text: `${Math.abs(days)}d overdue`, color: '#f87171' }
   if (days === 0) return { text: 'Due today!', color: '#ef4444' }
   if (days <= 3)  return { text: `${days}d left`, color: '#f87171' }
   if (days <= 7)  return { text: `${days}d left`, color: '#f59e0b' }
   if (days <= 14) return { text: `${days}d left`, color: '#fbbf24' }
-  return { text: `${days}d left`, color: 'rgba(255,255,255,0.35)' }
+  return { text: `${days}d left`, color: 'rgba(255,255,255,0.55)' }
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -170,7 +170,7 @@ export default function BursaryTracker() {
     return (
       <div className="flex flex-col gap-4">
         <button onClick={() => setSelected(null)}
-          className="font-mono text-[0.62rem] text-white/35 hover:text-white/60 self-start">
+          className="font-mono text-[0.62rem] text-white/60 hover:text-white/60 self-start">
           ← All applications
         </button>
 
@@ -180,40 +180,40 @@ export default function BursaryTracker() {
             <div>
               <div className="font-display font-bold text-white text-base leading-tight">{selected.bursary_name}</div>
               {selected.organization && (
-                <div className="font-mono text-[0.58rem] text-white/40 mt-0.5">{selected.organization}</div>
+                <div className="font-mono text-[0.58rem] text-white/65 mt-0.5">{selected.organization}</div>
               )}
             </div>
             <button onClick={() => deleteApp(selected.id)}
-              className="font-mono text-[0.65rem] text-white/20 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5">
+              className="font-mono text-[0.65rem] text-white/45 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5">
               Delete
             </button>
           </div>
 
           <div className="grid grid-cols-3 gap-2 mb-3">
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.65rem] text-white/25 mb-1">DEADLINE</div>
+              <div className="font-mono text-[0.65rem] text-white/50 mb-1">DEADLINE</div>
               <div className="font-mono text-[0.62rem] font-bold" style={{ color: dl.color }}>{dl.text}</div>
               {selected.deadline && (
-                <div className="font-mono text-[0.48rem] text-white/20 mt-0.5">
+                <div className="font-mono text-[0.48rem] text-white/45 mt-0.5">
                   {new Date(selected.deadline).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
             </div>
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.65rem] text-white/25 mb-1">AMOUNT</div>
+              <div className="font-mono text-[0.65rem] text-white/50 mb-1">AMOUNT</div>
               <div className="font-display font-black text-white text-sm">
                 {selected.amount_rands ? `R${selected.amount_rands.toLocaleString()}` : '—'}
               </div>
             </div>
             <div className="text-center bg-white/3 rounded-xl py-2">
-              <div className="font-mono text-[0.65rem] text-white/25 mb-1">DOCS</div>
+              <div className="font-mono text-[0.65rem] text-white/50 mb-1">DOCS</div>
               <div className="font-display font-black text-white text-sm">{docsDone}/{docsTotal}</div>
             </div>
           </div>
 
           {/* Status selector */}
           <div>
-            <div className="font-mono text-[0.65rem] text-white/25 mb-1.5">STATUS</div>
+            <div className="font-mono text-[0.65rem] text-white/50 mb-1.5">STATUS</div>
             <div className="flex flex-wrap gap-1">
               {STATUS_ORDER.map(s => {
                 const sm = STATUS_META[s]
@@ -221,7 +221,7 @@ export default function BursaryTracker() {
                 return (
                   <button key={s} onClick={() => updateStatus(selected.id, s)}
                     className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border transition-all',
-                      isActive ? 'border-transparent' : 'bg-white/3 border-white/8 text-white/40 hover:border-white/15')}
+                      isActive ? 'border-transparent' : 'bg-white/3 border-white/8 text-white/65 hover:border-white/15')}
                     style={isActive ? { background: `${sm.color}20`, color: sm.color, borderColor: `${sm.color}30` } : {}}>
                     {sm.emoji} {sm.label}
                   </button>
@@ -233,7 +233,7 @@ export default function BursaryTracker() {
 
         {/* Document checklist */}
         <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.55rem] text-white/35 tracking-widest mb-3">DOCUMENT CHECKLIST</div>
+          <div className="font-mono text-[0.55rem] text-white/60 tracking-widest mb-3">DOCUMENT CHECKLIST</div>
           <div className="h-1.5 rounded-full bg-white/8 overflow-hidden mb-3">
             <div className="h-full rounded-full bg-emerald-500 transition-all"
               style={{ width: `${docsTotal > 0 ? (docsDone / docsTotal) * 100 : 0}%` }} />
@@ -246,7 +246,7 @@ export default function BursaryTracker() {
                   doc.done ? 'bg-emerald-500 border-emerald-500' : 'border-white/25')}>
                   {doc.done && <span className="text-white text-[0.55rem] font-bold">✓</span>}
                 </div>
-                <span className={cn('font-mono text-[0.6rem]', doc.done ? 'line-through text-white/30' : 'text-white/60')}>
+                <span className={cn('font-mono text-[0.6rem]', doc.done ? 'line-through text-white/55' : 'text-white/60')}>
                   {doc.name}
                 </span>
               </button>
@@ -256,15 +256,15 @@ export default function BursaryTracker() {
 
         {/* Notes */}
         <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.55rem] text-white/35 tracking-widest mb-2">NOTES</div>
+          <div className="font-mono text-[0.55rem] text-white/60 tracking-widest mb-2">NOTES</div>
           <textarea
             defaultValue={selected.notes || ''}
             onBlur={e => saveNotes(selected, e.target.value)}
             placeholder="Add notes, contacts, requirements, URLs…"
             rows={3}
-            className="w-full bg-white/4 border border-white/8 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-white/20 resize-none font-body"
+            className="w-full bg-white/4 border border-white/8 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-white/20 resize-none font-body"
           />
-          <div className="font-mono text-[0.48rem] text-white/20 mt-1">Auto-saved on blur</div>
+          <div className="font-mono text-[0.48rem] text-white/45 mt-1">Auto-saved on blur</div>
         </div>
       </div>
     )
@@ -279,19 +279,19 @@ export default function BursaryTracker() {
         <div className="grid grid-cols-3 gap-2">
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-white text-lg leading-none">{apps.length}</div>
-            <div className="font-mono text-[0.65rem] text-white/30 mt-1">applications</div>
+            <div className="font-mono text-[0.65rem] text-white/55 mt-1">applications</div>
           </div>
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-amber-400 text-base leading-none">
               {totalPot > 0 ? `R${(totalPot / 1000).toFixed(0)}k` : '—'}
             </div>
-            <div className="font-mono text-[0.65rem] text-white/30 mt-1">potential</div>
+            <div className="font-mono text-[0.65rem] text-white/55 mt-1">potential</div>
           </div>
           <div className="text-center bg-white/3 border border-white/7 rounded-2xl py-3 px-2">
             <div className="font-display font-black text-emerald-400 text-base leading-none">
               {wonAmount > 0 ? `R${(wonAmount / 1000).toFixed(0)}k` : accepted.length > 0 ? accepted.length : '—'}
             </div>
-            <div className="font-mono text-[0.65rem] text-white/30 mt-1">{accepted.length > 0 ? 'won' : 'accepted'}</div>
+            <div className="font-mono text-[0.65rem] text-white/55 mt-1">{accepted.length > 0 ? 'won' : 'accepted'}</div>
           </div>
         </div>
       )}
@@ -318,19 +318,19 @@ export default function BursaryTracker() {
         <div className="bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3">
           <div className="font-display font-bold text-white text-sm">Add application</div>
           <input value={fName} onChange={e => setFName(e.target.value)} placeholder="Bursary / scholarship name *"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-teal-500 font-body" />
           <div className="grid grid-cols-2 gap-2">
             <input value={fOrg} onChange={e => setFOrg(e.target.value)} placeholder="Organisation (optional)"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-teal-500 font-body" />
             <input type="number" inputMode="decimal" aria-label="Bursary amount in rands" value={fAmount} onChange={e => setFAmount(e.target.value)} placeholder="Amount (R)"
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/20 outline-none focus:border-teal-500 font-body" />
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-teal-500 font-body" />
             <div>
-              <label className="font-mono text-[0.65rem] text-white/30 mb-1 block">Deadline</label>
+              <label className="font-mono text-[0.65rem] text-white/55 mb-1 block">Deadline</label>
               <input type="date" value={fDeadline} onChange={e => setFDeadline(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-teal-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/30 mb-1 block">Status</label>
+              <label className="font-mono text-[0.65rem] text-white/55 mb-1 block">Status</label>
               <select value={fStatus} onChange={e => setFStatus(e.target.value as AppStatus)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-500 font-body">
                 {STATUS_ORDER.map(s => (
@@ -345,7 +345,7 @@ export default function BursaryTracker() {
               {creating ? 'Adding…' : 'Add Application'}
             </button>
             <button onClick={() => setShowNew(false)}
-              className="px-4 font-mono text-sm text-white/40 border border-white/10 rounded-xl">
+              className="px-4 font-mono text-sm text-white/65 border border-white/10 rounded-xl">
               Cancel
             </button>
           </div>
@@ -364,7 +364,7 @@ export default function BursaryTracker() {
         <div className="text-center py-10">
           <div className="text-3xl mb-2">🎓</div>
           <div className="font-display font-bold text-white text-sm">No applications yet</div>
-          <div className="font-mono text-[0.6rem] text-white/30 mt-1 leading-relaxed">
+          <div className="font-mono text-[0.6rem] text-white/55 mt-1 leading-relaxed">
             Track every bursary you're applying for — deadlines, documents, and status updates in one place.
           </div>
         </div>
@@ -387,14 +387,14 @@ export default function BursaryTracker() {
                         {meta.emoji} {meta.label}
                       </span>
                       {a.docs_checklist.length > 0 && (
-                        <span className="font-mono text-[0.65rem] text-white/25">
+                        <span className="font-mono text-[0.65rem] text-white/50">
                           {docsDone}/{a.docs_checklist.length} docs
                         </span>
                       )}
                     </div>
                     <div className="font-display font-bold text-white text-sm truncate">{a.bursary_name}</div>
                     {a.organization && (
-                      <div className="font-mono text-[0.55rem] text-white/35 truncate mt-0.5">{a.organization}</div>
+                      <div className="font-mono text-[0.55rem] text-white/60 truncate mt-0.5">{a.organization}</div>
                     )}
                   </div>
                   <div className="flex-shrink-0 text-right">

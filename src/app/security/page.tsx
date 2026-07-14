@@ -103,15 +103,15 @@ export default function SecurityPage() {
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
-        <span className="text-white/20 font-mono text-xs">|</span>
-        <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Trust Centre</span>
+        <span className="text-white/45 font-mono text-xs">|</span>
+        <span className="font-mono text-xs text-white/65 uppercase tracking-widest">Trust Centre</span>
       </div>
 
       <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Security</h1>
-          <p className="font-mono text-xs text-white/30">We protect 10,000+ students. Here&apos;s exactly how.</p>
+          <p className="font-mono text-xs text-white/55">We protect 10,000+ students. Here&apos;s exactly how.</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed">
@@ -151,9 +151,9 @@ export default function SecurityPage() {
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left py-2 pr-4 font-display font-bold text-white/50 text-xs uppercase tracking-wider">Regulation</th>
-                    <th className="text-left py-2 pr-4 font-display font-bold text-white/50 text-xs uppercase tracking-wider">Status</th>
-                    <th className="text-left py-2 font-display font-bold text-white/50 text-xs uppercase tracking-wider hidden sm:table-cell">Detail</th>
+                    <th className="text-left py-2 pr-4 font-display font-bold text-white/70 text-xs uppercase tracking-wider">Regulation</th>
+                    <th className="text-left py-2 pr-4 font-display font-bold text-white/70 text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-left py-2 font-display font-bold text-white/70 text-xs uppercase tracking-wider hidden sm:table-cell">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -163,7 +163,7 @@ export default function SecurityPage() {
                       <td className="py-2 pr-4">
                         <span style={{ color: row.color, fontWeight: 700 }}>{row.status}</span>
                       </td>
-                      <td className="py-2 text-white/40 hidden sm:table-cell">{row.detail}</td>
+                      <td className="py-2 text-white/65 hidden sm:table-cell">{row.detail}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -188,7 +188,7 @@ export default function SecurityPage() {
                   <span className="text-teal-400 font-bold flex-shrink-0" style={{ minWidth: 100 }}>{p.name}</span>
                   <div>
                     <p className="text-white/70 text-[10px] font-bold mb-0.5">{p.role}</p>
-                    <p className="text-white/35 text-[10px]">{p.cert}</p>
+                    <p className="text-white/60 text-[10px]">{p.cert}</p>
                   </div>
                 </div>
               ))}
@@ -218,10 +218,10 @@ export default function SecurityPage() {
                 <li>Include: affected URL, steps to reproduce, impact assessment, your contact details</li>
                 <li>We will acknowledge within 48 hours and provide a fix timeline</li>
               </ul>
-              <p className="text-white/40">
+              <p className="text-white/65">
                 Please do <strong className="text-white/60">not</strong> publicly disclose vulnerabilities before we have had reasonable time to fix them (we ask for a minimum 90-day window). We do not operate a bug bounty programme at this time, but we will credit researchers in our changelog.
               </p>
-              <p className="text-white/40">
+              <p className="text-white/65">
                 Out of scope: social engineering, physical access attacks, denial-of-service attacks, spam.
               </p>
             </div>
@@ -253,20 +253,20 @@ export default function SecurityPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/privacy" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Privacy Policy</p>
-                <p className="text-white/40 text-xs mt-1">How we process your personal information under POPIA</p>
+                <p className="text-white/65 text-xs mt-1">How we process your personal information under POPIA</p>
               </Link>
               <Link href="/paia" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">PAIA Manual</p>
-                <p className="text-white/40 text-xs mt-1">Section 51 manual, records held, annual report</p>
+                <p className="text-white/65 text-xs mt-1">Section 51 manual, records held, annual report</p>
               </Link>
               <Link href="/terms" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Terms</p>
-                <p className="text-white/40 text-xs mt-1">Platform rules, subscriptions, SA law</p>
+                <p className="text-white/65 text-xs mt-1">Platform rules, subscriptions, SA law</p>
               </Link>
             </div>
           </section>
 
-          <p className="text-white/25 text-xs text-center pt-2">
+          <p className="text-white/50 text-xs text-center pt-2">
             Questions? <a href="mailto:security@varsityos.co.za" className="text-teal-400 hover:text-teal-300">security@varsityos.co.za</a>
           </p>
 

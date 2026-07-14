@@ -62,7 +62,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
-    background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.12)',
     borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem',
     fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
   }
@@ -84,7 +84,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
             Share Your Notes
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.66)' }}>
             <X size={16} />
           </button>
         </div>
@@ -92,7 +92,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* File type selector */}
           <div>
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Type</div>
+            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Type</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {FILE_TYPES.map(({ value, label, icon: Icon }) => (
                 <button
@@ -103,8 +103,8 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
                     display: 'flex', alignItems: 'center', gap: 5, padding: '6px 12px',
                     borderRadius: 20, border: '0.5px solid',
                     borderColor: fileType === value ? '#4ecf9e' : 'rgba(255,255,255,0.12)',
-                    background: fileType === value ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)',
-                    color: fileType === value ? '#4ecf9e' : 'rgba(255,255,255,0.5)',
+                    background: fileType === value ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.07)',
+                    color: fileType === value ? '#4ecf9e' : 'rgba(255,255,255,0.66)',
                     fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer',
                   }}
                 >
@@ -115,28 +115,28 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
           </div>
 
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Title *</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Title *</label>
             <input aria-label="Title" style={inputStyle} value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Calculus Chapter 3 Summary" maxLength={120} required />
           </div>
 
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Module Code *</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Module Code *</label>
             <input aria-label="Module code" style={inputStyle} value={moduleCode} onChange={e => setModuleCode(e.target.value.toUpperCase())} placeholder="e.g. MATH1014" maxLength={20} required />
           </div>
 
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>
               <Link2 size={10} style={{ display: 'inline', marginRight: 4 }} />
               Google Drive / OneDrive / Dropbox link *
             </label>
             <input aria-label="Google Drive / OneDrive / Dropbox link" inputMode="url" style={inputStyle} type="url" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://drive.google.com/..." required />
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>
+            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>
               Share the link with "Anyone with link can view" access
             </div>
           </div>
 
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Description</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Description</label>
             <textarea
               aria-label="Description"
               style={{ ...inputStyle, resize: 'none', height: 72 }}
@@ -146,7 +146,7 @@ export default function NoteUploadModal({ userInstitution, userFaculty, userYear
           </div>
 
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Tags (comma-separated)</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Tags (comma-separated)</label>
             <input aria-label="Tags (comma-separated)" style={inputStyle} value={tags} onChange={e => setTags(e.target.value)} placeholder="exam prep, chapter 3, formulas" />
           </div>
 

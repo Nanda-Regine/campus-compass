@@ -68,7 +68,7 @@ export default function CompoundDayBurst() {
       <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 'clamp(1.6rem, 5vw, 2.4rem)', color: '#fff', marginBottom: 8, animation: 'cd-title 0.4s 0.65s ease both', opacity: 0, letterSpacing: '-0.03em' }}>
         Ubuntu Mode Activated
       </div>
-      <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginBottom: 28, animation: 'cd-title 0.4s 0.8s ease both', opacity: 0 }}>
+      <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.66)', marginBottom: 28, animation: 'cd-title 0.4s 0.8s ease both', opacity: 0 }}>
         You tended to {payload.domainsHit.length} areas of your life today
       </div>
 
@@ -108,7 +108,7 @@ export default function CompoundDayBurst() {
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.2rem', color: '#4ecf9e' }}>
           +{payload.xp} XP
         </span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)' }}>
           Compound Bonus
         </span>
       </div>

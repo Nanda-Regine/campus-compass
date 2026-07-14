@@ -33,7 +33,7 @@ export default function LanguageSwitcher({ currentLocale, onChange }: Props) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
         Language / Ulimi / Taal
       </div>
       <div style={{ display: 'flex', gap: 6 }}>
@@ -45,7 +45,7 @@ export default function LanguageSwitcher({ currentLocale, onChange }: Props) {
               flex: 1, padding: '9px 8px', borderRadius: 10,
               border: '0.5px solid',
               borderColor: currentLocale === lang.code ? '#4ecf9e' : 'rgba(255,255,255,0.1)',
-              background: currentLocale === lang.code ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)',
+              background: currentLocale === lang.code ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.07)',
               color: currentLocale === lang.code ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
               fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem',
               fontWeight: currentLocale === lang.code ? 700 : 400,

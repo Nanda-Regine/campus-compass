@@ -218,7 +218,7 @@ export default function LinkedInBootcamp() {
         </div>
       ) : (
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 16,
           padding: '16px',
@@ -260,7 +260,7 @@ export default function LinkedInBootcamp() {
           <div
             key={section.id}
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: isOpen ? '1px solid rgba(129,140,248,0.25)' : '1px solid rgba(255,255,255,0.06)',
               borderRadius: 16,
               overflow: 'hidden',

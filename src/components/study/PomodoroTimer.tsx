@@ -442,7 +442,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
               ? `${Math.floor(todayMinutes / 60)}h ${todayMinutes % 60}m`
               : `${todayMinutes}m`}
           </p>
-          <p className="font-mono text-[0.55rem] text-white/30 mt-0.5">studied today</p>
+          <p className="font-mono text-[0.55rem] text-white/55 mt-0.5">studied today</p>
         </div>
         <div
           className="rounded-2xl p-4 text-center relative overflow-hidden"
@@ -450,7 +450,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         >
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
           <p className="font-display font-black text-2xl" style={{ color: '#e8956e' }}>{completedSessions}</p>
-          <p className="font-mono text-[0.55rem] text-white/30 mt-0.5">sessions this run</p>
+          <p className="font-mono text-[0.55rem] text-white/55 mt-0.5">sessions this run</p>
         </div>
       </div>
 

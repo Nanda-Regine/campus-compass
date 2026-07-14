@@ -242,7 +242,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Job type */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Job Type</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8 }}>
             {JOB_TYPE_LABELS.map(jt => (
@@ -266,14 +266,14 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
         </div>
 
         {/* Industry */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Industry</div>
           <select
             value={setupDraft.industry ?? ''}
             onChange={e => setSetupDraft(prev => ({ ...prev, industry: e.target.value }))}
             style={{
               width: '100%',
-              background: 'rgba(255,255,255,0.04)',
+              background: 'rgba(255,255,255,0.07)',
               border: '1px solid rgba(255,255,255,0.09)',
               borderRadius: 10,
               padding: '10px 12px',
@@ -291,7 +291,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
         </div>
 
         {/* Interview type */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12, fontWeight: 600 }}>Interview Type</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {INTERVIEW_TYPE_LABELS.map(it => (
@@ -359,7 +359,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {/* Result card */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 16,
           padding: '20px',
@@ -386,7 +386,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
         </div>
 
         {/* Per-question scores */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '14px 16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '14px 16px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>Question Scores</div>
           <div style={{ display: 'flex', gap: 8 }}>
             {scores.map((s, i) => {
@@ -417,7 +417,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
               padding: '11px 0',
               borderRadius: 11,
               border: '1px solid rgba(255,255,255,0.1)',
-              background: copied ? 'rgba(129,140,248,0.15)' : 'rgba(255,255,255,0.03)',
+              background: copied ? 'rgba(129,140,248,0.15)' : 'rgba(255,255,255,0.06)',
               color: copied ? '#818cf8' : 'var(--text-tertiary)',
               fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Sora, sans-serif',
               transition: 'all 0.2s',
@@ -449,7 +449,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
       {/* Progress bar */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
             Question <strong style={{ color: 'var(--text-primary)' }}>{currentQ + 1}</strong> of {TOTAL_QUESTIONS}
@@ -498,7 +498,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
             disabled={loading}
             style={{
               width: '100%',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.09)',
               borderRadius: 12,
               padding: '12px 14px',
@@ -543,7 +543,7 @@ export default function MockInterviewCoach({ userId: _userId }: Props) {
       {/* Feedback card */}
       {feedback && (
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 16,
           padding: '16px',

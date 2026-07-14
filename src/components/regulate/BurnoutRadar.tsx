@@ -54,7 +54,7 @@ export default function BurnoutRadar({ userId }: Props) {
 
   if (loading) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16, minHeight: 200 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16, minHeight: 200 }}>
         <div style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>Loading...</div>
       </div>
     )
@@ -62,7 +62,7 @@ export default function BurnoutRadar({ userId }: Props) {
 
   if (checkins.length === 0) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
         <p style={{ color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Burnout Radar</p>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>No data yet — complete a wellness check-in</p>
         <Link href="/study?tab=wellness" style={{ color: '#a78bfa', fontSize: 12 }}>Go to Wellness →</Link>
@@ -89,7 +89,7 @@ export default function BurnoutRadar({ userId }: Props) {
   const sparkScores = [...scores].reverse()
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
+    <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
       <p style={{ color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Burnout Radar</p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>

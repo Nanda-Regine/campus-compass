@@ -220,7 +220,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '11px 14px',
-    background: 'rgba(255,255,255,0.04)',
+    background: 'rgba(255,255,255,0.07)',
     border: '1px solid rgba(255,255,255,0.10)',
     borderRadius: 10,
     color: 'var(--text-secondary)',
@@ -249,7 +249,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
 
           {/* Header */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 16, padding: '20px',
             position: 'relative', overflow: 'hidden',
@@ -269,7 +269,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
 
           {/* Form */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 16, padding: '20px',
             display: 'flex', flexDirection: 'column', gap: 16,
@@ -320,7 +320,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
                       padding: '8px 16px',
                       background: form.durationMinutes === min
                         ? 'rgba(251,146,60,0.18)'
-                        : 'rgba(255,255,255,0.04)',
+                        : 'rgba(255,255,255,0.07)',
                       border: `1px solid ${form.durationMinutes === min ? 'rgba(251,146,60,0.5)' : 'rgba(255,255,255,0.10)'}`,
                       borderRadius: 100,
                       color: form.durationMinutes === min ? '#fb923c' : 'var(--text-tertiary)',
@@ -344,7 +344,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
                 padding: '15px 0',
                 background: canStart
                   ? 'linear-gradient(135deg, #f87171, #ef4444)'
-                  : 'rgba(255,255,255,0.04)',
+                  : 'rgba(255,255,255,0.07)',
                 border: 'none',
                 borderRadius: 12,
                 color: canStart ? '#fff' : 'var(--text-muted)',
@@ -391,7 +391,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
 
           {/* Timer card */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: `1px solid ${countdownColor}40`,
             borderRadius: 16, padding: '32px 20px',
             textAlign: 'center',
@@ -415,7 +415,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
             <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginBottom: 20 }}>remaining</div>
 
             <div style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               borderRadius: 10, padding: '12px 16px', marginBottom: 8,
             }}>
               <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
@@ -566,7 +566,7 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
           onClick={handleCancelAlert}
           style={{
             width: '100%', padding: '14px 0',
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.10)',
             borderRadius: 12, color: 'var(--text-tertiary)',
             fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer',

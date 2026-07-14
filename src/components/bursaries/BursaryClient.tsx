@@ -47,7 +47,7 @@ function BursaryCard({
   return (
     <div style={{
       borderRadius: 16, overflow: 'hidden',
-      background: 'rgba(255,255,255,0.03)',
+      background: 'rgba(255,255,255,0.06)',
       border: `0.5px solid ${typeColor}25`,
       transition: 'border-color 0.15s',
     }}>
@@ -113,7 +113,7 @@ function BursaryCard({
           >
             {saved ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
           </button>
-          <div style={{ color: 'rgba(255,255,255,0.25)', paddingTop: 2 }}>
+          <div style={{ color: 'rgba(255,255,255,0.45)', paddingTop: 2 }}>
             {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </div>
         </div>
@@ -200,10 +200,10 @@ function BursaryCard({
                 flex: '1 1 100px',
                 padding: '8px 12px', borderRadius: 10, textDecoration: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                background: 'rgba(255,255,255,0.04)',
+                background: 'rgba(255,255,255,0.07)',
                 border: '0.5px solid rgba(255,255,255,0.1)',
                 fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.72rem',
-                color: 'rgba(255,255,255,0.5)',
+                color: 'rgba(255,255,255,0.66)',
               }}
             >
               <ExternalLink size={12} /> Website
@@ -291,7 +291,7 @@ export default function BursaryClient() {
                 flex: 1, padding: '10px 8px', border: 'none', background: 'transparent', cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: pageTab === id ? 700 : 400,
                 fontSize: '0.72rem',
-                color: pageTab === id ? '#c084fc' : 'rgba(255,255,255,0.35)',
+                color: pageTab === id ? '#c084fc' : 'rgba(255,255,255,0.55)',
                 borderBottom: pageTab === id ? '2px solid #c084fc' : '2px solid transparent',
                 transition: 'all 0.2s ease',
               }}>
@@ -328,7 +328,7 @@ export default function BursaryClient() {
         <div style={{ position: 'relative' }}>
           <Search size={14} style={{
             position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-            color: 'rgba(255,255,255,0.3)',
+            color: 'rgba(255,255,255,0.5)',
           }} />
           <input
             value={query}
@@ -336,7 +336,7 @@ export default function BursaryClient() {
             placeholder="Search by name, field, or provider…"
             style={{
               width: '100%', padding: '9px 12px 9px 32px', borderRadius: 10, boxSizing: 'border-box',
-              border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+              border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.08)',
               color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '0.8rem',
               outline: 'none',
             }}
@@ -351,7 +351,7 @@ export default function BursaryClient() {
             onChange={e => setField(e.target.value)}
             style={{
               flex: '1 1 140px', padding: '7px 10px', borderRadius: 8,
-              border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)',
+              border: '0.5px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.08)',
               color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', outline: 'none',
             }}
           >
@@ -368,8 +368,8 @@ export default function BursaryClient() {
                 style={{
                   padding: '7px 10px', border: 'none', cursor: 'pointer',
                   fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
-                  background: basis === o.value ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.03)',
-                  color: basis === o.value ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+                  background: basis === o.value ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
+                  color: basis === o.value ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
                   transition: 'all 0.15s', whiteSpace: 'nowrap',
                 }}
               >
@@ -385,8 +385,8 @@ export default function BursaryClient() {
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '7px 12px', borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-mono)', fontSize: '0.56rem', flexShrink: 0,
-              background: showSaved ? 'rgba(240,180,41,0.15)' : 'rgba(255,255,255,0.04)',
-              color: showSaved ? '#f0b429' : 'rgba(255,255,255,0.35)',
+              background: showSaved ? 'rgba(240,180,41,0.15)' : 'rgba(255,255,255,0.07)',
+              color: showSaved ? '#f0b429' : 'rgba(255,255,255,0.55)',
               border: `0.5px solid ${showSaved ? 'rgba(240,180,41,0.3)' : 'rgba(255,255,255,0.08)'}`,
               transition: 'all 0.15s',
             }}

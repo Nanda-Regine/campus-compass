@@ -43,7 +43,7 @@ export default function DomainFlames() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>Domain Flames</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>Domain Flames</span>
         {todayDomains.size >= 3 && (
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.12)', border: '1px solid rgba(78,207,158,0.3)', borderRadius: 6, padding: '1px 6px' }}>
             🔥 Compound Day!
@@ -59,7 +59,7 @@ export default function DomainFlames() {
 
           return (
             <div key={domain} style={{
-              background: isActiveToday ? meta.darkColor : 'rgba(255,255,255,0.03)',
+              background: isActiveToday ? meta.darkColor : 'rgba(255,255,255,0.06)',
               border: `1px solid ${isActiveToday ? meta.color + '40' : 'rgba(255,255,255,0.07)'}`,
               borderRadius: 14, padding: '10px 6px', textAlign: 'center',
               transition: 'all 0.3s ease',
@@ -71,11 +71,11 @@ export default function DomainFlames() {
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, color: flame.color, lineHeight: 1 }}>
                 {ds.streak}
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 {meta.label}
               </div>
               {ds.shields > 0 && (
-                <div style={{ marginTop: 4, fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ marginTop: 4, fontSize: 8, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)' }}>
                   {'🛡️'.repeat(ds.shields)}
                 </div>
               )}
@@ -87,7 +87,7 @@ export default function DomainFlames() {
         })}
       </div>
       {todayDomains.size > 0 && (
-        <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
+        <div style={{ marginTop: 8, fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', textAlign: 'center' }}>
           {todayDomains.size}/5 domains active today
           {todayDomains.size < 3 && <span style={{ color: 'rgba(255,255,255,0.15)' }}> · {3 - todayDomains.size} more for Compound Day</span>}
         </div>

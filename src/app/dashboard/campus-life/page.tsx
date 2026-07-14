@@ -161,9 +161,9 @@ export default async function CampusLifePage() {
                 <div className="text-2xl flex-shrink-0">{guide.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm">{guide.title}</div>
-                  <div className="font-mono text-[0.58rem] text-white/40 mt-0.5 leading-snug">{guide.subtitle}</div>
+                  <div className="font-mono text-[0.58rem] text-white/65 mt-0.5 leading-snug">{guide.subtitle}</div>
                 </div>
-                <div className="font-mono text-[0.6rem] text-white/25 flex-shrink-0">→</div>
+                <div className="font-mono text-[0.6rem] text-white/50 flex-shrink-0">→</div>
               </Link>
             )
           })}
@@ -171,7 +171,7 @@ export default async function CampusLifePage() {
 
         {/* Crisis resources */}
         <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.6rem] text-white/30 uppercase tracking-widest mb-3">
+          <div className="font-mono text-[0.6rem] text-white/55 uppercase tracking-widest mb-3">
             Crisis support — free, 24/7
           </div>
           <div className="space-y-2.5">

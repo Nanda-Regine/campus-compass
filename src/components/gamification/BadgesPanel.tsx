@@ -33,14 +33,14 @@ export default function BadgesPanel() {
         </span>
         <span style={{
           fontFamily: 'JetBrains Mono,monospace', fontSize: 10,
-          color: unlockedBadges.length === BADGES.length ? '#4ecf9e' : 'rgba(255,255,255,0.4)',
+          color: unlockedBadges.length === BADGES.length ? '#4ecf9e' : 'rgba(255,255,255,0.58)',
         }}>
           {unlockedBadges.length}/{BADGES.length} unlocked
         </span>
       </div>
 
       {unlockedBadges.length === 0 && (
-        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 14 }}>
           Start using VarsityOS to earn your first badge.
         </p>
       )}
@@ -48,7 +48,7 @@ export default function BadgesPanel() {
       {/* Unlocked */}
       {unlockedBadges.length > 0 && (
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Earned</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Earned</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
             {unlockedBadges.map(b => <BadgeChip key={b.id} badge={b} unlocked />)}
           </div>
@@ -58,7 +58,7 @@ export default function BadgesPanel() {
       {/* Locked */}
       {lockedBadges.length > 0 && (
         <div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Locked</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Locked</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
             {lockedBadges.map(b => <BadgeChip key={b.id} badge={b} unlocked={false} />)}
           </div>
@@ -78,7 +78,7 @@ function BadgeChip({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
       title={badge.description}
       style={{
         position: 'relative',
-        background: unlocked ? `${badge.color}0f` : 'rgba(255,255,255,0.025)',
+        background: unlocked ? `${badge.color}0f` : 'rgba(255,255,255,0.05)',
         border: `1px solid ${unlocked ? badge.color + '28' : 'rgba(255,255,255,0.06)'}`,
         borderRadius: 10, padding: '10px 6px',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
@@ -90,7 +90,7 @@ function BadgeChip({ badge, unlocked }: { badge: Badge; unlocked: boolean }) {
       <span style={{ fontSize: 22 }}>{badge.emoji}</span>
       <span style={{
         fontSize: 9, textAlign: 'center', lineHeight: 1.3,
-        color: unlocked ? badge.color : 'rgba(255,255,255,0.3)',
+        color: unlocked ? badge.color : 'rgba(255,255,255,0.5)',
         fontFamily: 'Sora,sans-serif', fontWeight: 600,
       }}>
         {badge.name}

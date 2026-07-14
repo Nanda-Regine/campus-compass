@@ -140,7 +140,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.66)',
               fontSize: '1rem',
               flexShrink: 0,
             }}
@@ -182,7 +182,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
         {/* Other restrictions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <label
-            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.07em' }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.62)', textTransform: 'uppercase', letterSpacing: '0.07em' }}
           >
             Any other restrictions?
           </label>
@@ -192,7 +192,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
             onChange={e => setPrefs(prev => ({ ...prev, otherRestrictions: e.target.value }))}
             placeholder="e.g. no pork, low FODMAP, diabetic-friendly..."
             style={{
-              background: 'rgba(255,255,255,0.04)',
+              background: 'rgba(255,255,255,0.07)',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: 10,
               padding: '10px 14px',
@@ -232,7 +232,7 @@ export default function DietaryPreferencesModal({ isOpen, onClose, onSave, initi
         </button>
 
         {/* Footer note */}
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.28)', textAlign: 'center', lineHeight: 1.5 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.48)', textAlign: 'center', lineHeight: 1.5 }}>
           These preferences filter recipe suggestions and meal planning.
         </div>
       </div>

@@ -247,7 +247,7 @@ function EyeMovementGuide() {
     <div style={{ textAlign: 'center', marginTop: 16 }}>
       {active ? (
         <>
-          <div style={{ width: 120, height: 40, background: 'rgba(255,255,255,0.05)', borderRadius: 20, position: 'relative', margin: '0 auto 12px' }}>
+          <div style={{ width: 120, height: 40, background: 'rgba(255,255,255,0.08)', borderRadius: 20, position: 'relative', margin: '0 auto 12px' }}>
             <div style={{
               position: 'absolute', top: 8, width: 24, height: 24, borderRadius: '50%',
               background: '#a78bfa', transition: 'left 1.4s ease-in-out',
@@ -269,7 +269,7 @@ function EyeMovementGuide() {
 
 function PracticeCard({ icon, title, duration, description, onStart }: { icon: string; title: string; duration: string; description: string; onStart?: () => void }) {
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+    <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
@@ -361,7 +361,7 @@ function VagalTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type:
 
   return (
     <div className="flex flex-col gap-4">
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>💧</span>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Gargling</span>
@@ -379,7 +379,7 @@ function VagalTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type:
         )}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>🫁</span>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Extended Exhale Breathing</span>
@@ -403,7 +403,7 @@ function EyeTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type: s
 
   return (
     <div className="flex flex-col gap-4">
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>⏱️</span>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>20-20-20 Rule</span>
@@ -420,7 +420,7 @@ function EyeTab({ userId, onTimerDone }: { userId: string; onTimerDone: (type: s
         </button>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <div className="flex items-center gap-2 mb-2">
           <span style={{ fontSize: 20 }}>👀</span>
           <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: 15 }}>Eye Movement Relaxation</span>
@@ -467,7 +467,7 @@ function HistoryTab({ userId }: { userId: string }) {
   if (loading) return <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>Loading...</p>
   if (sessions.length === 0) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24, textAlign: 'center' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24, textAlign: 'center' }}>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>No sessions yet — complete a practice to see your history.</p>
       </div>
     )
@@ -505,14 +505,14 @@ function HistoryTab({ userId }: { userId: string }) {
           { label: 'Minutes', value: totalMinutes },
           { label: 'Day streak', value: streak },
         ].map(({ label, value }) => (
-          <div key={label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16, textAlign: 'center' }}>
+          <div key={label} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16, textAlign: 'center' }}>
             <p style={{ color: '#a78bfa', fontSize: 24, fontWeight: 700 }}>{value}</p>
             <p style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>{label}</p>
           </div>
         ))}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 20 }}>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 11, marginBottom: 12 }}>Most used: <span style={{ color: '#a78bfa' }}>{mostUsed}</span></p>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 11, marginBottom: 12 }}>Sessions last 14 days</p>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 60 }}>
@@ -578,7 +578,7 @@ export default function RegulationRoom({ userId, exams }: Props) {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5,
                 background: isActive ? 'rgba(167,139,250,0.14)' : 'transparent',
                 border: 'none', borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
-                color: isActive ? ACCENT : 'rgba(255,255,255,0.35)',
+                color: isActive ? ACCENT : 'rgba(255,255,255,0.55)',
                 cursor: 'pointer', transition: 'all 0.15s ease', padding: '6px 2px',
               }}
             >

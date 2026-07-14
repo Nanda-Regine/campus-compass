@@ -174,7 +174,7 @@ function PostCard({
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         padding: '16px',
@@ -289,7 +289,7 @@ function PostCard({
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              background: hasVoted ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.05)',
+              background: hasVoted ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.08)',
               border: hasVoted ? '1px solid rgba(52,211,153,0.4)' : '1px solid rgba(255,255,255,0.1)',
               borderRadius: '20px',
               padding: '4px 12px',
@@ -493,7 +493,7 @@ export default function WisdomArchive({
           style={{
             display: 'flex',
             gap: '4px',
-            background: 'rgba(255,255,255,0.04)',
+            background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '12px',
             padding: '4px',
@@ -536,7 +536,7 @@ export default function WisdomArchive({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(255,255,255,0.08)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '10px',
                     padding: '10px 14px',
@@ -568,7 +568,7 @@ export default function WisdomArchive({
                     padding: '5px 12px',
                     borderRadius: '20px',
                     border: categoryFilter === 'all' ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                    background: categoryFilter === 'all' ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.04)',
+                    background: categoryFilter === 'all' ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.07)',
                     color: categoryFilter === 'all' ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
@@ -586,7 +586,7 @@ export default function WisdomArchive({
                       padding: '5px 12px',
                       borderRadius: '20px',
                       border: categoryFilter === key ? `1px solid ${cfg.color}` : '1px solid rgba(255,255,255,0.1)',
-                      background: categoryFilter === key ? `${cfg.color}20` : 'rgba(255,255,255,0.04)',
+                      background: categoryFilter === key ? `${cfg.color}20` : 'rgba(255,255,255,0.07)',
                       color: categoryFilter === key ? cfg.color : 'var(--text-tertiary)',
                       fontSize: '12px',
                       cursor: 'pointer',
@@ -608,7 +608,7 @@ export default function WisdomArchive({
                     padding: '5px 12px',
                     borderRadius: '20px',
                     border: !myUniOnly ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                    background: !myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                    background: !myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                     color: !myUniOnly ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
@@ -622,7 +622,7 @@ export default function WisdomArchive({
                     padding: '5px 12px',
                     borderRadius: '20px',
                     border: myUniOnly ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                    background: myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                    background: myUniOnly ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                     color: myUniOnly ? '#34d399' : 'var(--text-tertiary)',
                     fontSize: '12px',
                     cursor: 'pointer',
@@ -707,7 +707,7 @@ export default function WisdomArchive({
                 required
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -734,7 +734,7 @@ export default function WisdomArchive({
                       padding: '5px 12px',
                       borderRadius: '20px',
                       border: postForm.category === key ? `1px solid ${cfg.color}` : '1px solid rgba(255,255,255,0.1)',
-                      background: postForm.category === key ? `${cfg.color}20` : 'rgba(255,255,255,0.04)',
+                      background: postForm.category === key ? `${cfg.color}20` : 'rgba(255,255,255,0.07)',
                       color: postForm.category === key ? cfg.color : 'var(--text-tertiary)',
                       fontSize: '12px',
                       cursor: 'pointer',
@@ -759,7 +759,7 @@ export default function WisdomArchive({
                 required
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -780,7 +780,7 @@ export default function WisdomArchive({
                 alignItems: 'center',
                 gap: '10px',
                 cursor: 'pointer',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '10px',
                 padding: '10px 14px',

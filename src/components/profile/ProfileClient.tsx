@@ -135,7 +135,7 @@ const FIELD_UNLOCKS: Record<string, string> = {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+      <label className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>
         {label}
       </label>
       {children}
@@ -154,7 +154,7 @@ function TextInput({ value, onChange, placeholder, maxLength }: {
       placeholder={placeholder}
       maxLength={maxLength}
       className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none transition-all focus:ring-1 focus:ring-teal-500/40"
-      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)' }}
     />
   )
 }
@@ -172,7 +172,7 @@ function SelectInput({ value, options, onChange }: {
       value={value}
       onChange={e => onChange(e.target.value)}
       className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none appearance-none transition-all focus:ring-1 focus:ring-teal-500/40"
-      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+      style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)' }}
     >
       <option value="">Not set</option>
       {normalised.map(o => (
@@ -233,14 +233,14 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
 
   const tierBg = meta
     ? `${meta.colour}12`
-    : 'rgba(255,255,255,0.03)'
+    : 'rgba(255,255,255,0.06)'
   const tierBorder = meta
     ? `1px solid ${meta.colour}30`
     : '1px solid rgba(255,255,255,0.07)'
 
   return (
     <div className="rounded-2xl p-5" style={{ background: tierBg, border: tierBorder }}>
-      <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+      <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.45)' }}>
         Subscription
       </p>
 
@@ -249,7 +249,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
           <p className="font-display font-bold text-white">
             {meta ? `✦ ${meta.name}` : 'Free plan'}
           </p>
-          <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: meta ? meta.colour : 'rgba(255,255,255,0.3)' }}>
+          <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: meta ? meta.colour : 'rgba(255,255,255,0.5)' }}>
             {meta ? meta.messages : '20 Nova messages / month'}
           </p>
         </div>
@@ -282,13 +282,13 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
             <button
               onClick={() => setConfirmCancel(true)}
               className="font-mono text-[0.62rem]"
-              style={{ color: 'rgba(255,255,255,0.22)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              style={{ color: 'rgba(255,255,255,0.42)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               Cancel subscription
             </button>
           ) : (
             <div>
-              <p className="font-mono text-[0.6rem] mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <p className="font-mono text-[0.6rem] mb-2" style={{ color: 'rgba(255,255,255,0.62)' }}>
                 Cancel subscription? You&apos;ll move to the Free plan immediately.
               </p>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -317,7 +317,7 @@ function SubscriptionSection({ profile, isPremium }: { profile: ProfileData | nu
       )}
 
       {cancelled && (
-        <p className="font-mono text-[0.6rem] mt-3" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <p className="font-mono text-[0.6rem] mt-3" style={{ color: 'rgba(255,255,255,0.55)' }}>
           Subscription cancelled — you&apos;re on the Free plan now.
         </p>
       )}
@@ -493,7 +493,7 @@ export default function ProfileClient() {
         <TopBar title="Profile" />
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
+            <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ background: 'rgba(255,255,255,0.07)' }} />
           ))}
         </div>
       </div>
@@ -561,23 +561,23 @@ export default function ProfileClient() {
                     className="font-mono text-[0.65rem] uppercase tracking-widest px-2.5 py-1 rounded-full flex-shrink-0"
                     style={{
                       background: isPremium ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.06)',
-                      color: isPremium ? '#4db6ac' : 'rgba(255,255,255,0.35)',
+                      color: isPremium ? '#4db6ac' : 'rgba(255,255,255,0.55)',
                       border: `1px solid ${isPremium ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.1)'}`,
                     }}
                   >
                     {isPremium ? '★ Premium' : 'Free'}
                   </span>
                 </div>
-                <p className="font-mono text-[0.6rem] mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                <p className="font-mono text-[0.6rem] mb-1" style={{ color: 'rgba(255,255,255,0.55)' }}>
                   {profile?.email}
                 </p>
                 {profile?.university && (
-                  <p className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  <p className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.62)' }}>
                     {profile.university}{profile.year_of_study && ` · ${profile.year_of_study}`}
                   </p>
                 )}
                 {profile?.bio && (
-                  <p className="font-display text-xs mt-1 leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>{profile.bio}</p>
+                  <p className="font-display text-xs mt-1 leading-relaxed" style={{ color: 'rgba(255,255,255,0.66)' }}>{profile.bio}</p>
                 )}
               </div>
             </div>
@@ -585,7 +585,7 @@ export default function ProfileClient() {
             {/* Emoji picker */}
             {showEmojiPicker && (
               <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>Choose your avatar</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>Choose your avatar</p>
                 <div className="flex flex-wrap gap-2">
                   {EMOJI_OPTIONS.map(e => (
                     <button
@@ -596,7 +596,7 @@ export default function ProfileClient() {
                         emoji === e ? 'scale-110' : 'opacity-50 hover:opacity-90'
                       )}
                       style={{
-                        background: emoji === e ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.05)',
+                        background: emoji === e ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.08)',
                         border: emoji === e ? '1px solid rgba(13,148,136,0.4)' : '1px solid rgba(255,255,255,0.07)',
                         boxShadow: emoji === e ? '0 0 12px rgba(13,148,136,0.2)' : 'none',
                       }}
@@ -620,7 +620,7 @@ export default function ProfileClient() {
               <p className="font-display font-black text-xl" style={{ color: '#4db6ac' }}>
                 {stats.novaLimit === null ? stats.novaMessagesUsed : `${stats.novaMessagesUsed}`}
               </p>
-              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 {stats.novaLimit === null ? 'unlimited' : `/ ${stats.novaLimit}`}
               </p>
               {stats.novaLimit !== null && (
@@ -646,7 +646,7 @@ export default function ProfileClient() {
                   ? `${Math.floor(stats.totalStudyMinutesThisMonth / 60)}h`
                   : `${stats.totalStudyMinutesThisMonth}m`}
               </p>
-              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>this month</p>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.45)' }}>this month</p>
             </div>
 
             {/* Referrals */}
@@ -654,7 +654,7 @@ export default function ProfileClient() {
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
               <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(217,120,84,0.6)' }}>Refs</p>
               <p className="font-display font-black text-xl" style={{ color: '#d97b54' }}>{stats.referralCount}</p>
-              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>+{stats.referralCredits} earned</p>
+              <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.45)' }}>+{stats.referralCredits} earned</p>
             </div>
           </div>
         )}
@@ -682,13 +682,13 @@ export default function ProfileClient() {
             <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                  <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.48)' }}>
                     OS personalisation
                   </p>
                   <p className="font-display font-bold text-sm text-white mt-0.5">{pct}% complete</p>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-[0.6rem]" style={{ color: pct === 100 ? '#4ecf9e' : 'rgba(255,255,255,0.3)' }}>
+                  <div className="font-mono text-[0.6rem]" style={{ color: pct === 100 ? '#4ecf9e' : 'rgba(255,255,255,0.5)' }}>
                     {filled.length}/{checks.length} fields
                   </div>
                   {pct < 100 && (
@@ -719,7 +719,7 @@ export default function ProfileClient() {
 
               {/* Missing nudge */}
               {missing.length > 0 && pct < 100 && (
-                <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.22)' }}>
+                <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.42)' }}>
                   Missing: {missing.slice(0, 4).map(c => c.emoji + ' ' + c.key.replace(/_/g, ' ')).join(' · ')}{missing.length > 4 ? ` + ${missing.length - 4} more` : ''}
                 </p>
               )}
@@ -730,7 +730,7 @@ export default function ProfileClient() {
         {/* ── Section tabs ─────────────────────────────────────────────────── */}
         <div
           className="flex gap-1 p-1 rounded-2xl"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}
           role="tablist"
         >
           {([
@@ -748,7 +748,7 @@ export default function ProfileClient() {
                 'flex-1 py-2.5 rounded-xl font-display font-bold text-[0.6rem] sm:text-xs transition-all flex items-center justify-center gap-1 overflow-hidden',
                 activeSection === tab.id
                   ? 'text-white'
-                  : 'text-white/35 hover:text-white/55'
+                  : 'text-white/60 hover:text-white/55'
               )}
               style={activeSection === tab.id ? {
                 background: 'linear-gradient(135deg, rgba(13,148,136,0.25) 0%, rgba(8,145,178,0.2) 100%)',
@@ -764,7 +764,7 @@ export default function ProfileClient() {
         {/* ── Profile tab ──────────────────────────────────────────────────── */}
         {activeSection === 'profile' && (
           <div className="space-y-3">
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <Field label="Display name">
                 <TextInput value={name} onChange={setName} placeholder="Your name" maxLength={60} />
               </Field>
@@ -776,7 +776,7 @@ export default function ProfileClient() {
                   maxLength={160}
                   rows={2}
                   className="w-full rounded-xl px-4 py-3 font-display text-sm text-white outline-none transition-all focus:ring-1 focus:ring-teal-500/40 resize-none"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}
+                  style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)' }}
                 />
                 <p className="font-mono text-[0.65rem] text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{bio.length}/160</p>
               </Field>
@@ -790,7 +790,7 @@ export default function ProfileClient() {
               </Field>
             </div>
 
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Year of study">
                   <SelectInput value={yearOfStudy} options={YEAR_OPTIONS} onChange={setYearOfStudy} />
@@ -815,10 +815,10 @@ export default function ProfileClient() {
                   </p>
                 )}
               </Field>
-              <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
+              <div className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.09)' }}>
                 <div>
-                  <div className="font-mono text-[0.62rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>First-generation student</div>
-                  <div className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  <div className="font-mono text-[0.62rem] uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>First-generation student</div>
+                  <div className="font-display text-xs" style={{ color: 'rgba(255,255,255,0.62)' }}>
                     {isFirstGen ? '✓ First in your family to study at university/college' : 'Are you the first in your family to study?'}
                   </div>
                   {isFirstGen && (
@@ -845,7 +845,7 @@ export default function ProfileClient() {
         {/* ── Preferences tab ──────────────────────────────────────────────── */}
         {activeSection === 'preferences' && (
           <div className="space-y-3">
-            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5 space-y-4" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <Field label="Living situation">
                 <SelectInput value={livingSituation} options={LIVING_OPTIONS} onChange={setLivingSituation} />
                 {livingSituation && (
@@ -893,12 +893,12 @@ export default function ProfileClient() {
 
             <SaveButton onClick={handleSave} saving={saving} label="Save preferences" />
 
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <LanguageSwitcher currentLocale={uiLocale} onChange={setUiLocale} />
             </div>
 
             <div className="pt-1">
-              <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              <p className="font-mono text-[0.62rem] uppercase tracking-widest mb-3 px-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 Referral program
               </p>
               <ReferralWidget />
@@ -909,22 +909,22 @@ export default function ProfileClient() {
         {/* ── Progress tab ─────────────────────────────────────────────────── */}
         {activeSection === 'progress' && (
           <div className="space-y-5">
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <VarsityScore />
             </div>
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <BadgesPanel />
             </div>
 
             {/* My textbook listings */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3 flex items-center justify-between">
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>My textbook listings</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>My textbook listings</p>
                 <a href="/textbooks" className="font-mono text-[0.62rem]" style={{ color: 'rgba(0,229,176,0.6)', textDecoration: 'none' }}>Browse →</a>
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
                 {myListings.length === 0 ? (
-                  <div className="px-5 py-4 font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                  <div className="px-5 py-4 font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.45)' }}>
                     No listings yet. Go to Textbooks to sell or give away books.
                   </div>
                 ) : myListings.map((l, i) => {
@@ -934,11 +934,11 @@ export default function ProfileClient() {
                     <div
                       key={l.id}
                       className="flex items-center justify-between px-5 py-3"
-                      style={{ borderBottom: i < myListings.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', opacity: l.is_sold ? 0.45 : 1 }}
+                      style={{ borderBottom: i < myListings.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none', opacity: l.is_sold ? 0.45 : 1 }}
                     >
                       <div>
                         <p className="font-display text-sm font-medium text-white">{l.title}</p>
-                        <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        <p className="font-mono text-[0.62rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
                           {l.condition} · {new Date(l.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                           {l.is_sold && <span style={{ color: 'var(--teal)', marginLeft: 5 }}>· Sold</span>}
                         </p>
@@ -960,22 +960,22 @@ export default function ProfileClient() {
             <SubscriptionSection profile={profile} isPremium={isPremium} />
 
             {/* Guardian Access */}
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <GuardianAccess />
             </div>
 
             {/* Account info */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Account details</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>Account details</p>
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <div className="flex justify-between items-center px-5 py-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Email</span>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="flex justify-between items-center px-5 py-3.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.58)' }}>Email</span>
                   <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.55)' }}>{profile?.email}</span>
                 </div>
                 <div className="flex justify-between items-center px-5 py-3.5">
-                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Member since</span>
+                  <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.58)' }}>Member since</span>
                   <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.55)' }}>
                     {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }) : '—'}
                   </span>
@@ -984,14 +984,14 @@ export default function ProfileClient() {
             </div>
 
             {/* Display */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Display</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>Display</p>
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} className="p-3 space-y-2">
                 <div className="px-1 space-y-2">
                   <div>
-                    <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
                       Data Saver skips auto-loading AI content to protect your prepaid data.
                     </p>
                     <DataSaverToggle />
@@ -1001,15 +1001,15 @@ export default function ProfileClient() {
             </div>
 
             {/* Feedback */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Feedback & reviews</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>Feedback & reviews</p>
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} className="p-3 space-y-2">
                 <button
                   onClick={() => setShowFeedback(true)}
                   className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
-                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.07)' }}
                 >
                   <span className="text-base">📝</span>
                   <span>Send feedback</span>
@@ -1030,15 +1030,15 @@ export default function ProfileClient() {
             </div>
 
             {/* Actions */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-5 pt-5 pb-3">
-                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Actions</p>
+                <p className="font-mono text-[0.62rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>Actions</p>
               </div>
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }} className="p-3 space-y-2">
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} className="p-3 space-y-2">
                 <button
                   onClick={handleLogout}
                   className="w-full text-left font-display text-sm py-3 px-4 rounded-xl transition-all active:scale-[0.98] flex items-center gap-3"
-                  style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.65)', border: '1px solid rgba(255,255,255,0.07)' }}
                 >
                   <span className="text-base">🚪</span>
                   <span>Sign out</span>
@@ -1073,7 +1073,7 @@ export default function ProfileClient() {
                 ⚠️
               </div>
               <h2 className="font-display font-black text-white text-lg mb-2">Delete your account?</h2>
-              <p className="font-mono text-xs mb-5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <p className="font-mono text-xs mb-5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.62)' }}>
                 This permanently deletes your account and <strong className="text-white/70">all data</strong> — study plans, budget history, Nova conversations. Cannot be undone.
               </p>
               <p className="font-mono text-[0.62rem] mb-2" style={{ color: 'rgba(239,68,68,0.7)' }}>
@@ -1092,7 +1092,7 @@ export default function ProfileClient() {
                 <button
                   onClick={() => { setShowDeleteModal(false); setDeleteConfirmText('') }}
                   className="flex-1 font-display font-bold text-sm py-3 rounded-xl transition-all active:scale-95"
-                  style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >
                   Cancel
                 </button>

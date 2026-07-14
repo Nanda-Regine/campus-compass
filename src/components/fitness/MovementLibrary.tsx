@@ -598,7 +598,7 @@ export default function MovementLibrary() {
             <button
               onClick={stopWorkout}
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '12px',
                 color: '#9ca3af',
@@ -679,7 +679,7 @@ export default function MovementLibrary() {
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               style={{
-                background: categoryFilter === cat ? '#4ade80' : 'rgba(255,255,255,0.05)',
+                background: categoryFilter === cat ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 border: `1px solid ${categoryFilter === cat ? '#4ade80' : 'rgba(255,255,255,0.1)'}`,
                 borderRadius: '20px',
                 color: categoryFilter === cat ? '#0a0a0f' : '#9ca3af',
@@ -702,7 +702,7 @@ export default function MovementLibrary() {
               key={sp}
               onClick={() => setSpaceFilter(sp)}
               style={{
-                background: spaceFilter === sp ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.03)',
+                background: spaceFilter === sp ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.06)',
                 border: `1px solid ${spaceFilter === sp ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: '8px',
                 color: spaceFilter === sp ? '#4ade80' : '#9ca3af',
@@ -721,7 +721,7 @@ export default function MovementLibrary() {
               key={e}
               onClick={() => setEnergyFilter(e)}
               style={{
-                background: energyFilter === e ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.03)',
+                background: energyFilter === e ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.06)',
                 border: `1px solid ${energyFilter === e ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: '8px',
                 color: energyFilter === e ? '#4ade80' : '#9ca3af',
@@ -746,7 +746,7 @@ export default function MovementLibrary() {
             <div
               key={ex.id}
               style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: inCircuit(ex.id) ? '1px solid rgba(74,222,128,0.4)' : '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '16px',
                 padding: '14px',
@@ -771,7 +771,7 @@ export default function MovementLibrary() {
                 onClick={() => toggleCircuit(ex)}
                 style={{
                   width: '100%',
-                  background: inCircuit(ex.id) ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.05)',
+                  background: inCircuit(ex.id) ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.08)',
                   border: `1px solid ${inCircuit(ex.id) ? 'rgba(74,222,128,0.3)' : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: '8px',
                   color: inCircuit(ex.id) ? '#4ade80' : '#9ca3af',

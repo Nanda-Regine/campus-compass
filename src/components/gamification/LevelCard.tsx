@@ -276,7 +276,7 @@ export default function LevelCard() {
                   fontFamily: 'Sora, sans-serif',
                   fontWeight: 500,
                   fontSize: 11,
-                  color: 'rgba(255,255,255,0.45)',
+                  color: 'rgba(255,255,255,0.62)',
                   marginLeft: 3,
                 }}
               >

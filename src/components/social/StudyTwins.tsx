@@ -62,14 +62,14 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
             Study Twins
           </div>
-          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
             {userInstitution ?? 'Find your study peers'} · Ubuntu in action
           </div>
         </div>
 
         {/* Opt-in settings */}
         <div style={{
-          background: 'rgba(255,255,255,0.04)',
+          background: 'rgba(255,255,255,0.07)',
           border: '0.5px solid rgba(255,255,255,0.1)',
           borderRadius: 14, padding: 16, marginBottom: 20,
         }}>
@@ -78,14 +78,14 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
                 Appear in directory
               </div>
-              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.72rem', color: 'rgba(255,255,255,0.58)', marginTop: 2 }}>
                 Let students at your university find you
               </div>
             </div>
             <button
               onClick={toggleOptIn}
               disabled={savingSettings}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: optIn ? '#4ecf9e' : 'rgba(255,255,255,0.25)', padding: 0 }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: optIn ? '#4ecf9e' : 'rgba(255,255,255,0.45)', padding: 0 }}
             >
               {optIn ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
             </button>
@@ -93,7 +93,7 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
 
           {optIn && (
             <div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Phone size={10} />
                 WhatsApp number (optional — shown to matches only)
               </div>
@@ -104,7 +104,7 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
                   placeholder="+27 xx xxx xxxx"
                   style={{
                     flex: 1, padding: '8px 12px',
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'rgba(255,255,255,0.08)',
                     border: '0.5px solid rgba(255,255,255,0.12)',
                     borderRadius: 10, color: 'var(--text-primary)',
                     fontSize: '0.8rem', fontFamily: 'DM Sans, sans-serif', outline: 'none',
@@ -138,7 +138,7 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
             <Sparkles size={16} style={{ color: '#9b6fd4', flexShrink: 0 }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.8rem', color: '#9b6fd4' }}>Ask Nova to help you connect</div>
-              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Get a personalised intro message for any study twin</div>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>Get a personalised intro message for any study twin</div>
             </div>
             <ChevronRight size={14} style={{ color: 'rgba(155,111,212,0.5)' }} />
           </div>
@@ -149,10 +149,10 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
       <div style={{ padding: '0 20px' }}>
         {loading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} style={{ height: 72, borderRadius: 12, background: 'rgba(255,255,255,0.04)', marginBottom: 8 }} />
+            <div key={i} style={{ height: 72, borderRadius: 12, background: 'rgba(255,255,255,0.07)', marginBottom: 8 }} />
           ))
         ) : twins.length === 0 ? (
-          <div style={{ textAlign: 'center', paddingTop: 32, color: 'rgba(255,255,255,0.25)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
+          <div style={{ textAlign: 'center', paddingTop: 32, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem' }}>
             <Users size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
             <div>
               {userInstitution
@@ -178,7 +178,7 @@ export default function StudyTwins({ userInstitution, initialOptIn, initialWhats
 function TwinGroup({ twins, label }: { twins: StudyTwin[]; label: string }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         {label} · {twins.length}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -197,7 +197,7 @@ function TwinCard({ twin }: { twin: StudyTwin }) {
 
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.03)',
+      background: 'rgba(255,255,255,0.06)',
       border: '0.5px solid rgba(255,255,255,0.08)',
       borderRadius: 12, padding: '12px 14px',
       display: 'flex', alignItems: 'center', gap: 12,
@@ -215,7 +215,7 @@ function TwinCard({ twin }: { twin: StudyTwin }) {
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
           {twin.name}
         </div>
-        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>
+        <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)', marginTop: 1 }}>
           {[twin.faculty, twin.year_of_study ? `Year ${twin.year_of_study}` : null].filter(Boolean).join(' · ')}
         </div>
       </div>

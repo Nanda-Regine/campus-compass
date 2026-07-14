@@ -88,7 +88,7 @@ export default function LoginForm() {
           <span className="font-display font-bold text-white">VarsityOS</span>
         </Link>
         <h1 className="font-display font-black text-2xl text-white mb-1.5">Welcome back</h1>
-        <p className="font-mono text-xs text-white/40">Sign in to your account</p>
+        <p className="font-mono text-xs text-white/65">Sign in to your account</p>
       </div>
 
       {/* Card */}
@@ -114,7 +114,7 @@ export default function LoginForm() {
 
           <div className="flex items-center gap-3 mb-5">
             <div className="flex-1 h-px bg-white/7" />
-            <span className="font-mono text-[0.6rem] text-white/25 uppercase tracking-widest">or continue with email</span>
+            <span className="font-mono text-[0.6rem] text-white/50 uppercase tracking-widest">or continue with email</span>
             <div className="flex-1 h-px bg-white/7" />
           </div>
 
@@ -141,7 +141,7 @@ export default function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-white/30 hover:text-white/60 transition-colors"
+                  className="text-white/55 hover:text-white/60 transition-colors"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   aria-pressed={showPassword}
                 >
@@ -191,7 +191,7 @@ export default function LoginForm() {
           </form>
         </div>
 
-        <p className="text-center mt-5 font-mono text-xs text-white/30">
+        <p className="text-center mt-5 font-mono text-xs text-white/55">
           Don&apos;t have an account?{' '}
           <Link href="/auth/signup" className="text-teal-500 hover:text-teal-400 transition-colors">
             Sign up free

@@ -37,14 +37,14 @@ export default function PodActivityFeed() {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>
         Pod Activity
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {feed.slice(0, 5).map((item, i) => (
           <div key={i} style={{
             display: 'flex', alignItems: 'flex-start', gap: 10,
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 12, padding: '10px 12px',
           }}>
             <div style={{
@@ -67,7 +67,7 @@ export default function PodActivityFeed() {
                   <span key={d} style={{
                     fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
                     color: DOMAIN_META[d]?.color ?? '#fff',
-                    background: DOMAIN_META[d]?.darkColor ?? 'rgba(255,255,255,0.05)',
+                    background: DOMAIN_META[d]?.darkColor ?? 'rgba(255,255,255,0.08)',
                     borderRadius: 5, padding: '1px 5px',
                   }}>
                     {DOMAIN_META[d]?.emoji} {DOMAIN_META[d]?.label}

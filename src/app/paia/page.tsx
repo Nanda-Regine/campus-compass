@@ -15,16 +15,16 @@ export default function PaiaPage() {
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
-        <span className="text-white/20 font-mono text-xs">|</span>
-        <span className="font-mono text-xs text-white/40 uppercase tracking-widest">Legal</span>
+        <span className="text-white/45 font-mono text-xs">|</span>
+        <span className="font-mono text-xs text-white/65 uppercase tracking-widest">Legal</span>
       </div>
 
       <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">PAIA Manual</h1>
-          <p className="font-mono text-xs text-white/30">Section 51 Manual · Promotion of Access to Information Act 2 of 2000</p>
-          <p className="font-mono text-xs text-white/30 mt-1">Last updated: 14 June 2026 · Reporting year: 1 April 2025 – 31 March 2026</p>
+          <p className="font-mono text-xs text-white/55">Section 51 Manual · Promotion of Access to Information Act 2 of 2000</p>
+          <p className="font-mono text-xs text-white/55 mt-1">Last updated: 14 June 2026 · Reporting year: 1 April 2025 – 31 March 2026</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white/85">
@@ -50,7 +50,7 @@ export default function PaiaPage() {
                 <p><strong className="text-white/75">Appointed:</strong> 28 August 2025</p>
                 <p><strong className="text-white/75">Email:</strong> <a href="mailto:privacy@mirembemuse.co.za" className="text-teal-400 hover:text-teal-300">privacy@mirembemuse.co.za</a></p>
                 <p><strong className="text-white/75">Alternate email:</strong> <a href="mailto:privacy@varsityos.co.za" className="text-teal-400 hover:text-teal-300">privacy@varsityos.co.za</a></p>
-                <p className="mt-2 text-white/40 text-xs">PAIA requests submitted to the Information Officer must be addressed in writing to the above email addresses. Postal and physical address available on written request.</p>
+                <p className="mt-2 text-white/65 text-xs">PAIA requests submitted to the Information Officer must be addressed in writing to the above email addresses. Postal and physical address available on written request.</p>
               </div>
               <div className="mt-3 border-t border-white/10 pt-3">
                 <p className="font-display font-bold text-white/75 text-xs uppercase tracking-widest mb-2">Information Regulator (Supervising Authority)</p>
@@ -58,7 +58,7 @@ export default function PaiaPage() {
                 <p className="mt-1">Website: <a href="https://www.inforeg.org.za" target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:text-teal-300">www.inforeg.org.za</a></p>
                 <p>Email: <a href="mailto:inforeg@justice.gov.za" className="text-teal-400 hover:text-teal-300">inforeg@justice.gov.za</a></p>
                 <p>Tel: 010 023 5200</p>
-                <p className="text-white/40 text-xs mt-1">Physical: JD House, 27 Stiemens Street, Braamfontein, Johannesburg, 2001</p>
+                <p className="text-white/65 text-xs mt-1">Physical: JD House, 27 Stiemens Street, Braamfontein, Johannesburg, 2001</p>
               </div>
             </div>
           </section>
@@ -73,7 +73,7 @@ export default function PaiaPage() {
               <li>The PAIA Unit, Department of Justice and Constitutional Development</li>
               <li>Any Public Library in South Africa</li>
             </ul>
-            <p className="mt-2 text-white/40 text-xs">The Guide is available in all 11 official languages of South Africa.</p>
+            <p className="mt-2 text-white/65 text-xs">The Guide is available in all 11 official languages of South Africa.</p>
           </section>
 
           <section>
@@ -135,14 +135,14 @@ export default function PaiaPage() {
               ].map(({ cat, items }) => (
                 <div key={cat} className="border border-white/8 rounded-lg p-3">
                   <p className="font-display font-bold text-white/80 text-xs mb-2">{cat}</p>
-                  <ul className="list-disc list-inside text-white/50 text-xs space-y-0.5">
+                  <ul className="list-disc list-inside text-white/70 text-xs space-y-0.5">
                     {items.map(i => <li key={i}>{i}</li>)}
                   </ul>
                 </div>
               ))}
             </div>
 
-            <p className="mt-3 text-white/40 text-xs">Note: records held by third-party processors (Supabase, Anthropic, Paystack, Vercel) on our behalf are subject to their own PAIA/data access regimes. We will assist with directing requests to the relevant party where appropriate.</p>
+            <p className="mt-3 text-white/65 text-xs">Note: records held by third-party processors (Supabase, Anthropic, Paystack, Vercel) on our behalf are subject to their own PAIA/data access regimes. We will assist with directing requests to the relevant party where appropriate.</p>
           </section>
 
           <section>
@@ -154,42 +154,42 @@ export default function PaiaPage() {
                 <span className="font-display font-black text-teal-400 text-lg leading-none mt-0.5">01</span>
                 <div>
                   <p className="font-display font-bold text-white/75 text-sm">Obtain Form C</p>
-                  <p className="text-white/50 text-xs mt-0.5">Download the prescribed Form C from the Information Regulator website (<a href="https://www.inforeg.org.za" target="_blank" rel="noopener noreferrer" className="text-teal-400">inforeg.org.za</a>) or request it from our Information Officer at no charge.</p>
+                  <p className="text-white/70 text-xs mt-0.5">Download the prescribed Form C from the Information Regulator website (<a href="https://www.inforeg.org.za" target="_blank" rel="noopener noreferrer" className="text-teal-400">inforeg.org.za</a>) or request it from our Information Officer at no charge.</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <span className="font-display font-black text-teal-400 text-lg leading-none mt-0.5">02</span>
                 <div>
                   <p className="font-display font-bold text-white/75 text-sm">Complete Form C</p>
-                  <p className="text-white/50 text-xs mt-0.5">Provide your full name, contact details, a description of the records you require, and the reason for the request. Be as specific as possible to enable us to locate the relevant records.</p>
+                  <p className="text-white/70 text-xs mt-0.5">Provide your full name, contact details, a description of the records you require, and the reason for the request. Be as specific as possible to enable us to locate the relevant records.</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <span className="font-display font-black text-teal-400 text-lg leading-none mt-0.5">03</span>
                 <div>
                   <p className="font-display font-bold text-white/75 text-sm">Pay the Request Fee (R50)</p>
-                  <p className="text-white/50 text-xs mt-0.5">A non-refundable request fee of <strong className="text-white/70">R50.00</strong> is payable before we are required to process your request (Section 54(1) of PAIA). See the fees schedule in Section 7 below.</p>
+                  <p className="text-white/70 text-xs mt-0.5">A non-refundable request fee of <strong className="text-white/70">R50.00</strong> is payable before we are required to process your request (Section 54(1) of PAIA). See the fees schedule in Section 7 below.</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <span className="font-display font-black text-teal-400 text-lg leading-none mt-0.5">04</span>
                 <div>
                   <p className="font-display font-bold text-white/75 text-sm">Submit to Information Officer</p>
-                  <p className="text-white/50 text-xs mt-0.5">Email completed Form C and proof of fee payment to <a href="mailto:privacy@varsityos.co.za" className="text-teal-400">privacy@varsityos.co.za</a>. Mark the subject line: <strong className="text-white/70">PAIA Request — [Your Name]</strong>.</p>
+                  <p className="text-white/70 text-xs mt-0.5">Email completed Form C and proof of fee payment to <a href="mailto:privacy@varsityos.co.za" className="text-teal-400">privacy@varsityos.co.za</a>. Mark the subject line: <strong className="text-white/70">PAIA Request — [Your Name]</strong>.</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <span className="font-display font-black text-teal-400 text-lg leading-none mt-0.5">05</span>
                 <div>
                   <p className="font-display font-bold text-white/75 text-sm">Response Timeline</p>
-                  <p className="text-white/50 text-xs mt-0.5">We will respond within <strong className="text-white/70">30 days</strong> of receipt of a valid request (Section 56 of PAIA). If we need more time, we may extend by a further 30 days and will notify you in writing. If your request is granted in part or refused, we will provide written reasons.</p>
+                  <p className="text-white/70 text-xs mt-0.5">We will respond within <strong className="text-white/70">30 days</strong> of receipt of a valid request (Section 56 of PAIA). If we need more time, we may extend by a further 30 days and will notify you in writing. If your request is granted in part or refused, we will provide written reasons.</p>
                 </div>
               </div>
             </div>
 
             <div className="mt-4 rounded-lg border border-amber-600/15 bg-amber-600/5 px-4 py-3">
               <p className="font-display font-bold text-amber-400 text-xs mb-1">Important: PAIA vs POPIA Rights</p>
-              <p className="text-white/50 text-xs">
+              <p className="text-white/70 text-xs">
                 If you are requesting access to your <strong className="text-white/70">own</strong> personal information held by us, you may also exercise your rights under <strong className="text-white/70">POPIA Section 23</strong> by emailing <a href="mailto:privacy@varsityos.co.za" className="text-teal-400">privacy@varsityos.co.za</a> directly — no Form C or request fee required. See our <Link href="/privacy" className="text-teal-400">Privacy Policy</Link> for details.
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function PaiaPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">7. Prescribed Fees Schedule</h2>
-            <p className="mb-3 text-white/50 text-xs">Fees are prescribed by the Minister of Justice under Section 54 of PAIA. The following fees apply (as per PAIA Regulations, last amended 2021):</p>
+            <p className="mb-3 text-white/70 text-xs">Fees are prescribed by the Minister of Justice under Section 54 of PAIA. The following fees apply (as per PAIA Regulations, last amended 2021):</p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse">
@@ -207,7 +207,7 @@ export default function PaiaPage() {
                     <th className="text-right py-2 font-display font-bold text-white/60 text-xs uppercase tracking-wider">Fee</th>
                   </tr>
                 </thead>
-                <tbody className="text-white/50">
+                <tbody className="text-white/70">
                   <tr className="border-b border-white/5"><td className="py-2 pr-4">Request fee (non-refundable, payable upfront)</td><td className="py-2 text-right text-white/70">R 50.00</td></tr>
                   <tr className="border-b border-white/5"><td className="py-2 pr-4">Search, preparation, and reproduction — per hour (first hour free)</td><td className="py-2 text-right text-white/70">R 30.00/hr</td></tr>
                   <tr className="border-b border-white/5"><td className="py-2 pr-4">Photocopy / printout — per A4 page</td><td className="py-2 text-right text-white/70">R 1.10/page</td></tr>
@@ -219,7 +219,7 @@ export default function PaiaPage() {
               </table>
             </div>
 
-            <p className="mt-3 text-white/40 text-xs">
+            <p className="mt-3 text-white/65 text-xs">
               Requesters who demonstrate they are unable to afford fees may apply for waiver in terms of Section 54(8) of PAIA. Indigent requesters (including students who meet the criteria) may request fee exemption by providing supporting documentation.
             </p>
           </section>
@@ -237,7 +237,7 @@ export default function PaiaPage() {
               <li>Disclosure is prohibited under another law (s70)</li>
               <li>The request is manifestly frivolous or vexatious, or the disclosure of records would be an abuse of the right of access (s45)</li>
             </ul>
-            <p className="mt-3 text-white/40 text-xs">
+            <p className="mt-3 text-white/65 text-xs">
               Any refusal will be provided in writing with reasons. You have the right to appeal a refusal internally (to our Information Officer) and thereafter to seek review by the Information Regulator or the court.
             </p>
           </section>
@@ -256,7 +256,7 @@ export default function PaiaPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">10. Annual Report — 2025/2026</h2>
-            <p className="mb-2 text-white/50 text-xs">
+            <p className="mb-2 text-white/70 text-xs">
               Reporting period: <strong className="text-white/65">1 April 2025 – 31 March 2026</strong> · Submitted to the Information Regulator per Section 32(2) of PAIA.
             </p>
 
@@ -283,12 +283,12 @@ export default function PaiaPage() {
               </table>
             </div>
 
-            <div className="mt-4 rounded-lg border border-white/8 bg-white/3 px-4 py-3 text-white/45 text-xs space-y-1">
+            <div className="mt-4 rounded-lg border border-white/8 bg-white/3 px-4 py-3 text-white/68 text-xs space-y-1">
               <p><strong className="text-white/60">Reporting entity:</strong> Mirembe Muse (Pty) Ltd (VarsityOS)</p>
               <p><strong className="text-white/60">Information Officer:</strong> Nandawula Kabali-Kagwa</p>
               <p><strong className="text-white/60">Signature date:</strong> 14 June 2026</p>
               <p><strong className="text-white/60">Next report due:</strong> On or before 31 May 2027 (for period 1 April 2026 – 31 March 2027)</p>
-              <p className="pt-2 border-t border-white/8 text-white/35">
+              <p className="pt-2 border-t border-white/8 text-white/60">
                 This report was submitted to the Information Regulator in terms of Section 32(2) of the Promotion of Access to Information Act 2 of 2000. Mirembe Muse (Pty) Ltd became operational in August 2025 and received no PAIA requests during its first reporting year.
               </p>
             </div>
@@ -306,11 +306,11 @@ export default function PaiaPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/privacy" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Privacy Policy</p>
-                <p className="text-white/40 text-xs mt-1">POPIA compliance, your data rights, Information Officer contact</p>
+                <p className="text-white/65 text-xs mt-1">POPIA compliance, your data rights, Information Officer contact</p>
               </Link>
               <Link href="/terms" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Terms &amp; Conditions</p>
-                <p className="text-white/40 text-xs mt-1">Platform rules, subscriptions, SA law compliance</p>
+                <p className="text-white/65 text-xs mt-1">Platform rules, subscriptions, SA law compliance</p>
               </Link>
             </div>
           </section>

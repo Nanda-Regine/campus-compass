@@ -156,7 +156,7 @@ function PostCard({
   return (
     <article style={{
       borderRadius: 16,
-      background: 'rgba(255,255,255,0.025)',
+      background: 'rgba(255,255,255,0.05)',
       border: '0.5px solid rgba(255,255,255,0.08)',
       overflow: 'hidden',
       transition: 'border-color 0.15s ease',
@@ -175,7 +175,7 @@ function PostCard({
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.82rem', color: '#fff', margin: 0 }}>
                 {post.author_name}
               </p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', margin: 0 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 {post.institution ? ` · ${post.institution.split(' ').slice(0, 2).join(' ')}` : ''}
               </p>
@@ -213,7 +213,7 @@ function PostCard({
                     borderRadius: 10, padding: '4px 0', minWidth: 148,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                   }}>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)', padding: '6px 12px 4px', margin: 0 }}>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)', padding: '6px 12px 4px', margin: 0 }}>
                       REPORT POST
                     </p>
                     {REPORT_REASONS.map(r => (
@@ -254,7 +254,7 @@ function PostCard({
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               background: 'none', border: 'none', cursor: 'pointer',
-              color: post.reacted ? '#f43f5e' : 'rgba(255,255,255,0.35)',
+              color: post.reacted ? '#f43f5e' : 'rgba(255,255,255,0.55)',
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.7rem',
               padding: 0, transition: 'color 0.15s ease',
             }}
@@ -267,7 +267,7 @@ function PostCard({
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               background: 'none', border: 'none', cursor: 'pointer',
-              color: showComments ? '#7090d0' : 'rgba(255,255,255,0.35)',
+              color: showComments ? '#7090d0' : 'rgba(255,255,255,0.55)',
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.7rem',
               padding: 0, transition: 'color 0.15s ease',
             }}
@@ -284,10 +284,10 @@ function PostCard({
         <div style={{ borderTop: '0.5px solid rgba(255,255,255,0.06)', background: 'rgba(0,0,0,0.2)' }}>
           <div style={{ padding: '10px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {!commentsLoaded && (
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)', margin: 0 }}>Loading...</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', margin: 0 }}>Loading...</p>
             )}
             {commentsLoaded && comments.length === 0 && (
-              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', margin: 0 }}>No replies yet — be the first.</p>
+              <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', margin: 0 }}>No replies yet — be the first.</p>
             )}
             {comments.map(c => (
               <div key={c.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
@@ -311,7 +311,7 @@ function PostCard({
               maxLength={300}
               style={{
                 flex: 1, padding: '8px 12px',
-                background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.1)',
+                background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.1)',
                 borderRadius: 20, color: '#fff', fontSize: '0.78rem',
                 fontFamily: 'DM Sans, sans-serif', outline: 'none',
               }}
@@ -322,7 +322,7 @@ function PostCard({
               style={{
                 width: 32, height: 32, borderRadius: '50%', border: 'none',
                 background: newComment.trim() ? '#7090d0' : 'rgba(255,255,255,0.07)',
-                color: newComment.trim() ? '#fff' : 'rgba(255,255,255,0.25)',
+                color: newComment.trim() ? '#fff' : 'rgba(255,255,255,0.45)',
                 cursor: newComment.trim() ? 'pointer' : 'default',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.15s ease', flexShrink: 0,
@@ -380,7 +380,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
   }
 
   return (
-    <div style={{ borderRadius: 16, background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.1)', overflow: 'hidden', marginBottom: 16 }}>
+    <div style={{ borderRadius: 16, background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.1)', overflow: 'hidden', marginBottom: 16 }}>
       {!open ? (
         <button
           onClick={handleFocus}
@@ -390,7 +390,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
           }}
         >
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>🎓</div>
-          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>
             Share something with {institution ? `your campus` : 'SA students'}...
           </span>
         </button>
@@ -405,7 +405,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
             rows={3}
             style={{
               width: '100%', padding: '10px 12px', resize: 'none',
-              background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.1)',
+              background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.1)',
               borderRadius: 12, color: '#fff', fontSize: '0.85rem',
               fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
               lineHeight: 1.6,
@@ -422,7 +422,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
                   padding: '4px 10px', borderRadius: 9999, border: '0.5px solid',
                   borderColor: category === c.value ? c.color : 'rgba(255,255,255,0.1)',
                   background: category === c.value ? `${c.color}18` : 'transparent',
-                  color: category === c.value ? c.color : 'rgba(255,255,255,0.4)',
+                  color: category === c.value ? c.color : 'rgba(255,255,255,0.58)',
                   fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem',
                   cursor: 'pointer', transition: 'all 0.15s ease',
                 }}
@@ -437,7 +437,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
               {content.length}/500
             </span>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" onClick={() => { setOpen(false); setContent('') }} style={{ padding: '7px 14px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'none', color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', cursor: 'pointer' }}>
+              <button type="button" onClick={() => { setOpen(false); setContent('') }} style={{ padding: '7px 14px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.1)', background: 'none', color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', cursor: 'pointer' }}>
                 Cancel
               </button>
               <button
@@ -446,7 +446,7 @@ function PostComposer({ institution, onPosted }: { institution: string | null; o
                 style={{
                   padding: '7px 16px', borderRadius: 10, border: 'none',
                   background: content.trim() ? '#7090d0' : 'rgba(255,255,255,0.07)',
-                  color: content.trim() ? '#fff' : 'rgba(255,255,255,0.25)',
+                  color: content.trim() ? '#fff' : 'rgba(255,255,255,0.45)',
                   fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '0.78rem',
                   cursor: content.trim() ? 'pointer' : 'default',
                   display: 'flex', alignItems: 'center', gap: 5,
@@ -576,8 +576,8 @@ export default function CampusFeed({ institution }: Props) {
           style={{
             flex: 1, padding: '9px', borderRadius: 12, border: '0.5px solid',
             borderColor: scope === 'campus' ? '#0d9488' : 'rgba(255,255,255,0.08)',
-            background: scope === 'campus' ? 'rgba(13,148,136,0.12)' : 'rgba(255,255,255,0.03)',
-            color: scope === 'campus' ? '#5eead4' : 'rgba(255,255,255,0.35)',
+            background: scope === 'campus' ? 'rgba(13,148,136,0.12)' : 'rgba(255,255,255,0.06)',
+            color: scope === 'campus' ? '#5eead4' : 'rgba(255,255,255,0.55)',
             fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', fontWeight: scope === 'campus' ? 700 : 400,
             cursor: institution ? 'pointer' : 'not-allowed',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -591,8 +591,8 @@ export default function CampusFeed({ institution }: Props) {
           style={{
             flex: 1, padding: '9px', borderRadius: 12, border: '0.5px solid',
             borderColor: scope === 'all' ? '#7090d0' : 'rgba(255,255,255,0.08)',
-            background: scope === 'all' ? 'rgba(112,144,208,0.12)' : 'rgba(255,255,255,0.03)',
-            color: scope === 'all' ? '#93c5fd' : 'rgba(255,255,255,0.35)',
+            background: scope === 'all' ? 'rgba(112,144,208,0.12)' : 'rgba(255,255,255,0.06)',
+            color: scope === 'all' ? '#93c5fd' : 'rgba(255,255,255,0.55)',
             fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', fontWeight: scope === 'all' ? 700 : 400,
             cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -613,7 +613,7 @@ export default function CampusFeed({ institution }: Props) {
               flexShrink: 0, padding: '5px 12px', borderRadius: 9999, border: '0.5px solid',
               borderColor: category === c.value ? c.color : 'rgba(255,255,255,0.08)',
               background: category === c.value ? `${c.color}15` : 'transparent',
-              color: category === c.value ? c.color : 'rgba(255,255,255,0.35)',
+              color: category === c.value ? c.color : 'rgba(255,255,255,0.55)',
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem',
               cursor: 'pointer', transition: 'all 0.15s ease', whiteSpace: 'nowrap',
             }}
@@ -630,14 +630,14 @@ export default function CampusFeed({ institution }: Props) {
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[1, 2, 3].map(i => (
-            <div key={i} style={{ height: 110, borderRadius: 16, background: 'rgba(255,255,255,0.025)', border: '0.5px solid rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ height: 110, borderRadius: 16, background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
       ) : posts.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 20px' }}>
           <p style={{ fontSize: '2rem', marginBottom: 12 }}>📣</p>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#fff', marginBottom: 6 }}>Be the first to post</p>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', maxWidth: 280, margin: '0 auto' }}>
+          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem', color: 'rgba(255,255,255,0.58)', maxWidth: 280, margin: '0 auto' }}>
             Share a tip, post an opportunity, or start a conversation with students at your campus.
           </p>
         </div>
@@ -652,7 +652,7 @@ export default function CampusFeed({ institution }: Props) {
               disabled={loadingMore}
               style={{
                 padding: '12px', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.08)',
-                background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.4)',
+                background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.58)',
                 fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem',
                 cursor: 'pointer', width: '100%', marginTop: 4,
               }}

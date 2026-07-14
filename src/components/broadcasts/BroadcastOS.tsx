@@ -168,7 +168,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
       </div>
 
       {/* Tab rail */}
-      <div style={{ display: 'flex', gap: 0, background: 'var(--bg-surface,rgba(255,255,255,0.04))', borderRadius: 12, padding: 4 }}>
+      <div style={{ display: 'flex', gap: 0, background: 'var(--bg-surface,rgba(255,255,255,0.07))', borderRadius: 12, padding: 4 }}>
         <TabBtn
           active={tab === 'inbox'}
           onClick={() => setTab('inbox')}
@@ -194,9 +194,9 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
           {broadcasts.length === 0 && (
             <div style={{
               textAlign: 'center', padding: '40px 24px',
-              color: 'var(--text-muted,rgba(255,255,255,0.35))',
+              color: 'var(--text-muted,rgba(255,255,255,0.55))',
               fontSize: '0.8rem',
-              background: 'var(--bg-surface,rgba(255,255,255,0.04))',
+              background: 'var(--bg-surface,rgba(255,255,255,0.07))',
               borderRadius: 14,
               border: '1px solid var(--border-subtle,rgba(255,255,255,0.06))',
             }}>
@@ -219,7 +219,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
       {/* ── Send tab ── */}
       {tab === 'send' && (
         <div style={{
-          background: 'var(--bg-surface,rgba(255,255,255,0.04))',
+          background: 'var(--bg-surface,rgba(255,255,255,0.07))',
           border: '1px solid rgba(56,189,248,0.15)',
           borderRadius: 16, padding: '20px 18px',
           display: 'flex', flexDirection: 'column', gap: 16,
@@ -284,7 +284,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                   minHeight: 100,
                 }}
               />
-              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', textAlign: 'right' }}>
+              <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textAlign: 'right' }}>
                 {body.length}/2000
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
                     background: 'var(--bg-base,#0a0a0f)',
                     border: '1px solid var(--border-default,rgba(255,255,255,0.1))',
                     borderRadius: 10,
-                    color: expiresAt ? 'var(--text-primary,#fff)' : 'rgba(255,255,255,0.3)',
+                    color: expiresAt ? 'var(--text-primary,#fff)' : 'rgba(255,255,255,0.5)',
                     fontSize: '0.82rem',
                     outline: 'none',
                     colorScheme: 'dark',
@@ -382,7 +382,7 @@ function TabBtn({
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         padding: '9px 12px', border: 'none', borderRadius: 9, cursor: 'pointer',
         background: active ? 'rgba(56,189,248,0.12)' : 'transparent',
-        color: active ? accent : 'var(--text-tertiary,rgba(255,255,255,0.35))',
+        color: active ? accent : 'var(--text-tertiary,rgba(255,255,255,0.55))',
         fontSize: '0.72rem', fontFamily: 'var(--font-mono,monospace)', fontWeight: active ? 700 : 400,
         transition: 'all 140ms ease',
         position: 'relative',
@@ -423,7 +423,7 @@ function BroadcastCard({
       style={{
         position: 'relative', cursor: 'pointer',
         background: isRead
-          ? 'var(--bg-surface,rgba(255,255,255,0.04))'
+          ? 'var(--bg-surface,rgba(255,255,255,0.07))'
           : 'rgba(56,189,248,0.07)',
         border: `1px solid ${isRead ? 'var(--border-subtle,rgba(255,255,255,0.06))' : 'rgba(56,189,248,0.18)'}`,
         borderLeft: `3px solid ${borderColor}`,
@@ -464,7 +464,7 @@ function BroadcastCard({
             }}>
               {b.priority}
             </span>
-            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted,rgba(255,255,255,0.3))' }}>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted,rgba(255,255,255,0.5))' }}>
               {relativeDate(b.sent_at)}
             </span>
             {!isRead && (
@@ -481,7 +481,7 @@ function BroadcastCard({
       {!isExpanded && (
         <div style={{
           marginLeft: 26, marginTop: 2,
-          fontSize: '0.75rem', color: 'var(--text-secondary,rgba(255,255,255,0.5))',
+          fontSize: '0.75rem', color: 'var(--text-secondary,rgba(255,255,255,0.66))',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
           {b.body}
@@ -498,7 +498,7 @@ function BroadcastCard({
         }}>
           {b.body}
           {b.expires_at && (
-            <div style={{ marginTop: 10, fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-mono,monospace)' }}>
+            <div style={{ marginTop: 10, fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono,monospace)' }}>
               EXPIRES {new Date(b.expires_at).toLocaleString('en-ZA', { dateStyle: 'medium', timeStyle: 'short' })}
             </div>
           )}

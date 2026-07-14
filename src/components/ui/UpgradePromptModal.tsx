@@ -105,7 +105,7 @@ export default function UpgradePromptModal({
             style={{
               width: '100%', padding: '11px', borderRadius: 12,
               fontWeight: 600, fontSize: 13, cursor: 'pointer',
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)',
               color: 'var(--text-muted)',
             }}
           >

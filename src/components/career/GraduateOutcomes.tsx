@@ -335,7 +335,7 @@ export default function GraduateOutcomes() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* Institution selector */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
         <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>
           Select Institution
         </div>
@@ -344,7 +344,7 @@ export default function GraduateOutcomes() {
           onChange={e => handleInstitutionChange(e.target.value)}
           style={{
             width: '100%',
-            background: 'rgba(255,255,255,0.04)',
+            background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(255,255,255,0.09)',
             borderRadius: 10,
             padding: '10px 12px',
@@ -368,7 +368,7 @@ export default function GraduateOutcomes() {
 
       {/* Degree selector */}
       {selectedInstitution && (
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
+        <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '16px' }}>
           <div style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 10, fontWeight: 600 }}>
             Select Degree
           </div>
@@ -401,7 +401,7 @@ export default function GraduateOutcomes() {
       {outcomeData && (
         <>
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 16,
             padding: '18px 16px',
@@ -479,7 +479,7 @@ export default function GraduateOutcomes() {
 
           {/* Salary calculator */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 16,
             padding: '16px',
@@ -596,7 +596,7 @@ export default function GraduateOutcomes() {
       {!selectedInstitution && (
         <div style={{
           background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 16,
           padding: '32px 20px',
           textAlign: 'center',

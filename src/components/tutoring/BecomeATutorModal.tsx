@@ -75,7 +75,7 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
-    background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.12)',
     borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.82rem',
     fontFamily: 'DM Sans, sans-serif', outline: 'none', boxSizing: 'border-box',
   }
@@ -88,11 +88,11 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
               {existing ? 'Update Tutor Profile' : 'Become a Tutor'}
             </div>
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
               Earn while helping fellow students
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.5)' }}>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.66)' }}>
             <X size={16} />
           </button>
         </div>
@@ -101,7 +101,7 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
           {/* Subjects */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Subjects / Modules</label>
+              <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Subjects / Modules</label>
               <button type="button" onClick={addSubject} style={{ background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', borderRadius: 6, padding: '3px 8px', color: '#4ecf9e', fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Plus size={10} /> Add
               </button>
@@ -122,41 +122,41 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
 
           {/* Rate */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Hourly Rate (ZAR)</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>Hourly Rate (ZAR)</label>
             <input aria-label="Hourly rate (ZAR)" inputMode="decimal" style={inputStyle} type="number" min="20" max="500" value={rate} onChange={e => setRate(e.target.value)} />
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>Typical range: R50–R200/hr for peer tutors</div>
+            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'DM Sans, sans-serif', marginTop: 4 }}>Typical range: R50–R200/hr for peer tutors</div>
           </div>
 
           {/* Bio */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>About you</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>About you</label>
             <textarea aria-label="About you" style={{ ...inputStyle, resize: 'none', height: 80 }} value={bio} onChange={e => setBio(e.target.value)} placeholder="Your experience, teaching style, qualifications..." maxLength={400} />
           </div>
 
           {/* Availability */}
           <div>
-            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>When are you available?</label>
+            <label style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.6rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>When are you available?</label>
             <input aria-label="When are you available?" style={inputStyle} value={availability} onChange={e => setAvailability(e.target.value)} placeholder="e.g. Weekday evenings, Saturday mornings" maxLength={200} />
           </div>
 
           {/* Available toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'rgba(255,255,255,0.04)', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'rgba(255,255,255,0.07)', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.08)' }}>
             <div>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)' }}>Taking new students</div>
-              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Toggle off during exams</div>
+              <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>Toggle off during exams</div>
             </div>
-            <button type="button" role="switch" aria-checked={isAvailable} onClick={() => setIsAvailable(v => !v)} style={{ padding: '5px 12px', borderRadius: 20, border: '0.5px solid', borderColor: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.15)', background: isAvailable ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.04)', color: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button type="button" role="switch" aria-checked={isAvailable} onClick={() => setIsAvailable(v => !v)} style={{ padding: '5px 12px', borderRadius: 20, border: '0.5px solid', borderColor: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.15)', background: isAvailable ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.07)', color: isAvailable ? '#4ecf9e' : 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
               {isAvailable ? 'Available' : 'Unavailable'}
             </button>
           </div>
 
           {/* Verification */}
-          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.06)', borderRadius: 12, border: '0.5px solid rgba(255,255,255,0.08)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               {existing?.is_verified ? (
                 <ShieldCheck size={14} style={{ color: '#4ecf9e' }} />
               ) : (
-                <ShieldCheck size={14} style={{ color: 'rgba(255,255,255,0.3)' }} />
+                <ShieldCheck size={14} style={{ color: 'rgba(255,255,255,0.5)' }} />
               )}
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
                 Student Verification
@@ -172,7 +172,7 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
                 </span>
               )}
             </div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', margin: '0 0 10px', lineHeight: 1.4 }}>
+            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', margin: '0 0 10px', lineHeight: 1.4 }}>
               Upload your student card to get a verified badge. Increases trust and bookings.
             </p>
             {!existing?.is_verified && !existing?.is_verified_pending && (
@@ -188,7 +188,7 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    style={{ flex: 1, padding: '9px 12px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    style={{ flex: 1, padding: '9px 12px', borderRadius: 10, border: '0.5px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', cursor: 'pointer', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                   >
                     {cardFile ? cardFile.name : 'Choose student card (JPG/PDF)'}
                   </button>

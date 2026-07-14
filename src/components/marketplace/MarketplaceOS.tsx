@@ -172,7 +172,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
 
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.04)',
+      background: 'rgba(255,255,255,0.07)',
       border: '1px solid rgba(255,255,255,0.08)',
       borderRadius: 12,
       padding: '14px 16px',
@@ -197,7 +197,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
             <div style={{
               fontFamily: 'var(--font-body)',
               fontSize: '0.78rem',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.66)',
               lineHeight: 1.4,
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -231,7 +231,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
           <span style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6rem',
-            color: 'rgba(255,255,255,0.5)',
+            color: 'rgba(255,255,255,0.66)',
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 5,
@@ -244,7 +244,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
         <span style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.55rem',
-          color: 'rgba(255,255,255,0.28)',
+          color: 'rgba(255,255,255,0.48)',
           marginLeft: 'auto',
         }}>
           {timeAgo(listing.created_at)}
@@ -363,7 +363,7 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {/* Search */}
       <div style={{ position: 'relative' }}>
-        <Search size={13} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)', pointerEvents: 'none' }} />
+        <Search size={13} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.55)', pointerEvents: 'none' }} />
         <input
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -371,7 +371,7 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
           style={{
             width: '100%',
             paddingLeft: 36, paddingRight: 12, paddingTop: 9, paddingBottom: 9,
-            background: 'rgba(255,255,255,0.05)',
+            background: 'rgba(255,255,255,0.08)',
             border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 10,
             color: 'var(--text-primary)',
@@ -382,7 +382,7 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
           }}
         />
         {search && (
-          <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+          <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'rgba(255,255,255,0.58)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <X size={13} />
           </button>
         )}
@@ -402,8 +402,8 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.62rem',
                 fontWeight: active ? 700 : 400,
-                color: active ? ACCENT : 'rgba(255,255,255,0.45)',
-                background: active ? ACCENT_DIM : 'rgba(255,255,255,0.04)',
+                color: active ? ACCENT : 'rgba(255,255,255,0.62)',
+                background: active ? ACCENT_DIM : 'rgba(255,255,255,0.07)',
                 border: `1px solid ${active ? ACCENT + '50' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 20,
                 padding: '5px 11px',
@@ -420,16 +420,16 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
 
       {/* Listings */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.28)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.48)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
           Loading...
         </div>
       ) : listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🛒</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.66)' }}>
             No listings found
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', marginTop: 6 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.48)', marginTop: 6 }}>
             Be the first to sell something!
           </div>
         </div>
@@ -495,7 +495,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
   const inputStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
-    background: 'rgba(255,255,255,0.05)',
+    background: 'rgba(255,255,255,0.08)',
     border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: 10,
     color: 'var(--text-primary)',
@@ -509,7 +509,7 @@ function SellTab({ onCreated }: { onCreated: (l: Listing) => void }) {
     fontFamily: 'var(--font-mono)',
     fontSize: '0.65rem',
     fontWeight: 600,
-    color: 'rgba(255,255,255,0.45)',
+    color: 'rgba(255,255,255,0.62)',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
     marginBottom: 6,
@@ -694,10 +694,10 @@ function MyListingsTab({ initialMyListings }: { initialMyListings: Listing[] }) 
     return (
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
         <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>📦</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.66)' }}>
           No listings yet
         </div>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.48)', marginTop: 6 }}>
           Use the Sell tab to create your first listing
         </div>
       </div>
@@ -783,17 +783,17 @@ function MessagesTab({ userId }: { userId: string }) {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.28)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>Loading...</div>
+    return <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.48)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>Loading...</div>
   }
 
   if (threads.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
         <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>💬</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.66)' }}>
           No messages yet
         </div>
-        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.48)', marginTop: 6 }}>
           When buyers contact you, threads will appear here
         </div>
       </div>
@@ -809,7 +809,7 @@ function MessagesTab({ userId }: { userId: string }) {
 
         return (
           <div key={thread.listing_id} style={{
-            background: 'rgba(255,255,255,0.04)',
+            background: 'rgba(255,255,255,0.07)',
             border: `1px solid ${unread > 0 ? ACCENT + '40' : 'rgba(255,255,255,0.08)'}`,
             borderRadius: 12,
             overflow: 'hidden',
@@ -831,7 +831,7 @@ function MessagesTab({ userId }: { userId: string }) {
               }}
             >
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.35)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   {thread.listing_title}
                   {unread > 0 && (
                     <span style={{ marginLeft: 8, background: ACCENT, color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: '0.55rem', fontWeight: 700 }}>
@@ -842,11 +842,11 @@ function MessagesTab({ userId }: { userId: string }) {
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {lastMsg?.body ?? ''}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
                   {lastMsg ? timeAgo(lastMsg.created_at) : ''}
                 </div>
               </div>
-              <span style={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0 }}>
+              <span style={{ color: 'rgba(255,255,255,0.55)', flexShrink: 0 }}>
                 {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </span>
             </button>
@@ -875,7 +875,7 @@ function MessagesTab({ userId }: { userId: string }) {
                       }}>
                         {msg.body}
                       </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)', marginTop: 3 }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
                         {timeAgo(msg.created_at)}
                       </div>
                     </div>
@@ -893,7 +893,7 @@ function MessagesTab({ userId }: { userId: string }) {
                     style={{
                       flex: 1,
                       padding: '8px 12px',
-                      background: 'rgba(255,255,255,0.05)',
+                      background: 'rgba(255,255,255,0.08)',
                       border: '1px solid rgba(255,255,255,0.1)',
                       borderRadius: 8,
                       color: 'var(--text-primary)',
@@ -1002,7 +1002,7 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 12px',
-    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: 10, color: 'var(--text-primary)',
     fontFamily: 'var(--font-body)', fontSize: '0.85rem',
     outline: 'none', boxSizing: 'border-box',
@@ -1010,7 +1010,7 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
 
   const labelStyle: React.CSSProperties = {
     fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 600,
-    color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.62)', textTransform: 'uppercase',
     letterSpacing: '0.08em', marginBottom: 6, display: 'block',
   }
 
@@ -1027,8 +1027,8 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
               <button key={f} onClick={() => setTypeFilter(f)} style={{
                 flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
                 fontWeight: active ? 700 : 400,
-                color: active ? (f === 'all' ? ACCENT : color) : 'rgba(255,255,255,0.4)',
-                background: active ? (f === 'all' ? ACCENT_DIM : `${color}18`) : 'rgba(255,255,255,0.04)',
+                color: active ? (f === 'all' ? ACCENT : color) : 'rgba(255,255,255,0.58)',
+                background: active ? (f === 'all' ? ACCENT_DIM : `${color}18`) : 'rgba(255,255,255,0.07)',
                 border: `1px solid ${active ? (f === 'all' ? ACCENT + '50' : color + '50') : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 20, padding: '5px 11px', cursor: 'pointer', whiteSpace: 'nowrap',
               }}>
@@ -1064,7 +1064,7 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
                   flex: 1, padding: '8px 0',
                   background: active ? `${color}20` : 'transparent',
                   border: `1px solid ${active ? color + '50' : 'transparent'}`,
-                  borderRadius: 8, color: active ? color : 'rgba(255,255,255,0.4)',
+                  borderRadius: 8, color: active ? color : 'rgba(255,255,255,0.58)',
                   fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 700,
                   cursor: 'pointer', transition: 'all 0.15s ease',
                 }}>
@@ -1108,7 +1108,7 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
               <input type="tel" inputMode="tel" value={contactWhatsapp} onChange={e => setContactWhatsapp(e.target.value)} placeholder="+27 82 000 0000" maxLength={20} required style={inputStyle} />
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button type="button" onClick={() => setShowForm(false)} style={{ flex: 1, padding: '10px 0', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setShowForm(false)} style={{ flex: 1, padding: '10px 0', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'rgba(255,255,255,0.66)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', cursor: 'pointer' }}>
                 Cancel
               </button>
               <button type="submit" disabled={saving || title.trim().length < 3} style={{
@@ -1129,14 +1129,14 @@ function LostFoundTab({ userId: _userId, university: _university }: { userId: st
 
       {/* Feed */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.28)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>Loading...</div>
+        <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(255,255,255,0.48)', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>Loading...</div>
       ) : sorted.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: 10 }}>🔍</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'rgba(255,255,255,0.66)' }}>
             Nothing here yet
           </div>
-          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.28)', marginTop: 6 }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.48)', marginTop: 6 }}>
             Lost something on campus? Report it — someone might return it.
           </div>
         </div>
@@ -1192,7 +1192,7 @@ export default function MarketplaceOS({ userId, initialListings, myListings: ini
                 background: isActive ? ACCENT_DIM : 'transparent',
                 border: 'none',
                 borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
-                color: isActive ? ACCENT : 'rgba(255,255,255,0.4)',
+                color: isActive ? ACCENT : 'rgba(255,255,255,0.58)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
                 padding: '6px 2px',
@@ -1239,7 +1239,7 @@ export default function MarketplaceOS({ userId, initialListings, myListings: ini
               {activeTab.label}
             </div>
             {university && (
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: 3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {university}
               </div>
             )}

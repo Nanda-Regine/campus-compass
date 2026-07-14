@@ -221,15 +221,15 @@ export default function InstitutionPicker({ value, onChange }: Props) {
         onClick={() => setOpen(o => !o)}
         className="w-full rounded-xl px-4 py-3 font-display text-sm text-left outline-none transition-all"
         style={{
-          background: 'rgba(255,255,255,0.04)', border: `1px solid ${open ? 'rgba(78,207,158,0.4)' : 'rgba(255,255,255,0.09)'}`,
-          color: value ? 'var(--text-secondary)' : 'rgba(255,255,255,0.3)',
+          background: 'rgba(255,255,255,0.07)', border: `1px solid ${open ? 'rgba(78,207,158,0.4)' : 'rgba(255,255,255,0.09)'}`,
+          color: value ? 'var(--text-secondary)' : 'rgba(255,255,255,0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
         }}
       >
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
           {value || 'Search your institution…'}
         </span>
-        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, flexShrink: 0 }}>
+        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, flexShrink: 0 }}>
           {open ? '▲' : '▼'}
         </span>
       </button>
@@ -263,7 +263,7 @@ export default function InstitutionPicker({ value, onChange }: Props) {
             {filtered !== null ? (
               // Search mode — flat list
               filtered.length === 0 ? (
-                <div style={{ padding: '16px', fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
+                <div style={{ padding: '16px', fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
                   No institution found for &ldquo;{query}&rdquo;
                 </div>
               ) : (
@@ -288,9 +288,9 @@ export default function InstitutionPicker({ value, onChange }: Props) {
                 <div key={group.label}>
                   <div style={{
                     padding: '8px 14px 4px', fontFamily: '"JetBrains Mono",monospace',
-                    fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em',
+                    fontSize: 8, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em',
                     textTransform: 'uppercase', background: 'rgba(0,0,0,0.2)',
-                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    borderBottom: '1px solid rgba(255,255,255,0.07)',
                     position: 'sticky', top: 0,
                   }}>
                     {group.label}
@@ -305,7 +305,7 @@ export default function InstitutionPicker({ value, onChange }: Props) {
                         fontFamily: 'DM Sans,sans-serif', fontSize: 13.5,
                         color: value === item ? '#4ecf9e' : '#e5e7eb',
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        borderBottom: '1px solid rgba(255,255,255,0.03)',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
                       }}
                     >
                       <span>{item}</span>

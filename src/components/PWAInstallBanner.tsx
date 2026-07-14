@@ -74,7 +74,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
       >
         <div className="flex items-start justify-between mb-2">
           <p className="font-display font-bold text-teal-400 text-sm">Install VarsityOS on iPhone</p>
-          <button onClick={handleDismiss}><X size={14} className="text-white/30" /></button>
+          <button onClick={handleDismiss}><X size={14} className="text-white/55" /></button>
         </div>
         <ol className="font-mono text-[0.62rem] text-white/60 space-y-1 list-decimal list-inside">
           <li>Tap the <strong className="text-white/80">Share</strong> button in Safari (the box with an arrow)</li>
@@ -97,7 +97,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
           </div>
           <div>
             <p className="font-display font-bold text-white text-sm">Install VarsityOS</p>
-            <p className="font-mono text-[0.6rem] text-white/45">Works offline · No app store needed</p>
+            <p className="font-mono text-[0.6rem] text-white/68">Works offline · No app store needed</p>
           </div>
         </div>
         <p className="font-mono text-[0.65rem] text-white/55 mb-4">
@@ -138,7 +138,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
       </div>
       <div className="flex-1 min-w-0">
         <p className="font-display font-bold text-white text-xs">Install VarsityOS</p>
-        <p className="font-mono text-[0.58rem] text-white/40 truncate">Works offline · Home screen shortcut</p>
+        <p className="font-mono text-[0.58rem] text-white/65 truncate">Works offline · Home screen shortcut</p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <button
@@ -148,7 +148,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
         >
           {isIOS ? 'How?' : 'Install'}
         </button>
-        <button onClick={handleDismiss} className="text-white/25 hover:text-white/50 transition-colors">
+        <button onClick={handleDismiss} className="text-white/50 hover:text-white/70 transition-colors">
           <X size={14} />
         </button>
       </div>

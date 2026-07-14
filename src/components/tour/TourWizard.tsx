@@ -314,7 +314,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
     return (
       <div style={{
         width: '100%', maxWidth: 440, margin: '0 auto', padding: '32px 24px',
-        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(148,111,255,0.18)',
+        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(148,111,255,0.18)',
         borderRadius: 20, boxShadow: '0 0 60px rgba(168,85,247,0.12)',
         position: 'relative', overflowX: 'hidden',
       }}>
@@ -327,7 +327,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
           <h1 style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--text-primary)', margin: 0 }}>
             Khetha ulimi / Choose Language
           </h1>
-          <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
+          <p style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.62)', marginTop: 6 }}>
             Pick the language for your VarsityOS training tour
           </p>
         </div>
@@ -336,7 +336,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
           {(Object.entries(LANG_LABELS) as [Lang, string][]).map(([code, name]) => (
             <button key={code} onClick={() => setLang(code)} style={{
               padding: '14px 12px', borderRadius: 12, textAlign: 'center',
-              background: lang === code ? `rgba(168,85,247,0.18)` : 'rgba(255,255,255,0.04)',
+              background: lang === code ? `rgba(168,85,247,0.18)` : 'rgba(255,255,255,0.07)',
               border: `1px solid ${lang === code ? 'rgba(168,85,247,0.45)' : 'rgba(255,255,255,0.08)'}`,
               color: lang === code ? ACCENT : 'rgba(255,255,255,0.55)',
               fontFamily: 'DM Sans,sans-serif', fontSize: 14, fontWeight: lang === code ? 700 : 400,
@@ -371,7 +371,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
 
       {/* Card */}
       <div style={{
-        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(148,111,255,0.18)',
+        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(148,111,255,0.18)',
         borderRadius: 20, padding: '28px 24px', boxShadow: '0 0 60px rgba(168,85,247,0.10)',
         marginBottom: 20,
       }}>
@@ -398,7 +398,7 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
           {current.features.map(f => (
             <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: TEAL, flexShrink: 0 }} />
-              <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{f}</span>
+              <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: 'rgba(255,255,255,0.66)' }}>{f}</span>
             </div>
           ))}
         </div>
@@ -408,12 +408,12 @@ export default function TourWizard({ defaultLang }: { defaultLang: string }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
         <button onClick={() => step > 0 ? setStep(s => s - 1) : setStep(-1)} style={{
           padding: '10px 18px', borderRadius: 10, fontSize: 13, fontWeight: 500,
-          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-          color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif',
+          background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)',
+          color: 'rgba(255,255,255,0.62)', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif',
         }}>{t.back}</button>
 
         <button onClick={() => router.push('/dashboard')} style={{
-          background: 'none', border: 'none', color: 'rgba(255,255,255,0.25)',
+          background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)',
           fontSize: 11, fontFamily: '"JetBrains Mono",monospace', cursor: 'pointer', letterSpacing: '0.05em',
         }}>{t.skip}</button>
 

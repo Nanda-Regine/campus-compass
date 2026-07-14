@@ -18,7 +18,7 @@ export function DataSaverToggle({ variant = 'full' }: DataSaverToggleProps) {
     return onDataSaverChange(setEnabled)
   }, [])
 
-  if (!mounted) return <div style={{ height: 36, borderRadius: 8, background: 'rgba(255,255,255,0.04)' }} />
+  if (!mounted) return <div style={{ height: 36, borderRadius: 8, background: 'rgba(255,255,255,0.07)' }} />
 
   function toggle() {
     const next = !enabled
@@ -34,10 +34,10 @@ export function DataSaverToggle({ variant = 'full' }: DataSaverToggleProps) {
         style={{
           width: 32, height: 32, borderRadius: 8,
           border: `0.5px solid ${enabled ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.1)'}`,
-          background: enabled ? 'rgba(78,207,158,0.1)' : 'rgba(255,255,255,0.04)',
+          background: enabled ? 'rgba(78,207,158,0.1)' : 'rgba(255,255,255,0.07)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           cursor: 'pointer', transition: 'all 0.2s ease', flexShrink: 0,
-          color: enabled ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+          color: enabled ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
         }}
       >
         {enabled ? <WifiOff size={14} /> : <Wifi size={14} />}
@@ -51,7 +51,7 @@ export function DataSaverToggle({ variant = 'full' }: DataSaverToggleProps) {
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '8px 14px', borderRadius: 10, width: '100%',
-        background: enabled ? 'rgba(78,207,158,0.08)' : 'rgba(255,255,255,0.04)',
+        background: enabled ? 'rgba(78,207,158,0.08)' : 'rgba(255,255,255,0.07)',
         border: `0.5px solid ${enabled ? 'rgba(78,207,158,0.25)' : 'rgba(255,255,255,0.08)'}`,
         cursor: 'pointer', transition: 'all 0.2s ease',
         color: enabled ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
@@ -63,7 +63,7 @@ export function DataSaverToggle({ variant = 'full' }: DataSaverToggleProps) {
       <span style={{
         marginLeft: 'auto', fontSize: 10,
         fontFamily: 'JetBrains Mono, monospace',
-        color: enabled ? '#4ecf9e' : 'rgba(255,255,255,0.25)',
+        color: enabled ? '#4ecf9e' : 'rgba(255,255,255,0.45)',
       }}>
         {enabled ? 'ON' : 'OFF'}
       </span>

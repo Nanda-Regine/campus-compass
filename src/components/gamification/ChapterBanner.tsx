@@ -49,7 +49,7 @@ export default function ChapterBanner() {
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 4 }}>
             Current Chapter
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -63,7 +63,7 @@ export default function ChapterBanner() {
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1rem', color: '#4ecf9e' }}>
             {chapterXP.toLocaleString()} XP
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>
             this chapter
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function ChapterBanner() {
       <div style={{ height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #4ecf9e, #38BDF8)', borderRadius: 2, transition: 'width 0.6s ease' }} />
       </div>
-      <div style={{ marginTop: 6, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.25)' }}>
+      <div style={{ marginTop: 6, fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>
         {daysLeft > 0 ? `${daysLeft} days remaining in this chapter` : 'Chapter ending today'}
       </div>
     </div>

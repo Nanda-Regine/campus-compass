@@ -156,7 +156,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
   const sortedDates = Object.keys(byDate).sort((a, b) => b.localeCompare(a)).slice(0, 7)
 
   const card: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.04)',
+    background: 'rgba(255,255,255,0.07)',
     border: '1px solid rgba(255,255,255,0.08)',
     borderRadius: 14,
     padding: '14px 16px',
@@ -166,7 +166,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading food spend…</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Loading food spend…</span>
     </div>
   )
 
@@ -178,12 +178,12 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
         <div style={card}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
                 Food budget — {today.slice(0, 7)}
               </p>
               <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'rgba(255,255,255,0.9)', lineHeight: 1 }}>
                 R{totalSpent.toFixed(2)}
-                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 400, fontSize: 11, color: 'rgba(255,255,255,0.4)', marginLeft: 6 }}>/ R{foodBudget}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 400, fontSize: 11, color: 'rgba(255,255,255,0.58)', marginLeft: 6 }}>/ R{foodBudget}</span>
               </p>
             </div>
             {remaining != null && (
@@ -191,7 +191,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: remaining < 0 ? '#ef4444' : '#4ecf9e', lineHeight: 1, marginBottom: 2 }}>
                   {remaining < 0 ? '-' : ''}R{Math.abs(remaining).toFixed(0)}
                 </p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)' }}>remaining</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)' }}>remaining</p>
               </div>
             )}
           </div>
@@ -200,12 +200,12 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
           </div>
           <div style={{ display: 'flex', gap: 16 }}>
             <div>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', marginBottom: 2 }}>Today</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', marginBottom: 2 }}>Today</p>
               <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>R{todayTotal.toFixed(0)}</p>
             </div>
             {dailyLeft != null && (
               <div>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', marginBottom: 2 }}>Daily allowance left</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', marginBottom: 2 }}>Daily allowance left</p>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: dailyLeft < 20 ? '#f59e0b' : 'rgba(255,255,255,0.8)' }}>
                   R{dailyLeft.toFixed(0)}/day · {daysLeft}d left
                 </p>
@@ -218,7 +218,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(245,158,11,0.7)', marginBottom: 4 }}>
             💡 Set a food budget in Budget OS to see your progress bar
           </p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)' }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)' }}>
             You can still log meals below — they&apos;ll sync with your Budget tracker automatically.
           </p>
         </div>
@@ -226,7 +226,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
 
       {/* ── Quick-log buttons ────────────────────────────────────────────── */}
       <div style={card}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
           Quick log today&apos;s meals
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
@@ -239,7 +239,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
                 display: 'flex', alignItems: 'center', gap: 5,
                 padding: '6px 11px', borderRadius: 20,
                 border: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(255,255,255,0.04)',
+                background: 'rgba(255,255,255,0.07)',
                 color: 'rgba(255,255,255,0.65)',
                 fontFamily: 'var(--font-mono)', fontSize: 10.5,
                 cursor: logging ? 'default' : 'pointer',
@@ -262,10 +262,10 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
                 onChange={e => setCustomDesc(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleCustom()}
                 placeholder="What did you eat?"
-                style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '8px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-body)', fontSize: 13, outline: 'none' }}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '8px 12px', color: 'rgba(255,255,255,0.85)', fontFamily: 'var(--font-body)', fontSize: 13, outline: 'none' }}
               />
-              <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '0 10px', gap: 4 }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>R</span>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '0 10px', gap: 4 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.58)' }}>R</span>
                 <input
                   type="number"
                   inputMode="decimal"
@@ -278,7 +278,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setShowCustom(false)} style={{ flex: 1, padding: '8px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)', fontSize: 11, cursor: 'pointer' }}>
+              <button onClick={() => setShowCustom(false)} style={{ flex: 1, padding: '8px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: 'rgba(255,255,255,0.58)', fontFamily: 'var(--font-mono)', fontSize: 11, cursor: 'pointer' }}>
                 Cancel
               </button>
               <button onClick={handleCustom} disabled={logging} style={{ flex: 2, padding: '8px', borderRadius: 10, border: '1px solid rgba(78,207,158,0.35)', background: 'rgba(78,207,158,0.12)', color: '#4ecf9e', fontFamily: 'var(--font-mono)', fontSize: 11, cursor: logging ? 'default' : 'pointer', opacity: logging ? 0.6 : 1 }}>
@@ -289,7 +289,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
         ) : (
           <button
             onClick={() => setShowCustom(true)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px', borderRadius: 10, border: '1px dashed rgba(255,255,255,0.15)', background: 'transparent', color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)', fontSize: 11, cursor: 'pointer' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px', borderRadius: 10, border: '1px dashed rgba(255,255,255,0.15)', background: 'transparent', color: 'rgba(255,255,255,0.58)', fontFamily: 'var(--font-mono)', fontSize: 11, cursor: 'pointer' }}
           >
             <Plus size={12} /> Custom meal / amount
           </button>
@@ -299,7 +299,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
       {/* ── Spending history ─────────────────────────────────────────────── */}
       {sortedDates.length > 0 ? (
         <div style={card}>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
             Recent meals
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -308,7 +308,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
               return (
                 <div key={date}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: date === today ? '#7dd3fc' : 'rgba(255,255,255,0.4)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: date === today ? '#7dd3fc' : 'rgba(255,255,255,0.58)' }}>
                       {formatDate(date)}
                     </span>
                     <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
@@ -339,8 +339,8 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
       ) : (
         <div style={{ ...card, textAlign: 'center', padding: '28px 20px' }}>
           <Utensils size={28} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 auto 10px' }} />
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>No meals logged this month</p>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.25)' }}>Use the quick buttons above to log your first meal</p>
+          <p style={{ fontFamily: 'var(--font-display)', fontSize: 13, color: 'rgba(255,255,255,0.58)', marginBottom: 6 }}>No meals logged this month</p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.45)' }}>Use the quick buttons above to log your first meal</p>
         </div>
       )}
 
@@ -362,7 +362,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
             <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12.5, color: 'rgba(255,255,255,0.85)', marginBottom: 3 }}>
               {pct >= 100 ? 'Food budget exceeded' : 'Food budget almost gone'}
             </p>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>
               {pct >= 100
                 ? `You&apos;ve spent R${(totalSpent - foodBudget).toFixed(0)} over your food budget this month.`
                 : `${Math.round(100 - pct)}% left — about R${dailyLeft?.toFixed(0) ?? '?'}/day for the next ${daysLeft} days.`}

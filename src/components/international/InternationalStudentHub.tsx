@@ -184,7 +184,7 @@ function PermitCard({ expiryDate, onSaved }: {
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color }}>
               {days} day{days !== 1 ? 's' : ''} remaining
             </div>
-            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
+            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.66)', marginTop: 2 }}>
               Expires {expiryFormatted}
             </div>
           </div>
@@ -227,7 +227,7 @@ function PermitCard({ expiryDate, onSaved }: {
               background: dateInput && !saving ? SKY : 'rgba(255,255,255,0.08)',
               border: 'none',
               borderRadius: 8,
-              color: dateInput && !saving ? '#0F172A' : 'rgba(255,255,255,0.3)',
+              color: dateInput && !saving ? '#0F172A' : 'rgba(255,255,255,0.5)',
               fontSize: '0.75rem',
               fontWeight: 700,
               cursor: dateInput && !saving ? 'pointer' : 'not-allowed',
@@ -253,12 +253,12 @@ function PermitCard({ expiryDate, onSaved }: {
           alignItems: 'center',
           gap: 8,
           padding: '8px 12px',
-          background: 'rgba(255,255,255,0.04)',
+          background: 'rgba(255,255,255,0.07)',
           borderRadius: 8,
           marginTop: 4,
         }}>
           <span style={{ fontSize: '0.7rem' }}>📞</span>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>
+          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.66)', lineHeight: 1.4 }}>
             <span style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>Department of Home Affairs: </span>
             0800 60 11 90 (toll-free) · Mon–Fri 08:00–16:00
           </div>
@@ -309,7 +309,7 @@ function FundingCard() {
               display: 'flex',
               gap: 10,
               padding: '10px 12px',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 10,
             }}>
@@ -318,7 +318,7 @@ function FundingCard() {
                 <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 2 }}>
                   {f.name}
                 </div>
-                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>
                   {f.desc}
                   {f.url ? <> · <span style={{ color: SKY }}>{f.url}</span></> : ''}
                 </div>
@@ -382,7 +382,7 @@ function BankingCard() {
                 alignItems: 'flex-start',
                 gap: 10,
                 padding: '9px 12px',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 9,
               }}>
@@ -399,7 +399,7 @@ function BankingCard() {
                       letterSpacing: '0.04em',
                     }}>{b.tag}</span>
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{b.note}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{b.note}</div>
                 </div>
               </div>
             ))}
@@ -421,11 +421,11 @@ function BankingCard() {
 
         <div style={{
           padding: '9px 12px',
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 8,
           fontSize: '0.71rem',
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(255,255,255,0.66)',
           lineHeight: 1.5,
         }}>
           💸 <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Sending money home?</strong> Use <span style={{ color: SKY }}>Wise</span> or <span style={{ color: SKY }}>OFX</span> — their exchange rates and fees are significantly better than South African bank international transfers.
@@ -477,7 +477,7 @@ function HealthcareCard() {
                 alignItems: 'flex-start',
                 gap: 10,
                 padding: '9px 12px',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 9,
               }}>
@@ -493,7 +493,7 @@ function HealthcareCard() {
                       color: SKY,
                     }}>{opt.tag}</span>
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{opt.note}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{opt.note}</div>
                 </div>
               </div>
             ))}
@@ -548,7 +548,7 @@ function ContactsCard() {
               alignItems: 'center',
               gap: 12,
               padding: '10px 12px',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 10,
             }}>
@@ -574,7 +574,7 @@ function ContactsCard() {
           border: `1px solid ${SKY_BORDER}`,
           borderRadius: 8,
           fontSize: '0.7rem',
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(255,255,255,0.66)',
           lineHeight: 1.5,
         }}>
           💡 <strong style={{ color: 'rgba(255,255,255,0.7)' }}>SAQA</strong> evaluates your foreign qualifications to determine their South African equivalent — essential for job applications and further studies.
@@ -617,14 +617,14 @@ function TaxWorkCard() {
               display: 'flex',
               gap: 10,
               padding: '10px 12px',
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 9,
             }}>
               <span style={{ fontSize: '1.1rem', lineHeight: 1, marginTop: 1, flexShrink: 0 }}>{item.icon}</span>
               <div>
                 <div style={{ fontSize: '0.76rem', fontWeight: 700, color: 'rgba(255,255,255,0.82)', marginBottom: 3 }}>{item.title}</div>
-                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>{item.body}</div>
+                <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>{item.body}</div>
               </div>
             </div>
           ))}
@@ -632,11 +632,11 @@ function TaxWorkCard() {
 
         <div style={{
           padding: '8px 12px',
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.07)',
           borderRadius: 8,
           fontSize: '0.7rem',
-          color: 'rgba(255,255,255,0.45)',
+          color: 'rgba(255,255,255,0.62)',
           lineHeight: 1.5,
         }}>
           ⚠️ Working without a valid work permit (when your study permit does not explicitly allow it) is a <strong style={{ color: '#FCA5A5' }}>serious immigration offence</strong> and can result in deportation. Always verify your permit conditions.
@@ -792,7 +792,7 @@ export default function InternationalStudentHub() {
             Welcome to South Africa
             {profile.country_of_origin ? ` — from ${profile.country_of_origin}` : ''}
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>
+          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.66)', lineHeight: 1.5 }}>
             Everything you need to navigate studying, living, and thriving in SA.
           </div>
         </div>

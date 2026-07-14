@@ -50,7 +50,7 @@ export function ShareButton({ title, text, url = 'https://varsityos.co.za', labe
           background: shared ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
           border: `0.5px solid ${shared ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.1)'}`,
           cursor: 'pointer', transition: 'all 0.2s ease', flexShrink: 0,
-          color: shared ? '#4ecf9e' : 'rgba(255,255,255,0.45)',
+          color: shared ? '#4ecf9e' : 'rgba(255,255,255,0.62)',
         }}
       >
         {shared ? <Check size={14} /> : <Share2 size={14} />}
@@ -65,7 +65,7 @@ export function ShareButton({ title, text, url = 'https://varsityos.co.za', labe
         style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           padding: '11px 0', borderRadius: 12,
-          background: shared ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.05)',
+          background: shared ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.08)',
           border: `1px solid ${shared ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.08)'}`,
           cursor: 'pointer', transition: 'all 0.2s ease',
           color: shared ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
@@ -85,10 +85,10 @@ export function ShareButton({ title, text, url = 'https://varsityos.co.za', labe
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 5,
         padding: '5px 12px', borderRadius: 9999,
-        background: shared ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.05)',
+        background: shared ? 'rgba(78,207,158,0.12)' : 'rgba(255,255,255,0.08)',
         border: `0.5px solid ${shared ? 'rgba(78,207,158,0.3)' : 'rgba(255,255,255,0.1)'}`,
         cursor: 'pointer', transition: 'all 0.2s ease', flexShrink: 0,
-        color: shared ? '#4ecf9e' : 'rgba(255,255,255,0.4)',
+        color: shared ? '#4ecf9e' : 'rgba(255,255,255,0.58)',
         fontSize: 11, fontFamily: 'JetBrains Mono, monospace',
       }}
     >

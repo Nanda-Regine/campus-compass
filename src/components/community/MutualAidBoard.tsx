@@ -81,7 +81,7 @@ function AidCard({
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         padding: '16px',
@@ -329,7 +329,7 @@ export default function MutualAidBoard({
           style={{
             display: 'flex',
             gap: '4px',
-            background: 'rgba(255,255,255,0.04)',
+            background: 'rgba(255,255,255,0.07)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '12px',
             padding: '4px',
@@ -386,7 +386,7 @@ export default function MutualAidBoard({
                           : t === 'request'
                           ? 'rgba(96,165,250,0.12)'
                           : 'rgba(52,211,153,0.12)'
-                        : 'rgba(255,255,255,0.04)',
+                        : 'rgba(255,255,255,0.07)',
                     color:
                       typeFilter === t
                         ? t === 'offer'
@@ -423,7 +423,7 @@ export default function MutualAidBoard({
                   padding: '5px 12px',
                   borderRadius: '20px',
                   border: categoryFilter === 'all' ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                  background: categoryFilter === 'all' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                  background: categoryFilter === 'all' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                   color: categoryFilter === 'all' ? '#34d399' : '#9ca3af',
                   fontSize: '12px',
                   cursor: 'pointer',
@@ -441,7 +441,7 @@ export default function MutualAidBoard({
                     padding: '5px 12px',
                     borderRadius: '20px',
                     border: categoryFilter === key ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                    background: categoryFilter === key ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                    background: categoryFilter === key ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                     color: categoryFilter === key ? '#34d399' : '#9ca3af',
                     fontSize: '12px',
                     cursor: 'pointer',
@@ -508,7 +508,7 @@ export default function MutualAidBoard({
                     padding: '12px',
                     borderRadius: '12px',
                     border: postForm.type === 'offer' ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                    background: postForm.type === 'offer' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                    background: postForm.type === 'offer' ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                     color: postForm.type === 'offer' ? '#34d399' : '#9ca3af',
                     fontWeight: postForm.type === 'offer' ? 700 : 400,
                     fontSize: '14px',
@@ -526,7 +526,7 @@ export default function MutualAidBoard({
                     padding: '12px',
                     borderRadius: '12px',
                     border: postForm.type === 'request' ? '1px solid #60a5fa' : '1px solid rgba(255,255,255,0.1)',
-                    background: postForm.type === 'request' ? 'rgba(96,165,250,0.12)' : 'rgba(255,255,255,0.04)',
+                    background: postForm.type === 'request' ? 'rgba(96,165,250,0.12)' : 'rgba(255,255,255,0.07)',
                     color: postForm.type === 'request' ? '#60a5fa' : '#9ca3af',
                     fontWeight: postForm.type === 'request' ? 700 : 400,
                     fontSize: '14px',
@@ -558,7 +558,7 @@ export default function MutualAidBoard({
                       padding: '10px 14px',
                       borderRadius: '12px',
                       border: postForm.category === key ? '1px solid #34d399' : '1px solid rgba(255,255,255,0.1)',
-                      background: postForm.category === key ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.04)',
+                      background: postForm.category === key ? 'rgba(52,211,153,0.12)' : 'rgba(255,255,255,0.07)',
                       color: postForm.category === key ? '#34d399' : '#9ca3af',
                       fontSize: '12px',
                       cursor: 'pointer',
@@ -590,7 +590,7 @@ export default function MutualAidBoard({
                 required
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -615,7 +615,7 @@ export default function MutualAidBoard({
                 required
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -640,7 +640,7 @@ export default function MutualAidBoard({
                 onChange={(e) => setPostForm((f) => ({ ...f, expires_at: e.target.value }))}
                 min={new Date().toISOString().split('T')[0]}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -659,7 +659,7 @@ export default function MutualAidBoard({
                 alignItems: 'center',
                 gap: '10px',
                 cursor: 'pointer',
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '10px',
                 padding: '10px 14px',

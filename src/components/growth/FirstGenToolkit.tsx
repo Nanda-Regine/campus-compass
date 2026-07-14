@@ -134,7 +134,7 @@ export default function FirstGenToolkit() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>FIRST-GEN TOOLKIT</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>You belong here. Navigate with confidence.</div>
@@ -168,10 +168,10 @@ export default function FirstGenToolkit() {
             placeholder="Search terms..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={{ padding: '9px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none' }}
+            style={{ padding: '9px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none' }}
           />
           {filteredGlossary.map((g, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px' }}>
+            <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px' }}>
               <div style={{ fontSize: '0.82rem', fontWeight: 700, color: ACCENT, marginBottom: 4 }}>{g.term}</div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.65 }}>{g.plain}</div>
             </div>
@@ -188,7 +188,7 @@ export default function FirstGenToolkit() {
             Admin feels designed to confuse you. It is not — it just has steps no one explains. Here they are.
           </div>
           {ADMIN_STEPS.map((item, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${openStep === i ? `rgba(192,132,252,0.3)` : 'rgba(255,255,255,0.06)'}`, borderRadius: 12, overflow: 'hidden' }}>
+            <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${openStep === i ? `rgba(192,132,252,0.3)` : 'rgba(255,255,255,0.06)'}`, borderRadius: 12, overflow: 'hidden' }}>
               <button
                 onClick={() => setOpenStep(openStep === i ? null : i)}
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '13px 14px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
@@ -216,7 +216,7 @@ export default function FirstGenToolkit() {
             These are not motivational posters. These are truths specific to first-generation students — people who built something without a map.
           </div>
           {POWER_STATEMENTS.map((statement, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,0.15)`, borderRadius: 14, padding: '14px 16px', borderLeft: `3px solid ${ACCENT}` }}>
+            <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.15)`, borderRadius: 14, padding: '14px 16px', borderLeft: `3px solid ${ACCENT}` }}>
               <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 6 }}>#{String(i + 1).padStart(2, '0')}</div>
               <div style={{ fontSize: '0.83rem', color: 'var(--text-primary)', lineHeight: 1.7, fontStyle: 'italic' }}>&ldquo;{statement}&rdquo;</div>
             </div>
@@ -226,14 +226,14 @@ export default function FirstGenToolkit() {
 
       {tab === 'community' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,0.2)`, borderRadius: 16, padding: '18px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.2)`, borderRadius: 16, padding: '18px' }}>
             <div style={{ fontSize: '1.4rem', marginBottom: 10 }}>🤝</div>
             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>Find your people</div>
             <div style={{ fontSize: '0.77rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
               Many universities have First-Generation Student societies. These are spaces run by students who get it — who also navigated the first year without a parent who had been to university before them.
             </div>
           </div>
-          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px' }}>
+          <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px' }}>
             <div style={{ fontSize: '0.75rem', fontWeight: 700, color: ACCENT, marginBottom: 8 }}>Where to look</div>
             {[
               "Search your institution's student portal for 'First-Gen' or 'First Generation' societies",
@@ -263,7 +263,7 @@ export default function FirstGenToolkit() {
             When things go wrong — and sometimes they will — here is exactly who to call.
           </div>
           {EMERGENCY_CONTACTS.map((contact, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px' }}>
+            <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px' }}>
               <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 4, letterSpacing: '0.05em' }}>{contact.label.toUpperCase()}</div>
               <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4, fontFamily: 'var(--font-mono)' }}>{contact.value}</div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{contact.note}</div>

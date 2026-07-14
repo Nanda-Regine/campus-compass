@@ -172,7 +172,7 @@ export default function CampusEvents({ userId, institution }: Props) {
             What&apos;s happening
           </div>
           {institution && (
-            <div className="font-mono text-[0.65rem] text-white/30 mt-0.5">{institution}</div>
+            <div className="font-mono text-[0.65rem] text-white/55 mt-0.5">{institution}</div>
           )}
         </div>
         <button
@@ -193,11 +193,11 @@ export default function CampusEvents({ userId, institution }: Props) {
               <input
                 value={fTitle} onChange={e => setFTitle(e.target.value)}
                 placeholder="Event title *"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-emerald-500 font-body"
               />
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Type</label>
+              <label className="font-mono text-[0.65rem] text-white/60 mb-1 block">Type</label>
               <select value={fType} onChange={e => setFType(e.target.value as EventType)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 outline-none focus:border-emerald-500 font-body">
                 {Object.entries(TYPE_META).map(([k, v]) => (
@@ -206,33 +206,33 @@ export default function CampusEvents({ userId, institution }: Props) {
               </select>
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Venue</label>
+              <label className="font-mono text-[0.65rem] text-white/60 mb-1 block">Venue</label>
               <input value={fVenue} onChange={e => setFVenue(e.target.value)} placeholder="e.g. Library Room 2"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Date & time *</label>
+              <label className="font-mono text-[0.65rem] text-white/60 mb-1 block">Date & time *</label>
               <input type="datetime-local" value={fDate} onChange={e => setFDate(e.target.value)} min={nowMin}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Duration (minutes)</label>
+              <label className="font-mono text-[0.65rem] text-white/60 mb-1 block">Duration (minutes)</label>
               <input type="number" value={fDuration} onChange={e => setFDuration(e.target.value)} placeholder="e.g. 90" min={15}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.65rem] text-white/35 mb-1 block">Max attendees</label>
+              <label className="font-mono text-[0.65rem] text-white/60 mb-1 block">Max attendees</label>
               <input type="number" value={fMax} onChange={e => setFMax(e.target.value)} placeholder="Leave blank = unlimited" min={1}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 font-body" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div className="col-span-2">
               <textarea value={fDesc} onChange={e => setFDesc(e.target.value)} placeholder="Description (optional)" rows={2}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-emerald-500 resize-none font-body" />
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-emerald-500 resize-none font-body" />
             </div>
             <div className="col-span-2 flex items-center gap-2">
               <input type="checkbox" id="anon" checked={fAnon} onChange={e => setFAnon(e.target.checked)}
                 className="w-3.5 h-3.5 rounded" />
-              <label htmlFor="anon" className="font-mono text-[0.58rem] text-white/40">Post anonymously</label>
+              <label htmlFor="anon" className="font-mono text-[0.58rem] text-white/65">Post anonymously</label>
             </div>
           </div>
 
@@ -242,7 +242,7 @@ export default function CampusEvents({ userId, institution }: Props) {
               {creating ? 'Posting…' : 'Post Event'}
             </button>
             <button onClick={() => setShowCreate(false)}
-              className="px-4 font-mono text-sm text-white/40 border border-white/10 rounded-xl">
+              className="px-4 font-mono text-sm text-white/65 border border-white/10 rounded-xl">
               Cancel
             </button>
           </div>
@@ -259,7 +259,7 @@ export default function CampusEvents({ userId, institution }: Props) {
               'font-mono text-[0.58rem] px-2.5 py-1 rounded-full border whitespace-nowrap flex-shrink-0 transition-all',
               filterType === f.value
                 ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
-                : 'bg-white/3 text-white/40 border-white/8 hover:border-white/15'
+                : 'bg-white/3 text-white/65 border-white/8 hover:border-white/15'
             )}
           >
             {f.label}
@@ -276,7 +276,7 @@ export default function CampusEvents({ userId, institution }: Props) {
         <div className="text-center py-10">
           <div className="text-3xl mb-2">📅</div>
           <div className="font-display font-bold text-white text-sm">No upcoming events</div>
-          <div className="font-mono text-[0.6rem] text-white/30 mt-1">Be the first to post one above!</div>
+          <div className="font-mono text-[0.6rem] text-white/55 mt-1">Be the first to post one above!</div>
         </div>
       ) : (
         <div className="space-y-3">
@@ -297,7 +297,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                         {meta.emoji} {meta.label}
                       </span>
                       {e.max_attendees && (
-                        <span className="font-mono text-[0.48rem] text-white/25">
+                        <span className="font-mono text-[0.48rem] text-white/50">
                           {e.rsvp_count}/{e.max_attendees} spots
                         </span>
                       )}
@@ -306,17 +306,17 @@ export default function CampusEvents({ userId, institution }: Props) {
                     <div className="font-display font-bold text-white text-sm leading-tight mb-1">{e.title}</div>
 
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mb-1">
-                      <span className="font-mono text-[0.58rem] text-white/50">
+                      <span className="font-mono text-[0.58rem] text-white/70">
                         🕐 {formatEventDate(e.event_date)}
                         {e.duration_minutes ? ` · ${formatDuration(e.duration_minutes)}` : ''}
                       </span>
                       {e.venue && (
-                        <span className="font-mono text-[0.58rem] text-white/40">📍 {e.venue}</span>
+                        <span className="font-mono text-[0.58rem] text-white/65">📍 {e.venue}</span>
                       )}
                     </div>
 
                     {e.description && (
-                      <div className="font-mono text-[0.6rem] text-white/35 leading-relaxed mt-1 line-clamp-2">
+                      <div className="font-mono text-[0.6rem] text-white/60 leading-relaxed mt-1 line-clamp-2">
                         {e.description}
                       </div>
                     )}
@@ -332,18 +332,18 @@ export default function CampusEvents({ userId, institution }: Props) {
                         e.user_rsvped
                           ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                           : isFull
-                          ? 'bg-white/3 text-white/20 border-white/8 cursor-not-allowed'
-                          : 'bg-white/4 text-white/50 border-white/10 hover:border-white/20'
+                          ? 'bg-white/3 text-white/45 border-white/8 cursor-not-allowed'
+                          : 'bg-white/4 text-white/70 border-white/10 hover:border-white/20'
                       )}
                     >
                       {e.user_rsvped ? '✓ Going' : isFull ? 'Full' : "I'm going"}
                     </button>
                     {e.rsvp_count > 0 && (
-                      <span className="font-mono text-[0.65rem] text-white/25">{e.rsvp_count} going</span>
+                      <span className="font-mono text-[0.65rem] text-white/50">{e.rsvp_count} going</span>
                     )}
                     {isOwner && (
                       <button onClick={() => cancelEvent(e.id)}
-                        className="font-mono text-[0.48rem] text-white/20 hover:text-red-400 transition-colors">
+                        className="font-mono text-[0.48rem] text-white/45 hover:text-red-400 transition-colors">
                         cancel
                       </button>
                     )}

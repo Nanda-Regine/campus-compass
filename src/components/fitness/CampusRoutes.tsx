@@ -289,7 +289,7 @@ export default function CampusRoutes({ userId, university }: Props) {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    background: 'rgba(255,255,255,0.05)',
+    background: 'rgba(255,255,255,0.08)',
     border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '10px',
     color: 'var(--text-secondary)',
@@ -323,7 +323,7 @@ export default function CampusRoutes({ userId, university }: Props) {
         <div
           className="flex"
           style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '12px',
             padding: '4px',
@@ -375,7 +375,7 @@ export default function CampusRoutes({ userId, university }: Props) {
                   <div
                     key={i}
                     style={{
-                      background: 'rgba(255,255,255,0.03)',
+                      background: 'rgba(255,255,255,0.06)',
                       border: '1px solid rgba(255,255,255,0.06)',
                       borderRadius: '16px',
                       height: '140px',
@@ -400,7 +400,7 @@ export default function CampusRoutes({ userId, university }: Props) {
                     <div
                       key={route.id}
                       style={{
-                        background: 'rgba(255,255,255,0.03)',
+                        background: 'rgba(255,255,255,0.06)',
                         border: '1px solid rgba(255,255,255,0.06)',
                         borderRadius: '16px',
                         padding: '16px',

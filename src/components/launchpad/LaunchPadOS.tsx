@@ -471,7 +471,7 @@ export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
               background: isActive ? `${ACCENT}18` : 'transparent',
               border: 'none', borderLeft: `2px solid ${isActive ? ACCENT : 'transparent'}`,
-              color: isActive ? ACCENT : 'rgba(255,255,255,0.35)',
+              color: isActive ? ACCENT : 'rgba(255,255,255,0.55)',
               cursor: 'pointer', transition: 'all 0.15s', padding: '6px 2px',
             }}>
               <span style={{ fontSize: '1.05rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>

@@ -339,7 +339,7 @@ function LevelUpOverlay({ level, onDismiss }: { level: Level; onDismiss: () => v
         <div style={{
           marginTop: 28,
           fontFamily: '"JetBrains Mono", monospace',
-          fontSize: 10, color: 'rgba(255,255,255,0.22)',
+          fontSize: 10, color: 'rgba(255,255,255,0.42)',
           animation: 'gl-badge-text-in 0.4s ease 0.8s both',
         }}>
           Tap to continue

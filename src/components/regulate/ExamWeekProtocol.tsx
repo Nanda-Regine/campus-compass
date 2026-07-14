@@ -84,7 +84,7 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
 
   if (!nearExam || dismissed) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>
           No exams in the next 7 days — great time to build regulation habits.
         </p>
@@ -97,7 +97,7 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
   const progress = (checkedSteps.length / STEPS.length) * 100
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}>
+    <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}>
       <div className="flex items-start justify-between mb-4">
         <div>
           <p style={{ color: '#a78bfa', fontWeight: 700, fontSize: 16 }}>{nearExam.exam_name || nearExam.name}</p>
@@ -128,7 +128,7 @@ export default function ExamWeekProtocol({ exams, userId: _userId }: Props) {
                 background: isChecked ? 'rgba(167,139,250,0.08)' : 'rgba(255,255,255,0.02)',
                 borderRadius: 10,
                 cursor: 'pointer',
-                border: '1px solid ' + (isChecked ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.04)'),
+                border: '1px solid ' + (isChecked ? 'rgba(167,139,250,0.25)' : 'rgba(255,255,255,0.07)'),
                 transition: 'all 0.2s',
               }}
             >

@@ -135,7 +135,7 @@ export function MobileSidebar() {
                 width: 30, height: 30, borderRadius: 8,
                 background: 'rgba(255,255,255,0.06)', border: 'none',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'rgba(255,255,255,0.4)',
+                color: 'rgba(255,255,255,0.58)',
               }}
             >
               <X size={14} />
@@ -200,10 +200,10 @@ export function MobileSidebar() {
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: '8px 12px', borderRadius: 10,
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.08)',
                 border: '0.5px solid rgba(255,255,255,0.08)',
               }}>
-                <UserCircle size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />
+                <UserCircle size={16} style={{ color: 'rgba(255,255,255,0.58)' }} />
                 <span style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>
                   My Profile
                 </span>

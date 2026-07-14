@@ -15,7 +15,7 @@ function getRating(total: number): { label: string; color: string } {
   if (total >= 600) return { label: 'Excellent',   color: '#9b6fd4' }
   if (total >= 400) return { label: 'Good',         color: '#7090d0' }
   if (total >= 200) return { label: 'Building',     color: '#c9a84c' }
-  return { label: 'Getting started', color: 'rgba(255,255,255,0.35)' }
+  return { label: 'Getting started', color: 'rgba(255,255,255,0.55)' }
 }
 
 export default function VarsityScore() {
@@ -62,7 +62,7 @@ export default function VarsityScore() {
           }}>
             {score.total}
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>out of 1000</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>out of 1000</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 2 }}>
             {1000 - score.total} points to go
           </div>
@@ -98,10 +98,10 @@ export default function VarsityScore() {
 
       {/* How score is calculated */}
       <details style={{ marginTop: 16 }}>
-        <summary style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', cursor: 'pointer', userSelect: 'none' }}>
+        <summary style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', cursor: 'pointer', userSelect: 'none' }}>
           How is this calculated?
         </summary>
-        <div style={{ marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.3)', lineHeight: 1.6 }}>
+        <div style={{ marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
           <b style={{ color: '#9b6fd4' }}>Academic (400):</b> Tasks · Pomodoro sessions · Flashcard reviews<br />
           <b style={{ color: '#4ecf9e' }}>Wellness (300):</b> Check-in streak · Burnout score<br />
           <b style={{ color: '#7090d0' }}>Career (200):</b> Mock interviews · Skills gap · CV skills<br />

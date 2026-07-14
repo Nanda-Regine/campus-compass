@@ -77,7 +77,7 @@ const SKILL_INCOME_MAP: Record<string, IncomeEntry> = {
 }
 
 const CARD_STYLE = {
-  background: 'rgba(255,255,255,0.03)',
+  background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.06)',
   borderRadius: '16px',
 }
@@ -226,7 +226,7 @@ export default function SkillsToIncome({ completedSkills }: Props) {
             className="px-4 py-3 rounded-xl text-xs text-center"
             style={{
               background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
               color: 'var(--text-tertiary)',
             }}
           >

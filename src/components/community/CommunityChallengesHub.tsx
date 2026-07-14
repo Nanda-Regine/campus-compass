@@ -44,7 +44,7 @@ export default function CommunityChallengesHub() {
 
       {/* Tab bar */}
       <div style={{
-        display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.05)',
+        display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.08)',
         background: 'rgba(0,0,0,0.15)',
       }}>
         {TABS.map(t => (
@@ -53,7 +53,7 @@ export default function CommunityChallengesHub() {
             background: 'transparent',
             borderBottom: tab === t.id ? '2px solid #c9a84c' : '2px solid transparent',
             fontFamily: 'Sora,sans-serif', fontSize: 11, fontWeight: tab === t.id ? 700 : 400,
-            color: tab === t.id ? '#c9a84c' : 'rgba(255,255,255,0.3)',
+            color: tab === t.id ? '#c9a84c' : 'rgba(255,255,255,0.5)',
             transition: 'all 0.15s',
           }}>
             {t.emoji} {t.label}

@@ -31,7 +31,7 @@ function SignupSkeleton() {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-white/7" />
-            <span className="font-mono text-[0.6rem] text-white/25 uppercase tracking-widest">or</span>
+            <span className="font-mono text-[0.6rem] text-white/50 uppercase tracking-widest">or</span>
             <div className="flex-1 h-px bg-white/7" />
           </div>
 

@@ -29,7 +29,7 @@ function SectionContent({ id }: { id: string }) {
                 <div
                   key={item.food}
                   style={{
-                    background: 'rgba(255,255,255,0.03)',
+                    background: 'rgba(255,255,255,0.06)',
                     border: '1px solid rgba(255,255,255,0.06)',
                     borderRadius: 10,
                     padding: '10px 12px',
@@ -75,7 +75,7 @@ function SectionContent({ id }: { id: string }) {
             </div>
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)' }}>
             R8-15 pre-exam meal is achievable at any campus tuck shop or res kitchen.
           </div>
         </div>
@@ -97,7 +97,7 @@ function SectionContent({ id }: { id: string }) {
             <div
               key={item.food}
               style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 10,
                 padding: 12,
@@ -144,7 +144,7 @@ function SectionContent({ id }: { id: string }) {
           </div>
 
           <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.58)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
               Signs of study dehydration
             </div>
             {['Headache mid-study session', 'Difficulty focusing on a single paragraph', 'Irritability for no reason'].map(s => (
@@ -161,7 +161,7 @@ function SectionContent({ id }: { id: string }) {
 
           <div
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: 10,
               padding: '10px 14px',
@@ -213,7 +213,7 @@ function SectionContent({ id }: { id: string }) {
               <div
                 key={item.item}
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
+                  background: 'rgba(255,255,255,0.06)',
                   border: `1px solid ${colors[item.severity]}25`,
                   borderRadius: 10,
                   padding: '10px 14px',
@@ -255,7 +255,7 @@ function SectionContent({ id }: { id: string }) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 14,
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 10,
                 padding: '10px 14px',
@@ -351,7 +351,7 @@ export default function BrainFoodGuide() {
           <div
             key={section.id}
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: isOpen ? `1px solid rgba(251,146,60,0.25)` : '1px solid rgba(255,255,255,0.06)',
               borderRadius: 16,
               overflow: 'hidden',
@@ -389,7 +389,7 @@ export default function BrainFoodGuide() {
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.75rem',
-                  color: 'rgba(255,255,255,0.3)',
+                  color: 'rgba(255,255,255,0.5)',
                   transition: 'transform 0.2s',
                   display: 'inline-block',
                   transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -403,7 +403,7 @@ export default function BrainFoodGuide() {
               <div
                 style={{
                   padding: '0 16px 16px',
-                  borderTop: '1px solid rgba(255,255,255,0.05)',
+                  borderTop: '1px solid rgba(255,255,255,0.08)',
                   paddingTop: 14,
                 }}
               >

@@ -227,9 +227,9 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
     setLiftPosts(prev => prev.filter(p => p.id !== id))
   }
 
-  const formField = 'w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none focus:border-teal-600/60 transition-all font-body'
-  const lbl       = 'font-mono text-[0.6rem] tracking-[0.12em] uppercase text-white/40 mb-1 block'
-  const chip      = (active: boolean) => `px-3 py-1.5 rounded-full text-xs font-mono border transition-all ${active ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/4 border-white/8 text-white/50 hover:text-white hover:bg-white/8'}`
+  const formField = 'w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600/60 transition-all font-body'
+  const lbl       = 'font-mono text-[0.6rem] tracking-[0.12em] uppercase text-white/65 mb-1 block'
+  const chip      = (active: boolean) => `px-3 py-1.5 rounded-full text-xs font-mono border transition-all ${active ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/4 border-white/8 text-white/70 hover:text-white hover:bg-white/8'}`
 
   return (
     <>
@@ -283,7 +283,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
         {tab === 'get-there' && (
           <div className="space-y-4">
             <div className="card-base p-4 space-y-3">
-              <p className="font-mono text-[0.6rem] text-white/40 uppercase tracking-wider">Route Planner</p>
+              <p className="font-mono text-[0.6rem] text-white/65 uppercase tracking-wider">Route Planner</p>
 
               <div>
                 <label className={lbl}>From</label>
@@ -331,7 +331,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {dirQuery && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
-                  <span className="font-mono text-[0.58rem] text-white/30 uppercase tracking-wider">
+                  <span className="font-mono text-[0.58rem] text-white/55 uppercase tracking-wider">
                     {TRANSPORT_ICONS[dirQuery.mode]} {TRANSPORT_LABELS[dirQuery.mode]} · {SA_FARE_RANGES[dirQuery.mode]}
                   </span>
                   <a
@@ -358,8 +358,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     className="rounded-2xl flex flex-col items-center justify-center gap-3 py-10"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
-                    <MapPin size={28} className="text-white/20" />
-                    <p className="font-mono text-[0.65rem] text-white/30 text-center max-w-[200px] leading-relaxed">
+                    <MapPin size={28} className="text-white/45" />
+                    <p className="font-mono text-[0.65rem] text-white/55 text-center max-w-[200px] leading-relaxed">
                       Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to your .env.local to enable the map
                     </p>
                     <a
@@ -390,13 +390,13 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     </button>
                   </div>
                   <div className="font-display font-bold text-white">{def.label}</div>
-                  <div className="font-mono text-[0.65rem] text-white/40 mt-1">
+                  <div className="font-mono text-[0.65rem] text-white/65 mt-1">
                     {def.from_address} → {def.to_address}
                   </div>
                   <div className="flex items-center gap-3 mt-2">
-                    <span className="font-mono text-xs text-white/50">{TRANSPORT_ICONS[def.transport_type]} {TRANSPORT_LABELS[def.transport_type]}</span>
+                    <span className="font-mono text-xs text-white/70">{TRANSPORT_ICONS[def.transport_type]} {TRANSPORT_LABELS[def.transport_type]}</span>
                     {def.fare_rands && <span className="font-mono text-xs text-teal-400">R{def.fare_rands}</span>}
-                    {def.estimated_minutes && <span className="font-mono text-xs text-white/40">{def.estimated_minutes} min</span>}
+                    {def.estimated_minutes && <span className="font-mono text-xs text-white/65">{def.estimated_minutes} min</span>}
                   </div>
                 </div>
               )
@@ -410,7 +410,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {/* Mapbox interactive map */}
             {routes.length > 0 && (
               <div>
-                <p className="font-mono text-[0.58rem] text-white/25 uppercase tracking-wider mb-2 px-1">
+                <p className="font-mono text-[0.58rem] text-white/50 uppercase tracking-wider mb-2 px-1">
                   📍 Tap markers for details · Teal = departure · Orange = destination
                 </p>
                 {MAPBOX_TOKEN ? (
@@ -420,8 +420,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     className="rounded-2xl flex flex-col items-center justify-center gap-2 py-8"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
-                    <MapPin size={24} className="text-white/20" />
-                    <p className="font-mono text-[0.62rem] text-white/25 text-center max-w-[200px] leading-relaxed">
+                    <MapPin size={24} className="text-white/45" />
+                    <p className="font-mono text-[0.62rem] text-white/50 text-center max-w-[200px] leading-relaxed">
                       Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable the route map
                     </p>
                   </div>
@@ -473,7 +473,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   </div>
                 </div>
                 <div className="flex gap-2 pt-1">
-                  <button onClick={() => setAddingRoute(false)} className="flex-1 py-2.5 rounded-xl font-mono text-sm border border-white/10 text-white/40 hover:text-white transition-all">Cancel</button>
+                  <button onClick={() => setAddingRoute(false)} className="flex-1 py-2.5 rounded-xl font-mono text-sm border border-white/10 text-white/65 hover:text-white transition-all">Cancel</button>
                   <button onClick={saveRoute} disabled={savingRoute} className="flex-1 py-2.5 rounded-xl font-mono text-sm bg-teal-600/20 border border-teal-600/40 text-teal-400 hover:bg-teal-600/30 transition-all disabled:opacity-40">
                     {savingRoute ? 'Saving…' : 'Save Route'}
                   </button>
@@ -484,7 +484,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {routes.length === 0 && !addingRoute && (
               <div className="text-center py-10">
                 <MapPin size={32} className="text-white/15 mx-auto mb-3" />
-                <p className="font-mono text-xs text-white/30">No saved routes yet</p>
+                <p className="font-mono text-xs text-white/55">No saved routes yet</p>
               </div>
             )}
 
@@ -496,13 +496,13 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                       <span className="font-display font-bold text-white text-sm">{r.label}</span>
                       {r.is_default && <span className="font-mono text-[0.65rem] bg-amber-500/15 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded-full">DEFAULT</span>}
                     </div>
-                    <div className="font-mono text-[0.62rem] text-white/40 mt-0.5 truncate">
+                    <div className="font-mono text-[0.62rem] text-white/65 mt-0.5 truncate">
                       {r.from_address} → {r.to_address}
                     </div>
                     <div className="flex items-center gap-3 mt-1.5">
-                      <span className="font-mono text-xs text-white/50">{TRANSPORT_ICONS[r.transport_type]} {TRANSPORT_LABELS[r.transport_type]}</span>
+                      <span className="font-mono text-xs text-white/70">{TRANSPORT_ICONS[r.transport_type]} {TRANSPORT_LABELS[r.transport_type]}</span>
                       {r.fare_rands !== null && <span className="font-mono text-xs text-teal-400">R{r.fare_rands}</span>}
-                      {r.estimated_minutes && <span className="font-mono text-xs text-white/30">{r.estimated_minutes}min</span>}
+                      {r.estimated_minutes && <span className="font-mono text-xs text-white/55">{r.estimated_minutes}min</span>}
                     </div>
                   </div>
                   <div className="flex gap-1.5 shrink-0">
@@ -526,7 +526,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
           <div className="space-y-3">
             <div className="card-base p-4">
               <div className="flex items-center justify-between gap-3 mb-2">
-                <p className="font-mono text-[0.6rem] text-white/35 leading-relaxed flex-1">
+                <p className="font-mono text-[0.6rem] text-white/60 leading-relaxed flex-1">
                   Find or offer a lift with fellow students. Always meet in a public place and share your trip with someone you trust.
                 </p>
                 {MAPBOX_TOKEN && liftLoaded && liftPosts.length > 0 && (
@@ -544,7 +544,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {/* Lift club map — shows all active lift posts as 🚗 pins */}
             {liftMapView && MAPBOX_TOKEN && (
               <div>
-                <p className="font-mono text-[0.58rem] text-white/25 uppercase tracking-wider mb-2 px-1">
+                <p className="font-mono text-[0.58rem] text-white/50 uppercase tracking-wider mb-2 px-1">
                   🚗 = pickup point · tap for details & WhatsApp link
                 </p>
                 <MapboxRoutesMap liftPosts={liftPosts} token={MAPBOX_TOKEN} height={380} />
@@ -601,7 +601,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   <input type="tel" inputMode="tel" className={formField} placeholder="+27 82 000 0000" value={liftForm.contact_whatsapp} onChange={e => setLiftForm(p => ({ ...p, contact_whatsapp: e.target.value }))} />
                 </div>
                 <div className="flex gap-2 pt-1">
-                  <button onClick={() => setAddingLift(false)} className="flex-1 py-2.5 rounded-xl font-mono text-sm border border-white/10 text-white/40 hover:text-white transition-all">Cancel</button>
+                  <button onClick={() => setAddingLift(false)} className="flex-1 py-2.5 rounded-xl font-mono text-sm border border-white/10 text-white/65 hover:text-white transition-all">Cancel</button>
                   <button onClick={postLift} disabled={savingLift} className="flex-1 py-2.5 rounded-xl font-mono text-sm bg-sky-600/20 border border-sky-600/40 text-sky-400 hover:bg-sky-600/30 transition-all disabled:opacity-40">
                     {savingLift ? 'Posting…' : 'Post Lift'}
                   </button>
@@ -612,8 +612,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {liftPosts.length === 0 && liftLoaded && !addingLift && (
               <div className="text-center py-10">
                 <Car size={32} className="text-white/15 mx-auto mb-3" />
-                <p className="font-mono text-xs text-white/30">No lift offers at your university yet</p>
-                <p className="font-mono text-[0.62rem] text-white/20 mt-1">Be the first to offer a lift!</p>
+                <p className="font-mono text-xs text-white/55">No lift offers at your university yet</p>
+                <p className="font-mono text-[0.62rem] text-white/45 mt-1">Be the first to offer a lift!</p>
               </div>
             )}
 
@@ -625,14 +625,14 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                       {p.from_location} → {p.to_location}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                      <span className="font-mono text-[0.62rem] text-white/50">
+                      <span className="font-mono text-[0.62rem] text-white/70">
                         🗓 {new Date(p.departure_time).toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })} {new Date(p.departure_time).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       <span className="font-mono text-[0.62rem] text-sky-400">
                         {p.seats_available} seat{p.seats_available !== 1 ? 's' : ''}
                       </span>
                       {p.fare_rands && <span className="font-mono text-[0.62rem] text-teal-400">R{p.fare_rands}/person</span>}
-                      <span className="font-mono text-[0.58rem] text-white/25 capitalize">{p.recurring}</span>
+                      <span className="font-mono text-[0.58rem] text-white/50 capitalize">{p.recurring}</span>
                     </div>
                     {p.contact_whatsapp && (
                       <a
@@ -668,14 +668,14 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   <span className="text-2xl flex-shrink-0">{tip.icon}</span>
                   <div>
                     <div className="font-display font-bold text-white text-sm mb-1">{tip.title}</div>
-                    <p className="font-mono text-[0.65rem] text-white/50 leading-relaxed">{tip.body}</p>
+                    <p className="font-mono text-[0.65rem] text-white/70 leading-relaxed">{tip.body}</p>
                   </div>
                 </div>
               </div>
             ))}
 
             <div className="card-base p-4">
-              <div className="font-mono text-[0.6rem] text-white/35 uppercase tracking-wider mb-3">SA Fare Guide</div>
+              <div className="font-mono text-[0.6rem] text-white/60 uppercase tracking-wider mb-3">SA Fare Guide</div>
               <div className="space-y-2">
                 {(Object.keys(TRANSPORT_ICONS) as TransportType[]).map(t => (
                   <div key={t} className="flex items-center justify-between">

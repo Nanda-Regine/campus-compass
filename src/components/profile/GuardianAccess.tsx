@@ -141,7 +141,7 @@ export default function GuardianAccess() {
           marginBottom: 12,
         }}
       >
-        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>What does my guardian see?</span>
+        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.66)' }}>What does my guardian see?</span>
         <span style={{ fontSize: '0.65rem', color: '#4ecf9e', transform: showExplainer ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
       </button>
 
@@ -156,7 +156,7 @@ export default function GuardianAccess() {
               <li>Budget health (managing well / watch spending / tight) — <em>no rand amounts</em></li>
               <li>Upcoming exams in the next 14 days</li>
             </ul>
-            <div style={{ marginTop: 8, padding: '6px 10px', background: 'rgba(78,207,158,0.08)', borderRadius: 8, fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
+            <div style={{ marginTop: 8, padding: '6px 10px', background: 'rgba(78,207,158,0.08)', borderRadius: 8, fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)' }}>
               🔒 Your guardian can never see your grades, expenses, messages, or any personal details.
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function GuardianAccess() {
           background: 'rgba(78,207,158,0.05)', border: '1px solid rgba(78,207,158,0.15)',
           borderRadius: 14, padding: '14px 16px', marginBottom: 14,
         }}>
-          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginBottom: 8 }}>
+          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.66)', marginBottom: 8 }}>
             Give this link a label so you know who it&apos;s for
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -197,7 +197,7 @@ export default function GuardianAccess() {
               {creating ? '…' : 'Create'}
             </button>
           </div>
-          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>
+          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>
             Links expire after 90 days. Financial amounts are never shown.
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function GuardianAccess() {
                   {expired ? (
                     <span style={{ fontSize: '0.6rem', color: '#f87171', fontFamily: 'monospace', background: 'rgba(248,113,113,0.1)', padding: '2px 6px', borderRadius: 999 }}>Expired</span>
                   ) : (
-                    <span style={{ fontSize: '0.6rem', color: days <= 7 ? '#f59e0b' : 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>
+                    <span style={{ fontSize: '0.6rem', color: days <= 7 ? '#f59e0b' : 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>
                       Expires in {days}d
                     </span>
                   )}
@@ -244,7 +244,7 @@ export default function GuardianAccess() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{
                       background: 'var(--bg-base)', border: '1px solid var(--border-subtle)',
-                      borderRadius: 8, padding: '6px 10px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)',
+                      borderRadius: 8, padding: '6px 10px', fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)',
                       fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {guardianUrl(t.token)}
@@ -255,7 +255,7 @@ export default function GuardianAccess() {
                         style={{
                           flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: '0.68rem', fontWeight: 600,
                           background: copied === t.token ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
-                          color: copied === t.token ? '#4ecf9e' : 'rgba(255,255,255,0.5)',
+                          color: copied === t.token ? '#4ecf9e' : 'rgba(255,255,255,0.66)',
                           border: '1px solid var(--border-subtle)', cursor: 'pointer',
                         }}
                       >

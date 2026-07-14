@@ -92,7 +92,7 @@ export default function AddJobPage() {
           />
 
           <div>
-            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/40 mb-2">Job type</div>
+            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Job type</div>
             <div className="grid grid-cols-2 gap-2">
               {JOB_TYPES.map(type => (
                 <button
@@ -102,7 +102,7 @@ export default function AddJobPage() {
                   className={`text-left px-3 py-2.5 rounded-xl border transition-all text-sm ${
                     form.job_type === type
                       ? 'bg-teal-600/15 border-teal-600/40 text-teal-300'
-                      : 'bg-white/3 border-white/8 text-white/50 hover:border-white/20'
+                      : 'bg-white/3 border-white/8 text-white/70 hover:border-white/20'
                   }`}
                 >
                   {JOB_TYPE_LABELS[type]}
@@ -133,7 +133,7 @@ export default function AddJobPage() {
                 onChange={e => set('is_on_campus', e.target.checked)}
                 className="w-4 h-4 accent-teal-500"
               />
-              <span className="font-mono text-[0.6rem] text-white/50 uppercase">On campus</span>
+              <span className="font-mono text-[0.6rem] text-white/70 uppercase">On campus</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -142,7 +142,7 @@ export default function AddJobPage() {
                 onChange={e => set('is_remote', e.target.checked)}
                 className="w-4 h-4 accent-teal-500"
               />
-              <span className="font-mono text-[0.6rem] text-white/50 uppercase">Remote</span>
+              <span className="font-mono text-[0.6rem] text-white/70 uppercase">Remote</span>
             </label>
           </div>
 
@@ -199,7 +199,7 @@ export default function AddJobPage() {
             />
             <div>
               <div className="font-display font-bold text-white text-sm">Protect exam periods</div>
-              <div className="font-mono text-[0.58rem] text-white/35 mt-0.5">
+              <div className="font-mono text-[0.58rem] text-white/60 mt-0.5">
                 Nova will flag shifts within 3 days of an exam and remind you to request time off
               </div>
             </div>

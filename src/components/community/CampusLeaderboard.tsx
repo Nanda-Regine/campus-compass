@@ -20,7 +20,7 @@ const FILTER_STYLE: React.CSSProperties = {
   padding: '5px 12px', borderRadius: 20, fontSize: 10,
   fontFamily: '"JetBrains Mono",monospace', cursor: 'pointer',
   border: '1px solid rgba(255,255,255,0.1)',
-  background: 'transparent', color: 'rgba(255,255,255,0.4)',
+  background: 'transparent', color: 'rgba(255,255,255,0.58)',
   transition: 'all 0.15s',
 }
 const FILTER_ACTIVE: React.CSSProperties = {
@@ -75,7 +75,7 @@ export default function CampusLeaderboard() {
   function xpBar(xp: number, max: number) {
     const pct = max > 0 ? Math.min(100, Math.round((xp / max) * 100)) : 0
     return (
-      <div style={{ height: 3, borderRadius: 3, background: 'rgba(255,255,255,0.05)', flex: 1, maxWidth: 60 }}>
+      <div style={{ height: 3, borderRadius: 3, background: 'rgba(255,255,255,0.08)', flex: 1, maxWidth: 60 }}>
         <div style={{ height: '100%', borderRadius: 3, background: '#c9a84c', width: `${pct}%`, transition: 'width 0.6s' }} />
       </div>
     )
@@ -91,7 +91,7 @@ export default function CampusLeaderboard() {
       <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 16, color: '#fff', marginBottom: 4 }}>
         Who's studying hardest?
       </div>
-      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 14, lineHeight: 1.5 }}>
+      <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.55)', marginBottom: 14, lineHeight: 1.5 }}>
         Your XP: <span style={{ color: '#c9a84c', fontWeight: 700 }}>{myXP.toLocaleString()}</span>
       </div>
 
@@ -109,7 +109,7 @@ export default function CampusLeaderboard() {
           Loading rankings…
         </div>
       ) : entries.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>
+        <div style={{ textAlign: 'center', padding: '20px 0', fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
           No data yet — be the first to earn XP in this category!
         </div>
       ) : (
@@ -118,7 +118,7 @@ export default function CampusLeaderboard() {
             <div key={e.rank} style={{
               display: 'flex', alignItems: 'center', gap: 10,
               padding: '9px 12px', borderRadius: 11,
-              background: e.is_me ? 'rgba(201,168,76,0.09)' : 'rgba(255,255,255,0.03)',
+              background: e.is_me ? 'rgba(201,168,76,0.09)' : 'rgba(255,255,255,0.06)',
               border: `1px solid ${e.is_me ? 'rgba(201,168,76,0.3)' : 'rgba(255,255,255,0.06)'}`,
               transition: 'all 0.15s',
             }}>
@@ -127,7 +127,7 @@ export default function CampusLeaderboard() {
                 width: 22, textAlign: 'center', flexShrink: 0,
                 fontFamily: '"JetBrains Mono",monospace', fontWeight: 700,
                 fontSize: e.rank <= 3 ? 14 : 10,
-                color: e.rank === 1 ? '#FFD700' : e.rank === 2 ? '#C0C0C0' : e.rank === 3 ? '#CD7F32' : 'rgba(255,255,255,0.3)',
+                color: e.rank === 1 ? '#FFD700' : e.rank === 2 ? '#C0C0C0' : e.rank === 3 ? '#CD7F32' : 'rgba(255,255,255,0.5)',
               }}>
                 {MEDALS[e.rank] ?? `#${e.rank}`}
               </div>
@@ -142,7 +142,7 @@ export default function CampusLeaderboard() {
                   {e.first_name}
                   {e.is_me && <span style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: '#c9a84c' }}>YOU</span>}
                 </div>
-                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 1 }}>
+                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.45)', marginTop: 1 }}>
                   {e.university} · Yr {e.year_of_study ?? '?'}
                 </div>
               </div>

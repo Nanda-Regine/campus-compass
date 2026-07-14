@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center px-5 text-center">
         <div className="text-5xl mb-4">✅</div>
         <h1 className="font-display font-black text-2xl text-white mb-2">Password updated!</h1>
-        <p className="font-body text-sm text-white/50 max-w-xs leading-relaxed mb-6">
+        <p className="font-body text-sm text-white/70 max-w-xs leading-relaxed mb-6">
           Your password has been changed. You&apos;re now signed in.
         </p>
         <Link href="/dashboard" className="font-mono text-xs text-teal-500 hover:text-teal-400 transition-colors">
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-[var(--bg-base)] flex flex-col items-center justify-center px-5 text-center">
         <div className="text-5xl mb-4">📬</div>
         <h1 className="font-display font-black text-2xl text-white mb-2">Check your email</h1>
-        <p className="font-body text-sm text-white/50 max-w-xs leading-relaxed mb-6">
+        <p className="font-body text-sm text-white/70 max-w-xs leading-relaxed mb-6">
           If an account exists for {email}, you&apos;ll receive a password reset link shortly.
         </p>
         <Link href="/auth/login" className="font-mono text-xs text-teal-500 hover:text-teal-400 transition-colors">
@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
             <span className="font-display font-bold text-white">VarsityOS</span>
           </Link>
           <h1 className="font-display font-black text-2xl text-white mb-1.5">Set a new password</h1>
-          <p className="font-mono text-xs text-white/40">Choose something strong and memorable.</p>
+          <p className="font-mono text-xs text-white/65">Choose something strong and memorable.</p>
         </div>
 
         <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-white/30 hover:text-white/60 transition-colors"
+                    className="text-white/55 hover:text-white/60 transition-colors"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                     aria-pressed={showPassword}
                   >
@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
           <span className="font-display font-bold text-white">VarsityOS</span>
         </Link>
         <h1 className="font-display font-black text-2xl text-white mb-1.5">Reset your password</h1>
-        <p className="font-mono text-xs text-white/40">We&apos;ll send you a link to reset it.</p>
+        <p className="font-mono text-xs text-white/65">We&apos;ll send you a link to reset it.</p>
       </div>
 
       <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
@@ -191,7 +191,7 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
         </div>
-        <p className="text-center mt-5 font-mono text-xs text-white/30">
+        <p className="text-center mt-5 font-mono text-xs text-white/55">
           Remembered it?{' '}
           <Link href="/auth/login" className="text-teal-500 hover:text-teal-400 transition-colors">
             Back to login

@@ -139,7 +139,7 @@ export default function StreakWidget() {
             fontFamily: '"JetBrains Mono",monospace',
             fontSize: 8.5, letterSpacing: '0.11em',
             marginTop: 3,
-            color: isAtRisk ? '#ff9a00' : data.todayDone ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.25)',
+            color: isAtRisk ? '#ff9a00' : data.todayDone ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.45)',
           }}>
             {isAtRisk ? '⚠ AT RISK — DO A TASK OR HABIT' : data.todayDone ? 'PROTECTED TODAY ✓' : 'DAY STREAK'}
           </div>
@@ -169,7 +169,7 @@ export default function StreakWidget() {
               }} />
               <div style={{
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 8,
-                color: isToday ? fc : done ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)',
+                color: isToday ? fc : done ? 'rgba(255,255,255,0.58)' : 'rgba(255,255,255,0.18)',
                 letterSpacing: '0.04em',
               }}>
                 {DAY_LABELS[dow]}
@@ -201,7 +201,7 @@ export default function StreakWidget() {
               </div>
               <div style={{
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 8,
-                color: reached ? fc : 'rgba(255,255,255,0.22)',
+                color: reached ? fc : 'rgba(255,255,255,0.42)',
                 letterSpacing: '0.04em',
               }}>
                 {m.days}d

@@ -236,7 +236,7 @@ export default function CulturalMovement() {
           <div
             key={section.id}
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
               borderRadius: '16px',
               overflow: 'hidden',
@@ -307,7 +307,7 @@ export default function CulturalMovement() {
                         key={i}
                         style={{
                           background: 'rgba(255,255,255,0.02)',
-                          border: '1px solid rgba(255,255,255,0.05)',
+                          border: '1px solid rgba(255,255,255,0.08)',
                           borderRadius: '10px',
                           padding: '12px',
                         }}
@@ -356,7 +356,7 @@ export default function CulturalMovement() {
         {/* 7-Day Challenge */}
         <div
           style={{
-            background: 'rgba(255,255,255,0.03)',
+            background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '16px',
             padding: '20px',
@@ -397,7 +397,7 @@ export default function CulturalMovement() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   padding: '10px 4px',
-                  background: challengeDays[i] ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.03)',
+                  background: challengeDays[i] ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.06)',
                   border: `1px solid ${challengeDays[i] ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.08)'}`,
                   borderRadius: '10px',
                   cursor: 'pointer',

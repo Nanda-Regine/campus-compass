@@ -256,10 +256,10 @@ export function Sidebar() {
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           style={{
             width: collapsed ? 30 : 'calc(100% - 20px)', height: 28, borderRadius: 8,
-            margin: '0 auto', background: 'rgba(255,255,255,0.04)',
+            margin: '0 auto', background: 'rgba(255,255,255,0.07)',
             border: '0.5px solid rgba(255,255,255,0.07)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            gap: 5, color: 'rgba(255,255,255,0.28)', transition: 'all 0.28s',
+            gap: 5, color: 'rgba(255,255,255,0.48)', transition: 'all 0.28s',
           }}
         >
           {collapsed

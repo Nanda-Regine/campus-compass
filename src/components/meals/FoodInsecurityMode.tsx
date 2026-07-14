@@ -96,7 +96,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           >
             {budgetHealth === 'critical' ? 'Stretch Week Mode' : 'Budget Stretching Tips'}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.62)' }}>
             {budgetHealth === 'critical'
               ? 'Resources available right now on campus.'
               : 'Here\'s what works when funds are tight.'}
@@ -105,7 +105,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
         {budgetHealth === 'tight' && (
           <button
             onClick={() => setExpanded(false)}
-            style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
+            style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1rem', cursor: 'pointer', background: 'none', border: 'none', padding: 4 }}
           >
             ✕
           </button>
@@ -115,7 +115,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
       {/* Food bank section */}
       <div
         style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: 12,
           padding: 16,
@@ -172,7 +172,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem', color: '#fbbf24', marginBottom: 2 }}>
             No income this month?
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.66)' }}>
             Check if you qualify for R370/month SASSA SRD
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
             <div
               key={meal.name}
               style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: 12,
                 padding: 14,
@@ -246,7 +246,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
                   style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.6rem',
-                    color: 'rgba(255,255,255,0.4)',
+                    color: 'rgba(255,255,255,0.58)',
                   }}
                 >
                   {meal.calories} kcal

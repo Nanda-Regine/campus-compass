@@ -45,7 +45,7 @@ function daysUntil(date: string): number {
 }
 
 function dueBadgeColor(due: string | null): string {
-  if (!due) return 'rgba(255,255,255,0.3)'
+  if (!due) return 'rgba(255,255,255,0.5)'
   const d = daysUntil(due)
   if (d < 0) return '#6b7280'
   if (d <= 2) return '#ef4444'
@@ -135,12 +135,12 @@ function AddIntegrationForm({ onAdded }: { onAdded: (i: Integration) => void }) 
             onClick={() => { setLmsType(t); setTestResult(null) }}
             style={{
               flex: 1, padding: '10px 8px', borderRadius: 10, border: `1px solid ${lmsType === t ? LMS_INFO[t].color + '60' : 'var(--border-subtle)'}`,
-              background: lmsType === t ? `${LMS_INFO[t].color}15` : 'rgba(255,255,255,0.03)',
+              background: lmsType === t ? `${LMS_INFO[t].color}15` : 'rgba(255,255,255,0.06)',
               cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             }}
           >
             <span style={{ fontSize: '1.1rem' }}>{LMS_INFO[t].emoji}</span>
-            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: lmsType === t ? LMS_INFO[t].color : 'rgba(255,255,255,0.5)' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: lmsType === t ? LMS_INFO[t].color : 'rgba(255,255,255,0.66)' }}>
               {LMS_INFO[t].label}
             </span>
           </button>
@@ -150,7 +150,7 @@ function AddIntegrationForm({ onAdded }: { onAdded: (i: Integration) => void }) 
       {/* Fields */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
         <div>
-          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Site URL</div>
+          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)', marginBottom: 4 }}>Site URL</div>
           <input
             type="url"
             value={siteUrl}
@@ -164,7 +164,7 @@ function AddIntegrationForm({ onAdded }: { onAdded: (i: Integration) => void }) 
           />
         </div>
         <div>
-          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>Personal API Token</div>
+          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)', marginBottom: 4 }}>Personal API Token</div>
           <input
             type="password"
             value={token}
@@ -176,7 +176,7 @@ function AddIntegrationForm({ onAdded }: { onAdded: (i: Integration) => void }) 
               color: 'var(--text-primary)', fontSize: '0.78rem', outline: 'none', fontFamily: 'monospace',
             }}
           />
-          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', marginTop: 4, lineHeight: 1.5 }}>
+          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', marginTop: 4, lineHeight: 1.5 }}>
             {info.tokenHelp}
           </div>
         </div>
@@ -213,9 +213,9 @@ function AddIntegrationForm({ onAdded }: { onAdded: (i: Integration) => void }) 
           disabled={!testResult?.ok || saving}
           style={{
             flex: 1, padding: '9px 12px', borderRadius: 10, fontSize: '0.75rem', fontWeight: 700,
-            background: testResult?.ok ? IND : 'rgba(255,255,255,0.04)',
+            background: testResult?.ok ? IND : 'rgba(255,255,255,0.07)',
             border: `1px solid ${testResult?.ok ? IND : 'var(--border-subtle)'}`,
-            color: testResult?.ok ? '#fff' : 'rgba(255,255,255,0.3)', cursor: 'pointer',
+            color: testResult?.ok ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer',
             opacity: (!testResult?.ok || saving) ? 0.6 : 1,
           }}
         >
@@ -235,7 +235,7 @@ function AssignmentRow({ a, selected, onToggle }: { a: LMSAssignment; selected: 
       style={{
         width: '100%', textAlign: 'left', padding: '10px 12px',
         background: selected ? `${IND}18` : 'rgba(255,255,255,0.02)',
-        border: `1px solid ${selected ? IND_BORDER : 'rgba(255,255,255,0.05)'}`,
+        border: `1px solid ${selected ? IND_BORDER : 'rgba(255,255,255,0.08)'}`,
         borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
         transition: 'background 0.15s',
       }}
@@ -358,7 +358,7 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
           <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {integration.display_name || info.label}
           </div>
-          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {integration.site_url}
           </div>
         </div>
@@ -391,7 +391,7 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
       {/* Sync meta */}
       <div style={{ display: 'flex', gap: 12, marginBottom: assignments !== null ? 10 : 0 }}>
         {integration.last_synced_at && (
-          <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>
+          <span style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>
             Last sync: {new Date(integration.last_synced_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
           </span>
         )}
@@ -404,7 +404,7 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
       {assignments !== null && (
         <div>
           {assignments.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '16px 0', fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>
+            <div style={{ textAlign: 'center', padding: '16px 0', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
               No assignments found
             </div>
           ) : (
@@ -412,7 +412,7 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
               {/* Upcoming */}
               {upcoming.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
-                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.35)', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
                     Upcoming ({upcoming.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -425,7 +425,7 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
               {/* Past (collapsed) */}
               {past.length > 0 && (
                 <div style={{ marginBottom: 8 }}>
-                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.45)', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
                     Past ({past.length})
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -437,8 +437,8 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
               )}
 
               {/* Import actions */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.4)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <span style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.58)' }}>
                   {selected.size} selected
                   {importedCount > 0 ? ` · ${importedCount} already imported` : ''}
                 </span>
@@ -457,8 +457,8 @@ function IntegrationCard({ integration, onRemove }: { integration: Integration; 
                     disabled={selected.size === 0 || importing}
                     style={{
                       padding: '7px 14px', borderRadius: 8, fontSize: '0.72rem', fontWeight: 700,
-                      background: selected.size > 0 ? IND : 'rgba(255,255,255,0.05)',
-                      border: 'none', color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.3)',
+                      background: selected.size > 0 ? IND : 'rgba(255,255,255,0.08)',
+                      border: 'none', color: selected.size > 0 ? '#fff' : 'rgba(255,255,255,0.5)',
                       cursor: selected.size > 0 ? 'pointer' : 'not-allowed',
                       opacity: importing ? 0.6 : 1,
                     }}
@@ -510,7 +510,7 @@ export default function LMSConnector() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>LMS Integrations</div>
-          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)', lineHeight: 1.5 }}>
             Connect Moodle or Canvas to sync assignments directly into your task list
           </div>
         </div>
@@ -521,7 +521,7 @@ export default function LMSConnector() {
               padding: '7px 14px', borderRadius: 20, fontSize: '0.72rem', fontWeight: 600,
               background: showForm ? 'rgba(255,255,255,0.06)' : IND_DIM,
               border: `1px solid ${showForm ? 'var(--border-subtle)' : IND_BORDER}`,
-              color: showForm ? 'rgba(255,255,255,0.5)' : IND, cursor: 'pointer', flexShrink: 0,
+              color: showForm ? 'rgba(255,255,255,0.66)' : IND, cursor: 'pointer', flexShrink: 0,
             }}
           >
             {showForm ? 'Cancel' : '+ Connect'}
@@ -542,7 +542,7 @@ export default function LMSConnector() {
         <div style={{ textAlign: 'center', padding: '32px 16px', background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: 16 }}>
           <div style={{ fontSize: '2rem', marginBottom: 10 }}>🎓</div>
           <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.6)', marginBottom: 6 }}>No LMS connected yet</div>
-          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.6, maxWidth: 260, margin: '0 auto 14px' }}>
+          <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, maxWidth: 260, margin: '0 auto 14px' }}>
             Connect your university Moodle or Canvas to automatically pull assignment deadlines into VarsityOS.
           </div>
           <button
@@ -564,7 +564,7 @@ export default function LMSConnector() {
       )}
 
       {/* Info callout */}
-      <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', lineHeight: 1.7 }}>
+      <div style={{ marginTop: 12, padding: '10px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, fontSize: '0.68rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
         🔒 Your token is stored securely and only used to fetch your own assignments. VarsityOS never stores your LMS password — only the personal API token you generate. You can revoke the token from your LMS settings at any time.
       </div>
     </div>

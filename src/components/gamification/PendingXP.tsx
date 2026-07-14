@@ -27,7 +27,7 @@ export default function PendingXP() {
         <span style={{ fontSize: 16 }}>🌍</span>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.72rem', color: '#4ecf9e' }}>Ubuntu Day Complete!</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)' }}>All 5 domains active — incredible.</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)' }}>All 5 domains active — incredible.</div>
         </div>
       </div>
     )
@@ -47,7 +47,7 @@ export default function PendingXP() {
           <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.72rem', color: '#f59e0b' }}>
             {pending} XP waiting tonight
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.3)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)' }}>
             {domainsHit === 0 ? 'Start in any domain to claim it' : `${5 - domainsHit} more domain${5 - domainsHit !== 1 ? 's' : ''} to unlock compound bonus`}
           </div>
         </div>

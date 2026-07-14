@@ -237,7 +237,7 @@ export function BottomNav() {
               </Link>
               <button
                 onClick={() => setOpenSheet(null)}
-                style={{ background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.4)' }}
+                style={{ background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.58)' }}
               >
                 <X size={14} />
               </button>
@@ -260,7 +260,7 @@ export function BottomNav() {
                     <div style={{
                       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
                       padding: '10px 4px 8px',
-                      background: active ? `${openRoom.color}18` : 'rgba(255,255,255,0.04)',
+                      background: active ? `${openRoom.color}18` : 'rgba(255,255,255,0.07)',
                       border: `0.5px solid ${active ? openRoom.color + '45' : 'rgba(255,255,255,0.07)'}`,
                       borderRadius: 12,
                     }}>
@@ -275,7 +275,7 @@ export function BottomNav() {
                       <span style={{
                         fontSize: 9.5, fontFamily: 'DM Sans, sans-serif',
                         fontWeight: active ? 600 : 400,
-                        color: active ? openRoom.color : 'rgba(255,255,255,0.5)',
+                        color: active ? openRoom.color : 'rgba(255,255,255,0.66)',
                         textAlign: 'center', lineHeight: 1.2,
                       }}>
                         {link.label}

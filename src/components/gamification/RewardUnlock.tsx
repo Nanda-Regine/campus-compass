@@ -78,7 +78,7 @@ function ClaimCelebration({ reward, onDone }: { reward: Reward; onDone: () => vo
       }}>
         {reward.title}
       </div>
-      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+      <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>
         You earned it. Go enjoy it.
       </div>
     </div>
@@ -131,14 +131,14 @@ function CreateForm({ onSave, onCancel }: CreateFormProps) {
           style={{
             width: '100%', padding: '11px 14px', borderRadius: 11,
             fontFamily: 'Sora,sans-serif', fontSize: 13, marginBottom: 16,
-            background: 'rgba(255,255,255,0.05)',
+            background: 'rgba(255,255,255,0.08)',
             border: '1px solid rgba(255,255,255,0.1)',
             color: '#fff', outline: 'none', boxSizing: 'border-box',
           }}
         />
 
         <div style={{ marginBottom: 22 }}>
-          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.35)', marginBottom: 10, letterSpacing: '0.1em' }}>
+          <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 9, color: 'rgba(255,255,255,0.55)', marginBottom: 10, letterSpacing: '0.1em' }}>
             AFTER HOW MANY POMODOROS?
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -148,7 +148,7 @@ function CreateForm({ onSave, onCancel }: CreateFormProps) {
                 fontFamily: '"JetBrains Mono",monospace', fontSize: 12, fontWeight: 700,
                 cursor: 'pointer',
                 background: milestone === m ? '#c9a84c' : 'rgba(255,255,255,0.06)',
-                color: milestone === m ? '#000' : 'rgba(255,255,255,0.4)',
+                color: milestone === m ? '#000' : 'rgba(255,255,255,0.58)',
                 transition: 'all 0.2s',
               }}>{m}</button>
             ))}
@@ -168,7 +168,7 @@ function CreateForm({ onSave, onCancel }: CreateFormProps) {
           <button onClick={onCancel} style={{
             flex: 1, padding: '11px 0', borderRadius: 11,
             border: '1px solid rgba(255,255,255,0.1)',
-            background: 'transparent', color: 'rgba(255,255,255,0.4)',
+            background: 'transparent', color: 'rgba(255,255,255,0.58)',
             fontFamily: 'Sora,sans-serif', cursor: 'pointer', fontSize: 13,
           }}>Cancel</button>
           <button onClick={handleSave} disabled={!title.trim()} style={{
@@ -288,7 +288,7 @@ export default function RewardUnlock() {
               <button onClick={() => removeReward(r.id)} style={{
                 flex: 1, padding: '11px 0', borderRadius: 11,
                 border: '1px solid rgba(255,255,255,0.1)',
-                background: 'transparent', color: 'rgba(255,255,255,0.3)',
+                background: 'transparent', color: 'rgba(255,255,255,0.5)',
                 fontFamily: 'Sora,sans-serif', fontSize: 12, cursor: 'pointer',
               }}>Remove</button>
             </div>
@@ -302,7 +302,7 @@ export default function RewardUnlock() {
             <div key={r.id} style={{
               display: 'flex', alignItems: 'center', gap: 12,
               padding: '10px 14px', borderRadius: 12, marginBottom: 8,
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.06)',
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -321,7 +321,7 @@ export default function RewardUnlock() {
                 <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 11, color: '#c9a84c', fontWeight: 700 }}>
                   {pomodoroCount}/{r.milestone}
                 </div>
-                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>
+                <div style={{ fontFamily: '"JetBrains Mono",monospace', fontSize: 8, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
                   🍅 sessions
                 </div>
               </div>
@@ -336,7 +336,7 @@ export default function RewardUnlock() {
         {activeRewards.length === 0 && (
           <div style={{ textAlign: 'center', padding: '12px 0' }}>
             <div style={{ fontSize: 26, marginBottom: 8 }}>🎁</div>
-            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
               Define a reward to unlock after your next study sessions. Working toward something you want makes starting easier.
             </div>
           </div>

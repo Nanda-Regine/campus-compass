@@ -96,7 +96,7 @@ export default function NSScore({ userId }: Props) {
 
   if (loading) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16, minHeight: 180 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16, minHeight: 180 }}>
         <div style={{ color: 'var(--text-tertiary)', fontSize: 12 }}>Loading...</div>
       </div>
     )
@@ -109,7 +109,7 @@ export default function NSScore({ userId }: Props) {
 
   return (
     <>
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 16 }}>
         <p style={{ color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>NS Score</p>
 
         <div className="flex items-center gap-4">

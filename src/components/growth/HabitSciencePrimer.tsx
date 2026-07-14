@@ -146,7 +146,7 @@ export default function HabitSciencePrimer() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
         <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>HABIT SCIENCE PRIMER</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>The science of building habits that stick</div>
@@ -297,7 +297,7 @@ function StackingSection({ stacks, existing, newHabit, onExistingChange, onNewCh
         </div>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
         <div style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 10 }}>BUILD YOUR STACK</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div>
@@ -306,7 +306,7 @@ function StackingSection({ stacks, existing, newHabit, onExistingChange, onNewCh
               value={existing}
               onChange={e => onExistingChange(e.target.value)}
               placeholder="e.g. make my morning coffee"
-              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
           <div>
@@ -315,7 +315,7 @@ function StackingSection({ stacks, existing, newHabit, onExistingChange, onNewCh
               value={newHabit}
               onChange={e => onNewChange(e.target.value)}
               placeholder="e.g. review yesterday's lecture notes for 5 minutes"
-              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
             />
           </div>
           <button
@@ -331,7 +331,7 @@ function StackingSection({ stacks, existing, newHabit, onExistingChange, onNewCh
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>MY HABIT STACKS</div>
           {stacks.map(stack => (
-            <div key={stack.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div key={stack.id} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: 3 }}>After I...</div>
                 <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 5 }}>{stack.existing}</div>
@@ -345,7 +345,7 @@ function StackingSection({ stacks, existing, newHabit, onExistingChange, onNewCh
       )}
 
       {stacks.length === 0 && (
-        <div style={{ padding: '14px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12 }}>
+        <div style={{ padding: '14px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12 }}>
           Your habit stacks will appear here.
         </div>
       )}
@@ -370,7 +370,7 @@ function TwoMinSection({ input, result, onInputChange, onGenerate }: {
           { full: 'Run 5km', two: 'Put on running shoes' },
           { full: 'Read a book chapter', two: 'Read one page' },
         ].map(ex => (
-          <div key={ex.full} style={{ flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '10px 10px' }}>
+          <div key={ex.full} style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '10px 10px' }}>
             <div style={{ fontSize: '0.67rem', color: 'var(--text-muted)', marginBottom: 2 }}>Full habit</div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: 6, lineHeight: 1.4 }}>{ex.full}</div>
             <div style={{ fontSize: '0.67rem', color: ACCENT, marginBottom: 2 }}>2-min version</div>
@@ -379,13 +379,13 @@ function TwoMinSection({ input, result, onInputChange, onGenerate }: {
         ))}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
         <div style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 10 }}>TRY IT — ENTER YOUR HABIT</div>
         <input
           value={input}
           onChange={e => onInputChange(e.target.value)}
           placeholder="e.g. exercise every morning"
-          style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', marginBottom: 10, boxSizing: 'border-box' }}
+          style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', marginBottom: 10, boxSizing: 'border-box' }}
         />
         <button
           onClick={onGenerate}
@@ -403,7 +403,7 @@ function TwoMinSection({ input, result, onInputChange, onGenerate }: {
         </div>
       )}
 
-      <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.65, fontStyle: 'italic' }}>
+      <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.65, fontStyle: 'italic' }}>
         &ldquo;The secret is to always stay below the point where it feels like work.&rdquo; — James Clear
       </div>
     </div>
@@ -420,7 +420,7 @@ function StreakSection({ grid, streakCount, onToggle }: { grid: boolean[]; strea
         &ldquo;Lost days hurt you more than successful days help you. If you miss one day, you lose momentum. If you miss two, you lose the habit. Never miss twice.&rdquo; — James Clear
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>42-DAY TRACKER (6 WEEKS)</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -439,7 +439,7 @@ function StreakSection({ grid, streakCount, onToggle }: { grid: boolean[]; strea
               onClick={() => onToggle(i)}
               style={{
                 width: '100%', aspectRatio: '1', borderRadius: '50%',
-                background: filled ? ACCENT : 'rgba(255,255,255,0.04)',
+                background: filled ? ACCENT : 'rgba(255,255,255,0.07)',
                 border: `1.5px solid ${filled ? ACCENT : 'rgba(255,255,255,0.1)'}`,
                 cursor: 'pointer',
                 transition: 'all 0.15s',
@@ -487,7 +487,7 @@ function IdentitySection({ inputs, savedStatements, onInputChange, onSave, saved
         </div>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px' }}>
         <div style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 10 }}>WRITE YOUR IDENTITY STATEMENTS</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {([0, 1, 2] as const).map(i => (
@@ -496,7 +496,7 @@ function IdentitySection({ inputs, savedStatements, onInputChange, onSave, saved
               value={inputs[i]}
               onChange={e => onInputChange(i, e.target.value)}
               placeholder={i === 0 ? 'I am a student who...' : i === 1 ? 'I am a person who...' : 'I am someone who...'}
-              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '9px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' }}
             />
           ))}
           <button
@@ -544,7 +544,7 @@ function UbuntuSection() {
         { emoji: '🤝', title: 'Find a habit partner', desc: 'Someone who has a habit they want to build too. Check in with each other weekly. You will both do better.' },
         { emoji: '🏆', title: 'Celebrate together', desc: 'When you hit a streak milestone, tell your accountability partner. Celebration reinforces the identity. You are building something real.' },
       ].map(item => (
-        <div key={item.title} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+        <div key={item.title} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
           <div style={{ fontSize: '1.4rem', flexShrink: 0 }}>{item.emoji}</div>
           <div>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{item.title}</div>
