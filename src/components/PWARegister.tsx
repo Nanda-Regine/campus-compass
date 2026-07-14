@@ -9,6 +9,21 @@ export default function PWARegister() {
   const setIsOnline = useAppStore(s => s.setIsOnline)
 
   useEffect(() => {
+    // Explicitly register the service worker. next-pwa's `register: true` auto-inject
+    // does NOT reliably fire on the App Router, so without this the SW never activates
+    // and NONE of the offline caching works (verified: serviceWorker.ready never
+    // resolves, no controller, offline = ERR_INTERNET_DISCONNECTED). Registering here
+    // guarantees it. Idempotent for the same URL/scope, so it's safe alongside next-pwa.
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      const register = () => {
+        navigator.serviceWorker
+          .register('/sw.js', { scope: '/' })
+          .catch(err => console.warn('[pwa] service worker registration failed:', err))
+      }
+      if (document.readyState === 'complete') register()
+      else window.addEventListener('load', register, { once: true })
+    }
+
     // Initialise offline → online sync listener
     initOfflineSync()
 
