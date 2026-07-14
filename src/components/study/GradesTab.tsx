@@ -241,7 +241,7 @@ function GradeCalcCard({
                 })
               }}
               style={{
-                background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.1)',
+                background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.1)',
                 borderRadius: 8, padding: '6px 10px', color: 'rgba(255,255,255,0.55)',
                 fontSize: 12, fontFamily: 'DM Sans, sans-serif', width: '100%', cursor: 'pointer',
               }}
@@ -295,7 +295,7 @@ function GradeCalcCard({
                 />
                 <button
                   onClick={() => removeAssessment(a.id)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40, minHeight: 40 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.66)', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40, minHeight: 40 }}
                 >
                   <Trash2 size={12} />
                 </button>
@@ -315,7 +315,7 @@ function GradeCalcCard({
               </button>
               <span style={{
                 fontSize: 10, fontFamily: 'JetBrains Mono, monospace',
-                color: isOverWeight ? '#ff6b6b' : 'rgba(255,255,255,0.3)',
+                color: isOverWeight ? '#ff6b6b' : 'rgba(255,255,255,0.5)',
               }}>
                 {totalWeight}% / 100%
               </span>
@@ -324,7 +324,7 @@ function GradeCalcCard({
 
           {/* Target selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif' }}>Target:</span>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans, sans-serif' }}>Target:</span>
             {[{ pct: 50, label: 'Pass (50%)' }, { pct: 60, label: 'Credit (60%)' }, { pct: 75, label: 'Distinction (75%)' }].map(({ pct, label }) => (
               <button
                 key={pct}
@@ -332,9 +332,9 @@ function GradeCalcCard({
                 style={{
                   padding: '4px 10px', borderRadius: 9999, fontSize: 11,
                   fontFamily: 'DM Sans, sans-serif', fontWeight: target === pct ? 600 : 400,
-                  background: target === pct ? gradeColour(pct) + '25' : 'rgba(255,255,255,0.05)',
+                  background: target === pct ? gradeColour(pct) + '25' : 'rgba(255,255,255,0.08)',
                   border: `0.5px solid ${target === pct ? gradeColour(pct) + '50' : 'rgba(255,255,255,0.08)'}`,
-                  color: target === pct ? gradeColour(pct) : 'rgba(255,255,255,0.4)',
+                  color: target === pct ? gradeColour(pct) : 'rgba(255,255,255,0.58)',
                   cursor: 'pointer', transition: 'all 0.15s',
                 }}
               >
@@ -357,7 +357,7 @@ function GradeCalcCard({
                   <div style={{ fontSize: 18, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: neededColour }}>
                     {result.earned.toFixed(1)}%
                   </div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
                     {`All marks entered · You ${result.earned >= 50 ? 'passed' : 'did not pass'} (${markToGrade(result.earned).label})`}
                   </div>
                 </>
@@ -366,7 +366,7 @@ function GradeCalcCard({
                   <div style={{ fontSize: 18, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#ff6b6b' }}>
                     Mathematically impossible
                   </div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
                     You need {needed.toFixed(1)}% in remaining {result.remainingWeight}% — consider a lower target
                   </div>
                 </>
@@ -375,7 +375,7 @@ function GradeCalcCard({
                   <div style={{ fontSize: 18, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: neededColour }}>
                     {clamp(needed, 0, 100).toFixed(1)}% needed
                   </div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 2, fontFamily: 'DM Sans, sans-serif' }}>
                     In your remaining {result.remainingWeight}% of assessments · to reach {target}% ({markToGrade(target).label})
                   </div>
                 </>
@@ -484,7 +484,7 @@ function GpaCalculator({
                   <span style={{
                     position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)',
                     fontSize: 9, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700,
-                    color: m != null ? gradeColour(m!) : 'rgba(255,255,255,0.3)',
+                    color: m != null ? gradeColour(m!) : 'rgba(255,255,255,0.5)',
                   }}>
                     {rowGrade.letter}
                   </span>
@@ -500,7 +500,7 @@ function GpaCalculator({
               />
               <button
                 onClick={() => removeRow(row.id)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.66)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <Trash2 size={12} />
               </button>
@@ -528,7 +528,7 @@ function GpaCalculator({
               <div style={{ fontSize: 26, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: gradeColour(gpa), lineHeight: 1 }}>
                 {gpa.toFixed(2)}%
               </div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 3, fontFamily: 'DM Sans' }}>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.58)', marginTop: 3, fontFamily: 'DM Sans' }}>
                 Credit-weighted average · {completedCount} module{completedCount !== 1 ? 's' : ''} · {totalCredits} credits
               </div>
             </div>
@@ -581,7 +581,7 @@ function GpaCalculator({
 
 /* ── Shared input style ─────────────────────────────────── */
 const inputStyle: CSSProperties = {
-  background: 'rgba(255,255,255,0.04)',
+  background: 'rgba(255,255,255,0.07)',
   border: '0.5px solid rgba(255,255,255,0.1)',
   borderRadius: 8,
   padding: '6px 8px',
@@ -647,7 +647,7 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
   return (
     <div>
       {/* Sub-nav */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, background: 'rgba(255,255,255,0.03)', padding: 4, borderRadius: 14, border: '0.5px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 16, background: 'rgba(255,255,255,0.06)', padding: 4, borderRadius: 14, border: '0.5px solid rgba(255,255,255,0.07)' }}>
         {[
           { id: 'calc', label: 'Pass Calculator', icon: '🧮' },
           { id: 'gpa',  label: 'GPA Calculator',  icon: '📊' },
@@ -661,7 +661,7 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
               fontFamily: 'Sora, sans-serif', fontWeight: view === id ? 700 : 400,
               background: view === id ? 'rgba(78,207,158,0.12)' : 'transparent',
               border: `0.5px solid ${view === id ? 'rgba(78,207,158,0.3)' : 'transparent'}`,
-              color: view === id ? '#4ecf9e' : 'rgba(255,255,255,0.4)',
+              color: view === id ? '#4ecf9e' : 'rgba(255,255,255,0.58)',
               cursor: 'pointer', transition: 'all 0.2s',
               boxShadow: view === id ? '0 2px 12px rgba(78,207,158,0.1)' : 'none',
             }}
@@ -695,7 +695,7 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
       {view === 'calc' && (
         <>
           <div style={{ marginBottom: 12, padding: '10px 12px', background: 'rgba(78,207,158,0.05)', borderRadius: 10, border: '0.5px solid rgba(78,207,158,0.15)' }}>
-            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontFamily: 'DM Sans, sans-serif', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans, sans-serif', lineHeight: 1.5, margin: 0 }}>
               Enter each assessment, its mark (if received), and its weight. Leave the mark blank for assessments still to come — the calculator tells you what you need.
             </p>
           </div>
@@ -714,9 +714,9 @@ export default function GradesTab({ modules }: { modules: Module[] }) {
             onClick={addModule}
             style={{
               width: '100%', padding: '11px', borderRadius: 12,
-              background: 'rgba(255,255,255,0.04)',
+              background: 'rgba(255,255,255,0.07)',
               border: '0.5px dashed rgba(255,255,255,0.15)',
-              color: 'rgba(255,255,255,0.4)', fontSize: 13,
+              color: 'rgba(255,255,255,0.58)', fontSize: 13,
               fontFamily: 'Sora, sans-serif', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             }}

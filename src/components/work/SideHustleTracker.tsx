@@ -42,13 +42,13 @@ function HustleTypeLabel({ type }: { type: string }) {
 }
 
 const CARD_STYLE = {
-  background: 'rgba(255,255,255,0.03)',
+  background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.06)',
   borderRadius: '16px',
 }
 
 const INPUT_STYLE: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.04)',
+  background: 'rgba(255,255,255,0.07)',
   border: '1px solid rgba(255,255,255,0.10)',
   borderRadius: '10px',
   color: '#e5e7eb',
@@ -165,7 +165,7 @@ export default function SideHustleTracker({ userId }: Props) {
           <div
             key={i}
             className="animate-pulse h-20 rounded-2xl"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            style={{ background: 'rgba(255,255,255,0.07)' }}
           />
         ))}
       </div>
@@ -262,7 +262,7 @@ export default function SideHustleTracker({ userId }: Props) {
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div
                     className="rounded-xl py-2"
-                    style={{ background: 'rgba(255,255,255,0.03)' }}
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
                   >
                     <div className="text-sm font-bold" style={{ color: '#4ecf9e' }}>
                       R{hustle.income_this_month.toLocaleString('en-ZA')}
@@ -273,7 +273,7 @@ export default function SideHustleTracker({ userId }: Props) {
                   </div>
                   <div
                     className="rounded-xl py-2"
-                    style={{ background: 'rgba(255,255,255,0.03)' }}
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
                   >
                     <div className="text-sm font-bold" style={{ color: 'var(--text-secondary)' }}>
                       {hustle.hours_this_month}hrs
@@ -284,7 +284,7 @@ export default function SideHustleTracker({ userId }: Props) {
                   </div>
                   <div
                     className="rounded-xl py-2"
-                    style={{ background: 'rgba(255,255,255,0.03)' }}
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
                   >
                     <div className="text-sm font-bold" style={{ color: '#fbbf24' }}>
                       R{effectiveRate}/hr
@@ -325,7 +325,7 @@ export default function SideHustleTracker({ userId }: Props) {
             <div
               className="rounded-xl p-3 font-mono text-xs whitespace-pre-wrap mb-2"
               style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 color: 'var(--text-tertiary)',
               }}
@@ -350,7 +350,7 @@ export default function SideHustleTracker({ userId }: Props) {
             className="rounded-xl p-3 text-xs space-y-1"
             style={{
               background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.08)',
               color: 'var(--text-tertiary)',
             }}
           >
@@ -377,7 +377,7 @@ export default function SideHustleTracker({ userId }: Props) {
           className="px-4 py-3 rounded-xl text-sm text-center"
           style={{
             background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.08)',
             color: 'var(--text-tertiary)',
           }}
         >
@@ -442,7 +442,7 @@ export default function SideHustleTracker({ userId }: Props) {
                     onClick={() => setForm(prev => ({ ...prev, hustle_type: key }))}
                     className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
                     style={{
-                      background: form.hustle_type === key ? '#60a5fa20' : 'rgba(255,255,255,0.04)',
+                      background: form.hustle_type === key ? '#60a5fa20' : 'rgba(255,255,255,0.07)',
                       border: `1px solid ${form.hustle_type === key ? '#60a5fa50' : 'rgba(255,255,255,0.08)'}`,
                       color: form.hustle_type === key ? '#60a5fa' : '#9ca3af',
                     }}

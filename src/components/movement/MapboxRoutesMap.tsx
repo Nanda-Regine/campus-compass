@@ -280,7 +280,7 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
           box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
         }
         .mapboxgl-popup-tip { border-top-color: #1a2a38 !important; }
-        .mapboxgl-popup-close-button { color: rgba(255,255,255,0.4) !important; font-size: 16px !important; }
+        .mapboxgl-popup-close-button { color: rgba(255,255,255,0.58) !important; font-size: 16px !important; }
         .mapboxgl-ctrl-group { background: #1a2a38 !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; }
         .mapboxgl-ctrl-group button { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
         .mapboxgl-ctrl-group button:hover { background: rgba(255,255,255,0.1) !important; }
@@ -293,7 +293,7 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
           borderRadius: 16, display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 2,
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
             Initialising map…
           </span>
         </div>
@@ -314,7 +314,7 @@ export function MapboxRoutesMap({ routes = [], liftPosts = [], token, height = 3
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#f97316' }}>⬤ To</span>
           </>}
           {liftPosts.length > 0 &&
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>🚗 Lift offer</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.66)' }}>🚗 Lift offer</span>
           }
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: '#38bdf8' }}>⬤ You</span>
         </div>

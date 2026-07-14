@@ -124,7 +124,7 @@ function recommend(q: QuizState): string {
 }
 
 const CARD: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.03)',
+  background: 'rgba(255,255,255,0.06)',
   border: '1px solid rgba(255,255,255,0.06)',
   borderRadius: '16px',
   padding: '24px',
@@ -150,7 +150,7 @@ function QuizButton({
         padding: '12px 14px',
         borderRadius: '10px',
         border: `1px solid ${active ? 'rgba(251,191,36,0.5)' : 'rgba(255,255,255,0.1)'}`,
-        background: active ? 'rgba(251,191,36,0.08)' : 'rgba(255,255,255,0.03)',
+        background: active ? 'rgba(251,191,36,0.08)' : 'rgba(255,255,255,0.06)',
         color: active ? '#fbbf24' : 'rgba(255,255,255,0.8)',
         fontSize: '13px',
         cursor: 'pointer',
@@ -197,7 +197,7 @@ export default function BankingAdvisor() {
         <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
           Banking Advisor
         </h3>
-        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>
           SA bank comparison — find your best match
         </p>
       </div>
@@ -234,7 +234,7 @@ export default function BankingAdvisor() {
               <QuizButton label="Yes — I receive NSFAS / bursary" onClick={() => setAnswer('nsfas', true)} />
               <QuizButton label="No — self-funded or part-time income" onClick={() => setAnswer('nsfas', false)} />
               {step > 0 && (
-                <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+                <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
                   ← Back
                 </button>
               )}
@@ -248,7 +248,7 @@ export default function BankingAdvisor() {
               </p>
               <QuizButton label="Yes — I shop at PnP regularly" onClick={() => setAnswer('cashback', true)} />
               <QuizButton label="No — lower fees matter more" onClick={() => setAnswer('cashback', false)} />
-              <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
+              <button onClick={() => setStep((s) => s - 1)} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}>
                 ← Back
               </button>
             </div>
@@ -297,13 +297,13 @@ export default function BankingAdvisor() {
                   key={item.label}
                   style={{ background: 'rgba(0,0,0,0.25)', borderRadius: '8px', padding: '8px 10px' }}
                 >
-                  <p style={{ margin: '0 0 1px', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>{item.label}</p>
+                  <p style={{ margin: '0 0 1px', fontSize: '10px', color: 'rgba(255,255,255,0.58)' }}>{item.label}</p>
                   <p style={{ margin: 0, fontSize: '12px', color: '#fff', fontWeight: 600 }}>{item.val}</p>
                 </div>
               ))}
             </div>
 
-            <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 700 }}>
+            <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'rgba(255,255,255,0.66)', fontWeight: 700 }}>
               HOW TO OPEN YOUR ACCOUNT
             </p>
             {bank.openingSteps.map((s, i) => (
@@ -336,7 +336,7 @@ export default function BankingAdvisor() {
               background: 'none',
               border: '1px solid rgba(255,255,255,0.1)',
               borderRadius: '8px',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.66)',
               fontSize: '12px',
               padding: '8px 14px',
               cursor: 'pointer',
@@ -358,7 +358,7 @@ export default function BankingAdvisor() {
                         style={{
                           textAlign: 'left',
                           padding: '6px 8px',
-                          color: 'rgba(255,255,255,0.4)',
+                          color: 'rgba(255,255,255,0.58)',
                           borderBottom: '1px solid rgba(255,255,255,0.06)',
                           fontWeight: 600,
                           whiteSpace: 'nowrap',
@@ -375,12 +375,12 @@ export default function BankingAdvisor() {
                       key={key}
                       style={{ background: key === result ? `${b.color}0d` : 'transparent' }}
                     >
-                      <td style={{ padding: '7px 8px', color: key === result ? b.color : 'rgba(255,255,255,0.8)', fontWeight: key === result ? 700 : 400, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '7px 8px', color: key === result ? b.color : 'rgba(255,255,255,0.8)', fontWeight: key === result ? 700 : 400, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                         {b.name}
                       </td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.04)', whiteSpace: 'nowrap' }}>{b.monthlyFee}</td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.04)', whiteSpace: 'nowrap' }}>{b.atmFee}</td>
-                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>{b.cashback}</td>
+                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.monthlyFee}</td>
+                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)', whiteSpace: 'nowrap' }}>{b.atmFee}</td>
+                      <td style={{ padding: '7px 8px', color: 'rgba(255,255,255,0.6)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>{b.cashback}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -390,7 +390,7 @@ export default function BankingAdvisor() {
 
           <div
             style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgba(255,255,255,0.06)',
               border: '1px solid rgba(255,255,255,0.07)',
               borderRadius: '10px',
               padding: '12px 14px',

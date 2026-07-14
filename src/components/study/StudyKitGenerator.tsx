@@ -254,7 +254,7 @@ export default function StudyKitGenerator({ modules }: Props) {
                         : 'bg-white/3 border-white/8 hover:border-white/15'
                     )}
                   >
-                    <div className="font-mono text-[0.65rem] mb-1" style={{ color: flipped[i] ? '#c084fc' : 'rgba(255,255,255,0.25)' }}>
+                    <div className="font-mono text-[0.65rem] mb-1" style={{ color: flipped[i] ? '#c084fc' : 'rgba(255,255,255,0.45)' }}>
                       {flipped[i] ? 'BACK (answer)' : 'FRONT (question)'}
                     </div>
                     <div className="font-body text-xs text-white leading-relaxed">

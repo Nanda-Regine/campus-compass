@@ -74,7 +74,7 @@ function CompoundCalculator() {
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '12px',
         padding: '16px',
@@ -100,8 +100,8 @@ function CompoundCalculator() {
           style={{ width: '100%', accentColor: '#fbbf24', cursor: 'pointer' }}
         />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>R10</span>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>R1,000</span>
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>R10</span>
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>R1,000</span>
         </div>
       </div>
 
@@ -120,8 +120,8 @@ function CompoundCalculator() {
           style={{ width: '100%', accentColor: '#fbbf24', cursor: 'pointer' }}
         />
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>1 yr</span>
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>20 yrs</span>
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>1 yr</span>
+          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>20 yrs</span>
         </div>
       </div>
 
@@ -135,13 +135,13 @@ function CompoundCalculator() {
             key={item.label}
             style={{
               flex: 1,
-              background: 'rgba(255,255,255,0.04)',
+              background: 'rgba(255,255,255,0.07)',
               borderRadius: '8px',
               padding: '10px 6px',
               textAlign: 'center',
             }}
           >
-            <p style={{ margin: '0 0 2px', fontSize: '9px', color: 'rgba(255,255,255,0.4)' }}>{item.label}</p>
+            <p style={{ margin: '0 0 2px', fontSize: '9px', color: 'rgba(255,255,255,0.58)' }}>{item.label}</p>
             <p style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: item.color }}>{item.value}</p>
           </div>
         ))}
@@ -149,7 +149,7 @@ function CompoundCalculator() {
 
       {milestones.length > 0 && (
         <div>
-          <p style={{ margin: '0 0 8px', fontSize: '10px', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+          <p style={{ margin: '0 0 8px', fontSize: '10px', color: 'rgba(255,255,255,0.58)', fontWeight: 600 }}>
             GROWTH OVER TIME
           </p>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', height: '60px' }}>
@@ -167,7 +167,7 @@ function CompoundCalculator() {
                       transition: 'height 0.3s ease',
                     }}
                   />
-                  <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.4)' }}>{y}y</span>
+                  <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.58)' }}>{y}y</span>
                 </div>
               );
             })}
@@ -211,7 +211,7 @@ export default function FirstInvestment() {
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         padding: '24px',
@@ -223,7 +223,7 @@ export default function FirstInvestment() {
         <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
           Your First Investment
         </h3>
-        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>
           A 5-step guide built for SA students
         </p>
       </div>
@@ -259,7 +259,7 @@ export default function FirstInvestment() {
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{step.icon}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>{step.title}</p>
-                  <p style={{ margin: '1px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>{step.subtitle}</p>
+                  <p style={{ margin: '1px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.62)' }}>{step.subtitle}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <span
@@ -273,7 +273,7 @@ export default function FirstInvestment() {
                   >
                     {step.tag}
                   </span>
-                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{isOpen ? '▲' : '▼'}</span>
+                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)' }}>{isOpen ? '▲' : '▼'}</span>
                 </div>
               </button>
 
@@ -296,7 +296,7 @@ export default function FirstInvestment() {
         style={{
           margin: '16px 0 0',
           fontSize: '11px',
-          color: 'rgba(255,255,255,0.3)',
+          color: 'rgba(255,255,255,0.5)',
           lineHeight: '1.5',
           padding: '10px 12px',
           background: 'rgba(255,255,255,0.02)',

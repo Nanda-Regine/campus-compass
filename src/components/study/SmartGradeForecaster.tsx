@@ -142,7 +142,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
       <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr' }}>
         {/* Current Standing */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: '16px',
           padding: '20px',
@@ -175,7 +175,7 @@ export default function SmartGradeForecaster({ modules }: Props) {
 
         {/* Target */}
         <div style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.06)',
           borderRadius: '16px',
           padding: '20px',

@@ -88,7 +88,7 @@ function BurnoutRing({ score, color }: { score: number; color: string }) {
   return (
     <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={sw} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={sw} />
         <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={sw}
           strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
           style={{ transition: 'stroke-dashoffset 0.6s ease' }} />
@@ -129,7 +129,7 @@ function Sparkline({ checkins }: { checkins: CheckIn[] }) {
       </svg>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
         {last7.map((c, i) => (
-          <div key={i} style={{ fontSize: 8, color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>
+          <div key={i} style={{ fontSize: 8, color: 'rgba(255,255,255,0.66)', textAlign: 'center' }}>
             {new Date(c.date + 'T00:00:00').toLocaleDateString('en-ZA', { weekday: 'short' }).slice(0, 1)}
           </div>
         ))}
@@ -160,9 +160,9 @@ function DimSlider({ dim, value, onChange }: {
                   ? (dim.invert
                       ? (n <= 2 ? '#4ecf9e' : n === 3 ? '#c9a84c' : '#ff6b6b')
                       : (n >= 4 ? '#4ecf9e' : n === 3 ? '#c9a84c' : '#ff6b6b'))
-                  : 'rgba(255,255,255,0.05)',
+                  : 'rgba(255,255,255,0.08)',
                 border: value === n ? 'none' : '1px solid rgba(255,255,255,0.07)',
-                color: value === n ? '#fff' : 'rgba(255,255,255,0.35)',
+                color: value === n ? '#fff' : 'rgba(255,255,255,0.55)',
                 fontSize: 11, fontWeight: 700, cursor: 'pointer',
                 transition: 'all 0.15s',
               }}
@@ -171,8 +171,8 @@ function DimSlider({ dim, value, onChange }: {
         </div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', paddingLeft: 24 }}>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>{dim.lo}</span>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)' }}>{dim.hi}</span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.66)' }}>{dim.lo}</span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.66)' }}>{dim.hi}</span>
       </div>
     </div>
   )
@@ -199,7 +199,7 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
       {/* Day labels */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
         {['M','T','W','T','F','S','S'].map((d, i) => (
-          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>{d}</div>
+          <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.66)', textAlign: 'center' }}>{d}</div>
         ))}
       </div>
       {/* Week rows */}
@@ -208,7 +208,7 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
           {week.map((dateStr, di) => {
             const ci      = checkMap.get(dateStr)
             const isToday = dateStr === todayStr
-            const color   = ci ? getRisk(ci.score).color : 'rgba(255,255,255,0.04)'
+            const color   = ci ? getRisk(ci.score).color : 'rgba(255,255,255,0.07)'
             return (
               <div
                 key={di}
@@ -216,9 +216,9 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
                 style={{
                   aspectRatio: '1',
                   borderRadius: 3,
-                  background: ci ? `${color}35` : 'rgba(255,255,255,0.04)',
+                  background: ci ? `${color}35` : 'rgba(255,255,255,0.07)',
                   border: isToday
-                    ? `1px solid ${ci ? color : 'rgba(255,255,255,0.3)'}`
+                    ? `1px solid ${ci ? color : 'rgba(255,255,255,0.5)'}`
                     : `1px solid ${ci ? color + '20' : 'transparent'}`,
                   boxShadow: isToday ? `0 0 5px ${ci ? color + '40' : 'rgba(255,255,255,0.1)'}` : 'none',
                   cursor: ci ? 'default' : 'default',
@@ -293,7 +293,7 @@ function SleepScience() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         {([['log', '📊 Sleep Log'], ['science', '🧬 Science'], ['quiz', '🦁 Chronotype']] as [typeof sleepView, string][]).map(([v, l]) => (
-          <button key={v} onClick={() => setSleepView(v)} style={{ flex: 1, padding: '8px 4px', background: 'none', border: 'none', borderBottom: sleepView === v ? '2px solid #7090d0' : '2px solid transparent', color: sleepView === v ? '#7090d0' : 'rgba(255,255,255,0.35)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: sleepView === v ? 700 : 400, cursor: 'pointer', marginBottom: -1 }}>{l}</button>
+          <button key={v} onClick={() => setSleepView(v)} style={{ flex: 1, padding: '8px 4px', background: 'none', border: 'none', borderBottom: sleepView === v ? '2px solid #7090d0' : '2px solid transparent', color: sleepView === v ? '#7090d0' : 'rgba(255,255,255,0.55)', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: sleepView === v ? 700 : 400, cursor: 'pointer', marginBottom: -1 }}>{l}</button>
         ))}
       </div>
 
@@ -306,7 +306,7 @@ function SleepScience() {
                 { l: 'Sleep debt', v: sleepDebt !== null && sleepDebt > 0 ? `${sleepDebt}h` : 'None', c: sleepDebt !== null && sleepDebt > 5 ? '#ff6b6b' : '#4ecf9e' },
                 { l: 'Days logged', v: String(logs.length), c: '#7090d0' },
               ].map(s => (
-                <div key={s.l} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '10px 8px', textAlign: 'center' }}>
+                <div key={s.l} style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '10px 8px', textAlign: 'center' }}>
                   <div style={{ fontSize: '1rem', fontWeight: 700, color: s.c, fontFamily: 'var(--font-mono)' }}>{s.v}</div>
                   <div style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{s.l}</div>
                 </div>
@@ -314,25 +314,25 @@ function SleepScience() {
             </div>
           )}
           {addMode ? (
-            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {[{ l: 'Hours slept', k: 'hours', t: 'number', p: '7.5' }, { l: 'Quality (1–5)', k: 'quality', t: 'number', p: '3' }, { l: 'Bedtime', k: 'bedtime', t: 'time', p: '' }, { l: 'Wake up', k: 'wakeup', t: 'time', p: '' }].map(f => (
                   <div key={f.k}>
-                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>{f.l}</div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.58)', marginBottom: 3 }}>{f.l}</div>
                     <input type={f.t} placeholder={f.p} value={form[f.k as keyof typeof form]} onChange={e => setForm(v => ({ ...v, [f.k]: e.target.value }))} style={{ width: '100%', padding: '8px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: 'var(--text-primary)', fontSize: '0.8rem' }} />
                   </div>
                 ))}
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={addLog} style={{ flex: 1, padding: '9px 0', background: 'rgba(112,144,208,0.15)', border: '1px solid rgba(112,144,208,0.3)', borderRadius: 8, color: '#7090d0', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>Log sleep</button>
-                <button onClick={() => setAddMode(false)} style={{ padding: '9px 14px', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', cursor: 'pointer' }}>Cancel</button>
+                <button onClick={() => setAddMode(false)} style={{ padding: '9px 14px', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: 'rgba(255,255,255,0.58)', fontSize: '0.72rem', cursor: 'pointer' }}>Cancel</button>
               </div>
             </div>
           ) : (
             <button onClick={() => setAddMode(true)} style={{ padding: '11px 0', background: 'rgba(112,144,208,0.07)', border: '1px solid rgba(112,144,208,0.2)', borderRadius: 10, color: '#7090d0', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}>+ Log tonight&apos;s sleep</button>
           )}
           {logs.slice(0, 7).map(l => (
-            <div key={l.date} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9 }}>
+            <div key={l.date} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 9 }}>
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{l.date}</div>
                 <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>{l.bedtime} → {l.wakeup}</div>
@@ -349,9 +349,9 @@ function SleepScience() {
       {sleepView === 'science' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {SLEEP_TIPS.map((t, i) => (
-            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '13px 14px', borderLeft: '3px solid #7090d0' }}>
+            <div key={i} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '13px 14px', borderLeft: '3px solid #7090d0' }}>
               <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'rgba(255,255,255,0.85)', marginBottom: 5 }}>{t.title}</div>
-              <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.5)', lineHeight: 1.65 }}>{t.body}</div>
+              <div style={{ fontSize: '0.73rem', color: 'rgba(255,255,255,0.66)', lineHeight: 1.65 }}>{t.body}</div>
             </div>
           ))}
         </div>
@@ -362,11 +362,11 @@ function SleepScience() {
           {!chronoResult ? (
             <>
               {CHRONOTYPE_Qs.map((q, qi) => (
-                <div key={qi} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '13px 14px' }}>
+                <div key={qi} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '13px 14px' }}>
                   <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginBottom: 10 }}>{qi + 1}. {q.q}</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {q.opts.map((o, oi) => (
-                      <button key={oi} onClick={() => { const a = [...chronoAnswers]; a[qi] = o.v; setChronoAnswers(a) }} style={{ padding: '8px 12px', textAlign: 'left', background: chronoAnswers[qi] === o.v ? 'rgba(112,144,208,0.15)' : 'rgba(255,255,255,0.03)', border: `1px solid ${chronoAnswers[qi] === o.v ? 'rgba(112,144,208,0.35)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 8, color: chronoAnswers[qi] === o.v ? '#7090d0' : 'rgba(255,255,255,0.55)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: chronoAnswers[qi] === o.v ? 600 : 400 }}>{o.l}</button>
+                      <button key={oi} onClick={() => { const a = [...chronoAnswers]; a[qi] = o.v; setChronoAnswers(a) }} style={{ padding: '8px 12px', textAlign: 'left', background: chronoAnswers[qi] === o.v ? 'rgba(112,144,208,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${chronoAnswers[qi] === o.v ? 'rgba(112,144,208,0.35)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 8, color: chronoAnswers[qi] === o.v ? '#7090d0' : 'rgba(255,255,255,0.55)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: chronoAnswers[qi] === o.v ? 600 : 400 }}>{o.l}</button>
                     ))}
                   </div>
                 </div>
@@ -376,7 +376,7 @@ function SleepScience() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ background: 'rgba(112,144,208,0.08)', border: '1px solid rgba(112,144,208,0.25)', borderRadius: 14, padding: '18px', whiteSpace: 'pre-line', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.7 }}>{chronoResult}</div>
-              <button onClick={() => { setChronoResult(null); setChronoAnswers([null, null, null, null]) }} style={{ padding: '9px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', cursor: 'pointer' }}>Retake quiz</button>
+              <button onClick={() => { setChronoResult(null); setChronoAnswers([null, null, null, null]) }} style={{ padding: '9px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: 'rgba(255,255,255,0.58)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', cursor: 'pointer' }}>Retake quiz</button>
             </div>
           )}
         </div>
@@ -478,7 +478,7 @@ export default function WellnessTab() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* View toggle */}
-      <div style={{ display: 'flex', gap: 6, padding: '3px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
+      <div style={{ display: 'flex', gap: 6, padding: '3px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
         {([['checkin', 'Check-in'], ['history', 'History'], ['sleep', '😴 Sleep']] as [typeof view, string][]).map(([v, l]) => (
           <button
             key={v}
@@ -486,7 +486,7 @@ export default function WellnessTab() {
             style={{
               flex: 1, padding: '8px 0', borderRadius: 9, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: 'none',
               background: view === v ? 'rgba(112,144,208,0.2)' : 'transparent',
-              color: view === v ? '#7090d0' : 'rgba(255,255,255,0.35)',
+              color: view === v ? '#7090d0' : 'rgba(255,255,255,0.55)',
               transition: 'all 0.15s',
             }}
           >
@@ -505,7 +505,7 @@ export default function WellnessTab() {
                 {saved ? 'Today\'s Status' : 'Live Preview'}
               </div>
               <div style={{ fontFamily: 'Sora,sans-serif', fontSize: 18, fontWeight: 700, color: risk.color, marginBottom: 4 }}>{risk.label}</div>
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{risk.tip}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.66)', lineHeight: 1.5 }}>{risk.tip}</div>
               {avgScore !== null && checkins.length >= 3 && (
                 <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>
                   7-day avg: <span style={{ color: getRisk(avgScore).color, fontWeight: 600 }}>{avgScore}</span>
@@ -558,7 +558,7 @@ export default function WellnessTab() {
               </div>
               <button
                 onClick={handleEdit}
-                style={{ marginTop: 14, width: '100%', padding: '9px 0', borderRadius: 9, border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.45)', fontSize: 12, cursor: 'pointer' }}
+                style={{ marginTop: 14, width: '100%', padding: '9px 0', borderRadius: 9, border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.62)', fontSize: 12, cursor: 'pointer' }}
               >
                 Edit today&apos;s check-in
               </button>
@@ -585,7 +585,7 @@ export default function WellnessTab() {
               <span style={{ fontSize: 18, flexShrink: 0 }}>🆘</span>
               <div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: '#ff6b6b', marginBottom: 2 }}>Campus counselling is free</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>Every SA university offers free mental health support. Your student card gets you in. You don't need to be in crisis to go.</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', lineHeight: 1.5 }}>Every SA university offers free mental health support. Your student card gets you in. You don't need to be in crisis to go.</div>
               </div>
             </div>
           )}

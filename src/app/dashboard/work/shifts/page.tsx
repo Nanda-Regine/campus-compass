@@ -118,7 +118,7 @@ export default function ShiftsPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="schedule" opacity={0.15} blurPx={16} saturation={1.2} overlayColor="rgba(5,4,12,0.72)" />
+      <AmbientImage zone="schedule" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.42)" />
       <TopBar title="Shifts" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 

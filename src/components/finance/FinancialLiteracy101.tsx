@@ -110,7 +110,7 @@ function CurrencyConverter() {
               <div key={code} style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 padding: '6px 10px', borderRadius: 8,
-                background: 'rgba(255,255,255,0.025)',
+                background: 'rgba(255,255,255,0.05)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                   <span style={{ fontSize: 14 }}>{flag}</span>

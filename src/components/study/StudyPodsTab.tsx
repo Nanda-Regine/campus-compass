@@ -61,7 +61,7 @@ function MatchCard({ match, onConnect, connecting }: {
   return (
     <div style={{
       padding: '16px', borderRadius: 14,
-      background: 'rgba(255,255,255,0.03)',
+      background: 'rgba(255,255,255,0.06)',
       border: '1px solid rgba(255,255,255,0.07)',
       display: 'flex', flexDirection: 'column', gap: 10,
     }}>
@@ -150,7 +150,7 @@ function ConnectionCard({ conn, myUserId, onAction, acting }: {
   return (
     <div style={{
       padding: '14px 16px', borderRadius: 12,
-      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -217,7 +217,7 @@ function ConnectionCard({ conn, myUserId, onAction, acting }: {
             <button
               onClick={() => onAction(conn.id, 'cancel')}
               disabled={acting}
-              style={{ ...actionBtn, background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.08)', color: 'var(--text-muted)' }}
+              style={{ ...actionBtn, background: 'rgba(255,255,255,0.07)', borderColor: 'rgba(255,255,255,0.08)', color: 'var(--text-muted)' }}
             >
               Cancel request
             </button>
@@ -232,7 +232,7 @@ function Chip({ label }: { label: string }) {
   return (
     <span style={{
       fontSize: 10, padding: '2px 7px', borderRadius: 8,
-      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+      background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)',
       color: 'var(--text-muted)',
     }}>{label}</span>
   )
@@ -384,7 +384,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
           {(['silent','discussion','mixed'] as const).map(s => (
             <button key={s} onClick={() => setStyle(s)} style={{
               flex: 1, padding: '8px 0', borderRadius: 8, fontSize: 11, fontWeight: 600,
-              background: style === s ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.04)',
+              background: style === s ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.07)',
               border: `1px solid ${style === s ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.07)'}`,
               color: style === s ? '#38BDF8' : 'var(--text-muted)', cursor: 'pointer',
             }}>{STYLE_LABELS[s]}</button>
@@ -397,7 +397,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
             <button key={t} onClick={() => setTimes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])}
               style={{
                 padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                background: times.includes(t) ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.04)',
+                background: times.includes(t) ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.07)',
                 border: `1px solid ${times.includes(t) ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.07)'}`,
                 color: times.includes(t) ? '#38BDF8' : 'var(--text-muted)', cursor: 'pointer',
               }}
@@ -414,7 +414,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
           placeholder="e.g. Need someone to do past papers with for 3rd year Stats…"
           style={{
             width: '100%', padding: '10px 12px', borderRadius: 9, fontSize: 12,
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)',
             color: 'var(--text-primary)', resize: 'none', outline: 'none', boxSizing: 'border-box',
             marginBottom: 16,
           }}
@@ -446,7 +446,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
         {(['matches', 'pods'] as const).map(v => (
           <button key={v} onClick={() => setView(v)} style={{
             padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-            background: view === v ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.04)',
+            background: view === v ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.07)',
             border: `1px solid ${view === v ? 'rgba(56,189,248,0.35)' : 'rgba(255,255,255,0.07)'}`,
             color: view === v ? '#38BDF8' : 'var(--text-muted)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 5,
@@ -536,7 +536,7 @@ export default function StudyPodsTab({ userId }: { userId: string }) {
 }
 
 const card: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.07)',
   borderRadius: 14, padding: '18px 16px',
 }
 const chipStyle: React.CSSProperties = {

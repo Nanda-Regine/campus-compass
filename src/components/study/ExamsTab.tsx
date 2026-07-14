@@ -35,7 +35,7 @@ const RING_C   = 2 * Math.PI * RING_R  // circumference ≈ 106.8
 
 // ─── Urgency helpers ──────────────────────────────────────────────────────────
 function urgency(days: number, isPast: boolean): { color: string; label: string } {
-  if (isPast)     return { color: 'rgba(255,255,255,0.22)', label: 'DONE' }
+  if (isPast)     return { color: 'rgba(255,255,255,0.42)', label: 'DONE' }
   if (days === 0) return { color: '#ff6b6b', label: 'TODAY!' }
   if (days <= 3)  return { color: '#ff6b6b', label: 'CRITICAL' }
   if (days <= 7)  return { color: '#f59e0b', label: 'HIGH' }
@@ -98,12 +98,12 @@ function ExamTimeline({ exams }: { exams: Exam[] }) {
 
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.025)', borderRadius: 12,
+      background: 'rgba(255,255,255,0.05)', borderRadius: 12,
       border: '1px solid rgba(255,255,255,0.06)', padding: '12px 14px',
     }}>
       <div style={{
         fontFamily: 'JetBrains Mono, monospace', fontSize: 7.5,
-        color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase',
+        color: 'rgba(255,255,255,0.42)', textTransform: 'uppercase',
         letterSpacing: '0.12em', marginBottom: 14,
       }}>
         Exam Timeline · {sorted.length} upcoming
@@ -352,7 +352,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
               <div style={{ minWidth: 0 }}>
                 <div style={{
                   fontFamily: 'Sora, sans-serif', fontWeight: 700, fontSize: 13,
-                  color: isPast ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.92)',
+                  color: isPast ? 'rgba(255,255,255,0.62)' : 'rgba(255,255,255,0.92)',
                   lineHeight: 1.3, overflow: 'hidden',
                   textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
@@ -380,7 +380,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
 
             <div style={{
               fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-              color: 'rgba(255,255,255,0.35)', marginBottom: 8,
+              color: 'rgba(255,255,255,0.55)', marginBottom: 8,
             }}>
               {fmt.dateFull(exam.exam_date)}
               {exam.start_time && ` · ${fmt.time(exam.start_time)}`}
@@ -425,7 +425,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                   padding: '4px 8px', borderRadius: 8,
                   background: 'transparent', border: '1px solid rgba(255,255,255,0.07)',
                   fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
-                  color: 'rgba(255,255,255,0.28)', cursor: 'pointer',
+                  color: 'rgba(255,255,255,0.48)', cursor: 'pointer',
                 }}
               >
                 ✕
@@ -445,7 +445,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
         <div style={{
           display: 'flex', borderRadius: 10, overflow: 'hidden',
           border: '0.5px solid rgba(255,255,255,0.08)',
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
         }}>
           {(['list', 'readiness'] as const).map(v => (
             <button
@@ -455,7 +455,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                 padding: '6px 12px',
                 fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
                 fontWeight: view === v ? 700 : 400,
-                color: view === v ? '#4ecf9e' : 'rgba(255,255,255,0.35)',
+                color: view === v ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
                 background: view === v ? 'rgba(78,207,158,0.1)' : 'transparent',
                 border: 'none', cursor: 'pointer', transition: 'all 0.15s',
                 textTransform: 'uppercase', letterSpacing: '0.06em',
@@ -498,7 +498,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
               <p style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>
                 No exams added yet
               </p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>
                 Add upcoming exams to track countdowns and get AI prep guides.
               </p>
               <button
@@ -523,7 +523,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                   <div>
                     <div style={{
                       fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
-                      color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
                       letterSpacing: '0.1em', marginBottom: 8,
                     }}>
                       Upcoming · {upcoming.length}
@@ -538,7 +538,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
               {upcoming.length === 0 && (
                 <p style={{
                   textAlign: 'center', fontFamily: 'JetBrains Mono, monospace',
-                  fontSize: 10, color: 'rgba(255,255,255,0.3)', padding: '12px 0',
+                  fontSize: 10, color: 'rgba(255,255,255,0.5)', padding: '12px 0',
                 }}>
                   No upcoming exams — you&apos;re done! 🎉
                 </p>
@@ -548,7 +548,7 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
                 <div style={{ opacity: 0.55 }}>
                   <div style={{
                     fontFamily: 'JetBrains Mono, monospace', fontSize: 8,
-                    color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase',
                     letterSpacing: '0.1em', marginBottom: 8, marginTop: 8,
                   }}>
                     Past · {past.length}

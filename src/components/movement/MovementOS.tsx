@@ -10,8 +10,8 @@ import { AmbientImage } from '@/components/ui/AmbientImage'
 const SmartCommute = dynamic(() => import('./SmartCommute'), { ssr: false })
 
 const mapLoadingFallback = (
-  <div style={{ height: 360, borderRadius: 16, background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>Loading map…</span>
+  <div style={{ height: 360, borderRadius: 16, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Loading map…</span>
   </div>
 )
 
@@ -267,7 +267,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   cursor: 'pointer', width: '100%',
                 }}
               >
-                <Icon size={18} style={{ opacity: active ? 1 : 0.45, color: active ? '#38bdf8' : 'rgba(255,255,255,0.45)' }} />
+                <Icon size={18} style={{ opacity: active ? 1 : 0.45, color: active ? '#38bdf8' : 'rgba(255,255,255,0.62)' }} />
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tLabel.slice(0, 5).toUpperCase()}
                 </span>
@@ -356,7 +356,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 ) : (
                   <div
                     className="rounded-2xl flex flex-col items-center justify-center gap-3 py-10"
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }}
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
                     <MapPin size={28} className="text-white/20" />
                     <p className="font-mono text-[0.65rem] text-white/30 text-center max-w-[200px] leading-relaxed">
@@ -418,7 +418,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 ) : (
                   <div
                     className="rounded-2xl flex flex-col items-center justify-center gap-2 py-8"
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }}
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
                     <MapPin size={24} className="text-white/20" />
                     <p className="font-mono text-[0.62rem] text-white/25 text-center max-w-[200px] leading-relaxed">
@@ -533,7 +533,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                   <button
                     onClick={() => setLiftMapView(v => !v)}
                     className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[0.6rem] transition-all"
-                    style={{ background: liftMapView ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${liftMapView ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.1)'}`, color: liftMapView ? '#38bdf8' : 'rgba(255,255,255,0.45)' }}
+                    style={{ background: liftMapView ? 'rgba(56,189,248,0.15)' : 'rgba(255,255,255,0.06)', border: `1px solid ${liftMapView ? 'rgba(56,189,248,0.4)' : 'rgba(255,255,255,0.1)'}`, color: liftMapView ? '#38bdf8' : 'rgba(255,255,255,0.62)' }}
                   >
                     🗺 {liftMapView ? 'Hide map' : 'Show map'}
                   </button>

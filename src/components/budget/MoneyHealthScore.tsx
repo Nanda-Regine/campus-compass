@@ -50,7 +50,7 @@ export default function MoneyHealthScore(props: Props) {
   const dashOffset = circumference - (score / 100) * circumference
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
+    <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
       <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>Money Health</p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, flexWrap: 'wrap' }}>

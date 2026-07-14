@@ -52,7 +52,7 @@ export default function DataBudgetTracker() {
   const isAlert = usedPercent > 70;
 
   const cardStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.03)',
+    background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.06)',
     borderRadius: '16px',
     padding: '24px',
@@ -73,12 +73,12 @@ export default function DataBudgetTracker() {
           <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
             Data Budget Tracker
           </h3>
-          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
             Monthly mobile data usage
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>Bundle:</label>
+          <label style={{ fontSize: '11px', color: 'rgba(255,255,255,0.66)' }}>Bundle:</label>
           <select
             value={bundleGB}
             onChange={(e) => setBundleGB(Number(e.target.value))}
@@ -148,17 +148,17 @@ export default function DataBudgetTracker() {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
             {mbToReadable(remainingMB)} remaining
           </span>
-          <span style={{ fontSize: '11px', color: daysLeft < 7 ? '#ef4444' : 'rgba(255,255,255,0.4)' }}>
+          <span style={{ fontSize: '11px', color: daysLeft < 7 ? '#ef4444' : 'rgba(255,255,255,0.58)' }}>
             ~{daysLeft} days left at current pace
           </span>
         </div>
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+        <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'rgba(255,255,255,0.66)', fontWeight: 600 }}>
           USAGE BY CATEGORY
         </p>
         {categories.map((cat) => {
@@ -200,7 +200,7 @@ export default function DataBudgetTracker() {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: 'rgba(255,255,255,0.5)',
+                        color: 'rgba(255,255,255,0.66)',
                         fontSize: '12px',
                         cursor: 'pointer',
                         padding: 0,
@@ -225,14 +225,14 @@ export default function DataBudgetTracker() {
             </div>
           );
         })}
-        <p style={{ margin: '6px 0 0', fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>
+        <p style={{ margin: '6px 0 0', fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
           Tap any usage value to edit it
         </p>
       </div>
 
       <div
         style={{
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.06)',
           border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '10px',
           padding: '12px 14px',

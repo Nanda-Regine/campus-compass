@@ -92,7 +92,7 @@ const SECTIONS: Section[] = [
         <Step num={3}>
           Walk-in — visit your nearest SASSA office with your SA ID.
         </Step>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
           Re-apply every month — approval is not automatic. Set a monthly reminder.
         </p>
       </SectionBody>
@@ -106,7 +106,7 @@ const SECTIONS: Section[] = [
         <Bullet>SA ID (green book or smart card)</Bullet>
         <Bullet>Active South African phone number (for OTP verification)</Bullet>
         <Bullet>Bank account number for payment (optional — post office also works)</Bullet>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
           No proof of income or address required for the online application.
         </p>
       </SectionBody>
@@ -123,7 +123,7 @@ const SECTIONS: Section[] = [
         <Bullet>Direct bank deposit (fastest)</Bullet>
         <Bullet>SASSA card — collect at Post Office or Pick n Pay</Bullet>
         <Bullet>Cash send — collect at specific retailers</Bullet>
-        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+        <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.62)' }}>
           Payments are usually released in the first two weeks of each month.
         </p>
       </SectionBody>
@@ -191,7 +191,7 @@ export default function SassaSrdGuide() {
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
         color: 'var(--text-primary)',
@@ -202,7 +202,7 @@ export default function SassaSrdGuide() {
       <div
         style={{
           padding: '20px 20px 16px',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
           background: 'rgba(251,191,36,0.04)',
         }}
       >
@@ -211,7 +211,7 @@ export default function SassaSrdGuide() {
             <h3 style={{ margin: 0, fontSize: '16px', color: '#fbbf24', fontWeight: 700 }}>
               SASSA SRD Grant Guide
             </h3>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.66)' }}>
               R370/month — many students qualify and never apply
             </p>
           </div>
@@ -237,7 +237,7 @@ export default function SassaSrdGuide() {
           return (
             <div
               key={section.id}
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
             >
               <button
                 onClick={() => setOpenId(isOpen ? null : section.id)}
@@ -262,7 +262,7 @@ export default function SassaSrdGuide() {
                 >
                   {section.title}
                 </span>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', flexShrink: 0 }}>
                   {isOpen ? '▲' : '▼'}
                 </span>
               </button>
@@ -273,7 +273,7 @@ export default function SassaSrdGuide() {
       </div>
 
       <div style={{ padding: '14px 16px' }}>
-        <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.35)', lineHeight: '1.5' }}>
+        <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.55)', lineHeight: '1.5' }}>
           Information current as of 2026. Grant amounts and eligibility may change. Verify at srd.sassa.gov.za.
         </p>
       </div>

@@ -34,7 +34,7 @@ export default function NsfasWorkCheck({ monthlyEarnings }: Props) {
   return (
     <div
       style={{
-        background: 'rgba(255,255,255,0.03)',
+        background: 'rgba(255,255,255,0.06)',
         border: '1px solid rgba(255,255,255,0.06)',
         borderRadius: '16px',
       }}

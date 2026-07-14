@@ -186,10 +186,10 @@ html:not(.light) {
      secondary/tertiary/label brightened for AA contrast (they previously failed,
      esp. over ambient background images). Primary/muted unchanged. */
   --text-primary:   #EDE8F8;
-  --text-secondary: #ADA8CE;
-  --text-tertiary:  #9C96C2;
-  --text-muted:     #3D395E;
-  --text-label:     rgba(237, 232, 248, 0.60);
+  --text-secondary: #C3BFE0;
+  --text-tertiary:  #ADA7CE;
+  --text-muted:     #6E6996;
+  --text-label:     rgba(237, 232, 248, 0.68);
   --text-light:     #EDE8F8;
   --text-light2:    #ADA8CE;
   --text-light3:    #9C96C2;

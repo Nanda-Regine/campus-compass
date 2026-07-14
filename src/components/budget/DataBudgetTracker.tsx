@@ -95,7 +95,7 @@ export default function DataBudgetTracker({ userId }: Props) {
 
   if (loading) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
         <div className="animate-pulse space-y-3">
           <div className="h-4 rounded w-1/2" style={{ background: 'rgba(255,255,255,0.06)' }} />
           <div className="h-24 rounded" style={{ background: 'rgba(255,255,255,0.06)' }} />
@@ -106,7 +106,7 @@ export default function DataBudgetTracker({ userId }: Props) {
 
   if (!budget) {
     return (
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
+      <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
         <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-secondary)' }}>Set your monthly data budget</p>
         <p className="text-xs mb-4" style={{ color: 'var(--text-tertiary)' }}>Track mobile data usage to avoid overspending</p>
 
@@ -167,7 +167,7 @@ export default function DataBudgetTracker({ userId }: Props) {
   const dashOffset = circumference - (usedPercent / 100) * circumference
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
+    <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px' }} className="p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>Data Budget</p>
         <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(251,191,36,0.1)', color: '#fbbf24' }}>
@@ -235,7 +235,7 @@ export default function DataBudgetTracker({ userId }: Props) {
       </div>
 
       {showAddModal && (
-        <div className="mb-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="mb-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <p className="text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>Custom amount (MB)</p>
           <div className="flex gap-2">
             <input
@@ -267,7 +267,7 @@ export default function DataBudgetTracker({ userId }: Props) {
 
       <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
         <p className="text-xs px-3 pt-2 pb-1 font-medium" style={{ color: '#fbbf24' }}>Data-saving tips</p>
-        <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
           {TIPS.map((tip, i) => (
             <p key={i} className="text-xs px-3 py-2" style={{ color: 'var(--text-tertiary)' }}>• {tip}</p>
           ))}

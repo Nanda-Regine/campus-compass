@@ -78,7 +78,7 @@ const POPUP_STYLES = `
     box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
   }
   .mapboxgl-popup-tip { border-top-color: #1a2a38 !important; }
-  .mapboxgl-popup-close-button { color: rgba(255,255,255,0.4) !important; font-size: 16px !important; }
+  .mapboxgl-popup-close-button { color: rgba(255,255,255,0.58) !important; font-size: 16px !important; }
   .mapboxgl-ctrl-group { background: #1a2a38 !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; }
   .mapboxgl-ctrl-group button { background: transparent !important; color: rgba(255,255,255,0.7) !important; }
   .mapboxgl-ctrl-group button:hover { background: rgba(255,255,255,0.1) !important; }
@@ -218,7 +218,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           borderRadius: 16, display: 'flex', alignItems: 'center',
           justifyContent: 'center', zIndex: 2,
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
             Finding route…
           </span>
         </div>
@@ -227,13 +227,13 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
       {status === 'geocode-error' && (
         <div style={{
           height, borderRadius: 16,
-          background: 'rgba(255,255,255,0.04)',
+          background: 'rgba(255,255,255,0.07)',
           border: '1px dashed rgba(255,255,255,0.1)',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: 8,
         }}>
           <span style={{ fontSize: 28 }}>🗺️</span>
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
             Couldn't locate one or both addresses. Try adding a suburb, city, or campus name.
           </p>
         </div>
@@ -259,7 +259,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: '#0d9488', fontWeight: 600 }}>
             🕒 {fmtDuration(routeInfo.duration)}
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>
             {fmtDistance(routeInfo.distance)}
           </span>
         </div>
@@ -273,7 +273,7 @@ export function MapboxDirectionsMap({ from, to, profile = 'driving', token, heig
           border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8,
           padding: '5px 10px',
         }}>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>
             Showing straight line (routing unavailable)
           </span>
         </div>

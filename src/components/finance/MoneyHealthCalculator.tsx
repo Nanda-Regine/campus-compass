@@ -179,7 +179,7 @@ export default function MoneyHealthCalculator({
   const insight = getInsight(pillars);
 
   const cardStyle: React.CSSProperties = {
-    background: 'rgba(255,255,255,0.03)',
+    background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.06)',
     borderRadius: '16px',
     padding: compact ? '16px' : '24px',
@@ -194,7 +194,7 @@ export default function MoneyHealthCalculator({
           <h3 style={{ margin: 0, fontSize: compact ? '14px' : '16px', color: '#fbbf24', fontWeight: 700 }}>
             Money Health Score
           </h3>
-          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+          <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.66)' }}>
             Enter your monthly figures
           </p>
         </div>
@@ -262,7 +262,7 @@ export default function MoneyHealthCalculator({
           <h3 style={{ margin: 0, fontSize: compact ? '14px' : '16px', color: '#fbbf24', fontWeight: 700 }}>
             Money Health Score
           </h3>
-          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.58)' }}>
             Based on your budget data
           </p>
         </div>

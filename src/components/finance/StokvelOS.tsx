@@ -264,7 +264,7 @@ export default function StokvelOS() {
 
   if (!group) return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', padding: '24px 16px 96px' }}>
-      <AmbientImage zone="community" opacity={0.10} blurPx={28} saturation={1.1} overlayColor="rgba(5,4,12,0.76)" />
+      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.45)" />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
@@ -308,7 +308,7 @@ export default function StokvelOS() {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
-      <AmbientImage zone="community" opacity={0.10} blurPx={28} saturation={1.15} overlayColor="rgba(5,4,12,0.74)" />
+      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.45)" />
 
       {/* Side rail */}
       <div style={{

@@ -152,7 +152,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
         <button
           onClick={() => { setOpen(false); reset() }}
           className="font-mono text-xs"
-          style={{ color: 'rgba(255,255,255,0.3)' }}
+          style={{ color: 'rgba(255,255,255,0.5)' }}
           aria-label="Close scanner"
         >
           ✕
@@ -166,7 +166,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
             <button
               onClick={() => cameraRef.current?.click()}
               className="flex flex-col items-center gap-2 py-5 rounded-xl transition-all"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)' }}
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.66)' }}
             >
               <span className="text-2xl" aria-hidden="true">📷</span>
               <span className="font-display text-xs">Take photo</span>
@@ -174,7 +174,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
             <button
               onClick={() => fileRef.current?.click()}
               className="flex flex-col items-center gap-2 py-5 rounded-xl transition-all"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)' }}
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.66)' }}
             >
               <span className="text-2xl" aria-hidden="true">🖼️</span>
               <span className="font-display text-xs">Upload image</span>
@@ -209,7 +209,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               <div className="w-4 h-4 rounded-full border-2 border-teal-400 border-t-transparent animate-spin" />
               <p className="font-display text-sm text-white">Reading receipt…</p>
             </div>
-            <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.5)' }}>
               Claude Vision is extracting the details
             </p>
           </div>
@@ -237,37 +237,37 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
             {/* Preview image */}
             {previewUrl && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={previewUrl} alt="Scanned receipt" className="w-full h-32 object-contain rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }} />
+              <img src={previewUrl} alt="Scanned receipt" className="w-full h-32 object-contain rounded-xl" style={{ background: 'rgba(255,255,255,0.06)' }} />
             )}
 
             {/* Editable fields */}
             <div className="space-y-2">
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Merchant</label>
+                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Merchant</label>
                 <input value={merchant} onChange={e => setMerchant(e.target.value)} maxLength={100} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Amount (R)</label>
+                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Amount (R)</label>
                   <input type="number" inputMode="decimal" aria-label="Receipt total amount in rands" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
                 <div>
-                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Date</label>
+                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date</label>
                   <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
               </div>
 
               {/* Category selector */}
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Category</label>
+                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Category</label>
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(CATEGORY_ICONS).map(([cat, icon]) => (
                     <button
                       key={cat}
                       onClick={() => setCategory(cat)}
                       className={cn('font-display text-xs px-2.5 py-1.5 rounded-xl capitalize transition-all', category === cat ? 'font-bold' : 'opacity-50')}
-                      style={{ background: category === cat ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.05)', color: category === cat ? '#4db6ac' : 'rgba(255,255,255,0.5)', border: `1px solid ${category === cat ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.07)'}` }}
+                      style={{ background: category === cat ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.08)', color: category === cat ? '#4db6ac' : 'rgba(255,255,255,0.66)', border: `1px solid ${category === cat ? 'rgba(13,148,136,0.25)' : 'rgba(255,255,255,0.07)'}` }}
                     >
                       {icon} {cat}
                     </button>
@@ -276,7 +276,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               </div>
 
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>Description</label>
+                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Description</label>
                 <input value={description} onChange={e => setDescription(e.target.value)} maxLength={200} placeholder="What did you buy?" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
             </div>
@@ -286,7 +286,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               <button
                 onClick={reset}
                 className="flex-1 font-display text-xs py-2.5 rounded-xl"
-                style={{ border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.4)' }}
+                style={{ border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.58)' }}
               >
                 Scan again
               </button>

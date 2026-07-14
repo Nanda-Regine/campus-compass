@@ -59,7 +59,7 @@ export default function EarningsPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="budget" opacity={0.26} blurPx={8} saturation={1.3} overlayColor="rgba(5,4,12,0.55)" />
+      <AmbientImage zone="budget" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.42)" />
       <TopBar title="Earnings" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 

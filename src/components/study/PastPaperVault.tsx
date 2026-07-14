@@ -257,7 +257,7 @@ export default function PastPaperVault({ userId }: Props) {
                 </button>
                 <button
                   onClick={() => { setScanState('idle'); setActiveTab('upload') }}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: '13px', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)', color: '#9ca3af', fontSize: '13px', cursor: 'pointer' }}
                 >
                   Paste text instead
                 </button>
@@ -356,7 +356,7 @@ export default function PastPaperVault({ userId }: Props) {
                 placeholder="e.g. ECS2605"
                 required
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 12px',
@@ -375,7 +375,7 @@ export default function PastPaperVault({ userId }: Props) {
                 placeholder="e.g. Macroeconomics"
                 required
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 12px',
@@ -395,7 +395,7 @@ export default function PastPaperVault({ userId }: Props) {
                 value={uploadForm.year}
                 onChange={e => setUploadForm(f => ({ ...f, year: Number(e.target.value) }))}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '10px',
                   padding: '10px 12px',
@@ -442,7 +442,7 @@ export default function PastPaperVault({ userId }: Props) {
               rows={6}
               placeholder="Paste the paper content here. Nova will analyse topics, predict questions, and estimate prep time."
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.08)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '10px',
                 padding: '12px',
@@ -482,7 +482,7 @@ export default function PastPaperVault({ userId }: Props) {
           {loading ? (
             <div className="flex flex-col gap-3">
               {[1, 2, 3].map(i => (
-                <div key={i} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '16px', height: '100px', border: '1px solid rgba(255,255,255,0.06)' }} />
+                <div key={i} style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '16px', height: '100px', border: '1px solid rgba(255,255,255,0.06)' }} />
               ))}
             </div>
           ) : papers.length === 0 ? (
@@ -503,7 +503,7 @@ export default function PastPaperVault({ userId }: Props) {
             <div className="grid grid-cols-2 gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
               {papers.map(paper => (
                 <div key={paper.id} style={{
-                  background: 'rgba(255,255,255,0.03)',
+                  background: 'rgba(255,255,255,0.06)',
                   border: '1px solid rgba(255,255,255,0.06)',
                   borderRadius: '16px',
                   padding: '16px',
@@ -642,7 +642,7 @@ export default function PastPaperVault({ userId }: Props) {
           ) : (
             <>
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '16px',
                 padding: '20px',
@@ -652,7 +652,7 @@ export default function PastPaperVault({ userId }: Props) {
               </div>
 
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '16px',
                 padding: '20px',
@@ -662,7 +662,7 @@ export default function PastPaperVault({ userId }: Props) {
               </div>
 
               <div style={{
-                background: 'rgba(255,255,255,0.03)',
+                background: 'rgba(255,255,255,0.06)',
                 border: '1px solid rgba(255,255,255,0.06)',
                 borderRadius: '16px',
                 padding: '20px',
