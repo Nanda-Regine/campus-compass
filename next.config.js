@@ -66,6 +66,23 @@ const withPWA = require('@ducanh2912/next-pwa').default({
   fallbacks: {
     document: '/offline',
   },
+  // Cache pages as the user navigates (SPA) so recently-visited rooms work offline.
+  cacheOnFrontEndNav: true,
+  // Slim the workbox PRECACHE to the app shell (JS/CSS). Precaching every image,
+  // font and source map made the service-worker `install` hang forever in
+  // "installing" state, so it never activated and offline never worked. Images and
+  // fonts are still available offline via the runtimeCaching rules above
+  // (CacheFirst), just cached on first use instead of all up-front at install.
+  workboxOptions: {
+    exclude: [
+      /\.map$/,
+      /^manifest.*\.js$/,
+      /\.(?:png|jpe?g|svg|gif|webp|avif|ico)$/i,
+      /\.(?:woff2?|ttf|otf|eot)$/i,
+      /\.(?:mp4|webm|mp3|wav)$/i,
+    ],
+    maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+  },
 })
 
 /** @type {import('next').NextConfig} */
