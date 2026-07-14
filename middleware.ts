@@ -67,6 +67,18 @@ const MAX_BODY_BYTES = 2_097_152 // 2 MB
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // ── 0. Canonical host: www → apex ────────────────────────────
+  // www.varsityos.co.za serves the app directly (no redirect), which breaks Google
+  // OAuth: from www the app sends redirect_to=https://www.../auth/callback, which
+  // isn't in Supabase's allowed Redirect URLs, so Supabase dumps the user on the
+  // Site URL (apex landing page) instead of /dashboard. And /auth/callback hard-codes
+  // the apex origin, so a www login would set cookies on www then redirect to apex and
+  // lose the session. Force everyone onto the one canonical host so both are correct.
+  if (request.headers.get('host') === 'www.varsityos.co.za') {
+    return NextResponse.redirect(`https://varsityos.co.za${pathname}${request.nextUrl.search}`, 308)
+  }
+
   const reqId = crypto.randomUUID()
 
   // Paystack subscription webhook is an external POST forwarded by the Mirembe hub;
