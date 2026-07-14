@@ -80,7 +80,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
             Your referrals
           </p>
           <p className="font-display font-black text-6xl text-white mb-1">{referralCount}</p>
-          <p className="font-mono text-[0.65rem] text-white/65">
+          <p className="font-mono text-[0.65rem] text-white/82">
             {referralCount === 1 ? 'friend joined' : 'friends joined'} with your link
           </p>
           {xpEarned > 0 && (
@@ -94,17 +94,17 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
         {/* Referral link card */}
         <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5 space-y-4">
           <div>
-            <p className="font-mono text-[0.58rem] text-white/60 uppercase tracking-widest mb-2">Your referral code</p>
+            <p className="font-mono text-[0.58rem] text-white/80 uppercase tracking-widest mb-2">Your referral code</p>
             <div className="flex items-center gap-3 bg-white/3 border border-white/10 rounded-xl px-4 py-3">
               <span className="font-mono font-black text-white text-xl tracking-widest uppercase flex-1">
                 {referralCode || '—'}
               </span>
-              <span className="font-mono text-[0.55rem] text-white/50">unique to you</span>
+              <span className="font-mono text-[0.55rem] text-white/75">unique to you</span>
             </div>
           </div>
 
           <div>
-            <p className="font-mono text-[0.58rem] text-white/60 uppercase tracking-widest mb-2">Your referral link</p>
+            <p className="font-mono text-[0.58rem] text-white/80 uppercase tracking-widest mb-2">Your referral link</p>
             <div className="flex items-center gap-2 bg-white/3 border border-white/8 rounded-xl px-3 py-2.5">
               <span className="font-mono text-[0.6rem] text-white/70 truncate flex-1">{referralUrl}</span>
               <button
@@ -131,7 +131,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
             </button>
             <button
               onClick={copyLink}
-              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white font-display font-bold text-xs py-3 rounded-xl transition-all"
+              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white font-display font-bold text-xs py-3 rounded-xl transition-all"
             >
               <span>🔗</span> Copy Link
             </button>
@@ -143,14 +143,14 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
           <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="font-mono text-[0.58rem] text-white/60 uppercase tracking-widest">Next milestone</p>
+                <p className="font-mono text-[0.58rem] text-white/80 uppercase tracking-widest">Next milestone</p>
                 <p className="font-display font-bold text-white text-sm mt-0.5">
                   {nextMilestone.icon} {nextMilestone.count} referrals → {nextMilestone.reward}
                 </p>
               </div>
               <div className="text-right">
                 <p className="font-display font-bold text-teal-400 text-lg">{referralCount}/{nextMilestone.count}</p>
-                <p className="font-mono text-[0.55rem] text-white/55">friends</p>
+                <p className="font-mono text-[0.55rem] text-white/78">friends</p>
               </div>
             </div>
             <div className="h-2 bg-white/8 rounded-full overflow-hidden">
@@ -166,13 +166,13 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
           <div className="bg-amber-500/8 border border-amber-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl mb-1">👑</p>
             <p className="font-display font-bold text-amber-400 text-sm">{name}, you&apos;re a VarsityOS legend!</p>
-            <p className="font-mono text-[0.6rem] text-white/65 mt-1">10+ referrals — Premium reward being processed</p>
+            <p className="font-mono text-[0.6rem] text-white/82 mt-1">10+ referrals — Premium reward being processed</p>
           </div>
         )}
 
         {/* How it works */}
         <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5">
-          <p className="font-mono text-[0.58rem] text-white/60 uppercase tracking-widest mb-4">How it works</p>
+          <p className="font-mono text-[0.58rem] text-white/80 uppercase tracking-widest mb-4">How it works</p>
           <div className="space-y-4">
             {HOW_IT_WORKS.map(step => (
               <div key={step.step} className="flex gap-4">
@@ -181,10 +181,10 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-mono text-[0.65rem] text-white/50">{step.step}</span>
+                    <span className="font-mono text-[0.65rem] text-white/75">{step.step}</span>
                     <p className="font-display font-bold text-white text-sm">{step.title}</p>
                   </div>
-                  <p className="font-mono text-[0.62rem] text-white/68 leading-relaxed">{step.desc}</p>
+                  <p className="font-mono text-[0.62rem] text-white/85 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -193,7 +193,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
 
         {/* Milestones table */}
         <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-5">
-          <p className="font-mono text-[0.58rem] text-white/60 uppercase tracking-widest mb-4">Reward milestones</p>
+          <p className="font-mono text-[0.58rem] text-white/80 uppercase tracking-widest mb-4">Reward milestones</p>
           <div className="space-y-2">
             {MILESTONES.map(m => {
               const reached = referralCount >= m.count
@@ -209,10 +209,10 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
                 >
                   <span className="text-lg w-7 text-center">{m.icon}</span>
                   <div className="flex-1">
-                    <p className={cn('font-display font-bold text-sm', reached ? 'text-teal-300' : 'text-white/60')}>
+                    <p className={cn('font-display font-bold text-sm', reached ? 'text-teal-300' : 'text-white/80')}>
                       {m.reward}
                     </p>
-                    <p className="font-mono text-[0.55rem] text-white/50">{m.count} referral{m.count > 1 ? 's' : ''}</p>
+                    <p className="font-mono text-[0.55rem] text-white/75">{m.count} referral{m.count > 1 ? 's' : ''}</p>
                   </div>
                   {reached && (
                     <span className="font-mono text-[0.6rem] text-teal-400 bg-teal-600/15 px-2 py-0.5 rounded-full">✓ earned</span>
@@ -224,7 +224,7 @@ export default function ReferralPageClient({ referralCode, referralUrl, referral
         </div>
 
         {/* Fine print */}
-        <p className="font-mono text-[0.55rem] text-white/45 text-center pb-2">
+        <p className="font-mono text-[0.55rem] text-white/72 text-center pb-2">
           XP is permanent — it climbs your level and unlocks badges, and never expires.
           The 10-referral Premium reward is reviewed manually within 48 hours.
         </p>

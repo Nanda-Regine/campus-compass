@@ -83,24 +83,24 @@ export default function EarningsPage() {
         {/* ─── Current month context ─── */}
         {thisMonth && thisMonth.earnings > 0 && (
           <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
-            <div className="font-mono text-[0.58rem] text-white/55 uppercase tracking-widest mb-2">
+            <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest mb-2">
               {thisMonth.label}
             </div>
             <div className="font-display font-black text-2xl text-amber-400 mb-1">
               {fmt.currencyShort(thisMonth.earnings)}
             </div>
-            <div className="font-mono text-[0.58rem] text-white/65">
+            <div className="font-mono text-[0.58rem] text-white/82">
               {thisMonth.hours.toFixed(1)} hours across {thisMonth.shifts} shifts
             </div>
 
             {/* What it covered */}
             <div className="mt-3 pt-3 border-t border-white/7">
-              <div className="font-mono text-[0.58rem] text-white/55 mb-1.5">Approximate coverage</div>
+              <div className="font-mono text-[0.58rem] text-white/78 mb-1.5">Approximate coverage</div>
               <div className="space-y-1">
                 {getWhatItCovers(thisMonth.earnings).map(item => (
                   <div key={item.label} className="flex items-center justify-between text-xs">
-                    <span className="font-body text-white/55">{item.emoji} {item.label}</span>
-                    <span className={`font-mono font-bold ${item.covered ? 'text-teal-400' : 'text-white/50'}`}>
+                    <span className="font-body text-white/78">{item.emoji} {item.label}</span>
+                    <span className={`font-mono font-bold ${item.covered ? 'text-teal-400' : 'text-white/75'}`}>
                       {item.covered ? '✓ covered' : fmt.currencyShort(item.cost)}
                     </span>
                   </div>
@@ -112,7 +112,7 @@ export default function EarningsPage() {
 
         {/* ─── Month history ─── */}
         <section>
-          <div className="font-mono text-[0.6rem] text-white/55 uppercase tracking-widest mb-2.5">Monthly history</div>
+          <div className="font-mono text-[0.6rem] text-white/78 uppercase tracking-widest mb-2.5">Monthly history</div>
           {loading ? (
             <div className="space-y-2">
               {[1,2].map(i => <div key={i} className="skeleton h-16 rounded-2xl" />)}
@@ -120,7 +120,7 @@ export default function EarningsPage() {
           ) : sorted.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-3xl mb-2">💸</div>
-              <p className="font-mono text-[0.6rem] text-white/55">No worked shifts yet — mark shifts as worked to track earnings</p>
+              <p className="font-mono text-[0.6rem] text-white/78">No worked shifts yet — mark shifts as worked to track earnings</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -128,7 +128,7 @@ export default function EarningsPage() {
                 <div key={m.month} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl px-4 py-3.5 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="font-display font-bold text-white text-sm">{m.label}</div>
-                    <div className="font-mono text-[0.58rem] text-white/60 mt-0.5">
+                    <div className="font-mono text-[0.58rem] text-white/80 mt-0.5">
                       {m.hours.toFixed(1)} hrs · {m.shifts} shifts
                     </div>
                   </div>

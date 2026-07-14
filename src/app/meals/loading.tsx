@@ -5,7 +5,7 @@ export default function Loading() {
         <div className="w-10 h-10 rounded-2xl bg-green-600/20 flex items-center justify-center animate-pulse">
           <span className="text-xl">🍽️</span>
         </div>
-        <div className="font-mono text-[0.6rem] text-white/55 tracking-widest uppercase animate-pulse">Loading…</div>
+        <div className="font-mono text-[0.6rem] text-white/78 tracking-widest uppercase animate-pulse">Loading…</div>
       </div>
     </div>
   )

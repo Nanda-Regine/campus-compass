@@ -413,7 +413,7 @@ export default function SetupFlow() {
           <Image src="/favicon.jpg" alt="VarsityOS" width={56} height={56} className="object-contain" />
         </div>
         <div className="font-display font-black text-xl text-white">VarsityOS</div>
-        <div className="font-mono text-[0.6rem] text-white/60 tracking-widest uppercase mt-1">
+        <div className="font-mono text-[0.6rem] text-white/80 tracking-widest uppercase mt-1">
           Your varsity life, fully organised
         </div>
       </div>
@@ -444,7 +444,7 @@ export default function SetupFlow() {
                   onKeyDown={e => e.key === 'Enter' && handleNext()}
                 />
                 <div>
-                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Pick your avatar</div>
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Pick your avatar</div>
                   <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                     {EMOJIS.map(e => (
                       <button
@@ -479,7 +479,7 @@ export default function SetupFlow() {
                   <span className="text-lg">🎓</span>
                   <div>
                     <p className="font-display font-bold text-teal-400 text-xs">Detected from your email</p>
-                    <p className="font-mono text-[0.62rem] text-white/60">{detectedUniversity}</p>
+                    <p className="font-mono text-[0.62rem] text-white/80">{detectedUniversity}</p>
                   </div>
                 </div>
               )}
@@ -487,7 +487,7 @@ export default function SetupFlow() {
               <div className="space-y-4">
                 {/* Searchable institution combobox */}
                 <div>
-                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">
                     University / Institution
                   </div>
                   <div ref={uniRef} className="relative">
@@ -497,13 +497,13 @@ export default function SetupFlow() {
                       value={uniDropdownOpen ? uniQuery : (university || '')}
                       onFocus={() => { setUniDropdownOpen(true); setUniQuery('') }}
                       onChange={e => setUniQuery(e.target.value)}
-                      className="w-full bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/55 outline-none transition-all font-body"
+                      className="w-full bg-[var(--bg-surface)] border border-white/10 hover:border-white/20 focus:border-teal-600 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/78 outline-none transition-all font-body"
                     />
                     {university && !uniDropdownOpen && (
                       <button
                         type="button"
                         onClick={() => { setUniversity(''); setUniQuery('') }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/55 hover:text-white/60 text-xs"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/78 hover:text-white/80 text-xs"
                       >
                         ✕
                       </button>
@@ -534,14 +534,14 @@ export default function SetupFlow() {
                           ))
                         }
                         {SA_UNIVERSITIES.filter(u => u.toLowerCase().includes(uniQuery.toLowerCase())).length === 0 && (
-                          <div className="px-4 py-3 font-mono text-[0.62rem] text-white/55">No match found</div>
+                          <div className="px-4 py-3 font-mono text-[0.62rem] text-white/78">No match found</div>
                         )}
                       </div>
                     )}
                   </div>
                 </div>
                 <div>
-                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Year of Study</div>
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Year of Study</div>
                   <div className="flex flex-wrap gap-2">
                     {YEARS.map(y => (
                       <button
@@ -552,7 +552,7 @@ export default function SetupFlow() {
                           'px-3 py-2 rounded-xl text-xs font-display font-bold transition-all',
                           year === y
                             ? 'bg-teal-600/20 border border-teal-500 text-teal-400'
-                            : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white'
+                            : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white'
                         )}
                       >
                         {y}
@@ -581,7 +581,7 @@ export default function SetupFlow() {
               <div className="space-y-4">
                 {/* Student status — determines funding options */}
                 <div className="space-y-2">
-                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-1">Student status</div>
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-1">Student status</div>
                   <div className="grid grid-cols-2 gap-2">
                     {([
                       { key: 'sa_citizen',          label: '🇿🇦 SA Citizen' },
@@ -597,7 +597,7 @@ export default function SetupFlow() {
                           'px-3 py-2.5 rounded-xl border text-left text-xs font-display font-bold transition-all',
                           studentStatus === s.key
                             ? 'bg-sky-500/15 border-sky-500/50 text-sky-300'
-                            : 'bg-white/3 border-white/8 text-white/60 hover:bg-white/8'
+                            : 'bg-white/3 border-white/8 text-white/80 hover:bg-white/8'
                         )}
                       >{s.label}</button>
                     ))}
@@ -628,7 +628,7 @@ export default function SetupFlow() {
                       <span className="text-xl flex-shrink-0">{f.icon}</span>
                       <div>
                         <div className="font-display font-bold text-sm">{f.name}</div>
-                        <div className="font-mono text-[0.58rem] text-white/65">{f.desc}</div>
+                        <div className="font-mono text-[0.58rem] text-white/82">{f.desc}</div>
                       </div>
                     </button>
                   ))}
@@ -679,7 +679,7 @@ export default function SetupFlow() {
                       <div>
                         <span className="font-mono text-[0.57rem] text-sky-400 uppercase tracking-widest">Fastest way</span>
                         <p className="font-display font-bold text-sm text-white mt-0.5">Import your university timetable</p>
-                        <p className="font-mono text-[0.58rem] text-white/60 mt-0.5">Adds all classes + exams from a .ics calendar file</p>
+                        <p className="font-mono text-[0.58rem] text-white/80 mt-0.5">Adds all classes + exams from a .ics calendar file</p>
                       </div>
                       {icsImported && (
                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 text-xs font-bold">✓</span>
@@ -697,7 +697,7 @@ export default function SetupFlow() {
                 {!isTVET && (
                   <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-white/8" />
-                    <span className="font-mono text-[0.57rem] text-white/50 uppercase">
+                    <span className="font-mono text-[0.57rem] text-white/75 uppercase">
                       {icsImported ? 'add extra subjects' : 'or add manually'}
                     </span>
                     <div className="h-px flex-1 bg-white/8" />
@@ -716,7 +716,7 @@ export default function SetupFlow() {
                           />
                           <span className="text-sm text-white font-body">{m}</span>
                         </div>
-                        <button type="button" onClick={() => removeModule(m)} className="text-white/50 hover:text-red-400 transition-colors text-sm ml-2">✕</button>
+                        <button type="button" onClick={() => removeModule(m)} className="text-white/75 hover:text-red-400 transition-colors text-sm ml-2">✕</button>
                       </div>
                     ))}
                   </div>
@@ -726,7 +726,7 @@ export default function SetupFlow() {
                   /* TVET: level + program selectors */
                   <div className="space-y-3">
                     <div>
-                      <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Study Level</div>
+                      <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Study Level</div>
                       <div className="flex flex-wrap gap-2">
                         {[...TVET_N_LEVELS, ...TVET_NCV_LEVELS].map(lvl => (
                           <button
@@ -747,7 +747,7 @@ export default function SetupFlow() {
                     </div>
                     {tvetLevel && (
                       <div>
-                        <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Programme</div>
+                        <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Programme</div>
                         <div className="flex flex-wrap gap-2">
                           {tvetPrograms.map(prog => (
                             <button
@@ -787,7 +787,7 @@ export default function SetupFlow() {
                 {/* Next exam quick-capture */}
                 {!isTVET && (
                   <div className="pt-3 border-t border-white/8 space-y-3">
-                    <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-wide">Next exam (optional)</div>
+                    <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-wide">Next exam (optional)</div>
                     <div className="flex flex-wrap gap-2">
                       <Input
                         placeholder="e.g. Mathematics 201"
@@ -809,7 +809,7 @@ export default function SetupFlow() {
                   </div>
                 )}
 
-                <p className="font-mono text-[0.6rem] text-white/50">
+                <p className="font-mono text-[0.6rem] text-white/75">
                   This step is optional — you can skip and add subjects later.
                 </p>
               </div>
@@ -838,7 +838,7 @@ export default function SetupFlow() {
                 />
 
                 <div>
-                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Dietary preference</div>
+                  <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Dietary preference</div>
                   <div className="flex flex-wrap gap-2">
                     {DIETS.map(d => (
                       <button
@@ -881,14 +881,14 @@ export default function SetupFlow() {
 
               {/* Language of training */}
               <div className="mb-5">
-                <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Train me in</div>
+                <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Train me in</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                   {([['en','English'],['zu','isiZulu'],['xh','isiXhosa'],['af','Afrikaans'],['nso','Sepedi'],['st','Sesotho'],['tn','Setswana'],['ts','Xitsonga'],['ss','siSwati'],['ve','Tshivenda'],['nr','isiNdebele']] as [string,string][]).map(([code, name]) => (
                     <button key={code} type="button" onClick={() => setPreferredLang(code)} className={cn(
                       'py-1.5 px-2 rounded-lg text-[0.62rem] font-mono transition-all border',
                       preferredLang === code
                         ? 'bg-teal-600/20 border-teal-500 text-teal-300'
-                        : 'bg-white/4 border-white/8 text-white/65 hover:text-white/60'
+                        : 'bg-white/4 border-white/8 text-white/82 hover:text-white/80'
                     )}>{name}</button>
                   ))}
                 </div>
@@ -910,7 +910,7 @@ export default function SetupFlow() {
                   ))}
                 </div>
 
-                <p className="font-mono text-[0.57rem] text-white/50">
+                <p className="font-mono text-[0.57rem] text-white/75">
                   You can turn these off any time in your Profile settings.
                 </p>
 
@@ -935,7 +935,7 @@ export default function SetupFlow() {
               <button
                 type="button"
                 onClick={goNext}
-                className="font-mono text-[0.65rem] text-white/55 hover:text-white/70 transition-colors"
+                className="font-mono text-[0.65rem] text-white/78 hover:text-white/70 transition-colors"
               >
                 Skip →
               </button>

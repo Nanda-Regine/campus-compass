@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
             <span className="font-display font-bold text-white">VarsityOS</span>
           </Link>
           <h1 className="font-display font-black text-2xl text-white mb-1.5">Set a new password</h1>
-          <p className="font-mono text-xs text-white/65">Choose something strong and memorable.</p>
+          <p className="font-mono text-xs text-white/82">Choose something strong and memorable.</p>
         </div>
 
         <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-white/55 hover:text-white/60 transition-colors"
+                    className="text-white/78 hover:text-white/80 transition-colors"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                     aria-pressed={showPassword}
                   >
@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
           <span className="font-display font-bold text-white">VarsityOS</span>
         </Link>
         <h1 className="font-display font-black text-2xl text-white mb-1.5">Reset your password</h1>
-        <p className="font-mono text-xs text-white/65">We&apos;ll send you a link to reset it.</p>
+        <p className="font-mono text-xs text-white/82">We&apos;ll send you a link to reset it.</p>
       </div>
 
       <div className="flex-1 px-5 pb-10 max-w-sm mx-auto w-full">
@@ -191,7 +191,7 @@ export default function ResetPasswordPage() {
             </Button>
           </form>
         </div>
-        <p className="text-center mt-5 font-mono text-xs text-white/55">
+        <p className="text-center mt-5 font-mono text-xs text-white/78">
           Remembered it?{' '}
           <Link href="/auth/login" className="text-teal-500 hover:text-teal-400 transition-colors">
             Back to login

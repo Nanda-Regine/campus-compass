@@ -92,7 +92,7 @@ export default function AddJobPage() {
           />
 
           <div>
-            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-2">Job type</div>
+            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-2">Job type</div>
             <div className="grid grid-cols-2 gap-2">
               {JOB_TYPES.map(type => (
                 <button
@@ -199,7 +199,7 @@ export default function AddJobPage() {
             />
             <div>
               <div className="font-display font-bold text-white text-sm">Protect exam periods</div>
-              <div className="font-mono text-[0.58rem] text-white/60 mt-0.5">
+              <div className="font-mono text-[0.58rem] text-white/80 mt-0.5">
                 Nova will flag shifts within 3 days of an exam and remind you to request time off
               </div>
             </div>

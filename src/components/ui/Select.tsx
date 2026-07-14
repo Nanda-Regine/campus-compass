@@ -28,7 +28,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
       {label && (
         <label
           htmlFor={selectId}
-          className="block font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-1.5"
+          className="block font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-1.5"
         >
           {label}
         </label>
@@ -69,7 +69,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
         <p className="mt-1 font-mono text-[0.6rem] text-red-400">{error}</p>
       )}
       {hint && !error && (
-        <p className="mt-1 font-mono text-[0.6rem] text-white/55">{hint}</p>
+        <p className="mt-1 font-mono text-[0.6rem] text-white/78">{hint}</p>
       )}
     </div>
   )

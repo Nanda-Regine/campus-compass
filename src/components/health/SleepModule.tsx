@@ -204,7 +204,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 <div className="font-display font-bold text-sm text-white">
                   {todayHours}h logged for today
                 </div>
-                <div className="font-mono text-[0.62rem] text-white/65">
+                <div className="font-mono text-[0.62rem] text-white/82">
                   {todayHours >= 8 ? 'Excellent recovery' : todayHours >= 7 ? 'Good — aim for 7–9h' : todayHours >= 6 ? 'Slightly short — one more hour helps a lot' : 'Significantly sleep deprived — rest is productive'}
                 </div>
               </div>
@@ -213,13 +213,13 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
           {/* Form card */}
           <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 space-y-4">
-            <div className="font-mono text-[0.62rem] text-white/60 uppercase tracking-widest">
+            <div className="font-mono text-[0.62rem] text-white/80 uppercase tracking-widest">
               {editId ? 'Update today\'s sleep' : 'Log last night\'s sleep'}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="font-mono text-[0.62rem] text-white/65 block mb-1.5">Bed time</label>
+                <label className="font-mono text-[0.62rem] text-white/82 block mb-1.5">Bed time</label>
                 <input
                   type="time"
                   value={bedtime}
@@ -228,7 +228,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 />
               </div>
               <div>
-                <label className="font-mono text-[0.62rem] text-white/65 block mb-1.5">Wake time</label>
+                <label className="font-mono text-[0.62rem] text-white/82 block mb-1.5">Wake time</label>
                 <input
                   type="time"
                   value={wakeTime}
@@ -241,7 +241,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
             {/* Duration preview */}
             {bedtime && wakeTime && (
               <div className="flex items-center gap-2">
-                <div className="font-mono text-[0.6rem] text-white/55">Duration:</div>
+                <div className="font-mono text-[0.6rem] text-white/78">Duration:</div>
                 <div
                   className="font-display font-black text-base"
                   style={{ color: hoursColor(sleepHours(bedtime, wakeTime)) }}
@@ -256,7 +256,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
             {/* Quality */}
             <div>
-              <label className="font-mono text-[0.62rem] text-white/65 block mb-2">Sleep quality</label>
+              <label className="font-mono text-[0.62rem] text-white/82 block mb-2">Sleep quality</label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map(q => (
                   <button
@@ -281,19 +281,19 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               style={{ background: 'rgba(251,191,36,0.06)', border: '0.5px solid rgba(251,191,36,0.2)' }}
             >
               <div className="font-mono text-[0.62rem] text-amber-400 uppercase tracking-widest">⚡ Load shedding + sleep</div>
-              <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed">
+              <p className="font-mono text-[0.62rem] text-white/78 leading-relaxed">
                 Phone or laptop screens during outages expose you to blue light with no ambient light to balance it. This suppresses melatonin and can delay your sleep by 1–2 hours. Switch to a red-tinted screen mode or warm candlelight during load shedding — your brain needs the darkness signal to start winding down.
               </p>
             </div>
 
             {/* Notes */}
             <div>
-              <label className="font-mono text-[0.62rem] text-white/65 block mb-1.5">Notes (optional)</label>
+              <label className="font-mono text-[0.62rem] text-white/82 block mb-1.5">Notes (optional)</label>
               <input
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 placeholder="e.g. stressed about exam, woke up twice"
-                className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/45 outline-none transition-all"
+                className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/72 outline-none transition-all"
               />
             </div>
 
@@ -310,7 +310,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
           {/* Recent logs list */}
           {recentLogs.length > 0 && (
             <div>
-              <div className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest mb-2">Recent nights</div>
+              <div className="font-mono text-[0.62rem] text-white/78 uppercase tracking-widest mb-2">Recent nights</div>
               <div className="space-y-2">
                 {recentLogs.map(log => {
                   const h = sleepHours(log.bedtime, log.wake_time)
@@ -329,14 +329,14 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                           <div className="font-mono text-[0.62rem] font-bold" style={{ color: hoursColor(h) }}>{h}h</div>
                           {log.quality && <span className="text-sm">{qualityEmoji(log.quality)}</span>}
                         </div>
-                        <div className="font-mono text-[0.62rem] text-white/55">
+                        <div className="font-mono text-[0.62rem] text-white/78">
                           {log.bedtime.slice(0, 5)} → {log.wake_time.slice(0, 5)}
                           {log.notes && ` · ${log.notes}`}
                         </div>
                       </div>
                       <button
                         onClick={() => deleteLog(log.id)}
-                        className="opacity-0 group-hover:opacity-100 text-white/45 hover:text-red-400 transition-all text-xs flex-shrink-0"
+                        className="opacity-0 group-hover:opacity-100 text-white/72 hover:text-red-400 transition-all text-xs flex-shrink-0"
                       >
                         ✕
                       </button>
@@ -356,7 +356,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
             <div className="text-center py-12">
               <div className="text-4xl mb-3">🌙</div>
               <div className="font-display font-bold text-white mb-1">No sleep data yet</div>
-              <div className="font-mono text-[0.6rem] text-white/55">Log a few nights to see your stats</div>
+              <div className="font-mono text-[0.6rem] text-white/78">Log a few nights to see your stats</div>
             </div>
           ) : (
             <>
@@ -364,23 +364,23 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg" style={{ color: hoursColor(avgHours) }}>{avgHours.toFixed(1)}h</div>
-                  <div className="font-mono text-[0.62rem] text-white/60 mt-0.5">Avg / night</div>
+                  <div className="font-mono text-[0.62rem] text-white/80 mt-0.5">Avg / night</div>
                 </div>
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg" style={{ color: sleepDebt > 5 ? '#FB7185' : sleepDebt > 2 ? '#f59e0b' : '#4ecf9e' }}>
                     {sleepDebt.toFixed(1)}h
                   </div>
-                  <div className="font-mono text-[0.62rem] text-white/60 mt-0.5">Sleep debt</div>
+                  <div className="font-mono text-[0.62rem] text-white/80 mt-0.5">Sleep debt</div>
                 </div>
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-3 text-center">
                   <div className="font-display font-black text-lg text-indigo-400">{recentLogs.length}</div>
-                  <div className="font-mono text-[0.62rem] text-white/60 mt-0.5">Nights logged</div>
+                  <div className="font-mono text-[0.62rem] text-white/80 mt-0.5">Nights logged</div>
                 </div>
               </div>
 
               {/* 7-day bar chart */}
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
-                <div className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest mb-3">Last 7 nights</div>
+                <div className="font-mono text-[0.62rem] text-white/78 uppercase tracking-widest mb-3">Last 7 nights</div>
                 <div className="flex items-end gap-2 h-24">
                   {recentLogs.slice(0, 7).reverse().map(log => {
                     const h = sleepHours(log.bedtime, log.wake_time)
@@ -388,7 +388,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                     const date = log.sleep_date.slice(5) // MM-DD
                     return (
                       <div key={log.id} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="font-mono text-[0.65rem] text-white/55">{h}h</div>
+                        <div className="font-mono text-[0.65rem] text-white/78">{h}h</div>
                         <div
                           className="w-full rounded-t-md transition-all"
                           style={{
@@ -398,7 +398,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                             opacity: 0.85,
                           }}
                         />
-                        <div className="font-mono text-[0.62rem] text-white/50 text-center leading-tight">{date}</div>
+                        <div className="font-mono text-[0.62rem] text-white/75 text-center leading-tight">{date}</div>
                       </div>
                     )
                   })}
@@ -406,15 +406,15 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                 <div className="flex items-center gap-3 mt-3">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-teal-400" />
-                    <div className="font-mono text-[0.65rem] text-white/60">7h+ (goal)</div>
+                    <div className="font-mono text-[0.65rem] text-white/80">7h+ (goal)</div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-amber-400" />
-                    <div className="font-mono text-[0.65rem] text-white/60">6–7h</div>
+                    <div className="font-mono text-[0.65rem] text-white/80">6–7h</div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full bg-rose-400" />
-                    <div className="font-mono text-[0.65rem] text-white/60">&lt;6h</div>
+                    <div className="font-mono text-[0.65rem] text-white/80">&lt;6h</div>
                   </div>
                 </div>
               </div>
@@ -471,12 +471,12 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
               >
                 <div className="text-4xl mb-2">{chronotype.name.split(' ')[1]}</div>
                 <div className="font-display font-black text-xl text-white mb-1">{chronotype.name}</div>
-                <div className="font-body text-sm text-white/65 leading-relaxed max-w-xs mx-auto">{chronotype.desc}</div>
+                <div className="font-body text-sm text-white/82 leading-relaxed max-w-xs mx-auto">{chronotype.desc}</div>
               </div>
 
               {/* Score breakdown */}
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
-                <div className="font-mono text-[0.62rem] text-white/55 uppercase tracking-widest mb-3">Your chronotype spectrum</div>
+                <div className="font-mono text-[0.62rem] text-white/78 uppercase tracking-widest mb-3">Your chronotype spectrum</div>
                 <div className="relative h-2 bg-white/8 rounded-full overflow-hidden">
                   <div
                     className="absolute left-0 top-0 h-full rounded-full"
@@ -502,7 +502,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
 
               <button
                 onClick={() => { setAnswers(Array(5).fill(-1)); setQuizDone(false); localStorage.removeItem('chronotype_answers') }}
-                className="w-full font-mono text-[0.6rem] text-white/55 hover:text-white/70 py-2 transition-colors"
+                className="w-full font-mono text-[0.6rem] text-white/78 hover:text-white/70 py-2 transition-colors"
               >
                 Retake quiz
               </button>
@@ -511,7 +511,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
             <>
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4">
                 <div className="font-display font-bold text-white mb-1">Discover your chronotype</div>
-                <div className="font-body text-sm text-white/55 mb-4">
+                <div className="font-body text-sm text-white/78 mb-4">
                   Your chronotype is your body&apos;s natural sleep–wake preference. Knowing it lets you schedule study sessions at your peak cognitive hours.
                 </div>
                 <div className="space-y-5">
@@ -530,7 +530,7 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
                               'w-full text-left px-3 py-2.5 rounded-xl border font-body text-sm transition-all',
                               answers[qi] === oi
                                 ? 'bg-indigo-500/15 border-indigo-500/40 text-white'
-                                : 'bg-[var(--bg-base)] border-white/8 text-white/55 hover:border-white/15'
+                                : 'bg-[var(--bg-base)] border-white/8 text-white/78 hover:border-white/15'
                             )}
                           >
                             {opt}

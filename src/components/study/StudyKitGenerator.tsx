@@ -149,7 +149,7 @@ export default function StudyKitGenerator({ modules }: Props) {
       <div>
         <div className="font-mono text-[0.55rem] text-purple-400 tracking-widest mb-0.5">AI STUDY KIT</div>
         <div className="font-display font-bold text-white text-lg leading-tight">Generate from notes</div>
-        <div className="font-mono text-[0.6rem] text-white/60 mt-1 leading-relaxed">
+        <div className="font-mono text-[0.6rem] text-white/80 mt-1 leading-relaxed">
           Paste lecture notes or a past-paper question. Nova generates a summary, key concepts, 10 flashcards, and a quiz in seconds.
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function StudyKitGenerator({ modules }: Props) {
             value={subject}
             onChange={e => setSubject(e.target.value)}
             placeholder="Subject / topic (optional)"
-            className="col-span-2 w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-purple-500 font-body"
+            className="col-span-2 w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/72 outline-none focus:border-purple-500 font-body"
           />
         </div>
 
@@ -171,7 +171,7 @@ export default function StudyKitGenerator({ modules }: Props) {
             onChange={e => setText(e.target.value)}
             placeholder="Paste your lecture notes, textbook excerpt, or past-paper question here…"
             rows={7}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/45 outline-none focus:border-purple-500 resize-none font-body leading-relaxed"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/72 outline-none focus:border-purple-500 resize-none font-body leading-relaxed"
           />
           {/* Character progress */}
           <div className="absolute bottom-2 right-2.5 flex items-center gap-1.5">
@@ -222,7 +222,7 @@ export default function StudyKitGenerator({ modules }: Props) {
           {/* Key Concepts */}
           {kit.key_concepts.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-              <div className="font-mono text-[0.55rem] text-white/60 tracking-widest mb-3">KEY CONCEPTS</div>
+              <div className="font-mono text-[0.55rem] text-white/80 tracking-widest mb-3">KEY CONCEPTS</div>
               <div className="flex flex-wrap gap-1.5">
                 {kit.key_concepts.map((c, i) => (
                   <span key={i} className="font-mono text-[0.6rem] px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
@@ -237,10 +237,10 @@ export default function StudyKitGenerator({ modules }: Props) {
           {kit.flashcards.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="font-mono text-[0.55rem] text-white/60 tracking-widest">
+                <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">
                   FLASHCARDS ({kit.flashcards.length})
                 </div>
-                <span className="font-mono text-[0.65rem] text-white/50">tap to flip</span>
+                <span className="font-mono text-[0.65rem] text-white/75">tap to flip</span>
               </div>
               <div className="space-y-2">
                 {kit.flashcards.map((c, i) => (
@@ -267,7 +267,7 @@ export default function StudyKitGenerator({ modules }: Props) {
               {/* Save to deck */}
               {!saved ? (
                 <div className="mt-4 pt-3 border-t border-white/8 space-y-2">
-                  <div className="font-mono text-[0.55rem] text-white/60 tracking-widest">SAVE TO FLASHCARD DECK</div>
+                  <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">SAVE TO FLASHCARD DECK</div>
                   <select
                     value={deckId}
                     onChange={e => setDeckId(e.target.value)}
@@ -283,7 +283,7 @@ export default function StudyKitGenerator({ modules }: Props) {
                       value={newDeckName}
                       onChange={e => setNewDeckName(e.target.value)}
                       placeholder={`Deck name (default: "${subject || 'Study Kit'}")`}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-purple-500 font-body"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/72 outline-none focus:border-purple-500 font-body"
                     />
                   )}
                   <button
@@ -308,8 +308,8 @@ export default function StudyKitGenerator({ modules }: Props) {
           {kit.quiz.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="font-mono text-[0.55rem] text-white/60 tracking-widest">QUIZ</div>
-                <span className="font-mono text-[0.65rem] text-white/50">
+                <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">QUIZ</div>
+                <span className="font-mono text-[0.65rem] text-white/75">
                   {quizIdx + 1}/{kit.quiz.length}
                 </span>
               </div>
@@ -342,7 +342,7 @@ export default function StudyKitGenerator({ modules }: Props) {
                               !showResult && 'bg-white/3 border-white/10 hover:border-white/20 text-white/70',
                               showResult && isRight && 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300',
                               showResult && isPicked && !isRight && 'bg-red-500/10 border-red-500/25 text-red-300',
-                              showResult && !isPicked && !isRight && 'bg-white/2 border-white/5 text-white/55',
+                              showResult && !isPicked && !isRight && 'bg-white/2 border-white/5 text-white/78',
                             )}
                           >
                             {opt}
@@ -355,8 +355,8 @@ export default function StudyKitGenerator({ modules }: Props) {
 
                     {isRevealedQ && (
                       <div className="bg-white/3 border border-white/8 rounded-xl px-3 py-2">
-                        <span className="font-mono text-[0.65rem] text-white/55 block mb-0.5">EXPLANATION</span>
-                        <span className="font-body text-xs text-white/60 leading-relaxed">{q.explanation}</span>
+                        <span className="font-mono text-[0.65rem] text-white/78 block mb-0.5">EXPLANATION</span>
+                        <span className="font-body text-xs text-white/80 leading-relaxed">{q.explanation}</span>
                       </div>
                     )}
 
@@ -364,14 +364,14 @@ export default function StudyKitGenerator({ modules }: Props) {
                       <button
                         onClick={() => setQuizIdx(i => Math.max(0, i - 1))}
                         disabled={quizIdx === 0}
-                        className="flex-1 font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/65 disabled:opacity-25 hover:border-white/20 transition-all"
+                        className="flex-1 font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/82 disabled:opacity-25 hover:border-white/20 transition-all"
                       >
                         ← Prev
                       </button>
                       <button
                         onClick={() => setQuizIdx(i => Math.min(kit.quiz.length - 1, i + 1))}
                         disabled={quizIdx === kit.quiz.length - 1}
-                        className="flex-1 font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/65 disabled:opacity-25 hover:border-white/20 transition-all"
+                        className="flex-1 font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/82 disabled:opacity-25 hover:border-white/20 transition-all"
                       >
                         Next →
                       </button>
@@ -385,7 +385,7 @@ export default function StudyKitGenerator({ modules }: Props) {
           {/* Regenerate */}
           <button
             onClick={() => { setKit(null); setSaved(false); setText(''); setSubject('') }}
-            className="w-full font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/55 hover:text-white/70 hover:border-white/20 transition-all"
+            className="w-full font-mono text-[0.6rem] py-2 rounded-xl border border-white/10 text-white/78 hover:text-white/70 hover:border-white/20 transition-all"
           >
             ← Clear and start over
           </button>
@@ -395,7 +395,7 @@ export default function StudyKitGenerator({ modules }: Props) {
       {/* Tips (pre-generate) */}
       {!kit && !generating && (
         <div className="bg-white/2 border border-white/6 rounded-2xl p-4 space-y-2">
-          <div className="font-mono text-[0.55rem] text-white/50 tracking-widest">TIPS FOR BEST RESULTS</div>
+          <div className="font-mono text-[0.55rem] text-white/75 tracking-widest">TIPS FOR BEST RESULTS</div>
           <ul className="space-y-1.5">
             {[
               'Paste complete paragraphs, not just headings',
@@ -406,7 +406,7 @@ export default function StudyKitGenerator({ modules }: Props) {
             ].map((tip, i) => (
               <li key={i} className="flex items-start gap-2">
                 <span className="font-mono text-[0.48rem] text-purple-400 mt-0.5 flex-shrink-0">→</span>
-                <span className="font-mono text-[0.58rem] text-white/60 leading-relaxed">{tip}</span>
+                <span className="font-mono text-[0.58rem] text-white/80 leading-relaxed">{tip}</span>
               </li>
             ))}
           </ul>

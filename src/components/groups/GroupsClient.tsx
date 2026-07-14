@@ -69,7 +69,7 @@ type DetailTab = 'overview' | 'tasks' | 'members' | 'noticeboard' | 'conflicts' 
 const TASK_PRIORITIES = ['low', 'normal', 'high', 'critical'] as const
 type TaskPriority = typeof TASK_PRIORITIES[number]
 const PRIORITY_COLORS: Record<TaskPriority, string> = {
-  low:      'text-white/55 bg-white/5 border-white/10',
+  low:      'text-white/78 bg-white/5 border-white/10',
   normal:   'text-white/70 bg-white/7 border-white/10',
   high:     'text-amber-400 bg-amber-500/15 border-amber-500/20',
   critical: 'text-red-400 bg-red-500/15 border-red-500/20',
@@ -591,13 +591,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
             <>
               <div>
                 <div className="flex justify-between mb-1.5">
-                  <span className="font-mono text-[0.6rem] text-white/65">Progress</span>
-                  <span className="font-mono text-[0.6rem] text-white/60">{selected.group_tasks.filter(t => t.done).length}/{selected.group_tasks.length} tasks</span>
+                  <span className="font-mono text-[0.6rem] text-white/82">Progress</span>
+                  <span className="font-mono text-[0.6rem] text-white/80">{selected.group_tasks.filter(t => t.done).length}/{selected.group_tasks.length} tasks</span>
                 </div>
                 <div className="h-2.5 rounded-full bg-white/8 overflow-hidden">
                   <div className={cn('h-full rounded-full transition-all duration-500', progress === 100 ? 'bg-green-500' : progress > 60 ? 'bg-teal-500' : 'bg-amber-500')} style={{ width: `${progress}%` }} />
                 </div>
-                <p className="font-mono text-[0.62rem] text-white/50 mt-1">{progress}% complete</p>
+                <p className="font-mono text-[0.62rem] text-white/75 mt-1">{progress}% complete</p>
               </div>
 
               {selected.due_date && (() => {
@@ -605,13 +605,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 if (d <= 3 && d >= 0 && selected.status === 'active') return (
                   <div className="bg-red-500/8 border border-red-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.65rem] text-red-400 font-bold">⚡ Due in {d === 0 ? 'today' : `${d} day${d === 1 ? '' : 's'}`}</p>
-                    <p className="font-mono text-[0.62rem] text-white/65 mt-1">Coordinate final review now. All tasks should be done 24h before submission.</p>
+                    <p className="font-mono text-[0.62rem] text-white/82 mt-1">Coordinate final review now. All tasks should be done 24h before submission.</p>
                   </div>
                 )
                 if (d < 0) return (
                   <div className="bg-amber-500/8 border border-amber-500/20 rounded-xl px-3 py-2.5">
                     <p className="font-mono text-[0.65rem] text-amber-400 font-bold">⏰ Overdue by {Math.abs(d)} day{Math.abs(d) === 1 ? '' : 's'}</p>
-                    <p className="font-mono text-[0.62rem] text-white/65 mt-1">Submit immediately or contact your lecturer to request an extension.</p>
+                    <p className="font-mono text-[0.62rem] text-white/82 mt-1">Submit immediately or contact your lecturer to request an extension.</p>
                   </div>
                 )
                 return null
@@ -620,7 +620,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               {freeRiders.length > 0 && (
                 <div className="bg-red-500/6 border border-red-500/15 rounded-xl px-3 py-2.5">
                   <p className="font-mono text-[0.62rem] text-red-400 font-bold mb-1">⚠️ No tasks assigned to: {freeRiders.map(m => m.display_name || m.email).join(', ')}</p>
-                  <p className="font-mono text-[0.62rem] text-white/65">Go to the Team tab → assign tasks or remove inactive members.</p>
+                  <p className="font-mono text-[0.62rem] text-white/82">Go to the Team tab → assign tasks or remove inactive members.</p>
                 </div>
               )}
 
@@ -632,14 +632,14 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 ].map(s => (
                   <div key={s.label} className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5 text-center">
                     <div className="font-display font-black text-white text-sm">{s.value}</div>
-                    <div className="font-mono text-[0.62rem] text-white/55 mt-0.5">{s.label}</div>
+                    <div className="font-mono text-[0.62rem] text-white/78 mt-0.5">{s.label}</div>
                   </div>
                 ))}
               </div>
 
               {selected.description && (
                 <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                  <p className="font-mono text-[0.62rem] text-white/65 leading-relaxed">{selected.description}</p>
+                  <p className="font-mono text-[0.62rem] text-white/82 leading-relaxed">{selected.description}</p>
                 </div>
               )}
 
@@ -652,12 +652,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   ) : (
                     <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2.5">
                       <p className="font-mono text-[0.62rem] text-white/70">Submission link or reference (optional)</p>
-                      <input value={submitLink} onChange={e => setSubmitLink(e.target.value)} placeholder="e.g. Google Drive link" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-amber-500 font-body" />
+                      <input value={submitLink} onChange={e => setSubmitLink(e.target.value)} placeholder="e.g. Google Drive link" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-amber-500 font-body" />
                       <div className="flex gap-2">
                         <button onClick={submitAssignment} disabled={submitting} className="flex-1 font-display font-bold text-sm bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
                           {submitting ? 'Submitting…' : 'Confirm Submitted'}
                         </button>
-                        <button onClick={() => setShowSubmitForm(false)} className="px-3 font-mono text-sm text-white/65 border border-white/10 rounded-xl">Cancel</button>
+                        <button onClick={() => setShowSubmitForm(false)} className="px-3 font-mono text-sm text-white/82 border border-white/10 rounded-xl">Cancel</button>
                       </div>
                     </div>
                   )}
@@ -672,7 +672,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   {inviteUrl && (
                     <div className="mt-2 bg-teal-600/10 border border-teal-600/20 rounded-xl p-3">
                       <p className="font-mono text-[0.6rem] text-teal-300 break-all mb-2">{inviteUrl}</p>
-                      <button onClick={copyInvite} className={cn('font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border transition-all', copied ? 'bg-green-500/15 text-green-400 border-green-500/20' : 'bg-white/5 text-white/60 border-white/10')}>
+                      <button onClick={copyInvite} className={cn('font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border transition-all', copied ? 'bg-green-500/15 text-green-400 border-green-500/20' : 'bg-white/5 text-white/80 border-white/10')}>
                         {copied ? '✓ Copied!' : 'Copy link'}
                       </button>
                     </div>
@@ -686,7 +686,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {detailTab === 'tasks' && (
             <>
               <div className="flex justify-between items-center">
-                <span className="font-mono text-[0.6rem] text-white/65 uppercase tracking-wide">Scope delegation</span>
+                <span className="font-mono text-[0.6rem] text-white/82 uppercase tracking-wide">Scope delegation</span>
                 <button onClick={() => setShowAddTask(!showAddTask)} className="font-mono text-[0.62rem] text-teal-400 hover:text-teal-300 transition-colors">
                   {showAddTask ? '✕ Cancel' : '+ Assign task'}
                 </button>
@@ -694,8 +694,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
               {showAddTask && (
                 <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2.5">
-                  <input value={taskTitle} onChange={e => setTaskTitle(e.target.value)} placeholder="Task title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
-                  <input value={taskSection} onChange={e => setTaskSection(e.target.value)} placeholder="Section / scope (e.g. Introduction, Literature Review)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 placeholder:text-white/45 outline-none focus:border-teal-600 font-body" />
+                  <input value={taskTitle} onChange={e => setTaskTitle(e.target.value)} placeholder="Task title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
+                  <input value={taskSection} onChange={e => setTaskSection(e.target.value)} placeholder="Section / scope (e.g. Introduction, Literature Review)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 placeholder:text-white/72 outline-none focus:border-teal-600 font-body" />
                   <div className="grid grid-cols-2 gap-2">
                     <select value={taskAssigneeEmail} onChange={e => setTaskAssigneeEmail(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body">
                       <option value="">Assign to…</option>
@@ -715,7 +715,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               )}
 
               {selected.group_tasks.length === 0 ? (
-                <p className="font-mono text-[0.65rem] text-white/50 text-center py-6">No tasks yet — break the assignment into sections and assign each part</p>
+                <p className="font-mono text-[0.65rem] text-white/75 text-center py-6">No tasks yet — break the assignment into sections and assign each part</p>
               ) : (() => {
                 // Group tasks by section
                 const sectionMap: Record<string, typeof selected.group_tasks> = {}
@@ -759,8 +759,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                     </div>
                                   </div>
                                   <div className="flex gap-1 flex-shrink-0">
-                                    <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/60 hover:text-teal-400 hover:border-teal-600/30 transition-all">⇄</button>
-                                    <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/50 hover:text-red-400 hover:border-red-500/30 transition-all">✕</button>
+                                    <button onClick={() => setReassignTaskId(isReassigning ? null : t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/80 hover:text-teal-400 hover:border-teal-600/30 transition-all">⇄</button>
+                                    <button onClick={() => deleteTask(t.id)} className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/75 hover:text-red-400 hover:border-red-500/30 transition-all">✕</button>
                                   </div>
                                 </div>
                                 {isReassigning && (
@@ -777,9 +777,9 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     ))}
                     {selected.group_tasks.some(t => t.done) && (
                       <details className="group">
-                        <summary className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide cursor-pointer list-none flex items-center gap-2">
+                        <summary className="font-mono text-[0.62rem] text-white/75 uppercase tracking-wide cursor-pointer list-none flex items-center gap-2">
                           <span>Completed ({selected.group_tasks.filter(t => t.done).length})</span>
-                          <span className="text-white/45 group-open:rotate-90 transition-transform inline-block">▸</span>
+                          <span className="text-white/72 group-open:rotate-90 transition-transform inline-block">▸</span>
                         </summary>
                         <div className="space-y-1.5 mt-2">
                           {selected.group_tasks.filter(t => t.done).map(t => {
@@ -790,10 +790,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
                                   <span className="text-white text-[0.6rem]">✓</span>
                                 </button>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-body text-white/65 line-through">{t.title}</p>
+                                  <p className="text-sm font-body text-white/82 line-through">{t.title}</p>
                                   <div className="flex gap-2 flex-wrap">
-                                    {t.section && <span className="font-mono text-[0.65rem] text-white/45">{t.section}</span>}
-                                    {t.assigned_to_email && <span className="font-mono text-[0.62rem] text-white/50">→ {assignee?.display_name || t.assigned_to_email}</span>}
+                                    {t.section && <span className="font-mono text-[0.65rem] text-white/72">{t.section}</span>}
+                                    {t.assigned_to_email && <span className="font-mono text-[0.62rem] text-white/75">→ {assignee?.display_name || t.assigned_to_email}</span>}
                                   </div>
                                 </div>
                               </div>
@@ -821,7 +821,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   onChange={e => setNoticeText(e.target.value)}
                   placeholder="Post a notice for the group (deadline change, important update, final decision…)"
                   rows={3}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/45 outline-none focus:border-amber-500/50 font-body resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/72 outline-none focus:border-amber-500/50 font-body resize-none"
                 />
                 <button
                   onClick={postNotice}
@@ -833,9 +833,9 @@ export default function GroupsClient({ userId }: { userId: string }) {
               </div>
 
               {loadingMsgs ? (
-                <p className="font-mono text-[0.6rem] text-white/50 text-center py-4">Loading…</p>
+                <p className="font-mono text-[0.6rem] text-white/75 text-center py-4">Loading…</p>
               ) : pinnedMessages.length === 0 ? (
-                <p className="font-mono text-[0.65rem] text-white/50 text-center py-6">No notices yet — post important updates above</p>
+                <p className="font-mono text-[0.65rem] text-white/75 text-center py-6">No notices yet — post important updates above</p>
               ) : (
                 <div className="space-y-2">
                   {pinnedMessages.map(msg => (
@@ -844,12 +844,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <p className="font-body text-sm text-white/80 leading-relaxed flex-1">{msg.content}</p>
                         <button
                           onClick={() => pinMessage(msg.id, false)}
-                          className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/50 hover:text-white/70 flex-shrink-0 transition-all"
+                          className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/75 hover:text-white/70 flex-shrink-0 transition-all"
                         >
                           unpin
                         </button>
                       </div>
-                      <p className="font-mono text-[0.65rem] text-white/50 mt-2">
+                      <p className="font-mono text-[0.65rem] text-white/75 mt-2">
                         {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
@@ -884,10 +884,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     onChange={e => setConflictDesc(e.target.value)}
                     placeholder="Describe the conflict clearly (e.g. two members both want to write the introduction, someone missed the deadline…)"
                     rows={3}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/45 outline-none focus:border-rose-500/50 font-body resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/72 outline-none focus:border-rose-500/50 font-body resize-none"
                   />
                   <div>
-                    <p className="font-mono text-[0.62rem] text-white/65 mb-1.5">Who&apos;s involved?</p>
+                    <p className="font-mono text-[0.62rem] text-white/82 mb-1.5">Who&apos;s involved?</p>
                     <div className="flex flex-wrap gap-1.5">
                       {joinedMembers.map(m => {
                         const isSelected = conflictInvolved.includes(m.email)
@@ -895,7 +895,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           <button
                             key={m.email}
                             onClick={() => setConflictInvolved(prev => isSelected ? prev.filter(e => e !== m.email) : [...prev, m.email])}
-                            className={cn('font-mono text-[0.62rem] px-2.5 py-1.5 rounded-lg border transition-all', isSelected ? 'bg-rose-500/15 text-rose-400 border-rose-500/25' : 'bg-white/4 text-white/65 border-white/10 hover:text-white/60')}
+                            className={cn('font-mono text-[0.62rem] px-2.5 py-1.5 rounded-lg border transition-all', isSelected ? 'bg-rose-500/15 text-rose-400 border-rose-500/25' : 'bg-white/4 text-white/82 border-white/10 hover:text-white/80')}
                           >
                             {m.display_name || m.email.split('@')[0]}
                           </button>
@@ -904,20 +904,20 @@ export default function GroupsClient({ userId }: { userId: string }) {
                     </div>
                   </div>
                   <div>
-                    <p className="font-mono text-[0.62rem] text-white/65 mb-1.5">Proposed resolution (optional)</p>
+                    <p className="font-mono text-[0.62rem] text-white/82 mb-1.5">Proposed resolution (optional)</p>
                     <textarea
                       value={conflictResolution}
                       onChange={e => setConflictResolution(e.target.value)}
                       placeholder="What do you think should happen? (e.g. split the section, set a clear deadline, reassign the task)"
                       rows={2}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 placeholder:text-white/45 outline-none focus:border-teal-600 font-body resize-none"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 placeholder:text-white/72 outline-none focus:border-teal-600 font-body resize-none"
                     />
                   </div>
                   <div className="flex gap-2">
                     <button onClick={raiseConflict} disabled={raisingConflict || !conflictDesc.trim()} className="flex-1 font-display font-bold text-sm bg-rose-500 hover:bg-rose-400 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
                       {raisingConflict ? 'Raising…' : 'Raise conflict'}
                     </button>
-                    <button onClick={() => { setShowConflictForm(false); setConflictDesc(''); setConflictInvolved([]); setConflictResolution('') }} className="px-4 font-mono text-sm text-white/65 border border-white/10 rounded-xl">
+                    <button onClick={() => { setShowConflictForm(false); setConflictDesc(''); setConflictInvolved([]); setConflictResolution('') }} className="px-4 font-mono text-sm text-white/82 border border-white/10 rounded-xl">
                       Cancel
                     </button>
                   </div>
@@ -925,15 +925,15 @@ export default function GroupsClient({ userId }: { userId: string }) {
               )}
 
               {loadingMsgs ? (
-                <p className="font-mono text-[0.6rem] text-white/50 text-center py-4">Loading…</p>
+                <p className="font-mono text-[0.6rem] text-white/75 text-center py-4">Loading…</p>
               ) : conflictMessages.length === 0 ? (
                 <div className="text-center py-6">
-                  <p className="font-mono text-[0.65rem] text-white/50">No conflicts raised — great teamwork! 🌿</p>
-                  <p className="font-mono text-[0.62rem] text-white/15 mt-1">If an issue comes up, raise it early — before resentment builds</p>
+                  <p className="font-mono text-[0.65rem] text-white/75">No conflicts raised — great teamwork! 🌿</p>
+                  <p className="font-mono text-[0.62rem] text-white/55 mt-1">If an issue comes up, raise it early — before resentment builds</p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <p className="font-mono text-[0.62rem] text-white/55 uppercase tracking-wide">Open conflicts</p>
+                  <p className="font-mono text-[0.62rem] text-white/78 uppercase tracking-wide">Open conflicts</p>
                   {conflictMessages.map(msg => {
                     const lines = msg.content.replace('[CONFLICT] ', '').split('\n')
                     const issue = lines[0]
@@ -944,16 +944,16 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           <div className="flex-1">
                             <p className="font-mono text-[0.6rem] text-rose-400 mb-1">⚡ CONFLICT</p>
                             <p className="font-body text-sm text-white/80 leading-relaxed">{issue}</p>
-                            {meta.map((line, i) => <p key={i} className="font-mono text-[0.62rem] text-white/60 mt-0.5">{line}</p>)}
+                            {meta.map((line, i) => <p key={i} className="font-mono text-[0.62rem] text-white/80 mt-0.5">{line}</p>)}
                           </div>
                           <button
                             onClick={() => pinMessage(msg.id, true)}
-                            className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/50 hover:text-teal-400 flex-shrink-0"
+                            className="font-mono text-[0.65rem] px-1.5 py-1 rounded border border-white/10 text-white/75 hover:text-teal-400 flex-shrink-0"
                           >
                             pin
                           </button>
                         </div>
-                        <p className="font-mono text-[0.65rem] text-white/50">
+                        <p className="font-mono text-[0.65rem] text-white/75">
                           Raised {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })} · Reply in Chat tab
                         </p>
                       </div>
@@ -967,7 +967,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {/* ── Members / Team Dynamics tab ── */}
           {detailTab === 'members' && (
             <>
-              <p className="font-mono text-[0.62rem] text-white/60 leading-relaxed">
+              <p className="font-mono text-[0.62rem] text-white/80 leading-relaxed">
                 Assign roles so everyone knows their lane. Track who&apos;s doing the work. Leaders can remove inactive members.
               </p>
 
@@ -979,7 +979,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   {inviteUrl && (
                     <div className="mt-2 bg-teal-600/10 border border-teal-600/20 rounded-xl p-3">
                       <p className="font-mono text-[0.6rem] text-teal-300 break-all mb-2">{inviteUrl}</p>
-                      <button onClick={copyInvite} className="font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border bg-white/5 text-white/60 border-white/10">
+                      <button onClick={copyInvite} className="font-mono text-[0.62rem] px-3 py-1.5 rounded-lg border bg-white/5 text-white/80 border-white/10">
                         {copied ? '✓ Copied!' : 'Copy link'}
                       </button>
                     </div>
@@ -1001,17 +1001,17 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
-                            {isSelf && <span className="font-mono text-[0.62rem] bg-white/8 text-white/65 px-1 py-0.5 rounded">you</span>}
+                            {isSelf && <span className="font-mono text-[0.62rem] bg-white/8 text-white/82 px-1 py-0.5 rounded">you</span>}
                             {m.role === 'leader' && <span className="font-mono text-[0.65rem] bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-md border border-amber-500/20">owner</span>}
                             {mRole && <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded-md border', ROLE_COLORS[mRole])}>{mRole}</span>}
                             {isFreeRider && <span className="font-mono text-[0.65rem] bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-md border border-red-500/20">⚠ no tasks</span>}
                           </div>
-                          <p className="font-mono text-[0.62rem] text-white/55 mt-0.5 truncate">{m.email}</p>
+                          <p className="font-mono text-[0.62rem] text-white/78 mt-0.5 truncate">{m.email}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="text-right">
                             <div className="font-display font-black text-white text-sm">{pct}%</div>
-                            <div className="font-mono text-[0.65rem] text-white/55">{stats.done}/{stats.assigned}</div>
+                            <div className="font-mono text-[0.65rem] text-white/78">{stats.done}/{stats.assigned}</div>
                           </div>
                           {isLeader && !isSelf && (
                             <button
@@ -1029,10 +1029,10 @@ export default function GroupsClient({ userId }: { userId: string }) {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[0.62rem] text-white/55">Role:</span>
+                        <span className="font-mono text-[0.62rem] text-white/78">Role:</span>
                         <div className="flex gap-1 flex-wrap">
                           {MEMBER_ROLES.map(r => (
-                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/50 border-white/8 hover:text-white/70')}>
+                            <button key={r} onClick={() => assignRole(m.id, r)} className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded border transition-all', mRole === r ? ROLE_COLORS[r] : 'text-white/75 border-white/8 hover:text-white/70')}>
                               {r}
                             </button>
                           ))}
@@ -1045,11 +1045,11 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
               {selected.group_members.some(m => m.status === 'invited') && (
                 <div>
-                  <p className="font-mono text-[0.62rem] text-white/50 uppercase tracking-wide mb-2">Pending invites</p>
+                  <p className="font-mono text-[0.62rem] text-white/75 uppercase tracking-wide mb-2">Pending invites</p>
                   {selected.group_members.filter(m => m.status === 'invited').map(m => (
                     <div key={m.id} className="flex items-center justify-between bg-white/2 border border-white/5 rounded-xl px-3 py-2 mb-1.5">
-                      <span className="font-mono text-[0.62rem] text-white/65">{m.email}</span>
-                      <span className="font-mono text-[0.65rem] bg-white/5 text-white/50 px-1.5 py-0.5 rounded">awaiting</span>
+                      <span className="font-mono text-[0.62rem] text-white/82">{m.email}</span>
+                      <span className="font-mono text-[0.65rem] bg-white/5 text-white/75 px-1.5 py-0.5 rounded">awaiting</span>
                     </div>
                   ))}
                 </div>
@@ -1061,7 +1061,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           {detailTab === 'discussion' && (
             <div className="flex flex-col gap-3">
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.6rem] text-white/65 leading-relaxed">
+                <p className="font-mono text-[0.6rem] text-white/82 leading-relaxed">
                   Group chat — log decisions, share updates, flag blockers. Pin important messages to the Notice Board.
                 </p>
               </div>
@@ -1085,11 +1085,11 @@ export default function GroupsClient({ userId }: { userId: string }) {
               })()}
 
               {loadingMsgs ? (
-                <div className="font-mono text-[0.62rem] text-white/55 text-center py-6">Loading board…</div>
+                <div className="font-mono text-[0.62rem] text-white/78 text-center py-6">Loading board…</div>
               ) : messages.length === 0 ? (
                 <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
                   <div className="text-2xl mb-2">💬</div>
-                  <p className="font-mono text-[0.62rem] text-white/55">No posts yet. Be the first to post.</p>
+                  <p className="font-mono text-[0.62rem] text-white/78">No posts yet. Be the first to post.</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
@@ -1104,13 +1104,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
                           {msg.is_pinned && <p className="font-mono text-[0.65rem] text-amber-400 font-bold mb-1">📌 PINNED</p>}
                           {msg.is_decision && !msg.is_pinned && <p className="font-mono text-[0.65rem] text-amber-400 font-bold mb-1">⭐ DECISION</p>}
                           <p className="font-mono text-[0.68rem] text-white/75 leading-relaxed">{msg.content}</p>
-                          <p className="font-mono text-[0.65rem] text-white/50 mt-1">
+                          <p className="font-mono text-[0.65rem] text-white/75 mt-1">
                             {msg.user_id === userId ? 'You' : 'Team member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
                         <button
                           onClick={() => pinMessage(msg.id, !msg.is_pinned)}
-                          className={cn('font-mono text-[0.62rem] px-1.5 py-1 rounded border flex-shrink-0 transition-all', msg.is_pinned ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-white/45 border-white/8 hover:text-amber-400')}
+                          className={cn('font-mono text-[0.62rem] px-1.5 py-1 rounded border flex-shrink-0 transition-all', msg.is_pinned ? 'text-amber-400 border-amber-500/20 bg-amber-500/10' : 'text-white/72 border-white/8 hover:text-amber-400')}
                           title={msg.is_pinned ? 'Unpin' : 'Pin to Notice Board'}
                         >
                           📌
@@ -1125,7 +1125,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                 <textarea
                   value={msgText} onChange={e => setMsgText(e.target.value)}
                   placeholder="Post an update, question, or decision…" rows={2}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[0.78rem] text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-[0.78rem] text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body resize-none"
                 />
                 <div className="flex items-center justify-between gap-2">
                   <label className="flex items-center gap-1.5 cursor-pointer">
@@ -1146,7 +1146,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-mono text-[0.6rem] text-white/65">Schedule and manage group meetings</p>
+                  <p className="font-mono text-[0.6rem] text-white/82">Schedule and manage group meetings</p>
                 </div>
                 <button onClick={() => setShowMeetingForm(!showMeetingForm)} className="font-mono text-[0.62rem] text-teal-400 hover:text-teal-300 transition-colors">
                   {showMeetingForm ? '✕ Cancel' : '+ Schedule meeting'}
@@ -1155,20 +1155,20 @@ export default function GroupsClient({ userId }: { userId: string }) {
 
               {showMeetingForm && (
                 <div className="bg-white/3 border border-white/10 rounded-xl p-3 space-y-2">
-                  <input value={meetingTitle} onChange={e => setMeetingTitle(e.target.value)} placeholder="Meeting title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
+                  <input value={meetingTitle} onChange={e => setMeetingTitle(e.target.value)} placeholder="Meeting title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="font-mono text-[0.62rem] text-white/60 mb-1 block">Date & time *</label>
+                      <label className="font-mono text-[0.62rem] text-white/80 mb-1 block">Date & time *</label>
                       <input type="datetime-local" value={meetingAt} onChange={e => setMeetingAt(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white/70 outline-none focus:border-teal-600 font-body" />
                     </div>
                     <div>
-                      <label className="font-mono text-[0.62rem] text-white/60 mb-1 block">Duration (min)</label>
+                      <label className="font-mono text-[0.62rem] text-white/80 mb-1 block">Duration (min)</label>
                       <input type="number" inputMode="numeric" value={meetingDuration} onChange={e => setMeetingDuration(Number(e.target.value))} min={15} max={480} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
                     </div>
                   </div>
-                  <input value={meetingLocation} onChange={e => setMeetingLocation(e.target.value)} placeholder="Location (e.g. Library Room 3, Wits)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
-                  <input value={meetingLink} onChange={e => setMeetingLink(e.target.value)} placeholder="Virtual link (Google Meet, Zoom…)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
-                  <textarea value={meetingAgenda} onChange={e => setMeetingAgenda(e.target.value)} placeholder="Agenda (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 resize-none font-body" />
+                  <input value={meetingLocation} onChange={e => setMeetingLocation(e.target.value)} placeholder="Location (e.g. Library Room 3, Wits)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
+                  <input value={meetingLink} onChange={e => setMeetingLink(e.target.value)} placeholder="Virtual link (Google Meet, Zoom…)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
+                  <textarea value={meetingAgenda} onChange={e => setMeetingAgenda(e.target.value)} placeholder="Agenda (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 resize-none font-body" />
                   <button onClick={createMeeting} disabled={creatingMeeting || !meetingTitle.trim() || !meetingAt} className="w-full font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2 rounded-xl transition-all">
                     {creatingMeeting ? 'Scheduling…' : 'Schedule Meeting'}
                   </button>
@@ -1176,12 +1176,12 @@ export default function GroupsClient({ userId }: { userId: string }) {
               )}
 
               {loadingMeetings ? (
-                <div className="font-mono text-[0.62rem] text-white/55 text-center py-6">Loading meetings…</div>
+                <div className="font-mono text-[0.62rem] text-white/78 text-center py-6">Loading meetings…</div>
               ) : meetings.length === 0 ? (
                 <div className="bg-white/3 border border-white/7 rounded-xl py-8 text-center">
                   <div className="text-2xl mb-2">📅</div>
-                  <p className="font-mono text-[0.62rem] text-white/55">No meetings scheduled yet.</p>
-                  <p className="font-mono text-[0.62rem] text-white/45 mt-1">Schedule your first sync above.</p>
+                  <p className="font-mono text-[0.62rem] text-white/78">No meetings scheduled yet.</p>
+                  <p className="font-mono text-[0.62rem] text-white/72 mt-1">Schedule your first sync above.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -1193,7 +1193,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="font-display font-bold text-white text-sm">{meeting.title}</p>
-                            <p className={cn('font-mono text-[0.6rem] mt-0.5', isPast ? 'text-white/55' : 'text-teal-400')}>
+                            <p className={cn('font-mono text-[0.6rem] mt-0.5', isPast ? 'text-white/78' : 'text-teal-400')}>
                               {dt.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })} · {dt.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })} · {meeting.duration_min} min
                             </p>
                           </div>
@@ -1203,7 +1203,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                             </button>
                           )}
                         </div>
-                        {meeting.location && <p className="font-mono text-[0.62rem] text-white/65">📍 {meeting.location}</p>}
+                        {meeting.location && <p className="font-mono text-[0.62rem] text-white/82">📍 {meeting.location}</p>}
                         {meeting.link && (
                           <a href={meeting.link} target="_blank" rel="noopener noreferrer" className="font-mono text-[0.62rem] text-sky-400 hover:text-sky-300 transition-colors">
                             🔗 Join virtual meeting →
@@ -1211,8 +1211,8 @@ export default function GroupsClient({ userId }: { userId: string }) {
                         )}
                         {meeting.agenda && (
                           <div className="bg-white/3 border border-white/7 rounded-lg px-2.5 py-2">
-                            <p className="font-mono text-[0.62rem] text-white/50 mb-1">AGENDA</p>
-                            <p className="font-mono text-[0.62rem] text-white/55 leading-relaxed whitespace-pre-wrap">{meeting.agenda}</p>
+                            <p className="font-mono text-[0.62rem] text-white/75 mb-1">AGENDA</p>
+                            <p className="font-mono text-[0.62rem] text-white/78 leading-relaxed whitespace-pre-wrap">{meeting.agenda}</p>
                           </div>
                         )}
                       </div>
@@ -1228,13 +1228,13 @@ export default function GroupsClient({ userId }: { userId: string }) {
             <div style={{ overflowX: 'hidden', minWidth: 0 }}>
               <div className="bg-indigo-500/6 border border-indigo-500/15 rounded-xl px-3 py-2.5">
                 <p className="font-mono text-[0.62rem] text-indigo-400 font-bold mb-1">📘 Group Assignment OS vs Study Pods</p>
-                <p className="font-mono text-[0.62rem] text-white/68 leading-relaxed" style={{ wordBreak: 'break-word' }}>
+                <p className="font-mono text-[0.62rem] text-white/85 leading-relaxed" style={{ wordBreak: 'break-word' }}>
                   <span className="text-teal-400">Groups</span> = structured assignment collaboration (tasks, roles, scope, deadlines, conflicts).
                   <span className="text-indigo-400"> Study Pods</span> = accountability groups for solo study — check-ins, compound streaks, presence.
                 </p>
               </div>
               <div className="bg-white/3 border border-white/7 rounded-xl px-3 py-2.5">
-                <p className="font-mono text-[0.6rem] text-white/65 leading-relaxed" style={{ wordBreak: 'break-word' }}>Survival guide from research and books — applied to SA student group assignments.</p>
+                <p className="font-mono text-[0.6rem] text-white/82 leading-relaxed" style={{ wordBreak: 'break-word' }}>Survival guide from research and books — applied to SA student group assignments.</p>
               </div>
               {[
                 { book: 'Getting Things Done — David Allen', color: '#38BDF8', tip: 'Capture everything into a shared task list before your first meeting. Every action needs an owner and a due date. If it has no owner, it will not happen.' },
@@ -1246,7 +1246,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
               ].map(t => (
                 <div key={t.book} className="bg-white/3 border border-white/7 rounded-xl p-3" style={{ borderLeft: `3px solid ${t.color}`, minWidth: 0 }}>
                   <p className="font-mono text-[0.62rem] mb-2" style={{ color: t.color, wordBreak: 'break-word' }}>{t.book}</p>
-                  <p className="font-mono text-[0.65rem] text-white/55 leading-relaxed" style={{ wordBreak: 'break-word' }}>{t.tip}</p>
+                  <p className="font-mono text-[0.65rem] text-white/78 leading-relaxed" style={{ wordBreak: 'break-word' }}>{t.tip}</p>
                 </div>
               ))}
             </div>
@@ -1265,7 +1265,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div>
           <h1 className="font-display font-black text-white text-xl">Group Assignment OS</h1>
-          <p className="font-mono text-[0.62rem] text-white/60 mt-0.5">Scope delegation · conflict resolution · notice board</p>
+          <p className="font-mono text-[0.62rem] text-white/80 mt-0.5">Scope delegation · conflict resolution · notice board</p>
         </div>
         <button onClick={() => setShowNewForm(!showNewForm)} className="font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 text-white px-4 py-2 rounded-xl transition-all">
           + New
@@ -1276,18 +1276,18 @@ export default function GroupsClient({ userId }: { userId: string }) {
         {showNewForm && (
           <div className="mb-1 bg-white/3 border border-white/10 rounded-2xl p-4 space-y-3">
             <h3 className="font-display font-bold text-white text-sm">New Group Assignment</h3>
-            <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Assignment title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
-            <input value={newSubject} onChange={e => setNewSubject(e.target.value)} placeholder="Subject / Module (e.g. Marketing 201)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 font-body" />
-            <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Description (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-teal-600 resize-none font-body" />
+            <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="Assignment title *" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
+            <input value={newSubject} onChange={e => setNewSubject(e.target.value)} placeholder="Subject / Module (e.g. Marketing 201)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 font-body" />
+            <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Description (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/75 outline-none focus:border-teal-600 resize-none font-body" />
             <div>
-              <label className="font-mono text-[0.6rem] text-white/65 mb-1 block">Due date</label>
+              <label className="font-mono text-[0.6rem] text-white/82 mb-1 block">Due date</label>
               <input type="date" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none focus:border-teal-600 font-body" />
             </div>
             <div className="flex gap-2">
               <button onClick={createAssignment} disabled={creating || !newTitle.trim()} className="flex-1 font-display font-bold text-sm bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white py-2.5 rounded-xl transition-all">
                 {creating ? 'Creating…' : 'Create Group'}
               </button>
-              <button onClick={() => setShowNewForm(false)} className="px-4 font-mono text-sm text-white/65 hover:text-white/70 border border-white/10 rounded-xl transition-all">Cancel</button>
+              <button onClick={() => setShowNewForm(false)} className="px-4 font-mono text-sm text-white/82 hover:text-white/70 border border-white/10 rounded-xl transition-all">Cancel</button>
             </div>
           </div>
         )}
@@ -1296,7 +1296,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
           <div className="text-center py-12">
             <div className="text-4xl mb-3">👥</div>
             <h3 className="font-display font-bold text-white text-sm">No group assignments yet</h3>
-            <p className="font-mono text-[0.6rem] text-white/55 mt-1">Create one and invite your classmates.</p>
+            <p className="font-mono text-[0.6rem] text-white/78 mt-1">Create one and invite your classmates.</p>
             <button onClick={() => setShowNewForm(true)} className="mt-4 bg-teal-600 hover:bg-teal-500 text-white font-display font-bold text-sm px-4 py-2 rounded-xl transition-all">
               Create assignment
             </button>
@@ -1329,7 +1329,7 @@ export default function GroupsClient({ userId }: { userId: string }) {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 font-mono text-[0.62rem] text-white/60">
+                <div className="flex items-center gap-3 font-mono text-[0.62rem] text-white/80">
                   <span>👥 {memberCount} member{memberCount !== 1 ? 's' : ''}</span>
                   {a.group_tasks.length > 0 && <span>✓ {a.group_tasks.filter(t => t.done).length}/{a.group_tasks.length} tasks</span>}
                   {a.due_date && <span className={daysUntil(a.due_date).color}>{daysUntil(a.due_date).label}</span>}

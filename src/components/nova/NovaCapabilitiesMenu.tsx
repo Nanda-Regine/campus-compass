@@ -96,11 +96,11 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
       <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-subtle)] sticky top-0 bg-[var(--bg-surface)] z-10">
         <div>
           <h3 className="font-display font-bold text-white text-sm">What can Nova do?</h3>
-          <p className="font-mono text-[0.58rem] text-white/60">Tap a category, then pick a conversation starter</p>
+          <p className="font-mono text-[0.58rem] text-white/80">Tap a category, then pick a conversation starter</p>
         </div>
         <button
           onClick={onClose}
-          className="text-white/55 hover:text-white/60 text-sm w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all"
+          className="text-white/78 hover:text-white/80 text-sm w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all"
         >
           ✕
         </button>
@@ -133,7 +133,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
         {/* Prompt list for active category */}
         {activeCategory !== null && (
           <div className="animate-fade-in">
-            <p className="font-mono text-[0.58rem] text-white/55 mb-2 px-1">
+            <p className="font-mono text-[0.58rem] text-white/78 mb-2 px-1">
               {CAPABILITIES[activeCategory].description}
             </p>
             <div className="space-y-1.5">
@@ -149,7 +149,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
                   <span className="font-body text-sm text-white/75 group-hover:text-teal-300 transition-colors">
                     {p.label}
                   </span>
-                  <span className="font-mono text-[0.55rem] text-white/50 ml-2">→</span>
+                  <span className="font-mono text-[0.55rem] text-white/75 ml-2">→</span>
                 </button>
               ))}
             </div>
@@ -157,7 +157,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
         )}
 
         {activeCategory === null && (
-          <p className="font-mono text-[0.6rem] text-white/45 text-center py-2">
+          <p className="font-mono text-[0.6rem] text-white/72 text-center py-2">
             Tap a category above to see conversation starters
           </p>
         )}
@@ -165,7 +165,7 @@ export default function NovaCapabilitiesMenu({ onSelectPrompt, onClose }: Props)
 
       {/* Footer note */}
       <div className="px-4 pb-4">
-        <p className="font-mono text-[0.55rem] text-white/15 text-center leading-relaxed">
+        <p className="font-mono text-[0.55rem] text-white/55 text-center leading-relaxed">
           Nova already knows your schedule, budget, and exams — no need to repeat yourself.
           For serious mental health concerns, please contact a professional.
         </p>

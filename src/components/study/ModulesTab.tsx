@@ -323,7 +323,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
           <div className="font-display font-bold text-white text-base">
             {modules.length > 0 ? `${modules.length} module${modules.length !== 1 ? 's' : ''}` : 'No modules'}
           </div>
-          <div className="font-mono text-[0.62rem] text-white/55">
+          <div className="font-mono text-[0.62rem] text-white/78">
             Link tasks, exams and timetable to modules
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
         <div className="text-center py-14 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
           <div className="text-4xl mb-3">📚</div>
           <p className="font-display font-bold text-white text-sm">No modules yet</p>
-          <p className="font-mono text-[0.6rem] text-white/55 mt-1 px-8">
+          <p className="font-mono text-[0.6rem] text-white/78 mt-1 px-8">
             Add your modules to connect tasks, timetable slots and exams in one place.
           </p>
           <button
@@ -396,7 +396,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
                     </div>
                     <button
                       onClick={() => deleteModule(mod.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all text-white/45 hover:text-red-400 hover:bg-red-400/10"
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all text-white/72 hover:text-red-400 hover:bg-red-400/10"
                     >
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -467,7 +467,7 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
             <Input label="Credits (optional)" type="number" placeholder="16" {...register('credits')} />
           </div>
           <div>
-            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/65 mb-3">Colour</div>
+            <div className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-white/82 mb-3">Colour</div>
             <div className="flex gap-3 flex-wrap">
               {COLOUR_OPTIONS.map(c => {
                 const col      = MODULE_COLOURS[c]

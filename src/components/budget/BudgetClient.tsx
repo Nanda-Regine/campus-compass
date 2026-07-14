@@ -452,11 +452,11 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                   padding: '4px 2px',
                 }}
               >
-                <span style={{ fontSize: '1.2rem', lineHeight: 1, opacity: active ? 1 : 0.5 }}>{tab.icon}</span>
+                <span style={{ fontSize: '1.2rem', lineHeight: 1, opacity: active ? 1 : 0.82 }}>{tab.icon}</span>
                 <span style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.38rem',
-                  color: active ? '#4ecf9e' : 'rgba(255,255,255,0.5)',
+                  fontSize: '0.44rem',
+                  color: active ? '#4ecf9e' : 'rgba(255,255,255,0.75)',
                   letterSpacing: '0.04em',
                   lineHeight: 1,
                   maxWidth: 54,
@@ -485,7 +485,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               {/* Month + health status */}
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <div className="font-mono text-[0.56rem] text-white/60 uppercase tracking-widest">
+                  <div className="font-mono text-[0.56rem] text-white/80 uppercase tracking-widest">
                     {new Date().toLocaleString('en-ZA', { month: 'long', year: 'numeric' })}
                   </div>
                   <div className="font-display font-bold text-white text-sm mt-0.5">Budget overview</div>
@@ -526,7 +526,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     )}>
                       {spentPct}%
                     </div>
-                    <div className="font-mono text-[0.45rem] text-white/50 uppercase tracking-widest mt-0.5">spent</div>
+                    <div className="font-mono text-[0.45rem] text-white/75 uppercase tracking-widest mt-0.5">spent</div>
                   </div>
                 </div>
 
@@ -535,12 +535,12 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                   {[
                     { label: 'Remaining', value: fmt.currencyShort(Math.max(0, remaining)), colour: overBudget ? 'text-red-400' : 'text-teal-400' },
                     { label: 'Spent',  value: fmt.currencyShort(totalSpent),    colour: 'text-white' },
-                    { label: 'Budget',  value: fmt.currencyShort(totalBudget),   colour: 'text-white/55' },
+                    { label: 'Budget',  value: fmt.currencyShort(totalBudget),   colour: 'text-white/78' },
                     { label: 'Income',  value: fmt.currencyShort(totalIncome),   colour: 'text-teal-400' },
                   ].map(stat => (
                     <div key={stat.label}>
                       <div className={cn('font-display font-black text-base leading-none', stat.colour)}>{stat.value}</div>
-                      <div className="font-mono text-[0.48rem] text-white/50 uppercase tracking-wide mt-1">{stat.label}</div>
+                      <div className="font-mono text-[0.48rem] text-white/75 uppercase tracking-wide mt-1">{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -550,7 +550,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
             {/* Category breakdown */}
             {Object.keys(categoryTotals).length > 0 && (
               <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
-                <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest mb-4">
+                <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-4">
                   Spending by category
                 </div>
                 <div className="space-y-3">
@@ -568,7 +568,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                               <span className="font-display text-sm text-white">{cat}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-[0.62rem] text-white/65">{pct}%</span>
+                              <span className="font-mono text-[0.62rem] text-white/82">{pct}%</span>
                               <span className="font-display font-bold text-sm text-white">{fmt.currencyShort(amount)}</span>
                             </div>
                           </div>
@@ -593,7 +593,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="w-10 h-10 bg-teal-600/15 rounded-xl flex items-center justify-center text-xl flex-shrink-0">🤖</div>
               <div>
                 <div className="font-display font-bold text-teal-400 text-sm">Get AI Budget Analysis</div>
-                <div className="font-mono text-[0.6rem] text-white/55">Personalised financial health score + tips →</div>
+                <div className="font-mono text-[0.6rem] text-white/78">Personalised financial health score + tips →</div>
               </div>
             </button>
           </>
@@ -605,7 +605,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-display font-bold text-white text-base">{expenses.length} expenses</div>
-                <div className="font-mono text-[0.6rem] text-white/55">{fmt.currencyShort(totalSpent)} total this month</div>
+                <div className="font-mono text-[0.6rem] text-white/78">{fmt.currencyShort(totalSpent)} total this month</div>
               </div>
               <div className="flex gap-2 items-center">
                 <button
@@ -628,7 +628,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Log expense</div>
                 <input
-                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                   placeholder="What did you spend on?"
                   value={desc}
                   onChange={e => setDesc(e.target.value)}
@@ -638,7 +638,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     type="number"
                     inputMode="decimal"
                     aria-label="Expense amount in rands"
-                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={amount}
                     onChange={e => setAmount(e.target.value)}
@@ -698,7 +698,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="text-center py-12">
                 <div className="text-3xl mb-3">💳</div>
                 <p className="font-display font-bold text-white text-sm">No expenses logged yet</p>
-                <p className="font-mono text-[0.6rem] text-white/55 mt-1">Add your first expense to start tracking.</p>
+                <p className="font-mono text-[0.6rem] text-white/78 mt-1">Add your first expense to start tracking.</p>
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="mt-4 font-mono text-[0.65rem] text-teal-400 border border-teal-600/25 bg-teal-600/10 hover:bg-teal-600/20 px-4 py-2 rounded-xl transition-all"
@@ -721,7 +721,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-body text-sm text-white truncate">{exp.description}</div>
-                      <div className="font-mono text-[0.58rem] text-white/55">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
+                      <div className="font-mono text-[0.58rem] text-white/78">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="font-display font-bold text-sm" style={{ color: CATEGORY_COLORS[exp.category] || '#f97316' }}>
@@ -729,7 +729,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       </div>
                       <button
                         onClick={() => deleteExpense(exp.id)}
-                        className="opacity-0 group-hover:opacity-100 text-white/45 hover:text-red-400 transition-all text-xs"
+                        className="opacity-0 group-hover:opacity-100 text-white/72 hover:text-red-400 transition-all text-xs"
                       >
                         ✕
                       </button>
@@ -748,7 +748,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-display font-bold text-white text-base">Income this month</div>
-                <div className="font-mono text-[0.6rem] text-white/55">
+                <div className="font-mono text-[0.6rem] text-white/78">
                   {fmt.currencyShort(totalIncome)} total
                   {shiftEarnings > 0 && (
                     <span className="text-teal-400/70"> · {fmt.currencyShort(shiftEarnings)} from shifts</span>
@@ -789,7 +789,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <div key={job.name} className="flex items-center justify-between">
                         <div>
                           <div className="font-body text-sm text-white">{job.name}</div>
-                          <div className="font-mono text-[0.55rem] text-white/55">{job.shifts} shift{job.shifts !== 1 ? 's' : ''} worked this month</div>
+                          <div className="font-mono text-[0.55rem] text-white/78">{job.shifts} shift{job.shifts !== 1 ? 's' : ''} worked this month</div>
                         </div>
                         <div className="font-display font-bold text-sm text-white/70">+{fmt.currencyShort(job.earned)}</div>
                       </div>
@@ -806,7 +806,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-2xl p-4 space-y-3 animate-fade-up">
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Record income</div>
                 <input
-                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                  className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                   placeholder="e.g. NSFAS deposit, Part-time pay"
                   value={incomeLabel}
                   onChange={e => setIncomeLabel(e.target.value)}
@@ -816,7 +816,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     type="number"
                     inputMode="decimal"
                     aria-label="Income amount in rands"
-                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                     placeholder="Amount (R)"
                     value={incomeAmount}
                     onChange={e => setIncomeAmount(e.target.value)}
@@ -848,7 +848,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
             )}
 
             {/* Manual income label */}
-            <div className="font-mono text-[0.6rem] text-white/55 uppercase tracking-widest">
+            <div className="font-mono text-[0.6rem] text-white/78 uppercase tracking-widest">
               Manual income — NSFAS, bursary, pocket money
             </div>
 
@@ -856,7 +856,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="text-center py-8 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
                 <div className="text-3xl mb-2">💵</div>
                 <p className="font-display font-bold text-white text-sm">No income logged this month</p>
-                <p className="font-mono text-[0.6rem] text-white/55 mt-1">Track NSFAS, bursary, pocket money and more.</p>
+                <p className="font-mono text-[0.6rem] text-white/78 mt-1">Track NSFAS, bursary, pocket money and more.</p>
                 <button
                   onClick={() => setShowIncomeForm(true)}
                   className="mt-4 px-4 py-2 rounded-xl font-display font-bold text-xs bg-teal-600/15 border border-teal-500/30 text-teal-400 hover:bg-teal-600/25 transition-all"
@@ -877,7 +877,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <div className="flex-1 min-w-0">
                         <div className="font-body text-sm text-white truncate">{entry.label}</div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[0.58rem] text-white/55">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
+                          <span className="font-mono text-[0.58rem] text-white/78">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
                           {isSynced && <span className="font-mono text-[0.65rem] text-amber-400/70 bg-amber-400/8 border border-amber-400/15 px-1.5 py-0.5 rounded-full">🔗 NSFAS</span>}
                         </div>
                       </div>
@@ -890,7 +890,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
 
             {/* Savings Goals */}
             <div className="flex items-center justify-between mt-2">
-              <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest">Savings goals</div>
+              <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest">Savings goals</div>
               <button
                 onClick={() => setShowGoalForm(!showGoalForm)}
                 className="font-mono text-[0.6rem] text-teal-500 hover:text-teal-400 transition-colors"
@@ -911,11 +911,11 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="rounded-2xl p-4 flex items-center gap-4" style={{ background: `${scoreColor}0C`, border: `0.5px solid ${scoreColor}30` }}>
                   <div className="text-center flex-shrink-0">
                     <div className="font-display font-black text-2xl" style={{ color: scoreColor }}>{score}</div>
-                    <div className="font-mono text-[0.65rem] text-white/55 mt-0.5">Savings Score</div>
+                    <div className="font-mono text-[0.65rem] text-white/78 mt-0.5">Savings Score</div>
                   </div>
                   <div>
                     <div className="font-display font-bold text-white text-xs">{savingsGoals.length} active goal{savingsGoals.length !== 1 ? 's' : ''}</div>
-                    <div className="font-mono text-[0.58rem] text-white/65 mt-0.5">Avg {avgPct}% funded · Keep contributing weekly to grow your score</div>
+                    <div className="font-mono text-[0.58rem] text-white/82 mt-0.5">Avg {avgPct}% funded · Keep contributing weekly to grow your score</div>
                   </div>
                 </div>
               )
@@ -926,7 +926,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Create savings goal</div>
                 {/* Quick templates */}
                 <div>
-                  <div className="font-mono text-[0.55rem] text-white/50 mb-1.5">Quick templates</div>
+                  <div className="font-mono text-[0.55rem] text-white/75 mb-1.5">Quick templates</div>
                   <div className="flex flex-wrap gap-1.5">
                     {[
                       { emoji: '🛡️', name: 'Emergency Fund',  target: '3000' },
@@ -953,7 +953,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     maxLength={2}
                   />
                   <input
-                    className="flex-1 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                    className="flex-1 bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                     placeholder="Goal name (e.g. New laptop)"
                     value={goalName}
                     onChange={e => setGoalName(e.target.value)}
@@ -964,7 +964,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     type="number"
                     inputMode="decimal"
                     aria-label="Savings goal target amount in rands"
-                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/50 outline-none transition-all"
+                    className="bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/75 outline-none transition-all"
                     placeholder="Target amount (R)"
                     value={goalTarget}
                     onChange={e => setGoalTarget(e.target.value)}
@@ -990,7 +990,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               <div className="text-center py-8 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl">
                 <div className="text-3xl mb-2">🎯</div>
                 <p className="font-display font-bold text-white text-sm">No savings goals yet</p>
-                <p className="font-mono text-[0.6rem] text-white/55 mt-1">Set a target and track progress toward it.</p>
+                <p className="font-mono text-[0.6rem] text-white/78 mt-1">Set a target and track progress toward it.</p>
                 <div className="flex flex-wrap justify-center gap-1.5 mt-3 px-4">
                   {[
                     { emoji: '🛡️', name: 'Emergency Fund',  target: '3000' },
@@ -1034,7 +1034,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                               {isComplete && <span className="text-xs">✨</span>}
                             </div>
                             {goal.deadline && (
-                              <div className="font-mono text-[0.55rem] text-white/55">By {fmt.dateShort(goal.deadline)}</div>
+                              <div className="font-mono text-[0.55rem] text-white/78">By {fmt.dateShort(goal.deadline)}</div>
                             )}
                           </div>
                         </div>
@@ -1072,7 +1072,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="font-mono text-[0.58rem]" style={{ color: barColor }}>{fmt.currencyShort(goal.current_amount)}</div>
-                        <div className="font-mono text-[0.58rem] text-white/55">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
+                        <div className="font-mono text-[0.58rem] text-white/78">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
                       </div>
                     </div>
                   )
@@ -1151,12 +1151,12 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="bg-gradient-to-br from-teal-900/20 to-purple-900/10 border border-teal-600/20 rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <div className="font-mono text-[0.58rem] text-white/65 uppercase tracking-widest">Financial Health Score</div>
+                      <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-widest">Financial Health Score</div>
                       <div className="flex items-baseline gap-2 mt-1">
                         <div className={cn('font-display font-black text-5xl', healthColour)}>
                           {aiInsights.healthScore}
                         </div>
-                        <div className="font-mono text-[0.6rem] text-white/65">/10</div>
+                        <div className="font-mono text-[0.6rem] text-white/82">/10</div>
                       </div>
                       <div className={cn('font-mono text-[0.65rem] uppercase tracking-widest mt-1', healthColour)}>
                         {aiInsights.healthLabel}
@@ -1186,7 +1186,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <div className="text-2xl flex-shrink-0">{tip.icon}</div>
                       <div>
                         <div className="font-display font-bold text-white text-sm mb-1">{tip.title}</div>
-                        <div className="font-body text-sm text-white/60 leading-relaxed">{tip.detail}</div>
+                        <div className="font-body text-sm text-white/80 leading-relaxed">{tip.detail}</div>
                       </div>
                     </div>
                   ))}
@@ -1201,7 +1201,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 {/* Projection */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
-                    <div className="font-mono text-[0.55rem] text-white/55 uppercase mb-1">Projected end balance</div>
+                    <div className="font-mono text-[0.55rem] text-white/78 uppercase mb-1">Projected end balance</div>
                     <div className={cn(
                       'font-display font-black text-xl',
                       aiInsights.projectedEndBalance < 0 ? 'text-red-400' : 'text-teal-400'
@@ -1210,7 +1210,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     </div>
                   </div>
                   <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
-                    <div className="font-mono text-[0.55rem] text-white/55 uppercase mb-1">Biggest spend</div>
+                    <div className="font-mono text-[0.55rem] text-white/78 uppercase mb-1">Biggest spend</div>
                     <div className="font-display font-black text-xl text-white">
                       {aiInsights.biggestSpendCategory}
                     </div>
@@ -1219,7 +1219,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
 
                 <button
                   onClick={loadInsights}
-                  className="w-full font-mono text-[0.62rem] text-white/65 hover:text-white/60 border border-white/8 hover:border-white/15 py-2.5 rounded-xl transition-all"
+                  className="w-full font-mono text-[0.62rem] text-white/82 hover:text-white/80 border border-white/8 hover:border-white/15 py-2.5 rounded-xl transition-all"
                 >
                   ↻ Refresh analysis
                 </button>
@@ -1231,7 +1231,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               >
                 <div className="text-4xl mb-3">🤖</div>
                 <div className="font-display font-bold text-white text-base mb-1">Analyse my finances</div>
-                <div className="font-mono text-[0.62rem] text-white/65">Get your AI financial health score</div>
+                <div className="font-mono text-[0.62rem] text-white/82">Get your AI financial health score</div>
               </button>
             )}
           </>
@@ -1242,13 +1242,13 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
           <>
             <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-5">
               <div className="font-display font-bold text-white mb-1">NSFAS Appeal Letter Generator</div>
-              <p className="font-mono text-[0.62rem] text-white/65 mb-5">
+              <p className="font-mono text-[0.62rem] text-white/82 mb-5">
                 Describe your situation and Claude will draft a professional appeal letter. Always review before submitting.
               </p>
 
               <div className="space-y-4">
                 <div>
-                  <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest mb-2">Appeal type</div>
+                  <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-2">Appeal type</div>
                   <div className="flex flex-wrap gap-2">
                     {['Financial hardship', 'Academic exclusion', 'Allowance dispute', 'Funding cancellation', 'Other'].map(type => (
                       <button
@@ -1268,12 +1268,12 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 </div>
 
                 <div>
-                  <div className="font-mono text-[0.6rem] text-white/65 uppercase tracking-widest mb-2">Your situation</div>
+                  <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-widest mb-2">Your situation</div>
                   <textarea
                     value={appealSituation}
                     onChange={e => setAppealSituation(e.target.value)}
                     placeholder="Describe what happened and why you need to appeal. Be specific — include dates, amounts, and any supporting circumstances."
-                    className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/50 outline-none transition-all resize-none font-body"
+                    className="w-full bg-[var(--bg-base)] border border-white/10 focus:border-teal-600 rounded-xl px-3.5 py-3 text-sm text-white placeholder:text-white/75 outline-none transition-all resize-none font-body"
                     rows={5}
                   />
                 </div>
@@ -1305,7 +1305,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <pre className="font-body text-sm text-white/80 whitespace-pre-wrap leading-relaxed">
                   {appealLetter}
                 </pre>
-                <p className="font-mono text-[0.56rem] text-white/50 mt-4 pt-4 border-t border-white/7">
+                <p className="font-mono text-[0.56rem] text-white/75 mt-4 pt-4 border-t border-white/7">
                   ⚠️ Review this letter carefully before submitting. Add your student number, dates, and any supporting documents. This is a draft — you are responsible for its content.
                 </p>
               </div>

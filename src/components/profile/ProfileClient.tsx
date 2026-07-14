@@ -748,7 +748,7 @@ export default function ProfileClient() {
                 'flex-1 py-2.5 rounded-xl font-display font-bold text-[0.6rem] sm:text-xs transition-all flex items-center justify-center gap-1 overflow-hidden',
                 activeSection === tab.id
                   ? 'text-white'
-                  : 'text-white/60 hover:text-white/55'
+                  : 'text-white/80 hover:text-white/78'
               )}
               style={activeSection === tab.id ? {
                 background: 'linear-gradient(135deg, rgba(13,148,136,0.25) 0%, rgba(8,145,178,0.2) 100%)',

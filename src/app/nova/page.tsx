@@ -784,7 +784,7 @@ export default function NovaPage() {
             <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
               <div>
                 <div className="font-display font-bold text-white text-sm">Chat History</div>
-                <div className="font-mono text-[0.68rem] text-white/55 mt-0.5">{historyList.length} conversations</div>
+                <div className="font-mono text-[0.68rem] text-white/78 mt-0.5">{historyList.length} conversations</div>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -795,7 +795,7 @@ export default function NovaPage() {
                 </button>
                 <button
                   onClick={() => setShowHistory(false)}
-                  className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/65 hover:text-white/70 transition-all text-xs"
+                  className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/82 hover:text-white/70 transition-all text-xs"
                 >
                   ✕
                 </button>
@@ -815,8 +815,8 @@ export default function NovaPage() {
               ) : historyList.length === 0 ? (
                 <div className="px-4 py-8 text-center">
                   <div className="text-2xl mb-2">🌟</div>
-                  <p className="font-mono text-[0.72rem] text-white/55">No conversations yet</p>
-                  <p className="font-mono text-[0.68rem] text-white/45 mt-1">Start chatting with Nova</p>
+                  <p className="font-mono text-[0.72rem] text-white/78">No conversations yet</p>
+                  <p className="font-mono text-[0.68rem] text-white/72 mt-1">Start chatting with Nova</p>
                 </div>
               ) : (
                 historyList.map(convo => {
@@ -847,14 +847,14 @@ export default function NovaPage() {
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[0.65rem] text-white/50">{convo.message_count} msgs</span>
-                            <span className="font-mono text-[0.65rem] text-white/45">·</span>
-                            <span className="font-mono text-[0.65rem] text-white/50">{dateStr}</span>
+                            <span className="font-mono text-[0.65rem] text-white/75">{convo.message_count} msgs</span>
+                            <span className="font-mono text-[0.65rem] text-white/72">·</span>
+                            <span className="font-mono text-[0.65rem] text-white/75">{dateStr}</span>
                           </div>
                         </div>
                         <button
                           onClick={(e) => deleteConversation(convo.id, e)}
-                          className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-white/55 hover:text-red-400 hover:bg-red-500/10 transition-all text-xs flex-shrink-0"
+                          className="opacity-0 group-hover:opacity-100 w-6 h-6 rounded flex items-center justify-center text-white/78 hover:text-red-400 hover:bg-red-500/10 transition-all text-xs flex-shrink-0"
                           title="Delete"
                         >
                           ✕
@@ -878,7 +878,7 @@ export default function NovaPage() {
             {/* History button */}
             <button
               onClick={openHistory}
-              className="font-mono text-[0.7rem] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-white/65 hover:text-white/70 hover:bg-white/10 transition-all"
+              className="font-mono text-[0.7rem] px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 text-white/82 hover:text-white/70 hover:bg-white/10 transition-all"
               title="Chat history"
             >
               ☰ History
@@ -890,7 +890,7 @@ export default function NovaPage() {
                 'font-mono text-[0.7rem] px-2.5 py-1 rounded-lg border transition-all',
                 showCapabilities
                   ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
-                  : 'bg-white/5 border-white/10 text-white/65 hover:text-white/70 hover:bg-white/10'
+                  : 'bg-white/5 border-white/10 text-white/82 hover:text-white/70 hover:bg-white/10'
               )}
               title="What can Nova do?"
             >
@@ -921,7 +921,7 @@ export default function NovaPage() {
                   />
                 </div>
                 <span className={cn('font-mono text-[0.68rem]',
-                  usagePercent > 80 ? 'text-red-400' : usagePercent > 50 ? 'text-amber-400' : 'text-white/55'
+                  usagePercent > 80 ? 'text-red-400' : usagePercent > 50 ? 'text-amber-400' : 'text-white/78'
                 )}>
                   {usageLeft} left
                 </span>
@@ -955,7 +955,7 @@ export default function NovaPage() {
               <div className="space-y-1.5">
                 {CRISIS_NUMBERS.map(c => (
                   <div key={c.name} className="flex items-center gap-2">
-                    <span className="font-mono text-[0.72rem] text-white/65 w-16">{c.type}</span>
+                    <span className="font-mono text-[0.72rem] text-white/82 w-16">{c.type}</span>
                     <span className="font-display font-bold text-white text-sm">{c.name}:</span>
                     <a
                       href={`tel:${c.number.replace(/\s/g, '')}`}
@@ -966,13 +966,13 @@ export default function NovaPage() {
                   </div>
                 ))}
               </div>
-              <p className="font-mono text-[0.7rem] text-white/55 mt-2">
+              <p className="font-mono text-[0.7rem] text-white/78 mt-2">
                 Your university counselling centre is also available — check their website for hours.
               </p>
             </div>
             <button
               onClick={() => setShowCrisisPanel(false)}
-              className="text-white/55 hover:text-white/60 text-sm flex-shrink-0"
+              className="text-white/78 hover:text-white/80 text-sm flex-shrink-0"
             >
               ✕
             </button>
@@ -1054,7 +1054,7 @@ export default function NovaPage() {
                     )}>
                       <div className={cn(
                         'font-mono text-[0.65rem]',
-                        msg.role === 'user' ? 'text-teal-400/50' : 'text-white/50'
+                        msg.role === 'user' ? 'text-teal-400/50' : 'text-white/75'
                       )}>
                         {msg.timestamp.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' })}
                       </div>
@@ -1066,7 +1066,7 @@ export default function NovaPage() {
                             'ml-2 flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center text-[0.72rem] transition-all',
                             speakingMsgId === msg.id
                               ? 'bg-teal-600/30 text-teal-400 border border-teal-500/40'
-                              : 'bg-white/4 text-white/50 hover:bg-white/10 hover:text-white/70 border border-transparent'
+                              : 'bg-white/4 text-white/75 hover:bg-white/10 hover:text-white/70 border border-transparent'
                           )}
                         >
                           {speakingMsgId === msg.id ? '◼' : '🔊'}
@@ -1092,10 +1092,10 @@ export default function NovaPage() {
                               {r.title}
                             </p>
                             {r.description && (
-                              <p className="font-mono text-[0.68rem] text-white/50 truncate">{r.description}</p>
+                              <p className="font-mono text-[0.68rem] text-white/75 truncate">{r.description}</p>
                             )}
                           </div>
-                          <span className="text-white/45 text-xs ml-auto flex-shrink-0">↗</span>
+                          <span className="text-white/72 text-xs ml-auto flex-shrink-0">↗</span>
                         </a>
                       ))}
                     </div>
@@ -1142,7 +1142,7 @@ export default function NovaPage() {
                   'flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-xl border text-xs font-mono transition-all',
                   selectedMood === mood.label
                     ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
-                    : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
+                    : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10'
                 )}
               >
                 <span className="text-xl">{mood.emoji}</span>
@@ -1157,13 +1157,13 @@ export default function NovaPage() {
       {selectedMood && (
         <div className="px-4 pb-1 animate-fade-in">
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-mono text-white/55">Mood set:</span>
+            <span className="font-mono text-white/78">Mood set:</span>
             <span className="bg-teal-600/15 text-teal-400 border border-teal-600/20 px-2 py-0.5 rounded-full font-mono text-[0.72rem]">
               {MOODS.find(m => m.label === selectedMood)?.emoji} {selectedMood}
             </span>
             <button
               onClick={() => setSelectedMood(null)}
-              className="text-white/50 hover:text-white/70 text-xs"
+              className="text-white/75 hover:text-white/70 text-xs"
             >
               ✕
             </button>
@@ -1187,7 +1187,7 @@ export default function NovaPage() {
             {imageCompressing ? (
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 rounded-lg bg-white/10 animate-pulse" />
-                <span className="font-mono text-[0.72rem] text-white/55">Compressing…</span>
+                <span className="font-mono text-[0.72rem] text-white/78">Compressing…</span>
               </div>
             ) : pendingImage && (
               <>
@@ -1200,7 +1200,7 @@ export default function NovaPage() {
                 <span className="font-mono text-[0.72rem] text-white/70 flex-1">Image ready to send</span>
                 <button
                   onClick={clearPendingImage}
-                  className="text-white/55 hover:text-red-400 text-xs transition-colors"
+                  className="text-white/78 hover:text-red-400 text-xs transition-colors"
                   aria-label="Remove image"
                 >
                   ✕
@@ -1227,7 +1227,7 @@ export default function NovaPage() {
         {!isUnlimited && usageLeft === 0 ? (
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
             <p className="font-display font-bold text-white text-sm mb-1">Monthly limit reached</p>
-            <p className="font-mono text-[0.72rem] text-white/65 mb-3">
+            <p className="font-mono text-[0.72rem] text-white/82 mb-3">
               {userTier === 'scholar'
                 ? 'Nova Unlimited (R89/month) removes all caps — unlimited messages'
                 : 'Nova Scholar gives you 150 messages for R29/month'}
@@ -1272,7 +1272,7 @@ export default function NovaPage() {
                   'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all border',
                   sr.isListening
                     ? 'bg-sky-500/20 border-sky-500/50 text-sky-400 animate-pulse'
-                    : 'bg-white/5 border-white/10 text-white/65 hover:bg-white/10 hover:text-white/70'
+                    : 'bg-white/5 border-white/10 text-white/82 hover:bg-white/10 hover:text-white/70'
                 )}
                 aria-label={sr.isListening ? 'Stop listening' : 'Speak to Nova'}
               >
@@ -1309,7 +1309,7 @@ export default function NovaPage() {
                 rows={1}
                 maxLength={2000}
                 className={cn(
-                  'w-full bg-[var(--bg-surface)] border rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/50 resize-none outline-none transition-all font-body',
+                  'w-full bg-[var(--bg-surface)] border rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/75 resize-none outline-none transition-all font-body',
                   sr.isListening
                     ? 'border-red-500/40 ring-2 ring-red-500/15'
                     : 'border-white/10 hover:border-white/20 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20'
@@ -1333,7 +1333,7 @@ export default function NovaPage() {
                   'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all border',
                   voiceMode
                     ? 'bg-sky-500/20 border-sky-500/40 text-sky-400'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 text-white/65'
+                    : 'bg-white/5 border-white/10 hover:bg-white/10 text-white/82'
                 )}
                 aria-label="Toggle auto-read"
               >
@@ -1364,7 +1364,7 @@ export default function NovaPage() {
           </>
         )}
 
-        <p className="font-mono text-[0.54rem] text-white/15 text-center mt-2">
+        <p className="font-mono text-[0.54rem] text-white/55 text-center mt-2">
           Nova is an AI companion, not a licensed therapist. In crisis, call SADAG: 0800 21 4446
         </p>
       </div>

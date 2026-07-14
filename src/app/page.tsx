@@ -1034,7 +1034,7 @@ export default function LandingPage() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="font-mono text-[0.6rem] transition-colors hover:text-white/60 min-h-[44px] flex items-center"
+                  className="font-mono text-[0.6rem] transition-colors hover:text-white/80 min-h-[44px] flex items-center"
                   style={{ color: 'rgba(255,255,255,0.25)' }}
                 >
                   {link.label}

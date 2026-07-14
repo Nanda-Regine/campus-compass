@@ -86,7 +86,7 @@ const components: Components = {
 
   // Blockquotes — used for key insights
   blockquote: ({ children }) => (
-    <blockquote className="border-l-2 border-teal-500/50 pl-3 my-2 last:mb-0 text-white/65 italic">
+    <blockquote className="border-l-2 border-teal-500/50 pl-3 my-2 last:mb-0 text-white/82 italic">
       {children}
     </blockquote>
   ),

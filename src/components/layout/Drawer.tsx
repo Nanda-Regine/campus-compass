@@ -299,7 +299,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
             </div>
             <div className="min-w-0">
               <div className="font-display font-bold text-white text-xs truncate">{profile?.name || 'Student'}</div>
-              <div className="font-mono text-[0.65rem] text-white/55 truncate">{profile?.university?.split('(')[0]?.trim() || 'University'}</div>
+              <div className="font-mono text-[0.65rem] text-white/78 truncate">{profile?.university?.split('(')[0]?.trim() || 'University'}</div>
             </div>
             {isPremium && (
               <span className="ml-auto flex-shrink-0 bg-amber-500/15 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-mono text-[0.65rem] uppercase tracking-wide">PRO</span>
@@ -312,7 +312,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
 
           {/* ── Home links (always visible) ── */}
           <div className="mb-2">
-            <div className="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-white/45 px-2 mb-1">Home</div>
+            <div className="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-white/72 px-2 mb-1">Home</div>
             {[
               { href: '/dashboard', icon: '🏠', label: 'Dashboard' },
               { href: '/nova',      icon: '✦',  label: 'Nova — AI Companion' },
@@ -326,13 +326,13 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                   onClick={onClose}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 mb-0.5 text-sm font-display font-medium',
-                    active ? 'bg-teal-600/15 text-teal-400 border border-teal-600/20' : 'text-white/60 hover:text-white hover:bg-white/5'
+                    active ? 'bg-teal-600/15 text-teal-400 border border-teal-600/20' : 'text-white/80 hover:text-white hover:bg-white/5'
                   )}
                 >
                   <span className="w-5 text-center text-base">{item.icon}</span>
                   {item.label}
                   {item.href === '/nova' && !isPremium && (
-                    <span className="ml-auto font-mono text-[0.65rem] text-white/50">10/mo free</span>
+                    <span className="ml-auto font-mono text-[0.65rem] text-white/75">10/mo free</span>
                   )}
                 </Link>
               )
@@ -360,7 +360,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                     <div className="font-display font-bold text-sm" style={{ color: isOpen || isActive ? room.color : 'rgba(255,255,255,0.7)' }}>
                       {room.label}
                     </div>
-                    <div className="font-mono text-[0.65rem] text-white/50 truncate">{room.tagline}</div>
+                    <div className="font-mono text-[0.65rem] text-white/75 truncate">{room.tagline}</div>
                   </div>
                   <span
                     className="font-mono text-[0.65rem] flex-shrink-0 transition-transform duration-200"
@@ -394,7 +394,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                                   'flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg transition-all duration-100 text-xs font-display',
                                   active
                                     ? 'font-bold'
-                                    : 'text-white/55 hover:text-white hover:bg-white/5'
+                                    : 'text-white/78 hover:text-white hover:bg-white/5'
                                 )}
                                 style={active ? { color: room.color, background: `${room.color}12` } : {}}
                               >
@@ -414,19 +414,19 @@ export default function Drawer({ open, onClose }: DrawerProps) {
 
           {/* ── Account ── */}
           <div className="border-t border-white/7 mt-3 pt-3">
-            <div className="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-white/45 px-2 mb-1.5">Account</div>
+            <div className="font-mono text-[0.65rem] tracking-[0.18em] uppercase text-white/72 px-2 mb-1.5">Account</div>
 
             <div className="px-2 py-2 mb-1">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-base w-5 text-center">🌍</span>
-                <span className="font-display text-xs text-white/55">Nova Language</span>
+                <span className="font-display text-xs text-white/78">Nova Language</span>
                 {savingLang && <span className="ml-auto font-mono text-[0.65rem] text-teal-400">saving…</span>}
               </div>
               <select
                 value={profile?.ai_language || 'English'}
                 onChange={e => handleLanguageChange(e.target.value as SALanguage)}
                 disabled={savingLang}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 font-mono text-[0.65rem] text-white/65 focus:outline-none focus:border-teal-600/50 disabled:opacity-40"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 font-mono text-[0.65rem] text-white/82 focus:outline-none focus:border-teal-600/50 disabled:opacity-40"
               >
                 {SA_LANGUAGES.map(l => (
                   <option key={l.value} value={l.value} className="bg-[var(--bg-surface)]">{l.label}</option>
@@ -439,7 +439,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
               { href: '/referral', icon: '🎁', label: 'Refer & Earn' },
               { href: '/feedback', icon: '⭐', label: 'Rate & Feedback' },
             ].map(item => (
-              <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-display text-white/55 hover:text-white hover:bg-white/5 transition-all mb-0.5">
+              <Link key={item.href} href={item.href} onClick={onClose} className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-display text-white/78 hover:text-white hover:bg-white/5 transition-all mb-0.5">
                 <span className="text-base w-5 text-center">{item.icon}</span>
                 {item.label}
               </Link>
@@ -454,7 +454,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
 
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-display text-white/60 hover:text-red-400 hover:bg-red-500/5 transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-display text-white/80 hover:text-red-400 hover:bg-red-500/5 transition-all"
             >
               <span className="text-base w-5 text-center">🚪</span>
               Sign Out
@@ -464,7 +464,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
 
         {/* ── Footer ── */}
         <div className="px-5 py-3 border-t border-white/7">
-          <p className="font-mono text-[0.65rem] text-white/40 leading-relaxed">
+          <p className="font-mono text-[0.65rem] text-white/72 leading-relaxed">
             VarsityOS v2.0 · Built by{' '}
             <a href="https://creativelynanda.co.za" target="_blank" rel="noopener noreferrer" className="text-teal-500 hover:text-teal-400">
               Nanda Regine

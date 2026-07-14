@@ -26,7 +26,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     teal:    'bg-teal-600 text-white hover:bg-teal-500 shadow-teal disabled:opacity-50',
     coral:   'bg-coral text-white hover:bg-coral-light disabled:opacity-50',
     outline: 'bg-transparent text-white border border-white/20 hover:border-teal-500 hover:text-teal-400 disabled:opacity-40',
-    ghost:   'bg-transparent text-white/60 hover:text-white hover:bg-white/5 disabled:opacity-40',
+    ghost:   'bg-transparent text-white/80 hover:text-white hover:bg-white/5 disabled:opacity-40',
     danger:  'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 disabled:opacity-40',
     amber:   'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 disabled:opacity-40',
     purple:  'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 disabled:opacity-40',

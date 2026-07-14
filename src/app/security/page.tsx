@@ -103,15 +103,15 @@ export default function SecurityPage() {
         <Link href="/" className="text-teal-400 font-mono text-xs hover:text-teal-300 transition-colors">
           ← Back
         </Link>
-        <span className="text-white/45 font-mono text-xs">|</span>
-        <span className="font-mono text-xs text-white/65 uppercase tracking-widest">Trust Centre</span>
+        <span className="text-white/72 font-mono text-xs">|</span>
+        <span className="font-mono text-xs text-white/82 uppercase tracking-widest">Trust Centre</span>
       </div>
 
       <div className="relative z-[1] max-w-2xl mx-auto my-8 px-6 py-8 rounded-2xl border border-white/10 bg-[rgba(10,9,23,0.85)] backdrop-blur-xl">
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400/70 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Security</h1>
-          <p className="font-mono text-xs text-white/55">We protect 10,000+ students. Here&apos;s exactly how.</p>
+          <p className="font-mono text-xs text-white/78">We protect 10,000+ students. Here&apos;s exactly how.</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed">
@@ -119,7 +119,7 @@ export default function SecurityPage() {
           {/* Architecture summary */}
           <div className="rounded-xl border border-teal-600/20 bg-teal-600/5 px-4 py-4">
             <p className="font-display font-bold text-teal-400 text-sm mb-2">Security-by-Design Architecture</p>
-            <p className="text-white/55 text-xs leading-relaxed">
+            <p className="text-white/78 text-xs leading-relaxed">
               VarsityOS is built on <strong className="text-white/75">Supabase</strong> (managed Postgres with RLS), hosted on <strong className="text-white/75">Vercel</strong> (SOC 2 Type II), and protected by <strong className="text-white/75">Arcjet</strong> at the edge. Every request passes through our security middleware before reaching your data. We follow a zero-trust model: each request is independently authenticated and rate-limited regardless of origin.
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function SecurityPage() {
               <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
                 <ul className="space-y-2">
                   {shield.items.map(item => (
-                    <li key={item} className="flex items-start gap-2.5 text-xs text-white/55">
+                    <li key={item} className="flex items-start gap-2.5 text-xs text-white/78">
                       <span style={{ color: shield.color, flexShrink: 0, marginTop: 1 }}>✓</span>
                       <span>{item}</span>
                     </li>
@@ -159,11 +159,11 @@ export default function SecurityPage() {
                 <tbody>
                   {COMPLIANCE.map(row => (
                     <tr key={row.name} className="border-b border-white/5">
-                      <td className="py-2 pr-4 text-white/65 font-bold">{row.name}</td>
+                      <td className="py-2 pr-4 text-white/82 font-bold">{row.name}</td>
                       <td className="py-2 pr-4">
                         <span style={{ color: row.color, fontWeight: 700 }}>{row.status}</span>
                       </td>
-                      <td className="py-2 text-white/65 hidden sm:table-cell">{row.detail}</td>
+                      <td className="py-2 text-white/82 hidden sm:table-cell">{row.detail}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -174,7 +174,7 @@ export default function SecurityPage() {
           {/* Third-party security */}
           <section>
             <h2 className="font-display font-bold text-white text-base mb-3">🏗️ Infrastructure Partners</h2>
-            <div className="space-y-2 text-xs text-white/55">
+            <div className="space-y-2 text-xs text-white/78">
               {[
                 { name: 'Supabase', cert: 'SOC 2 Type II, GDPR, ISO 27001', role: 'Database, Auth, Storage' },
                 { name: 'Vercel', cert: 'SOC 2 Type II, ISO 27001, PCI DSS SAQ A', role: 'Edge hosting, Functions, CDN' },
@@ -188,7 +188,7 @@ export default function SecurityPage() {
                   <span className="text-teal-400 font-bold flex-shrink-0" style={{ minWidth: 100 }}>{p.name}</span>
                   <div>
                     <p className="text-white/70 text-[10px] font-bold mb-0.5">{p.role}</p>
-                    <p className="text-white/60 text-[10px]">{p.cert}</p>
+                    <p className="text-white/80 text-[10px]">{p.cert}</p>
                   </div>
                 </div>
               ))}
@@ -198,7 +198,7 @@ export default function SecurityPage() {
           {/* AI-specific security */}
           <section>
             <h2 className="font-display font-bold text-white text-base mb-3">✦ AI (Nova) Security</h2>
-            <div className="rounded-xl border border-indigo-600/20 bg-indigo-600/5 px-4 py-4 text-xs text-white/55 space-y-2">
+            <div className="rounded-xl border border-indigo-600/20 bg-indigo-600/5 px-4 py-4 text-xs text-white/78 space-y-2">
               <p>Your conversations with Nova are sent to Anthropic&apos;s Claude API over TLS. We have enabled <strong className="text-white/75">zero data retention</strong> — Anthropic does not use your messages to train models. Messages are stored in our database for paying subscribers (90 days) and deleted on request.</p>
               <p>Nova context is scoped to YOUR data only. Your profile, budget, and tasks are injected into prompts server-side — they are never visible to other users and are never logged in a way that could cross-contaminate sessions.</p>
               <p>Anthropic&apos;s API key is a server-only environment variable and is never exposed to browsers, source maps, or client-side bundles.</p>
@@ -208,7 +208,7 @@ export default function SecurityPage() {
           {/* Responsible disclosure */}
           <section>
             <h2 className="font-display font-bold text-white text-base mb-3">🔍 Responsible Disclosure</h2>
-            <div className="rounded-xl border border-amber-600/20 bg-amber-600/5 px-4 py-4 text-xs text-white/55 space-y-3">
+            <div className="rounded-xl border border-amber-600/20 bg-amber-600/5 px-4 py-4 text-xs text-white/78 space-y-3">
               <p>
                 We take security reports seriously. If you discover a vulnerability in VarsityOS, please disclose it responsibly:
               </p>
@@ -218,10 +218,10 @@ export default function SecurityPage() {
                 <li>Include: affected URL, steps to reproduce, impact assessment, your contact details</li>
                 <li>We will acknowledge within 48 hours and provide a fix timeline</li>
               </ul>
-              <p className="text-white/65">
-                Please do <strong className="text-white/60">not</strong> publicly disclose vulnerabilities before we have had reasonable time to fix them (we ask for a minimum 90-day window). We do not operate a bug bounty programme at this time, but we will credit researchers in our changelog.
+              <p className="text-white/82">
+                Please do <strong className="text-white/80">not</strong> publicly disclose vulnerabilities before we have had reasonable time to fix them (we ask for a minimum 90-day window). We do not operate a bug bounty programme at this time, but we will credit researchers in our changelog.
               </p>
-              <p className="text-white/65">
+              <p className="text-white/82">
                 Out of scope: social engineering, physical access attacks, denial-of-service attacks, spam.
               </p>
             </div>
@@ -230,7 +230,7 @@ export default function SecurityPage() {
           {/* What we don't do */}
           <section>
             <h2 className="font-display font-bold text-white text-base mb-3">❌ What We Never Do</h2>
-            <ul className="space-y-2 text-xs text-white/55">
+            <ul className="space-y-2 text-xs text-white/78">
               {[
                 'Sell your personal information to advertisers or data brokers',
                 'Store your payment card details (Paystack handles all card data)',
@@ -253,20 +253,20 @@ export default function SecurityPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/privacy" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Privacy Policy</p>
-                <p className="text-white/65 text-xs mt-1">How we process your personal information under POPIA</p>
+                <p className="text-white/82 text-xs mt-1">How we process your personal information under POPIA</p>
               </Link>
               <Link href="/paia" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">PAIA Manual</p>
-                <p className="text-white/65 text-xs mt-1">Section 51 manual, records held, annual report</p>
+                <p className="text-white/82 text-xs mt-1">Section 51 manual, records held, annual report</p>
               </Link>
               <Link href="/terms" className="flex-1 rounded-lg border border-white/8 bg-white/3 px-4 py-3 hover:bg-white/5 transition-colors no-underline">
                 <p className="font-display font-bold text-teal-400 text-sm">Terms</p>
-                <p className="text-white/65 text-xs mt-1">Platform rules, subscriptions, SA law</p>
+                <p className="text-white/82 text-xs mt-1">Platform rules, subscriptions, SA law</p>
               </Link>
             </div>
           </section>
 
-          <p className="text-white/50 text-xs text-center pt-2">
+          <p className="text-white/75 text-xs text-center pt-2">
             Questions? <a href="mailto:security@varsityos.co.za" className="text-teal-400 hover:text-teal-300">security@varsityos.co.za</a>
           </p>
 
