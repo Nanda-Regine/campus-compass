@@ -418,7 +418,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       {/* Kente gold fire — subtle texture for the finance domain */}
-      <AmbientImage zone="budget" opacity={0.34} blurPx={6} saturation={1.5} overlayColor="linear-gradient(180deg,rgba(5,4,12,0.55) 0%,rgba(5,4,12,0.64) 100%)" />
+      <AmbientImage zone="budget" opacity={0.46} blurPx={6} saturation={1.5} overlayColor="linear-gradient(180deg,rgba(5,4,12,0.4) 0%,rgba(5,4,12,0.5) 100%)" />
       <TopBar title="Budget & NSFAS" />
 
       {/* ── Main: vertical tab rail + content ── */}

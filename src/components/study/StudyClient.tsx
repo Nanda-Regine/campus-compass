@@ -166,7 +166,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
 
   return (
     <div className="page-enter study-page min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="schedule" opacity={0.34} blurPx={6} saturation={1.8} overlayColor="linear-gradient(180deg,rgba(5,4,12,0.55) 0%,rgba(5,4,12,0.64) 100%)" />
+      <AmbientImage zone="schedule" opacity={0.46} blurPx={6} saturation={1.8} overlayColor="linear-gradient(180deg,rgba(5,4,12,0.4) 0%,rgba(5,4,12,0.5) 100%)" />
       <PullToRefresh onRefresh={handleRefresh} />
 
       {/* ── Page header ── */}
