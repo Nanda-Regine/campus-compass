@@ -328,7 +328,7 @@ export default function SundayPlanning() {
             {/* Priorities with checkboxes */}
             {plan.priorities.map((p, i) => (
               <button key={i} onClick={() => togglePriority(i)} style={{ display: 'flex', gap: 10, padding: '8px 10px', background: 'rgba(255,255,255,0.06)', border: `1px solid ${plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.2)' : 'var(--border-subtle)'}`, borderRadius: 8, cursor: 'pointer', textAlign: 'left', alignItems: 'center' }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${plan.completedPriorities.includes(i) ? 'var(--teal)' : 'var(--border-default)'}`, background: plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.55rem', color: 'var(--teal)' }}>{plan.completedPriorities.includes(i) ? '✓' : ''}</div>
+                <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${plan.completedPriorities.includes(i) ? 'var(--teal)' : 'var(--border-default)'}`, background: plan.completedPriorities.includes(i) ? 'rgba(52,211,153,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.63rem', color: 'var(--teal)' }}>{plan.completedPriorities.includes(i) ? '✓' : ''}</div>
                 <div style={{ fontSize: '0.75rem', color: plan.completedPriorities.includes(i) ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: plan.completedPriorities.includes(i) ? 'line-through' : 'none', flex: 1 }}>{p}</div>
               </button>
             ))}

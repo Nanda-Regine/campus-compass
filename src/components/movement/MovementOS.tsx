@@ -268,7 +268,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                 }}
               >
                 <Icon size={18} style={{ opacity: active ? 1 : 0.45, color: active ? '#38bdf8' : 'rgba(255,255,255,0.62)' }} />
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? '#38bdf8' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tLabel.slice(0, 5).toUpperCase()}
                 </span>
               </button>
@@ -331,7 +331,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {dirQuery && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
-                  <span className="font-mono text-[0.58rem] text-white/78 uppercase tracking-wider">
+                  <span className="font-mono text-[0.65rem] text-white/78 uppercase tracking-wider">
                     {TRANSPORT_ICONS[dirQuery.mode]} {TRANSPORT_LABELS[dirQuery.mode]} · {SA_FARE_RANGES[dirQuery.mode]}
                   </span>
                   <a
@@ -381,7 +381,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
               return (
                 <div className="card-base p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-[0.58rem] text-amber-400 uppercase tracking-wider">⭐ Your Default Route</span>
+                    <span className="font-mono text-[0.65rem] text-amber-400 uppercase tracking-wider">⭐ Your Default Route</span>
                     <button
                       onClick={() => { setFromAddr(def.from_address); setToAddr(def.to_address); setTransport(def.transport_type); setDirQuery({ from: def.from_address, to: def.to_address, mode: def.transport_type }) }}
                       className="font-mono text-[0.6rem] text-sky-400 hover:text-sky-300 transition-colors"
@@ -410,7 +410,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {/* Mapbox interactive map */}
             {routes.length > 0 && (
               <div>
-                <p className="font-mono text-[0.58rem] text-white/75 uppercase tracking-wider mb-2 px-1">
+                <p className="font-mono text-[0.65rem] text-white/75 uppercase tracking-wider mb-2 px-1">
                   📍 Tap markers for details · Teal = departure · Orange = destination
                 </p>
                 {MAPBOX_TOKEN ? (
@@ -544,7 +544,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
             {/* Lift club map — shows all active lift posts as 🚗 pins */}
             {liftMapView && MAPBOX_TOKEN && (
               <div>
-                <p className="font-mono text-[0.58rem] text-white/75 uppercase tracking-wider mb-2 px-1">
+                <p className="font-mono text-[0.65rem] text-white/75 uppercase tracking-wider mb-2 px-1">
                   🚗 = pickup point · tap for details & WhatsApp link
                 </p>
                 <MapboxRoutesMap liftPosts={liftPosts} token={MAPBOX_TOKEN} height={380} />
@@ -632,7 +632,7 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                         {p.seats_available} seat{p.seats_available !== 1 ? 's' : ''}
                       </span>
                       {p.fare_rands && <span className="font-mono text-[0.62rem] text-teal-400">R{p.fare_rands}/person</span>}
-                      <span className="font-mono text-[0.58rem] text-white/75 capitalize">{p.recurring}</span>
+                      <span className="font-mono text-[0.65rem] text-white/75 capitalize">{p.recurring}</span>
                     </div>
                     {p.contact_whatsapp && (
                       <a

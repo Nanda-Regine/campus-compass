@@ -238,7 +238,7 @@ export default function GraduationOptimizer({ hasModules }: { hasModules: boolea
 
         {/* Gap type legend */}
         <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
-          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Understanding gaps</div>
+          <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>Understanding gaps</div>
           {[
             { type: 'Failed core module', detail: 'A compulsory module you didn\'t pass. Must be repeated — no equivalent substitution. Delays graduation by at least one semester.', color: '#ef4444' },
             { type: 'Missing prerequisite', detail: 'A module that must be passed before you can register for a later one. Check your faculty handbook for chains.', color: '#f97316' },
@@ -256,7 +256,7 @@ export default function GraduationOptimizer({ hasModules }: { hasModules: boolea
 
         {/* SA-specific graduation info */}
         <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '12px 14px' }}>
-          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>SA graduation calendar</div>
+          <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#38BDF8', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>SA graduation calendar</div>
           {[
             { item: 'Graduation ceremonies', detail: 'Most South African public universities hold two ceremonies per year: April (for November/December completions) and December/October (for June completions). If you complete mid-year, you\'ll often wait 6 months for your ceremony.' },
             { item: 'Supplementary exams', detail: 'If your final mark is 40–49%, most SA institutions offer a supplementary (supp) exam — one more attempt at the paper. A supp pass is usually capped at 50%. Below 40% = repeat the module (not a supp). Check your faculty rules — some departments don\'t offer supps for all modules.' },

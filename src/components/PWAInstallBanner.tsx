@@ -138,7 +138,7 @@ export default function PWAInstallBanner({ variant = 'banner', onInstalled }: Pr
       </div>
       <div className="flex-1 min-w-0">
         <p className="font-display font-bold text-white text-xs">Install VarsityOS</p>
-        <p className="font-mono text-[0.58rem] text-white/82 truncate">Works offline · Home screen shortcut</p>
+        <p className="font-mono text-[0.65rem] text-white/82 truncate">Works offline · Home screen shortcut</p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <button

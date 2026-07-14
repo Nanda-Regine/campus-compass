@@ -142,7 +142,7 @@ export default function StudyRoomsTab({ userInstitution }: { userId: string; use
               </div>
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
                 <div style={{ fontSize: '1rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: ACCENT }}>{remaining(r.ends_at)}</div>
-                <div style={{ fontSize: '0.56rem', color: 'var(--text-muted)' }}>left</div>
+                <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>left</div>
               </div>
             </div>
 

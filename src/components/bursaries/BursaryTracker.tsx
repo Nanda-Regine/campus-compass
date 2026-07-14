@@ -180,7 +180,7 @@ export default function BursaryTracker() {
             <div>
               <div className="font-display font-bold text-white text-base leading-tight">{selected.bursary_name}</div>
               {selected.organization && (
-                <div className="font-mono text-[0.58rem] text-white/82 mt-0.5">{selected.organization}</div>
+                <div className="font-mono text-[0.65rem] text-white/82 mt-0.5">{selected.organization}</div>
               )}
             </div>
             <button onClick={() => deleteApp(selected.id)}
@@ -194,7 +194,7 @@ export default function BursaryTracker() {
               <div className="font-mono text-[0.65rem] text-white/75 mb-1">DEADLINE</div>
               <div className="font-mono text-[0.62rem] font-bold" style={{ color: dl.color }}>{dl.text}</div>
               {selected.deadline && (
-                <div className="font-mono text-[0.48rem] text-white/72 mt-0.5">
+                <div className="font-mono text-[0.58rem] text-white/72 mt-0.5">
                   {new Date(selected.deadline).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
@@ -220,7 +220,7 @@ export default function BursaryTracker() {
                 const isActive = selected.status === s
                 return (
                   <button key={s} onClick={() => updateStatus(selected.id, s)}
-                    className={cn('font-mono text-[0.55rem] px-2 py-1 rounded-lg border transition-all',
+                    className={cn('font-mono text-[0.63rem] px-2 py-1 rounded-lg border transition-all',
                       isActive ? 'border-transparent' : 'bg-white/3 border-white/8 text-white/82 hover:border-white/15')}
                     style={isActive ? { background: `${sm.color}20`, color: sm.color, borderColor: `${sm.color}30` } : {}}>
                     {sm.emoji} {sm.label}
@@ -233,7 +233,7 @@ export default function BursaryTracker() {
 
         {/* Document checklist */}
         <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.55rem] text-white/80 tracking-widest mb-3">DOCUMENT CHECKLIST</div>
+          <div className="font-mono text-[0.63rem] text-white/80 tracking-widest mb-3">DOCUMENT CHECKLIST</div>
           <div className="h-1.5 rounded-full bg-white/8 overflow-hidden mb-3">
             <div className="h-full rounded-full bg-emerald-500 transition-all"
               style={{ width: `${docsTotal > 0 ? (docsDone / docsTotal) * 100 : 0}%` }} />
@@ -244,7 +244,7 @@ export default function BursaryTracker() {
                 className="w-full flex items-center gap-2.5 text-left rounded-xl px-3 py-2.5 border transition-all bg-white/2 border-white/6 hover:border-white/12">
                 <div className={cn('w-4 h-4 rounded-md border-2 flex-shrink-0 flex items-center justify-center transition-all',
                   doc.done ? 'bg-emerald-500 border-emerald-500' : 'border-white/25')}>
-                  {doc.done && <span className="text-white text-[0.55rem] font-bold">✓</span>}
+                  {doc.done && <span className="text-white text-[0.63rem] font-bold">✓</span>}
                 </div>
                 <span className={cn('font-mono text-[0.6rem]', doc.done ? 'line-through text-white/78' : 'text-white/80')}>
                   {doc.name}
@@ -256,7 +256,7 @@ export default function BursaryTracker() {
 
         {/* Notes */}
         <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-          <div className="font-mono text-[0.55rem] text-white/80 tracking-widest mb-2">NOTES</div>
+          <div className="font-mono text-[0.63rem] text-white/80 tracking-widest mb-2">NOTES</div>
           <textarea
             defaultValue={selected.notes || ''}
             onBlur={e => saveNotes(selected, e.target.value)}
@@ -264,7 +264,7 @@ export default function BursaryTracker() {
             rows={3}
             className="w-full bg-white/4 border border-white/8 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/72 outline-none focus:border-white/20 resize-none font-body"
           />
-          <div className="font-mono text-[0.48rem] text-white/72 mt-1">Auto-saved on blur</div>
+          <div className="font-mono text-[0.58rem] text-white/72 mt-1">Auto-saved on blur</div>
         </div>
       </div>
     )
@@ -299,14 +299,14 @@ export default function BursaryTracker() {
       {/* Urgent deadlines */}
       {urgent.length > 0 && (
         <div className="bg-red-500/6 border border-red-500/20 rounded-2xl p-3 space-y-1">
-          <div className="font-mono text-[0.55rem] text-red-400 tracking-widest">⚠️ URGENT DEADLINES</div>
+          <div className="font-mono text-[0.63rem] text-red-400 tracking-widest">⚠️ URGENT DEADLINES</div>
           {urgent.map(a => {
             const dl = formatDeadline(a.deadline)
             return (
               <button key={a.id} onClick={() => setSelected(a)}
                 className="w-full flex items-center justify-between text-left rounded-xl px-2 py-1.5 hover:bg-white/4 transition-all">
                 <span className="font-mono text-[0.6rem] text-white/70 truncate">{a.bursary_name}</span>
-                <span className="font-mono text-[0.58rem] font-bold ml-2 flex-shrink-0" style={{ color: dl.color }}>{dl.text}</span>
+                <span className="font-mono text-[0.65rem] font-bold ml-2 flex-shrink-0" style={{ color: dl.color }}>{dl.text}</span>
               </button>
             )
           })}
@@ -382,7 +382,7 @@ export default function BursaryTracker() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <span className="font-mono text-[0.55rem] px-1.5 py-0.5 rounded-md"
+                      <span className="font-mono text-[0.63rem] px-1.5 py-0.5 rounded-md"
                         style={{ background: `${meta.color}15`, color: meta.color }}>
                         {meta.emoji} {meta.label}
                       </span>
@@ -394,7 +394,7 @@ export default function BursaryTracker() {
                     </div>
                     <div className="font-display font-bold text-white text-sm truncate">{a.bursary_name}</div>
                     {a.organization && (
-                      <div className="font-mono text-[0.55rem] text-white/80 truncate mt-0.5">{a.organization}</div>
+                      <div className="font-mono text-[0.63rem] text-white/80 truncate mt-0.5">{a.organization}</div>
                     )}
                   </div>
                   <div className="flex-shrink-0 text-right">
@@ -403,7 +403,7 @@ export default function BursaryTracker() {
                         R{a.amount_rands.toLocaleString()}
                       </div>
                     )}
-                    <div className="font-mono text-[0.55rem] mt-1" style={{ color: dl.color }}>{dl.text}</div>
+                    <div className="font-mono text-[0.63rem] mt-1" style={{ color: dl.color }}>{dl.text}</div>
                   </div>
                 </div>
                 {/* Doc progress bar */}

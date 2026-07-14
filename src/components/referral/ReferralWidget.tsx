@@ -58,7 +58,7 @@ export default function ReferralWidget() {
         </div>
         <div className="text-right">
           <p className="font-display font-bold text-teal-400 text-lg leading-none">{data.referralCount}</p>
-          <p className="font-mono text-[0.55rem] text-white/78">referrals</p>
+          <p className="font-mono text-[0.63rem] text-white/78">referrals</p>
         </div>
       </div>
 
@@ -101,7 +101,7 @@ export default function ReferralWidget() {
         </button>
       </div>
 
-      <p className="font-mono text-[0.55rem] text-white/72 text-center mt-2">
+      <p className="font-mono text-[0.63rem] text-white/72 text-center mt-2">
         XP climbs your level and unlocks badges. It never expires.
       </p>
     </div>

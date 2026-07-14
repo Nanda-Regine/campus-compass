@@ -125,7 +125,7 @@ function JoinGroupContent() {
         >
           {joining ? 'Joining…' : 'Join Group'}
         </button>
-        <p className="font-mono text-[0.58rem] text-white/75">
+        <p className="font-mono text-[0.65rem] text-white/75">
           You need a VarsityOS account to join. We&apos;ll create one if you don&apos;t have one.
         </p>
       </div>

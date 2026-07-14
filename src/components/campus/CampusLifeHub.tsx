@@ -143,7 +143,7 @@ function LibraryTab({ institution }: { institution: string }) {
             {data?.myCheckin ? `📍 ${data.myCheckin.zone}` : 'Not checked in'}
           </div>
           {data?.myCheckin && (
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)' }}>
+            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>
               Checked in {formatDistanceToNow(parseISO(data.myCheckin.checked_in_at), { addSuffix: true })}
             </div>
           )}
@@ -191,7 +191,7 @@ function LibraryTab({ institution }: { institution: string }) {
       )}
 
       {/* Zone occupancy */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Current occupancy at {institution?.split(' ').slice(0, 3).join(' ') ?? 'campus'}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -207,7 +207,7 @@ function LibraryTab({ institution }: { institution: string }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                 <Users size={11} style={{ color }} />
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color }}>{count}</span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{label}</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)', background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{label}</span>
               </div>
             </div>
           )
@@ -315,7 +315,7 @@ function EventsTab() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 3 }}>
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)' }}>{event.title}</span>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color, background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{event.category}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color, background: `${color}15`, border: `0.5px solid ${color}30`, padding: '2px 6px', borderRadius: 9999 }}>{event.category}</span>
                 </div>
                 {event.venue && (
                   <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)' }}>
@@ -336,7 +336,7 @@ function EventsTab() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.45)' }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>
                 {event.creator_emoji} {event.creator_name} · {event.rsvp_count} going
               </div>
               <button
@@ -479,7 +479,7 @@ function SafetyTab({ institution }: { institution: string }) {
       </div>
 
       {/* All emergency contacts */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Emergency contacts — free to call 24/7
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -537,7 +537,7 @@ function MapTab({ institution }: { institution: string }) {
   return (
     <div style={{ padding: '16px 20px' }}>
       {/* Quick navigation */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Navigate to campus
       </div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
@@ -557,7 +557,7 @@ function MapTab({ institution }: { institution: string }) {
       </div>
 
       {/* Campus area quick links */}
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
         Find on campus
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -615,7 +615,7 @@ export default function CampusLifeHub({ institution }: { institution: string }) 
             }}
           >
             {t.icon}
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{t.label}</span>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{t.label}</span>
           </button>
         ))}
       </div>

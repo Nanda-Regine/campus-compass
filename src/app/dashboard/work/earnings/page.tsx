@@ -59,7 +59,7 @@ export default function EarningsPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="budget" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.42)" />
+      <AmbientImage zone="budget" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.58)" />
       <TopBar title="Earnings" />
       <div className="px-4 py-3 space-y-4 max-w-2xl mx-auto">
 
@@ -75,7 +75,7 @@ export default function EarningsPage() {
           <div className="font-display font-black text-3xl text-white">
             {fmt.currencyShort(totalEarnings)}
           </div>
-          <div className="font-mono text-[0.58rem] text-teal-300/50 mt-1">
+          <div className="font-mono text-[0.65rem] text-teal-300/50 mt-1">
             {totalHours.toFixed(1)} hours worked · {workedShifts.length} shifts
           </div>
         </div>
@@ -83,19 +83,19 @@ export default function EarningsPage() {
         {/* ─── Current month context ─── */}
         {thisMonth && thisMonth.earnings > 0 && (
           <div className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-4">
-            <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest mb-2">
+            <div className="font-mono text-[0.65rem] text-white/78 uppercase tracking-widest mb-2">
               {thisMonth.label}
             </div>
             <div className="font-display font-black text-2xl text-amber-400 mb-1">
               {fmt.currencyShort(thisMonth.earnings)}
             </div>
-            <div className="font-mono text-[0.58rem] text-white/82">
+            <div className="font-mono text-[0.65rem] text-white/82">
               {thisMonth.hours.toFixed(1)} hours across {thisMonth.shifts} shifts
             </div>
 
             {/* What it covered */}
             <div className="mt-3 pt-3 border-t border-white/7">
-              <div className="font-mono text-[0.58rem] text-white/78 mb-1.5">Approximate coverage</div>
+              <div className="font-mono text-[0.65rem] text-white/78 mb-1.5">Approximate coverage</div>
               <div className="space-y-1">
                 {getWhatItCovers(thisMonth.earnings).map(item => (
                   <div key={item.label} className="flex items-center justify-between text-xs">
@@ -128,7 +128,7 @@ export default function EarningsPage() {
                 <div key={m.month} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl px-4 py-3.5 flex items-center gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="font-display font-bold text-white text-sm">{m.label}</div>
-                    <div className="font-mono text-[0.58rem] text-white/80 mt-0.5">
+                    <div className="font-mono text-[0.65rem] text-white/80 mt-0.5">
                       {m.hours.toFixed(1)} hrs · {m.shifts} shifts
                     </div>
                   </div>

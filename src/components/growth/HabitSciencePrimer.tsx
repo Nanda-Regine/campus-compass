@@ -148,7 +148,7 @@ export default function HabitSciencePrimer() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>HABIT SCIENCE PRIMER</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>HABIT SCIENCE PRIMER</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>The science of building habits that stick</div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>James Clear, BJ Fogg, and neuroscience — adapted for your student life.</div>
       </div>
@@ -431,7 +431,7 @@ function StreakSection({ grid, streakCount, onToggle }: { grid: boolean[]; strea
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
           {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-            <div key={i} style={{ textAlign: 'center', fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 2 }}>{d}</div>
+            <div key={i} style={{ textAlign: 'center', fontSize: '0.63rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 2 }}>{d}</div>
           ))}
           {grid.map((filled, i) => (
             <button

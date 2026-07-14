@@ -161,7 +161,7 @@ export default async function CampusLifePage() {
                 <div className="text-2xl flex-shrink-0">{guide.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm">{guide.title}</div>
-                  <div className="font-mono text-[0.58rem] text-white/82 mt-0.5 leading-snug">{guide.subtitle}</div>
+                  <div className="font-mono text-[0.65rem] text-white/82 mt-0.5 leading-snug">{guide.subtitle}</div>
                 </div>
                 <div className="font-mono text-[0.6rem] text-white/75 flex-shrink-0">→</div>
               </Link>

@@ -194,7 +194,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
       {/* Summary strip */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: '12px 14px' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>This week</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>This week</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, marginTop: 4 }}>
             {totalHoursWeek.toFixed(1)}<span style={{ fontSize: '0.7rem', fontWeight: 400, color: 'var(--text-muted)', marginLeft: 4 }}>hrs</span>
           </div>
@@ -207,7 +207,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
           border: `1px solid ${criticalCount > 0 ? 'rgba(248,113,113,0.2)' : 'rgba(78,207,158,0.2)'}`,
           borderRadius: 12, padding: '12px 14px',
         }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Status</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 800, color: criticalCount > 0 ? '#f87171' : '#4ecf9e', lineHeight: 1.2, marginTop: 4 }}>
             {criticalCount > 0 ? criticalCount : '✓'}
           </div>
@@ -330,25 +330,25 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 800, color: meta.color, lineHeight: 1 }}>
                     {v.velocityRatio !== null ? `${(v.velocityRatio * 100).toFixed(0)}%` : '—'}
                   </div>
-                  <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', marginTop: 2 }}>pace</div>
+                  <div style={{ fontSize: '0.63rem', color: 'var(--text-muted)', marginTop: 2 }}>pace</div>
                 </div>
               </div>
 
               {/* Velocity bar */}
               {pct !== null && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-muted)', flexShrink: 0, width: 36 }}>pace</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-muted)', flexShrink: 0, width: 36 }}>pace</span>
                   <VelocityBar ratio={pct} color={meta.color} />
                 </div>
               )}
 
               {/* Coverage bar (total hours done / required) */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-muted)', flexShrink: 0, width: 36 }}>done</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-muted)', flexShrink: 0, width: 36 }}>done</span>
                 <div style={{ height: 4, borderRadius: 4, background: 'var(--border-subtle)', overflow: 'hidden', flex: 1 }}>
                   <div style={{ height: '100%', width: `${totPct}%`, background: 'rgba(112,144,208,0.5)', borderRadius: 4, transition: 'width 0.4s ease' }} />
                 </div>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-muted)', flexShrink: 0 }}>
                   {v.totalHours.toFixed(1)}h
                 </span>
               </div>
@@ -362,7 +362,7 @@ export default function StudyVelocityTab({ modules, userId }: { modules: Module[
                 ].map(s => (
                   <div key={s.label} style={{ background: 'var(--bg-base)', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>{s.value}</div>
-                    <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
+                    <div style={{ fontSize: '0.63rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
                   </div>
                 ))}
               </div>

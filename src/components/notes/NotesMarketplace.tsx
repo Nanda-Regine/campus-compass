@@ -241,13 +241,13 @@ function NoteCard({
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 3 }}>
             <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem',
+              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem',
               color: typeColor, background: `${typeColor}15`,
               border: `0.5px solid ${typeColor}35`,
               padding: '2px 7px', borderRadius: 9999,
             }}>{typeLabel}</span>
             <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem',
+              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem',
               color: 'rgba(255,255,255,0.66)', background: 'rgba(255,255,255,0.06)',
               border: '0.5px solid rgba(255,255,255,0.1)',
               padding: '2px 7px', borderRadius: 9999,
@@ -269,7 +269,7 @@ function NoteCard({
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', paddingLeft: 13 }}>
           {note.tags.map(tag => (
             <span key={tag} style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem',
+              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem',
               color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.08)',
               padding: '2px 6px', borderRadius: 9999,
             }}>#{tag}</span>
@@ -285,11 +285,11 @@ function NoteCard({
             {note.uploader_name ?? 'Student'}
             {note.year_of_study && ` · Year ${note.year_of_study}`}
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)' }}>
             · {note.save_count ?? 0} saves
           </span>
           {(note.view_count ?? 0) > 0 && (
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)' }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)' }}>
               · {note.view_count} views
             </span>
           )}

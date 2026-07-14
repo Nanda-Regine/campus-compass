@@ -431,7 +431,7 @@ export default function SetupFlow() {
           {/* STEP 0 — Name & avatar */}
           {step === 0 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 1 of 6</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Step 1 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Hey! What&apos;s your name?</h2>
               <p className="text-sm text-white/70 mb-5">Let&apos;s personalise your VarsityOS.</p>
 
@@ -470,7 +470,7 @@ export default function SetupFlow() {
           {/* STEP 1 — University */}
           {step === 1 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 2 of 6</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Step 2 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Where are you studying?</h2>
               <p className="text-sm text-white/70 mb-5">We&apos;ll customise your experience.</p>
 
@@ -574,7 +574,7 @@ export default function SetupFlow() {
           {/* STEP 2 — Funding & budget */}
           {step === 2 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 3 of 6</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Step 3 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">How are you funded?</h2>
               <p className="text-sm text-white/70 mb-5">We&apos;ll help you track every rand.</p>
 
@@ -628,7 +628,7 @@ export default function SetupFlow() {
                       <span className="text-xl flex-shrink-0">{f.icon}</span>
                       <div>
                         <div className="font-display font-bold text-sm">{f.name}</div>
-                        <div className="font-mono text-[0.58rem] text-white/82">{f.desc}</div>
+                        <div className="font-mono text-[0.65rem] text-white/82">{f.desc}</div>
                       </div>
                     </button>
                   ))}
@@ -640,7 +640,7 @@ export default function SetupFlow() {
                       {isTVET ? 'TVET NSFAS Allowances' : 'NSFAS Allowances'}
                     </div>
                     {isTVET && (
-                      <p className="font-mono text-[0.58rem] text-teal-300/70 leading-relaxed">
+                      <p className="font-mono text-[0.65rem] text-teal-300/70 leading-relaxed">
                         TVET NSFAS: R1,625/month living · R2,400–R5,000/month accommodation · R455/month books (R5,460/year)
                       </p>
                     )}
@@ -658,7 +658,7 @@ export default function SetupFlow() {
           {/* STEP 3 — Timetable & Modules */}
           {step === 3 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 4 of 6</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Step 4 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">
                 {isTVET ? 'What are you studying at TVET?' : 'Subjects & timetable'}
               </h2>
@@ -677,9 +677,9 @@ export default function SetupFlow() {
                   )}>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
-                        <span className="font-mono text-[0.57rem] text-sky-400 uppercase tracking-widest">Fastest way</span>
+                        <span className="font-mono text-[0.64rem] text-sky-400 uppercase tracking-widest">Fastest way</span>
                         <p className="font-display font-bold text-sm text-white mt-0.5">Import your university timetable</p>
-                        <p className="font-mono text-[0.58rem] text-white/80 mt-0.5">Adds all classes + exams from a .ics calendar file</p>
+                        <p className="font-mono text-[0.65rem] text-white/80 mt-0.5">Adds all classes + exams from a .ics calendar file</p>
                       </div>
                       {icsImported && (
                         <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500/20 border border-teal-500/40 flex items-center justify-center text-teal-400 text-xs font-bold">✓</span>
@@ -697,7 +697,7 @@ export default function SetupFlow() {
                 {!isTVET && (
                   <div className="flex items-center gap-3">
                     <div className="h-px flex-1 bg-white/8" />
-                    <span className="font-mono text-[0.57rem] text-white/75 uppercase">
+                    <span className="font-mono text-[0.64rem] text-white/75 uppercase">
                       {icsImported ? 'add extra subjects' : 'or add manually'}
                     </span>
                     <div className="h-px flex-1 bg-white/8" />
@@ -819,7 +819,7 @@ export default function SetupFlow() {
           {/* STEP 4 — Food & living */}
           {step === 4 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Step 5 of 6</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Step 5 of 6</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Food & living situation</h2>
               <p className="text-sm text-white/70 mb-5">Help us give you the most relevant tips.</p>
 
@@ -873,7 +873,7 @@ export default function SetupFlow() {
           {/* STEP 5 — Notifications opt-in */}
           {step === 5 && (
             <div>
-              <div className="font-mono text-[0.58rem] text-coral uppercase tracking-widest mb-1">Almost done!</div>
+              <div className="font-mono text-[0.65rem] text-coral uppercase tracking-widest mb-1">Almost done!</div>
               <h2 className="font-display font-black text-xl text-white mb-1">Stay on track 🔔</h2>
               <p className="text-sm text-white/70 mb-5">
                 Get exam reminders and wellness nudges — even when the app is closed.
@@ -910,7 +910,7 @@ export default function SetupFlow() {
                   ))}
                 </div>
 
-                <p className="font-mono text-[0.57rem] text-white/75">
+                <p className="font-mono text-[0.64rem] text-white/75">
                   You can turn these off any time in your Profile settings.
                 </p>
 

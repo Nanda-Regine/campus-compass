@@ -104,7 +104,7 @@ function ClassChip({ slot }: { slot: TimetableEntry }) {
         {isNow && <span style={{ marginLeft: 4, color: colour }}>● now</span>}
       </div>
       {slot.venue && (
-        <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>{slot.venue}</div>
+        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{slot.venue}</div>
       )}
     </div>
   )
@@ -146,7 +146,7 @@ function TaskRow({ task, onComplete }: { task: Task; onComplete: () => void }) {
         }}>
           {isAuto && (
             <span style={{
-              fontSize: '0.53rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)',
+              fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)',
               border: '1px solid var(--teal)', borderRadius: 4,
               padding: '1px 4px', marginRight: 5, verticalAlign: 'middle',
             }}>AUTO</span>
@@ -162,7 +162,7 @@ function TaskRow({ task, onComplete }: { task: Task; onComplete: () => void }) {
       <span style={{
         flexShrink: 0, padding: '2px 7px',
         background: bg, border: `1px solid ${color}40`,
-        borderRadius: 100, fontSize: '0.57rem',
+        borderRadius: 100, fontSize: '0.64rem',
         fontFamily: 'var(--font-mono)', color, fontWeight: 700,
       }}>
         {task.priority}
@@ -306,7 +306,7 @@ export default function DailyBrief() {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
           <div>
-            <div style={{ fontSize: '0.57rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 3 }}>
+            <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 3 }}>
               TODAY&apos;S BRIEF · {dayLabel().toUpperCase()}
             </div>
             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -318,7 +318,7 @@ export default function DailyBrief() {
               <div style={{
                 padding: '3px 9px', background: 'var(--coral-dim)',
                 border: '1px solid rgba(232,112,64,0.3)', borderRadius: 100,
-                fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--coral)',
+                fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--coral)',
               }}>
                 Burnout {wellness.burnoutScore}%
               </div>
@@ -328,7 +328,7 @@ export default function DailyBrief() {
                 padding: '3px 9px',
                 background: academic.riskLevel === 'critical' ? 'var(--danger-dim)' : 'var(--gold-dim)',
                 border: `1px solid ${riskColor}40`, borderRadius: 100,
-                fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: riskColor,
+                fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: riskColor,
               }}>
                 {academic.riskLevel} risk
               </div>
@@ -339,7 +339,7 @@ export default function DailyBrief() {
         {/* Today's classes */}
         {todayClasses.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <div style={{ fontSize: '0.57rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 7 }}>
+            <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: 7 }}>
               📅 {todayClasses.length} CLASS{todayClasses.length !== 1 ? 'ES' : ''} TODAY
             </div>
             <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
@@ -360,7 +360,7 @@ export default function DailyBrief() {
             <div style={{ flex: 1, minWidth: 0, fontSize: '0.76rem', fontWeight: 600, color: t.priority === 'urgent' ? 'var(--danger)' : 'var(--gold)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {t.title}
             </div>
-            <span style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: t.priority === 'urgent' ? 'var(--danger)' : 'var(--gold)', flexShrink: 0 }}>
+            <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: t.priority === 'urgent' ? 'var(--danger)' : 'var(--gold)', flexShrink: 0 }}>
               due today
             </span>
           </div>
@@ -378,7 +378,7 @@ export default function DailyBrief() {
             <div style={{ flex: 1, minWidth: 0, fontSize: '0.73rem', fontWeight: 500, color: 'var(--gold)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {t.title}
             </div>
-            <span style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>
+            <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>
               {t.due_date === tomorrowStr ? 'due tomorrow' : `due ${t.due_date}`}
             </span>
           </div>
@@ -387,7 +387,7 @@ export default function DailyBrief() {
         {/* Tasks */}
         <div style={{ marginBottom: 4 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-            <div style={{ fontSize: '0.57rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
+            <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>
               🎯 FOCUS — {schedule.todayPlan.length} TASK{schedule.todayPlan.length !== 1 ? 'S' : ''} DUE TODAY
             </div>
             <Link href="/study?tab=tasks" style={{ fontSize: '0.65rem', color: 'var(--teal)', textDecoration: 'none' }}>
@@ -427,7 +427,7 @@ export default function DailyBrief() {
           borderRadius: 12, position: 'relative', overflow: 'hidden',
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#9b6fff,transparent)' }} />
-          <div style={{ fontSize: '0.56rem', fontFamily: 'var(--font-mono)', color: '#9b6fff', letterSpacing: '0.09em', marginBottom: 6 }}>
+          <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: '#9b6fff', letterSpacing: '0.09em', marginBottom: 6 }}>
             ✦ NOVA&apos;S TAKE TODAY
           </div>
           {briefLoading && (
@@ -477,7 +477,7 @@ export default function DailyBrief() {
           borderRight: '1px solid var(--border-subtle)',
           textDecoration: 'none',
         }}>
-          <div style={{ fontSize: '0.56rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>
+          <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>
             💰 BUDGET
           </div>
           <div style={{
@@ -496,7 +496,7 @@ export default function DailyBrief() {
           flex: '1 0 45%', padding: '10px 14px',
           textDecoration: 'none',
         }}>
-          <div style={{ fontSize: '0.56rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>
+          <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.07em', marginBottom: 2 }}>
             📚 ACADEMIC
           </div>
           <div style={{ fontSize: '0.75rem', fontWeight: 600, color: riskColor }}>

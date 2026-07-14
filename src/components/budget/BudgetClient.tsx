@@ -418,7 +418,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
       {/* Kente gold fire — subtle texture for the finance domain */}
-      <AmbientImage zone="budget" opacity={0.48} blurPx={6} saturation={1.5} overlayColor="rgba(5,4,12,0.42)" />
+      <AmbientImage zone="budget" opacity={0.48} blurPx={6} saturation={1.5} overlayColor="rgba(5,4,12,0.58)" />
       <TopBar title="Budget & NSFAS" />
 
       {/* ── Main: vertical tab rail + content ── */}
@@ -455,7 +455,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <span style={{ fontSize: '1.2rem', lineHeight: 1, opacity: active ? 1 : 0.82 }}>{tab.icon}</span>
                 <span style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.44rem',
+                  fontSize: '0.56rem',
                   color: active ? '#4ecf9e' : 'rgba(255,255,255,0.75)',
                   letterSpacing: '0.04em',
                   lineHeight: 1,
@@ -485,7 +485,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
               {/* Month + health status */}
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <div className="font-mono text-[0.56rem] text-white/80 uppercase tracking-widest">
+                  <div className="font-mono text-[0.64rem] text-white/80 uppercase tracking-widest">
                     {new Date().toLocaleString('en-ZA', { month: 'long', year: 'numeric' })}
                   </div>
                   <div className="font-display font-bold text-white text-sm mt-0.5">Budget overview</div>
@@ -526,7 +526,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     )}>
                       {spentPct}%
                     </div>
-                    <div className="font-mono text-[0.45rem] text-white/75 uppercase tracking-widest mt-0.5">spent</div>
+                    <div className="font-mono text-[0.56rem] text-white/75 uppercase tracking-widest mt-0.5">spent</div>
                   </div>
                 </div>
 
@@ -540,7 +540,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                   ].map(stat => (
                     <div key={stat.label}>
                       <div className={cn('font-display font-black text-base leading-none', stat.colour)}>{stat.value}</div>
-                      <div className="font-mono text-[0.48rem] text-white/75 uppercase tracking-wide mt-1">{stat.label}</div>
+                      <div className="font-mono text-[0.58rem] text-white/75 uppercase tracking-wide mt-1">{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -656,7 +656,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       key={cat}
                       onClick={() => setCategory(cat)}
                       className={cn(
-                        'px-2.5 py-1 rounded-full font-mono text-[0.58rem] border transition-all',
+                        'px-2.5 py-1 rounded-full font-mono text-[0.65rem] border transition-all',
                         category === cat
                           ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
                           : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
@@ -721,7 +721,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-body text-sm text-white truncate">{exp.description}</div>
-                      <div className="font-mono text-[0.58rem] text-white/78">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
+                      <div className="font-mono text-[0.65rem] text-white/78">{exp.category} · {fmt.dateShort(exp.expense_date)}</div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="font-display font-bold text-sm" style={{ color: CATEGORY_COLORS[exp.category] || '#f97316' }}>
@@ -789,7 +789,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <div key={job.name} className="flex items-center justify-between">
                         <div>
                           <div className="font-body text-sm text-white">{job.name}</div>
-                          <div className="font-mono text-[0.55rem] text-white/78">{job.shifts} shift{job.shifts !== 1 ? 's' : ''} worked this month</div>
+                          <div className="font-mono text-[0.63rem] text-white/78">{job.shifts} shift{job.shifts !== 1 ? 's' : ''} worked this month</div>
                         </div>
                         <div className="font-display font-bold text-sm text-white/70">+{fmt.currencyShort(job.earned)}</div>
                       </div>
@@ -831,7 +831,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="flex flex-wrap gap-1.5">
                   {[['nsfas','🏛️ NSFAS'],['bursary','📜 Bursary'],['part_time','💼 Work'],['pocket_money','💵 Pocket money'],['family','👨‍👩‍👧 Family'],['scholarship','🎓 Scholarship'],['other','💳 Other']].map(([val, label]) => (
                     <button key={val} onClick={() => setIncomeType(val)}
-                      className={cn('px-2.5 py-1 rounded-full font-mono text-[0.58rem] border transition-all',
+                      className={cn('px-2.5 py-1 rounded-full font-mono text-[0.65rem] border transition-all',
                         incomeType === val ? 'bg-teal-600/20 border-teal-500/50 text-teal-400' : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
                       )}>
                       {label}
@@ -877,7 +877,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <div className="flex-1 min-w-0">
                         <div className="font-body text-sm text-white truncate">{entry.label}</div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[0.58rem] text-white/78">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
+                          <span className="font-mono text-[0.65rem] text-white/78">{entry.source_type.replace('_', ' ')} · {fmt.dateShort(entry.received_date)}</span>
                           {isSynced && <span className="font-mono text-[0.65rem] text-amber-400/70 bg-amber-400/8 border border-amber-400/15 px-1.5 py-0.5 rounded-full">🔗 NSFAS</span>}
                         </div>
                       </div>
@@ -915,7 +915,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                   </div>
                   <div>
                     <div className="font-display font-bold text-white text-xs">{savingsGoals.length} active goal{savingsGoals.length !== 1 ? 's' : ''}</div>
-                    <div className="font-mono text-[0.58rem] text-white/82 mt-0.5">Avg {avgPct}% funded · Keep contributing weekly to grow your score</div>
+                    <div className="font-mono text-[0.65rem] text-white/82 mt-0.5">Avg {avgPct}% funded · Keep contributing weekly to grow your score</div>
                   </div>
                 </div>
               )
@@ -926,7 +926,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest">Create savings goal</div>
                 {/* Quick templates */}
                 <div>
-                  <div className="font-mono text-[0.55rem] text-white/75 mb-1.5">Quick templates</div>
+                  <div className="font-mono text-[0.63rem] text-white/75 mb-1.5">Quick templates</div>
                   <div className="flex flex-wrap gap-1.5">
                     {[
                       { emoji: '🛡️', name: 'Emergency Fund',  target: '3000' },
@@ -938,7 +938,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                       <button
                         key={t.name}
                         onClick={() => { setGoalEmoji(t.emoji); setGoalName(t.name); setGoalTarget(t.target) }}
-                        className="px-2.5 py-1 rounded-full font-mono text-[0.55rem] border bg-white/5 border-white/10 text-white/70 hover:text-teal-400 hover:border-teal-600/40 transition-all"
+                        className="px-2.5 py-1 rounded-full font-mono text-[0.63rem] border bg-white/5 border-white/10 text-white/70 hover:text-teal-400 hover:border-teal-600/40 transition-all"
                       >
                         {t.emoji} {t.name}
                       </button>
@@ -1000,7 +1000,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     <button
                       key={t.name}
                       onClick={() => { setGoalEmoji(t.emoji); setGoalName(t.name); setGoalTarget(t.target); setShowGoalForm(true) }}
-                      className="px-3 py-1.5 rounded-full font-mono text-[0.58rem] border bg-teal-600/10 border-teal-500/25 text-teal-400 hover:bg-teal-600/20 transition-all"
+                      className="px-3 py-1.5 rounded-full font-mono text-[0.65rem] border bg-teal-600/10 border-teal-500/25 text-teal-400 hover:bg-teal-600/20 transition-all"
                     >
                       {t.emoji} {t.name}
                     </button>
@@ -1034,7 +1034,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                               {isComplete && <span className="text-xs">✨</span>}
                             </div>
                             {goal.deadline && (
-                              <div className="font-mono text-[0.55rem] text-white/78">By {fmt.dateShort(goal.deadline)}</div>
+                              <div className="font-mono text-[0.63rem] text-white/78">By {fmt.dateShort(goal.deadline)}</div>
                             )}
                           </div>
                         </div>
@@ -1047,7 +1047,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                             {contributingGoalId === goal.id ? 'Adding…' : '+ Add'}
                           </button>
                         ) : (
-                          <span className="font-mono text-[0.58rem] text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-lg">Goal reached!</span>
+                          <span className="font-mono text-[0.65rem] text-amber-400 bg-amber-500/10 border border-amber-500/25 px-2.5 py-1 rounded-lg">Goal reached!</span>
                         )}
                       </div>
                       <div className="h-2 bg-white/8 rounded-full overflow-hidden mb-2">
@@ -1063,7 +1063,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                               <span className="font-mono text-[0.65rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
                                 ◆
                               </span>
-                              <span className="font-mono text-[0.45rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
+                              <span className="font-mono text-[0.56rem]" style={{ color: hit ? barColor : 'rgba(255,255,255,0.12)' }}>
                                 {milestoneBadges[m]}
                               </span>
                             </div>
@@ -1071,8 +1071,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                         })}
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="font-mono text-[0.58rem]" style={{ color: barColor }}>{fmt.currencyShort(goal.current_amount)}</div>
-                        <div className="font-mono text-[0.58rem] text-white/78">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
+                        <div className="font-mono text-[0.65rem]" style={{ color: barColor }}>{fmt.currencyShort(goal.current_amount)}</div>
+                        <div className="font-mono text-[0.65rem] text-white/78">{pct}% of {fmt.currencyShort(goal.target_amount)}</div>
                       </div>
                     </div>
                   )
@@ -1151,7 +1151,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <div className="bg-gradient-to-br from-teal-900/20 to-purple-900/10 border border-teal-600/20 rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-widest">Financial Health Score</div>
+                      <div className="font-mono text-[0.65rem] text-white/82 uppercase tracking-widest">Financial Health Score</div>
                       <div className="flex items-baseline gap-2 mt-1">
                         <div className={cn('font-display font-black text-5xl', healthColour)}>
                           {aiInsights.healthScore}
@@ -1201,7 +1201,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 {/* Projection */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
-                    <div className="font-mono text-[0.55rem] text-white/78 uppercase mb-1">Projected end balance</div>
+                    <div className="font-mono text-[0.63rem] text-white/78 uppercase mb-1">Projected end balance</div>
                     <div className={cn(
                       'font-display font-black text-xl',
                       aiInsights.projectedEndBalance < 0 ? 'text-red-400' : 'text-teal-400'
@@ -1210,7 +1210,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                     </div>
                   </div>
                   <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-xl p-4 text-center">
-                    <div className="font-mono text-[0.55rem] text-white/78 uppercase mb-1">Biggest spend</div>
+                    <div className="font-mono text-[0.63rem] text-white/78 uppercase mb-1">Biggest spend</div>
                     <div className="font-display font-black text-xl text-white">
                       {aiInsights.biggestSpendCategory}
                     </div>
@@ -1305,7 +1305,7 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
                 <pre className="font-body text-sm text-white/80 whitespace-pre-wrap leading-relaxed">
                   {appealLetter}
                 </pre>
-                <p className="font-mono text-[0.56rem] text-white/75 mt-4 pt-4 border-t border-white/7">
+                <p className="font-mono text-[0.64rem] text-white/75 mt-4 pt-4 border-t border-white/7">
                   ⚠️ Review this letter carefully before submitting. Add your student number, dates, and any supporting documents. This is a draft — you are responsible for its content.
                 </p>
               </div>

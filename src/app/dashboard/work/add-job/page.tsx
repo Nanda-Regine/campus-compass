@@ -78,7 +78,7 @@ export default function AddJobPage() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflow: 'hidden' }}>
-      <AmbientImage zone="career" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.42)" />
+      <AmbientImage zone="career" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="rgba(5,4,12,0.58)" />
       <TopBar title="Add Job" />
       <div className="px-4 py-3 max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -199,7 +199,7 @@ export default function AddJobPage() {
             />
             <div>
               <div className="font-display font-bold text-white text-sm">Protect exam periods</div>
-              <div className="font-mono text-[0.58rem] text-white/80 mt-0.5">
+              <div className="font-mono text-[0.65rem] text-white/80 mt-0.5">
                 Nova will flag shifts within 3 days of an exam and remind you to request time off
               </div>
             </div>

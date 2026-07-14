@@ -1118,11 +1118,11 @@ function JobsTab() {
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: '#4A9EF5', fontWeight: 600 }}>
                   {job.company.display_name}
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text-tertiary)' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)' }}>
                   📍 {job.location.display_name}
                 </span>
                 {salary && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#4ecf9e', fontWeight: 600 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#4ecf9e', fontWeight: 600 }}>
                     {salary}
                   </span>
                 )}
@@ -1139,7 +1139,7 @@ function JobsTab() {
               {nsfasRisk && (
                 <div style={{ marginTop: 8, padding: '4px 10px', borderRadius: 6, background: 'rgba(251,191,36,0.08)', border: '0.5px solid rgba(251,191,36,0.2)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                   <span style={{ fontSize: '0.6rem' }}>⚠️</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#fbbf24', lineHeight: 1.4 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#fbbf24', lineHeight: 1.4 }}>
                     Salary may exceed NSFAS means threshold — confirm with financial aid office
                   </span>
                 </div>
@@ -1238,7 +1238,7 @@ export default function CareerClient({ userId, profile, modules }: Props) {
                 }}
               >
                 <span style={{ fontSize: '1.1rem', opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tab.accent : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tab.accent : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tab.label.slice(0, 5).toUpperCase()}
                 </span>
               </button>

@@ -608,7 +608,7 @@ function AppealsTab({ appeals, onUpdate }: { appeals: NsfasAppeal[]; onUpdate: (
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 3 }}>
+              <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: 3 }}>
                 {APPEAL_TYPE_LABEL[a.appeal_type]}
               </div>
               <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>{a.title}</div>
@@ -618,7 +618,7 @@ function AppealsTab({ appeals, onUpdate }: { appeals: NsfasAppeal[]; onUpdate: (
               background: `${APPEAL_STATUS_COLOR[a.status]}18`,
               border: `1px solid ${APPEAL_STATUS_COLOR[a.status]}40`,
               borderRadius: 100,
-              fontSize: '0.58rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+              fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
               color: APPEAL_STATUS_COLOR[a.status], letterSpacing: '0.06em',
             }}>
               {a.status.replace('_', ' ').toUpperCase()}
@@ -996,7 +996,7 @@ export default function NsfasTrackerOS({ budget, userId, fundingType }: Props) {
           position: 'absolute', top: 0, left: 0, right: 0, height: 2,
           background: 'linear-gradient(90deg, var(--gold), transparent)',
         }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.09em', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.09em', marginBottom: 4 }}>
           {fundingType === 'tvet_nsfas' ? 'TVET NSFAS TRACKER' : 'NSFAS TRACKER OS'}
         </div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>

@@ -132,7 +132,7 @@ export function FeedbackModal({ open, onClose }: Props) {
                   key={c.value}
                   onClick={() => setCategory(c.value)}
                   className={cn(
-                    'font-mono text-[0.58rem] px-3 py-1.5 rounded-full border transition-all',
+                    'font-mono text-[0.65rem] px-3 py-1.5 rounded-full border transition-all',
                     category === c.value
                       ? 'bg-teal-600/20 border-teal-500/40 text-teal-400'
                       : 'bg-white/5 border-white/10 text-white/70 hover:text-white/80'
@@ -157,7 +157,7 @@ export function FeedbackModal({ open, onClose }: Props) {
               maxLength={1000}
               className="w-full bg-[var(--bg-surface)] border border-white/10 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/75 resize-none outline-none transition-all font-body"
             />
-            <div className="text-right font-mono text-[0.55rem] text-white/72 mt-1">
+            <div className="text-right font-mono text-[0.63rem] text-white/72 mt-1">
               {message.length}/1000
             </div>
           </div>

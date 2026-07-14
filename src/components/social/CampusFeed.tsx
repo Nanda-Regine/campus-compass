@@ -175,7 +175,7 @@ function PostCard({
               <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.82rem', color: '#fff', margin: 0 }}>
                 {post.author_name}
               </p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 {post.institution ? ` · ${post.institution.split(' ').slice(0, 2).join(' ')}` : ''}
               </p>
@@ -183,7 +183,7 @@ function PostCard({
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem',
+              fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem',
               padding: '2px 8px', borderRadius: 9999,
               background: `${meta.color}15`, border: `0.5px solid ${meta.color}35`,
               color: meta.color,
@@ -213,7 +213,7 @@ function PostCard({
                     borderRadius: 10, padding: '4px 0', minWidth: 148,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
                   }}>
-                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.5)', padding: '6px 12px 4px', margin: 0 }}>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.5)', padding: '6px 12px 4px', margin: 0 }}>
                       REPORT POST
                     </p>
                     {REPORT_REASONS.map(r => (
@@ -295,7 +295,7 @@ function PostCard({
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', marginRight: 6 }}>{c.author_name}</span>
                   <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.75rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, wordBreak: 'break-word' }}>{c.content}</span>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)', margin: '2px 0 0 0' }}>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)', margin: '2px 0 0 0' }}>
                     {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
                   </p>
                 </div>

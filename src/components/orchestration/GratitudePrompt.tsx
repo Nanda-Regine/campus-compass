@@ -105,7 +105,7 @@ export default function GratitudePrompt({ moodScore, onDone }: Props) {
       }} />
 
       <div style={{ padding: '16px 18px' }}>
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>
           END OF DAY · GRATITUDE
         </div>
         <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>

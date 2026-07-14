@@ -240,7 +240,7 @@ export default function SignupForm() {
                     ))}
                   </div>
                   {strength.label && (
-                    <p className="font-mono text-[0.58rem]" style={{ color: strength.color }}>
+                    <p className="font-mono text-[0.65rem]" style={{ color: strength.color }}>
                       {strength.label}
                       {strength.score < 3 && ' — add uppercase, numbers or symbols'}
                     </p>

@@ -118,11 +118,11 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
               }}>
                 {REASON_LABELS[report.reason] ?? report.reason}
               </span>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.25)' }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.25)' }}>
                 reported by {report.reporter?.name ?? 'user'} · {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
               </span>
               {report.resolved && (
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#4ecf9e', marginLeft: 'auto' }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#4ecf9e', marginLeft: 'auto' }}>
                   ✓ resolved
                 </span>
               )}
@@ -135,7 +135,7 @@ export default function AdminFeedClient({ reports: initial }: { reports: Report[
                 <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
                   {report.campus_posts.profiles?.name ?? 'Student'}
                 </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)' }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)' }}>
                   · {report.campus_posts.category} · {report.campus_posts.institution ?? 'unknown institution'}
                 </span>
               </div>

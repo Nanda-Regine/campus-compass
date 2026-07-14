@@ -138,7 +138,7 @@ function GraduationTimeline({ config }: { config: AuditConfig }) {
                 }}>
                   {isGraduation ? '🎓' : yearNum}
                 </div>
-                <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                   {year}
                   {isCurrent && <span style={{ color: 'var(--sky, #38BDF8)' }}> ◀ you</span>}
                   {isNPlus && <span style={{ color: 'var(--coral)' }}> N+</span>}
@@ -192,7 +192,7 @@ function ModuleRow({ module, minPass }: { module: ModuleRecord; minPass: number 
         background: `${STATUS_COLOR[module.status]}18`,
         border: `1px solid ${STATUS_COLOR[module.status]}30`,
         borderRadius: 100,
-        fontSize: '0.58rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+        fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
         color: STATUS_COLOR[module.status], letterSpacing: '0.05em',
       }}>
         {module.status.replace('_', ' ').toUpperCase()}
@@ -383,7 +383,7 @@ export default function GraduationAudit() {
           position: 'absolute', top: 0, left: 0, right: 0, height: 2,
           background: 'linear-gradient(90deg, var(--sky, #38BDF8), transparent)',
         }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--sky, #38BDF8)', letterSpacing: '0.09em', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--sky, #38BDF8)', letterSpacing: '0.09em', marginBottom: 4 }}>
           GRADUATION AUDIT
         </div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>

@@ -79,7 +79,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>Book {tutor.name}</div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: '#4ecf9e' }}>R{tutor.rate_per_hour}/hr</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#4ecf9e' }}>R{tutor.rate_per_hour}/hr</div>
             </div>
           </div>
           <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 8, width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'rgba(255,255,255,0.66)' }}>
@@ -142,7 +142,7 @@ export default function BookSessionModal({ tutor, onClose, onBooked }: Props) {
           <div style={{ background: 'rgba(78,207,158,0.06)', border: '0.5px solid rgba(78,207,158,0.2)', borderRadius: 12, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: 'rgba(255,255,255,0.66)' }}>Agree to pay tutor</div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>sorted directly · cash or EFT</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>sorted directly · cash or EFT</div>
             </div>
             <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '1rem', color: '#4ecf9e' }}>R{total.toFixed(0)}</div>
           </div>

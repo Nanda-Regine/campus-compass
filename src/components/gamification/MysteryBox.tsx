@@ -154,7 +154,7 @@ export default function MysteryBox() {
               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.1rem', color: '#4ecf9e' }}>+{reward.xp} XP</span>
             </div>
           )}
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.2)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.2)' }}>
             Tap anywhere to continue
           </div>
         </div>

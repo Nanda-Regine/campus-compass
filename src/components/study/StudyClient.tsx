@@ -166,7 +166,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
 
   return (
     <div className="page-enter study-page min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      <AmbientImage zone="schedule" opacity={0.5} blurPx={6} saturation={1.8} overlayColor="rgba(5,4,12,0.4)" />
+      <AmbientImage zone="schedule" opacity={0.5} blurPx={6} saturation={1.8} overlayColor="rgba(5,4,12,0.58)" />
       <PullToRefresh onRefresh={handleRefresh} />
 
       {/* ── Page header ── */}
@@ -282,7 +282,7 @@ export default function StudyClient({ initialData, initialTab }: StudyClientProp
                     minWidth: 14, height: 14, padding: '0 2px',
                     borderRadius: 9999,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'var(--font-mono)', fontSize: '0.55rem', fontWeight: 700,
+                    fontFamily: 'var(--font-mono)', fontSize: '0.63rem', fontWeight: 700,
                     background: `${badge.color}20`, color: badge.color,
                     border: `0.5px solid ${badge.color}40`,
                   }}>

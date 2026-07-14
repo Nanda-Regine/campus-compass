@@ -376,7 +376,7 @@ export default function Drawer({ open, onClose }: DrawerProps) {
                     {room.clusters.map(cluster => (
                       <div key={cluster.label}>
                         <div
-                          className="font-mono text-[0.48rem] uppercase tracking-[0.16em] px-2 py-1"
+                          className="font-mono text-[0.58rem] uppercase tracking-[0.16em] px-2 py-1"
                           style={{ color: room.color, opacity: 0.6 }}
                         >
                           {cluster.label}

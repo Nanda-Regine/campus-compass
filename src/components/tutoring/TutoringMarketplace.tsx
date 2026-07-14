@@ -248,12 +248,12 @@ function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; o
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{tutor.name}</span>
             {tutor.is_verified && (
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
                 <CheckCircle size={9} /> Verified
               </span>
             )}
             {tutor.average_rating && (
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.25)', padding: '2px 7px', borderRadius: 9999 }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.25)', padding: '2px 7px', borderRadius: 9999 }}>
                 ⭐ {tutor.average_rating} ({tutor.session_count})
               </span>
             )}
@@ -270,7 +270,7 @@ function TutorCard({ tutor, isSelf, onBook }: { tutor: Tutor; isSelf: boolean; o
       {/* Subjects */}
       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: tutor.bio ? 8 : 10 }}>
         {tutor.subjects.slice(0, 6).map(s => (
-          <span key={s} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.58rem', color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.12)', padding: '2px 7px', borderRadius: 9999 }}>{s}</span>
+          <span key={s} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.07)', border: '0.5px solid rgba(255,255,255,0.12)', padding: '2px 7px', borderRadius: 9999 }}>{s}</span>
         ))}
       </div>
 
@@ -320,7 +320,7 @@ function SessionCard({ session, role, userId, onConfirm, onComplete, onCancel, o
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)' }}>{session.subject}</div>
           <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.58)', marginTop: 2 }}>{other}</div>
         </div>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color, background: `${color}15`, border: `0.5px solid ${color}35`, padding: '3px 8px', borderRadius: 9999, textTransform: 'uppercase' }}>
+        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color, background: `${color}15`, border: `0.5px solid ${color}35`, padding: '3px 8px', borderRadius: 9999, textTransform: 'uppercase' }}>
           {session.status}
         </span>
       </div>

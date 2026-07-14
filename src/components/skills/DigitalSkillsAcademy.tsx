@@ -1889,7 +1889,7 @@ export default function DigitalSkillsAcademy() {
       {/* Header */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,#6366F1,#4ecf9e,transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: '#6366F1', letterSpacing: '0.09em', marginBottom: 4 }}>DIGITAL SKILLS ACADEMY</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#6366F1', letterSpacing: '0.09em', marginBottom: 4 }}>DIGITAL SKILLS ACADEMY</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Skills for school, assignments & work</div>
         <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: 3, lineHeight: 1.5 }}>Google Workspace · Research & Citations · AI Tools · Excel · Professional Skills · Security · Python · Financial Adulting SA · SA Adulting Checklist · Job Hunt & Career Launch</div>
       </div>

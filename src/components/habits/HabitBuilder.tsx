@@ -598,7 +598,7 @@ export default function HabitBuilder() {
           position: 'absolute', top: 0, left: 0, right: 0, height: 2,
           background: 'linear-gradient(90deg, var(--indigo, #6366F1), transparent)',
         }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--indigo, #6366F1)', letterSpacing: '0.09em', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--indigo, #6366F1)', letterSpacing: '0.09em', marginBottom: 4 }}>
           HABIT BUILDER — ATOMIC HABITS
         </div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -643,7 +643,7 @@ export default function HabitBuilder() {
               <div style={{ fontSize: '1rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
                 {s.value}
               </div>
-              <div style={{ fontSize: '0.57rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
+              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
         </button>

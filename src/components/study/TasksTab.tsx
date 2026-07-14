@@ -337,13 +337,13 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
           {overdueCount > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/8 border border-red-500/20">
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              <span className="font-mono text-[0.58rem] text-red-400 font-bold">{overdueCount} overdue</span>
+              <span className="font-mono text-[0.65rem] text-red-400 font-bold">{overdueCount} overdue</span>
             </div>
           )}
           {doneToday > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600/8 border border-teal-600/20">
               <span className="text-teal-400 text-xs">✓</span>
-              <span className="font-mono text-[0.58rem] text-teal-400">{doneToday} done today</span>
+              <span className="font-mono text-[0.65rem] text-teal-400">{doneToday} done today</span>
             </div>
           )}
         </div>
@@ -362,7 +362,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
               key={key}
               onClick={() => setView(key)}
               className={cn(
-                'px-3 py-1.5 rounded-lg font-mono text-[0.58rem] uppercase tracking-wide transition-all whitespace-nowrap',
+                'px-3 py-1.5 rounded-lg font-mono text-[0.65rem] uppercase tracking-wide transition-all whitespace-nowrap',
                 view === key ? 'bg-teal-600/20 text-teal-400' : 'text-white/82 hover:text-white/70'
               )}
             >
@@ -379,7 +379,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
           <button
             onClick={() => setSelectedCategory('all')}
             className={cn(
-              'flex-shrink-0 font-mono text-[0.58rem] px-3 py-1 rounded-full border transition-all',
+              'flex-shrink-0 font-mono text-[0.65rem] px-3 py-1 rounded-full border transition-all',
               selectedCategory === 'all'
                 ? 'bg-white/15 border-white/30 text-white'
                 : 'bg-white/5 border-white/10 text-white/82 hover:text-white/70'
@@ -392,7 +392,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
               key={key}
               onClick={() => setSelectedCategory(key)}
               className={cn(
-                'flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.58rem] px-3 py-1 rounded-full border transition-all',
+                'flex-shrink-0 flex items-center gap-1.5 font-mono text-[0.65rem] px-3 py-1 rounded-full border transition-all',
                 selectedCategory === key
                   ? 'border-white/40 text-white'
                   : 'bg-white/5 border-white/10 text-white/82 hover:text-white/70'
@@ -495,32 +495,32 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="font-mono text-[0.58rem] text-white/78">
+                    <span className="font-mono text-[0.65rem] text-white/78">
                       {TASK_TYPE_LABELS[task.task_type] ?? task.task_type}
                     </span>
                     {task.module && (
-                      <span className="font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full"
+                      <span className="font-mono text-[0.65rem] px-1.5 py-0.5 rounded-full"
                         style={{ background: modColour?.bg, color: modColour?.text }}>
                         {task.module.module_name}
                       </span>
                     )}
                     {label && task.status !== 'done' && (
-                      <span className={cn('font-mono text-[0.58rem] px-1.5 py-0.5 rounded-full border', urgencyBadge)}>
+                      <span className={cn('font-mono text-[0.65rem] px-1.5 py-0.5 rounded-full border', urgencyBadge)}>
                         {label}
                       </span>
                     )}
                     {task.status === 'done' && task.completed_at && (
-                      <span className="font-mono text-[0.58rem] text-white/72">Done {fmt.dateShort(task.completed_at)}</span>
+                      <span className="font-mono text-[0.65rem] text-white/72">Done {fmt.dateShort(task.completed_at)}</span>
                     )}
                   </div>
                   {/* AI Decompose panel — inside content column, below metadata */}
                   {task.status !== 'done' && decomp[task.id] && !decomp[task.id].loading && (
                     <div className="mt-3 border-t border-white/5 pt-3 space-y-1.5">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono text-[0.55rem] text-purple-400 tracking-widest">✦ MICRO-STEPS</span>
+                        <span className="font-mono text-[0.63rem] text-purple-400 tracking-widest">✦ MICRO-STEPS</span>
                         <button
                           onClick={e => { e.stopPropagation(); decompDispatch({ type: 'close', taskId: task.id }) }}
-                          className="font-mono text-[0.55rem] text-white/75 hover:text-white/70"
+                          className="font-mono text-[0.63rem] text-white/75 hover:text-white/70"
                         >✕</button>
                       </div>
                       {decomp[task.id].steps.map(step => {
@@ -626,7 +626,7 @@ export default function TasksTab({ tasks, modules, userId, supabase, triggerAdd 
                     setValue('task_type', grp.types[0])
                   }}
                   className={cn(
-                    'flex items-center gap-1.5 font-mono text-[0.58rem] px-3 py-1.5 rounded-full border transition-all',
+                    'flex items-center gap-1.5 font-mono text-[0.65rem] px-3 py-1.5 rounded-full border transition-all',
                     formCategory === key
                       ? 'border-white/40 text-white'
                       : 'bg-white/5 border-white/10 text-white/82 hover:text-white/70'
@@ -683,7 +683,7 @@ function GTDInsightCard({ pendingCount, overdueCount }: { pendingCount: number; 
             GTD principles for {pendingCount} open task{pendingCount !== 1 ? 's' : ''}
           </span>
         </span>
-        <span style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.3)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
+        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>▾</span>
       </button>
       {open && (
         <div className="space-y-3 px-3 pb-3">
@@ -707,7 +707,7 @@ function GTDInsightCard({ pendingCount, overdueCount }: { pendingCount: number; 
             },
           ].map(item => (
             <div key={item.book} className="pl-2.5" style={{ borderLeft: '2px solid rgba(99,102,241,0.4)' }}>
-              <div className="font-mono text-[0.55rem] mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{item.book}</div>
+              <div className="font-mono text-[0.63rem] mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{item.book}</div>
               <div className="font-mono text-[0.62rem] leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>{item.insight}</div>
             </div>
           ))}

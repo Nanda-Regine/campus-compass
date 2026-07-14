@@ -50,7 +50,7 @@ function DailyInsightCard({quote,riskLevel}:{quote:Quote;riskLevel:string}) {
   return (
     <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:`1px solid ${quote.color}25`,borderRadius:16,padding:'18px'}}>
       <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,${quote.color},transparent)`}}/>
-      <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:quote.color,letterSpacing:'0.09em',marginBottom:10}}>TODAY&apos;S INSIGHT</div>
+      <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:quote.color,letterSpacing:'0.09em',marginBottom:10}}>TODAY&apos;S INSIGHT</div>
       <div style={{fontSize:'1.05rem',fontWeight:700,color:'var(--text-primary)',lineHeight:1.55,marginBottom:8,fontStyle:'italic'}}>
         &ldquo;{quote.text}&rdquo;
       </div>
@@ -94,7 +94,7 @@ export default function PhilosophyFeed() {
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(99,102,241,0.25)',borderRadius:16,padding:'16px 18px'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--indigo, #6366F1),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--indigo, #6366F1)',letterSpacing:'0.09em',marginBottom:4}}>PHILOSOPHY FEED</div>
+        <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:'var(--indigo, #6366F1)',letterSpacing:'0.09em',marginBottom:4}}>PHILOSOPHY FEED</div>
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Applied wisdom for your actual life</div>
       </div>
 

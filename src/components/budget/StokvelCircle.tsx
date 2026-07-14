@@ -148,7 +148,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
 
         {/* Header */}
         <div className="bg-white/3 border border-emerald-500/20 rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(52,211,153,0.06) 0%, transparent 70%)' }}>
-          <div className="font-mono text-[0.55rem] text-emerald-400 tracking-widest mb-1">STOKVEL CIRCLE</div>
+          <div className="font-mono text-[0.63rem] text-emerald-400 tracking-widest mb-1">STOKVEL CIRCLE</div>
           <div className="font-display font-bold text-white text-lg leading-tight">{selected.name}</div>
           {selected.description && <div className="font-mono text-[0.62rem] text-white/82 mt-1">{selected.description}</div>}
           <div className="grid grid-cols-3 gap-2 mt-3">
@@ -171,20 +171,20 @@ export default function StokvelCircle({ userId }: { userId: string }) {
         <div className="bg-white/3 border border-white/7 rounded-2xl p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="font-mono text-[0.6rem] text-white/82 uppercase tracking-wide">Round {round}</div>
-            {allPaid && <div className="font-mono text-[0.55rem] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">All paid ✓</div>}
+            {allPaid && <div className="font-mono text-[0.63rem] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">All paid ✓</div>}
           </div>
 
           {recipient && (
             <div className="bg-emerald-500/8 border border-emerald-500/20 rounded-xl px-3 py-2.5">
-              <div className="font-mono text-[0.55rem] text-emerald-400 mb-1">🎉 THIS ROUND'S RECIPIENT</div>
+              <div className="font-mono text-[0.63rem] text-emerald-400 mb-1">🎉 THIS ROUND'S RECIPIENT</div>
               <div className="font-display font-bold text-white text-sm">{recipient.display_name || recipient.email}</div>
-              <div className="font-mono text-[0.58rem] text-emerald-300/70 mt-0.5">Receives R{potSize.toFixed(0)} when all members have paid</div>
+              <div className="font-mono text-[0.65rem] text-emerald-300/70 mt-0.5">Receives R{potSize.toFixed(0)} when all members have paid</div>
             </div>
           )}
 
           {/* Contribution tracker */}
           <div>
-            <div className="font-mono text-[0.56rem] text-white/75 uppercase mb-2">{paidCount}/{totalCount} contributed</div>
+            <div className="font-mono text-[0.64rem] text-white/75 uppercase mb-2">{paidCount}/{totalCount} contributed</div>
             <div className="h-1.5 rounded-full bg-white/8 overflow-hidden mb-3">
               <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${totalCount > 0 ? (paidCount / totalCount) * 100 : 0}%` }} />
             </div>
@@ -208,8 +208,8 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                         <div>
                           <div className="flex items-center gap-1.5">
                             <span className="font-display font-bold text-white text-xs">{m.display_name || m.email}</span>
-                            {isMe && <span className="font-mono text-[0.48rem] bg-white/8 text-white/80 px-1 rounded">you</span>}
-                            {isRcpt && <span className="font-mono text-[0.48rem] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">receives pot</span>}
+                            {isMe && <span className="font-mono text-[0.58rem] bg-white/8 text-white/80 px-1 rounded">you</span>}
+                            {isRcpt && <span className="font-mono text-[0.58rem] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">receives pot</span>}
                           </div>
                           <div className="font-mono text-[0.65rem] text-white/78 mt-0.5">
                             {hasPaid ? `Paid R${selected.contribution_amount.toFixed(0)}` : `Owes R${selected.contribution_amount.toFixed(0)}`}
@@ -219,7 +219,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                       {!hasPaid && (isMe || isCreator) && (
                         <button
                           onClick={() => markPaid(selected.id, m.id, round)}
-                          className="font-mono text-[0.55rem] px-2.5 py-1 rounded-lg bg-emerald-600/15 text-emerald-400 border border-emerald-600/25 hover:bg-emerald-600/25 transition-all flex-shrink-0"
+                          className="font-mono text-[0.63rem] px-2.5 py-1 rounded-lg bg-emerald-600/15 text-emerald-400 border border-emerald-600/25 hover:bg-emerald-600/25 transition-all flex-shrink-0"
                         >
                           Mark paid
                         </button>
@@ -227,7 +227,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                       {hasPaid && isCreator && (
                         <button
                           onClick={() => unmarkPaid(m.id, round, selected.id)}
-                          className="font-mono text-[0.48rem] text-white/72 hover:text-red-400 transition-colors flex-shrink-0"
+                          className="font-mono text-[0.58rem] text-white/72 hover:text-red-400 transition-colors flex-shrink-0"
                         >
                           undo
                         </button>
@@ -250,7 +250,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
               const isCurrent   = roundNum === round
               return (
                 <div key={m.id} className={cn('flex items-center gap-3 rounded-lg px-2.5 py-2', isCurrent ? 'bg-emerald-500/8 border border-emerald-500/15' : isPast ? 'opacity-40' : 'bg-white/2')}>
-                  <div className={cn('font-mono text-[0.55rem] w-5 text-center font-bold', isCurrent ? 'text-emerald-400' : isPast ? 'text-white/75' : 'text-white/80')}>
+                  <div className={cn('font-mono text-[0.63rem] w-5 text-center font-bold', isCurrent ? 'text-emerald-400' : isPast ? 'text-white/75' : 'text-white/80')}>
                     {roundNum}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -259,7 +259,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                   <div className={cn('font-mono text-[0.65rem]', isCurrent ? 'text-emerald-400' : isPast ? 'text-white/72' : 'text-white/78')}>
                     {isPast ? 'received' : isCurrent ? 'this round' : `round ${roundNum}`}
                   </div>
-                  <div className="font-mono text-[0.55rem] text-white/82">R{potSize.toFixed(0)}</div>
+                  <div className="font-mono text-[0.63rem] text-white/82">R{potSize.toFixed(0)}</div>
                 </div>
               )
             })}
@@ -281,7 +281,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                     </div>
                     <button
                       onClick={() => { navigator.clipboard.writeText(link); toast.success('Invite link copied!') }}
-                      className="font-mono text-[0.55rem] px-2 py-1 rounded border border-white/10 text-teal-400 hover:bg-teal-600/10 transition-all"
+                      className="font-mono text-[0.63rem] px-2 py-1 rounded border border-white/10 text-teal-400 hover:bg-teal-600/10 transition-all"
                     >
                       Copy link
                     </button>
@@ -300,7 +300,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
     <div className="flex flex-col gap-4">
       {/* Explainer */}
       <div className="bg-emerald-500/6 border border-emerald-500/20 rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(52,211,153,0.06) 0%, transparent 70%)' }}>
-        <div className="font-mono text-[0.55rem] text-emerald-400 tracking-widest mb-1">STOKVEL CIRCLE</div>
+        <div className="font-mono text-[0.63rem] text-emerald-400 tracking-widest mb-1">STOKVEL CIRCLE</div>
         <div className="font-display font-bold text-white text-base leading-tight mb-1.5">Ubuntu savings for students</div>
         <div className="font-mono text-[0.62rem] text-white/85 leading-relaxed">
           A digital stokvel — everyone contributes R{'{'}amount{'}'} each round. One person gets the full pot. Rotate until everyone has received. No banks, no fees.
@@ -315,11 +315,11 @@ export default function StokvelCircle({ userId }: { userId: string }) {
           <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Description (optional)" rows={2} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-emerald-500 resize-none font-body" />
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="font-mono text-[0.55rem] text-white/80 mb-1 block">Contribution amount (R) *</label>
+              <label className="font-mono text-[0.63rem] text-white/80 mb-1 block">Contribution amount (R) *</label>
               <input type="number" inputMode="decimal" value={newAmount} onChange={e => setNewAmount(e.target.value)} placeholder="e.g. 200" min={10} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/75 outline-none focus:border-emerald-500 font-body" />
             </div>
             <div>
-              <label className="font-mono text-[0.55rem] text-white/80 mb-1 block">Frequency</label>
+              <label className="font-mono text-[0.63rem] text-white/80 mb-1 block">Frequency</label>
               <select value={newFreq} onChange={e => setNewFreq(e.target.value as 'weekly'|'biweekly'|'monthly')} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white/70 outline-none focus:border-emerald-500 font-body">
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Fortnightly</option>
@@ -329,7 +329,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
           </div>
 
           <div>
-            <label className="font-mono text-[0.55rem] text-white/80 mb-2 block">Invite members (they&apos;ll get a join link)</label>
+            <label className="font-mono text-[0.63rem] text-white/80 mb-2 block">Invite members (they&apos;ll get a join link)</label>
             <div className="space-y-2">
               {memberRows.map((r, i) => (
                 <div key={i} className="grid grid-cols-2 gap-2">
@@ -337,7 +337,7 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                   <input value={r.name} onChange={e => { const next = [...memberRows]; next[i] = { ...next[i], name: e.target.value }; setMemberRows(next) }} placeholder="Name (optional)" className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/72 outline-none focus:border-emerald-500 font-body" />
                 </div>
               ))}
-              <button onClick={() => setMemberRows([...memberRows, { email: '', name: '' }])} className="font-mono text-[0.58rem] text-white/78 hover:text-teal-400 transition-colors">
+              <button onClick={() => setMemberRows([...memberRows, { email: '', name: '' }])} className="font-mono text-[0.65rem] text-white/78 hover:text-teal-400 transition-colors">
                 + Add another member
               </button>
             </div>
@@ -378,11 +378,11 @@ export default function StokvelCircle({ userId }: { userId: string }) {
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <div className="font-display font-bold text-white text-sm">{s.name}</div>
-                    <div className="font-mono text-[0.58rem] text-emerald-400/70 mt-0.5">R{s.contribution_amount.toFixed(0)} {FREQ_LABEL[s.frequency]} · {joined.length} members</div>
+                    <div className="font-mono text-[0.65rem] text-emerald-400/70 mt-0.5">R{s.contribution_amount.toFixed(0)} {FREQ_LABEL[s.frequency]} · {joined.length} members</div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <div className="font-display font-black text-white text-base leading-none">R{potSize.toFixed(0)}</div>
-                    <div className="font-mono text-[0.48rem] text-white/75">pot size</div>
+                    <div className="font-mono text-[0.58rem] text-white/75">pot size</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

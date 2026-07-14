@@ -95,7 +95,7 @@ function MacroRing({ value, target, color, label, unit }: {
           {Math.round(value)}
         </text>
       </svg>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.53rem', color: 'rgba(255,255,255,0.38)', textAlign: 'center', lineHeight: 1.4 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.38)', textAlign: 'center', lineHeight: 1.4 }}>
         {label}<br />
         <span style={{ color }}>/{target}{unit}</span>
       </div>
@@ -129,7 +129,7 @@ function WaterGrid({ water, onAdd }: { water: number; onAdd: (delta: number) => 
       <button
         onClick={() => onAdd(1)}
         style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.55rem',
+          fontFamily: 'var(--font-mono)', fontSize: '0.63rem',
           color: '#38BDF8',
           background: 'rgba(56,189,248,0.1)',
           border: '0.5px solid rgba(56,189,248,0.25)',
@@ -139,7 +139,7 @@ function WaterGrid({ water, onAdd }: { water: number; onAdd: (delta: number) => 
       >
         +💧
       </button>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.53rem', color: 'rgba(255,255,255,0.38)', textAlign: 'center', lineHeight: 1.4 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.38)', textAlign: 'center', lineHeight: 1.4 }}>
         Water<br />
         <span style={{ color: '#38BDF8' }}>{water}/8 gl</span>
       </div>
@@ -274,7 +274,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       <div className="flex items-center justify-between">
         <div className="font-display font-bold text-white">Today&apos;s Nutrition</div>
         <div className="flex items-center gap-2">
-          <div className="font-mono text-[0.58rem] text-white/78">{today}</div>
+          <div className="font-mono text-[0.65rem] text-white/78">{today}</div>
           {logs.length > 0 && (
             <div
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border"
@@ -292,7 +292,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
         {/* Calorie progress bar */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1.5">
-            <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-wide">Calories</div>
+            <div className="font-mono text-[0.65rem] text-white/82 uppercase tracking-wide">Calories</div>
             <div className="font-mono text-[0.6rem] font-bold" style={{ color: calColor }}>
               {Math.round(totals.calories)} / {DAILY_TARGETS.calories} kcal
             </div>
@@ -304,7 +304,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
             />
           </div>
           {totals.calories === 0 && (
-            <div className="font-mono text-[0.55rem] text-white/72 mt-1">Log your first meal below to track your day</div>
+            <div className="font-mono text-[0.63rem] text-white/72 mt-1">Log your first meal below to track your day</div>
           )}
         </div>
 
@@ -337,7 +337,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                   {label}
                 </span>
                 {slotCal > 0 && (
-                  <span className="ml-2 font-mono text-[0.55rem] text-white/78">{slotCal} kcal</span>
+                  <span className="ml-2 font-mono text-[0.63rem] text-white/78">{slotCal} kcal</span>
                 )}
               </div>
               <button
@@ -360,7 +360,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
                   <div key={log.id} className="flex items-center gap-3 px-4 py-2.5 group">
                     <div className="flex-1 min-w-0">
                       <div className="font-body text-sm text-white/80 truncate">{log.food_name}</div>
-                      <div className="font-mono text-[0.53rem] text-white/75">
+                      <div className="font-mono text-[0.62rem] text-white/75">
                         {log.calories} kcal
                         {log.protein_g > 0 && ` · P ${Math.round(log.protein_g)}g`}
                         {log.carbs_g   > 0 && ` · C ${Math.round(log.carbs_g)}g`}
@@ -381,14 +381,14 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
             {/* Empty state */}
             {slotLogs.length === 0 && !isOpen && (
               <div className="px-4 py-3">
-                <div className="font-mono text-[0.58rem] text-white/72">Nothing logged yet — tap + Add</div>
+                <div className="font-mono text-[0.65rem] text-white/72">Nothing logged yet — tap + Add</div>
               </div>
             )}
 
             {/* Quick-add panel */}
             {isOpen && (
               <div className="border-t border-white/8 p-3 space-y-3 animate-fade-up">
-                <div className="font-mono text-[0.55rem] text-white/75 uppercase tracking-widest">SA food quick-add</div>
+                <div className="font-mono text-[0.63rem] text-white/75 uppercase tracking-widest">SA food quick-add</div>
                 <div className="grid grid-cols-2 gap-1.5">
                   {foods.map(food => (
                     <button
@@ -442,7 +442,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       {/* Study brain fuel tip */}
       {healthScore >= 75 && totals.protein >= 40 && (
         <div className="bg-indigo-500/8 border border-indigo-500/15 rounded-xl px-4 py-3">
-          <div className="font-mono text-[0.58rem] text-indigo-400 mb-1">🧠 Brain fuelled</div>
+          <div className="font-mono text-[0.65rem] text-indigo-400 mb-1">🧠 Brain fuelled</div>
           <div className="font-body text-sm text-white/82">
             Good protein + carbs today means sustained focus. Your brain needs glucose every 2–3 hours — keep a snack nearby during long study sessions.
           </div>
@@ -452,7 +452,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       {/* Contextual nutrition tips */}
       {totals.calories > 0 && totals.protein < 30 && (
         <div className="bg-rose-500/8 border border-rose-500/15 rounded-xl px-4 py-3">
-          <div className="font-mono text-[0.58rem] text-rose-400 mb-1">💡 Low protein today</div>
+          <div className="font-mono text-[0.65rem] text-rose-400 mb-1">💡 Low protein today</div>
           <div className="font-body text-sm text-white/82">
             Add eggs, tinned tuna, or lentils — cheap, high-protein options that keep you full during long study sessions.
           </div>
@@ -460,7 +460,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       )}
       {totals.calories > DAILY_TARGETS.calories * 1.15 && (
         <div className="bg-amber-500/8 border border-amber-500/15 rounded-xl px-4 py-3">
-          <div className="font-mono text-[0.58rem] text-amber-400 mb-1">📊 Over target</div>
+          <div className="font-mono text-[0.65rem] text-amber-400 mb-1">📊 Over target</div>
           <div className="font-body text-sm text-white/82">
             You&apos;re {Math.round(totals.calories - DAILY_TARGETS.calories)} kcal over today&apos;s target. A light supper with samp, chakalaka or a salad will balance things out.
           </div>
@@ -468,7 +468,7 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
       )}
       {water < 4 && (
         <div className="bg-sky-500/8 border border-sky-500/15 rounded-xl px-4 py-3">
-          <div className="font-mono text-[0.58rem] text-sky-400 mb-1">💧 Stay hydrated</div>
+          <div className="font-mono text-[0.65rem] text-sky-400 mb-1">💧 Stay hydrated</div>
           <div className="font-body text-sm text-white/82">
             Dehydration tanks concentration. Aim for 8 glasses — tap the water grid above each time you drink.
           </div>

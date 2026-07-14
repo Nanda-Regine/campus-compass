@@ -77,7 +77,7 @@ export default async function UpgradeSuccessPage() {
               border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)',
               padding: '20px', marginBottom: 32, textAlign: 'left',
             }}>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: 14 }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', marginBottom: 14 }}>
                 What&apos;s unlocked
               </p>
               {[

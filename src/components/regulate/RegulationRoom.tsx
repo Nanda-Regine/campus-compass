@@ -583,7 +583,7 @@ export default function RegulationRoom({ userId, exams }: Props) {
               }}
             >
               <span style={{ fontSize: '1.1rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
                 {t.label.split(' ')[0]}
               </span>
             </button>
@@ -599,7 +599,7 @@ export default function RegulationRoom({ userId, exams }: Props) {
           borderBottom: '0.5px solid rgba(255,255,255,0.08)',
           background: 'rgba(10,10,15,0.3)',
         }}>
-          <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>
+          <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>
             REGULATION ROOM
           </div>
           <NSScore userId={userId} />

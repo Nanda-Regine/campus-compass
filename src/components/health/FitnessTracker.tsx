@@ -242,7 +242,7 @@ export default function FitnessTracker() {
       {/* Header */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(251,113,133,0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--rose,#FB7185),transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--rose,#FB7185)', letterSpacing: '0.09em', marginBottom: 4 }}>FITNESS TRACKER</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--rose,#FB7185)', letterSpacing: '0.09em', marginBottom: 4 }}>FITNESS TRACKER</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Move your body, sharpen your mind</div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>Log workouts · Campus sports · Streak tracker</div>
       </div>
@@ -289,7 +289,7 @@ export default function FitnessTracker() {
                 {WORKOUT_TYPES.map(w => (
                   <button key={w.id} onClick={() => setForm(v => ({ ...v, type: w.id }))} style={{ padding: '8px 4px', background: form.type === w.id ? 'rgba(251,113,133,0.12)' : 'transparent', border: `1px solid ${form.type === w.id ? 'rgba(251,113,133,0.3)' : 'var(--border-subtle)'}`, borderRadius: 8, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <span style={{ fontSize: '1.1rem' }}>{w.emoji}</span>
-                    <span style={{ fontSize: '0.55rem', color: form.type === w.id ? 'var(--rose,#FB7185)' : 'var(--text-secondary)', fontFamily: 'var(--font-mono)', textAlign: 'center', lineHeight: 1.2 }}>{w.label}</span>
+                    <span style={{ fontSize: '0.63rem', color: form.type === w.id ? 'var(--rose,#FB7185)' : 'var(--text-secondary)', fontFamily: 'var(--font-mono)', textAlign: 'center', lineHeight: 1.2 }}>{w.label}</span>
                   </button>
                 ))}
               </div>

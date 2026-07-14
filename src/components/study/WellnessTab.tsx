@@ -193,7 +193,7 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
 
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
         35-day burnout heatmap
       </div>
       {/* Day labels */}
@@ -231,11 +231,11 @@ function CalendarHeatmap({ checkins }: { checkins: CheckIn[] }) {
       ))}
       {/* Legend */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.55)' }}>Thriving</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'rgba(255,255,255,0.55)' }}>Thriving</span>
         {['#4ecf9e','#7090d0','#c9a84c','#e8834a','#ff6b6b'].map(c => (
           <div key={c} style={{ width: 10, height: 10, borderRadius: 2, background: `${c}45`, border: `1px solid ${c}35` }} />
         ))}
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.45rem', color: 'rgba(255,255,255,0.55)' }}>Burnt out</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'rgba(255,255,255,0.55)' }}>Burnt out</span>
       </div>
     </div>
   )

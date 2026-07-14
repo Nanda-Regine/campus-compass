@@ -98,7 +98,7 @@ function ShiftBlock({ shift, top, height }: { shift: WorkShift; top: number; hei
         💼
       </div>
       {height > 34 && (
-        <div style={{ fontSize: '0.56rem', color: 'rgba(168,85,247,0.85)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: '0.64rem', color: 'rgba(168,85,247,0.85)', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {label}
         </div>
       )}
@@ -128,7 +128,7 @@ function EventBlock({ event, top, height, onDelete }: {
         {cat.icon}
       </div>
       {height > 28 && (
-        <div style={{ fontSize: '0.55rem', color: col, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: 0.9 }}>
+        <div style={{ fontSize: '0.63rem', color: col, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: 0.9 }}>
           {event.title}
         </div>
       )}
@@ -153,7 +153,7 @@ function SlotBlock({ slot, top, height }: { slot: TimetableEntry; top: number; h
         {code}
       </div>
       {height > 34 && (
-        <div style={{ fontSize: '0.56rem', color: 'var(--text-muted)', lineHeight: 1.2 }}>
+        <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)', lineHeight: 1.2 }}>
           {slot.venue ?? slot.slot_type ?? ''}
         </div>
       )}
@@ -267,7 +267,7 @@ function ActivityScore({ tasks, expenses }: { tasks: Task[]; expenses: { expense
       <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 12, overflow: 'hidden', padding: '12px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 3 }}>
           {['M','T','W','T','F','S','S'].map((d, i) => (
-            <div key={i} style={{ textAlign: 'center', fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
+            <div key={i} style={{ textAlign: 'center', fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', paddingBottom: 4 }}>{d}</div>
           ))}
         </div>
 
@@ -307,7 +307,7 @@ function ActivityScore({ tasks, expenses }: { tasks: Task[]; expenses: { expense
                 {!cell.isFuture && cell.score > 0 && (
                   <div style={{ display: 'flex', gap: 1 }}>
                     {selMood !== null && cell.iso === selected && MOOD_EMO[selMood] && (
-                      <span style={{ fontSize: '0.45rem' }}>{MOOD_EMO[selMood]}</span>
+                      <span style={{ fontSize: '0.56rem' }}>{MOOD_EMO[selMood]}</span>
                     )}
                   </div>
                 )}
@@ -318,11 +318,11 @@ function ActivityScore({ tasks, expenses }: { tasks: Task[]; expenses: { expense
 
         {/* Intensity legend */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 10, justifyContent: 'flex-end' }}>
-          <span style={{ fontSize: '0.55rem', color: 'var(--text-muted)' }}>Less</span>
+          <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)' }}>Less</span>
           {[0,1,2,3,4,5,6].map(s => (
             <div key={s} style={{ width: 10, height: 10, borderRadius: 2, background: colorsForScore(s) }} />
           ))}
-          <span style={{ fontSize: '0.55rem', color: 'var(--text-muted)' }}>More</span>
+          <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)' }}>More</span>
         </div>
       </div>
 
@@ -595,7 +595,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
               No classes scheduled yet
             </p>
             <p style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
               color: 'var(--text-muted)', margin: '2px 0 0', lineHeight: 1.6,
             }}>
               Go to the Timetable tab to import your .ics calendar or add classes manually.
@@ -653,7 +653,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
                 style={{
                   marginTop: 2, padding: '1px 5px', borderRadius: 4,
                   background: 'transparent', border: '1px solid var(--border-subtle)',
-                  color: 'var(--text-muted)', fontSize: '0.55rem', cursor: 'pointer',
+                  color: 'var(--text-muted)', fontSize: '0.63rem', cursor: 'pointer',
                   lineHeight: 1.4,
                 }}
               >+</button>
@@ -679,7 +679,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
               <div key={i} style={{
                 position: 'absolute', top: i * CELL_H - 7,
                 left: 0, right: 0,
-                fontSize: '0.54rem', fontFamily: 'var(--font-mono)',
+                fontSize: '0.62rem', fontFamily: 'var(--font-mono)',
                 color: 'var(--text-muted)', textAlign: 'right',
                 paddingRight: 6,
               }}>
@@ -769,7 +769,7 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
                     position: 'absolute', top: 4 + i * 18, left: 2, right: 2, zIndex: 2,
                     padding: '2px 4px', background: 'rgba(245,158,11,0.15)',
                     border: '1px solid rgba(245,158,11,0.4)', borderRadius: 4,
-                    fontSize: '0.55rem', color: '#f59e0b', fontWeight: 700,
+                    fontSize: '0.63rem', color: '#f59e0b', fontWeight: 700,
                     overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
                   }}>
                     ✦ {exam.exam_name}

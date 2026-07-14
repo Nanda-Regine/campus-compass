@@ -80,19 +80,19 @@ function BursaryCard({
             </span>
           </div>
 
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: 'var(--text-tertiary)', marginTop: 3 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', marginTop: 3 }}>
             {b.provider}
           </div>
 
           {/* Tag chip */}
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: typeColor, marginTop: 6 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: typeColor, marginTop: 6 }}>
             {b.tag}
           </div>
 
           {/* Amount pill */}
           <div style={{
             display: 'inline-block', marginTop: 6,
-            fontFamily: 'var(--font-mono)', fontSize: '0.55rem',
+            fontFamily: 'var(--font-mono)', fontSize: '0.63rem',
             color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.06)',
             border: '0.5px solid rgba(255,255,255,0.08)',
             padding: '3px 8px', borderRadius: 6,
@@ -163,7 +163,7 @@ function BursaryCard({
             background: 'rgba(245,158,11,0.07)',
             border: '0.5px solid rgba(245,158,11,0.18)',
           }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: '#f59e0b' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#f59e0b' }}>
               📅 {b.deadline}
             </span>
           </div>
@@ -218,12 +218,12 @@ function BursaryCard({
 // ── Shared micro-styles ───────────────────────────────────────────────────────
 
 const labelStyle: CSSProperties = {
-  fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text-tertiary)',
+  fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'var(--text-tertiary)',
   textTransform: 'uppercase', letterSpacing: '0.07em',
 }
 
 const chip: CSSProperties = {
-  fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+  fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
   color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.06)',
   border: '0.5px solid rgba(255,255,255,0.08)',
   padding: '3px 8px', borderRadius: 6,
@@ -318,7 +318,7 @@ export default function BursaryClient() {
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: '#c084fc' }}>
               Get a personal bursary plan from Nova
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: 'rgba(192,132,252,0.6)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'rgba(192,132,252,0.6)', marginTop: 2 }}>
               Nova knows your degree, year, and funding type — tap for a custom application strategy
             </div>
           </div>
@@ -367,7 +367,7 @@ export default function BursaryClient() {
                 onClick={() => setBasis(o.value)}
                 style={{
                   padding: '7px 10px', border: 'none', cursor: 'pointer',
-                  fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+                  fontFamily: 'var(--font-mono)', fontSize: '0.64rem',
                   background: basis === o.value ? 'rgba(78,207,158,0.15)' : 'rgba(255,255,255,0.06)',
                   color: basis === o.value ? '#4ecf9e' : 'rgba(255,255,255,0.55)',
                   transition: 'all 0.15s', whiteSpace: 'nowrap',
@@ -384,7 +384,7 @@ export default function BursaryClient() {
             style={{
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '7px 12px', borderRadius: 8, cursor: 'pointer',
-              fontFamily: 'var(--font-mono)', fontSize: '0.56rem', flexShrink: 0,
+              fontFamily: 'var(--font-mono)', fontSize: '0.64rem', flexShrink: 0,
               background: showSaved ? 'rgba(240,180,41,0.15)' : 'rgba(255,255,255,0.07)',
               color: showSaved ? '#f0b429' : 'rgba(255,255,255,0.55)',
               border: `0.5px solid ${showSaved ? 'rgba(240,180,41,0.3)' : 'rgba(255,255,255,0.08)'}`,
@@ -397,7 +397,7 @@ export default function BursaryClient() {
         </div>
 
         {/* Result count */}
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)' }}>
           {dueCount} result{dueCount === 1 ? '' : 's'} {showSaved ? '· saved only' : query || field ? '· filtered' : ''}
         </div>
 
@@ -431,10 +431,10 @@ export default function BursaryClient() {
           background: 'rgba(78,207,158,0.04)',
           border: '0.5px solid rgba(78,207,158,0.1)',
         }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#4ecf9e', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#4ecf9e', marginBottom: 4 }}>
             Can&apos;t find what you need?
           </div>
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: 'var(--text-tertiary)', lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', lineHeight: 1.5, margin: 0 }}>
             Ask Nova — she knows hundreds of SA bursaries and can advise based on your degree, university, and financial situation.
             Also check your university&apos;s financial aid office directly.
           </p>

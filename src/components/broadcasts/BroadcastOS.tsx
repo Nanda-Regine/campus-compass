@@ -153,7 +153,7 @@ export default function BroadcastOS({ userId, broadcasts: initialBroadcasts, rea
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Bell size={20} color="#38bdf8" strokeWidth={2} />
           <div>
-            <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono,monospace)', color: '#38bdf8', letterSpacing: '0.09em', marginBottom: 2 }}>
+            <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono,monospace)', color: '#38bdf8', letterSpacing: '0.09em', marginBottom: 2 }}>
               INSTITUTION BROADCAST OS
             </div>
             <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>Official Notices</div>
@@ -395,7 +395,7 @@ function TabBtn({
           position: 'absolute', top: 5, right: 8,
           minWidth: 16, height: 16, borderRadius: 8,
           background: '#ef4444', color: '#fff',
-          fontSize: '0.58rem', fontWeight: 700,
+          fontSize: '0.65rem', fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '0 4px',
         }}>

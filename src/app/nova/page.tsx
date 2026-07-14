@@ -1364,7 +1364,7 @@ export default function NovaPage() {
           </>
         )}
 
-        <p className="font-mono text-[0.54rem] text-white/55 text-center mt-2">
+        <p className="font-mono text-[0.62rem] text-white/55 text-center mt-2">
           Nova is an AI companion, not a licensed therapist. In crisis, call SADAG: 0800 21 4446
         </p>
       </div>

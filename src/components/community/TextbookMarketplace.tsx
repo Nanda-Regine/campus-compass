@@ -116,7 +116,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
       {/* Header */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(var(--teal-rgb,0,229,176),0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>TEXTBOOK MARKETPLACE</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>TEXTBOOK MARKETPLACE</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Buy, sell, swap, free</div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>
           {university || 'All universities'} · {listings.length} listing{listings.length !== 1 ? 's' : ''} available
@@ -135,7 +135,7 @@ export default function TextbookMarketplace({ userId, university }: { userId: st
           }}>
             {t.icon} {t.label}
             {t.id === 'mine' && myListings.length > 0 && (
-              <span style={{ marginLeft: 5, background: 'rgba(0,229,176,0.15)', color: 'var(--teal)', borderRadius: 9999, padding: '1px 5px', fontSize: '0.55rem', fontWeight: 700 }}>
+              <span style={{ marginLeft: 5, background: 'rgba(0,229,176,0.15)', color: 'var(--teal)', borderRadius: 9999, padding: '1px 5px', fontSize: '0.63rem', fontWeight: 700 }}>
                 {myListings.length}
               </span>
             )}
@@ -376,7 +376,7 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
         }}
       >
         👥 {relevant.length} {relevant.length === 1 ? 'buyer' : 'buyers'} interested
-        <span style={{ opacity: 0.5, fontSize: '0.55rem' }}>{open ? '▲' : '▼'}</span>
+        <span style={{ opacity: 0.5, fontSize: '0.63rem' }}>{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (
@@ -397,7 +397,7 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
               >
                 <div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>{i.buyerName}</div>
-                  <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.5)' }}>
+                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>
                     {new Date(i.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' })}
                     {i.whatsapp_number && (
                       <span style={{ marginLeft: 5, color: '#25D366' }}>· {i.whatsapp_number}</span>
@@ -414,14 +414,14 @@ function InterestedBuyers({ listingId, listing, interests, loading }: {
                     💬 Chat
                   </a>
                 ) : (
-                  <span style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)' }}>
                     No WA given
                   </span>
                 )}
               </div>
             )
           })}
-          <div style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+          <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
             Arrange campus pickup — no payments through the app
           </div>
         </div>

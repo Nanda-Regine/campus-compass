@@ -121,7 +121,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           padding: 16,
         }}
       >
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
           Campus Food Support
         </div>
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: 6 }}>
@@ -198,7 +198,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
 
       {/* Meal cards */}
       <div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
           Nutritionally complete meals under R20
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -269,7 +269,7 @@ export default function FoodInsecurityMode({ budgetHealth, university }: Props) 
           padding: 14,
         }}
       >
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
           Community kitchen tip
         </div>
         <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>

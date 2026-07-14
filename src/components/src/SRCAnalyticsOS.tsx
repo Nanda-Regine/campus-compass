@@ -285,7 +285,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                 <div style={{
                   position: 'absolute', top: 10, right: 12,
                   display: 'flex', alignItems: 'center', gap: 3,
-                  fontSize: '0.55rem', fontFamily: 'var(--font-mono)',
+                  fontSize: '0.63rem', fontFamily: 'var(--font-mono)',
                   color: '#f59e0b', letterSpacing: '0.04em',
                 }}>
                   <Pin size={9} />
@@ -300,7 +300,7 @@ function FeedTab({ posts, setPosts, userId }: { posts: Post[]; setPosts: React.D
                   borderRadius: 10,
                   background: cfg.bg,
                   color: cfg.color,
-                  fontSize: '0.58rem',
+                  fontSize: '0.65rem',
                   fontFamily: 'var(--font-mono)',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -412,7 +412,7 @@ function TeamTab({ members }: { members: Member[] }) {
                     padding: '2px 8px', borderRadius: 10,
                     background: 'rgba(139,92,246,0.15)',
                     color: '#8b5cf6',
-                    fontSize: '0.58rem',
+                    fontSize: '0.65rem',
                     fontFamily: 'var(--font-mono)',
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
@@ -549,7 +549,7 @@ function PostTab({
                 boxSizing: 'border-box',
               }}
             />
-            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
+            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
               {title.length}/120
             </div>
           </div>
@@ -581,7 +581,7 @@ function PostTab({
                 lineHeight: 1.6,
               }}
             />
-            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
+            <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)', marginTop: 3 }}>
               {body.length}/5000
             </div>
           </div>
@@ -731,7 +731,7 @@ function AboutTab() {
                 width: 18, height: 18, borderRadius: '50%',
                 background: `${ACCENT}20`, border: `1px solid ${ACCENT}40`,
                 color: ACCENT, fontFamily: 'var(--font-mono)',
-                fontSize: '0.55rem', fontWeight: 700,
+                fontSize: '0.63rem', fontWeight: 700,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, marginTop: 1,
               }}>

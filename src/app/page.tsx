@@ -342,7 +342,7 @@ export default function LandingPage() {
                 <div className="space-y-3">
                   {/* Budget card */}
                   <div className="rounded-2xl p-4" style={{ background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.18)' }}>
-                    <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-2" style={{ color: '#93c5fd' }}>Budget · This Month</p>
+                    <p className="font-mono text-[0.63rem] uppercase tracking-widest mb-2" style={{ color: '#93c5fd' }}>Budget · This Month</p>
                     <div className="space-y-2">
                       {[
                         { label: 'NSFAS food', amount: 'R890', pct: 72, colour: '#3b82f6' },
@@ -381,12 +381,12 @@ export default function LandingPage() {
                     <div className="rounded-2xl p-3" style={{ background: 'rgba(224,120,88,0.1)', border: '1px solid rgba(224,120,88,0.25)' }}>
                       <span className="text-lg">🔥</span>
                       <p className="font-display font-bold text-white text-xs mt-1">12 day streak</p>
-                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Keep it going</p>
+                      <p className="font-mono text-[0.6rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>Keep it going</p>
                     </div>
                     <div className="rounded-2xl p-3" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
                       <span className="text-lg">🛡️</span>
                       <p className="font-display font-bold text-white text-xs mt-1">Walk Me Home</p>
-                      <p className="font-mono text-[0.5rem] mt-0.5" style={{ color: '#6ee7b7' }}>Active · 12 min left</p>
+                      <p className="font-mono text-[0.6rem] mt-0.5" style={{ color: '#6ee7b7' }}>Active · 12 min left</p>
                     </div>
                   </div>
                 </div>
@@ -423,7 +423,7 @@ export default function LandingPage() {
               >
                 <span className="font-display font-black text-2xl sm:text-3xl mb-0.5" style={{ color: stat.color }}>{stat.value}</span>
                 <span className="font-display text-xs text-white/70">{stat.label}</span>
-                <span className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{stat.sub}</span>
+                <span className="font-mono text-[0.63rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{stat.sub}</span>
               </div>
             ))}
           </div>
@@ -498,7 +498,7 @@ export default function LandingPage() {
             <div className="relative grid sm:grid-cols-3 gap-3">
               {/* Budget card */}
               <div className="rounded-2xl p-4" style={{ background: 'rgba(59,130,246,0.07)', border: '1px solid rgba(59,130,246,0.18)' }}>
-                <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: '#93c5fd' }}>Budget · March</p>
+                <p className="font-mono text-[0.63rem] uppercase tracking-widest mb-3" style={{ color: '#93c5fd' }}>Budget · March</p>
                 <div className="space-y-2.5 mb-4">
                   {[
                     { label: 'NSFAS food', amount: 'R890', pct: 72, colour: '#3b82f6' },
@@ -524,7 +524,7 @@ export default function LandingPage() {
               {/* Study + streak */}
               <div className="flex flex-col gap-3">
                 <div className="rounded-2xl p-4 flex-1" style={{ background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.18)' }}>
-                  <p className="font-mono text-[0.55rem] uppercase tracking-widest mb-3" style={{ color: '#c4b5fd' }}>Upcoming</p>
+                  <p className="font-mono text-[0.63rem] uppercase tracking-widest mb-3" style={{ color: '#c4b5fd' }}>Upcoming</p>
                   <div className="space-y-2">
                     {[
                       { label: 'CHEM3 exam', date: 'Mon 14 Apr', urgent: true },
@@ -535,7 +535,7 @@ export default function LandingPage() {
                         <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: item.urgent ? '#f87171' : 'rgba(255,255,255,0.25)' }} />
                         <div className="flex-1 min-w-0">
                           <p className="font-display text-xs truncate text-white/80">{item.label}</p>
-                          <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.date}</p>
+                          <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{item.date}</p>
                         </div>
                       </div>
                     ))}
@@ -546,7 +546,7 @@ export default function LandingPage() {
                     <span className="text-xl" aria-hidden="true">🔥</span>
                     <div>
                       <p className="font-display font-bold text-white text-sm">12 day streak</p>
-                      <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Keep it going</p>
+                      <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>Keep it going</p>
                     </div>
                   </div>
                 </div>
@@ -598,7 +598,7 @@ export default function LandingPage() {
                     <span className="font-mono text-[0.65rem] uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ background: `${f.accent}20`, color: f.accent, border: `1px solid ${f.accent}40` }}>New</span>
                   )}
                   {f.domain && (
-                    <span className="font-mono text-[0.48rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
+                    <span className="font-mono text-[0.58rem] uppercase tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.22)', border: '1px solid rgba(255,255,255,0.08)' }}>{f.domain}</span>
                   )}
                 </div>
                 <div className="text-2xl mb-3" aria-hidden="true">{f.icon}</div>
@@ -646,7 +646,7 @@ export default function LandingPage() {
                       <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                       <div>
                         <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
-                        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
+                        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -658,7 +658,7 @@ export default function LandingPage() {
                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)', boxShadow: '0 0 16px rgba(13,148,136,0.4)' }}>✦</div>
                     <div>
                       <p className="font-display font-bold text-white text-sm">Nova</p>
-                      <p className="font-mono text-[0.55rem]" style={{ color: '#5eead4' }}>Online · SA Student AI</p>
+                      <p className="font-mono text-[0.63rem]" style={{ color: '#5eead4' }}>Online · SA Student AI</p>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -683,7 +683,7 @@ export default function LandingPage() {
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #0d9488, #3b82f6)' }} aria-hidden="true">↑</div>
                   </div>
                 </div>
-                <p className="font-mono text-[0.55rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
+                <p className="font-mono text-[0.63rem] text-center mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>15 free messages/month · 100 with Scholar · 250 with Premium · ∞ with Nova Unlimited</p>
               </div>
             </div>
           </div>
@@ -726,7 +726,7 @@ export default function LandingPage() {
                       <span className="text-base flex-shrink-0 mt-0.5" aria-hidden="true">{item.icon}</span>
                       <div>
                         <p className="font-display font-bold text-white text-xs mb-0.5">{item.label}</p>
-                        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
+                        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.4)' }}>{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -738,17 +738,17 @@ export default function LandingPage() {
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm" style={{ background: 'linear-gradient(135deg, #10b981, #38bdf8)', boxShadow: '0 0 16px rgba(16,185,129,0.4)' }}>🛡️</div>
                   <div>
                     <p className="font-display font-bold text-white text-sm">Safety OS</p>
-                    <p className="font-mono text-[0.55rem]" style={{ color: '#6ee7b7' }}>Active · All SA campuses</p>
+                    <p className="font-mono text-[0.63rem]" style={{ color: '#6ee7b7' }}>Active · All SA campuses</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   <div className="rounded-xl p-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)' }}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-mono text-[0.55rem] uppercase tracking-widest" style={{ color: '#6ee7b7' }}>Walk Me Home</span>
+                      <span className="font-mono text-[0.63rem] uppercase tracking-widest" style={{ color: '#6ee7b7' }}>Walk Me Home</span>
                       <span className="font-mono text-[0.65rem] px-2 py-0.5 rounded-full" style={{ background: 'rgba(16,185,129,0.2)', color: '#6ee7b7' }}>Active</span>
                     </div>
                     <p className="font-display text-xs text-white/80">Timer: <span style={{ color: '#6ee7b7', fontWeight: 700 }}>12:00</span> remaining</p>
-                    <p className="font-mono text-[0.55rem] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Check-in required by 22:15 · Lethabo will be notified</p>
+                    <p className="font-mono text-[0.63rem] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Check-in required by 22:15 · Lethabo will be notified</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}>
@@ -903,7 +903,7 @@ export default function LandingPage() {
                 <p className="font-display text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.75)' }}>&ldquo;{t.quote}&rdquo;</p>
                 <footer>
                   <p className="font-display font-bold text-xs" style={{ color: t.accent }}>{t.name}</p>
-                  <p className="font-mono text-[0.55rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.role}</p>
+                  <p className="font-mono text-[0.63rem] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.role}</p>
                 </footer>
               </blockquote>
             ))}
@@ -1019,7 +1019,7 @@ export default function LandingPage() {
                 </a>
                 {' '}· Mirembe Muse (Pty) Ltd
               </p>
-              <p className="font-mono text-[0.55rem]" style={{ color: 'rgba(255,255,255,0.18)' }}>
+              <p className="font-mono text-[0.63rem]" style={{ color: 'rgba(255,255,255,0.18)' }}>
                 POPIA Reg. 2026-005658 · East London, Eastern Cape, South Africa
               </p>
             </div>

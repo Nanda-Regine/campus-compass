@@ -193,7 +193,7 @@ export default function StudyAssistModal({
                     <div key={i} className="bg-[var(--bg-surface)] border border-teal-600/20 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-display font-bold text-sm text-teal-400">{day.day}</span>
-                        <span className="font-mono text-[0.58rem] text-white/78">{day.hours}h</span>
+                        <span className="font-mono text-[0.65rem] text-white/78">{day.hours}h</span>
                       </div>
                       <p className="font-body text-sm text-white/80 mb-2">{day.focus}</p>
                       <ul className="space-y-1">
@@ -204,7 +204,7 @@ export default function StudyAssistModal({
                         ))}
                       </ul>
                       {day.tip && (
-                        <p className="font-mono text-[0.58rem] text-teal-400/60 mt-2 italic">💡 {day.tip}</p>
+                        <p className="font-mono text-[0.65rem] text-teal-400/60 mt-2 italic">💡 {day.tip}</p>
                       )}
                     </div>
                   ))}
@@ -229,32 +229,32 @@ export default function StudyAssistModal({
               <>
                 {guide?.prepPhases && guide.prepPhases.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest">Prep Phases</div>
+                    <div className="font-mono text-[0.65rem] text-white/78 uppercase tracking-widest">Prep Phases</div>
                     {guide.prepPhases.map((phase, i) => (
                       <div key={i} className="bg-[var(--bg-surface)] border border-purple-500/20 rounded-xl p-4">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <span className="font-display font-bold text-sm text-purple-300">{phase.phase}</span>
-                          <span className="font-mono text-[0.55rem] text-white/78 flex-shrink-0">{phase.days}</span>
+                          <span className="font-mono text-[0.63rem] text-white/78 flex-shrink-0">{phase.days}</span>
                         </div>
                         <p className="font-body text-sm text-white/70 mb-2">{phase.focus}</p>
                         <div className="flex items-center gap-2 flex-wrap">
                           {phase.techniques.map((t, j) => (
-                            <span key={j} className="font-mono text-[0.55rem] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">{t}</span>
+                            <span key={j} className="font-mono text-[0.63rem] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full">{t}</span>
                           ))}
                         </div>
-                        <p className="font-mono text-[0.58rem] text-white/78 mt-2">✓ {phase.milestone}</p>
+                        <p className="font-mono text-[0.65rem] text-white/78 mt-2">✓ {phase.milestone}</p>
                       </div>
                     ))}
                   </div>
                 )}
                 {guide?.studyTechniques && guide.studyTechniques.length > 0 && (
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest mb-2">Study Techniques</div>
+                    <div className="font-mono text-[0.65rem] text-white/78 uppercase tracking-widest mb-2">Study Techniques</div>
                     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
                       {guide.studyTechniques.map((t, i) => (
                         <div key={i} className="flex-shrink-0 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 w-40">
                           <div className="font-display font-bold text-xs text-white mb-1">{t.name}</div>
-                          <p className="font-mono text-[0.55rem] text-white/82 leading-relaxed">{t.description}</p>
+                          <p className="font-mono text-[0.63rem] text-white/82 leading-relaxed">{t.description}</p>
                         </div>
                       ))}
                     </div>
@@ -264,20 +264,20 @@ export default function StudyAssistModal({
                   <div className="grid grid-cols-2 gap-3">
                     {guide.dayBeforeTips && guide.dayBeforeTips.length > 0 && (
                       <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3">
-                        <div className="font-mono text-[0.55rem] text-amber-400 uppercase tracking-widest mb-2">Day Before</div>
+                        <div className="font-mono text-[0.63rem] text-amber-400 uppercase tracking-widest mb-2">Day Before</div>
                         <ul className="space-y-1.5">
                           {guide.dayBeforeTips.map((tip, i) => (
-                            <li key={i} className="font-mono text-[0.58rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
+                            <li key={i} className="font-mono text-[0.65rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
                           ))}
                         </ul>
                       </div>
                     )}
                     {guide.examDayTips && guide.examDayTips.length > 0 && (
                       <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3">
-                        <div className="font-mono text-[0.55rem] text-teal-400 uppercase tracking-widest mb-2">Exam Day</div>
+                        <div className="font-mono text-[0.63rem] text-teal-400 uppercase tracking-widest mb-2">Exam Day</div>
                         <ul className="space-y-1.5">
                           {guide.examDayTips.map((tip, i) => (
-                            <li key={i} className="font-mono text-[0.58rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
+                            <li key={i} className="font-mono text-[0.65rem] text-white/70 flex gap-1.5"><span>·</span>{tip}</li>
                           ))}
                         </ul>
                       </div>
@@ -333,12 +333,12 @@ export default function StudyAssistModal({
                 )}
                 {res?.alternativeScenarios && res.alternativeScenarios.length > 0 && (
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest mb-2">Alternative targets</div>
+                    <div className="font-mono text-[0.65rem] text-white/78 uppercase tracking-widest mb-2">Alternative targets</div>
                     <div className="flex gap-2">
                       {res.alternativeScenarios.map((s, i) => (
                         <div key={i} className="flex-1 bg-[var(--bg-surface)] border border-white/7 rounded-xl p-3 text-center">
                           <div className="font-display font-black text-lg text-white">{s.requiredScore}%</div>
-                          <div className="font-mono text-[0.55rem] text-white/78 mt-0.5">{s.label}</div>
+                          <div className="font-mono text-[0.63rem] text-white/78 mt-0.5">{s.label}</div>
                         </div>
                       ))}
                     </div>
@@ -373,7 +373,7 @@ export default function StudyAssistModal({
               <>
                 {analysis?.overallLoad && (
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[0.58rem] text-white/82 uppercase tracking-widest">Overall load:</span>
+                    <span className="font-mono text-[0.65rem] text-white/82 uppercase tracking-widest">Overall load:</span>
                     <span className={cn(
                       'font-mono text-[0.6rem] px-2.5 py-1 rounded-full border',
                       analysis.overallLoad === 'critical' ? 'bg-red-500/10 text-red-400 border-red-500/20'
@@ -386,22 +386,22 @@ export default function StudyAssistModal({
                 )}
                 {analysis?.topPriority && (
                   <div className="bg-[var(--bg-surface)] border border-white/7 rounded-xl px-4 py-3">
-                    <div className="font-mono text-[0.55rem] text-white/78 uppercase tracking-widest mb-1">Top priority</div>
+                    <div className="font-mono text-[0.63rem] text-white/78 uppercase tracking-widest mb-1">Top priority</div>
                     <p className="font-display font-bold text-sm text-white">{analysis.topPriority}</p>
                   </div>
                 )}
                 {analysis?.conflictPeriods && analysis.conflictPeriods.length > 0 && (
                   <div className="space-y-3">
-                    <div className="font-mono text-[0.58rem] text-white/78 uppercase tracking-widest">Conflict periods</div>
+                    <div className="font-mono text-[0.65rem] text-white/78 uppercase tracking-widest">Conflict periods</div>
                     {analysis.conflictPeriods.map((period, i) => (
                       <div key={i} className={cn('rounded-xl p-4 border', severityStyle[period.severity] || severityStyle.low)}>
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-display font-bold text-sm">{period.dateRange}</span>
-                          <span className="font-mono text-[0.55rem] uppercase">{period.severity}</span>
+                          <span className="font-mono text-[0.63rem] uppercase">{period.severity}</span>
                         </div>
                         <ul className="space-y-0.5 mb-2">
                           {period.items.map((item, j) => (
-                            <li key={j} className="font-mono text-[0.58rem] text-white/70">· {item}</li>
+                            <li key={j} className="font-mono text-[0.65rem] text-white/70">· {item}</li>
                           ))}
                         </ul>
                         <p className="font-mono text-[0.6rem] text-white/82">{period.suggestion}</p>

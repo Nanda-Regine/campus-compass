@@ -242,7 +242,7 @@ export default function ValuesMap() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>VALUES MAP</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>VALUES MAP</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Discover what you actually stand for</div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>5 dilemmas. No right answers. Your values, surfaced.</div>
       </div>
@@ -334,7 +334,7 @@ function ResultsPhase({ top3, onContinue, onRetake }: { top3: ValueName[]; onCon
             {rank === 0 && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div>
-                <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 4 }}>{rank === 0 ? 'PRIMARY VALUE' : rank === 1 ? 'SECONDARY VALUE' : 'CORE VALUE'}</div>
+                <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, marginBottom: 4 }}>{rank === 0 ? 'PRIMARY VALUE' : rank === 1 ? 'SECONDARY VALUE' : 'CORE VALUE'}</div>
                 <div style={{ fontSize: '1.1rem', fontWeight: 800, color: ACCENT }}>{valueName}</div>
               </div>
               <div style={{ fontSize: '1.4rem', marginTop: -2 }}>{rank === 0 ? '🥇' : rank === 1 ? '🥈' : '🥉'}</div>

@@ -243,7 +243,7 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
         {showActions && <StatusBadge status={listing.status} />}
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.55rem',
+          fontSize: '0.63rem',
           color: 'rgba(255,255,255,0.48)',
           marginLeft: 'auto',
         }}>
@@ -834,7 +834,7 @@ function MessagesTab({ userId }: { userId: string }) {
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'rgba(255,255,255,0.55)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   {thread.listing_title}
                   {unread > 0 && (
-                    <span style={{ marginLeft: 8, background: ACCENT, color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: '0.55rem', fontWeight: 700 }}>
+                    <span style={{ marginLeft: 8, background: ACCENT, color: '#000', borderRadius: 10, padding: '1px 6px', fontSize: '0.63rem', fontWeight: 700 }}>
                       {unread} new
                     </span>
                   )}
@@ -842,7 +842,7 @@ function MessagesTab({ userId }: { userId: string }) {
                 <div style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {lastMsg?.body ?? ''}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
                   {lastMsg ? timeAgo(lastMsg.created_at) : ''}
                 </div>
               </div>

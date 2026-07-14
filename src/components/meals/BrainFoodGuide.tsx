@@ -58,7 +58,7 @@ function SectionContent({ id }: { id: string }) {
               padding: '10px 14px',
             }}
           >
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: '#f87171', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: '#f87171', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
               Avoid before exams
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -109,7 +109,7 @@ function SectionContent({ id }: { id: string }) {
               <div
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.58rem',
+                  fontSize: '0.65rem',
                   color: ACCENT,
                   marginBottom: 5,
                 }}
@@ -333,7 +333,7 @@ export default function BrainFoodGuide() {
         <div
           style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: '0.55rem',
+            fontSize: '0.63rem',
             color: ACCENT,
             background: 'rgba(251,146,60,0.1)',
             border: '1px solid rgba(251,146,60,0.2)',

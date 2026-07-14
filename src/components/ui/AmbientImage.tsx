@@ -107,7 +107,7 @@ export function AmbientImage({
   // page stays readable. In light/outdoor themes the `.ambient-scrim` class below
   // is overridden in globals.css with a pale scrim so the dark gradient never
   // muddies a bright surface. Pages that want no scrim pass overlayColor="transparent".
-  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.30) 0%, rgba(5,4,12,0.52) 100%)',
+  overlayColor = 'linear-gradient(180deg, rgba(5,4,12,0.34) 0%, rgba(5,4,12,0.62) 100%)',
   sizes = '100vw',
 }: AmbientImageProps) {
   const imageSrc = zone ? AMBIENT_IMAGES[zone] : src

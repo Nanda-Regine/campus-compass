@@ -507,7 +507,7 @@ function EmergencySection() {
                 {c.number}
               </span>
               <span style={{
-                fontSize: '0.58rem',
+                fontSize: '0.65rem',
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
                 padding: '2px 8px',
@@ -833,7 +833,7 @@ export default function GBVResponseGuide() {
             position: 'absolute', top: 0, left: 0, right: 0, height: 2,
             background: 'linear-gradient(90deg, #f87171, transparent)',
           }} />
-          <div style={{ fontSize: '0.58rem', fontWeight: 700, color: '#f87171', letterSpacing: '0.09em', marginBottom: 4 }}>
+          <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#f87171', letterSpacing: '0.09em', marginBottom: 4 }}>
             GBV RESPONSE GUIDE
           </div>
           <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 4 }}>

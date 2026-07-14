@@ -457,7 +457,7 @@ export default function WhenYouAreSick({university=''}:{university?:string}) {
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:16,padding:'16px 18px'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--danger),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--danger)',letterSpacing:'0.09em',marginBottom:4}}>HEALTH OS</div>
+        <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:'var(--danger)',letterSpacing:'0.09em',marginBottom:4}}>HEALTH OS</div>
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>When You&apos;re Sick</div>
         <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>Symptoms · Remedies · Drug safety · Clinic finder · Medical science · Women&apos;s health</div>
       </div>

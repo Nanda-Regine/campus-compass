@@ -475,7 +475,7 @@ export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}
               cursor: 'pointer', transition: 'all 0.15s', padding: '6px 2px',
             }}>
               <span style={{ fontSize: '1.05rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
                 {t.label.split(' ')[0]}
               </span>
             </button>
@@ -488,7 +488,7 @@ export default function LaunchPadOS({ initialTab }: { initialTab?: string } = {}
         {/* Header */}
         <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-          <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>LAUNCH PAD — {activeT.label}</div>
+          <div style={{ fontSize: '0.63rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>LAUNCH PAD — {activeT.label}</div>
           <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>Ready for life after varsity</div>
           <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 2 }}>The leap · exit admin · first salary · 90 days</div>
         </div>

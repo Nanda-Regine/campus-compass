@@ -129,7 +129,7 @@ export default function WorkClient({ userId }: Props) {
         ].map(stat => (
           <div key={stat.label} className="bg-[var(--bg-surface)] border border-white/7 rounded-2xl p-3 text-center">
             <div className={`font-display font-black text-lg ${stat.color}`}>{stat.value}</div>
-            <div className="font-mono text-[0.53rem] text-white/78 uppercase mt-0.5">{stat.label}</div>
+            <div className="font-mono text-[0.62rem] text-white/78 uppercase mt-0.5">{stat.label}</div>
           </div>
         ))}
       </div>
@@ -144,7 +144,7 @@ export default function WorkClient({ userId }: Props) {
             <div key={s.id} className="text-sm text-white/70">
               <span className="font-body">{s.shift_date} {s.start_time}–{s.end_time}</span>
               {s.conflict_detail && (
-                <span className="font-mono text-[0.58rem] text-amber-400/70 ml-2">conflicts with {s.conflict_detail}</span>
+                <span className="font-mono text-[0.65rem] text-amber-400/70 ml-2">conflicts with {s.conflict_detail}</span>
               )}
             </div>
           ))}
@@ -154,7 +154,7 @@ export default function WorkClient({ userId }: Props) {
       {/* ─── Nova tip ─── */}
       {novaInsight ? (
         <div className="bg-purple-500/8 border border-purple-500/20 rounded-2xl p-4">
-          <div className="font-mono text-[0.58rem] text-purple-400 uppercase tracking-widest mb-2">🌟 Nova</div>
+          <div className="font-mono text-[0.65rem] text-purple-400 uppercase tracking-widest mb-2">🌟 Nova</div>
           <p className="font-body text-sm text-white/75 leading-relaxed">{novaInsight}</p>
         </div>
       ) : (
@@ -168,7 +168,7 @@ export default function WorkClient({ userId }: Props) {
             <div className="font-display font-bold text-purple-300 text-sm">
               {insightLoading ? 'Nova is thinking...' : 'Get Nova\'s take on your week'}
             </div>
-            <div className="font-mono text-[0.58rem] text-white/78">Work-study balance tip →</div>
+            <div className="font-mono text-[0.65rem] text-white/78">Work-study balance tip →</div>
           </div>
         </button>
       )}
@@ -205,14 +205,14 @@ export default function WorkClient({ userId }: Props) {
                 <div className="text-xl flex-shrink-0">{JOB_TYPE_LABELS[job.job_type]?.split(' ')[0] ?? '💼'}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-display font-bold text-white text-sm truncate">{job.employer_name}</div>
-                  <div className="font-mono text-[0.58rem] text-white/82 mt-0.5">
+                  <div className="font-mono text-[0.65rem] text-white/82 mt-0.5">
                     {job.role_title ?? JOB_TYPE_LABELS[job.job_type]?.split(' ').slice(1).join(' ')}
                     {job.pay_rate && ` · R${job.pay_rate}/${job.pay_type === 'hourly' ? 'hr' : 'shift'}`}
                     {job.location && ` · ${job.location}`}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={cn('font-mono text-[0.55rem] px-2 py-0.5 rounded-full border', STATUS_STYLES[job.status])}>
+                  <span className={cn('font-mono text-[0.63rem] px-2 py-0.5 rounded-full border', STATUS_STYLES[job.status])}>
                     {job.status}
                   </span>
                   <button
@@ -252,7 +252,7 @@ export default function WorkClient({ userId }: Props) {
                   <div className="font-display font-bold text-sm text-white truncate">
                     {shift.job?.employer_name ?? 'Shift'}
                   </div>
-                  <div className="font-mono text-[0.58rem] text-white/82">
+                  <div className="font-mono text-[0.65rem] text-white/82">
                     {shift.shift_date} · {shift.start_time}–{shift.end_time}
                     {shift.earnings ? ` · ${fmt.currencyShort(shift.earnings)}` : ''}
                   </div>
@@ -261,13 +261,13 @@ export default function WorkClient({ userId }: Props) {
                   {shift.has_study_conflict && (
                     <span className="text-amber-400 text-xs" title="Study conflict">⚠️</span>
                   )}
-                  <span className={cn('font-mono text-[0.55rem] px-2 py-0.5 rounded-full border', SHIFT_STATUS_STYLES[shift.status])}>
+                  <span className={cn('font-mono text-[0.63rem] px-2 py-0.5 rounded-full border', SHIFT_STATUS_STYLES[shift.status])}>
                     {shift.status}
                   </span>
                   {shift.status === 'scheduled' && (
                     <button
                       onClick={() => handleMarkWorked(shift.id)}
-                      className="font-mono text-[0.55rem] text-teal-400 hover:text-teal-300"
+                      className="font-mono text-[0.63rem] text-teal-400 hover:text-teal-300"
                     >
                       ✓
                     </button>
@@ -284,12 +284,12 @@ export default function WorkClient({ userId }: Props) {
         <Link href="/dashboard/work/shifts" className="bg-[var(--bg-surface)] border border-white/7 hover:border-amber-500/30 rounded-2xl p-4 transition-all">
           <div className="text-2xl mb-2">📅</div>
           <div className="font-display font-bold text-white text-sm">Add Shift</div>
-          <div className="font-mono text-[0.58rem] text-amber-400 mt-0.5">Log your schedule →</div>
+          <div className="font-mono text-[0.65rem] text-amber-400 mt-0.5">Log your schedule →</div>
         </Link>
         <Link href="/dashboard/work/earnings" className="bg-[var(--bg-surface)] border border-white/7 hover:border-teal-600/30 rounded-2xl p-4 transition-all">
           <div className="text-2xl mb-2">💸</div>
           <div className="font-display font-bold text-white text-sm">Earnings</div>
-          <div className="font-mono text-[0.58rem] text-teal-400 mt-0.5">View income history →</div>
+          <div className="font-mono text-[0.65rem] text-teal-400 mt-0.5">View income history →</div>
         </Link>
       </div>
     </div>

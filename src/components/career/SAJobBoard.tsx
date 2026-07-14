@@ -63,7 +63,7 @@ export default function SAJobBoard() {
     <div style={{display:'flex',flexDirection:'column',gap:14}}>
       <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(99,102,241,0.25)',borderRadius:16,padding:'16px 18px'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--indigo,#6366F1),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--indigo,#6366F1)',letterSpacing:'0.09em',marginBottom:4}}>SA JOB BOARD</div>
+        <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:'var(--indigo,#6366F1)',letterSpacing:'0.09em',marginBottom:4}}>SA JOB BOARD</div>
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Find work that fits student life</div>
         <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>Part-time · Vacation · Grad programmes · Learnerships</div>
       </div>

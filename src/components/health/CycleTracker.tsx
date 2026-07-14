@@ -821,7 +821,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                       <div key={i} style={{ flex: 1, textAlign: 'center' }}>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.65rem', marginBottom: 4 }}>{d.label}</div>
                         <div style={{ width: 8, height: `${info ? levelPct(info.energy) * 0.28 : 10}px`, background: info ? info.color : '#374151', borderRadius: 4, margin: '0 auto', minHeight: 10 }} />
-                        <div style={{ color: '#4b5563', fontSize: '0.55rem', marginTop: 4, textTransform: 'capitalize' }}>{d.phase?.[0]}</div>
+                        <div style={{ color: '#4b5563', fontSize: '0.63rem', marginTop: 4, textTransform: 'capitalize' }}>{d.phase?.[0]}</div>
                       </div>
                     )
                   })}

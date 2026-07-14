@@ -272,7 +272,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
               <button
                 key={p}
                 onClick={() => { if (!running) { setPhase(p); setSecondsLeft(p === 'work' ? settings.workMinutes * 60 : p === 'short_break' ? settings.shortBreakMinutes * 60 : settings.longBreakMinutes * 60); setSessionStartTime(null) } }}
-                className={cn('font-mono text-[0.55rem] px-2.5 py-1 rounded-full transition-all', phase === p ? 'font-bold' : 'opacity-40')}
+                className={cn('font-mono text-[0.63rem] px-2.5 py-1 rounded-full transition-all', phase === p ? 'font-bold' : 'opacity-40')}
                 style={{ background: phase === p ? c.bg : 'transparent', color: phase === p ? c.text : 'rgba(255,255,255,0.4)', border: `1px solid ${phase === p ? c.border : 'transparent'}` }}
               >
                 {PHASE_LABELS[p]}
@@ -327,7 +327,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
             >
               {formatTime(secondsLeft)}
             </span>
-            <span className="font-mono text-[0.58rem] mt-1.5 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span className="font-mono text-[0.65rem] mt-1.5 uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
               {PHASE_LABELS[phase]}
             </span>
             {running && (
@@ -384,7 +384,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         className="rounded-2xl p-4 space-y-3"
         style={{ background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.07)' }}
       >
-        <p className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>
           Studying for (optional)
         </p>
 
@@ -442,7 +442,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
               ? `${Math.floor(todayMinutes / 60)}h ${todayMinutes % 60}m`
               : `${todayMinutes}m`}
           </p>
-          <p className="font-mono text-[0.55rem] text-white/78 mt-0.5">studied today</p>
+          <p className="font-mono text-[0.63rem] text-white/78 mt-0.5">studied today</p>
         </div>
         <div
           className="rounded-2xl p-4 text-center relative overflow-hidden"
@@ -450,7 +450,7 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
         >
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, #d97b54, transparent)' }} />
           <p className="font-display font-black text-2xl" style={{ color: '#e8956e' }}>{completedSessions}</p>
-          <p className="font-mono text-[0.55rem] text-white/78 mt-0.5">sessions this run</p>
+          <p className="font-mono text-[0.63rem] text-white/78 mt-0.5">sessions this run</p>
         </div>
       </div>
 
@@ -514,7 +514,7 @@ function FlowInsightCard({ workMinutes }: { workMinutes: number }) {
             },
           ].map(item => (
             <div key={item.book} style={{ paddingLeft: 8, borderLeft: '2px solid rgba(13,148,136,0.4)' }}>
-              <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.35)', marginBottom: 3 }}>{item.book}</div>
+              <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.35)', marginBottom: 3 }}>{item.book}</div>
               <div style={{ fontSize: '0.63rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.55 }}>{item.insight}</div>
             </div>
           ))}
@@ -536,7 +536,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
   const slider = (label: string, key: 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes' | 'sessionsUntilLongBreak', min: number, max: number) => (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <label className="font-mono text-[0.58rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <label className="font-mono text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
           {label}
         </label>
         <span className="font-display font-bold text-white text-sm tabular-nums">
@@ -560,7 +560,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
     >
       <div className="text-left">
         <p className="font-display text-xs text-white">{label}</p>
-        <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{description}</p>
+        <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.35)' }}>{description}</p>
       </div>
       <div
         className="w-9 h-5 rounded-full flex-shrink-0 relative transition-colors"
@@ -583,7 +583,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
 
       {/* Presets */}
       <div>
-        <p className="font-mono text-[0.56rem] uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Presets</p>
+        <p className="font-mono text-[0.64rem] uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>Presets</p>
         <div className="grid grid-cols-4 gap-1.5">
           {PRESETS.map(p => {
             const active = s.workMinutes === p.s.workMinutes && s.sessionsUntilLongBreak === p.s.sessionsUntilLongBreak
@@ -595,7 +595,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
                 style={{ background: active ? 'rgba(13,148,136,0.15)' : 'rgba(255,255,255,0.04)', border: `1px solid ${active ? 'rgba(13,148,136,0.3)' : 'rgba(255,255,255,0.07)'}` }}
               >
                 <span style={{ fontSize: '1rem' }}>{p.emoji}</span>
-                <span className="font-mono text-[0.55rem]" style={{ color: active ? '#4db6ac' : 'rgba(255,255,255,0.4)' }}>{p.label}</span>
+                <span className="font-mono text-[0.63rem]" style={{ color: active ? '#4db6ac' : 'rgba(255,255,255,0.4)' }}>{p.label}</span>
                 <span className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.25)' }}>{p.s.workMinutes}m</span>
               </button>
             )
@@ -605,7 +605,7 @@ function SettingsPanel({ settings, onApply, onClose }: {
 
       {/* Sliders */}
       <div className="space-y-3">
-        <p className="font-mono text-[0.56rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Custom duration</p>
+        <p className="font-mono text-[0.64rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Custom duration</p>
         {slider('Focus', 'workMinutes', 1, 90)}
         {slider('Short break', 'shortBreakMinutes', 1, 30)}
         {slider('Long break', 'longBreakMinutes', 5, 60)}

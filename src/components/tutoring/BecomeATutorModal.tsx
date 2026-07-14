@@ -162,12 +162,12 @@ export default function BecomeATutorModal({ existing, onClose, onSaved }: Props)
                 Student Verification
               </span>
               {existing?.is_verified && (
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999 }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#4ecf9e', background: 'rgba(78,207,158,0.1)', border: '0.5px solid rgba(78,207,158,0.3)', padding: '2px 7px', borderRadius: 9999 }}>
                   ✓ Verified
                 </span>
               )}
               {!existing?.is_verified && existing?.is_verified_pending && (
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.55rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.63rem', color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '0.5px solid rgba(245,158,11,0.3)', padding: '2px 7px', borderRadius: 9999, display: 'flex', alignItems: 'center', gap: 3 }}>
                   <Clock4 size={9} /> Pending review
                 </span>
               )}

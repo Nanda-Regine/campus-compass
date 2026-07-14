@@ -136,7 +136,7 @@ export default function FirstGenToolkit() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'rgba(255,255,255,0.06)', border: `1px solid rgba(192,132,252,0.25)`, borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>FIRST-GEN TOOLKIT</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.09em', marginBottom: 4 }}>FIRST-GEN TOOLKIT</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>You belong here. Navigate with confidence.</div>
         <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>Everything no one told you — decoded for first-generation students.</div>
       </div>

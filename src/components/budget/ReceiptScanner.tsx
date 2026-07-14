@@ -209,7 +209,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               <div className="w-4 h-4 rounded-full border-2 border-teal-400 border-t-transparent animate-spin" />
               <p className="font-display text-sm text-white">Reading receipt…</p>
             </div>
-            <p className="font-mono text-[0.58rem]" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <p className="font-mono text-[0.65rem]" style={{ color: 'rgba(255,255,255,0.5)' }}>
               Claude Vision is extracting the details
             </p>
           </div>
@@ -243,24 +243,24 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
             {/* Editable fields */}
             <div className="space-y-2">
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Merchant</label>
+                <label className="font-mono text-[0.65rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Merchant</label>
                 <input value={merchant} onChange={e => setMerchant(e.target.value)} maxLength={100} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Amount (R)</label>
+                  <label className="font-mono text-[0.65rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Amount (R)</label>
                   <input type="number" inputMode="decimal" aria-label="Receipt total amount in rands" value={total} onChange={e => setTotal(e.target.value)} min="0.01" step="0.01" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
                 <div>
-                  <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date</label>
+                  <label className="font-mono text-[0.65rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Date</label>
                   <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
                 </div>
               </div>
 
               {/* Category selector */}
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Category</label>
+                <label className="font-mono text-[0.65rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Category</label>
                 <div className="flex flex-wrap gap-1.5">
                   {Object.entries(CATEGORY_ICONS).map(([cat, icon]) => (
                     <button
@@ -276,7 +276,7 @@ export default function ReceiptScanner({ userId, supabase, onExpenseAdded }: Rec
               </div>
 
               <div>
-                <label className="font-mono text-[0.58rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Description</label>
+                <label className="font-mono text-[0.65rem] uppercase tracking-widest block mb-1" style={{ color: 'rgba(255,255,255,0.5)' }}>Description</label>
                 <input value={description} onChange={e => setDescription(e.target.value)} maxLength={200} placeholder="What did you buy?" className="w-full rounded-xl px-3 py-2 font-display text-sm text-white outline-none" style={{ background: 'var(--bg-base)', border: '1px solid rgba(255,255,255,0.09)' }} />
               </div>
             </div>

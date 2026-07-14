@@ -49,7 +49,7 @@ export default function AlumniMentorNetwork({userId,university}:{userId:string;u
     <div style={{display:'flex',flexDirection:'column',gap:14}}>
       <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(99,102,241,0.25)',borderRadius:16,padding:'16px 18px'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--indigo,#6366F1),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--indigo,#6366F1)',letterSpacing:'0.09em',marginBottom:4}}>ALUMNI MENTOR NETWORK</div>
+        <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:'var(--indigo,#6366F1)',letterSpacing:'0.09em',marginBottom:4}}>ALUMNI MENTOR NETWORK</div>
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Learn from those who walked this path</div>
         <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>{mentors.length} mentor{mentors.length!==1?'s':''} available · Free for all students</div>
       </div>
@@ -107,13 +107,13 @@ function MentorCard({mentor:m,userId}:{mentor:MentorProfile;userId:string}) {
           <div style={{fontSize:'0.65rem',color:'var(--text-muted)',marginTop:2}}>{m.degree} · {m.institution}{m.grad_year?` · Class of ${m.grad_year}`:''}</div>
           <div style={{display:'flex',gap:5,marginTop:6,flexWrap:'wrap'}}>
             {m.available_for.slice(0,3).map(a=>(
-              <span key={a} style={{fontSize:'0.58rem',padding:'2px 7px',background:'rgba(99,102,241,0.08)',border:'1px solid rgba(99,102,241,0.15)',borderRadius:100,color:'var(--indigo,#6366F1)',fontFamily:'var(--font-mono)'}}>{TOPIC_LABELS[a]||a}</span>
+              <span key={a} style={{fontSize:'0.65rem',padding:'2px 7px',background:'rgba(99,102,241,0.08)',border:'1px solid rgba(99,102,241,0.15)',borderRadius:100,color:'var(--indigo,#6366F1)',fontFamily:'var(--font-mono)'}}>{TOPIC_LABELS[a]||a}</span>
             ))}
           </div>
         </div>
         <div style={{flexShrink:0,textAlign:'right'}}>
           <div style={{fontSize:'0.72rem',fontWeight:700,fontFamily:'var(--font-mono)',color:'var(--teal)'}}>{m.response_rate}%</div>
-          <div style={{fontSize:'0.55rem',color:'var(--text-muted)'}}>response</div>
+          <div style={{fontSize:'0.63rem',color:'var(--text-muted)'}}>response</div>
           <div style={{fontSize:'0.6rem',color:'var(--text-muted)',transform:open?'rotate(180deg)':'none',transition:'transform 0.2s',marginTop:6}}>▾</div>
         </div>
       </button>

@@ -276,13 +276,13 @@ function FSRSExplainer() {
 
 function DueChip({ count, color }: { count: number; color: string }) {
   if (count === 0) return (
-    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'rgba(255,255,255,0.25)' }}>
+    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.25)' }}>
       All done
     </span>
   )
   return (
     <span style={{
-      fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color,
+      fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color,
       background: `${color}18`, border: `0.5px solid ${color}40`,
       padding: '2px 7px', borderRadius: 9999,
     }}>
@@ -319,7 +319,7 @@ function DeckListScreen({
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
               {totalDue} card{totalDue === 1 ? '' : 's'} due for review
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#4ecf9e', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#4ecf9e', marginTop: 2 }}>
               Tap a deck to start studying
             </div>
           </div>
@@ -363,7 +363,7 @@ function DeckListScreen({
                     {deck.name}
                   </div>
                   {deck.moduleName && (
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: deck.color, marginTop: 2 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: deck.color, marginTop: 2 }}>
                       {deck.moduleName}
                     </div>
                   )}
@@ -513,7 +513,7 @@ function DeckEditorScreen({
 
       {/* Add new card */}
       <div style={cardBox}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>
           Add card
         </div>
         <textarea value={newFront} onChange={e => setNewFront(e.target.value)}
@@ -535,7 +535,7 @@ function DeckEditorScreen({
       {/* Card list */}
       {cards.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
             {cards.length} card{cards.length === 1 ? '' : 's'}
           </div>
           {cards.map((c, i) => (
@@ -655,7 +655,7 @@ function StudyScreen({
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
             {deck.name}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
             {idx + 1} of {dueCards.length}
           </div>
         </div>
@@ -690,7 +690,7 @@ function StudyScreen({
             boxShadow: `0 0 40px ${deck.color}0d, inset 0 1px 0 rgba(255,255,255,0.06)`,
           }}>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
               color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em',
               background: 'rgba(255,255,255,0.04)', padding: '3px 10px', borderRadius: 99,
               border: '0.5px solid rgba(255,255,255,0.08)',
@@ -705,7 +705,7 @@ function StudyScreen({
               }}
             />
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.56rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.64rem',
               color: deck.color, opacity: 0.6, marginTop: 4,
             }}>
               Tap to reveal answer
@@ -724,7 +724,7 @@ function StudyScreen({
             boxShadow: `0 0 40px ${deck.color}15, inset 0 1px 0 ${deck.color}20`,
           }}>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.54rem',
+              fontFamily: 'var(--font-mono)', fontSize: '0.62rem',
               color: deck.color, textTransform: 'uppercase', letterSpacing: '0.1em',
               background: `${deck.color}15`, padding: '3px 10px', borderRadius: 99,
               border: `0.5px solid ${deck.color}30`,
@@ -745,7 +745,7 @@ function StudyScreen({
       {/* Rating buttons (only when back is shown) */}
       {phase === 'back' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
             How well did you know it?
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
@@ -806,7 +806,7 @@ const cardBox: CSSProperties = {
 }
 
 const labelStyle: CSSProperties = {
-  fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)',
+  fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)',
   textTransform: 'uppercase', letterSpacing: '0.06em',
 }
 

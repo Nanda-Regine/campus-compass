@@ -20,7 +20,7 @@ export default function Badge({ variant = 'teal', size = 'sm', children, classNa
   }
 
   const sizes = {
-    sm: 'px-2 py-0.5 text-[0.58rem]',
+    sm: 'px-2 py-0.5 text-[0.65rem]',
     md: 'px-2.5 py-1 text-[0.65rem]',
   }
 

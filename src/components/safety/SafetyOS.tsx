@@ -552,7 +552,7 @@ function DefenceTab() {
                 <span style={{
                   display: 'inline-block', marginBottom: 4, padding: '1px 7px',
                   background: `${tip.color}18`, borderRadius: 100,
-                  fontSize: '0.56rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: tip.color,
+                  fontSize: '0.64rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: tip.color,
                 }}>
                   {tip.level.toUpperCase()}
                 </span>
@@ -1248,7 +1248,7 @@ export default function SafetyOS() {
           position: 'absolute', top: 0, left: 0, right: 0, height: 2,
           background: 'linear-gradient(90deg, var(--emerald, #34D399), transparent)',
         }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--emerald, #34D399)', letterSpacing: '0.09em', marginBottom: 4 }}>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--emerald, #34D399)', letterSpacing: '0.09em', marginBottom: 4 }}>
           SAFETY OS
         </div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -1277,7 +1277,7 @@ export default function SafetyOS() {
               }}
             >
               <span style={{ fontSize: '1.1rem', opacity: activeTab === tab.id ? 1 : 0.45 }}>{tab.icon}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: activeTab === tab.id ? 'var(--emerald, #34D399)' : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                 {tab.label.slice(0, 6).toUpperCase()}
               </span>
             </button>

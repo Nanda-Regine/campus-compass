@@ -167,7 +167,7 @@ export default function CampusEvents({ userId, institution }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="font-mono text-[0.55rem] text-emerald-400 tracking-widest">CAMPUS EVENTS</div>
+          <div className="font-mono text-[0.63rem] text-emerald-400 tracking-widest">CAMPUS EVENTS</div>
           <div className="font-display font-bold text-white text-base leading-tight">
             What&apos;s happening
           </div>
@@ -232,7 +232,7 @@ export default function CampusEvents({ userId, institution }: Props) {
             <div className="col-span-2 flex items-center gap-2">
               <input type="checkbox" id="anon" checked={fAnon} onChange={e => setFAnon(e.target.checked)}
                 className="w-3.5 h-3.5 rounded" />
-              <label htmlFor="anon" className="font-mono text-[0.58rem] text-white/82">Post anonymously</label>
+              <label htmlFor="anon" className="font-mono text-[0.65rem] text-white/82">Post anonymously</label>
             </div>
           </div>
 
@@ -256,7 +256,7 @@ export default function CampusEvents({ userId, institution }: Props) {
             key={f.value}
             onClick={() => setFilterType(f.value as EventType | 'all')}
             className={cn(
-              'font-mono text-[0.58rem] px-2.5 py-1 rounded-full border whitespace-nowrap flex-shrink-0 transition-all',
+              'font-mono text-[0.65rem] px-2.5 py-1 rounded-full border whitespace-nowrap flex-shrink-0 transition-all',
               filterType === f.value
                 ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                 : 'bg-white/3 text-white/82 border-white/8 hover:border-white/15'
@@ -297,7 +297,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                         {meta.emoji} {meta.label}
                       </span>
                       {e.max_attendees && (
-                        <span className="font-mono text-[0.48rem] text-white/75">
+                        <span className="font-mono text-[0.58rem] text-white/75">
                           {e.rsvp_count}/{e.max_attendees} spots
                         </span>
                       )}
@@ -306,12 +306,12 @@ export default function CampusEvents({ userId, institution }: Props) {
                     <div className="font-display font-bold text-white text-sm leading-tight mb-1">{e.title}</div>
 
                     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mb-1">
-                      <span className="font-mono text-[0.58rem] text-white/70">
+                      <span className="font-mono text-[0.65rem] text-white/70">
                         🕐 {formatEventDate(e.event_date)}
                         {e.duration_minutes ? ` · ${formatDuration(e.duration_minutes)}` : ''}
                       </span>
                       {e.venue && (
-                        <span className="font-mono text-[0.58rem] text-white/82">📍 {e.venue}</span>
+                        <span className="font-mono text-[0.65rem] text-white/82">📍 {e.venue}</span>
                       )}
                     </div>
 
@@ -328,7 +328,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                       onClick={() => toggleRsvp(e)}
                       disabled={isFull}
                       className={cn(
-                        'font-mono text-[0.58rem] px-2.5 py-1.5 rounded-xl border transition-all',
+                        'font-mono text-[0.65rem] px-2.5 py-1.5 rounded-xl border transition-all',
                         e.user_rsvped
                           ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30'
                           : isFull
@@ -343,7 +343,7 @@ export default function CampusEvents({ userId, institution }: Props) {
                     )}
                     {isOwner && (
                       <button onClick={() => cancelEvent(e.id)}
-                        className="font-mono text-[0.48rem] text-white/72 hover:text-red-400 transition-colors">
+                        className="font-mono text-[0.58rem] text-white/72 hover:text-red-400 transition-colors">
                         cancel
                       </button>
                     )}

@@ -147,7 +147,7 @@ export default function StudyKitGenerator({ modules }: Props) {
 
       {/* Header */}
       <div>
-        <div className="font-mono text-[0.55rem] text-purple-400 tracking-widest mb-0.5">AI STUDY KIT</div>
+        <div className="font-mono text-[0.63rem] text-purple-400 tracking-widest mb-0.5">AI STUDY KIT</div>
         <div className="font-display font-bold text-white text-lg leading-tight">Generate from notes</div>
         <div className="font-mono text-[0.6rem] text-white/80 mt-1 leading-relaxed">
           Paste lecture notes or a past-paper question. Nova generates a summary, key concepts, 10 flashcards, and a quiz in seconds.
@@ -178,7 +178,7 @@ export default function StudyKitGenerator({ modules }: Props) {
             <div className="h-1 w-16 rounded-full bg-white/8 overflow-hidden">
               <div className="h-full rounded-full transition-all" style={{ width: `${charPct * 100}%`, background: charColor }} />
             </div>
-            <span className="font-mono text-[0.48rem]" style={{ color: charColor }}>
+            <span className="font-mono text-[0.58rem]" style={{ color: charColor }}>
               {charCount.toLocaleString()}/5000
             </span>
           </div>
@@ -215,14 +215,14 @@ export default function StudyKitGenerator({ modules }: Props) {
 
           {/* Summary */}
           <div className="bg-purple-500/6 border border-purple-500/20 rounded-2xl p-4">
-            <div className="font-mono text-[0.55rem] text-purple-400 tracking-widest mb-2">SUMMARY</div>
+            <div className="font-mono text-[0.63rem] text-purple-400 tracking-widest mb-2">SUMMARY</div>
             <p className="font-body text-sm text-white/80 leading-relaxed">{kit.summary}</p>
           </div>
 
           {/* Key Concepts */}
           {kit.key_concepts.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
-              <div className="font-mono text-[0.55rem] text-white/80 tracking-widest mb-3">KEY CONCEPTS</div>
+              <div className="font-mono text-[0.63rem] text-white/80 tracking-widest mb-3">KEY CONCEPTS</div>
               <div className="flex flex-wrap gap-1.5">
                 {kit.key_concepts.map((c, i) => (
                   <span key={i} className="font-mono text-[0.6rem] px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
@@ -237,7 +237,7 @@ export default function StudyKitGenerator({ modules }: Props) {
           {kit.flashcards.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">
+                <div className="font-mono text-[0.63rem] text-white/80 tracking-widest">
                   FLASHCARDS ({kit.flashcards.length})
                 </div>
                 <span className="font-mono text-[0.65rem] text-white/75">tap to flip</span>
@@ -267,7 +267,7 @@ export default function StudyKitGenerator({ modules }: Props) {
               {/* Save to deck */}
               {!saved ? (
                 <div className="mt-4 pt-3 border-t border-white/8 space-y-2">
-                  <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">SAVE TO FLASHCARD DECK</div>
+                  <div className="font-mono text-[0.63rem] text-white/80 tracking-widest">SAVE TO FLASHCARD DECK</div>
                   <select
                     value={deckId}
                     onChange={e => setDeckId(e.target.value)}
@@ -308,7 +308,7 @@ export default function StudyKitGenerator({ modules }: Props) {
           {kit.quiz.length > 0 && (
             <div className="bg-white/3 border border-white/7 rounded-2xl p-4">
               <div className="flex items-center justify-between mb-3">
-                <div className="font-mono text-[0.55rem] text-white/80 tracking-widest">QUIZ</div>
+                <div className="font-mono text-[0.63rem] text-white/80 tracking-widest">QUIZ</div>
                 <span className="font-mono text-[0.65rem] text-white/75">
                   {quizIdx + 1}/{kit.quiz.length}
                 </span>
@@ -395,7 +395,7 @@ export default function StudyKitGenerator({ modules }: Props) {
       {/* Tips (pre-generate) */}
       {!kit && !generating && (
         <div className="bg-white/2 border border-white/6 rounded-2xl p-4 space-y-2">
-          <div className="font-mono text-[0.55rem] text-white/75 tracking-widest">TIPS FOR BEST RESULTS</div>
+          <div className="font-mono text-[0.63rem] text-white/75 tracking-widest">TIPS FOR BEST RESULTS</div>
           <ul className="space-y-1.5">
             {[
               'Paste complete paragraphs, not just headings',
@@ -405,8 +405,8 @@ export default function StudyKitGenerator({ modules }: Props) {
               'Screenshotted notes? Use Past Papers → Scan first to extract text',
             ].map((tip, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="font-mono text-[0.48rem] text-purple-400 mt-0.5 flex-shrink-0">→</span>
-                <span className="font-mono text-[0.58rem] text-white/80 leading-relaxed">{tip}</span>
+                <span className="font-mono text-[0.58rem] text-purple-400 mt-0.5 flex-shrink-0">→</span>
+                <span className="font-mono text-[0.65rem] text-white/80 leading-relaxed">{tip}</span>
               </li>
             ))}
           </ul>

@@ -316,7 +316,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 }}
               >
                 <span style={{ fontSize: '1.1rem', opacity: active ? 1 : 0.45 }}>{tab.icon}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tabAccent : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', letterSpacing: '0.04em', textTransform: 'uppercase', color: active ? tabAccent : 'rgba(255,255,255,0.55)', lineHeight: 1.2, textAlign: 'center' }}>
                   {tab.label.slice(0, 7).toUpperCase()}
                 </span>
               </button>
@@ -329,7 +329,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
           {initialData.foodBudget > 0 && (
             <div className="flex items-center gap-2 px-3 pt-2 pb-1 border-b border-white/7">
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(78,207,158,0.7)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Food</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.63rem', color: '#4ecf9e', fontWeight: 700 }}>{fmt.currencyShort(initialData.foodBudget)}/mo</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>· {fmt.currencyShort(initialData.foodBudget / 30)}/day</span>
               {initialData.profile?.dietary_pref && initialData.profile.dietary_pref !== 'No restrictions' && (
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 9999, background: 'rgba(78,207,158,0.08)', border: '0.5px solid rgba(78,207,158,0.2)', color: '#4ecf9e', marginLeft: 4 }}>{initialData.profile.dietary_pref}</span>
@@ -347,7 +347,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 <div className="w-10 h-10 bg-amber-500/15 rounded-xl flex items-center justify-center text-xl">📅</div>
                 <div>
                   <div className="font-display font-bold text-white text-sm">AI Weekly Meal Plan</div>
-                  <div className="font-mono text-[0.58rem] text-white/82">
+                  <div className="font-mono text-[0.65rem] text-white/82">
                     Personalised for your budget & diet ({initialData.profile?.dietary_pref || 'No restrictions'})
                   </div>
                 </div>
@@ -363,7 +363,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               {generatedPlan && (
                 <div className="mt-4 space-y-3 animate-fade-up">
                   <div className="flex items-center justify-between">
-                    <div className="font-mono text-[0.58rem] text-white/82 uppercase">Estimated weekly cost</div>
+                    <div className="font-mono text-[0.65rem] text-white/82 uppercase">Estimated weekly cost</div>
                     <div className="font-display font-black text-teal-400">{fmt.currencyShort(generatedPlan.weeklyTotal)}</div>
                   </div>
 
@@ -373,9 +373,9 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                       <div className="space-y-1.5">
                         {(['breakfast', 'lunch', 'supper'] as const).map(slot => (
                           <div key={slot} className="flex items-center gap-2">
-                            <div className="font-mono text-[0.55rem] text-white/78 w-16 capitalize">{slot}</div>
+                            <div className="font-mono text-[0.63rem] text-white/78 w-16 capitalize">{slot}</div>
                             <div className="flex-1 font-body text-sm text-white">{day[slot].name}</div>
-                            <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(day[slot].cost)}</div>
+                            <div className="font-mono text-[0.65rem] text-teal-400">{fmt.currencyShort(day[slot].cost)}</div>
                           </div>
                         ))}
                       </div>
@@ -383,20 +383,20 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                   ))}
 
                   <div className="bg-teal-900/20 border border-teal-600/20 rounded-xl p-3">
-                    <div className="font-mono text-[0.58rem] text-teal-400 mb-1">💡 Meal prep tip</div>
+                    <div className="font-mono text-[0.65rem] text-teal-400 mb-1">💡 Meal prep tip</div>
                     <div className="font-body text-sm text-white/80">{generatedPlan.mealPrepTip}</div>
                   </div>
 
                   {/* Shopping list from plan */}
                   {generatedPlan.shoppingList.length > 0 && (
                     <div>
-                      <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-widest mb-2">Shopping list</div>
+                      <div className="font-mono text-[0.65rem] text-white/82 uppercase tracking-widest mb-2">Shopping list</div>
                       <div className="space-y-1.5">
                         {generatedPlan.shoppingList.map((item, i) => (
                           <div key={i} className="flex items-center justify-between bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded-lg px-3 py-2">
                             <div>
                               <div className="font-body text-sm text-white">{item.item}</div>
-                              <div className="font-mono text-[0.55rem] text-white/78">Used: {item.usedIn.join(', ')}</div>
+                              <div className="font-mono text-[0.63rem] text-white/78">Used: {item.usedIn.join(', ')}</div>
                             </div>
                             <div className="font-display font-bold text-sm text-white/80">{fmt.currencyShort(item.estimatedCost)}</div>
                           </div>
@@ -414,7 +414,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 <div className="w-10 h-10 bg-teal-600/15 rounded-xl flex items-center justify-center text-xl">👨‍🍳</div>
                 <div>
                   <div className="font-display font-bold text-white text-sm">What can I cook?</div>
-                  <div className="font-mono text-[0.58rem] text-white/82">Tell me your ingredients → get a recipe</div>
+                  <div className="font-mono text-[0.65rem] text-white/82">Tell me your ingredients → get a recipe</div>
                 </div>
               </div>
 
@@ -428,14 +428,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-wide mb-1.5">Meal type</div>
+                    <div className="font-mono text-[0.65rem] text-white/82 uppercase tracking-wide mb-1.5">Meal type</div>
                     <div className="flex flex-wrap gap-1.5">
                       {['Breakfast', 'Lunch', 'Supper', 'Snack'].map(t => (
                         <button
                           key={t}
                           onClick={() => setMealType(mealType === t ? '' : t)}
                           className={cn(
-                            'px-2.5 py-1 rounded-full font-mono text-[0.58rem] border transition-all',
+                            'px-2.5 py-1 rounded-full font-mono text-[0.65rem] border transition-all',
                             mealType === t
                               ? 'bg-teal-600/20 border-teal-500/50 text-teal-400'
                               : 'bg-white/5 border-white/10 text-white/70 hover:text-white'
@@ -447,7 +447,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                     </div>
                   </div>
                   <div>
-                    <div className="font-mono text-[0.58rem] text-white/82 uppercase tracking-wide mb-1.5">Max budget (R)</div>
+                    <div className="font-mono text-[0.65rem] text-white/82 uppercase tracking-wide mb-1.5">Max budget (R)</div>
                     <input
                       type="number"
                       value={maxBudget}
@@ -475,10 +475,10 @@ export default function MealsClient({ initialData }: MealsClientProps) {
             <div className="flex items-center justify-between">
               <div className="font-display font-bold text-white">This week</div>
               <div className="flex items-center gap-3">
-                <div className="font-mono text-[0.58rem] text-white/78">{initialData.weekStart}</div>
+                <div className="font-mono text-[0.65rem] text-white/78">{initialData.weekStart}</div>
                 <button
                   onClick={() => setActiveTab('nutrition')}
-                  className="font-mono text-[0.55rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg transition-all"
+                  className="font-mono text-[0.63rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg transition-all"
                 >
                   🥗 Log nutrition →
                 </button>
@@ -488,7 +488,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               <div key={day} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-white/5 flex items-center justify-between">
                   <div className="font-display font-bold text-white text-sm">{day}</div>
-                  <div className="font-mono text-[0.55rem] text-white/75 uppercase">{day.slice(0, 3)}</div>
+                  <div className="font-mono text-[0.63rem] text-white/75 uppercase">{day.slice(0, 3)}</div>
                 </div>
                 <div className="divide-y divide-white/5">
                   {MEAL_SLOTS.map(slot => {
@@ -499,7 +499,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                         {isEditing ? (
                           <div className="px-4 py-3 space-y-2">
                             <div className="flex items-center gap-2">
-                              <div className="font-mono text-[0.55rem] text-white/78 uppercase w-16 flex-shrink-0">{slot}</div>
+                              <div className="font-mono text-[0.63rem] text-white/78 uppercase w-16 flex-shrink-0">{slot}</div>
                               <input
                                 autoFocus
                                 value={editValue}
@@ -539,7 +539,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                                 <button
                                   key={s}
                                   onClick={() => setEditValue(s)}
-                                  className="font-mono text-[0.55rem] bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white/80 px-2 py-1 rounded-full transition-all"
+                                  className="font-mono text-[0.63rem] bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white/80 px-2 py-1 rounded-full transition-all"
                                 >
                                   {s}
                                 </button>
@@ -551,7 +551,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                             onClick={() => { setEditingSlot({ day, slot }); setEditValue(meal?.meal_name ?? '') }}
                             className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.04] transition-colors group"
                           >
-                            <div className="font-mono text-[0.55rem] text-white/78 uppercase w-16 flex-shrink-0">{slot}</div>
+                            <div className="font-mono text-[0.63rem] text-white/78 uppercase w-16 flex-shrink-0">{slot}</div>
                             <div className="flex-1 font-body text-sm">
                               {meal?.meal_name
                                 ? <span className="text-white/70">{meal.meal_name}</span>
@@ -559,9 +559,9 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                               }
                             </div>
                             {meal?.cost && (
-                              <div className="font-mono text-[0.58rem] text-teal-400">{fmt.currencyShort(meal.cost)}</div>
+                              <div className="font-mono text-[0.65rem] text-teal-400">{fmt.currencyShort(meal.cost)}</div>
                             )}
-                            <span className="opacity-0 group-hover:opacity-100 font-mono text-[0.55rem] text-white/75 transition-opacity flex-shrink-0">✎</span>
+                            <span className="opacity-0 group-hover:opacity-100 font-mono text-[0.63rem] text-white/75 transition-opacity flex-shrink-0">✎</span>
                           </button>
                         )}
                       </div>
@@ -613,7 +613,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
               {/* Category chips */}
               <div className="space-y-2">
-                <div className="font-mono text-[0.55rem] text-white/78 uppercase tracking-widest">Category</div>
+                <div className="font-mono text-[0.63rem] text-white/78 uppercase tracking-widest">Category</div>
                 <div className="flex flex-wrap gap-1.5">
                   {GROCERY_CATS.map(cat => (
                     <button
@@ -621,7 +621,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                       onClick={() => setSelectedCat(cat.id)}
                       title={cat.tip}
                       className={cn(
-                        'flex items-center gap-1 px-2.5 py-1.5 rounded-full font-mono text-[0.58rem] border transition-all',
+                        'flex items-center gap-1 px-2.5 py-1.5 rounded-full font-mono text-[0.65rem] border transition-all',
                         selectedCat === cat.id
                           ? 'border-white/30 text-white'
                           : 'border-white/10 text-white/85 hover:text-white/70'
@@ -661,14 +661,14 @@ export default function MealsClient({ initialData }: MealsClientProps) {
               {/* Cart balance insight */}
               {groceryItems.filter(i => !i.checked).length > 2 && (
                 <div className="bg-[var(--bg-surface)] border border-white/8 rounded-xl p-3 space-y-2">
-                  <div className="font-mono text-[0.55rem] text-white/80 uppercase tracking-widest">Cart balance</div>
+                  <div className="font-mono text-[0.63rem] text-white/80 uppercase tracking-widest">Cart balance</div>
                   <div className="flex gap-2 flex-wrap">
                     {GROCERY_CATS.map(cat => {
                       const count = catCounts[cat.id] || 0
                       return (
                         <div key={cat.id} className="flex items-center gap-1" style={{ opacity: count > 0 ? 1 : 0.3 }}>
                           <span style={{ fontSize: 13 }}>{cat.icon}</span>
-                          <span className="font-mono text-[0.55rem]" style={{ color: count > 0 ? cat.color : 'rgba(255,255,255,0.5)' }}>
+                          <span className="font-mono text-[0.63rem]" style={{ color: count > 0 ? cat.color : 'rgba(255,255,255,0.5)' }}>
                             ×{count}
                           </span>
                         </div>
@@ -699,7 +699,7 @@ export default function MealsClient({ initialData }: MealsClientProps) {
                     {groceryItems.some(i => i.checked) && (
                       <button
                         onClick={clearChecked}
-                        className="font-mono text-[0.58rem] text-white/78 hover:text-red-400 transition-colors"
+                        className="font-mono text-[0.65rem] text-white/78 hover:text-red-400 transition-colors"
                       >
                         Clear checked
                       </button>

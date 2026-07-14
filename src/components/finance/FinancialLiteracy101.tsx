@@ -117,7 +117,7 @@ function CurrencyConverter() {
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text-secondary)' }}>{name}</span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  {code === 'USD' ? '$' : code === 'EUR' ? '€' : code === 'GBP' ? '£' : ''}{converted} <span style={{ fontSize: '0.58rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>{code}</span>
+                  {code === 'USD' ? '$' : code === 'EUR' ? '€' : code === 'GBP' ? '£' : ''}{converted} <span style={{ fontSize: '0.65rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>{code}</span>
                 </div>
               </div>
             )
@@ -178,7 +178,7 @@ export default function FinancialLiteracy101() {
       {/* Header + XP bar */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(250,204,21,0.2)', borderRadius: 16, padding: '14px 16px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, var(--gold), transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.09em', marginBottom: 3 }}>FINANCIAL LITERACY 101</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--gold)', letterSpacing: '0.09em', marginBottom: 3 }}>FINANCIAL LITERACY 101</div>
         <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>Money School for South African Students</div>
         <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 3 }}>7 chapters · Read each to earn XP · No textbooks required</div>
         <div style={{ marginTop: 10 }}>
@@ -203,7 +203,7 @@ export default function FinancialLiteracy101() {
           }}>
             <span style={{ fontSize: '0.85rem' }}>{c.emoji}</span>
             <span style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: active === c.id ? 'var(--gold)' : 'var(--text-tertiary)', fontWeight: active === c.id ? 700 : 400, whiteSpace: 'nowrap' }}>{c.title}</span>
-            {read.has(c.id) && <span style={{ fontSize: '0.55rem', color: 'var(--teal)' }}>✓</span>}
+            {read.has(c.id) && <span style={{ fontSize: '0.63rem', color: 'var(--teal)' }}>✓</span>}
           </button>
         ))}
       </div>
@@ -356,7 +356,7 @@ export default function FinancialLiteracy101() {
               <div key={t.trap} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderLeft: `3px solid ${t.color}`, borderRadius: 11, padding: '11px 14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>{t.trap}</div>
-                  <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: t.color, fontWeight: 700 }}>RISK: {t.risk}</div>
+                  <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: t.color, fontWeight: 700 }}>RISK: {t.risk}</div>
                 </div>
                 <div style={{ fontSize: '0.69rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{t.detail}</div>
               </div>
@@ -379,7 +379,7 @@ export default function FinancialLiteracy101() {
               <div key={i.type} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderLeft: `3px solid ${i.need ? 'var(--teal)' : 'var(--text-muted)'}`, borderRadius: 11, padding: '11px 14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                   <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-primary)', flex: 1 }}>{i.type}</div>
-                  <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', fontWeight: 700, flexShrink: 0, marginLeft: 8, color: i.need ? 'var(--teal)' : 'var(--text-muted)' }}>{i.need ? '✓ CONSIDER' : '✕ SKIP FOR NOW'}</div>
+                  <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, flexShrink: 0, marginLeft: 8, color: i.need ? 'var(--teal)' : 'var(--text-muted)' }}>{i.need ? '✓ CONSIDER' : '✕ SKIP FOR NOW'}</div>
                 </div>
                 <div style={{ fontSize: '0.69rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{i.detail}</div>
               </div>

@@ -264,11 +264,11 @@ export default function StokvelOS() {
 
   if (!group) return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', padding: '24px 16px 96px' }}>
-      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.45)" />
+      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.58)" />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.25)', borderRadius: 16, padding: '16px 18px' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--teal),transparent)' }} />
-        <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
+        <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.09em', marginBottom: 4 }}>STOKVEL OS</div>
         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Set up your savings circle</div>
       </div>
       <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 14, padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -308,7 +308,7 @@ export default function StokvelOS() {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-base)', display: 'flex' }}>
-      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.45)" />
+      <AmbientImage zone="community" opacity={0.4} blurPx={8} saturation={1.4} overlayColor="rgba(5,4,12,0.58)" />
 
       {/* Side rail */}
       <div style={{
@@ -337,7 +337,7 @@ export default function StokvelOS() {
               }}
             >
               <span style={{ fontSize: '1.05rem', opacity: isActive ? 1 : 0.65 }}>{t.icon}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.04em', fontWeight: isActive ? 700 : 400, lineHeight: 1, textTransform: 'uppercase', textAlign: 'center' }}>
                 {t.label.split(' ')[0]}
               </span>
             </button>
@@ -349,7 +349,7 @@ export default function StokvelOS() {
       <div style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
         <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
-          <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>STOKVEL OS</div>
+          <div style={{ fontSize: '0.63rem', fontFamily: 'var(--font-mono)', color: 'var(--teal)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>STOKVEL OS</div>
           <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)' }}>{group.name}</div>
           <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginTop: 2 }}>{members.length} members · R{group.contribution_amount}/mo · R{totalFund.toLocaleString('en-ZA')} pot</div>
         </div>
@@ -406,9 +406,9 @@ export default function StokvelOS() {
                   marginLeft: msg.user_id === userId ? 20 : 0,
                   marginRight: msg.user_id === userId ? 0 : 20,
                 }}>
-                  {msg.is_decision && <div style={{ fontSize: '0.55rem', color: 'var(--gold)', fontFamily: 'var(--font-mono)', fontWeight: 700, marginBottom: 4 }}>📌 DECISION</div>}
+                  {msg.is_decision && <div style={{ fontSize: '0.63rem', color: 'var(--gold)', fontFamily: 'var(--font-mono)', fontWeight: 700, marginBottom: 4 }}>📌 DECISION</div>}
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{msg.content}</div>
-                  <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', marginTop: 4 }}>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 4 }}>
                     {msg.user_id === userId ? 'You' : 'Member'} · {new Date(msg.created_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>

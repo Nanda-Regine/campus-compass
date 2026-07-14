@@ -89,14 +89,14 @@ export default function GoalArchitecture() {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg,var(--indigo,#6366F1),var(--teal),transparent)' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <div style={{ fontSize: '0.58rem', fontFamily: 'var(--font-mono)', color: 'var(--indigo,#6366F1)', letterSpacing: '0.09em', marginBottom: 4 }}>GOAL ARCHITECTURE</div>
+            <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--indigo,#6366F1)', letterSpacing: '0.09em', marginBottom: 4 }}>GOAL ARCHITECTURE</div>
             <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Build the life you actually want</div>
             <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', marginTop: 3 }}>Vision → 3-year goals → 90-day sprints → daily 3</div>
           </div>
           {streak > 0 && (
             <div style={{ textAlign: 'center', padding: '6px 12px', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 10 }}>
               <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--indigo,#6366F1)', fontFamily: 'var(--font-mono)' }}>{streak}</div>
-              <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>day streak</div>
+              <div style={{ fontSize: '0.63rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>day streak</div>
             </div>
           )}
         </div>
@@ -295,7 +295,7 @@ function SprintTab({ state, update }: { state: GoalState; update: (s: GoalState)
               </div>
               {activeSprint.milestones.map((m, i) => (
                 <button key={i} onClick={() => toggleMilestone(i)} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '8px 12px', marginBottom: 4, background: milestoneDoneArr[i] ? 'rgba(52,211,153,0.06)' : 'var(--bg-base)', border: `1px solid ${milestoneDoneArr[i] ? 'rgba(52,211,153,0.2)' : 'var(--border-subtle)'}`, borderRadius: 8, cursor: 'pointer', textAlign: 'left' }}>
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${milestoneDoneArr[i] ? 'var(--teal)' : 'var(--border-default)'}`, background: milestoneDoneArr[i] ? 'rgba(52,211,153,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.55rem', color: 'var(--teal)', fontWeight: 800, flexShrink: 0 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', border: `2px solid ${milestoneDoneArr[i] ? 'var(--teal)' : 'var(--border-default)'}`, background: milestoneDoneArr[i] ? 'rgba(52,211,153,0.15)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.63rem', color: 'var(--teal)', fontWeight: 800, flexShrink: 0 }}>
                     {milestoneDoneArr[i] ? '✓' : ''}
                   </div>
                   <span style={{ fontSize: '0.75rem', color: milestoneDoneArr[i] ? 'var(--text-muted)' : 'var(--text-secondary)', textDecoration: milestoneDoneArr[i] ? 'line-through' : 'none' }}>{m}</span>

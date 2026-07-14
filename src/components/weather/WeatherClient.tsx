@@ -294,7 +294,7 @@ export default function WeatherClient() {
                   <div key={s.label} style={{ flexShrink: 0, padding: '6px 14px', textAlign: 'center', minWidth: 72 }}>
                     <div style={{ fontSize: '1.1rem', marginBottom: 4 }}>{s.icon}</div>
                     <div style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-secondary)' }}>{s.value}</div>
-                    <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
+                    <div style={{ fontSize: '0.63rem', color: 'var(--text-muted)', marginTop: 2 }}>{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -400,7 +400,7 @@ export default function WeatherClient() {
                       {data.tomorrow.min_C}° – {data.tomorrow.max_C}°
                     </div>
                     {data.tomorrow.is_rainy && (
-                      <span style={{ fontSize: '0.58rem', padding: '1px 6px', background: 'var(--teal-dim)', borderRadius: 100, color: 'var(--teal)' }}>
+                      <span style={{ fontSize: '0.65rem', padding: '1px 6px', background: 'var(--teal-dim)', borderRadius: 100, color: 'var(--teal)' }}>
                         Rain
                       </span>
                     )}

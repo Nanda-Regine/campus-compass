@@ -206,7 +206,7 @@ export default function PresenceTab({ userInstitution }: { userId: string; userI
                   </div>
                   {p.note && <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: 3, lineHeight: 1.5 }}>{p.note}</div>}
                 </div>
-                <span style={{ fontSize: '0.58rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', flexShrink: 0, whiteSpace: 'nowrap' }}>{timeLeft(p.expires_at)}</span>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', flexShrink: 0, whiteSpace: 'nowrap' }}>{timeLeft(p.expires_at)}</span>
               </div>
             )
           })}

@@ -537,7 +537,7 @@ export default function ProfileClient() {
                   ) : emoji}
                 </button>
                 {uploadingAvatar ? (
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.45rem]" style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}>
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[0.56rem]" style={{ background: '#0d9488', border: '2px solid var(--bg-base)' }}>
                     ⏳
                   </div>
                 ) : (

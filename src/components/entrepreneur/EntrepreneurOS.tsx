@@ -79,7 +79,7 @@ function SideHustleTab() {
           {[{l:'Total earned',v:`R${totalRevenue.toLocaleString('en-ZA')}`,c:'var(--teal)'},{l:'Hours invested',v:`${totalHours}h`,c:'var(--gold)'},{l:'Effective rate',v:`R${hourlyRate}/h`,c:'var(--nova)'}].map(s=>(
             <div key={s.l} style={{background:'var(--bg-surface)',border:'1px solid var(--border-subtle)',borderRadius:10,padding:'10px 12px',textAlign:'center'}}>
               <div style={{fontSize:'1rem',fontWeight:800,fontFamily:'var(--font-mono)',color:s.c}}>{s.v}</div>
-              <div style={{fontSize:'0.56rem',color:'var(--text-muted)',marginTop:2}}>{s.l}</div>
+              <div style={{fontSize:'0.64rem',color:'var(--text-muted)',marginTop:2}}>{s.l}</div>
             </div>
           ))}
         </div>
@@ -140,7 +140,7 @@ function FundingTab() {
               <div style={{fontSize:'0.85rem',fontWeight:700,color:'var(--text-primary)'}}>{f.name}</div>
               <div style={{fontSize:'0.65rem',color:'var(--text-muted)',marginTop:1}}>{f.org}</div>
             </div>
-            <span style={{padding:'2px 8px',background:`${f.color}15`,border:`1px solid ${f.color}30`,borderRadius:100,fontSize:'0.58rem',fontFamily:'var(--font-mono)',fontWeight:700,color:f.color,flexShrink:0}}>{f.type}</span>
+            <span style={{padding:'2px 8px',background:`${f.color}15`,border:`1px solid ${f.color}30`,borderRadius:100,fontSize:'0.65rem',fontFamily:'var(--font-mono)',fontWeight:700,color:f.color,flexShrink:0}}>{f.type}</span>
           </div>
           <div style={{fontSize:'0.7rem',color:'var(--text-secondary)',marginBottom:4}}>💵 {f.amount}</div>
           <div style={{fontSize:'0.68rem',color:'var(--text-tertiary)',marginBottom:8}}>✓ {f.eligibility}</div>
@@ -263,7 +263,7 @@ export default function EntrepreneurOS() {
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
       <div style={{position:'relative',overflow:'hidden',background:'var(--bg-surface)',border:'1px solid rgba(245,158,11,0.25)',borderRadius:16,padding:'16px 18px'}}>
         <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:'linear-gradient(90deg,var(--gold),transparent)'}}/>
-        <div style={{fontSize:'0.58rem',fontFamily:'var(--font-mono)',color:'var(--gold)',letterSpacing:'0.09em',marginBottom:4}}>ENTREPRENEURSHIP OS</div>
+        <div style={{fontSize:'0.65rem',fontFamily:'var(--font-mono)',color:'var(--gold)',letterSpacing:'0.09em',marginBottom:4}}>ENTREPRENEURSHIP OS</div>
         <div style={{fontSize:'1rem',fontWeight:700,color:'var(--text-primary)'}}>Build while you study</div>
         <div style={{fontSize:'0.73rem',color:'var(--text-secondary)',marginTop:3}}>Idea validation · Side hustle tracker · SA funding · Business model · Legal path</div>
       </div>
@@ -276,7 +276,7 @@ export default function EntrepreneurOS() {
               padding:'10px 4px',background:'none',border:'none',
               borderLeft:tab===t.id?'2px solid var(--gold)':'2px solid transparent',
               color:tab===t.id?'var(--gold)':'var(--text-muted)',
-              fontSize:'0.52rem',fontFamily:'var(--font-mono)',cursor:'pointer',
+              fontSize:'0.6rem',fontFamily:'var(--font-mono)',cursor:'pointer',
               width:'100%',transition:'color 0.15s',
             }}>
               <span style={{fontSize:'1rem'}}>{t.icon}</span>

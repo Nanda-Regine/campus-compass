@@ -220,7 +220,7 @@ function MyPlaceTab() {
             <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.08em' }}>{PLACE_LABELS[rec.place_type].toUpperCase()}</div>
             <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: 2 }}>{rec.name || 'My place'}</div>
           </div>
-          {rec.is_nsfas_accredited && <span style={{ padding: '3px 8px', background: 'rgba(78,207,158,0.12)', border: '1px solid rgba(78,207,158,0.3)', borderRadius: 100, fontSize: '0.56rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--teal, #4ecf9e)' }}>NSFAS ✓</span>}
+          {rec.is_nsfas_accredited && <span style={{ padding: '3px 8px', background: 'rgba(78,207,158,0.12)', border: '1px solid rgba(78,207,158,0.3)', borderRadius: 100, fontSize: '0.64rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--teal, #4ecf9e)' }}>NSFAS ✓</span>}
         </div>
         <div style={{ display: 'flex', gap: 20, marginTop: 12 }}>
           <div>
@@ -895,17 +895,17 @@ function KitTab() {
       <div style={{ ...card, display: 'flex', gap: 10 }}>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: '#ef4444' }}>{fmtR(stillEssential)}</div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>ESSENTIALS LEFT</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>ESSENTIALS LEFT</div>
         </div>
         <div style={{ width: 1, background: 'var(--border-subtle)' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: ACCENT }}>{fmtR(stillAll)}</div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>EVERYTHING LEFT</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>EVERYTHING LEFT</div>
         </div>
         <div style={{ width: 1, background: 'var(--border-subtle)' }} />
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: '1.3rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{fmtR(fullTotal)}</div>
-          <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)' }}>FULL KIT</div>
+          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>FULL KIT</div>
         </div>
       </div>
 
@@ -994,7 +994,7 @@ export default function HousingOS({ initialTab }: { initialTab?: string } = {}) 
       {/* Page header */}
       <div style={{ position: 'relative', zIndex: 1, padding: '16px 18px 12px', borderBottom: '0.5px solid var(--border-subtle)', background: 'rgba(0,0,0,0.15)' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,${ACCENT},transparent)` }} />
-        <div style={{ fontSize: '0.55rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>HOUSING OS</div>
+        <div style={{ fontSize: '0.63rem', fontFamily: 'var(--font-mono)', color: ACCENT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 3 }}>HOUSING OS</div>
         <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>Your place, sorted</div>
         <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 2 }}>Rent tracking · split bills · know your rights</div>
       </div>

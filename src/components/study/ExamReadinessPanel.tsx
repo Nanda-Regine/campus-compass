@@ -214,14 +214,14 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: avgMeta.color, marginTop: 2 }}>
             {avgMeta.label} · {upcoming.length} exam{upcoming.length === 1 ? '' : 's'} ahead
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', marginTop: 6, lineHeight: 1.5 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', marginTop: 6, lineHeight: 1.5 }}>
             Rate your ★ confidence below to improve accuracy.
           </div>
         </div>
       </div>
 
       {/* ── Section label ── */}
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
         Lowest readiness first
       </div>
 
@@ -264,12 +264,12 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
                   {exam.exam_name}
                 </div>
                 {exam.module && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: modCol?.text ?? '#c084fc', marginBottom: 6 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: modCol?.text ?? '#c084fc', marginBottom: 6 }}>
                     {exam.module.module_name}
                   </div>
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'var(--text-tertiary)' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)' }}>
                     Confidence:
                   </span>
                   <Stars examId={exam.id} value={conf} onChange={v => handleConf(exam.id, v)} />
@@ -295,7 +295,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
             {/* Tip + breakdown bars */}
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.57rem',
+                fontFamily: 'var(--font-mono)', fontSize: '0.64rem',
                 color: meta.color, padding: '6px 10px',
                 borderRadius: 8, background: `${meta.color}10`, lineHeight: 1.5,
               }}>
@@ -313,7 +313,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
 
       {/* ── Action plan by overall grade ── */}
       <div style={{ padding: '14px 16px', borderRadius: 16, background: `${avgMeta.color}08`, border: `0.5px solid ${avgMeta.color}20` }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: avgMeta.color, marginBottom: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: avgMeta.color, marginBottom: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           Your action plan — {avgMeta.label}
         </div>
         {avgGrade === 'critical' && (
@@ -355,7 +355,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
 
       {/* ── Past papers guide ── */}
       <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(99,102,241,0.06)', border: '0.5px solid rgba(99,102,241,0.15)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#a5b4fc', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Where to find past papers</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#a5b4fc', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Where to find past papers</div>
         {[
           { source: 'Institution LMS', detail: 'Blackboard, Moodle, eFundi, or iKamva — check your module page under "Resources" or "Past Assessments".' },
           { source: 'StudyPool / Ananzi', detail: 'Student-uploaded SA past papers across most public universities. Search "[module code] past exam paper".' },
@@ -371,7 +371,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
 
       {/* ── Anxiety management ── */}
       <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(251,113,133,0.05)', border: '0.5px solid rgba(251,113,133,0.15)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#fb7185', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Exam anxiety — what actually works</div>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#fb7185', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Exam anxiety — what actually works</div>
         {[
           { tip: 'Box breathing (4-4-4-4)', detail: 'Inhale 4 seconds, hold 4, exhale 4, hold 4. Do 4 cycles. Clinically proven to lower cortisol within 90 seconds — do this before you open the paper.' },
           { tip: 'Perspective reframe', detail: 'Ask: "Will this exam matter in 5 years?" Rarely yes. Your effort matters more than any single result. NSFAS appeals exist. Supp exams exist. Your life is not defined by one paper.' },
@@ -391,7 +391,7 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
 
       {/* ── Score legend ── */}
       <div style={{ padding: '14px 16px', borderRadius: 16, background: 'rgba(78,207,158,0.05)', border: '0.5px solid rgba(78,207,158,0.1)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.56rem', color: '#4ecf9e', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#4ecf9e', marginBottom: 8, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
           How your score is calculated
         </div>
         {[
@@ -400,10 +400,10 @@ export default function ExamReadinessPanel({ exams, tasks, onSwitchToList }: Pro
           ['20%', 'Time buffer',     'Days left (30 days = 100%)'],
         ].map(([pct, label, desc]) => (
           <div key={label} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 5 }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.57rem', color: '#4ecf9e', flexShrink: 0, width: 28 }}>{pct}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#4ecf9e', flexShrink: 0, width: 28 }}>{pct}</span>
             <div>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.7rem', color: 'var(--text-primary)' }}>{label}</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.54rem', color: 'var(--text-tertiary)', marginLeft: 6 }}>{desc}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--text-tertiary)', marginLeft: 6 }}>{desc}</span>
             </div>
           </div>
         ))}
