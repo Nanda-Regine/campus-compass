@@ -671,6 +671,16 @@ html.light {
   display: none !important;
 }
 
+/* 7c. Ambient layering fix. The ambient background (.ambient-root) is an
+   absolutely-positioned layer, so static content siblings would paint UNDER it and
+   the dark scrim would darken the TEXT, not just the image. Lift every content
+   sibling above the ambient layer. Fixed/absolute/sticky siblings (modals, FABs,
+   sticky headers) are excluded so their positioning and stacking stay intact. */
+.ambient-root ~ *:not([class*="fixed"]):not([class*="absolute"]):not([class*="sticky"]):not([style*="position: fixed"]):not([style*="position:fixed"]):not([style*="position: absolute"]):not([style*="position:absolute"]):not([style*="position: sticky"]):not([style*="position:sticky"]) {
+  position: relative;
+  z-index: 1;
+}
+
 /* 8. Selection */
 :is([data-theme="outdoor"],html.outdoor) ::selection {
   background: rgba(6, 95, 70, 0.22);

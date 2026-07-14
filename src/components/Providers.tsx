@@ -10,6 +10,7 @@ import { useAppStore } from '@/store'
 import { initOrchestration } from '@/store/studentState'
 import { initRulesEngine } from '@/lib/rules'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
+import { trackPageView } from '@/lib/analytics'
 import type { Profile, Budget, Subscription } from '@/types'
 import { IntlProvider } from '@/lib/i18n/IntlProvider'
 
@@ -28,9 +29,12 @@ function PostHogPageView() {
   const pathname = usePathname()
 
   useEffect(() => {
-    if (pathname && process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+    if (!pathname) return
+    if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
       posthog.capture('$pageview', { $current_url: window.location.href })
     }
+    // GA4 page_view on every client-side route change (see trackPageView).
+    trackPageView(pathname)
   }, [pathname])
 
   return null

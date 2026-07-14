@@ -116,6 +116,7 @@ export function AmbientImage({
   return (
     <div
       aria-hidden="true"
+      className="ambient-root"
       style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}
     >
       <Image

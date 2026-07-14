@@ -422,7 +422,9 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
       <TopBar title="Budget & NSFAS" />
 
       {/* ── Main: vertical tab rail + content ── */}
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      {/* position/zIndex lift the content ABOVE the absolutely-positioned AmbientImage
+          layer so the dark scrim only darkens the background image, never the text. */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
         {/* Vertical tab rail */}
         <div style={{
