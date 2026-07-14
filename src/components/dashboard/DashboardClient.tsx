@@ -88,8 +88,8 @@ function ZoneSection({
       border: `1px solid ${accent}26`,
     }}>
       {!dataSaver && (
-        <AmbientImage zone={zone} opacity={0.28} blurPx={12} saturation={1.4}
-          overlayColor="rgba(5,4,12,0.58)" />
+        <AmbientImage zone={zone} opacity={0.5} blurPx={6} saturation={1.5}
+          overlayColor="rgba(5,4,12,0.45)" />
       )}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2,
         background: `linear-gradient(90deg,${accent} 0%,${accent}40 55%,transparent 100%)` }} />
