@@ -291,8 +291,10 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   }
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg-base)', position: 'relative', overflowX: 'hidden' }}>
-      {/* Terracotta earth tones — African soil energy for the food domain */}
-      <AmbientImage zone="meals" opacity={0.15} blurPx={16} saturation={1.3} overlayColor="rgba(5,4,12,0.72)" />
+      {/* Terracotta earth tones — African soil energy for the food domain.
+          Opacity/blur/scrim tuned to match the visible rooms (movement, study);
+          the previous 0.15 opacity + 16px blur + 0.72 solid scrim crushed it to black. */}
+      <AmbientImage zone="meals" opacity={0.32} blurPx={4} saturation={1.35} />
       <TopBar title="Meal Prep" />
 
       {/* Main layout: vertical tab rail + content */}
