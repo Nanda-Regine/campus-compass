@@ -49,7 +49,7 @@ export default function GoalArchitecture() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
-      supabase.from('user_goals').select('state').eq('user_id', user.id).single()
+      supabase.from('user_goals').select('state').eq('user_id', user.id).maybeSingle()
         .then(({ data }) => {
           if (data?.state && Object.keys(data.state).length > 0) {
             const remote = data.state as GoalState

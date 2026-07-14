@@ -665,6 +665,11 @@ html.light {
 :is([data-theme="outdoor"],html.outdoor) .ambient-img {
   opacity: 0.05 !important;
 }
+/* The teal top-glow halo is a dark-theme device (screen-blend brightening). On the
+   bright themes it either does nothing or tints the surface, so hide it outright. */
+:is([data-theme="light"],html.light,[data-theme="outdoor"],html.outdoor) .ambient-glow {
+  display: none !important;
+}
 
 /* 8. Selection */
 :is([data-theme="outdoor"],html.outdoor) ::selection {

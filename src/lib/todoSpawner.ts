@@ -194,7 +194,7 @@ export function useAutoTodoSpawner(): void {
           const { data, error } = await supabase
             .from('tasks')
             .insert(t)
-            .select('*, module:modules(id,module_name,name,color,colour,module_code,code)')
+            .select('*, module:modules(id,module_name,color)')
             .single()
           if (!error && data) {
             addTask(data as Task)

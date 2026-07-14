@@ -59,8 +59,12 @@ export default function ConsentBanner() {
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 60,
-        background: 'rgba(7,11,9,0.95)',
+        // Sit above the floating chrome (GlobalFAB z-50, GameLayer XP z-9998,
+        // PWAUpdateNotifier z-9999). Those FABs were clipping the "Essential only"
+        // button. As a POPIA consent gate this must be the top-most transient UI;
+        // the FABs tuck behind it and return the moment a choice is made.
+        zIndex: 9999,
+        background: 'rgba(7,11,9,0.97)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderTop: '0.5px solid var(--border-subtle)',

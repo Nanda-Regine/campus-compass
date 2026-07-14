@@ -24,12 +24,14 @@ export async function GET(req: NextRequest) {
 
   const orderCol = sort === 'most_saved' ? 'save_count' : sort === 'most_viewed' ? 'view_count' : 'created_at'
 
+  // NOTE: community_notes.user_id references auth.users, not profiles, so there is
+  // no PostgREST relationship to embed `profiles(...)` through. Fetch uploader
+  // profiles in a second query and merge in JS instead.
   let query = supabase
     .from('community_notes')
     .select(`
       id, user_id, title, module_code, description, institution, faculty,
-      year_of_study, link_url, file_type, tags, save_count, view_count, created_at,
-      profiles!inner(name, emoji)
+      year_of_study, link_url, file_type, tags, save_count, view_count, created_at
     `)
     .order(orderCol, { ascending: false })
     .limit(50)
@@ -41,18 +43,26 @@ export async function GET(req: NextRequest) {
   const { data: notes, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Fetch which notes the current user has saved
-  const noteIds = (notes || []).map((n: Record<string, unknown>) => n.id)
-  const { data: saves } = noteIds.length
-    ? await supabase.from('note_saves').select('note_id').eq('user_id', user.id).in('note_id', noteIds)
-    : { data: [] }
+  const noteIds  = (notes || []).map((n: Record<string, unknown>) => n.id as string)
+  const uploaderIds = [...new Set((notes || []).map((n: Record<string, unknown>) => n.user_id as string))]
+
+  // Uploader display info + which notes the current user has saved (parallel).
+  const [{ data: uploaders }, { data: saves }] = await Promise.all([
+    uploaderIds.length
+      ? supabase.from('profiles').select('id, name, emoji').in('id', uploaderIds)
+      : Promise.resolve({ data: [] as { id: string; name: string; emoji: string }[] }),
+    noteIds.length
+      ? supabase.from('note_saves').select('note_id').eq('user_id', user.id).in('note_id', noteIds)
+      : Promise.resolve({ data: [] as { note_id: string }[] }),
+  ])
+
+  const profileMap = new Map((uploaders || []).map((p: { id: string; name: string; emoji: string }) => [p.id, p]))
   const savedSet = new Set((saves || []).map((s: { note_id: string }) => s.note_id))
 
   const result = (notes || []).map((n: Record<string, unknown>) => {
-    const profile = n.profiles as { name: string; emoji: string } | null
+    const profile = profileMap.get(n.user_id as string)
     return {
       ...n,
-      profiles: undefined,
       uploader_name:  profile?.name  ?? 'Student',
       uploader_emoji: profile?.emoji ?? '🎓',
       is_saved: savedSet.has(n.id as string),

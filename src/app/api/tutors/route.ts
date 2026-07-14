@@ -17,13 +17,14 @@ export async function GET(req: NextRequest) {
   const subject = searchParams.get('subject')
   const institution = searchParams.get('institution')
 
+  // tutor_profiles.user_id references auth.users, not profiles — no PostgREST
+  // relationship to embed through. Fetch tutor display profiles separately.
   let query = supabase
     .from('tutor_profiles')
     .select(`
       id, user_id, bio, subjects, institution, faculty, year_of_study,
       rate_per_hour, availability, is_available, session_count, average_rating,
-      is_verified, is_verified_pending,
-      profiles!inner(name, emoji)
+      is_verified, is_verified_pending
     `)
     .eq('is_available', true)
     .order('average_rating', { ascending: false, nullsFirst: false })
@@ -35,16 +36,25 @@ export async function GET(req: NextRequest) {
   const { data, error } = await query
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Check if current user is already a tutor
-  const { data: myProfile } = await supabase
-    .from('tutor_profiles')
-    .select('id, subjects, rate_per_hour, bio, availability, is_available, is_verified, is_verified_pending')
-    .eq('user_id', user.id)
-    .maybeSingle()
+  const tutorUserIds = [...new Set((data ?? []).map((t: Record<string, unknown>) => t.user_id as string))]
+
+  // Tutor display info + whether the current user is already a tutor (parallel).
+  const [{ data: profileRows }, { data: myProfile }] = await Promise.all([
+    tutorUserIds.length
+      ? supabase.from('profiles').select('id, name, emoji').in('id', tutorUserIds)
+      : Promise.resolve({ data: [] as { id: string; name: string; emoji: string }[] }),
+    supabase
+      .from('tutor_profiles')
+      .select('id, subjects, rate_per_hour, bio, availability, is_available, is_verified, is_verified_pending')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+  ])
+
+  const profileMap = new Map((profileRows || []).map((p: { id: string; name: string; emoji: string }) => [p.id, p]))
 
   const tutors = (data ?? []).map((t: Record<string, unknown>) => {
-    const profile = t.profiles as { name: string; emoji: string } | null
-    return { ...t, profiles: undefined, name: profile?.name ?? 'Tutor', emoji: profile?.emoji ?? '🎓' }
+    const profile = profileMap.get(t.user_id as string)
+    return { ...t, name: profile?.name ?? 'Tutor', emoji: profile?.emoji ?? '🎓' }
   })
 
   return NextResponse.json({ tutors, myTutorProfile: myProfile ?? null })

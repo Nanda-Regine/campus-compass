@@ -72,7 +72,13 @@ export async function GET() {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
-  if (error) return NextResponse.json({ error: 'Failed to load integrations' }, { status: 500 })
+  if (error) {
+    // Don't hard-fail the whole page. A user with no LMS connected (or a missing
+    // table in an environment where migration 000027 hasn't been applied) should
+    // see the "connect your LMS" empty state, not an error screen.
+    console.error('[api/integrations/lms] load failed:', error.message)
+    return NextResponse.json({ integrations: [] })
+  }
   return NextResponse.json({ integrations: data ?? [] })
 }
 

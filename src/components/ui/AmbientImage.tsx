@@ -77,6 +77,24 @@ interface AmbientImageProps {
   sizes?: string
 }
 
+// Turn a FLAT solid scrim into a top-lighter gradient. A uniform rgba() overlay
+// dims the whole viewport equally — including the hero area at the top — so the
+// image's colour never glows through anywhere and the page reads as flat black.
+// Easing the top ~45% from a lighter alpha up to the full value restores the glow
+// at the hero while keeping the full scrim over the content/text area below.
+// Gradients and "transparent" are left exactly as the page specified them.
+function easeScrim(overlay: string): string {
+  if (!overlay || overlay === 'transparent' || overlay.includes('gradient')) return overlay
+  const m = overlay.match(/rgba?\(([^)]+)\)/)
+  if (!m) return overlay
+  const p = m[1].split(',').map(s => s.trim())
+  const [r, g, b] = p
+  const a = p[3] !== undefined ? parseFloat(p[3]) : 1
+  const topA = Math.max(0, a * 0.4).toFixed(3)
+  const midA = Math.max(0, a * 0.82).toFixed(3)
+  return `linear-gradient(180deg, rgba(${r},${g},${b},${topA}) 0%, rgba(${r},${g},${b},${midA}) 30%, rgba(${r},${g},${b},${a}) 58%, rgba(${r},${g},${b},${a}) 100%)`
+}
+
 export function AmbientImage({
   zone,
   src,
@@ -108,12 +126,24 @@ export function AmbientImage({
         style={{
           objectFit: 'cover',
           opacity,
-          filter: `blur(${blurPx}px) saturate(${saturation})`,
+          // Small brightness lift so the colour actually reads through the scrim
+          // instead of sinking into the page's near-black background.
+          filter: `blur(${blurPx}px) saturate(${saturation}) brightness(1.08)`,
         }}
         sizes={sizes}
         priority={false}
       />
-      <div className="ambient-scrim" style={{ position: 'absolute', inset: 0, background: overlayColor }} />
+      <div className="ambient-scrim" style={{ position: 'absolute', inset: 0, background: easeScrim(overlayColor) }} />
+      {/* Soft teal halo at the top — gives the page depth/glow instead of flat dark.
+          `screen` blend brightens only; at 0.09 it never fights body text. Suppressed
+          on the light/outdoor themes in globals.css. */}
+      <div
+        className="ambient-glow"
+        style={{
+          position: 'absolute', inset: 0, mixBlendMode: 'screen', pointerEvents: 'none',
+          background: 'radial-gradient(130% 62% at 50% -12%, rgba(45,212,191,0.16) 0%, rgba(45,212,191,0.05) 34%, transparent 60%)',
+        }}
+      />
     </div>
   )
 }

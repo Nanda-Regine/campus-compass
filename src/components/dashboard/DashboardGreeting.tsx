@@ -1,7 +1,7 @@
 'use client'
 
 import { type Profile, type Budget, type Exam, type Task } from '@/types'
-import { getDaysUntil } from '@/lib/utils'
+import { getDaysUntil, sastHour, sastToday } from '@/lib/utils'
 
 interface Props {
   profile: Profile
@@ -15,7 +15,9 @@ interface Props {
 export default function DashboardGreeting({
   profile, budget, nextExam, overdueTasks, weekStudyHours, isPremium,
 }: Props) {
-  const hour = new Date().getHours()
+  // SAST hour on both server (UTC) and client — a raw new Date().getHours() differed
+  // by 2h and flipped the greeting text, tripping hydration mismatch (#425).
+  const hour = sastHour()
 
   let timeLabel: string
   let isLateNight = false
@@ -38,7 +40,7 @@ export default function DashboardGreeting({
     }
     if (budget?.nsfas_enabled) {
       // NSFAS late heuristic: after 15th of month
-      const dayOfMonth = new Date().getDate()
+      const dayOfMonth = Number(sastToday().split('-')[2])
       if (dayOfMonth > 15) {
         return {
           text: "NSFAS hasn't arrived yet? Check your emergency options in budget.",
