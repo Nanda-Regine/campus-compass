@@ -1,9 +1,23 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ShoppingBag, Plus, Package, MessageSquare, Search, ChevronDown, ChevronUp, Send, X, HelpCircle } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { ShoppingBag, Plus, Package, MessageSquare, Search, ChevronDown, ChevronUp, Send, X, HelpCircle, Map as MapIcon, List } from 'lucide-react'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import type { MapPinInput } from '@/components/movement/CampusMap'
 import toast from 'react-hot-toast'
+
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+// Mapbox map is client-only (touches window/document).
+const CampusMap = dynamic(() => import('@/components/movement/CampusMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 340, borderRadius: 16, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>Loading map…</span>
+    </div>
+  ),
+})
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -331,11 +345,12 @@ function ListingCard({ listing, showActions, onMarkSold, onDelete }: {
 
 // ─── Browse Tab ───────────────────────────────────────────────────────────────
 
-function BrowseTab({ userId: _userId, initialListings, university: _university }: { userId: string; initialListings: Listing[]; university: string }) {
+function BrowseTab({ userId: _userId, initialListings, university }: { userId: string; initialListings: Listing[]; university: string }) {
   const [listings, setListings] = useState<Listing[]>(initialListings)
   const [search, setSearch] = useState('')
   const [catFilter, setCatFilter] = useState<Category | 'all'>('all')
   const [loading, setLoading] = useState(false)
+  const [mapView, setMapView] = useState(false)
 
   const fetch = useCallback(async () => {
     setLoading(true)
@@ -418,8 +433,55 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
         })}
       </div>
 
+      {/* View toggle */}
+      {MAPBOX_TOKEN && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            onClick={() => setMapView(v => !v)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none',
+              color: mapView ? ACCENT : 'rgba(255,255,255,0.6)', cursor: 'pointer',
+              fontFamily: 'var(--font-mono)', fontSize: '0.66rem',
+            }}
+          >
+            {mapView ? <><List size={12} /> List</> : <><MapIcon size={12} /> Map</>}
+          </button>
+        </div>
+      )}
+
+      {/* Map view — pickup points geocoded from each listing's location */}
+      {mapView && MAPBOX_TOKEN && !loading && (() => {
+        const mappable = listings.filter(l => l.pickup_location && l.pickup_location.trim())
+        if (mappable.length === 0) {
+          return (
+            <div style={{ textAlign: 'center', padding: '28px 12px', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '0.78rem', background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(255,255,255,0.12)', borderRadius: 14 }}>
+              🗺️ None of these listings have a pickup spot yet — switch to the list, or add a pickup location when you sell.
+            </div>
+          )
+        }
+        const pins: MapPinInput[] = mappable.map(l => ({
+          id: l.id,
+          address: `${l.pickup_location}${university ? ', ' + university : ''}`,
+          emoji: CATEGORY_META[l.category as Category]?.emoji ?? '🛍️',
+          title: l.title,
+          rows: [
+            l.is_free ? '🎁 Free' : (l.price_rands != null ? `R${l.price_rands}` : 'Price on ask'),
+            l.pickup_location ? `📍 ${l.pickup_location}` : null,
+            l.condition ?? null,
+          ],
+        }))
+        return (
+          <>
+            <CampusMap token={MAPBOX_TOKEN} height={340} pins={pins} emptyLabel="Placing listings…" />
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.5 }}>
+              📍 Meet in a busy, public spot. Pins are approximate — placed from the seller&apos;s typed location.
+            </div>
+          </>
+        )
+      })()}
+
       {/* Listings */}
-      {loading ? (
+      {!mapView && (loading ? (
         <div style={{ textAlign: 'center', padding: '32px 0', color: '#fff', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
           Loading...
         </div>
@@ -439,7 +501,7 @@ function BrowseTab({ userId: _userId, initialListings, university: _university }
             <ListingCard key={l.id} listing={l} />
           ))}
         </div>
-      )}
+      ))}
     </div>
   )
 }

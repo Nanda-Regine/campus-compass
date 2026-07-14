@@ -24,6 +24,7 @@ const MapboxDirectionsMap = dynamic(
   () => import('./MapboxDirectionsMap').then(m => m.MapboxDirectionsMap),
   { ssr: false, loading: () => mapLoadingFallback }
 )
+const ModeComparison = dynamic(() => import('./ModeComparison'), { ssr: false })
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -359,8 +360,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
                     <MapPin size={28} className="text-white" />
-                    <p className="font-mono text-[0.65rem] text-white text-center max-w-[200px] leading-relaxed">
-                      Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to your .env.local to enable the map
+                    <p className="font-mono text-[0.65rem] text-white text-center max-w-[220px] leading-relaxed">
+                      Interactive map is temporarily unavailable — open your route in Google Maps below.
                     </p>
                     <a
                       href={gmDirectionsUrl(dirQuery.from, dirQuery.to)}
@@ -371,6 +372,10 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                       Open in Google Maps instead
                     </a>
                   </div>
+                )}
+
+                {MAPBOX_TOKEN && (
+                  <ModeComparison from={dirQuery.from} to={dirQuery.to} token={MAPBOX_TOKEN} />
                 )}
               </div>
             )}
@@ -421,8 +426,8 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px dashed rgba(255,255,255,0.1)' }}
                   >
                     <MapPin size={24} className="text-white" />
-                    <p className="font-mono text-[0.62rem] text-white text-center max-w-[200px] leading-relaxed">
-                      Add <code className="text-sky-400">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable the route map
+                    <p className="font-mono text-[0.62rem] text-white text-center max-w-[220px] leading-relaxed">
+                      Route map is temporarily unavailable. Your saved routes are still listed below.
                     </p>
                   </div>
                 )}

@@ -1,9 +1,22 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { MapPin, RefreshCw } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { MapPin, RefreshCw, Map as MapIcon, List } from 'lucide-react'
+import type { MapPinInput } from '@/components/movement/CampusMap'
 
 const ACCENT = '#34d399'
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+// Mapbox map is client-only (touches window/document).
+const CampusMap = dynamic(() => import('@/components/movement/CampusMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 340, borderRadius: 16, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>Loading map…</span>
+    </div>
+  ),
+})
 
 const STATUSES = [
   { id: 'on_campus',    emoji: '🏫', label: 'On campus' },
@@ -38,6 +51,8 @@ export default function PresenceTab({ userInstitution }: { userId: string; userI
   const [around, setAround]     = useState<AroundPerson[]>([])
   const [mine, setMine]         = useState<Mine | null>(null)
   const [error, setError]       = useState<string | null>(null)
+
+  const [mapView, setMapView] = useState(false)
 
   // form
   const [status, setStatus] = useState<StatusId>('library')
@@ -175,13 +190,53 @@ export default function PresenceTab({ userInstitution }: { userId: string; userI
         <span style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
           Around now {around.length > 0 ? `· ${around.length}` : ''}
         </span>
-        <button onClick={() => { setLoading(true); load() }} aria-label="Refresh"
-          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.66rem' }}>
-          <RefreshCw size={12} /> Refresh
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {MAPBOX_TOKEN && (
+            <button onClick={() => setMapView(v => !v)} aria-label={mapView ? 'List view' : 'Map view'}
+              style={{ background: 'none', border: 'none', color: mapView ? ACCENT : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.66rem' }}>
+              {mapView ? <><List size={12} /> List</> : <><MapIcon size={12} /> Map</>}
+            </button>
+          )}
+          <button onClick={() => { setLoading(true); load() }} aria-label="Refresh"
+            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.66rem' }}>
+            <RefreshCw size={12} /> Refresh
+          </button>
+        </div>
       </div>
 
-      {loading ? (
+      {/* ── Map view ── */}
+      {mapView && MAPBOX_TOKEN && !loading && !error && (() => {
+        const mappable = around.filter(p => p.spot && p.spot.trim())
+        if (mappable.length === 0) {
+          return (
+            <div style={{ ...card, textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+              🗺️ No one nearby has shared a spot yet. Add a spot to your status (e.g. &ldquo;Main library&rdquo;) so friends can find you on the map.
+            </div>
+          )
+        }
+        const pins: MapPinInput[] = mappable.map((p, i) => ({
+          id: `${p.name}-${i}`,
+          address: `${p.spot}${userInstitution ? ', ' + userInstitution : ''}`,
+          emoji: p.emoji,
+          title: p.name,
+          rows: [
+            `${statusMeta(p.status).emoji} ${statusMeta(p.status).label}`,
+            p.spot ? `📍 ${p.spot}` : null,
+            p.note,
+            timeLeft(p.expires_at),
+          ],
+        }))
+        return (
+          <>
+            <CampusMap token={MAPBOX_TOKEN} height={340} pins={pins} emptyLabel="Placing people…" />
+            <div style={{ fontSize: '0.64rem', color: 'var(--text-tertiary)', lineHeight: 1.5, padding: '0 2px' }}>
+              Pins are approximate — placed from the spot each person typed, not live GPS.
+            </div>
+          </>
+        )
+      })()}
+
+      {!mapView && (loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: 28 }}>
           <div style={{ width: 20, height: 20, border: '2px solid var(--border-subtle)', borderTopColor: ACCENT, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
         </div>
@@ -211,7 +266,7 @@ export default function PresenceTab({ userInstitution }: { userId: string; userI
             )
           })}
         </div>
-      )}
+      ))}
     </div>
   )
 }

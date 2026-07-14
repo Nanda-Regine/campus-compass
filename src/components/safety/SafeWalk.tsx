@@ -8,6 +8,21 @@
 // ============================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import dynamic from 'next/dynamic'
+import type { LngLat } from '@/lib/mapbox'
+
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+// Mapbox map is client-only (touches window/document). Supplementary to the
+// timer — the Safe Walk countdown works fully offline without it.
+const CampusMap = dynamic(() => import('@/components/movement/CampusMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 220, borderRadius: 16, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>Loading map…</span>
+    </div>
+  ),
+})
 
 interface SafeWalkProps {
   userId: string | null
@@ -60,6 +75,9 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   const [timeRemaining, setTimeRemaining] = useState(0)
   const [sessionStart, setSessionStart] = useState<Date | null>(null)
   const [checkpoints, setCheckpoints] = useState<string[]>([])
+  const [locationText, setLocationText] = useState('')
+  const [alertContacts, setAlertContacts] = useState<{ name: string; phone: string }[]>([])
+  const [hereCoords, setHereCoords] = useState<LngLat | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // ── Restore session from localStorage on mount ─────────────
@@ -131,6 +149,18 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
     return clearTimer
   }, [screen, clearTimer])
 
+  // Grab current location once the walk is active, for the route map + the
+  // proactive "share my live location" link. Best-effort; never blocks the timer.
+  useEffect(() => {
+    if (screen !== 'active') return
+    if (!('geolocation' in navigator)) return
+    navigator.geolocation.getCurrentPosition(
+      pos => setHereCoords([pos.coords.longitude, pos.coords.latitude]),
+      () => { /* denied/unavailable — map falls back to destination only */ },
+      { timeout: 6000, enableHighAccuracy: false },
+    )
+  }, [screen])
+
   const persistSession = useCallback((
     walkForm: WalkForm,
     remaining: number,
@@ -167,6 +197,46 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
       })
     } catch { /* non-critical */ }
   }, [userId])
+
+  // ── WhatsApp alert helper ──────────────────────────────────
+  // Opens a pre-filled WhatsApp message to the contact. A user tap is a real
+  // gesture so the browser will not popup-block it (unlike an auto window.open).
+  const buildWaLink = useCallback((phone: string) => {
+    const clean = phone.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
+    const msg = `🆘 Safe Walk alert: I set a check-in timer for my walk to ${form.destination || 'my destination'} and it expired without me marking myself safe. Please check on me now or call 10111.${locationText ? '\n' + locationText : ''}`
+    return `https://wa.me/${clean}?text=${encodeURIComponent(msg)}`
+  }, [form.destination, locationText])
+
+  // ── When the alert screen shows: log it, gather contacts, get location ──────
+  useEffect(() => {
+    if (screen !== 'alert') return
+    // Record that this walk ended in an alert (best-effort audit trail).
+    saveToDb(form, 'alert', checkpoints)
+    // Alert the walk's designated contact PLUS any saved emergency contacts,
+    // so the message reaches as many people as possible. Dedupe by phone.
+    const saved: { name: string; phone: string }[] = (() => {
+      try {
+        const raw = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') as { name: string; number?: string; phone?: string }[]
+        return raw.map(c => ({ name: c.name, phone: c.number ?? c.phone ?? '' })).filter(c => c.phone)
+      } catch { return [] }
+    })()
+    const combined = [{ name: form.contactName, phone: form.contactPhone }, ...saved]
+    const seen = new Set<string>()
+    setAlertContacts(combined.filter(c => {
+      const k = c.phone.replace(/\D/g, '')
+      if (!k || seen.has(k)) return false
+      seen.add(k); return true
+    }))
+    // Enrich the alert message with a live location link.
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        pos => setLocationText(`📍 My location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`),
+        () => setLocationText(''),
+        { timeout: 6000, enableHighAccuracy: false }
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen])
 
   // ── Actions ───────────────────────────────────────────────
   const handleStart = () => {
@@ -385,6 +455,14 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
   // ACTIVE SCREEN
   // ────────────────────────────────────────────────────────────
   if (screen === 'active') {
+    // Proactive "let my person watch me get home" WhatsApp share (real anchor
+    // so no popup-blocker). Includes a live Google Maps location link when we
+    // have GPS. Lets the contact follow along before the timer ever expires.
+    const cleanPhone = form.contactPhone.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
+    const liveLoc = hereCoords ? `\n📍 Live location: https://maps.google.com/?q=${hereCoords[1]},${hereCoords[0]}` : ''
+    const shareMsg = `Hi${form.contactName ? ' ' + form.contactName : ''} 👋 I'm walking to ${form.destination || 'my destination'} now and started a Safe Walk timer. I'll message when I'm safe — if you don't hear from me, please check on me or call 10111.${liveLoc}`
+    const shareUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(shareMsg)}`
+
     return (
       <div style={{ background: 'var(--bg-base)', minHeight: '100vh', padding: '20px 16px' }}>
         <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -432,6 +510,37 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
               </div>
             )}
           </div>
+
+          {/* Route map — your position → destination (supplementary, offline-safe) */}
+          {MAPBOX_TOKEN && form.destination && (
+            <CampusMap
+              token={MAPBOX_TOKEN}
+              height={220}
+              route={hereCoords ? { from: hereCoords, to: form.destination, profile: 'walking' } : undefined}
+              pins={!hereCoords ? [{ id: 'dest', address: form.destination, emoji: '🏁', title: form.destination }] : []}
+            />
+          )}
+
+          {/* Proactively share live location so your person can watch you get home */}
+          {form.contactPhone && (
+            <a
+              href={shareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block', textDecoration: 'none', textAlign: 'center',
+                background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.4)',
+                borderRadius: 12, padding: '12px 0',
+              }}
+            >
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#25D366' }}>
+                💬 Share my live location with {form.contactName || 'my contact'}
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginTop: 2 }}>
+                Lets them follow along on WhatsApp{hereCoords ? '' : ' (enable location for a live map link)'}
+              </div>
+            </a>
+          )}
 
           {/* Check-in button */}
           <button
@@ -520,6 +629,30 @@ export default function SafeWalk({ userId }: SafeWalkProps) {
             {form.contactPhone}
           </div>
         </div>
+
+        {/* Send WhatsApp alert to contacts — one tap per contact (reliable) */}
+        {alertContacts.map((c, i) => (
+          <a
+            key={i}
+            href={buildWaLink(c.phone)}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block',
+              background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+              border: 'none', borderRadius: 14,
+              padding: '15px 0', textDecoration: 'none', textAlign: 'center',
+              boxShadow: '0 4px 20px rgba(34,197,94,0.3)',
+            }}
+          >
+            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff' }}>
+              🚨 Send WhatsApp alert to {c.name || c.phone}
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#fff', marginTop: 3 }}>
+              Sends your location and an emergency message
+            </div>
+          </a>
+        ))}
 
         {/* CALL 10111 */}
         <a

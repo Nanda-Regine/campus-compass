@@ -25,6 +25,19 @@ const withPWA = require('@ducanh2912/next-pwa').default({
         expiration: { maxEntries: 64, maxAgeSeconds: 30 * 24 * 60 * 60 },
       },
     },
+    // Mapbox tiles, styles, fonts, sprites & static images — CacheFirst so a
+    // student loads the campus map's tiles once and then pays ~no data on
+    // repeat visits (big win on prepaid). Excludes /geocoding & /directions
+    // (those are handled by the localStorage cache in src/lib/mapbox.ts).
+    {
+      urlPattern: /^https:\/\/(?:api|[abc]\.tiles)\.mapbox\.com\/(?:styles|fonts|v4|raster|tiles|mapbox-gl-js|models)\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'mapbox-tiles',
+        expiration: { maxEntries: 400, maxAgeSeconds: 14 * 24 * 60 * 60 },
+        cacheableResponse: { statuses: [0, 200] },
+      },
+    },
     // App pages — network first, fall back to cache.
     // Explicitly excludes /_next/* so that workbox's precache (not this
     // runtime-cache bucket) owns all content-addressed JS/CSS chunks.
@@ -159,7 +172,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat",
               "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
               "img-src 'self' data: blob: https: https://client.crisp.chat",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com wss://fcm.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io https://api.mapbox.com https://events.mapbox.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://vitals.vercel-insights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.hotjar.com wss://*.hotjar.com https://*.crisp.chat wss://*.crisp.chat https://fcm.googleapis.com wss://fcm.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.googleapis.com https://app.posthog.com https://*.posthog.com https://o4511111217217536.ingest.de.sentry.io https://api.mapbox.com https://events.mapbox.com https://*.tiles.mapbox.com",
               "frame-src 'self' https://g.page https://www.google.com",
               "form-action 'self'",
               "worker-src 'self' blob:",

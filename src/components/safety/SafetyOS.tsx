@@ -7,13 +7,29 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import { useAppStore } from '@/store'
+import { geocodeZA, type LngLat } from '@/lib/mapbox'
+import type { MapPinInput, SafePointKind } from '@/components/movement/CampusMap'
 
-type Tab = 'sos' | 'walk' | 'defence' | 'contacts' | 'report' | 'rights'
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
+
+// Mapbox map is client-only (touches window/document).
+const CampusMap = dynamic(() => import('@/components/movement/CampusMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 380, borderRadius: 16, background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#fff' }}>Loading map…</span>
+    </div>
+  ),
+})
+
+type Tab = 'sos' | 'walk' | 'map' | 'defence' | 'contacts' | 'report' | 'rights'
 
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: 'sos',      label: 'SOS',         icon: '🆘' },
   { id: 'walk',     label: 'Walk Me Home', icon: '🚶' },
+  { id: 'map',      label: 'Safety Map',   icon: '🗺️' },
   { id: 'defence',  label: 'Self-Defence', icon: '🥋' },
   { id: 'contacts', label: 'Contacts',     icon: '📞' },
   { id: 'report',   label: 'Report',       icon: '🚨' },
@@ -291,9 +307,19 @@ function WalkMeHomeTab() {
   const [duration, setDuration] = useState(15)
   const [elapsed, setElapsed] = useState(0)
   const [overdue, setOverdue] = useState(false)
+  const [alertContacts, setAlertContacts] = useState<{ name?: string; number: string }[]>([])
+  const [locationText, setLocationText] = useState('')
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startedAtRef = useRef<number>(0)
   const alertedRef = useRef(false)
+
+  // A user tap on these links is a real gesture, so the browser will not
+  // popup-block it (unlike an automatic window.open from a timer callback).
+  const buildWa = (number: string) => {
+    const clean = number.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
+    const msg = `🆘 Walk-home overdue — I haven't checked in safe. Please check on me now or call 10111.${locationText ? '\n' + locationText : ''}`
+    return `https://wa.me/${clean}?text=${encodeURIComponent(msg)}`
+  }
 
   // Wall-clock based: setInterval is throttled/suspended when the screen locks on
   // low-end Android, so a tick-counter undercounts. Recompute elapsed from real time.
@@ -320,28 +346,20 @@ function WalkMeHomeTab() {
     cancelWalk()
   }
 
-  // Actually notify emergency contacts when the timer runs out without a safe check-in.
+  // When the timer runs out without a safe check-in, surface one-tap alert
+  // buttons for every saved emergency contact and fetch a live location link.
   const triggerOverdueAlert = () => {
     if (alertedRef.current) return
     alertedRef.current = true
-    let contacts: { number: string }[] = []
+    let contacts: { name?: string; number: string }[] = []
     try { contacts = JSON.parse(localStorage.getItem('varsityos-emergency-contacts') ?? '[]') } catch { contacts = [] }
-    const fire = (locationText: string) => {
-      const msg = `🆘 Walk-home overdue — I haven't checked in safe.\n${locationText}\nPlease check on me or call 10111.`
-      const encoded = encodeURIComponent(msg)
-      contacts.forEach((c, i) => {
-        const clean = c.number.replace(/[\s\-()+]/g, '').replace(/^0/, '27')
-        setTimeout(() => window.open(`https://wa.me/${clean}?text=${encoded}`, '_blank'), i * 900)
-      })
-    }
+    setAlertContacts(contacts.filter(c => c && c.number))
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        pos => fire(`📍 Last location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`),
-        () => fire('📍 Location unavailable — please contact me urgently'),
+        pos => setLocationText(`📍 Last location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`),
+        () => setLocationText(''),
         { timeout: 6000, enableHighAccuracy: false }
       )
-    } else {
-      fire('📍 Location unavailable — please contact me urgently')
     }
   }
 
@@ -372,12 +390,51 @@ function WalkMeHomeTab() {
         </div>
 
         {overdue && !active && (
-          <div style={{
-            background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)',
-            borderRadius: 10, padding: '10px 12px', marginBottom: 14,
-            fontSize: '0.74rem', color: 'var(--danger, #f87171)', lineHeight: 1.5,
-          }}>
-            ⏰ Timer ran out — your emergency contacts have been alerted. Tap a WhatsApp window to send, or call 10111.
+          <div style={{ marginBottom: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{
+              background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)',
+              borderRadius: 10, padding: '10px 12px',
+              fontSize: '0.74rem', color: 'var(--danger, #f87171)', lineHeight: 1.5,
+            }}>
+              ⏰ Timer ran out and you haven&apos;t marked yourself safe. {alertContacts.length > 0
+                ? 'Tap to alert your emergency contact now, or call 10111.'
+                : 'Add emergency contacts under the Contacts tab so they can be alerted. Call 10111 if you need help now.'}
+            </div>
+            {alertContacts.map((c, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8 }}>
+                <a
+                  href={buildWa(c.number)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    flex: 1, padding: '11px 0', textAlign: 'center', textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)', borderRadius: 10,
+                    color: '#fff', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+                  }}>
+                  🚨 WhatsApp {c.name || c.number}
+                </a>
+                <a
+                  href={`tel:${c.number.replace(/\s/g, '')}`}
+                  style={{
+                    padding: '11px 16px', textAlign: 'center', textDecoration: 'none',
+                    background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)',
+                    borderRadius: 10, color: 'var(--danger, #f87171)',
+                    fontSize: '0.75rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+                  }}>
+                  Call
+                </a>
+              </div>
+            ))}
+            <a
+              href="tel:10111"
+              style={{
+                padding: '11px 0', textAlign: 'center', textDecoration: 'none',
+                background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.25)',
+                borderRadius: 10, color: 'var(--danger, #f87171)',
+                fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700,
+              }}>
+              📞 Call 10111 (Police)
+            </a>
           </div>
         )}
 
@@ -1231,6 +1288,165 @@ function RightsTab() {
   )
 }
 
+// ─── Safety Map Tab ───────────────────────────────────────────
+// Campus incident heatmap + nearest safe points. Incidents are geocoded
+// from their free-text location_description (embedded "(lat,lng)" from
+// app reports is used directly when present), weighted by severity.
+
+interface Incident {
+  id: string
+  incident_type: string
+  severity: string
+  location_description: string
+  description: string
+  created_at: string
+  upvotes: number
+  is_resolved: boolean
+}
+
+const SEVERITY_META: Record<string, { weight: number; color: string; label: string }> = {
+  critical: { weight: 1,    color: '#ef4444', label: 'Critical' },
+  high:     { weight: 0.72, color: '#f97316', label: 'High' },
+  medium:   { weight: 0.48, color: '#facc15', label: 'Medium' },
+  low:      { weight: 0.28, color: '#4ade80', label: 'Low' },
+}
+
+const INCIDENT_EMOJI: Record<string, string> = {
+  protest: '📢', crime: '🚨', unsafe_area: '⚠️', harassment: '😟', gbv: '💜', other: '❗',
+}
+
+function incidentAgo(iso: string): string {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
+  if (s < 3600) return `${Math.max(1, Math.floor(s / 60))}m ago`
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
+  return `${Math.floor(s / 86400)}d ago`
+}
+
+function SafetyMapTab() {
+  const { profile } = useAppStore()
+  const uni = profile?.university ?? ''
+  const [incidents, setIncidents] = useState<Incident[]>([])
+  const [located, setLocated] = useState<{ coords: LngLat; inc: Incident }[]>([])
+  const [loading, setLoading] = useState(true)
+  const [geocoding, setGeocoding] = useState(false)
+  const [showHeat, setShowHeat] = useState(true)
+  const [showSafe, setShowSafe] = useState(true)
+
+  // Fetch recent incidents for this campus.
+  useEffect(() => {
+    let alive = true
+    setLoading(true)
+    const qs = uni ? `?institution=${encodeURIComponent(uni)}` : ''
+    fetch(`/api/safety/incidents${qs}`)
+      .then(r => (r.ok ? r.json() : { data: [] }))
+      .then(d => { if (alive) setIncidents(Array.isArray(d?.data) ? d.data : []) })
+      .catch(() => { if (alive) setIncidents([]) })
+      .finally(() => { if (alive) setLoading(false) })
+    return () => { alive = false }
+  }, [uni])
+
+  // Geocode each incident once (cached in localStorage by the lib).
+  useEffect(() => {
+    if (!MAPBOX_TOKEN || incidents.length === 0) { setLocated([]); return }
+    let alive = true
+    setGeocoding(true)
+    ;(async () => {
+      const out: { coords: LngLat; inc: Incident }[] = []
+      for (const inc of incidents) {
+        const q = uni ? `${inc.location_description}, ${uni}` : inc.location_description
+        const c = await geocodeZA(q, MAPBOX_TOKEN)
+        if (!alive) return
+        if (c) out.push({ coords: c, inc })
+      }
+      if (alive) { setLocated(out); setGeocoding(false) }
+    })()
+    return () => { alive = false }
+  }, [incidents, uni])
+
+  const pins: MapPinInput[] = located.map(({ coords, inc }) => {
+    const sev = SEVERITY_META[inc.severity] ?? SEVERITY_META.medium
+    return {
+      id: inc.id,
+      lngLat: coords,
+      emoji: INCIDENT_EMOJI[inc.incident_type] ?? '❗',
+      color: sev.color,
+      title: `${INCIDENT_EMOJI[inc.incident_type] ?? '❗'} ${inc.incident_type.replace(/_/g, ' ')}`,
+      rows: [
+        `${sev.label} · ${incidentAgo(inc.created_at)}${inc.is_resolved ? ' · ✓ resolved' : ''}`,
+        inc.description?.slice(0, 120),
+        inc.upvotes > 0 ? `👍 ${inc.upvotes} confirmed` : null,
+      ],
+    }
+  })
+
+  const heatPoints = showHeat
+    ? located.map(({ coords, inc }) => ({
+        lngLat: coords,
+        weight: (SEVERITY_META[inc.severity]?.weight ?? 0.48) * (inc.is_resolved ? 0.35 : 1),
+      }))
+    : []
+
+  const safePoints: SafePointKind[] | undefined = showSafe ? ['police', 'hospital', 'pharmacy'] : undefined
+
+  const toggle = (active: boolean): React.CSSProperties => ({
+    padding: '6px 12px', borderRadius: 100, cursor: 'pointer',
+    fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.02em',
+    background: active ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.05)',
+    border: `1px solid ${active ? 'rgba(52,211,153,0.45)' : 'rgba(255,255,255,0.12)'}`,
+    color: active ? '#34D399' : 'rgba(255,255,255,0.6)',
+  })
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '4px 4px 0' }}>
+      <div style={{
+        background: 'var(--bg-surface)', border: '1px solid rgba(52,211,153,0.2)',
+        borderRadius: 14, padding: '12px 14px',
+      }}>
+        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>
+          🗺️ Campus Safety Map
+        </div>
+        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+          Hotspots reported by students {uni ? `at ${uni}` : 'near you'}, plus the nearest police, hospital &amp; pharmacy.
+          Warmer areas = more or more serious recent reports. Stay alert, not afraid.
+        </div>
+      </div>
+
+      {/* Layer toggles */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <button onClick={() => setShowHeat(v => !v)} style={toggle(showHeat)}>🔥 Hotspots</button>
+        <button onClick={() => setShowSafe(v => !v)} style={toggle(showSafe)}>🚓 Safe points</button>
+      </div>
+
+      {!MAPBOX_TOKEN ? (
+        <div style={{
+          height: 200, borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(255,255,255,0.12)',
+          fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-tertiary)', textAlign: 'center', padding: 20,
+        }}>
+          Map is temporarily unavailable.
+        </div>
+      ) : (
+        <CampusMap
+          token={MAPBOX_TOKEN}
+          height={380}
+          pins={pins}
+          heatPoints={heatPoints}
+          safePoints={safePoints}
+          loadSheddingBanner
+          emptyLabel={loading || geocoding ? 'Loading reports…' : 'No mapped reports yet — stay safe out there'}
+        />
+      )}
+
+      <div style={{ fontSize: '0.66rem', color: 'var(--text-tertiary)', lineHeight: 1.5, padding: '0 2px' }}>
+        {loading ? 'Loading recent reports…'
+          : geocoding ? 'Placing reports on the map…'
+          : `${located.length} of ${incidents.length} recent report${incidents.length === 1 ? '' : 's'} mapped.`}
+        {' '}See something? Use the <strong style={{ color: 'var(--emerald, #34D399)' }}>Report</strong> tab. In danger now? Call <a href="tel:10111" style={{ color: '#f87171' }}>10111</a>.
+      </div>
+    </div>
+  )
+}
+
 // ─── Main component ───────────────────────────────────────────
 
 export default function SafetyOS() {
@@ -1288,6 +1504,7 @@ export default function SafetyOS() {
         <div style={{ flex: 1, minWidth: 0, animation: 'fadeInUp 0.25s ease' }}>
           {activeTab === 'sos'      && <SosTab />}
           {activeTab === 'walk'     && <WalkMeHomeTab />}
+          {activeTab === 'map'      && <SafetyMapTab />}
           {activeTab === 'defence'  && <DefenceTab />}
           {activeTab === 'contacts' && <ContactsTab />}
           {activeTab === 'report'   && <ReportTab />}
