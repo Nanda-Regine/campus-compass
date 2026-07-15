@@ -499,9 +499,13 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           </TabErrorBoundary>
 
           {/* ═══════════════════════════════════════════════════════
-              MOBILE LAYOUT  (< lg — single column, zone sections)
+              MOBILE + TABLET LAYOUT  (< xl — single column, zone sections)
+              Shown up to xl (1280px). On md–lg the single column is capped and
+              centered so it isn't awkwardly stretched beside the fixed sidebar
+              (the 3-col bento needs ~1280px of viewport to fit past the sidebar
+              without horizontal overflow, so it only takes over at xl).
           ═══════════════════════════════════════════════════════ */}
-          <div className="flex flex-col gap-3 lg:hidden">
+          <div className="flex flex-col gap-3 xl:hidden md:mx-auto md:max-w-[780px] md:w-full">
 
             {/* ① COMMAND ZONE — OSCommandHero + act-now strip */}
             <ZoneSection dataSaver={dataSaver} zone="dashboard" accent={theme.accent} label="Command">
@@ -622,12 +626,17 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              DESKTOP LAYOUT  (lg+ — 3-column bento grid)
+              DESKTOP LAYOUT  (xl+ — 3-column bento grid)
+              Gated at xl (1280px): below that the fixed 220px sidebar leaves
+              too little room for 3 columns and the grid overflowed horizontally.
+              minWidth:0 on each column lets wide inner content (e.g. the
+              horizontally-scrolling stat row) scroll internally instead of
+              forcing the page to scroll sideways.
           ═══════════════════════════════════════════════════════ */}
-          <div className="hidden lg:grid lg:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
+          <div className="hidden xl:grid xl:grid-cols-[1.6fr_1fr_1fr] gap-4 items-start">
 
             {/* Column 1 — hero + check-in + plan */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
               <TabErrorBoundary label="Just Start"><JustStartButton tasks={allTasks} /></TabErrorBoundary>
               <OSCommandHero
                 timetable={initialData.timetable} tasks={allTasks} exams={allExams}
@@ -682,7 +691,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             </div>
 
             {/* Column 2 — insights + study */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
               <TabErrorBoundary label="Deadline Telescope"><DeadlineTelescope exams={allExams} /></TabErrorBoundary>
               <Deferred gap={14} dataSaver={dataSaver} label="insights & study cards">
                 <TabErrorBoundary label="Body Double Mode"><BodyDoubleMode /></TabErrorBoundary>
@@ -696,7 +705,7 @@ export default function DashboardClient({ initialData }: DashboardClientProps) {
             </div>
 
             {/* Column 3 — gamification momentum */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
               <SectionHeader label="Momentum" />
               <PendingXP />
               <DomainFlames />

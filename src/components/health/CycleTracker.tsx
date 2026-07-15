@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { signals } from '@/store/signals'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import { sastToday } from '@/lib/utils'
 
 type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal'
 type FlowLevel  = 'none' | 'light' | 'medium' | 'heavy'
@@ -100,16 +101,35 @@ function projectPhase(lastEntry: CycleEntry, target: Date): CyclePhase {
   return PHASE_ORDER[idx]
 }
 
-function getLastPeriodStart(entries: CycleEntry[]): Date | null {
-  const menstrualDates = new Set(entries.filter(e => e.phase === 'menstrual').map(e => e.entry_date))
-  const sorted = entries.filter(e => e.phase === 'menstrual').sort((a, b) => b.entry_date.localeCompare(a.entry_date))
-  if (!sorted.length) return null
-  let current = new Date(sorted[0].entry_date)
-  while (true) {
-    const prev = new Date(current)
-    prev.setDate(prev.getDate() - 1)
-    if (menstrualDates.has(prev.toISOString().split('T')[0])) { current = prev } else break
-  }
+// Date-only string math, done in UTC so it is identical on server and client
+// (avoids the SAST-vs-UTC hydration hazard from raw `new Date()` in render).
+function addDaysStr(dateStr: string, days: number): string {
+  const d = new Date(`${dateStr}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().split('T')[0]
+}
+function daysBetweenStr(fromStr: string, toStr: string): number {
+  return Math.round(
+    (new Date(`${toStr}T00:00:00Z`).getTime() - new Date(`${fromStr}T00:00:00Z`).getTime()) / 86400000,
+  )
+}
+
+// Which phase a given cycle day (1-based) falls in. Cutoffs match PHASE_INFO
+// durations exactly: menstrual 1–5, follicular 6–14, ovulation 15–17, luteal 18–28.
+function phaseForCycleDay(day: number): CyclePhase {
+  if (day <= 5) return 'menstrual'
+  if (day <= 14) return 'follicular'
+  if (day <= 17) return 'ovulation'
+  return 'luteal'
+}
+
+// Start date (YYYY-MM-DD) of the most recent run of consecutive menstrual entries.
+function getLastPeriodStart(entries: CycleEntry[]): string | null {
+  const menstrual = entries.filter(e => e.phase === 'menstrual').map(e => e.entry_date)
+  if (!menstrual.length) return null
+  const dates = new Set(menstrual)
+  let current = [...menstrual].sort((a, b) => b.localeCompare(a))[0]
+  while (dates.has(addDaysStr(current, -1))) current = addDaysStr(current, -1)
   return current
 }
 
@@ -484,17 +504,6 @@ const infoValue: React.CSSProperties = {
   fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, color: 'var(--text-secondary)',
 }
 
-function estimatePhaseFromDate(lastPeriodDateStr: string): CyclePhase {
-  const start = new Date(lastPeriodDateStr + 'T00:00:00')
-  const now = new Date(); now.setHours(0, 0, 0, 0)
-  const daysSince = Math.max(1, Math.floor((now.getTime() - start.getTime()) / 86400000) + 1)
-  const cycleDay = ((daysSince - 1) % 28) + 1
-  if (cycleDay <= 5) return 'menstrual'
-  if (cycleDay <= 14) return 'follicular'
-  if (cycleDay <= 17) return 'ovulation'
-  return 'luteal'
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function CycleTracker({ userId }: { userId: string }) {
@@ -515,39 +524,56 @@ export default function CycleTracker({ userId }: { userId: string }) {
 
   const supabase = useMemo(() => createClient(), [])
 
+  const loadEntries = useCallback(async () => {
+    const { data } = await supabase
+      .from('cycle_tracking').select('*')
+      .eq('user_id', userId).order('entry_date', { ascending: false })
+    setEntries((data as CycleEntry[]) ?? [])
+  }, [supabase, userId])
+
   useEffect(() => {
-    async function load() {
+    let active = true
+    ;(async () => {
       setLoading(true)
-      const { data } = await supabase
-        .from('cycle_tracking').select('*')
-        .eq('user_id', userId).order('entry_date', { ascending: false })
-      setEntries((data as CycleEntry[]) ?? [])
-      setLoading(false)
-    }
-    load()
-  }, [userId, supabase])
+      await loadEntries()
+      if (active) setLoading(false)
+    })()
+    return () => { active = false }
+  }, [loadEntries])
 
   const year  = activeMonth.getFullYear()
   const month = activeMonth.getMonth()
-  const today = new Date().toISOString().split('T')[0]
+  const today = sastToday()
   const entryByDate = new Map(entries.map(e => [e.entry_date, e]))
 
   const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
   const DAY_LABELS  = ['M','T','W','T','F','S','S']
 
-  // Cycle day computation
-  const periodStart = useMemo(() => getLastPeriodStart(entries), [entries])
-  const cycleDay    = periodStart ? (daysBetween(periodStart, new Date()) + 1) : null
+  // Cycle day + current phase are DERIVED from the last-period-start anchor and
+  // today's SAST date — not from the last logged entry — so they advance daily.
+  const periodStart   = useMemo(() => getLastPeriodStart(entries), [entries])
+  const cycleDay      = periodStart
+    ? (((daysBetweenStr(periodStart, today) % TOTAL_CYCLE_DAYS) + TOTAL_CYCLE_DAYS) % TOTAL_CYCLE_DAYS) + 1
+    : null
   const daysUntilNext = cycleDay ? Math.max(0, TOTAL_CYCLE_DAYS - cycleDay + 1) : null
 
   const latestEntry      = entries[0] ?? null
-  const currentPhaseInfo = latestEntry ? PHASE_INFO[latestEntry.phase] : null
+  const currentPhase: CyclePhase | null =
+    cycleDay !== null ? phaseForCycleDay(cycleDay) : (latestEntry?.phase ?? null)
+  const currentPhaseInfo = currentPhase ? PHASE_INFO[currentPhase] : null
 
   const next7Days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(); d.setDate(d.getDate() + i)
+    const dStr = addDaysStr(today, i)
+    const dow  = new Date(`${dStr}T00:00:00Z`).getUTCDay()
+    let phase: CyclePhase | null = null
+    if (cycleDay !== null) {
+      phase = phaseForCycleDay(((cycleDay - 1 + i) % TOTAL_CYCLE_DAYS) + 1)
+    } else if (latestEntry) {
+      phase = projectPhase(latestEntry, new Date(`${dStr}T00:00:00Z`))
+    }
     return {
-      label: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()],
-      phase: latestEntry ? projectPhase(latestEntry, d) : null,
+      label: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dow],
+      phase,
     }
   })
 
@@ -578,13 +604,26 @@ export default function CycleTracker({ userId }: { userId: string }) {
     if (!error) {
       if (logModal.date === today)
         signals.emit({ type: 'cycle_phase_logged', payload: { phase: modalPhase, energyLevel: modalEnergy } })
-      const { data } = await supabase
-        .from('cycle_tracking').select('*')
-        .eq('user_id', userId).order('entry_date', { ascending: false })
-      setEntries((data as CycleEntry[]) ?? [])
+      await loadEntries()
     }
     setSaving(false)
     setLogModal(null)
+  }
+
+  // Calculator: record the last-period-start date as the menstrual anchor so the
+  // app can derive today's cycle day, phase and predictions going forward.
+  async function saveAnchor(startDate: string) {
+    setSaving(true)
+    const { error } = await supabase.from('cycle_tracking').upsert({
+      user_id: userId, entry_date: startDate, phase: 'menstrual',
+      flow_level: 'medium', energy_level: 3, symptoms: [],
+      notes: 'Cycle start (from phase calculator)',
+    }, { onConflict: 'user_id,entry_date' })
+    if (!error) {
+      await loadEntries()
+      signals.emit({ type: 'cycle_phase_logged', payload: { phase: phaseForCycleDay((((daysBetweenStr(startDate, today) % TOTAL_CYCLE_DAYS) + TOTAL_CYCLE_DAYS) % TOTAL_CYCLE_DAYS) + 1), energyLevel: 3 } })
+    }
+    setSaving(false)
   }
 
   if (loading) {
@@ -609,8 +648,8 @@ export default function CycleTracker({ userId }: { userId: string }) {
           <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Track your phases, symptoms, and understand your body.</p>
         </div>
 
-        {/* Phase wizard — shown when no entries logged yet */}
-        {!latestEntry && (
+        {/* Phase wizard — shown until a period-start anchor exists to derive the cycle */}
+        {cycleDay === null && (
           <div style={{
             background: 'rgba(244,114,182,0.07)', border: '1px solid rgba(244,114,182,0.20)',
             borderRadius: 16, padding: 18, marginBottom: 20,
@@ -650,27 +689,23 @@ export default function CycleTracker({ userId }: { userId: string }) {
                   />
                 </div>
                 <button
-                  disabled={!wizardDate}
-                  onClick={() => {
+                  disabled={!wizardDate || saving}
+                  onClick={async () => {
                     if (!wizardDate) return
-                    const phase = estimatePhaseFromDate(wizardDate)
-                    setModalPhase(phase)
-                    setModalFlow(phase === 'menstrual' ? 'medium' : 'none')
-                    setModalEnergy(3)
-                    setModalSymptoms([])
-                    setModalNotes(`Estimated from last period date: ${wizardDate}`)
-                    setLogModal({ date: today })
-                    setShowWizard(false)
+                    const d = wizardDate
                     setWizardDate('')
+                    setShowWizard(false)
+                    await saveAnchor(d)
                   }}
                   style={{
-                    padding: '10px 20px', borderRadius: 10, border: 'none', cursor: wizardDate ? 'pointer' : 'default',
+                    padding: '10px 20px', borderRadius: 10, border: 'none', cursor: wizardDate && !saving ? 'pointer' : 'default',
                     background: wizardDate ? '#f472b6' : 'rgba(255,255,255,0.08)',
                     color: wizardDate ? '#000' : 'rgba(255,255,255,0.5)',
                     fontFamily: 'Sora,sans-serif', fontWeight: 700, fontSize: 13, flexShrink: 0,
+                    opacity: saving ? 0.7 : 1,
                   }}
                 >
-                  Calculate
+                  {saving ? 'Calculating…' : 'Calculate'}
                 </button>
               </div>
             )}
@@ -705,7 +740,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 CYCLE DAY {cycleDay}
               </div>
               <div style={{ fontFamily: 'Sora,sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--text-primary)', textTransform: 'capitalize', marginBottom: 4 }}>
-                {currentPhaseInfo ? `${latestEntry?.phase} Phase` : 'Log your phase'}
+                {currentPhaseInfo ? `${currentPhase} Phase` : 'Log your phase'}
               </div>
               {daysUntilNext !== null && daysUntilNext > 0 && (
                 <div style={{ fontFamily: 'DM Sans,sans-serif', fontSize: 13, color: '#fff' }}>
@@ -771,7 +806,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
             <h2 style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '1rem', margin: 0 }}>Phase Intelligence</h2>
             {currentPhaseInfo && (
               <button
-                onClick={() => setSciencePhase(latestEntry?.phase ?? null)}
+                onClick={() => setSciencePhase(currentPhase)}
                 style={{
                   padding: '4px 12px', borderRadius: 20, border: `1px solid ${currentPhaseInfo.color}40`,
                   background: `${currentPhaseInfo.color}10`, color: currentPhaseInfo.color,
@@ -789,7 +824,7 @@ export default function CycleTracker({ userId }: { userId: string }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <div style={{ width: 12, height: 12, borderRadius: '50%', background: currentPhaseInfo.color }} />
                 <span style={{ color: currentPhaseInfo.color, fontWeight: 700, textTransform: 'capitalize', fontSize: '1.1rem' }}>
-                  {latestEntry?.phase} Phase
+                  {currentPhase} Phase
                 </span>
                 <span style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem', marginLeft: 'auto' }}>Mood: {currentPhaseInfo.mood}</span>
               </div>
@@ -833,8 +868,8 @@ export default function CycleTracker({ userId }: { userId: string }) {
                 {PHASE_ORDER.map(p => (
                   <button key={p} onClick={() => setSciencePhase(p)} style={{
                     padding: '10px 12px', borderRadius: 12, cursor: 'pointer', textAlign: 'left',
-                    background: latestEntry?.phase === p ? `${PHASE_INFO[p].color}18` : 'rgba(255,255,255,0.06)',
-                    border: `1px solid ${latestEntry?.phase === p ? PHASE_INFO[p].color + '40' : 'rgba(255,255,255,0.07)'}`,
+                    background: currentPhase === p ? `${PHASE_INFO[p].color}18` : 'rgba(255,255,255,0.06)',
+                    border: `1px solid ${currentPhase === p ? PHASE_INFO[p].color + '40' : 'rgba(255,255,255,0.07)'}`,
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <div style={{ width: 7, height: 7, borderRadius: '50%', background: PHASE_INFO[p].color }} />

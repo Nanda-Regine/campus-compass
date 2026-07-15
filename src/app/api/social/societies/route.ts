@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const institution = new URL(request.url).searchParams.get('institution')
 
   let q = supabase.from('societies').select('*').order('created_at', { ascending: false }).limit(200)
-  if (institution) q = q.or(`institution.eq.${institution},institution.is.null`)
+  if (institution) q = q.or(`institution.eq."${String(institution).replace(/"/g, '')}",institution.is.null`)
   const { data: societies, error } = await q
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

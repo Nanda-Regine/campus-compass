@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const body = await req.json() as Record<string, unknown>
   // Explicit allowlist prevents mass-assignment of privileged columns.
   // Maps to the live safe_walk_sessions schema.
-  const { destination, contact_name, contact_phone, duration_minutes, started_at, check_in_at } = body
+  const { destination, contact_name, contact_phone, duration_minutes, started_at, check_in_at, status } = body
 
   // NOT NULL columns
   const dest = String(destination ?? '').trim()
@@ -19,6 +19,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'destination, contact_name, contact_phone and duration_minutes are required' }, { status: 400 })
   }
 
+  // Record the true outcome of the walk so the row is an accurate audit trail.
+  const completed = status === 'completed'
+  const alertSent = status === 'alert' || status === 'alert_triggered'
+  const nowIso = new Date().toISOString()
+
   const { data, error } = await supabase
     .from('safe_walk_sessions')
     .insert({
@@ -27,10 +32,10 @@ export async function POST(req: Request) {
       contact_name: name,
       contact_phone: phone,
       duration_minutes: Math.round(duration),
-      started_at: typeof started_at === 'string' && started_at ? started_at : new Date().toISOString(),
-      check_in_at: typeof check_in_at === 'string' && check_in_at ? check_in_at : null,
-      completed: false,
-      alert_sent: false,
+      started_at: typeof started_at === 'string' && started_at ? started_at : nowIso,
+      check_in_at: typeof check_in_at === 'string' && check_in_at ? check_in_at : (completed ? nowIso : null),
+      completed,
+      alert_sent: alertSent,
     })
     .select()
     .single()

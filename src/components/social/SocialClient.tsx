@@ -40,7 +40,7 @@ export default function SocialClient({ userId, userInstitution, initialOptIn, in
   const active = TAB_CONFIG.find(t => t.id === tab)!
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 96, display: 'flex' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', paddingBottom: 96, display: 'flex' }}>
 
       {/* Vertical side rail */}
       <div style={{

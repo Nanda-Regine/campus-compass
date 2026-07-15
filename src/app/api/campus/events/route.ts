@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     .limit(40)
 
   if (institution) {
-    query = query.or(`institution.eq.${institution},institution.is.null`)
+    query = query.or(`institution.eq."${String(institution).replace(/"/g, '')}",institution.is.null`)
   }
   if (category) query = query.eq('category', category)
 

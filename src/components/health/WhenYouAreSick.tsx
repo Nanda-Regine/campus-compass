@@ -2,6 +2,7 @@
 // ─── When You're Sick ─────────────────────────────────────────
 // Tabs: Symptoms · Home Remedies · Clinic Finder · Prescriptions · Women's Health · Medical Science
 import { useState } from 'react'
+import { sastToday } from '@/lib/utils'
 
 type Tab = 'symptoms'|'remedies'|'clinics'|'prescriptions'|'womens'|'science'
 const TABS: {id:Tab;label:string;icon:string}[] = [
@@ -216,7 +217,7 @@ function PrescriptionsTab() {
   const [adding,setAdding] = useState(false)
   const save=(updated:RxEntry[])=>{setMeds(updated);localStorage.setItem('varsityos-prescriptions',JSON.stringify(updated))}
   const add=()=>{if(!form.name)return;save([...meds,{id:Date.now(),...form}]);setForm({name:'',dose:'',frequency:'Once daily',nextRefill:'',instructions:''});setAdding(false)}
-  const today=new Date().toISOString().split('T')[0]
+  const today=sastToday()
   return (
     <div style={{display:'flex',flexDirection:'column',gap:12}}>
       {meds.map(m=>(

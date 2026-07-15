@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { sastToday, sastDatePlus } from '@/lib/utils'
 
 interface RxEntry { id: number; name: string; dose: string; frequency: string; nextRefill: string; instructions: string }
 
@@ -14,8 +15,10 @@ export default function PrescriptionReminderCard() {
     } catch { /* ignore */ }
   }, [])
 
-  const today = new Date().toISOString().split('T')[0]
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+  // Use SAST-anchored dates so a refill due "today"/"tomorrow" is correct for SA
+  // users (UTC toISOString() is up to 2h behind SAST and mislabels near midnight).
+  const today = sastToday()
+  const tomorrow = sastDatePlus(1)
   const urgent = meds.filter(m => m.nextRefill && m.nextRefill <= tomorrow)
   if (!urgent.length) return null
 

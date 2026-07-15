@@ -26,7 +26,7 @@ export default async function SocialPage() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg-base)', position: 'relative', overflowX: 'clip' }}>
-      <AmbientImage zone="community" opacity={0.26} blurPx={8} saturation={1.3} overlayColor="rgba(5,4,12,0.55)" />
+      <AmbientImage zone="community" opacity={0.42} blurPx={6} saturation={1.4} overlayColor="linear-gradient(180deg,rgba(5,4,12,0.5) 0%,rgba(5,4,12,0.6) 100%)" />
       <TopBar title="Social" />
       <SocialClient
         userId={user.id}

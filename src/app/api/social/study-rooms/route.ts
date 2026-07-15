@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
   const nowIso = new Date().toISOString()
 
   let q = supabase.from('study_rooms').select('*').gt('ends_at', nowIso).order('created_at', { ascending: false }).limit(60)
-  if (institution) q = q.or(`institution.eq.${institution},institution.is.null`)
+  // Double-quote the value so commas/parens in institution names (e.g. "Nelson
+  // Mandela University (NMU)") don't break out of the PostgREST .or() filter.
+  if (institution) q = q.or(`institution.eq."${String(institution).replace(/"/g, '')}",institution.is.null`)
   const { data: rooms, error } = await q
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

@@ -58,3 +58,7 @@ public/fallback-*.js.map
 public/worker-*.js
 public/worker-*.js.map
 .env*
+
+# local dev screenshot helper (contains creds — never commit)
+vos-shot.mjs
+*-shot.mjs
