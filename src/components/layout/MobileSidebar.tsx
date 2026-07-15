@@ -7,7 +7,8 @@ import {
   Home, BookOpen, Wallet, Sparkles, Utensils, Briefcase,
   Users, UserCircle, Heart, Dumbbell, Moon, Shield,
   MapPin, MessageCircle, Award, Building2, X,
-  GraduationCap, Globe, Flame, Rocket,
+  GraduationCap, Rocket, Bell, FileText, Link2, Coins,
+  Brain, Globe2, Layers, ShoppingBag, Landmark, Megaphone,
 } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { APP_PREFIXES } from '@/lib/appPrefixes'
@@ -20,43 +21,59 @@ const SECTIONS: Section[] = [
   {
     id: 'core', label: 'Core',
     items: [
-      { href: '/dashboard', icon: Home,     label: 'Dashboard', accent: '#00CFA0', emoji: '🏠' },
-      { href: '/nova',      icon: Sparkles, label: 'Nova AI',   accent: '#A855F7', emoji: '✨' },
+      { href: '/dashboard',  icon: Home,     label: 'Dashboard',  accent: '#00CFA0', emoji: '🏠' },
+      { href: '/nova',       icon: Sparkles, label: 'Nova AI',    accent: '#A855F7', emoji: '✨' },
+      { href: '/broadcasts', icon: Bell,     label: 'Broadcasts', accent: '#38bdf8', emoji: '🔔' },
     ],
   },
   {
     id: 'academic', label: 'Academic',
     items: [
-      { href: '/study',    icon: BookOpen,      label: 'Study Room',  accent: '#A855F7', emoji: '📚' },
-      { href: '/budget',   icon: Wallet,        label: 'Budget',      accent: '#D4A84B', emoji: '💸' },
-      { href: '/bursaries',icon: Award,         label: 'Bursaries',   accent: '#5B9CF5', emoji: '🎓' },
+      { href: '/study',     icon: BookOpen, label: 'Study',     accent: '#A855F7', emoji: '📚' },
+      { href: '/notes',     icon: FileText, label: 'Notes',     accent: '#4ecf9e', emoji: '📝' },
+      { href: '/bursaries', icon: Award,    label: 'Bursaries', accent: '#5B9CF5', emoji: '🎓' },
+      { href: '/lms',       icon: Link2,    label: 'LMS Sync',  accent: '#6366f1', emoji: '🔗' },
+    ],
+  },
+  {
+    id: 'money', label: 'Money',
+    items: [
+      { href: '/budget',  icon: Wallet, label: 'Budget',  accent: '#D4A84B', emoji: '💸' },
+      { href: '/stokvel', icon: Coins,  label: 'Stokvel', accent: '#f59e0b', emoji: '🪙' },
     ],
   },
   {
     id: 'life', label: 'Life',
     items: [
-      { href: '/meals',    icon: Utensils, label: 'Meals',    accent: '#E87040', emoji: '🍲' },
-      { href: '/housing',  icon: Home,     label: 'Housing',  accent: '#06B6D4', emoji: '🏠' },
-      { href: '/health',   icon: Heart,    label: 'Health',   accent: '#FB7185', emoji: '🏥' },
-      { href: '/fitness',  icon: Dumbbell, label: 'Fitness',  accent: '#34D399', emoji: '💪' },
-      { href: '/sleep',    icon: Moon,     label: 'Sleep',    accent: '#818CF8', emoji: '🌙' },
-      { href: '/safety',   icon: Shield,   label: 'Safety',   accent: '#10B981', emoji: '🛡️' },
-      { href: '/movement', icon: MapPin,   label: 'Movement', accent: '#06B6D4', emoji: '🚌' },
+      { href: '/meals',         icon: Utensils, label: 'Meals',    accent: '#E87040', emoji: '🍲' },
+      { href: '/housing',       icon: Home,     label: 'Housing',  accent: '#06B6D4', emoji: '🏠' },
+      { href: '/health',        icon: Heart,    label: 'Health',   accent: '#FB7185', emoji: '🏥' },
+      { href: '/fitness',       icon: Dumbbell, label: 'Fitness',  accent: '#34D399', emoji: '💪' },
+      { href: '/sleep',         icon: Moon,     label: 'Sleep',    accent: '#818CF8', emoji: '🌙' },
+      { href: '/regulate',      icon: Brain,    label: 'Regulate', accent: '#c084fc', emoji: '🧘' },
+      { href: '/safety',        icon: Shield,   label: 'Safety',   accent: '#10B981', emoji: '🛡️' },
+      { href: '/movement',      icon: MapPin,   label: 'Movement', accent: '#06B6D4', emoji: '🚌' },
+      { href: '/international', icon: Globe2,   label: 'Intl Hub', accent: '#38BDF8', emoji: '🌍' },
     ],
   },
   {
     id: 'career', label: 'Career',
     items: [
-      { href: '/career',         icon: Briefcase, label: 'Career OS', accent: '#5B9CF5', emoji: '💼' },
-      { href: '/dashboard/work', icon: Building2, label: 'Work',      accent: '#D4A84B', emoji: '🏢' },
+      { href: '/career',         icon: Briefcase, label: 'Career',     accent: '#5B9CF5', emoji: '💼' },
+      { href: '/skills',         icon: Layers,    label: 'Skills',     accent: '#38BDF8', emoji: '🧩' },
+      { href: '/dashboard/work', icon: Building2, label: 'Work',       accent: '#D4A84B', emoji: '🏢' },
       { href: '/launchpad',      icon: Rocket,    label: 'Launch Pad', accent: '#6366F1', emoji: '🚀' },
     ],
   },
   {
     id: 'community', label: 'Community',
     items: [
-      { href: '/dashboard/groups', icon: Users,         label: 'Groups', accent: '#00CFA0', emoji: '👥' },
-      { href: '/social',           icon: MessageCircle, label: 'Social', accent: '#7090D0', emoji: '💬' },
+      { href: '/dashboard/groups', icon: Users,         label: 'Groups',      accent: '#00CFA0', emoji: '👥' },
+      { href: '/social',           icon: MessageCircle, label: 'Social',      accent: '#7090D0', emoji: '💬' },
+      { href: '/marketplace',      icon: ShoppingBag,   label: 'Marketplace', accent: '#f59e0b', emoji: '🛒' },
+      { href: '/tutoring',         icon: GraduationCap, label: 'Tutoring',    accent: '#4ecf9e', emoji: '👩‍🏫' },
+      { href: '/civic',            icon: Landmark,      label: 'Civic',       accent: '#38BDF8', emoji: '🏛️' },
+      { href: '/src',              icon: Megaphone,     label: 'SRC',         accent: '#8b5cf6', emoji: '📢' },
     ],
   },
 ]
