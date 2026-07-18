@@ -35,9 +35,9 @@ Cross-cutting: **gamification** (9 levels, domain flames, compound days, 11 arch
 
 | Plan | Price | Nova access |
 |------|-------|-------------|
-| **Free** | R0/month | Free tier — core safety, academic & money tools always free |
-| **Scholar** | R39/month | Expanded Nova + premium tools |
-| **Premium** | R79/month | Highest Nova limits |
+| **Free** | R0/month | 20 Nova messages/mo — core safety, academic & money tools always free |
+| **Nova Scholar** | R29/month | 150 Nova messages/mo + premium tools |
+| **Nova Unlimited** | R89/month | Unlimited Nova + highest limits |
 
 Payments via **Paystack** recurring monthly subscriptions (ZAR), verified with HMAC-SHA512 webhook signatures.
 
