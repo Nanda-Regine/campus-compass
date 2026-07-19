@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Privacy Policy</h1>
-          <p className="font-mono text-xs text-white">Last updated: 19 March 2026 · Compliant with POPIA (Act 4 of 2013)</p>
+          <p className="font-mono text-xs text-white">Last updated: 19 July 2026 · Compliant with POPIA (Act 4 of 2013)</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white">
@@ -107,6 +107,11 @@ export default function PrivacyPage() {
               <li><strong className="text-white">Anthropic, PBC:</strong> AI processing for Nova responses — see Section 5</li>
               <li><strong className="text-white">Paystack:</strong> Payment processing — a PCI-DSS Level 1 compliant payment service provider</li>
               <li><strong className="text-white">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
+              <li><strong className="text-white">Google LLC (Analytics &amp; Tag Manager):</strong> Usage analytics — loaded only with your cookie consent (see Section 11)</li>
+              <li><strong className="text-white">PostHog Inc.:</strong> Product analytics — loaded only with your cookie consent (see Section 11)</li>
+              <li><strong className="text-white">Arcjet:</strong> Bot detection and abuse prevention — processes IP address and request metadata</li>
+              <li><strong className="text-white">Upstash:</strong> Rate-limiting infrastructure — processes an IP address / identifier to prevent abuse</li>
+              <li><strong className="text-white">Inngest:</strong> Background job processing (e.g. notifications and scheduled tasks)</li>
               <li><strong className="text-white">Law enforcement:</strong> Only when required by a valid legal order under South African law</li>
             </ul>
             <p className="mt-3 text-white text-xs">All third-party processors are bound by data processing agreements ensuring POPIA-equivalent protections.</p>
@@ -114,7 +119,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">7. Cross-Border Data Transfers</h2>
-            <p>Some of our service providers (Supabase, Anthropic, Vercel) process data outside South Africa. Under POPIA s72, we may transfer personal information to foreign countries only where:</p>
+            <p>Some of our service providers (Supabase, Anthropic, Vercel, Google, PostHog, Arcjet, Upstash, Inngest) process data outside South Africa. Under POPIA s72, we may transfer personal information to foreign countries only where:</p>
             <ul className="space-y-1 list-disc list-inside text-white mt-2">
               <li>The recipient country has adequate data protection laws; or</li>
               <li>We have a binding data processing agreement in place with adequate protections; or</li>
@@ -144,7 +149,7 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white">
               <li><strong className="text-white">Account data:</strong> Retained while your account is active + 12 months after deletion request</li>
               <li><strong className="text-white">Financial/academic data:</strong> Retained while account is active + 6 months after closure</li>
-              <li><strong className="text-white">Nova conversations:</strong> 90 days for paying subscribers (Scholar, Premium, Nova Unlimited); not stored beyond the session for free users</li>
+              <li><strong className="text-white">Nova conversations:</strong> 90 days for paying subscribers (Nova Scholar, Nova Unlimited); not stored beyond the session for free users</li>
               <li><strong className="text-white">Anonymous analytics:</strong> 24 months</li>
               <li><strong className="text-white">Payment records:</strong> 5 years (required by South African tax law — Income Tax Act)</li>
               <li><strong className="text-white">Security logs:</strong> 90 days</li>
@@ -165,8 +170,15 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="font-display font-bold text-white text-lg mb-3">11. Cookies</h2>
-            <p>We use only essential cookies (authentication session management). We do not use tracking cookies, advertising cookies, or third-party analytics cookies that identify you personally. Session cookies are deleted when you log out.</p>
+            <h2 className="font-display font-bold text-white text-lg mb-3">11. Cookies &amp; Analytics</h2>
+            <p className="mb-2">We use <strong className="text-white">essential cookies</strong> (authentication and session management) that are required for the platform to work — these are always on and are cleared when you log out.</p>
+            <p className="mb-2">With your consent, we also use <strong className="text-white">analytics cookies and tags</strong> to understand how the app is used so we can improve it:</p>
+            <ul className="space-y-1.5 list-disc list-inside text-white">
+              <li><strong className="text-white">Google Analytics 4 &amp; Google Tag Manager</strong> (IDs G-87QR50FJ7N, GT-PJ4PM27T, GTM-W7R77VP9) — usage and traffic analytics</li>
+              <li><strong className="text-white">PostHog</strong> — product analytics (how features are used)</li>
+              <li><strong className="text-white">Vercel Analytics</strong> — privacy-friendly, aggregated page-view data</li>
+            </ul>
+            <p className="mt-3">When you first visit, our cookie banner lets you choose <strong className="text-white">&quot;Accept all&quot;</strong> or <strong className="text-white">&quot;Essential only&quot;</strong>. Choosing &quot;Essential only&quot; disables the analytics above. You can change your choice at any time by clearing this site&apos;s data in your browser. We do <strong className="text-white">not</strong> use advertising or cross-site tracking cookies.</p>
           </section>
 
           <section>

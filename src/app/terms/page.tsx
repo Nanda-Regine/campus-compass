@@ -23,7 +23,7 @@ export default function TermsPage() {
         <div className="mb-10">
           <p className="font-mono text-[0.6rem] text-teal-400 uppercase tracking-widest mb-2">VarsityOS</p>
           <h1 className="font-display font-black text-3xl text-white mb-2">Terms &amp; Conditions</h1>
-          <p className="font-mono text-xs text-white">Last updated: 19 March 2026 · Governed by the laws of South Africa</p>
+          <p className="font-mono text-xs text-white">Last updated: 19 July 2026 · Governed by the laws of South Africa</p>
         </div>
 
         <div className="space-y-8 font-mono text-sm leading-relaxed text-white">
