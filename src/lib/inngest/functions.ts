@@ -1,7 +1,30 @@
 import { inngest } from './client'
 import { createAdminSupabaseClient } from '@/lib/supabase/admin'
-import { notifyUser } from '@/lib/push-notify'
+import { notifyUser, type PushPayload } from '@/lib/push-notify'
 import { canSendPush } from '@/lib/webpush'
+
+// Batched fan-out: send push notifications in parallel chunks rather than one
+// sequential `await notifyUser` per user, so a large audience can't blow the
+// Inngest step execution limit. Returns the total number successfully sent.
+async function notifyBatched<T>(
+  supabase: Parameters<typeof notifyUser>[0],
+  items: T[],
+  build: (item: T) => { userId: string; payload: PushPayload },
+  batchSize = 50,
+): Promise<number> {
+  let sent = 0
+  for (let i = 0; i < items.length; i += batchSize) {
+    const chunk = items.slice(i, i + batchSize)
+    const results = await Promise.all(
+      chunk.map((it) => {
+        const { userId, payload } = build(it)
+        return notifyUser(supabase, userId, payload)
+      }),
+    )
+    sent += results.reduce((a, b) => a + b, 0)
+  }
+  return sent
+}
 
 // ─── Attendance Risk Alert ────────────────────────────────────────────────────
 // Fires daily at 18:00 SAST.
@@ -14,63 +37,35 @@ export const attendanceAlert = inngest.createFunction(
     const supabase = createAdminSupabaseClient()
 
     const atRisk = await step.run('find-attendance-risk', async () => {
-      // Aggregate per user+module: count present/late/online vs total
-      const { data: recs } = await supabase
-        .from('attendance_records')
-        .select('user_id, module_id, status, modules!inner(module_name)')
-        .neq('status', 'cancelled')
-
-      if (!recs?.length) return []
-
-      // Group by user → module
-      type Rec = { user_id: string; module_id: string; status: string; modules: unknown }
-      const byUserModule: Record<string, { attended: number; total: number; name: string }> = {}
-      for (const r of recs as unknown as Rec[]) {
-        const moduleName = (Array.isArray(r.modules) ? (r.modules[0] as { module_name: string })?.module_name : (r.modules as { module_name: string })?.module_name) ?? 'Unknown'
-        const key = `${r.user_id}::${r.module_id}`
-        if (!byUserModule[key]) byUserModule[key] = { attended: 0, total: 0, name: moduleName }
-        byUserModule[key].total++
-        if (r.status !== 'absent') byUserModule[key].attended++
-      }
-
-      const results: { userId: string; moduleName: string; pct: number }[] = []
-      for (const [key, stat] of Object.entries(byUserModule)) {
-        if (stat.total < 3) continue // not enough data yet
-        const pct = Math.round((stat.attended / stat.total) * 100)
-        if (pct < 80) {
-          const userId = key.split('::')[0]
-          results.push({ userId, moduleName: stat.name, pct })
-        }
-      }
-
-      // Deduplicate: one notification per user (worst module)
-      const worst: Record<string, { moduleName: string; pct: number }> = {}
-      for (const r of results) {
-        if (!worst[r.userId] || r.pct < worst[r.userId].pct) {
-          worst[r.userId] = { moduleName: r.moduleName, pct: r.pct }
-        }
-      }
-      return Object.entries(worst).map(([userId, v]) => ({ userId, ...v }))
-    }) as { userId: string; moduleName: string; pct: number }[]
+      // Aggregation runs in Postgres (get_attendance_risk RPC) — returns only the
+      // worst at-risk module per user. Bounded to the last 120 days. Replaces the
+      // old "select all attendance_records into JS" scan that OOM'd at scale.
+      const since = new Date(Date.now() - 120 * 86400000).toISOString().slice(0, 10)
+      const { data } = await supabase.rpc('get_attendance_risk', {
+        p_since: since, p_min_sessions: 3, p_threshold: 80,
+      })
+      return (data ?? []) as { user_id: string; module_name: string; pct: number }[]
+    }) as { user_id: string; module_name: string; pct: number }[]
 
     if (!atRisk.length) return { sent: 0 }
 
     // Only send to users who have push subscriptions
     const { data: subs } = await supabase.from('push_subscriptions').select('user_id')
     const subSet = new Set((subs ?? []).map((s: { user_id: string }) => s.user_id))
-    const toNotify = atRisk.filter(r => subSet.has(r.userId))
+    const toNotify = atRisk.filter(r => subSet.has(r.user_id))
 
     const totalSent = await step.run('send-attendance-alerts', async () => {
-      let count = 0
-      for (const r of toNotify) {
-        count += await notifyUser(supabase, r.userId, {
+      // Batched fan-out (50 at a time) instead of one sequential await per user.
+      const month = new Date().toISOString().slice(0, 7)
+      return notifyBatched(supabase, toNotify, r => ({
+        userId: r.user_id,
+        payload: {
           title: r.pct < 70 ? '🚨 Attendance critical' : '⚠️ Attendance warning',
-          body:  `${r.moduleName}: ${r.pct}% attendance. 80% required for exam entry. Mark a catch-up session today.`,
+          body:  `${r.module_name}: ${r.pct}% attendance. 80% required for exam entry. Mark a catch-up session today.`,
           url:   '/study?tab=attendance',
-          tag:   `attendance-risk-${new Date().toISOString().slice(0, 7)}`,
-        })
-      }
-      return count
+          tag:   `attendance-risk-${month}`,
+        },
+      }))
     })
 
     logger.info(`Attendance alert: ${totalSent} sent to ${toNotify.length} at-risk users`)
