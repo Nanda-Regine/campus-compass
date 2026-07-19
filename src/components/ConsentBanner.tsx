@@ -43,20 +43,28 @@ export default function ConsentBanner() {
   }, [visible])
 
   function applyConsent(c: ConsentChoice) {
+    if (typeof window === 'undefined') return
+    // Google Consent Mode v2 — update live so GA4/GTM (and any ad tags) start or
+    // stop tracking immediately, no reload needed. Default is 'denied' (set in
+    // the beforeInteractive consent-default script in layout.tsx).
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
+    const granted = c === 'all'
+    gtag?.('consent', 'update', {
+      ad_storage: granted ? 'granted' : 'denied',
+      ad_user_data: granted ? 'granted' : 'denied',
+      ad_personalization: granted ? 'granted' : 'denied',
+      analytics_storage: granted ? 'granted' : 'denied',
+    })
+
     if (c === 'essential') {
-      if (typeof window !== 'undefined' && (window as { posthog?: { opt_out_capturing?: () => void } }).posthog?.opt_out_capturing) {
-        (window as { posthog?: { opt_out_capturing?: () => void } }).posthog!.opt_out_capturing!()
-      }
-      if (typeof window !== 'undefined') {
-        ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = false
-      }
+      const ph = (window as { posthog?: { opt_out_capturing?: () => void } }).posthog
+      ph?.opt_out_capturing?.()
+      ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = false
     } else if (c === 'all') {
-      if (typeof window !== 'undefined') {
-        ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = true
-        const ph = (window as { posthog?: { opt_in_capturing?: () => void; has_opted_out_capturing?: () => boolean } }).posthog
-        if (ph?.has_opted_out_capturing?.() && ph.opt_in_capturing) {
-          ph.opt_in_capturing()
-        }
+      ;(window as unknown as Record<string, unknown>).varsityos_analytics_allowed = true
+      const ph = (window as { posthog?: { opt_in_capturing?: () => void; has_opted_out_capturing?: () => boolean } }).posthog
+      if (ph?.has_opted_out_capturing?.() && ph.opt_in_capturing) {
+        ph.opt_in_capturing()
       }
     }
   }
@@ -102,8 +110,8 @@ export default function ConsentBanner() {
             Your data, your choice
           </p>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.69rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            VarsityOS uses essential cookies to keep you logged in. We'd also like to use analytics cookies (PostHog, Vercel)
-            to improve the app. Under POPIA you can choose what to allow.{' '}
+            VarsityOS uses essential cookies to keep you logged in. We'd also like to use analytics cookies
+            (Google Analytics, PostHog, Vercel, Hotjar) to improve the app. Under POPIA you can choose what to allow.{' '}
             <a href="/privacy" style={{ color: 'var(--teal)', textDecoration: 'none' }}>Privacy Policy →</a>
           </p>
           <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.69rem', color: 'var(--text-tertiary)', marginTop: 4 }}>

@@ -109,6 +109,8 @@ export default function PrivacyPage() {
               <li><strong className="text-white">Vercel Inc.:</strong> Application hosting and analytics — anonymised page view data only</li>
               <li><strong className="text-white">Google LLC (Analytics &amp; Tag Manager):</strong> Usage analytics — loaded only with your cookie consent (see Section 11)</li>
               <li><strong className="text-white">PostHog Inc.:</strong> Product analytics — loaded only with your cookie consent (see Section 11)</li>
+              <li><strong className="text-white">Hotjar Ltd:</strong> Aggregate usage/session insights — loaded only with your cookie consent (see Section 11)</li>
+              <li><strong className="text-white">Crisp IM SAS:</strong> In-app live chat support — active only if you use the chat widget</li>
               <li><strong className="text-white">Arcjet:</strong> Bot detection and abuse prevention — processes IP address and request metadata</li>
               <li><strong className="text-white">Upstash:</strong> Rate-limiting infrastructure — processes an IP address / identifier to prevent abuse</li>
               <li><strong className="text-white">Inngest:</strong> Background job processing (e.g. notifications and scheduled tasks)</li>
@@ -119,7 +121,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="font-display font-bold text-white text-lg mb-3">7. Cross-Border Data Transfers</h2>
-            <p>Some of our service providers (Supabase, Anthropic, Vercel, Google, PostHog, Arcjet, Upstash, Inngest) process data outside South Africa. Under POPIA s72, we may transfer personal information to foreign countries only where:</p>
+            <p>Some of our service providers (Supabase, Anthropic, Vercel, Google, PostHog, Hotjar, Crisp, Arcjet, Upstash, Inngest) process data outside South Africa. Under POPIA s72, we may transfer personal information to foreign countries only where:</p>
             <ul className="space-y-1 list-disc list-inside text-white mt-2">
               <li>The recipient country has adequate data protection laws; or</li>
               <li>We have a binding data processing agreement in place with adequate protections; or</li>
@@ -176,9 +178,10 @@ export default function PrivacyPage() {
             <ul className="space-y-1.5 list-disc list-inside text-white">
               <li><strong className="text-white">Google Analytics 4 &amp; Google Tag Manager</strong> (IDs G-87QR50FJ7N, GT-PJ4PM27T, GTM-W7R77VP9) — usage and traffic analytics</li>
               <li><strong className="text-white">PostHog</strong> — product analytics (how features are used)</li>
+              <li><strong className="text-white">Hotjar</strong> — aggregate usage and session insights</li>
               <li><strong className="text-white">Vercel Analytics</strong> — privacy-friendly, aggregated page-view data</li>
             </ul>
-            <p className="mt-3">When you first visit, our cookie banner lets you choose <strong className="text-white">&quot;Accept all&quot;</strong> or <strong className="text-white">&quot;Essential only&quot;</strong>. Choosing &quot;Essential only&quot; disables the analytics above. You can change your choice at any time by clearing this site&apos;s data in your browser. We do <strong className="text-white">not</strong> use advertising or cross-site tracking cookies.</p>
+            <p className="mt-3">We implement <strong className="text-white">Google Consent Mode v2</strong>: all analytics and advertising storage defaults to <em>denied</em>, so no analytics cookies are set until you opt in. When you first visit, our cookie banner lets you choose <strong className="text-white">&quot;Accept all&quot;</strong> or <strong className="text-white">&quot;Essential only&quot;</strong>. Choosing &quot;Essential only&quot; keeps the analytics above disabled; you can change your choice at any time by clearing this site&apos;s data in your browser. We also offer optional <strong className="text-white">live chat support (Crisp)</strong>, which loads its own functional cookies only when you open the chat. We do <strong className="text-white">not</strong> use advertising or cross-site tracking cookies.</p>
           </section>
 
           <section>

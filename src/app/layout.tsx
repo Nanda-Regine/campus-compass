@@ -580,6 +580,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
+        {/* ── Google Consent Mode v2 (POPIA) ──
+            MUST run before GTM/gtag load. Defaults every tracking storage to
+            'denied' so no analytics/ads cookies fire until the user opts in via
+            ConsentBanner. Returning users who previously chose "Accept all" are
+            granted immediately from localStorage. ConsentBanner calls
+            gtag('consent','update',…) live on choice — no reload needed. */}
+        <Script
+          id="consent-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'granted',security_storage:'granted',wait_for_update:500});try{if(localStorage.getItem('varsityos_cookie_consent')==='all'){gtag('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});}}catch(e){}`,
+          }}
+        />
+
         {/* ── Google Tag Manager ── */}
         <Script
           id="gtm-head"
@@ -602,17 +616,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
-        {/* ── Hotjar ── */}
+        {/* ── Hotjar (session insights) ──
+            POPIA: only initialises for users who chose "Accept all". First-time
+            opt-in starts Hotjar on the next navigation (errs toward not tracking). */}
         {HOTJAR_ENABLED && (
           <Script id="hotjar" strategy="afterInteractive">
-            {`(function(h,o,t,j,a,r){
+            {`try{if(localStorage.getItem('varsityos_cookie_consent')==='all'){(function(h,o,t,j,a,r){
 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
 h._hjSettings={hjid:${HOTJAR_ID},hjsv:6};
 a=o.getElementsByTagName('head')[0];
 r=o.createElement('script');r.async=1;
 r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
 a.appendChild(r);
-})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
+})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');}}catch(e){}`}
           </Script>
         )}
 
