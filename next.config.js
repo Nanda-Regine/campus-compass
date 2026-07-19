@@ -173,7 +173,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://www.googletagmanager.com https://static.hotjar.com https://client.crisp.chat https://www.gstatic.com https://us-assets.i.posthog.com https://us.posthog.com",
+              // Prod drops 'unsafe-eval' (no JS eval needed — mapbox-gl v3 & app
+              // code don't use it) but keeps 'wasm-unsafe-eval' for Tesseract OCR.
+              // Dev keeps 'unsafe-eval' for React Fast Refresh / HMR.
+              // ('unsafe-inline' still needed until a nonce migration — see notes.)
+              `script-src 'self' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : "'wasm-unsafe-eval'"} 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://www.googletagmanager.com https://static.hotjar.com https://client.crisp.chat https://www.gstatic.com https://us-assets.i.posthog.com https://us.posthog.com`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat",
               "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat",
               "img-src 'self' data: blob: https: https://client.crisp.chat",
