@@ -1,7 +1,17 @@
 import { openDB, type IDBPDatabase } from 'idb'
 
 const DB_NAME = 'varsityos'
-const DB_VERSION = 2
+const DB_VERSION = 3
+
+type PendingWriteValue = {
+  id?: number
+  table: string
+  operation: string
+  data: Record<string, unknown>
+  timestamp: number
+  retries: number
+  options?: { onConflict?: string }
+}
 
 export type OfflineDB = IDBPDatabase<{
   timetable: { key: string; value: Record<string, unknown> }
@@ -15,17 +25,10 @@ export type OfflineDB = IDBPDatabase<{
   savings_goals: { key: string; value: Record<string, unknown> }
   exams: { key: string; value: Record<string, unknown> }
   meal_plans: { key: string; value: Record<string, unknown> }
-  pending_writes: {
-    key: number
-    value: {
-      id?: number
-      table: string
-      operation: string
-      data: Record<string, unknown>
-      timestamp: number
-      retries: number
-    }
-  }
+  pending_writes: { key: number; value: PendingWriteValue }
+  // Dead-letter: writes that exhausted retries land here instead of being
+  // silently dropped, so the UI can surface "N changes couldn't sync".
+  failed_writes: { key: number; value: PendingWriteValue & { failedAt: number; lastError?: string } }
 }>
 
 let dbPromise: Promise<OfflineDB> | null = null
@@ -44,17 +47,8 @@ export function getOfflineDB(): Promise<OfflineDB> {
       savings_goals: { key: string; value: Record<string, unknown> }
       exams: { key: string; value: Record<string, unknown> }
       meal_plans: { key: string; value: Record<string, unknown> }
-      pending_writes: {
-        key: number
-        value: {
-          id?: number
-          table: string
-          operation: string
-          data: Record<string, unknown>
-          timestamp: number
-          retries: number
-        }
-      }
+      pending_writes: { key: number; value: PendingWriteValue }
+      failed_writes: { key: number; value: PendingWriteValue & { failedAt: number; lastError?: string } }
     }>(DB_NAME, DB_VERSION, {
       upgrade(db) {
         if (!db.objectStoreNames.contains('timetable')) {
@@ -82,6 +76,9 @@ export function getOfflineDB(): Promise<OfflineDB> {
         }
         if (!db.objectStoreNames.contains('pending_writes')) {
           db.createObjectStore('pending_writes', { keyPath: 'id', autoIncrement: true })
+        }
+        if (!db.objectStoreNames.contains('failed_writes')) {
+          db.createObjectStore('failed_writes', { keyPath: 'id', autoIncrement: true })
         }
       },
     }) as Promise<OfflineDB>

@@ -134,6 +134,9 @@ export default function PomodoroTimer({ modules, tasks, userId }: PomodoroTimerP
           })
         } else {
           await queueWrite('study_sessions', 'insert', {
+            // client id → idempotent re-flush (no duplicate session / XP) if the
+            // response is lost mid-sync on a flaky connection
+            id: crypto.randomUUID(),
             user_id: userId,
             duration_minutes: durationMinutes,
             task_id: selectedTaskId || null,

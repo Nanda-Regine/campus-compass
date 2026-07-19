@@ -10,6 +10,11 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type PendingOp = 'insert' | 'update' | 'upsert' | 'delete'
 
+export interface QueueOptions {
+  /** PostgREST onConflict target for upserts, e.g. 'user_id,date'. */
+  onConflict?: string
+}
+
 export interface PendingWrite {
   id?: number
   table: string
@@ -17,23 +22,93 @@ export interface PendingWrite {
   data: Record<string, unknown>
   timestamp: number
   retries: number
+  options?: QueueOptions
 }
 
 const MAX_RETRIES = 5
 
 // ── Queue a write while offline ──────────────────────────────────────────────
+// For inserts, pass a client-generated `id` (e.g. crypto.randomUUID()) in `data`
+// so re-flushing after a lost response upserts-on-id instead of duplicating.
 export async function queueWrite(
   table: string,
   operation: PendingOp,
   data: Record<string, unknown>,
+  options?: QueueOptions,
 ): Promise<void> {
   if (typeof window === 'undefined') return
   try {
     const db = await getOfflineDB()
-    await db.add('pending_writes', { table, operation, data, timestamp: Date.now(), retries: 0 })
+    await db.add('pending_writes', { table, operation, data, timestamp: Date.now(), retries: 0, options })
   } catch (err) {
     console.warn('[offline] queueWrite failed:', err)
   }
+}
+
+export async function getFailedCount(): Promise<number> {
+  if (typeof window === 'undefined') return 0
+  try {
+    const db = await getOfflineDB()
+    return await db.count('failed_writes')
+  } catch {
+    return 0
+  }
+}
+
+// ── Offline-safe mutation helpers ────────────────────────────────────────────
+// Do the write online; if offline (or the request errors/throws) queue it for
+// replay. Inserts always carry a client id so a lost-response replay upserts on
+// id instead of duplicating. Rooms use these instead of raw supabase.from(...).
+
+export async function offlineInsert<T = Record<string, unknown>>(
+  supabase: SupabaseClient,
+  table: string,
+  data: Record<string, unknown>,
+  select = '*',
+): Promise<{ row: T; queued: boolean }> {
+  const row: Record<string, unknown> = data.id != null ? data : { ...data, id: crypto.randomUUID() }
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine
+  if (!offline) {
+    try {
+      const { data: inserted, error } = await supabase.from(table).insert(row).select(select).single()
+      if (!error && inserted) return { row: inserted as unknown as T, queued: false }
+    } catch { /* fall through to queue */ }
+  }
+  await queueWrite(table, 'insert', row)
+  return { row: row as unknown as T, queued: true }
+}
+
+export async function offlineUpdate(
+  supabase: SupabaseClient,
+  table: string,
+  id: string | number,
+  patch: Record<string, unknown>,
+): Promise<{ queued: boolean }> {
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine
+  if (!offline) {
+    try {
+      const { error } = await supabase.from(table).update(patch).eq('id', id)
+      if (!error) return { queued: false }
+    } catch { /* fall through to queue */ }
+  }
+  await queueWrite(table, 'update', { id, ...patch })
+  return { queued: true }
+}
+
+export async function offlineDelete(
+  supabase: SupabaseClient,
+  table: string,
+  id: string | number,
+): Promise<{ queued: boolean }> {
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine
+  if (!offline) {
+    try {
+      const { error } = await supabase.from(table).delete().eq('id', id)
+      if (!error) return { queued: false }
+    } catch { /* fall through to queue */ }
+  }
+  await queueWrite(table, 'delete', { id })
+  return { queued: true }
 }
 
 export async function getPendingCount(): Promise<number> {
@@ -82,9 +157,16 @@ export async function flushPendingWrites(
       let error: { message: string } | null = null
       try {
         if (w.operation === 'insert') {
-          error = (await supabase.from(w.table).insert(w.data)).error
+          // Idempotent when a client id was supplied: a re-flush after a lost
+          // response upserts-on-id instead of creating a duplicate row.
+          error = w.data?.id != null
+            ? (await supabase.from(w.table).upsert(w.data, { onConflict: 'id' })).error
+            : (await supabase.from(w.table).insert(w.data)).error
         } else if (w.operation === 'upsert') {
-          error = (await supabase.from(w.table).upsert(w.data)).error
+          error = (await supabase.from(w.table).upsert(
+            w.data,
+            w.options?.onConflict ? { onConflict: w.options.onConflict } : undefined,
+          )).error
         } else if (w.operation === 'update') {
           const { id, ...rest } = w.data as { id: string | number; [k: string]: unknown }
           error = (await supabase.from(w.table).update(rest).eq('id', id)).error
@@ -108,8 +190,18 @@ export async function flushPendingWrites(
         console.warn('[offline] write failed:', w.table, w.operation, error.message)
         const retries = (w.retries ?? 0) + 1
         if (retries >= MAX_RETRIES) {
+          // Dead-letter instead of silently dropping — preserve the data and let
+          // the UI surface "N changes couldn't sync" rather than losing it.
+          try {
+            await db.add('failed_writes', {
+              table: w.table, operation: w.operation, data: w.data,
+              timestamp: w.timestamp, retries, options: w.options,
+              failedAt: Date.now(), lastError: error.message,
+            })
+          } catch { /* dead-letter is best-effort */ }
           await db.delete('pending_writes', w.id)
-          console.warn('[offline] dropping write after max retries:', w.table, w.operation)
+          window.dispatchEvent(new CustomEvent('sync:deadletter', { detail: { table: w.table } }))
+          console.warn('[offline] dead-lettered write after max retries:', w.table, w.operation)
         } else {
           const tx = db.transaction('pending_writes', 'readwrite')
           const existing = await tx.store.get(w.id)

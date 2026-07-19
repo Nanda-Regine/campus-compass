@@ -64,16 +64,16 @@ export default function MoodCheckin({ userId }: Props) {
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
         // Offline (load shedding / no data) — queue so the check-in syncs later
         // instead of throwing an unhandled rejection and being lost.
-        await queueWrite('mood_checkins', 'upsert', row)
+        await queueWrite('mood_checkins', 'upsert', row, { onConflict: 'user_id,date' })
       } else {
         const { error } = await supabaseRef.current
           .from('mood_checkins')
           .upsert(row, { onConflict: 'user_id,date' })
-        if (error) await queueWrite('mood_checkins', 'upsert', row)
+        if (error) await queueWrite('mood_checkins', 'upsert', row, { onConflict: 'user_id,date' })
       }
     } catch {
       // Network threw mid-request — queue rather than lose the check-in.
-      try { await queueWrite('mood_checkins', 'upsert', row) } catch { /* quota */ }
+      try { await queueWrite('mood_checkins', 'upsert', row, { onConflict: 'user_id,date' }) } catch { /* quota */ }
     } finally {
       setSaving(false)
     }

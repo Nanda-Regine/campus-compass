@@ -14,6 +14,7 @@ import { fmt, calcTotalBudget, cn, exportToCSV, currentMonthRange } from '@/lib/
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import { signals } from '@/store/signals'
+import { offlineInsert, offlineUpdate, offlineDelete } from '@/lib/offline/pendingWrites'
 import ReceiptScanner from '@/components/budget/ReceiptScanner'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import NsfasTrackerOS from '@/components/nsfas/NsfasTrackerOS'
@@ -233,19 +234,18 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     }
     setAddingIncome(true)
     try {
-      const { data, error } = await supabase.from('income_entries').insert({
+      const { row, queued } = await offlineInsert<IncomeEntry>(supabase, 'income_entries', {
         user_id: initialData.userId,
         source_type: incomeType,
         label: incomeLabel.trim(),
         amount: parseFloat(incomeAmount),
         received_date: incomeDate,
         month_year: incomeDate.slice(0, 7),
-      }).select('id,source_type,label,amount,received_date,is_recurring,nsfas_disbursement_id').single()
-      if (error) throw error
-      setIncomeEntries(prev => [data as IncomeEntry, ...prev])
+      }, 'id,source_type,label,amount,received_date,is_recurring,nsfas_disbursement_id')
+      setIncomeEntries(prev => [row, ...prev])
       setIncomeLabel(''); setIncomeAmount(''); setShowIncomeForm(false)
       dispatchXP('income_logged')
-      toast.success('Income recorded!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Income recorded!')
     } catch (err) { console.error('[BudgetClient] addIncome:', err); toast.error('Failed to record income') }
     finally { setAddingIncome(false) }
   }
@@ -257,18 +257,19 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     }
     setAddingGoal(true)
     try {
-      const { data, error } = await supabase.from('savings_goals').insert({
+      const { row, queued } = await offlineInsert<SavingsGoal>(supabase, 'savings_goals', {
         user_id: initialData.userId,
         name: goalName.trim(),
         emoji: goalEmoji,
         color: '#0d9488',
         target_amount: parseFloat(goalTarget),
+        current_amount: 0,
+        is_completed: false,
         deadline: goalDeadline || null,
-      }).select('id,name,emoji,color,target_amount,current_amount,deadline,is_completed').single()
-      if (error) throw error
-      setSavingsGoals(prev => [...prev, data as SavingsGoal])
+      }, 'id,name,emoji,color,target_amount,current_amount,deadline,is_completed')
+      setSavingsGoals(prev => [...prev, row])
       setGoalName(''); setGoalTarget(''); setGoalDeadline(''); setShowGoalForm(false)
-      toast.success('Savings goal created!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Savings goal created!')
     } catch (err) { console.error('[BudgetClient] addGoal:', err); toast.error('Failed to create goal') }
     finally { setAddingGoal(false) }
   }
@@ -285,15 +286,17 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     const newAmount = current + delta
     setContributingGoalId(goalId)
     try {
-      const { error: goalErr } = await supabase.from('savings_goals')
-        .update({ current_amount: newAmount, is_completed: newAmount >= target, completed_at: newAmount >= target ? new Date().toISOString() : null })
-        .eq('id', goalId)
-      if (goalErr) throw goalErr
-      const { error: contribErr } = await supabase.from('savings_contributions')
-        .insert({ user_id: initialData.userId, goal_id: goalId, amount: delta, contribution_date: new Date().toISOString().split('T')[0] })
-      if (contribErr) throw contribErr
-      // Update local state only after both writes succeed, so a failure never
-      // shows a contribution that wasn't recorded.
+      // Offline-safe: both writes go online, or queue for replay. Local state
+      // updates optimistically either way (a queued write is not "lost").
+      await offlineUpdate(supabase, 'savings_goals', goalId, {
+        current_amount: newAmount,
+        is_completed: newAmount >= target,
+        completed_at: newAmount >= target ? new Date().toISOString() : null,
+      })
+      await offlineInsert(supabase, 'savings_contributions', {
+        user_id: initialData.userId, goal_id: goalId, amount: delta,
+        contribution_date: new Date().toISOString().split('T')[0],
+      })
       setSavingsGoals(prev => prev.map(g => g.id === goalId ? { ...g, current_amount: newAmount, is_completed: newAmount >= target } : g).filter(g => !g.is_completed))
       if (newAmount >= target) dispatchXP('savings_goal_hit')
       toast.success(newAmount >= target ? 'Goal completed! 🎉' : `+${fmt.currencyShort(delta)} added!`)
@@ -311,28 +314,25 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     }
     setAddingExpense(true)
     try {
-      const { data: expense, error } = await supabase
-        .from('expenses')
-        .insert({
-          user_id: initialData.userId,
-          description: desc.trim(),
-          amount: parseFloat(amount),
-          category,
-          expense_date: date,
-          month_year: date.slice(0, 7),
-        })
-        .select()
-        .single()
+      // Offline-safe: writes online, or queues (with a client id) during load
+      // shedding / no data so the expense is never lost.
+      const { row: expense, queued } = await offlineInsert<Expense>(supabase, 'expenses', {
+        user_id: initialData.userId,
+        description: desc.trim(),
+        amount: parseFloat(amount),
+        category,
+        expense_date: date,
+        month_year: date.slice(0, 7),
+      })
 
-      if (error) throw error
-      const updated = [expense as Expense, ...expenses]
+      const updated = [expense, ...expenses]
       setLocalExpenses(updated)
       setExpenses(updated)
       setDesc('')
       setAmount('')
       setShowAddForm(false)
       dispatchXP('budget_entry')
-      toast.success('Expense logged!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Expense logged!')
       // Emit signals for orchestration layer
       const newTotalSpent = updated.reduce((s, e) => s + e.amount, 0)
       const budgetTotal = totalBudget + totalIncome
@@ -375,9 +375,8 @@ export default function BudgetClient({ initialData, initialTab }: BudgetClientPr
     setLocalExpenses(updated)
     setExpenses(updated)
     try {
-      const { error } = await supabase.from('expenses').delete().eq('id', id)
-      if (error) throw error
-      toast.success('Expense removed')
+      const { queued } = await offlineDelete(supabase, 'expenses', id)
+      toast.success(queued ? 'Removed — will sync' : 'Expense removed')
     } catch (err) {
       console.error('[BudgetClient] deleteExpense:', err)
       setLocalExpenses(previous)
