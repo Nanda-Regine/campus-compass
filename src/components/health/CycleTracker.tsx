@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { signals } from '@/store/signals'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import { sastToday } from '@/lib/utils'
+import { offlineUpsert } from '@/lib/offline/pendingWrites'
 
 type CyclePhase = 'menstrual' | 'follicular' | 'ovulation' | 'luteal'
 type FlowLevel  = 'none' | 'light' | 'medium' | 'heavy'
@@ -594,16 +595,26 @@ export default function CycleTracker({ userId }: { userId: string }) {
   async function saveEntry() {
     if (!logModal) return
     setSaving(true)
-    const { error } = await supabase.from('cycle_tracking').upsert({
-      user_id: userId, entry_date: logModal.date, phase: modalPhase,
+    const entryDate = logModal.date
+    // Offline-safe upsert — queues during load shedding so the log is never lost.
+    const { queued } = await offlineUpsert(supabase, 'cycle_tracking', {
+      user_id: userId, entry_date: entryDate, phase: modalPhase,
       flow_level: modalPhase === 'menstrual' ? modalFlow : null,
       energy_level: modalEnergy, symptoms: modalSymptoms,
       notes: modalNotes || null,
-    }, { onConflict: 'user_id,entry_date' })
+    }, 'user_id,entry_date')
 
-    if (!error) {
-      if (logModal.date === today)
-        signals.emit({ type: 'cycle_phase_logged', payload: { phase: modalPhase, energyLevel: modalEnergy } })
+    if (entryDate === today)
+      signals.emit({ type: 'cycle_phase_logged', payload: { phase: modalPhase, energyLevel: modalEnergy } })
+    if (queued) {
+      // A queued write won't come back from loadEntries yet — merge optimistically.
+      setEntries(prev => [
+        { id: crypto.randomUUID(), user_id: userId, entry_date: entryDate, phase: modalPhase,
+          flow_level: modalPhase === 'menstrual' ? modalFlow : null,
+          energy_level: modalEnergy, symptoms: modalSymptoms, notes: modalNotes || null },
+        ...prev.filter(e => e.entry_date !== entryDate),
+      ])
+    } else {
       await loadEntries()
     }
     setSaving(false)
@@ -614,15 +625,23 @@ export default function CycleTracker({ userId }: { userId: string }) {
   // app can derive today's cycle day, phase and predictions going forward.
   async function saveAnchor(startDate: string) {
     setSaving(true)
-    const { error } = await supabase.from('cycle_tracking').upsert({
+    // Offline-safe upsert — queues during load shedding so the anchor is never lost.
+    const { queued } = await offlineUpsert(supabase, 'cycle_tracking', {
       user_id: userId, entry_date: startDate, phase: 'menstrual',
       flow_level: 'medium', energy_level: 3, symptoms: [],
       notes: 'Cycle start (from phase calculator)',
-    }, { onConflict: 'user_id,entry_date' })
-    if (!error) {
+    }, 'user_id,entry_date')
+    if (queued) {
+      // A queued write won't come back from loadEntries yet — merge optimistically.
+      setEntries(prev => [
+        { id: crypto.randomUUID(), user_id: userId, entry_date: startDate, phase: 'menstrual',
+          flow_level: 'medium', energy_level: 3, symptoms: [], notes: 'Cycle start (from phase calculator)' },
+        ...prev.filter(e => e.entry_date !== startDate),
+      ])
+    } else {
       await loadEntries()
-      signals.emit({ type: 'cycle_phase_logged', payload: { phase: phaseForCycleDay((((daysBetweenStr(startDate, today) % TOTAL_CYCLE_DAYS) + TOTAL_CYCLE_DAYS) % TOTAL_CYCLE_DAYS) + 1), energyLevel: 3 } })
     }
+    signals.emit({ type: 'cycle_phase_logged', payload: { phase: phaseForCycleDay((((daysBetweenStr(startDate, today) % TOTAL_CYCLE_DAYS) + TOTAL_CYCLE_DAYS) % TOTAL_CYCLE_DAYS) + 1), energyLevel: 3 } })
     setSaving(false)
   }
 

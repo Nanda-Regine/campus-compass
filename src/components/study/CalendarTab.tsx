@@ -14,6 +14,7 @@ import toast from 'react-hot-toast'
 import { useAppStore } from '@/store'
 import { loadGratitudeEntries } from '@/components/orchestration/GratitudePrompt'
 import { createClient } from '@/lib/supabase/client'
+import { offlineInsert, offlineDelete } from '@/lib/offline/pendingWrites'
 import type { TimetableEntry, Task, Exam, Module, WorkShift, CalendarEvent } from '@/types'
 
 type CalMode = 'week' | 'month'
@@ -412,26 +413,28 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
     if (!draft.title.trim()) return
     setSaving(true)
     const cat   = catFor(draft.category)
-    const row   = {
-      user_id:    userId,
-      title:      draft.title.trim(),
-      event_date: draft.date,
-      start_time: draft.startTime || null,
-      end_time:   draft.endTime   || null,
-      category:   draft.category,
-      color:      cat.color,
-      notes:      draft.notes.trim() || null,
-    }
-    const { data, error } = await supabase.from('calendar_events').insert(row).select().single()
-    if (error || !data) {
+    try {
+      // Offline-safe: writes online, or queues during load shedding so the
+      // event is never lost.
+      const { row, queued } = await offlineInsert<CalendarEvent>(supabase, 'calendar_events', {
+        user_id:    userId,
+        title:      draft.title.trim(),
+        event_date: draft.date,
+        start_time: draft.startTime || null,
+        end_time:   draft.endTime   || null,
+        category:   draft.category,
+        color:      cat.color,
+        notes:      draft.notes.trim() || null,
+      })
+      setEvents(prev => [...prev, row])
+      setSaving(false)
+      setShowModal(false)
+      if (queued) toast.success('Saved offline — will sync')
+    } catch {
       // Don't pretend it saved: keep the modal open and tell the user.
       toast.error('Could not save event — check your connection and try again.')
       setSaving(false)
-      return
     }
-    setEvents(prev => [...prev, data as CalendarEvent])
-    setSaving(false)
-    setShowModal(false)
   }
 
   const deleteEvent = async (id: string) => {
@@ -439,8 +442,9 @@ export default function CalendarTab({ timetable, tasks, exams, workShifts = [], 
     if (!removed) return
     if (!window.confirm(`Delete "${removed.title}"? This can't be undone.`)) return
     setEvents(prev => prev.filter(e => e.id !== id))
-    const { error } = await supabase.from('calendar_events').delete().eq('id', id)
-    if (error) {
+    try {
+      await offlineDelete(supabase, 'calendar_events', id)
+    } catch {
       // Roll back the optimistic removal so the user doesn't lose an event on a failed delete.
       setEvents(prev => [...prev, removed])
       toast.error('Could not delete event — please try again.')

@@ -95,6 +95,23 @@ export async function offlineUpdate(
   return { queued: true }
 }
 
+export async function offlineUpsert(
+  supabase: SupabaseClient,
+  table: string,
+  data: Record<string, unknown>,
+  onConflict?: string,
+): Promise<{ queued: boolean }> {
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine
+  if (!offline) {
+    try {
+      const { error } = await supabase.from(table).upsert(data, onConflict ? { onConflict } : undefined)
+      if (!error) return { queued: false }
+    } catch { /* fall through to queue */ }
+  }
+  await queueWrite(table, 'upsert', data, onConflict ? { onConflict } : undefined)
+  return { queued: true }
+}
+
 export async function offlineDelete(
   supabase: SupabaseClient,
   table: string,

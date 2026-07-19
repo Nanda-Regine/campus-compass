@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
+import { offlineInsert, offlineDelete } from '@/lib/offline/pendingWrites'
 
 // SA student foods with macro data per typical serving — budget-friendly focus
 const SA_FOODS = [
@@ -177,9 +178,8 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
 
   async function addFood(food: typeof SA_FOODS[number]) {
     setSaving(true)
-    const { data, error } = await supabase
-      .from('nutrition_logs')
-      .insert({
+    try {
+      const { row, queued } = await offlineInsert<NutritionLog>(supabase, 'nutrition_logs', {
         user_id: userId,
         logged_date: today,
         meal_slot: food.slot,
@@ -190,20 +190,17 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
         fat_g: food.fat,
         quantity_g: 100,
       })
-      .select()
-      .single()
-    if (error) { toast.error('Failed to log food'); setSaving(false); return }
-    setLogs(prev => [...prev, data as NutritionLog])
-    setSaving(false)
-    toast.success(`${food.name} logged ✓`)
+      setLogs(prev => [...prev, row])
+      toast.success(queued ? 'Saved offline — will sync' : `${food.name} logged ✓`)
+    } catch { toast.error('Failed to log food') }
+    finally { setSaving(false) }
   }
 
   async function addCustom(slot: string) {
     if (!customName.trim() || !customCal) return
     setSaving(true)
-    const { data, error } = await supabase
-      .from('nutrition_logs')
-      .insert({
+    try {
+      const { row, queued } = await offlineInsert<NutritionLog>(supabase, 'nutrition_logs', {
         user_id: userId,
         logged_date: today,
         meal_slot: slot,
@@ -214,19 +211,17 @@ export default function NutritionTab({ supabase, userId, today }: NutritionTabPr
         fat_g: 0,
         quantity_g: 100,
       })
-      .select()
-      .single()
-    if (error) { toast.error('Failed to log'); setSaving(false); return }
-    setLogs(prev => [...prev, data as NutritionLog])
-    setCustomName('')
-    setCustomCal('')
-    setSaving(false)
-    toast.success('Food logged ✓')
+      setLogs(prev => [...prev, row])
+      setCustomName('')
+      setCustomCal('')
+      toast.success(queued ? 'Saved offline — will sync' : 'Food logged ✓')
+    } catch { toast.error('Failed to log') }
+    finally { setSaving(false) }
   }
 
   async function deleteLog(id: string) {
     setLogs(prev => prev.filter(l => l.id !== id))
-    await supabase.from('nutrition_logs').delete().eq('id', id)
+    await offlineDelete(supabase, 'nutrition_logs', id)
     toast.success('Removed')
   }
 

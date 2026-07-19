@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import { AlertTriangle, CheckCircle2, XCircle, Clock, Wifi, X, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { signals } from '@/store/signals'
+import { offlineUpsert } from '@/lib/offline/pendingWrites'
 
 interface Module { id: string; module_name: string }
 interface AttendanceRecord {
@@ -122,13 +123,16 @@ export default function AttendanceTab({ modules, userId }: { modules: Module[]; 
 
   const markAttendance = async (moduleId: string, status: Status) => {
     setMarking({ moduleId, date: selectedDate })
-    const { error } = await supabase.from('attendance_records').upsert(
-      { user_id: userId, module_id: moduleId, date: selectedDate, status },
-      { onConflict: 'user_id,module_id,date' }
-    )
-    if (error) { toast.error('Could not save') }
-    else {
-      toast.success(STATUS_LABELS[status])
+    try {
+      // Offline-safe: upserts online, or queues during load shedding so the
+      // attendance mark is never lost.
+      const { queued } = await offlineUpsert(
+        supabase,
+        'attendance_records',
+        { user_id: userId, module_id: moduleId, date: selectedDate, status },
+        'user_id,module_id,date',
+      )
+      toast.success(queued ? 'Saved offline — will sync' : STATUS_LABELS[status])
       signals.emit({
         type: 'attendance_marked',
         payload: {
@@ -138,6 +142,8 @@ export default function AttendanceTab({ modules, userId }: { modules: Module[]; 
         },
       })
       await loadRecords()
+    } catch {
+      toast.error('Could not save')
     }
     setMarking(null)
   }

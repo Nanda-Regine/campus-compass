@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/store'
 import toast from 'react-hot-toast'
+import { offlineInsert, offlineUpdate } from '@/lib/offline/pendingWrites'
 
 // ─── Types ────────────────────────────────────────────────────
 interface WorkoutLog {
@@ -135,34 +136,26 @@ export default function FitnessTracker() {
   async function logWorkout() {
     if (!userId) { toast.error('Sign in to log workouts'); return }
 
-    const { data, error } = await supabase
-      .from('workout_logs')
-      .insert({
-        user_id:  userId,
-        date:     form.date,
-        type:     form.type,
-        duration: parseInt(form.duration) || 30,
-        notes:    form.notes || null,
-      })
-      .select('id, date, type, duration, calories, notes')
-      .single()
-
-    if (error) {
-      toast.error('Could not save workout')
-      return
-    }
+    // Offline-safe insert — carries a client id so a queued write is never lost.
+    const { row, queued } = await offlineInsert<WorkoutLog>(supabase, 'workout_logs', {
+      user_id:  userId,
+      date:     form.date,
+      type:     form.type,
+      duration: parseInt(form.duration) || 30,
+      notes:    form.notes || null,
+    }, 'id, date, type, duration, calories, notes')
 
     const newLog: WorkoutLog = {
-      id:       data.id as string,
-      date:     data.date as string,
-      type:     data.type as string,
-      duration: data.duration as number,
-      calories: data.calories as number | null,
-      notes:    (data.notes ?? '') as string,
+      id:       row.id,
+      date:     form.date,
+      type:     form.type,
+      duration: parseInt(form.duration) || 30,
+      calories: row.calories ?? null,
+      notes:    form.notes,
     }
 
     setLogs(prev => [newLog, ...prev].slice(0, 90))
-    toast.success('Workout logged!')
+    toast.success(queued ? 'Saved offline — will sync' : 'Workout logged!')
     setAdding(false)
     setForm(blankForm)
   }
@@ -171,22 +164,15 @@ export default function FitnessTracker() {
   async function saveEdit() {
     if (!editId) return
 
-    const { error } = await supabase
-      .from('workout_logs')
-      .update({
-        date:       form.date,
-        type:       form.type,
-        duration:   parseInt(form.duration) || 30,
-        notes:      form.notes || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', editId)
-      .eq('user_id', userId)
-
-    if (error) {
-      toast.error('Could not update workout')
-      return
-    }
+    // Offline-safe update — queues during load shedding instead of losing the edit.
+    // RLS still enforces per-user ownership, so the id filter is sufficient here.
+    const { queued } = await offlineUpdate(supabase, 'workout_logs', editId, {
+      date:       form.date,
+      type:       form.type,
+      duration:   parseInt(form.duration) || 30,
+      notes:      form.notes || null,
+      updated_at: new Date().toISOString(),
+    })
 
     setLogs(prev =>
       prev.map(l =>
@@ -195,7 +181,7 @@ export default function FitnessTracker() {
           : l
       )
     )
-    toast.success('Workout updated!')
+    toast.success(queued ? 'Saved offline — will sync' : 'Workout updated!')
     setEditId(null)
     setAdding(false)
     setForm(blankForm)
@@ -203,19 +189,12 @@ export default function FitnessTracker() {
 
   // ─── Soft delete ──────────────────────────────────────────────
   async function deleteLog(id: string) {
-    const { error } = await supabase
-      .from('workout_logs')
-      .update({ deleted_at: new Date().toISOString() })
-      .eq('id', id)
-      .eq('user_id', userId)
-
-    if (error) {
-      toast.error('Could not remove workout')
-      return
-    }
+    // Soft delete is an UPDATE (deleted_at), so route through offlineUpdate — a hard
+    // offlineDelete would drop the row. Queues during load shedding; RLS guards ownership.
+    const { queued } = await offlineUpdate(supabase, 'workout_logs', id, { deleted_at: new Date().toISOString() })
 
     setLogs(prev => prev.filter(l => l.id !== id))
-    toast.success('Workout removed')
+    toast.success(queued ? 'Removed — will sync' : 'Workout removed')
   }
 
   // ─── Open edit form ───────────────────────────────────────────

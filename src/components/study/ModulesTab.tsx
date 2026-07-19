@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { signals } from '@/store/signals'
+import { offlineInsert, offlineUpsert, offlineDelete } from '@/lib/offline/pendingWrites'
 
 const COLOUR_OPTIONS: ModuleColour[] = ['teal', 'coral', 'purple', 'amber', 'blue', 'green']
 
@@ -104,16 +105,17 @@ function ModuleTools({
     // Sync to Supabase using the live schema (date/status). The present/absent
     // toggle maps onto the status enum so this UI stays consistent with AttendanceTab.
     setSyncing(true)
-    supabase.from('attendance_records')
-      .upsert(
-        { user_id: userId, module_id: moduleId, date: today, status: attended ? 'present' : 'absent' },
-        { onConflict: 'user_id,module_id,date' }
-      )
-      .then(({ error }) => {
+    // Offline-safe: upserts online, or queues during load shedding so the mark
+    // is never lost (localStorage already holds it on this device).
+    offlineUpsert(
+      supabase,
+      'attendance_records',
+      { user_id: userId, module_id: moduleId, date: today, status: attended ? 'present' : 'absent' },
+      'user_id,module_id,date',
+    )
+      .then(({ queued }) => {
         setSyncing(false)
-        // Previously the error was swallowed: localStorage said "marked" while the
-        // DB never got it. Surface the failure so the student knows to retry online.
-        if (error) toast.error('Saved on this device, but could not sync attendance — check your connection.')
+        if (queued) toast('Saved offline — will sync')
       })
   }
 
@@ -269,23 +271,19 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
   const onSubmit = async (data: FormData) => {
     setSaving(true)
     try {
-      const { data: module, error } = await supabase
-        .from('modules')
-        .insert({
-          user_id:       userId,
-          module_name:   data.name,
-          module_code:   data.code || '',
-          color:         data.colour as ModuleColour,
-          lecturer_name: data.lecturer || null,
-          venue:         data.venue || null,
-          credits:       parseInt(data.credits || '16') || 16,
-        })
-        .select()
-        .single()
-
-      if (error) throw error
+      // Offline-safe: writes online, or queues during load shedding so the
+      // module is never lost.
+      const { row: module, queued } = await offlineInsert<Module>(supabase, 'modules', {
+        user_id:       userId,
+        module_name:   data.name,
+        module_code:   data.code || '',
+        color:         data.colour as ModuleColour,
+        lecturer_name: data.lecturer || null,
+        venue:         data.venue || null,
+        credits:       parseInt(data.credits || '16') || 16,
+      })
       addModule(module)
-      toast.success('Module added!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Module added!')
       setModalOpen(false)
       reset()
     } catch (err) {
@@ -300,10 +298,14 @@ export default function ModulesTab({ modules, tasks = [], exams = [], userId, su
     if (!window.confirm('Delete this module? Its linked tasks and exams may be removed too. This cannot be undone.')) return
     const snapshot = modules.find(m => m.id === id)
     removeModule(id)
-    const { error } = await supabase.from('modules').delete().eq('id', id)
-    if (error && snapshot) {
-      addModule(snapshot) // roll back the optimistic removal
-      toast.error('Could not delete the module — please try again.')
+    try {
+      const { queued } = await offlineDelete(supabase, 'modules', id)
+      if (queued) toast.success('Removed — will sync')
+    } catch {
+      if (snapshot) {
+        addModule(snapshot) // roll back the optimistic removal
+        toast.error('Could not delete the module — please try again.')
+      }
     }
   }
 

@@ -7,6 +7,7 @@ import TopBar from '@/components/layout/TopBar'
 import { type GroceryItem, type MealPlan, MEAL_SLOTS } from '@/types'
 import { fmt, cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { offlineInsert, offlineUpdate, offlineDelete } from '@/lib/offline/pendingWrites'
 import { AmbientImage } from '@/components/ui/AmbientImage'
 import dynamic from 'next/dynamic'
 // Tabs render one at a time — code-split the per-tab components (RecipesTab is ~757 lines)
@@ -145,31 +146,28 @@ export default function MealsClient({ initialData }: MealsClientProps) {
         .eq('meal_slot', slot)
         .maybeSingle()
 
+      // Offline-safe: writes online, or queues for replay during load shedding
+      // so the planned meal is never lost. State updates optimistically either way.
       let saved: MealPlan
+      let queued: boolean
       if (existing) {
-        const { data, error } = await supabase
-          .from('meal_plans')
-          .update({ meal_name: mealName.trim() })
-          .eq('id', existing.id)
-          .select()
-          .single()
-        if (error) throw error
-        saved = data as MealPlan
+        const res = await offlineUpdate(supabase, 'meal_plans', existing.id, { meal_name: mealName.trim() })
+        queued = res.queued
+        const base = localMeals.find(m => m.day_of_week === day && m.meal_slot === slot)
+        saved = { ...(base as MealPlan), id: existing.id, meal_name: mealName.trim() }
       } else {
-        const { data, error } = await supabase
-          .from('meal_plans')
-          .insert({ user_id: initialData.userId, week_start: initialData.weekStart, day_of_week: day, meal_slot: slot, meal_name: mealName.trim() })
-          .select()
-          .single()
-        if (error) throw error
-        saved = data as MealPlan
+        const res = await offlineInsert<MealPlan>(supabase, 'meal_plans', {
+          user_id: initialData.userId, week_start: initialData.weekStart, day_of_week: day, meal_slot: slot, meal_name: mealName.trim(),
+        })
+        queued = res.queued
+        saved = res.row
       }
 
       setLocalMeals(prev => [...prev.filter(m => !(m.day_of_week === day && m.meal_slot === slot)), saved])
       setEditingSlot(null)
       setEditValue('')
       dispatchXP('meal_planned')
-      toast.success('Meal saved')
+      toast.success(queued ? 'Saved offline — will sync' : 'Meal saved')
     } catch { toast.error('Failed to save meal') }
     finally { setSavingSlot(false) }
   }
@@ -241,22 +239,16 @@ export default function MealsClient({ initialData }: MealsClientProps) {
   const addGroceryItem = async () => {
     if (!groceryInput.trim()) return
     try {
-      const { data: item, error } = await supabase
-        .from('grocery_items')
-        .insert({
-          user_id: initialData.userId,
-          name: groceryInput.trim(),
-          price: groceryPrice ? parseFloat(groceryPrice) : null,
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-      const newItem = item as GroceryItem
+      const { row: newItem, queued } = await offlineInsert<GroceryItem>(supabase, 'grocery_items', {
+        user_id: initialData.userId,
+        name: groceryInput.trim(),
+        price: groceryPrice ? parseFloat(groceryPrice) : null,
+      })
       setGroceryItems(prev => [newItem, ...prev])
       saveItemCat(newItem.id, selectedCat)
       setGroceryInput('')
       setGroceryPrice('')
+      if (queued) toast.success('Saved offline — will sync')
     } catch {
       toast.error('Failed to add item')
     }
@@ -264,12 +256,12 @@ export default function MealsClient({ initialData }: MealsClientProps) {
 
   const toggleGroceryItem = async (id: string, checked: boolean) => {
     setGroceryItems(prev => prev.map(i => i.id === id ? { ...i, checked } : i))
-    await supabase.from('grocery_items').update({ checked }).eq('id', id)
+    await offlineUpdate(supabase, 'grocery_items', id, { checked })
   }
 
   const deleteGroceryItem = async (id: string) => {
     setGroceryItems(prev => prev.filter(i => i.id !== id))
-    await supabase.from('grocery_items').delete().eq('id', id)
+    await offlineDelete(supabase, 'grocery_items', id)
   }
 
   const clearChecked = async () => {

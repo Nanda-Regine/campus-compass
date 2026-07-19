@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Plus, Trash2, TrendingDown, Utensils } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { offlineInsert, offlineDelete } from '@/lib/offline/pendingWrites'
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -104,22 +105,21 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
   const logMeal = async (description: string, amount: number) => {
     if (logging) return
     setLogging(true)
-    const { data, error } = await supabase
-      .from('expenses')
-      .insert({
+    try {
+      // Offline-safe: writes online, or queues (with a client id) during load
+      // shedding / no data so the meal spend is never lost.
+      const { row, queued } = await offlineInsert<FoodExpense>(supabase, 'expenses', {
         user_id:      userId,
         description,
         amount,
         category:     'food',
         expense_date: today,
         month_year:   today.slice(0, 7),
-      })
-      .select('id,description,amount,expense_date')
-      .single()
-    if (error) { toast.error('Failed to log meal'); setLogging(false); return }
-    setExpenses(prev => [(data as FoodExpense), ...prev])
-    toast.success(`R${amount} logged ✓`)
-    setLogging(false)
+      }, 'id,description,amount,expense_date')
+      setExpenses(prev => [row, ...prev])
+      toast.success(queued ? 'Saved offline — will sync' : `R${amount} logged ✓`)
+    } catch { toast.error('Failed to log meal') }
+    finally { setLogging(false) }
   }
 
   const handleCustom = async () => {
@@ -133,7 +133,7 @@ export default function FoodSpendTracker({ userId, foodBudget }: Props) {
 
   const deleteExpense = async (id: string) => {
     setExpenses(prev => prev.filter(e => e.id !== id))
-    void supabase.from('expenses').delete().eq('id', id)
+    void offlineDelete(supabase, 'expenses', id)
     toast.success('Removed')
   }
 

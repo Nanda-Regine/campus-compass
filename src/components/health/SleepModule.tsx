@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { signals } from '@/store/signals'
 import { cn } from '@/lib/utils'
+import { offlineInsert, offlineUpdate, offlineDelete } from '@/lib/offline/pendingWrites'
 
 interface SleepLog {
   id: string
@@ -112,27 +113,27 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
       notes: notes.trim() || null,
     }
 
-    let error
-    if (editId) {
-      const res = await supabase.from('sleep_logs').update(payload).eq('id', editId).select().single()
-      error = res.error
-      if (!error && res.data) {
-        setLogs(prev => prev.map(l => l.id === editId ? res.data as SleepLog : l))
+    try {
+      let queued: boolean
+      if (editId) {
+        // Offline-safe update — queues during load shedding instead of losing the edit.
+        const res = await offlineUpdate(supabase, 'sleep_logs', editId, payload)
+        queued = res.queued
+        setLogs(prev => prev.map(l => l.id === editId
+          ? { ...l, sleep_date: today, bedtime: bedtime + ':00', wake_time: wakeTime + ':00', quality, notes: notes.trim() || null }
+          : l))
+      } else {
+        // Offline-safe insert — carries a client id so a queued write is never lost.
+        const res = await offlineInsert<SleepLog>(supabase, 'sleep_logs', payload)
+        queued = res.queued
+        setLogs(prev => [res.row, ...prev])
+        setEditId(res.row.id)
       }
-    } else {
-      const res = await supabase.from('sleep_logs').insert(payload).select().single()
-      error = res.error
-      if (!error && res.data) {
-        setLogs(prev => [res.data as SleepLog, ...prev])
-        setEditId((res.data as SleepLog).id)
-      }
-    }
-
-    if (error) toast.error('Failed to save sleep log')
-    else {
-      toast.success('Sleep logged ✓')
+      toast.success(queued ? 'Saved offline — will sync' : 'Sleep logged ✓')
       const hrs = sleepHours(bedtime, wakeTime)
       signals.emit({ type: 'sleep_logged', payload: { hoursSlept: hrs, quality: quality ?? 3 } })
+    } catch {
+      toast.error('Failed to save sleep log')
     }
     setSaving(false)
   }, [supabase, userId, today, bedtime, wakeTime, quality, notes, editId])
@@ -140,8 +141,8 @@ export default function SleepModule({ initialLogs, userId, today }: SleepModuleP
   async function deleteLog(id: string) {
     setLogs(prev => prev.filter(l => l.id !== id))
     if (editId === id) setEditId(null)
-    await supabase.from('sleep_logs').delete().eq('id', id)
-    toast.success('Removed')
+    const { queued } = await offlineDelete(supabase, 'sleep_logs', id)
+    toast.success(queued ? 'Removed — will sync' : 'Removed')
   }
 
   // Stats derived from logs

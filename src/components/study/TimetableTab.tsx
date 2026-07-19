@@ -12,6 +12,7 @@ import { MODULE_COLOURS, WEEKDAYS, type Module, type TimetableEntry, DAYS_OF_WEE
 import { fmt } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { offlineInsert, offlineDelete } from '@/lib/offline/pendingWrites'
 import ICSImportButton from './ICSImportButton'
 
 interface SAHoliday { date: string; localName: string; name: string }
@@ -131,22 +132,18 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
   const onSubmit = async (data: Record<string, string>) => {
     setSaving(true)
     try {
-      const { data: entry, error } = await supabase
-        .from('timetable_slots')
-        .insert({
-          user_id:          userId,
-          module_id:        data.module_id || null,
-          day_of_week:      DAY_TO_INT[data.day_of_week as DayOfWeek] ?? 1,
-          day_of_week_text: data.day_of_week,
-          start_time:       data.start_time,
-          end_time:         data.end_time || null,
-          venue:            data.venue || null,
-        })
-        .select('*, module:modules(id,module_name,color)')
-        .single()
-      if (error) throw error
+      // Offline-safe: writes online, or queues during load shedding / no data.
+      const { row: entry, queued } = await offlineInsert<TimetableEntry>(supabase, 'timetable_slots', {
+        user_id:          userId,
+        module_id:        data.module_id || null,
+        day_of_week:      DAY_TO_INT[data.day_of_week as DayOfWeek] ?? 1,
+        day_of_week_text: data.day_of_week,
+        start_time:       data.start_time,
+        end_time:         data.end_time || null,
+        venue:            data.venue || null,
+      }, '*, module:modules(id,module_name,color)')
       addTimetableEntry(entry)
-      toast.success('Class added!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Class added!')
       setModalOpen(false)
       reset()
       setPrefill(null)
@@ -160,7 +157,7 @@ export default function TimetableTab({ timetable, modules, userId, supabase }: P
 
   const deleteEntry = async (id: string) => {
     removeTimetableEntry(id)
-    await supabase.from('timetable_slots').delete().eq('id', id)
+    await offlineDelete(supabase, 'timetable_slots', id)
   }
 
   // Helpers

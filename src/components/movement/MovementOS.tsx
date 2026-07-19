@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Navigation, MapPin, Users, Lightbulb, Plus, Trash2, Star, Car, Search, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { AmbientImage } from '@/components/ui/AmbientImage'
+import { offlineInsert, offlineUpdate } from '@/lib/offline/pendingWrites'
 
 const SmartCommute = dynamic(() => import('./SmartCommute'), { ssr: false })
 
@@ -168,31 +169,37 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
       return
     }
     setSavingRoute(true)
-    const { data, error } = await supabase.from('saved_routes').insert({
-      user_id: userId,
-      label: routeForm.label,
-      from_address: routeForm.from_address,
-      to_address: routeForm.to_address,
-      transport_type: routeForm.transport_type,
-      estimated_minutes: routeForm.estimated_minutes ? parseInt(routeForm.estimated_minutes) : null,
-      fare_rands: routeForm.fare_rands ? parseFloat(routeForm.fare_rands) : null,
-    }).select().single()
-    if (error) { toast.error('Failed to save route'); setSavingRoute(false); return }
-    setRoutes(prev => [data, ...prev])
-    setRouteForm({ label: '', from_address: '', to_address: '', transport_type: 'taxi', estimated_minutes: '', fare_rands: '' })
-    setAddingRoute(false)
-    toast.success('Route saved!')
-    setSavingRoute(false)
+    try {
+      // Offline-safe: writes online, or queues during load shedding so the
+      // route is never lost.
+      const { row, queued } = await offlineInsert<SavedRoute>(supabase, 'saved_routes', {
+        user_id: userId,
+        label: routeForm.label,
+        from_address: routeForm.from_address,
+        to_address: routeForm.to_address,
+        transport_type: routeForm.transport_type,
+        estimated_minutes: routeForm.estimated_minutes ? parseInt(routeForm.estimated_minutes) : null,
+        fare_rands: routeForm.fare_rands ? parseFloat(routeForm.fare_rands) : null,
+      })
+      setRoutes(prev => [row, ...prev])
+      setRouteForm({ label: '', from_address: '', to_address: '', transport_type: 'taxi', estimated_minutes: '', fare_rands: '' })
+      setAddingRoute(false)
+      toast.success(queued ? 'Saved offline — will sync' : 'Route saved!')
+    } catch {
+      toast.error('Failed to save route')
+    } finally {
+      setSavingRoute(false)
+    }
   }
 
   const deleteRoute = async (id: string) => {
-    await supabase.from('saved_routes').update({ deleted_at: new Date().toISOString() }).eq('id', id)
+    await offlineUpdate(supabase, 'saved_routes', id, { deleted_at: new Date().toISOString() })
     setRoutes(prev => prev.filter(r => r.id !== id))
   }
 
   const setDefault = async (id: string) => {
     await supabase.from('saved_routes').update({ is_default: false }).eq('user_id', userId)
-    await supabase.from('saved_routes').update({ is_default: true }).eq('id', id)
+    await offlineUpdate(supabase, 'saved_routes', id, { is_default: true })
     setRoutes(prev => prev.map(r => ({ ...r, is_default: r.id === id })))
     toast.success('Default route updated')
   }
@@ -204,27 +211,33 @@ export default function MovementOS({ initialRoutes, userId }: Props) {
     }
     setSavingLift(true)
     const { data: prof } = await supabase.from('profiles').select('university').eq('id', userId).single()
-    const { data, error } = await supabase.from('lift_club_posts').insert({
-      user_id: userId,
-      university: prof?.university ?? '',
-      from_location: liftForm.from_location,
-      to_location: liftForm.to_location,
-      departure_time: liftForm.departure_time,
-      seats_available: parseInt(liftForm.seats_available) || 1,
-      fare_rands: liftForm.fare_rands ? parseFloat(liftForm.fare_rands) : null,
-      recurring: liftForm.recurring,
-      contact_whatsapp: liftForm.contact_whatsapp || null,
-    }).select().single()
-    if (error) { toast.error('Failed to post lift'); setSavingLift(false); return }
-    setLiftPosts(prev => [data, ...prev])
-    setLiftForm({ from_location: '', to_location: '', departure_time: '', seats_available: '1', fare_rands: '', recurring: 'once', contact_whatsapp: '' })
-    setAddingLift(false)
-    toast.success('Lift posted!')
-    setSavingLift(false)
+    try {
+      // Offline-safe: writes online, or queues during load shedding so the
+      // lift post is never lost.
+      const { row, queued } = await offlineInsert<LiftPost>(supabase, 'lift_club_posts', {
+        user_id: userId,
+        university: prof?.university ?? '',
+        from_location: liftForm.from_location,
+        to_location: liftForm.to_location,
+        departure_time: liftForm.departure_time,
+        seats_available: parseInt(liftForm.seats_available) || 1,
+        fare_rands: liftForm.fare_rands ? parseFloat(liftForm.fare_rands) : null,
+        recurring: liftForm.recurring,
+        contact_whatsapp: liftForm.contact_whatsapp || null,
+      })
+      setLiftPosts(prev => [row, ...prev])
+      setLiftForm({ from_location: '', to_location: '', departure_time: '', seats_available: '1', fare_rands: '', recurring: 'once', contact_whatsapp: '' })
+      setAddingLift(false)
+      toast.success(queued ? 'Saved offline — will sync' : 'Lift posted!')
+    } catch {
+      toast.error('Failed to post lift')
+    } finally {
+      setSavingLift(false)
+    }
   }
 
   const deactivateLift = async (id: string) => {
-    await supabase.from('lift_club_posts').update({ is_active: false }).eq('id', id)
+    await offlineUpdate(supabase, 'lift_club_posts', id, { is_active: false })
     setLiftPosts(prev => prev.filter(p => p.id !== id))
   }
 

@@ -13,6 +13,7 @@ import { type Exam, type Module, type Task, MODULE_COLOURS } from '@/types'
 import { fmt, getDaysUntil } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { offlineInsert, offlineDelete } from '@/lib/offline/pendingWrites'
 import StudyAssistModal from '@/components/study/StudyAssistModal'
 import ExamPushBanner from '@/components/study/ExamPushBanner'
 import ExamReadinessPanel from '@/components/study/ExamReadinessPanel'
@@ -262,22 +263,19 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
   const onSubmit = async (data: FormData) => {
     setSaving(true)
     try {
-      const { data: exam, error } = await supabase
-        .from('exams')
-        .insert({
-          user_id:    userId,
-          exam_name:  data.name,
-          exam_date:  data.exam_date,
-          module_id:  data.module_id || null,
-          start_time: data.start_time || null,
-          venue:      data.venue || null,
-          notes:      data.notes || null,
-        })
-        .select('*, module:modules(id,module_name,color)')
-        .single()
-      if (error) throw error
+      // Offline-safe: writes online, or queues (with a client id) during load
+      // shedding / no data so the exam is never lost.
+      const { row: exam, queued } = await offlineInsert<Exam>(supabase, 'exams', {
+        user_id:    userId,
+        exam_name:  data.name,
+        exam_date:  data.exam_date,
+        module_id:  data.module_id || null,
+        start_time: data.start_time || null,
+        venue:      data.venue || null,
+        notes:      data.notes || null,
+      }, '*, module:modules(id,module_name,color)')
       addExam(exam)
-      toast.success('Exam added!')
+      toast.success(queued ? 'Saved offline — will sync' : 'Exam added!')
       setModalOpen(false)
       reset()
     } catch (err) {
@@ -292,10 +290,14 @@ export default function ExamsTab({ exams, modules, tasks, userId, supabase }: Pr
     if (!window.confirm('Delete this exam? This cannot be undone.')) return
     const snapshot = exams.find(e => e.id === id)
     removeExam(id)
-    const { error } = await supabase.from('exams').delete().eq('id', id)
-    if (error && snapshot) {
-      addExam(snapshot) // roll back the optimistic removal so it doesn't vanish then reappear
-      toast.error('Could not delete the exam — please try again.')
+    try {
+      const { queued } = await offlineDelete(supabase, 'exams', id)
+      if (queued) toast.success('Removed — will sync')
+    } catch {
+      if (snapshot) {
+        addExam(snapshot) // roll back the optimistic removal so it doesn't vanish then reappear
+        toast.error('Could not delete the exam — please try again.')
+      }
     }
   }
 
