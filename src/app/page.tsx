@@ -9,21 +9,47 @@ export const metadata: Metadata = {
     'VarsityOS is the free Student Operating System built for South African university and TVET college students. 9 life domains: study, budget & NSFAS, fitness, safety OS, stokvel, meals, work, community, and Nova AI. Track allowances, stay safe on campus, manage your money, and thrive. Works at all 26 public universities, all 50 TVET colleges, and private HEIs. Offline ready.',
   alternates: { canonical: 'https://varsityos.co.za' },
   keywords: [
-    'VarsityOS', 'NSFAS tracker', 'NSFAS app South Africa', 'student budget app South Africa',
-    'peer tutoring South Africa', 'study notes marketplace SA', 'bursary finder South Africa',
-    'TVET student app', 'university student app South Africa', 'Nova AI student',
-    'NSFAS 2025 2026', 'NSFAS appeal', 'NSFAS payment dates', 'bursary 2025 2026',
+    // ── Core / brand ──
+    'VarsityOS', 'Varsity OS', 'student operating system', 'student super app South Africa',
+    'free student app South Africa', 'student app South Africa', 'varsity app', 'campus app',
+    // ── NSFAS (highest intent) ──
+    'NSFAS tracker', 'NSFAS app South Africa', 'NSFAS status check', 'NSFAS wallet',
+    'NSFAS 2025 2026', 'NSFAS appeal', 'NSFAS payment dates', 'NSFAS allowance tracker',
+    'NSFAS N+ rule', 'NSFAS balance', 'bursary finder South Africa', 'bursary 2025 2026',
+    'Funza Lushaka', 'ISFAP', 'student funding South Africa',
+    // ── Money / study / life ──
+    'student budget app South Africa', 'budgeting app students', 'savings app students',
+    'peer tutoring South Africa', 'study notes marketplace SA', 'past exam papers South Africa',
+    'study timetable app', 'exam study planner', 'flashcards spaced repetition',
+    'load shedding study plan', 'study partner South Africa', 'study twin',
+    'student mental health app South Africa', 'student wellness app', 'student safety app',
+    'walk me home app', 'student discounts South Africa', 'cheap student meals',
+    // ── Institutions ──
+    'TVET student app', 'TVET app South Africa', 'university student app South Africa',
     'UCT student app', 'Wits student app', 'UP student app', 'UKZN student app',
     'UJ student app', 'TUT student app', 'CPUT student app', 'DUT student app',
-    'UNISA student app', 'load shedding study plan', 'study partner South Africa',
-    'student mental health app South Africa', 'student super app South Africa',
-    'free student app South Africa', 'TVET app South Africa',
+    'UNISA student app', 'Stellenbosch app', 'Rhodes app', 'NWU app', 'UWC app',
+    // ── Nova / AI ──
+    'Nova AI student', 'AI study assistant South Africa', 'AI tutor South Africa',
+    // ── Multilingual (isiZulu) ──
+    'i-app yabafundi', 'imali yabafundi', 'izibonelelo zabafundi', 'uhlelo lwabafundi',
+    'imali ye-NSFAS', 'ukusiza abafundi',
+    // ── Multilingual (isiXhosa) ──
+    'usebenziso lwabafundi', 'imali yabafundi', 'izibonelelo', 'inkxaso-mali yabafundi',
+    // ── Multilingual (Afrikaans) ──
+    'studente app', 'studente begroting app', 'beurse Suid-Afrika', 'universiteit app',
+    'studente lewe', 'NSFAS Afrikaans', 'gratis studente app',
+    // ── Multilingual (Sesotho / Setswana) ──
+    'app ya baithuti', 'chelete ya baithuti', 'thuso ya baithuti', 'diborsari',
   ],
   openGraph: {
     title: 'VarsityOS — Student Operating System for South African University & TVET Students',
     description:
       'Free Student OS for SA students: 9 life domains covering study, budget & NSFAS, safety OS, fitness, stokvel, meals, work, community & more. Nova AI companion built for SA varsity life. Works at all SA universities and TVET colleges. Offline ready.',
     url: 'https://varsityos.co.za',
+    locale: 'en_ZA',
+    alternateLocale: ['zu_ZA', 'xh_ZA', 'af_ZA', 'st_ZA', 'tn_ZA', 'nso_ZA', 've_ZA', 'ts_ZA', 'ss_ZA', 'nr_ZA'],
+    siteName: 'VarsityOS',
   },
 }
 
