@@ -4,9 +4,42 @@
 // NOT suitable for: Nova chat, crisis detection, prompt-cached contexts.
 
 import { NextResponse } from 'next/server'
+import { checkRateLimitAsync } from './rateLimit'
 
 const GROQ_BASE = 'https://api.groq.com/openai/v1'
 const DEFAULT_MODEL = 'llama-3.1-8b-instant'
+
+// Groq's free tier is a SHARED resource across ALL users: ~14,400 req/day and
+// ~30 req/min. Per-user route caps don't compose to a global bound, so these
+// global circuit-breakers (via the distributed Upstash counter) stop the whole
+// app from blowing the shared quota / RPM ceiling and 429-ing everyone.
+// Tunable via env; defaults leave headroom under the free-tier limits.
+const GROQ_DAILY_GLOBAL_CAP = Number(process.env.GROQ_DAILY_GLOBAL_CAP ?? 13_000)
+const GROQ_RPM_GLOBAL_CAP = Number(process.env.GROQ_RPM_GLOBAL_CAP ?? 25)
+
+export class GroqQuotaExhaustedError extends Error {
+  constructor() { super('Groq shared quota exhausted — try again shortly') }
+}
+
+export function groqQuotaExhaustedResponse() {
+  return NextResponse.json(
+    { error: 'AI service is busy right now — please try again in a moment' },
+    { status: 503 },
+  )
+}
+
+/**
+ * Global circuit-breaker on Groq's shared free-tier quota (daily + per-minute).
+ * Call before ANY Groq request — including routes that use raw fetch instead of
+ * callGroq — so the whole app shares one budget. Throws GroqQuotaExhaustedError.
+ */
+export async function assertGroqCapacity(): Promise<void> {
+  const [rpm, daily] = await Promise.all([
+    checkRateLimitAsync('global', 'groq-rpm', GROQ_RPM_GLOBAL_CAP, 60_000),
+    checkRateLimitAsync('global', 'groq-daily', GROQ_DAILY_GLOBAL_CAP, 86_400_000),
+  ])
+  if (!rpm.allowed || !daily.allowed) throw new GroqQuotaExhaustedError()
+}
 
 export function getGroqKey(): string {
   const key = process.env.GROQ_API_KEY
@@ -41,6 +74,10 @@ export async function callGroq(
   options: GroqOptions = {}
 ): Promise<string> {
   const key = getGroqKey()
+
+  // Global circuit-breaker on the shared free-tier quota (daily + per-minute).
+  await assertGroqCapacity()
+
   const res = await fetch(`${GROQ_BASE}/chat/completions`, {
     method: 'POST',
     headers: {

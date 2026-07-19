@@ -73,7 +73,8 @@ export default async function DashboardPage() {
         .select('id,source_type,label,amount,received_date,is_recurring')
         .eq('user_id', user.id)
         .gte('received_date', start)
-        .order('received_date', { ascending: false }),
+        .order('received_date', { ascending: false })
+        .limit(100),
       supabase
         .from('work_shifts')
         .select('earnings,start_time,end_time,shift_date')

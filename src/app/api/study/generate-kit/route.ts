@@ -23,6 +23,11 @@ export async function POST(request: NextRequest) {
   if (!rl.allowed)
     return NextResponse.json({ error: 'Rate limit: 5 generations per 5 minutes' }, { status: 429 })
 
+  // Per-user DAILY cap — protects the shared Groq quota beyond the burst window.
+  const rlDay = await checkRateLimitAsync(user.id, 'generate-kit-day', 20, 86_400_000)
+  if (!rlDay.allowed)
+    return NextResponse.json({ error: 'Daily limit reached — try again tomorrow' }, { status: 429 })
+
   const key = process.env.GROQ_API_KEY
   if (!key) return groqUnconfiguredResponse()
 

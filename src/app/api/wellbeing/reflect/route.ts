@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { checkRateLimitAsync } from '@/lib/rateLimit'
+import { assertGroqCapacity } from '@/lib/groq'
 
 const CRISIS_WORDS = ['suicide', 'kill myself', 'end my life', 'self-harm', 'hurt myself', 'no reason to live']
 
@@ -15,9 +16,11 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Shared (Upstash-backed) limiter — 5 reflections / 10 min.
+  // Shared (Upstash-backed) limiter — 5 reflections / 10 min + a daily cap.
   const rl = await checkRateLimitAsync(user.id, 'wellbeing-reflect', 5, 10 * 60 * 1000)
   if (!rl.allowed) return NextResponse.json({ error: 'Rate limit — wait a few minutes' }, { status: 429 })
+  const rlDay = await checkRateLimitAsync(user.id, 'wellbeing-reflect-day', 20, 86_400_000)
+  if (!rlDay.allowed) return NextResponse.json({ error: 'Daily limit reached — try again tomorrow' }, { status: 429 })
 
   const { entry_text } = await request.json().catch(() => ({})) as { entry_text?: string }
   if (!entry_text?.trim() || entry_text.trim().length < 10)
@@ -32,6 +35,10 @@ export async function POST(request: NextRequest) {
   if (!groqKey) return NextResponse.json({ reflection: 'Your feelings are valid. Take a breath — you showed up today, and that matters.' })
 
   try {
+    // Global breaker on the shared Groq quota (this route uses raw fetch, so it
+    // would otherwise bypass callGroq's breaker). On exhaustion the catch below
+    // returns a warm fallback rather than an error.
+    await assertGroqCapacity()
     const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${groqKey}` },

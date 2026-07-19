@@ -217,6 +217,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: 'ok' })
     }
 
+    // Per-user DAILY cap on Claude via WhatsApp. The 20/min per-phone limit above
+    // still allows ~28,800 Claude calls/day/number — this caps unbudgeted spend.
+    const novaDay = await checkRateLimitAsync(userId, 'whatsapp-nova-day', 30, 86_400_000)
+    if (!novaDay.allowed) {
+      await reply("You've reached today's Nova limit on WhatsApp. 🌙 Open the app for more, or try again tomorrow.")
+      return NextResponse.json({ status: 'ok' })
+    }
+
     try {
       const response = await anthropic.messages.create({
         model: 'claude-haiku-4-5-20251001',

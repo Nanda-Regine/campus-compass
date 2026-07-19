@@ -294,18 +294,30 @@ export const morningBrief = inngest.createFunction(
         .in('exam_date', [todayStr, tomorrowStr])
       const examUserSet = new Set((nearExams ?? []).map((e: { user_id: string }) => e.user_id))
 
-      // Profiles for Nova quota check
+      // Profiles for Nova quota check. Uses the ACTUAL live columns
+      // (nova_messages_limit / _used / _reset_at) — the per-user limit is stored
+      // directly, so no tier→limit derivation is needed. (Previously queried a
+      // non-existent `nova_messages_month` column + tier 'nova_scholar', so this
+      // warning never fired.)
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('id, nova_messages_used, nova_messages_month, subscription_tier')
+        .select('id, nova_messages_used, nova_messages_limit, nova_messages_reset_at')
         .in('id', userIds)
 
-      const currentMonth = today.toISOString().slice(0, 7)
+      // O(1) lookup Map instead of Array.find() per user (was O(n²) at scale).
+      const profileById = new Map(
+        (profiles ?? []).map((p: { id: string }) => [p.id, p]),
+      )
+      const nowMs = today.getTime()
+      const periodTag = todayStr.slice(0, 7)
       let nudgeSent = 0, quotaSent = 0
 
       for (const userId of userIds) {
-        const profile = (profiles ?? []).find((p: { id: string }) => p.id === userId) as {
-          id: string; nova_messages_used: number; nova_messages_month: string; subscription_tier: string
+        const profile = profileById.get(userId) as {
+          id: string
+          nova_messages_used: number | null
+          nova_messages_limit: number | null
+          nova_messages_reset_at: string | null
         } | undefined
 
         // Morning nudge — only for users without an imminent exam
@@ -318,18 +330,19 @@ export const morningBrief = inngest.createFunction(
           })
         }
 
-        // Nova quota warning (≥ 80% but not yet at limit)
-        if (profile && profile.nova_messages_month === currentMonth) {
-          const limit = profile.subscription_tier === 'nova_scholar' ? 150
-            : profile.subscription_tier === 'nova_unlimited' ? 9999
-            : 50
+        // Nova quota warning (≥ 80% but not yet at limit), only within the active
+        // quota window (reset_at in the future) and for capped tiers (< 9999).
+        if (profile) {
+          const limit = profile.nova_messages_limit ?? 0
           const used = profile.nova_messages_used ?? 0
-          if (used >= Math.floor(limit * 0.8) && used < limit) {
+          const resetMs = profile.nova_messages_reset_at ? Date.parse(profile.nova_messages_reset_at) : 0
+          const active = resetMs > nowMs
+          if (active && limit > 0 && limit < 9999 && used >= Math.floor(limit * 0.8) && used < limit) {
             quotaSent += await notifyUser(supabase, userId, {
               title: '🤖 Nova quota at 80%',
-              body: `${used}/${limit} messages used this month. Upgrade for unlimited.`,
+              body: `${used}/${limit} Nova messages used. Upgrade for more.`,
               url: '/nova',
-              tag: `nova-quota-${currentMonth}`,
+              tag: `nova-quota-${periodTag}`,
             })
           }
         }
