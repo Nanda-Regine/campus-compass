@@ -1631,6 +1631,30 @@ Four-agent audit: ambient-background legibility + three content clusters (academ
 
 ---
 
+## Landing Redesign · Compliance · Readiness Hardening (2026-07-19)
+
+A long session spanning marketing, legal, and deep infra hardening.
+
+**Landing page:** replaced the flat-black area below the hero with themed `AmbientImage` backgrounds per section (alerts/dashboard/community/nova/safety/nsfas/habits/study/impasto), fluid gradient headlines, asymmetric staggered/rotated cards, and a new Ubuntu "I am because we are" inspiration band with dual CTA.
+
+**Infra keys:** provisioned `UPSTASH_REDIS_REST_*` + `INNGEST_*` into Vercel **production** (were only in `.env.local`, which never reaches prod) → distributed rate-limiting + authenticated Inngest now live. Vector keys skipped (unused; no `@upstash/vector`).
+
+**POPIA / legal:** rewrote the Privacy cookies section (it falsely claimed no analytics cookies) to disclose GA4/GTM/PostHog/Vercel/Hotjar/Crisp; aligned the data-region claim to Supabase EU/Ireland across site + policy; added Google **Consent Mode v2** (analytics default-denied until opt-in, live update on choice) and gated Hotjar behind consent; expanded subprocessor list. See `docs/AUTH_CONFIG.md` sibling and the legal pages.
+
+**Three-agent readiness audit (offline / scale / DB), then fixes shipped:**
+- *Scale:* global circuit-breaker on Groq's shared free-tier quota (`assertGroqCapacity()`); per-user daily caps on generate-kit + wellbeing/reflect + WhatsApp Nova; fixed `morningBrief` reading a non-existent `nova_messages_month` column; hot-path indexes (`modules`, `timetable_slots`, `campus_posts`) — migration `000049`, applied live.
+- *Inngest:* `attendanceAlert`'s full-table scan replaced with a Postgres `get_attendance_risk()` RPC (migration `000050`) + `notifyBatched()` fan-out helper.
+- *Offline:* hardened the single write queue (idempotent inserts, `onConflict` passthrough, `failed_writes` dead-letter, DB v3) + `offlineInsert/Update/Upsert/Delete` helpers, then rolled them across ~13 rooms (Budget, Health, Meals, Fitness, Study, Movement) via three parallel agents. Money/health/study entries now survive load-shedding instead of being lost.
+- *DB:* schema-of-record migrations `000051` (gamification tables) + `000052` (base tables exams/expenses/modules/timetable_slots/work_shifts/part_time_jobs + collision-table column unions) — introspected verbatim from live so a fresh `db reset` rebuilds correctly. **Discovered the live Management API works via `SUPABASE_ACCESS_TOKEN` in `.env.local`** (the old PAT is dead).
+
+**Security:** CSP hardened (`object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'none'`, `upgrade-insecure-requests`; prod dropped `'unsafe-eval'` → `'wasm-unsafe-eval'`). Found & fixed a real bug: `Permissions-Policy: geolocation=()` was silently disabling **SafeWalk / SafetyOS** location for the whole origin → changed to `geolocation=(self)`.
+
+**SEO:** multilingual keyword expansion (isiZulu/isiXhosa/Afrikaans/Sesotho) + OG `en_ZA` + 10 alternate SA locales; visible title/desc kept natural (no keyword-stuffing penalty).
+
+**Deferred to a follow-up chat:** CSP `'unsafe-inline'` → nonce migration (scoped: middleware nonce + `strict-dynamic`, verify on a preview via curl before promoting), remaining sequential Inngest fan-outs, and the double `getUser`/`profiles` per navigation (H4). Full detail in memory `audit-2026-07-19-offline-scale-db`.
+
+---
+
 Every feature decision is tested against Nomvula:
 
 > **Nomvula** is a first-generation student from Soweto. She's studying BCom Accounting at Wits on a full NSFAS bursary. She has a prepaid Tecno Spark with 2GB of data per month. She takes two taxis to get to campus. She's brilliant, but she arrives without the network of tutors, advisors, and mentors that her more privileged classmates take for granted. She is homesick, occasionally overwhelmed, and full of potential.
