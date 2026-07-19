@@ -397,7 +397,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── 3. SOCIAL PROOF ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-12 max-w-7xl mx-auto" aria-label="Social proof">
+        <section className="relative px-5 py-16 overflow-hidden" aria-label="Social proof">
+          <AmbientImage zone="vibrant" opacity={0.22} blurPx={7} saturation={1.5}
+            overlayColor="rgba(5,4,12,0.80)" />
+          {/* asymmetric accent slab */}
+          <div aria-hidden="true" className="absolute -left-24 top-1/3 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.10), transparent 70%)', transform: 'rotate(-12deg)' }} />
+          <div className="relative max-w-7xl mx-auto">
           {/* Stat bar */}
           <div
             className="grid grid-cols-2 sm:grid-cols-4 rounded-2xl overflow-hidden mb-6"
@@ -449,44 +454,56 @@ export default function LandingPage() {
             ))}
             <span className="font-mono text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#fff' }}>+ more</span>
           </div>
+          </div>
         </section>
 
         {/* ── 4. PROBLEM ─────────────────────────────────────────────────────── */}
-        <section className="px-5 py-20 max-w-7xl mx-auto" aria-labelledby="problem-heading">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-10">
-              <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#fb923c' }}>Sound familiar?</p>
-              <h2 id="problem-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
-                SA varsity life is hard<br />enough without the chaos.
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="problem-heading">
+          <AmbientImage zone="alerts" opacity={0.36} blurPx={5} saturation={1.4}
+            overlayColor="rgba(5,4,12,0.74)" />
+          <div className="relative max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#fb923c' }}>· Sound familiar? ·</p>
+              <h2 id="problem-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+                SA varsity life is hard<br />enough without the{' '}
+                <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #fb923c, #ef4444)' }}>chaos.</span>
               </h2>
             </div>
+            {/* Asymmetric staggered pain cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {PAIN_POINTS.map((p, i) => (
                 <div
                   key={p.text}
-                  className="flex items-start gap-4 rounded-2xl p-5"
+                  className={`flex items-start gap-4 rounded-2xl p-5 sm:p-6 ${i % 2 === 1 ? 'sm:translate-y-8' : ''}`}
                   style={{
-                    background: i % 2 === 0 ? 'rgba(224,120,88,0.07)' : 'rgba(239,68,68,0.06)',
-                    border: i % 2 === 0 ? '1px solid rgba(224,120,88,0.2)' : '1px solid rgba(239,68,68,0.15)',
+                    background: i % 2 === 0 ? 'linear-gradient(145deg, rgba(224,120,88,0.14), rgba(6,12,24,0.6))' : 'linear-gradient(145deg, rgba(239,68,68,0.12), rgba(6,12,24,0.6))',
+                    border: i % 2 === 0 ? '1px solid rgba(224,120,88,0.28)' : '1px solid rgba(239,68,68,0.22)',
+                    backdropFilter: 'blur(4px)',
+                    boxShadow: i % 2 === 0 ? '0 8px 30px rgba(224,120,88,0.08)' : '0 8px 30px rgba(239,68,68,0.08)',
                   }}
                 >
-                  <span className="text-2xl flex-shrink-0 mt-0.5" aria-hidden="true">{p.icon}</span>
-                  <p className="font-display text-sm leading-relaxed" style={{ color: '#fff' }}>{p.text}</p>
+                  <span className="text-3xl flex-shrink-0 mt-0.5" aria-hidden="true">{p.icon}</span>
+                  <p className="font-display text-sm sm:text-base leading-relaxed" style={{ color: '#fff' }}>{p.text}</p>
                 </div>
               ))}
             </div>
-            <p className="text-center font-display font-bold text-white mt-8 text-lg">
-              You&apos;re not failing. You just don&apos;t have the right tools yet.
+            <p className="text-center font-display font-bold text-white mt-16 sm:mt-20" style={{ fontSize: 'clamp(1.3rem, 3vw, 1.9rem)' }}>
+              You&apos;re not failing. You just don&apos;t<br className="hidden sm:block" /> have the{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0)' }}>right tools</span> yet.
             </p>
           </div>
         </section>
 
         {/* ── 5. SOLUTION ────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="solution-heading">
-          <div className="text-center mb-8">
-            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#5eead4' }}>Enter VarsityOS</p>
-            <h2 id="solution-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
-              Everything you need.<br />One place. Built for SA.
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="solution-heading">
+          <AmbientImage zone="dashboard" opacity={0.30} blurPx={5} saturation={1.4}
+            overlayColor="rgba(5,4,12,0.76)" />
+          <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#5eead4' }}>· Enter VarsityOS ·</p>
+            <h2 id="solution-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Everything you need.<br />One place.{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #00CFA0, #3b82f6)' }}>Built for SA.</span>
             </h2>
           </div>
 
@@ -570,26 +587,36 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+          </div>
         </section>
 
         {/* ── 6. FEATURES ────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="features-heading">
-          <div className="text-center mb-10">
-            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: '#A855F7' }}>30+ tools across 9 life domains</p>
-            <h2 id="features-heading" className="font-display font-black text-3xl sm:text-4xl text-white">
-              Not a super-app.<br />A Student Operating System.
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="features-heading">
+          <AmbientImage zone="community" opacity={0.28} blurPx={6} saturation={1.5}
+            overlayColor="rgba(5,4,12,0.80)" />
+          <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#A855F7' }}>· 30+ tools · 9 life domains ·</p>
+            <h2 id="features-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Not a super-app.<br />A{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0, #D4A84B)' }}>Student Operating System.</span>
             </h2>
-            <p className="text-sm mt-3 max-w-lg mx-auto" style={{ color: '#fff' }}>Mind · Body · Money · Safety · Movement · Growth · Community · Work · Future</p>
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 mt-5 max-w-2xl mx-auto">
+              {['Mind','Body','Money','Safety','Movement','Growth','Community','Work','Future'].map((d, i) => (
+                <span key={d} className="font-mono text-xs" style={{ color: ['#8b5cf6','#FF6B9E','#d4a847','#10b981','#38bdf8','#A855F7','#4ecf9e','#7090d0','#06b6d4'][i] }}>{d}{i < 8 ? ' ·' : ''}</span>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURES.map((f) => (
+            {FEATURES.map((f, idx) => (
               <article
                 key={f.title}
-                className="rounded-2xl p-5 relative overflow-hidden"
+                className={`rounded-2xl p-5 relative overflow-hidden transition-transform hover:-translate-y-1 ${idx % 5 === 0 ? 'sm:row-span-1 lg:-rotate-[0.4deg]' : idx % 7 === 3 ? 'lg:rotate-[0.4deg]' : ''}`}
                 style={{
-                  background: `linear-gradient(145deg, rgba(6,12,24,0.9), ${f.accent}0d)`,
+                  background: `linear-gradient(145deg, rgba(6,12,24,0.72), ${f.accent}12)`,
                   border: `1px solid ${f.accent}30`,
                   boxShadow: `0 4px 20px ${f.accent}10`,
+                  backdropFilter: 'blur(4px)',
                 }}
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${f.accent}80, transparent)` }} />
@@ -607,6 +634,7 @@ export default function LandingPage() {
               </article>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── Nova spotlight ─────────────────────────────────────────────────── */}
@@ -615,6 +643,8 @@ export default function LandingPage() {
             className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
             style={{ background: 'linear-gradient(135deg, #060f1a, #071814)', border: '1px solid rgba(13,148,136,0.25)', transform: 'translateZ(0)' }}
           >
+            <AmbientImage zone="nova" opacity={0.34} blurPx={4} saturation={1.6}
+              overlayColor="rgba(6,15,26,0.78)" />
             <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(13,148,136,0.15), transparent 60%)' }} />
             <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(59,130,246,0.1), transparent 60%)' }} />
             <div className="relative grid lg:grid-cols-2 gap-10 items-start">
@@ -695,6 +725,8 @@ export default function LandingPage() {
             className="rounded-3xl p-6 sm:p-10 overflow-hidden relative"
             style={{ background: 'linear-gradient(135deg, #030d0a, #041208)', border: '1px solid rgba(16,185,129,0.25)', transform: 'translateZ(0)' }}
           >
+            <AmbientImage zone="safety" opacity={0.22} blurPx={6} saturation={1.4}
+              overlayColor="rgba(3,13,10,0.82)" />
             <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top right, rgba(16,185,129,0.14), transparent 60%)' }} />
             <div className="absolute bottom-0 left-0 w-72 h-72 pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom left, rgba(56,189,248,0.08), transparent 60%)' }} />
             <div className="relative grid lg:grid-cols-2 gap-10 items-center">
@@ -768,11 +800,53 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── Inspiration band ───────────────────────────────────────────────── */}
+        <section className="relative px-5 py-28 overflow-hidden" aria-label="Why VarsityOS exists">
+          <AmbientImage zone="entrepreneurship" opacity={0.42} blurPx={4} saturation={1.7}
+            overlayColor="rgba(5,4,12,0.68)" />
+          {/* asymmetric rotated glow shards */}
+          <div aria-hidden="true" className="absolute -top-10 right-[8%] w-64 h-64 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(0,207,160,0.14), transparent 70%)', transform: 'rotate(18deg)' }} />
+          <div aria-hidden="true" className="absolute bottom-0 left-[6%] w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.14), transparent 70%)' }} />
+          <div className="relative max-w-4xl mx-auto text-center">
+            <p className="font-mono text-xs uppercase tracking-[0.35em] mb-7" style={{ color: '#f9a8d4' }}>· Ubuntu · I am because we are ·</p>
+            <blockquote className="font-display font-black text-white leading-[1.08]" style={{ fontSize: 'clamp(1.8rem, 5.2vw, 3.4rem)' }}>
+              Built for the student on a prepaid phone,<br className="hidden sm:block" /> studying by candlelight through load shedding —{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #00CFA0, #A855F7, #D4A84B)' }}>and everyone chasing the same dream.</span>
+            </blockquote>
+            <p className="text-base sm:text-lg mt-8 max-w-2xl mx-auto leading-relaxed" style={{ color: '#fff' }}>
+              You don&apos;t need money, a fancy laptop, or perfect signal. You need one place that has your back — mind, money, safety, and future. That&apos;s VarsityOS.
+            </p>
+            <div className="flex items-center justify-center gap-3 flex-wrap mt-10">
+              <Link
+                href="/auth/signup"
+                className="font-display font-bold text-sm px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"
+                style={{ background: 'linear-gradient(135deg, #A855F7, #00CFA0)', color: '#fff', boxShadow: '0 4px 24px rgba(168,85,247,0.45)' }}
+              >
+                Claim your free account
+              </Link>
+              <Link
+                href="/demo"
+                className="font-display font-bold text-sm px-7 py-3.5 rounded-xl transition-all hover:bg-white/10"
+                style={{ border: '1px solid rgba(255,255,255,0.25)', color: '#fff' }}
+              >
+                ▶ See it in action
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── 7. HOW IT WORKS ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="how-heading">
-          <div className="text-center mb-10">
-            <h2 id="how-heading" className="font-display font-black text-3xl text-white">Up and running in 3 minutes.</h2>
-            <p className="text-sm mt-2" style={{ color: '#fff' }}>No app store. No credit card. Just sign up.</p>
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="how-heading">
+          <AmbientImage zone="movement" opacity={0.26} blurPx={6} saturation={1.5}
+            overlayColor="rgba(5,4,12,0.80)" />
+          <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#67e8f9' }}>· Getting started ·</p>
+            <h2 id="how-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Up and running in{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #06b6d4, #3b82f6)' }}>3 minutes.</span>
+            </h2>
+            <p className="text-sm mt-3" style={{ color: '#fff' }}>No app store. No credit card. Just sign up.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
             {[
@@ -811,13 +885,21 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── 8. PRICING ─────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="pricing-heading">
-          <div className="text-center mb-10">
-            <h2 id="pricing-heading" className="font-display font-black text-3xl text-white mb-2">Simple, honest pricing.</h2>
-            <p className="text-sm" style={{ color: '#fff' }}>Start free. Upgrade only when you need more Nova.</p>
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="pricing-heading">
+          <AmbientImage zone="nsfas" opacity={0.30} blurPx={6} saturation={1.5}
+            overlayColor="rgba(5,4,12,0.80)" />
+          <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#d4a847' }}>· Simple, honest pricing ·</p>
+            <h2 id="pricing-heading" className="font-display font-black leading-[1.05] text-white mb-2" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Free forever.{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #d4a847, #e07858)' }}>No catch.</span>
+            </h2>
+            <p className="text-sm" style={{ color: '#fff' }}>Start free. Upgrade only when you want more Nova.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {PRICING.map((tier) => (
@@ -882,21 +964,31 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── 9. TESTIMONIALS ────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-7xl mx-auto" aria-labelledby="testimonials-heading">
-          <div className="text-center mb-10">
-            <h2 id="testimonials-heading" className="font-display font-black text-3xl text-white">What students are saying</h2>
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="testimonials-heading">
+          <AmbientImage zone="habits" opacity={0.26} blurPx={7} saturation={1.5}
+            overlayColor="rgba(5,4,12,0.82)" />
+          <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#c084fc' }}>· Real students · Real campuses ·</p>
+            <h2 id="testimonials-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Loved from Soweto{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #A855F7, #00CFA0)' }}>to Stellenbosch.</span>
+            </h2>
           </div>
+          {/* Asymmetric masonry-ish grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {TESTIMONIALS.map((t) => (
+            {TESTIMONIALS.map((t, i) => (
               <blockquote
                 key={t.name}
-                className="rounded-2xl p-5 relative overflow-hidden"
+                className={`rounded-2xl p-5 sm:p-6 relative overflow-hidden ${i % 4 === 1 ? 'sm:translate-y-6' : i % 4 === 3 ? 'sm:-translate-y-3' : ''}`}
                 style={{
-                  background: `linear-gradient(145deg, ${t.accent}0d, rgba(6,12,24,0.9))`,
+                  background: `linear-gradient(145deg, ${t.accent}14, rgba(6,12,24,0.72))`,
                   border: `1px solid ${t.accent}30`,
+                  backdropFilter: 'blur(4px)',
                 }}
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: `linear-gradient(90deg, ${t.accent}80, transparent)` }} />
@@ -908,12 +1000,20 @@ export default function LandingPage() {
               </blockquote>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── 10. FAQ ────────────────────────────────────────────────────────── */}
-        <section className="px-5 pb-20 max-w-3xl mx-auto" aria-labelledby="faq-heading">
-          <div className="text-center mb-10">
-            <h2 id="faq-heading" className="font-display font-black text-3xl text-white">Common questions</h2>
+        <section className="relative px-5 py-24 overflow-hidden" aria-labelledby="faq-heading">
+          <AmbientImage zone="study" opacity={0.34} blurPx={4} saturation={1.35}
+            overlayColor="rgba(5,4,12,0.80)" />
+          <div className="relative max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] mb-4" style={{ color: '#93c5fd' }}>· Everything else ·</p>
+            <h2 id="faq-heading" className="font-display font-black leading-[1.05] text-white" style={{ fontSize: 'clamp(2rem, 5.5vw, 3.4rem)' }}>
+              Common{' '}
+              <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(120deg, #3b82f6, #00CFA0)' }}>questions.</span>
+            </h2>
           </div>
           <div className="space-y-2">
             {[
@@ -942,7 +1042,7 @@ export default function LandingPage() {
               <details
                 key={i}
                 className="rounded-2xl group overflow-hidden"
-                style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(59,130,246,0.12)' }}
+                style={{ background: 'rgba(6,12,24,0.55)', border: '1px solid rgba(59,130,246,0.16)', backdropFilter: 'blur(6px)' }}
               >
                 <summary className="font-display font-bold text-sm cursor-pointer flex items-center justify-between gap-3 px-5 py-4 text-white" style={{ listStyle: 'none' }}>
                   {faq.q}
@@ -952,14 +1052,17 @@ export default function LandingPage() {
               </details>
             ))}
           </div>
+          </div>
         </section>
 
         {/* ── 11. FINAL CTA ──────────────────────────────────────────────────── */}
         <section className="px-5 pb-24 max-w-7xl mx-auto">
           <div
-            className="rounded-3xl px-8 py-16 text-center relative overflow-hidden"
+            className="rounded-3xl px-8 py-20 text-center relative overflow-hidden"
             style={{ background: 'linear-gradient(135deg, #06112a 0%, #071c1a 60%, #060c18 100%)', border: '1px solid rgba(59,130,246,0.2)', transform: 'translateZ(0)' }}
           >
+            <AmbientImage zone="impasto" opacity={0.34} blurPx={5} saturation={1.6}
+              overlayColor="rgba(6,17,42,0.76)" />
             <div className="absolute top-0 left-0 w-full sm:w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 60%)' }} />
             <div className="absolute bottom-0 right-0 w-full sm:w-[500px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(circle at bottom right, rgba(13,148,136,0.18), transparent 60%)' }} />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full sm:w-[600px] h-[400px] pointer-events-none" aria-hidden="true" style={{ background: 'radial-gradient(ellipse, rgba(6,182,212,0.06), transparent 65%)' }} />
