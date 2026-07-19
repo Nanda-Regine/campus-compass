@@ -154,7 +154,12 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()' },
+          // geolocation=(self): SafeWalk / SafetyOS / Movement maps need the
+          // student's own location. 'self' allows only this origin (no third-party
+          // iframes), so the safety feature works while staying locked down. Camera
+          // stays () because scanners use the OS file picker (<input capture>), not
+          // getUserMedia.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), serial=(), bluetooth=()' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
           // Prevent window.opener attacks while still allowing hosted-checkout popups
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
@@ -176,6 +181,11 @@ const nextConfig = {
               "frame-src 'self' https://g.page https://www.google.com",
               "form-action 'self'",
               "worker-src 'self' blob:",
+              // Hardening: no plugins, no injected <base>, no framing, force https.
+              "object-src 'none'",
+              "base-uri 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests",
             ].join('; '),
           },
         ],
