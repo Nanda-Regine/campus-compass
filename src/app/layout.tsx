@@ -693,6 +693,7 @@ a.appendChild(r);
         <PWARegister />
         <Analytics />
         <SpeedInsights />
+              <script src="https://jarvis.mirembemuse.co.za/mm-feedback.js" data-app="varsityos" defer></script>
       </body>
     </html>
   )
